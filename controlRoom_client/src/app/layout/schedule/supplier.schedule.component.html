@@ -1,0 +1,212 @@
+
+<div class="container-fluid">
+    <h2 class="text-muted"><small>Supplier schedule Management</small></h2>
+</div>
+<br>
+<div class="content-section implementation">
+    <p-growl [value]="msgs" sticky="sticky"></p-growl>
+</div>
+<br>
+
+<div id="wrapper" class="left" >
+    <div class="row">
+        <div class="col-md-1">
+            Supplier : 
+        </div>
+        <div class="col-md-9" style="overflow: hidden; padding-right: .5em;">
+            <input type="text"  [(ngModel)]="searchCode" placeholder="enter a code or a description" style="width: 50%;" />
+            <button type="submit" pButton (click)="search()" icon="fa-search" label="Search" [disabled]="searchCode === ''"></button>
+        </div>
+    </div>
+</div>
+<p></p>
+
+<!-- Panel resul -->
+<!-- Result panel of the resarch --> 
+<!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
+<div  item-width="400px" table-layout="fixed">
+<p-dataTable #result [value]="searchResult" sortMode="multiple"
+             [resizableColumns]="true" columnResizeMode="expand"
+             [rows]="5"  [rowsPerPageOptions]="[5,10,15]"
+             [paginator]="true" [pageLinks]="3" 
+             [responsive]="true" [totalRecords]="totalRecords"
+             [reorderableColumns]="true" scrollHeight="400px"
+             [globalFilter]="gb"
+             selectionMode="single" [(selection)]="selectedElement" tableStyleClass="table-layout: auto;">
+
+    <p-header >
+        <div class="ui-widget-header pull-right ui-left-inner-addon">
+            <span class="fa fa-search"></span>
+            <input  type="text" #gb
+              placeholder="Type text to filter..." width="500px">
+        </div>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa-file-o" iconPos="left" label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+        </div>
+        <!--div style="text-align:right">
+            <p-multiSelect [options]="columnOptions" [(ngModel)]="columns"></p-multiSelect>
+        </div-->
+    </p-header>
+    <p-column *ngFor="let col of columnsResult" [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
+</p-dataTable>
+<i class="pull-right" style="font-size:smaller;" *ngIf="searchResult">{{searchResult.length}} references</i>
+</div>
+<!-- List of Schedules -->
+
+<div *ngIf="selectedElement">
+    <p></p>
+    <div *ngFor="let schedule of selectedElement.schedules">
+        <!--*ngIf="selectedElement.externalcode" -->
+        <div class="ui-g-6"> 
+                <p-panel header="Schedule {{schedule.start | date:'MM/dd/yyyy' }} - {{schedule.end | date:'MM/dd/yyyy' }}" 
+                        [toggleable]="true">
+                    <!-- Panel for the list of sites -->    
+                    <p-panel [toggleable]="true" collapsed="true">
+                        <p-header>Schedule applied on {{schedule.sites.length}} sites </p-header>
+                        <div class="alternateColor">
+                            <ng-container *ngFor="let site of schedule.sites">
+                                <div> {{ site.code }}  {{site.description}} </div>
+                            </ng-container>
+                        </div>
+                    </p-panel>
+
+                        <div class="row">
+                            <div class="ui-g-12" style="font-size: smaller; text-align:center;">
+                                <div class="ui-g-nopad">
+                                    <div class="ui-g-4"></div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">Monday</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">Tuesday</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">Wed.</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">Thurs.</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">Friday</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">Saturday</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">Sunday</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row rowcolorgray" >
+                            <div class="ui-g-12" style="font-size: smaller; text-align:center;">
+                                <div class="ui-g-nopad">
+                                    <div class="ui-g-2">Order day</div>
+                                    <div class="ui-g-2">(x {{schedule.frequency}} {{schedule.frequencyUnitLabel | lowercase }})  </div>         
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderMonday==1"></i></div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderTuesday==1"></i></div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderWednesday==1"></i></div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderThursday==1"></i></div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderFriday==1"></i></div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderSaturday==1"></i></div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderSunday==1"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="ui-g-12">
+                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
+                                    <div class="ui-g-2">Lead time</div>
+                                    <div class="ui-g-2">(days)</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.leadTimeMonday}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.leadTimeTuesday}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.leadTimeWednesday}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.leadTimeThursday}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.leadTimeFriday}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.leadTimeSaturday}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.leadTimeSunday}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row rowcolorgray">
+                            <div class="ui-g-12">
+                                <div class="ui-g-nopad"  style="font-size: smaller; text-align:center;">
+                                    <div class="ui-g-2">Collection time 1</div>
+                                    <div class="ui-g-2">(Time)</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.collectionTimeMonday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.collectionTuesday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.collectionTimeWednesday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.collectionTimeThursday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.collectionTimeFriday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.collectionTimeSaturday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.collectionTimeSunday1}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="ui-g-12">
+                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
+                                    <div class="ui-g-2">Delivery time 1</div>
+                                    <div class="ui-g-2">(Time)</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.deliveryTimeMonday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.deliveryTuesday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.deliveryTimeWednesday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.deliveryTimeThursday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.deliveryTimeFriday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.deliveryTimeSaturday1}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.deliveryTimeSunday1}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row rowcolorgray">
+                            <div class="ui-g-12">
+                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
+                                    <div class="ui-g-2">Collection time 2</div>
+                                    <div class="ui-g-2">(Time)</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.collectionTimeMonday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.collectionTuesday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.collectionTimeWednesday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.collectionTimeThursday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.collectionTimeFriday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.collectionTimeSaturday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.collectionTimeSunday2}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="ui-g-12">
+                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
+                                    <div class="ui-g-2">Delivery time 2</div>
+                                    <div class="ui-g-2">(Time)</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.deliveryTimeMonday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.deliveryTuesday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.deliveryTimeWednesday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.deliveryTimeThursday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.deliveryTimeFriday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.deliveryTimeSaturday2}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.deliveryTimeSunday2}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row rowcolorgray">
+                            <div class="ui-g-12">
+                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
+                                    <div class="ui-g-2">Collection time 3</div>
+                                    <div class="ui-g-2">(Time)</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.collectionTimeMonday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.collectionTuesday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.collectionTimeWednesday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.collectionTimeThursday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.collectionTimeFriday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.collectionTimeSaturday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.collectionTimeSunday3}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="ui-g-12">
+                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
+                                    <div class="ui-g-2">Delivery time 3</div>
+                                    <div class="ui-g-2">(Time)</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.deliveryTimeMonday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.deliveryTuesday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.deliveryTimeWednesday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.deliveryTimeThursday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.deliveryTimeFriday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.deliveryTimeSaturday3}}</div>
+                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.deliveryTimeSunday3}}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                </p-panel>
+
+        </div>
+    </div>
+</div>

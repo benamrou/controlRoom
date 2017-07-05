@@ -1,0 +1,396 @@
+2/10/2017 17:33:7 Connection execution:ORA-06550: line 1, column 7:
+PLS-00306: wrong number or types of arguments in call to 'CALLQUERY'
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+: abe
+2/10/2017 17:34:31 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 17:46:31 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 17:47:43 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 17:50:42 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 17:53:48 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 17:54:2 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 17:56:48 Connection execution:NJS-044: named JSON object is not expected in this context: abe
+2/10/2017 17:57:26 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 18:3:30 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 18:5:0 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 18:7:1 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 18:8:22 Connection execution:ORA-06550: line 1, column 7:
+PLS-00306: wrong number or types of arguments in call to 'CALLQUERY'
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+: abe
+2/10/2017 18:12:0 Connection execution:ORA-06550: line 1, column 7:
+PLS-00306: wrong number or types of arguments in call to 'CALLQUERY'
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+: abe
+2/10/2017 18:12:20 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 18:13:58 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 18:17:4 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 18:17:32 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "{" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 18:18:52 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 18:19:10 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "{" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 18:19:57 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "{" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 18:21:14 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "{" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 18:21:57 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "{" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 18:23:17 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "{" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 18:43:29 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "{" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 18:45:22 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "{" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 18:45:49 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "{" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 18:49:22 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "[" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 18:49:52 Connection execution:ORA-06550: line 1, column 79:
+PLS-00103: Encountered the symbol "end-of-file" when expecting one of the following:
+
+   := . ( % ;
+: abe
+2/10/2017 20:56:26 Connection execution:ORA-06550: line 1, column 75:
+PLS-00103: Encountered the symbol "end-of-file" when expecting one of the following:
+
+   := . ( % ;
+: abe
+2/10/2017 20:57:49 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "[" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 20:58:52 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "[" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 20:59:18 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "[" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 21:8:42 Connection execution:ORA-06550: line 1, column 50:
+PLS-00103: Encountered the symbol "[" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 21:9:9 Connection execution:ORA-06550: line 1, column 53:
+PLS-00103: Encountered the symbol "ADMIN" when expecting one of the following:
+
+   ) , * & = - + < / > at in is mod remainder not rem =>
+   <an exponent (**)> <> or != or ~= >= <= <> and or like like2
+   like4 likec between || multiset member submultiset
+: abe
+2/10/2017 21:10:25 Connection execution:ORA-06550: line 1, column 77:
+PLS-00103: Encountered the symbol "end-of-file" when expecting one of the following:
+
+   := . ( % ;
+: abe
+2/10/2017 22:6:50 Connection execution:ORA-06550: line 1, column 53:
+PLS-00103: Encountered the symbol "ADMIN" when expecting one of the following:
+
+   ) , * & = - + < / > at in is mod remainder not rem =>
+   <an exponent (**)> <> or != or ~= >= <= <> and or like like2
+   like4 likec between || multiset member submultiset
+: abe
+2/10/2017 22:8:2 Connection execution:ORA-06550: line 1, column 53:
+PLS-00103: Encountered the symbol "ADMIN" when expecting one of the following:
+
+   ) , * & = - + < / > at in is mod remainder not rem =>
+   <an exponent (**)> <> or != or ~= >= <= <> and or like like2
+   like4 likec between || multiset member submultiset
+: abe
+2/10/2017 22:9:41 Connection execution:ORA-06550: line 1, column 53:
+PLS-00103: Encountered the symbol "ADMIN" when expecting one of the following:
+
+   ) , * & = - + < / > at in is mod remainder not rem =>
+   <an exponent (**)> <> or != or ~= >= <= <> and or like like2
+   like4 likec between || multiset member submultiset
+: abe
+2/10/2017 22:10:59 Connection execution:ORA-06550: line 1, column 53:
+PLS-00103: Encountered the symbol "ADMIN" when expecting one of the following:
+
+   ) , * & = - + < / > at in is mod remainder not rem =>
+   <an exponent (**)> <> or != or ~= >= <= <> and or like like2
+   like4 likec between || multiset member submultiset
+: abe
+2/10/2017 22:12:12 Connection execution:ORA-06550: line 1, column 74:
+PLS-00103: Encountered the symbol "end-of-file" when expecting one of the following:
+
+   := . ( % ;
+: abe
+2/10/2017 22:12:47 Connection execution:ORA-06550: line 1, column 7:
+PLS-00306: wrong number or types of arguments in call to 'CALLQUERY'
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+: abe
+2/10/2017 22:13:28 Connection execution:ORA-06550: line 1, column 51:
+PLS-00103: Encountered the symbol "[" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 22:13:42 Connection execution:ORA-06550: line 1, column 7:
+PLS-00306: wrong number or types of arguments in call to 'CALLQUERY'
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+: abe
+2/10/2017 22:14:9 Connection execution:ORA-01756: quoted string not properly terminated
+: abe
+2/10/2017 22:14:31 Connection execution:ORA-01756: quoted string not properly terminated
+: abe
+2/10/2017 22:18:6 Connection execution:ORA-01036: illegal variable name/number
+: abe
+2/10/2017 22:18:55 Connection execution:ORA-06550: line 1, column 56:
+PLS-00103: Encountered the symbol "[" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 22:29:52 Connection execution:ORA-06550: line 1, column 56:
+PLS-00103: Encountered the symbol "[" when expecting one of the following:
+
+   ( - + case mod new not null <an identifier>
+   <a double-quoted delimited-identifier> <a bind variable>
+   continue avg count current exists max min prior sql stddev
+   sum variance execute forall merge time timestamp interval
+   date <a string literal with character set specification>
+   <a number> <a single-quoted SQL string> pipe
+   <an alternatively-quoted string literal with character set specification>
+   <an alternatively
+: abe
+2/10/2017 22:30:43 Connection execution:ORA-06550: line 1, column 59:
+PLS-00103: Encountered the symbol "ADMIN" when expecting one of the following:
+
+   ) , * & = - + < / > at in is mod remainder not rem =>
+   <an exponent (**)> <> or != or ~= >= <= <> and or like like2
+   like4 likec between || multiset member submultiset
+: abe
+2/10/2017 23:46:29 3: Connection to database... [IN PROGRESS]
+2/10/2017 23:46:29 3: Connection to database... [ESTABLISHED]
+2/10/2017 23:46:29 3: Path request:/api/authentification/
+2/10/2017 23:46:29 3: Executing query.... 
+2/10/2017 23:46:29 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:46:55 4: Connection to database... [IN PROGRESS]
+2/10/2017 23:46:55 4: Connection to database... [ESTABLISHED]
+2/10/2017 23:46:55 4: Path request:/api/authentification/
+2/10/2017 23:46:55 4: Executing query.... 
+2/10/2017 23:46:55 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:47:1 5: Connection to database... [IN PROGRESS]
+2/10/2017 23:47:1 5: Connection to database... [ESTABLISHED]
+2/10/2017 23:47:1 5: Path request:/api/authentification/
+2/10/2017 23:47:1 5: Executing query.... 
+2/10/2017 23:47:1 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:47:6 6: Connection to database... [IN PROGRESS]
+2/10/2017 23:47:6 6: Connection to database... [ESTABLISHED]
+2/10/2017 23:47:6 6: Path request:/api/authentification/
+2/10/2017 23:47:6 6: Executing query.... 
+2/10/2017 23:47:6 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:47:43 7: Connection to database... [IN PROGRESS]
+2/10/2017 23:47:44 7: Connection to database... [ESTABLISHED]
+2/10/2017 23:47:44 7: Path request:/api/authentification/
+2/10/2017 23:47:44 7: Executing query.... 
+2/10/2017 23:47:44 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:48:29 9: Connection to database... [IN PROGRESS]
+2/10/2017 23:48:29 9: Connection to database... [ESTABLISHED]
+2/10/2017 23:48:29 9: Path request:/api/authentification/
+2/10/2017 23:48:29 9: Executing query.... 
+2/10/2017 23:48:29 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:48:55 10: Connection to database... [IN PROGRESS]
+2/10/2017 23:48:55 10: Connection to database... [ESTABLISHED]
+2/10/2017 23:48:55 10: Path request:/api/authentification/
+2/10/2017 23:48:55 10: Executing query.... 
+2/10/2017 23:48:55 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:49:1 11: Connection to database... [IN PROGRESS]
+2/10/2017 23:49:1 11: Connection to database... [ESTABLISHED]
+2/10/2017 23:49:1 11: Path request:/api/authentification/
+2/10/2017 23:49:1 11: Executing query.... 
+2/10/2017 23:49:1 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:49:6 12: Connection to database... [IN PROGRESS]
+2/10/2017 23:49:6 12: Connection to database... [ESTABLISHED]
+2/10/2017 23:49:6 12: Path request:/api/authentification/
+2/10/2017 23:49:6 12: Executing query.... 
+2/10/2017 23:49:6 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:49:20 13: Connection to database... [IN PROGRESS]
+2/10/2017 23:49:20 13: Connection to database... [ESTABLISHED]
+2/10/2017 23:49:20 13: Path request:/api/authentification/
+2/10/2017 23:49:20 13: Executing query.... 
+2/10/2017 23:49:20 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:51:24 14: Connection to database... [IN PROGRESS]
+2/10/2017 23:51:24 14: Connection to database... [ESTABLISHED]
+2/10/2017 23:51:24 14: Path request:/api/authentification/
+2/10/2017 23:51:24 14: Executing query.... 
+2/10/2017 23:51:24 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:51:39 15: Connection to database... [IN PROGRESS]
+2/10/2017 23:51:40 15: Connection to database... [ESTABLISHED]
+2/10/2017 23:51:40 15: Path request:/api/authentification/
+2/10/2017 23:51:40 15: Executing query.... 
+2/10/2017 23:51:40 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:53:24 16: Connection to database... [IN PROGRESS]
+2/10/2017 23:53:24 16: Connection to database... [ESTABLISHED]
+2/10/2017 23:53:24 16: Path request:/api/authentification/
+2/10/2017 23:53:24 16: Executing query.... 
+2/10/2017 23:53:24 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/10/2017 23:53:39 17: Connection to database... [IN PROGRESS]
+2/10/2017 23:53:39 17: Connection to database... [ESTABLISHED]
+2/10/2017 23:53:39 17: Path request:/api/authentification/
+2/10/2017 23:53:39 17: Executing query.... 
+2/10/2017 23:53:39 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;

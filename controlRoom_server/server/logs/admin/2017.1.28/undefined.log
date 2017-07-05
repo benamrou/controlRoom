@@ -1,0 +1,90 @@
+1/28/2017 18:55:9 4: Path request:/user_profiles/ABE
+1/28/2017 18:55:9 4: Executing query.... 
+1/28/2017 18:55:9 4: UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME
+1/28/2017 18:55:9 4: 
+
+{"DISPLAY_NAME":"Chocapic","USER_NAME":"ABE"}
+1/28/2017 18:55:9 4: 1 Object(s) updated...
+1/28/2017 18:55:34 6: Path request:/user_profiles/ABE
+1/28/2017 18:55:34 6: Executing query.... 
+1/28/2017 18:55:34 6: UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME
+1/28/2017 18:55:34 6: 
+
+{"DISPLAY_NAME":"Chocapic","USER_NAME":"ABE"}
+1/28/2017 18:55:34 6: 1 Object(s) updated...
+1/28/2017 19:8:50  Server is listening at http://:::3000: internal
+1/28/2017 19:10:16  Server is listening at http://:::3000: internal
+1/28/2017 19:11:59  Server is listening at http://:::3000: internal
+1/28/2017 19:12:21  Server is listening at http://:::3000: internal
+1/28/2017 19:12:29 Path request:/user_profiles/ABE2: abe
+1/28/2017 19:12:29 Executing query.... : abe
+1/28/2017 19:12:29 UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME: abe
+1/28/2017 19:13:8  Server is listening at http://:::3000: internal
+1/28/2017 19:13:10 Path request:/user_profiles/ABE2: abe
+1/28/2017 19:13:10 Executing query.... : abe
+1/28/2017 19:13:10 UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME: abe
+1/28/2017 19:13:43  Server is listening at http://:::3000: internal
+1/28/2017 19:13:45 Path request:/user_profiles/ABE2: abe
+1/28/2017 19:13:45 Executing query.... : abe
+1/28/2017 19:13:45 UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME: abe
+1/28/2017 19:14:40  Server is listening at http://:::3000: internal
+1/28/2017 19:14:43 Path request:/user_profiles/ABE2: abe
+1/28/2017 19:14:43 Executing query.... : abe
+1/28/2017 19:14:43 UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME: abe
+1/28/2017 19:15:33  Server is listening at http://:::3000: internal
+1/28/2017 19:15:36 Path request:/user_profiles/ABE2: abe
+1/28/2017 19:15:36 Executing query.... : abe
+1/28/2017 19:15:36 UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME: abe
+"abe"
+1/28/2017 19:15:36 1 Object(s) updated...: abe
+1/28/2017 19:16:4 Path request:/user_profiles/: abe
+1/28/2017 19:16:4 Executing query.... : abe
+1/28/2017 19:16:4 SELECT * FROM USER_PROFILES : abe
+"abe"
+1/28/2017 19:16:4 10 Object(s) returned...: abe
+1/28/2017 19:23:23 Path request:/user_profiles/: abe
+1/28/2017 19:23:23 Executing query.... : abe
+1/28/2017 19:23:23 SELECT * FROM USER_PROFILES : abe
+1/28/2017 19:23:23 1: 
+
+"abe"
+1/28/2017 19:23:23 10 Object(s) returned...: abe
+1/28/2017 19:26:23 Path request:/user_profiles/: abe
+1/28/2017 19:26:23 Executing query.... : abe
+1/28/2017 19:26:23 SELECT * FROM USER_PROFILES : abe
+1/28/2017 19:26:23 1: 
+
+"abe"
+1/28/2017 19:26:23 10 Object(s) returned...: abe
+1/28/2017 19:26:51 Path request:/user_profiles/ABE2: abe
+1/28/2017 19:26:51 Executing query.... : abe
+1/28/2017 19:26:51 UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME: abe
+1/28/2017 19:26:51 2: 
+
+"abe"
+1/28/2017 19:26:51 1 Object(s) updated...: abe
+1/28/2017 19:27:28 Path request:/user_profiles/: abe
+1/28/2017 19:27:28 Executing query.... : abe
+1/28/2017 19:27:28 SELECT * FROM USER_PROFILES : abe
+1/28/2017 19:27:28 3: 
+
+"abe"
+1/28/2017 19:27:28 10 Object(s) returned...: abe
+1/28/2017 19:30:4 Path request:/user_profiles/: abe
+1/28/2017 19:30:4 Executing query.... : abe
+1/28/2017 19:30:4 SELECT * FROM USER_PROFILES : abe
+1/28/2017 19:30:4 1: 
+
+"abe"
+1/28/2017 19:30:4 10 Object(s) returned...: abe
+1/28/2017 19:31:2 10 Object(s) returned...: abe
+1/28/2017 19:31:28 1 Object(s) returned...: abe
+1/28/2017 19:33:22 2: Path request:/user_profiles/
+1/28/2017 19:33:22 2: Executing query.... 
+1/28/2017 19:33:22 2: INSERT INTO user_profiles VALUES (:USER_NAME, :DISPLAY_NAME, :DESCRIPTION, :GENDER,:AGE, :COUNTRY, :THEME) 
+1/28/2017 19:33:22 2: 
+
+{"USER_NAME":"ABE15"}
+1/28/2017 19:33:22 2: 1 Object(s) updated...
+1/28/2017 19:33:39 Error: ORA-00001: unique constraint (CONTROLROOM.SYS_C007088) violated
+: abe

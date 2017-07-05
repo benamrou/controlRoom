@@ -1,0 +1,15 @@
+2/11/2017 17:32:47 15: Connection to database... [IN PROGRESS]
+2/11/2017 17:32:47 15: Connection to database... [ESTABLISHED]
+2/11/2017 17:32:47 15: Path request:/api/authentification/
+2/11/2017 17:32:47 15: Executing query.... 
+2/11/2017 17:32:47 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'ffd','ADM0000001', '[ffd,ddf]', :cursor); END;
+2/11/2017 17:33:8 16: Connection to database... [IN PROGRESS]
+2/11/2017 17:33:8 16: Connection to database... [ESTABLISHED]
+2/11/2017 17:33:8 16: Path request:/api/authentification/
+2/11/2017 17:33:8 16: Executing query.... 
+2/11/2017 17:33:8 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'ffd','ADM0000001', '[ffd,ddf]', :cursor); END;
+2/11/2017 17:34:47 17: Connection to database... [IN PROGRESS]
+2/11/2017 17:34:47 17: Connection to database... [ESTABLISHED]
+2/11/2017 17:34:47 17: Path request:/api/authentification/
+2/11/2017 17:34:47 17: Executing query.... 
+2/11/2017 17:34:47 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'ffd','ADM0000001', '[ffd,ddf]', :cursor); END;

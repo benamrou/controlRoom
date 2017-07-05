@@ -1,0 +1,7 @@
+2/9/2017 22:11:49 1: Path request:undefined
+2/9/2017 22:11:49 1: Executing query.... 
+2/9/2017 22:11:49 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'[object Object]','ADM0000001', '{(:USERID:, :USER_NAME),(:PASSWORD:, :PASSWORD)}', :cursor); END;
+2/9/2017 22:11:49 1: 
+
+"{(:USERID:, :USER_NAME),(:PASSWORD:, :PASSWORD)}"
+2/9/2017 22:11:49 1: undefined Object(s) updated...

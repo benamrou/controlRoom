@@ -1,0 +1,7 @@
+2/2/2017 12:38:58 1: Path request:/user_profiles/
+2/2/2017 12:38:58 1: Executing query.... 
+2/2/2017 12:38:58 1: SELECT * FROM USER_PROFILES WHERE USER_NAME = :USER_NAME
+2/2/2017 12:38:58 1: 
+
+{"USER_NAME":"ABE2"}
+2/2/2017 12:38:58 1: 1 Object(s) returned...

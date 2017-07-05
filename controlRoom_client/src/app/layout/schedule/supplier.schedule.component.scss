@@ -1,0 +1,15 @@
+.isOrderDay {
+    color: green;
+    font-weight: bolder;
+}
+
+.rowcolorgray {
+    background-color: #F3F2F2;
+}
+
+.alternateColor div:nth-child(even){
+  background-color: lightgoldenrodyellow;
+}
+.alternateColor div:nth-child(odd){
+  background-color: white;
+}

@@ -1,0 +1,25 @@
+4/5/2017 8:26:9 ADM0000002: LIBQUERY with Callback: 
+4/5/2017 8:26:9 ADM0000002: Path request:undefined
+4/5/2017 8:26:9 ADM0000002: Path header:undefined
+4/5/2017 8:26:9 ADM0000002: Path query:undefined
+4/5/2017 8:26:9 ADM0000002: BEGIN PKREQUESTMANAGER.CALLQUERY(ADM0000002,''{admin,admin}'',''{}'','{}', abe,[object Object], :cursor); END;
+4/5/2017 8:26:19 ADM0000002: LIBQUERY with Callback: 
+4/5/2017 8:26:19 ADM0000002: Path request:undefined
+4/5/2017 8:26:19 ADM0000002: Path header:undefined
+4/5/2017 8:26:19 ADM0000002: Path query:undefined
+4/5/2017 8:26:19 ADM0000002: BEGIN PKREQUESTMANAGER.CALLQUERY(ADM0000002,''{admin,admin}'',''{}'','{}', abe,[object Object], :cursor); END;
+4/5/2017 8:32:0 ADM0000002: LIBQUERY with Callback: 
+4/5/2017 8:32:0 ADM0000002: Path request:undefined
+4/5/2017 8:32:0 ADM0000002: Path header:undefined
+4/5/2017 8:32:0 ADM0000002: Path query:undefined
+4/5/2017 8:32:0 ADM0000002: BEGIN PKREQUESTMANAGER.CALLQUERY(ADM0000002,''{undefined,undefined}'',''{}'','{}', undefined,[object Object], :cursor); END;
+4/5/2017 8:34:0 ADM0000002: LIBQUERY with Callback: 
+4/5/2017 8:34:0 ADM0000002: Path request:undefined
+4/5/2017 8:34:0 ADM0000002: Path header:undefined
+4/5/2017 8:34:0 ADM0000002: Path query:undefined
+4/5/2017 8:34:0 ADM0000002: BEGIN PKREQUESTMANAGER.CALLQUERY(ADM0000002,''{undefined,undefined}'',''{}'','{}', undefined,[object Object], :cursor); END;
+4/5/2017 8:36:0 ADM0000002: LIBQUERY with Callback: 
+4/5/2017 8:36:0 ADM0000002: Path request:undefined
+4/5/2017 8:36:0 ADM0000002: Path header:undefined
+4/5/2017 8:36:0 ADM0000002: Path query:undefined
+4/5/2017 8:36:0 ADM0000002: BEGIN PKREQUESTMANAGER.CALLQUERY(ADM0000002,''{undefined,undefined}'',''{}'','{}', undefined,[object Object], :cursor); END;

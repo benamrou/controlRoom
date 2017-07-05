@@ -1,0 +1,7 @@
+3/22/2017 14:0:53 7: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/22/2017 14:0:53 7: LIBQUERY with Callback: 
+3/22/2017 14:0:53 7: Path request:/api/authentification/
+3/22/2017 14:0:53 7: Path header:undefined
+3/22/2017 14:0:53 7: Path query:{}
+3/22/2017 14:0:53 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'ADM0000001','alpesh','{}', '{alpesh,alp}','{}', :cursor); END;
+3/22/2017 14:0:53 7: 0 Object(s) returned... [FETCH]

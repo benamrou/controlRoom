@@ -1,0 +1,123 @@
+1/28/2017 18:51:33 4: Path request:/user_profiles/
+1/28/2017 18:51:33 4: Executing query.... 
+1/28/2017 18:51:33 4: SELECT * FROM USER_PROFILES WHERE USER_NAME = :USER_NAME
+1/28/2017 18:51:33 4: 
+
+{"USER_NAME":"ABE100"}
+1/28/2017 18:51:33 4: 0 Object(s) returned...
+1/28/2017 18:54:45 2: Path request:/user_profiles/
+1/28/2017 18:54:45 2: Executing query.... 
+1/28/2017 18:54:45 2: SELECT * FROM USER_PROFILES WHERE USER_NAME = :USER_NAME
+1/28/2017 18:54:45 2: 
+
+{"USER_NAME":"ABE100"}
+1/28/2017 18:54:45 2: 0 Object(s) returned...
+1/28/2017 18:54:51 3: Path request:/user_profiles/
+1/28/2017 18:54:51 3: Executing query.... 
+1/28/2017 18:54:51 3: SELECT * FROM USER_PROFILES WHERE USER_NAME = :USER_NAME
+1/28/2017 18:54:51 3: 
+
+{"USER_NAME":"ABE"}
+1/28/2017 18:54:51 3: 1 Object(s) returned...
+1/28/2017 18:55:18 5: Path request:/user_profiles/
+1/28/2017 18:55:18 5: Executing query.... 
+1/28/2017 18:55:18 5: SELECT * FROM USER_PROFILES 
+1/28/2017 18:55:18 5: 
+
+{}
+1/28/2017 18:55:18 5: 10 Object(s) returned...
+1/28/2017 18:55:58 7: Path request:/user_profiles/ABE
+1/28/2017 18:55:58 7: Executing query.... 
+1/28/2017 18:55:58 7: UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME
+1/28/2017 18:55:58 7: 
+
+{"DISPLAY_NAME":"Chocapic","USER_NAME":"ABE"}
+1/28/2017 18:55:58 7: 1 Object(s) updated...
+1/28/2017 18:56:9 8: Path request:/user_profiles/
+1/28/2017 18:56:9 8: Executing query.... 
+1/28/2017 18:56:9 8: SELECT * FROM USER_PROFILES 
+1/28/2017 18:56:9 8: 
+
+{}
+1/28/2017 18:56:9 8: 10 Object(s) returned...
+1/28/2017 18:56:18 9: Path request:/user_profiles/ABE
+1/28/2017 18:56:18 9: Executing query.... 
+1/28/2017 18:56:18 9: UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME
+1/28/2017 18:56:18 9: 
+
+{"DISPLAY_NAME":"Chocapic","USER_NAME":"ABE"}
+1/28/2017 18:56:18 9: 1 Object(s) updated...
+1/28/2017 18:57:10 10: Path request:/user_profiles/ABE2
+1/28/2017 18:57:10 10: Executing query.... 
+1/28/2017 18:57:10 10: UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME
+1/28/2017 18:57:10 10: 
+
+{"DISPLAY_NAME":"Chocapic","USER_NAME":"ABE2"}
+1/28/2017 18:57:10 10: 1 Object(s) updated...
+1/28/2017 18:57:15 11: Path request:/user_profiles/
+1/28/2017 18:57:15 11: Executing query.... 
+1/28/2017 18:57:15 11: SELECT * FROM USER_PROFILES 
+1/28/2017 18:57:15 11: 
+
+{}
+1/28/2017 18:57:15 11: 10 Object(s) returned...
+1/28/2017 19:31:2 1: Path request:/user_profiles/
+1/28/2017 19:31:2 1: Executing query.... 
+1/28/2017 19:31:2 1: SELECT * FROM USER_PROFILES 
+1/28/2017 19:31:2 1: 
+
+{}
+1/28/2017 19:31:28 2: Path request:/user_profiles/
+1/28/2017 19:31:28 2: Executing query.... 
+1/28/2017 19:31:28 2: SELECT * FROM USER_PROFILES WHERE USER_NAME = :USER_NAME
+1/28/2017 19:31:28 2: 
+
+{"USER_NAME":"ABE2"}
+1/28/2017 19:33:8 1: Path request:/user_profiles/
+1/28/2017 19:33:8 1: Executing query.... 
+1/28/2017 19:33:8 1: SELECT * FROM USER_PROFILES WHERE USER_NAME = :USER_NAME
+1/28/2017 19:33:8 1: 
+
+{"USER_NAME":"ABE2"}
+1/28/2017 19:33:8 1: 1 Object(s) returned...
+1/28/2017 19:33:39 3: Path request:/user_profiles/
+1/28/2017 19:33:39 3: Executing query.... 
+1/28/2017 19:33:39 3: INSERT INTO user_profiles VALUES (:USER_NAME, :DISPLAY_NAME, :DESCRIPTION, :GENDER,:AGE, :COUNTRY, :THEME) 
+1/28/2017 19:33:39 3: 
+
+{"USER_NAME":"ABE15"}
+1/28/2017 19:33:47 4: Path request:/user_profiles/
+1/28/2017 19:33:47 4: Executing query.... 
+1/28/2017 19:33:47 4: INSERT INTO user_profiles VALUES (:USER_NAME, :DISPLAY_NAME, :DESCRIPTION, :GENDER,:AGE, :COUNTRY, :THEME) 
+1/28/2017 19:33:47 4: 
+
+{"USER_NAME":"ABE16"}
+1/28/2017 19:33:47 4: 1 Object(s) updated...
+1/28/2017 19:34:12 5: Path request:/user_profiles/ABE2
+1/28/2017 19:34:12 5: Executing query.... 
+1/28/2017 19:34:12 5: UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME
+1/28/2017 19:34:12 5: 
+
+{"DISPLAY_NAME":"Chocapic 2","USER_NAME":"ABE2"}
+1/28/2017 19:34:12 5: 1 Object(s) updated...
+1/28/2017 19:34:27 6: Path request:/user_profiles/ABE2
+1/28/2017 19:34:27 6: Executing query.... 
+1/28/2017 19:34:27 6: UPDATE USER_PROFILES SET DISPLAY_NAME = :DISPLAY_NAME WHERE USER_NAME = :USER_NAME
+1/28/2017 19:34:27 6: 
+
+{"DISPLAY_NAME":"Chocapic 2","USER_NAME":"ABE2"}
+1/28/2017 19:34:27 6: 1 Object(s) updated...
+1/28/2017 20:28:29 1: Path request:/user_profiles/
+1/28/2017 20:28:29 1: Executing query.... 
+1/28/2017 20:28:29 1: SELECT * FROM USER_PROFILES WHERE USER_NAME = :USER_NAME
+1/28/2017 20:28:29 1: 
+
+{"USER_NAME":"ABE2"}
+1/28/2017 20:28:29 1: 1 Object(s) returned...
+1/28/2017 20:39:36 1: Path request:/user_profiles/
+1/28/2017 20:39:36 1: Executing query.... 
+1/28/2017 20:39:36 1: SELECT * FROM USER_PROFILES WHERE USER_NAME = :USER_NAME
+1/28/2017 20:39:36 1: 
+
+{"USER_NAME":"ABE2"}
+1/28/2017 20:39:36 1: 1 Object(s) returned...

@@ -1,0 +1,460 @@
+3/28/2017 11:3:15 28: LIBQUERY with Callback: 
+3/28/2017 11:3:15 28: Path request:/api/search/
+3/28/2017 11:3:15 28: Path header:undefined
+3/28/2017 11:3:15 28: Path query:{"PARAM":"10001,10002"}
+3/28/2017 11:3:15 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'CLI0000001','abe','{HEINENS_UAT}', '{10001,10002}','{HN}', :cursor); END;
+3/28/2017 11:41:8 67: LIBQUERY with Callback: 
+3/28/2017 11:41:8 67: Path request:/api/search/
+3/28/2017 11:41:8 67: Path header:undefined
+3/28/2017 11:41:8 67: Path query:{"PARAM":"10001,10002"}
+3/28/2017 11:41:8 67: BEGIN PKREQUESTMANAGER.CALLQUERY(67,'CLI0000001','abe','{HEINENS_CEN_UAT}', '{10001,10002}','{HN}', :cursor); END;
+3/28/2017 11:41:38 67: 1207 Object(s) returned... [FETCH]
+3/28/2017 11:41:38 67: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+3/28/2017 11:56:26 1: LIBQUERY with Callback: 
+3/28/2017 11:56:26 1: Path request:/api/search/
+3/28/2017 11:56:26 1: Path header:undefined
+3/28/2017 11:56:26 1: Path query:{"PARAM":"10001,10002"}
+3/28/2017 11:56:26 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CLI0000001','abe','{HEINENS_CEN_UAT}', '{10001,10002}','{HN}', :cursor); END;
+3/28/2017 11:56:53 1: 1207 Object(s) returned... [FETCH]
+3/28/2017 11:56:53 1: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+3/28/2017 11:56:57 2: LIBQUERY with Callback: 
+3/28/2017 11:56:57 2: Path request:/api/search/
+3/28/2017 11:56:57 2: Path header:undefined
+3/28/2017 11:56:57 2: Path query:{"PARAM":"962936"}
+3/28/2017 11:56:57 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000001','abe','{HEINENS_CEN_UAT}', '{962936}','{HN}', :cursor); END;
+3/28/2017 11:57:14 2: 1 Object(s) returned... [FETCH]
+3/28/2017 11:57:14 2: [object Object]
+3/28/2017 12:35:17 18: LIBQUERY with Callback: 
+3/28/2017 12:35:17 18: Path request:/api/search/
+3/28/2017 12:35:17 18: Path header:undefined
+3/28/2017 12:35:17 18: Path query:{"PARAM":"962936"}
+3/28/2017 12:35:17 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CLI0000001','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT,}', '{962936}','{HN}', :cursor); END;
+3/28/2017 12:35:38 18: 1 Object(s) returned... [FETCH]
+3/28/2017 12:35:38 18: [object Object]
+3/28/2017 16:53:29 1: LIBQUERY with Callback: 
+3/28/2017 16:53:29 1: Path request:/api/authentification/
+3/28/2017 16:53:29 1: Path header:undefined
+3/28/2017 16:53:29 1: Path query:{}
+3/28/2017 16:53:29 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/28/2017 16:53:29 1: 1 Object(s) returned... [FETCH]
+3/28/2017 16:53:29 1: [object Object]
+3/28/2017 16:53:29 2: LIBQUERY with Callback: 
+3/28/2017 16:53:29 2: Path request:/api/user/
+3/28/2017 16:53:29 2: Path header:undefined
+3/28/2017 16:53:29 2: Path query:{"USER_NAME":"abe"}
+3/28/2017 16:53:29 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 16:53:29 3: LIBQUERY with Callback: 
+3/28/2017 16:53:29 3: Path request:/api/environment/
+3/28/2017 16:53:29 3: Path header:undefined
+3/28/2017 16:53:29 3: Path query:{"USER_NAME":"abe"}
+3/28/2017 16:53:29 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 16:53:29 3: 1 Object(s) returned... [FETCH]
+3/28/2017 16:53:29 3: [object Object]
+3/28/2017 16:53:29 3: 2 Object(s) returned... [FETCH]
+3/28/2017 16:53:29 3: [object Object],[object Object]
+3/28/2017 16:53:38 4: LIBQUERY with Callback: 
+3/28/2017 16:53:38 4: Path request:/api/search/
+3/28/2017 16:53:38 4: Path header:undefined
+3/28/2017 16:53:38 4: Path query:{"PARAM":["6293"]}
+3/28/2017 16:53:38 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'CLI0000001','abe','{HEINENS_CEN_UAT}', '{6293}','{HN}', :cursor); END;
+3/28/2017 16:53:52 4: 86 Object(s) returned... [FETCH]
+3/28/2017 16:53:52 4: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+3/28/2017 16:54:31 5: LIBQUERY with Callback: 
+3/28/2017 16:54:31 5: Path request:/api/user/
+3/28/2017 16:54:31 5: Path header:undefined
+3/28/2017 16:54:31 5: Path query:{"USER_NAME":"abe"}
+3/28/2017 16:54:31 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 16:54:31 6: LIBQUERY with Callback: 
+3/28/2017 16:54:31 6: Path request:/api/environment/
+3/28/2017 16:54:31 6: Path header:undefined
+3/28/2017 16:54:31 6: Path query:{"USER_NAME":"abe"}
+3/28/2017 16:54:31 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 16:54:31 6: 2 Object(s) returned... [FETCH]
+3/28/2017 16:54:31 6: [object Object],[object Object]
+3/28/2017 16:54:32 6: 1 Object(s) returned... [FETCH]
+3/28/2017 16:54:32 6: [object Object]
+3/28/2017 16:54:41 7: LIBQUERY with Callback: 
+3/28/2017 16:54:41 7: Path request:/api/search/
+3/28/2017 16:54:41 7: Path header:undefined
+3/28/2017 16:54:41 7: Path query:{"PARAM":["6293"]}
+3/28/2017 16:54:41 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000001','abe','{HEINENS_CEN_UAT}', '{6293}','{HN}', :cursor); END;
+3/28/2017 16:54:57 7: 86 Object(s) returned... [FETCH]
+3/28/2017 16:54:57 7: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+3/28/2017 17:7:34 1: LIBQUERY with Callback: 
+3/28/2017 17:7:34 1: Path request:/api/authentification/
+3/28/2017 17:7:34 1: Path header:undefined
+3/28/2017 17:7:34 1: Path query:{}
+3/28/2017 17:7:34 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/28/2017 17:7:34 1: 1 Object(s) returned... [FETCH]
+3/28/2017 17:7:34 1: [object Object]
+3/28/2017 17:7:34 2: LIBQUERY with Callback: 
+3/28/2017 17:7:34 2: Path request:/api/user/
+3/28/2017 17:7:34 2: Path header:undefined
+3/28/2017 17:7:34 2: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:7:34 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:7:34 3: LIBQUERY with Callback: 
+3/28/2017 17:7:34 3: Path request:/api/environment/
+3/28/2017 17:7:34 3: Path header:undefined
+3/28/2017 17:7:34 3: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:7:34 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:7:34 3: 1 Object(s) returned... [FETCH]
+3/28/2017 17:7:34 3: [object Object]
+3/28/2017 17:7:34 3: 2 Object(s) returned... [FETCH]
+3/28/2017 17:7:34 3: [object Object],[object Object]
+3/28/2017 17:8:4 4: LIBQUERY with Callback: 
+3/28/2017 17:8:4 4: Path request:/api/search/
+3/28/2017 17:8:4 4: Path header:undefined
+3/28/2017 17:8:4 4: Path query:{"PARAM":["6293"]}
+3/28/2017 17:8:4 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'CLI0000001','abe','{HEINENS_CEN_UAT}', '{6293}','{HN}', :cursor); END;
+3/28/2017 17:8:15 4: 86 Object(s) returned... [FETCH]
+3/28/2017 17:8:15 4: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+3/28/2017 17:10:4 5: LIBQUERY with Callback: 
+3/28/2017 17:10:4 5: Path request:/api/search/
+3/28/2017 17:10:4 5: Path header:undefined
+3/28/2017 17:10:4 5: Path query:{"PARAM":["962936"]}
+3/28/2017 17:10:4 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CLI0000001','abe','{HEINENS_CEN_UAT}', '{962936}','{HN}', :cursor); END;
+3/28/2017 17:10:13 5: 1 Object(s) returned... [FETCH]
+3/28/2017 17:10:13 5: [object Object]
+3/28/2017 17:12:24 6: LIBQUERY with Callback: 
+3/28/2017 17:12:24 6: Path request:/api/user/
+3/28/2017 17:12:24 6: Path header:undefined
+3/28/2017 17:12:24 6: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:12:24 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:12:24 7: LIBQUERY with Callback: 
+3/28/2017 17:12:24 7: Path request:/api/environment/
+3/28/2017 17:12:24 7: Path header:undefined
+3/28/2017 17:12:24 7: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:12:24 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:12:24 7: 2 Object(s) returned... [FETCH]
+3/28/2017 17:12:24 7: [object Object],[object Object]
+3/28/2017 17:12:24 7: 1 Object(s) returned... [FETCH]
+3/28/2017 17:12:24 7: [object Object]
+3/28/2017 17:13:17 8: LIBQUERY with Callback: 
+3/28/2017 17:13:17 8: Path request:/api/authentification/
+3/28/2017 17:13:17 8: Path header:undefined
+3/28/2017 17:13:17 8: Path query:{}
+3/28/2017 17:13:17 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/28/2017 17:13:19 8: 1 Object(s) returned... [FETCH]
+3/28/2017 17:13:19 8: [object Object]
+3/28/2017 17:13:19 9: LIBQUERY with Callback: 
+3/28/2017 17:13:19 9: Path request:/api/user/
+3/28/2017 17:13:19 9: Path header:undefined
+3/28/2017 17:13:19 9: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:13:19 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:13:19 10: LIBQUERY with Callback: 
+3/28/2017 17:13:19 10: Path request:/api/environment/
+3/28/2017 17:13:19 10: Path header:undefined
+3/28/2017 17:13:19 10: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:13:19 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:13:19 10: 2 Object(s) returned... [FETCH]
+3/28/2017 17:13:19 10: [object Object],[object Object]
+3/28/2017 17:13:19 10: 1 Object(s) returned... [FETCH]
+3/28/2017 17:13:19 10: [object Object]
+3/28/2017 17:15:6 11: LIBQUERY with Callback: 
+3/28/2017 17:15:6 11: Path request:/api/user/
+3/28/2017 17:15:6 11: Path header:undefined
+3/28/2017 17:15:6 11: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:15:6 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:15:6 12: LIBQUERY with Callback: 
+3/28/2017 17:15:6 12: Path request:/api/environment/
+3/28/2017 17:15:6 12: Path header:undefined
+3/28/2017 17:15:6 12: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:15:6 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:15:6 12: 1 Object(s) returned... [FETCH]
+3/28/2017 17:15:6 12: [object Object]
+3/28/2017 17:15:6 12: 2 Object(s) returned... [FETCH]
+3/28/2017 17:15:6 12: [object Object],[object Object]
+3/28/2017 17:15:36 13: LIBQUERY with Callback: 
+3/28/2017 17:15:36 13: Path request:/api/search/
+3/28/2017 17:15:36 13: Path header:undefined
+3/28/2017 17:15:36 13: Path query:{"PARAM":["962936"]}
+3/28/2017 17:15:36 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'CLI0000001','abe','{HEINENS_CEN_UAT}', '{962936}','{HN}', :cursor); END;
+3/28/2017 17:15:51 13: 1 Object(s) returned... [FETCH]
+3/28/2017 17:15:51 13: [object Object]
+3/28/2017 17:16:16 14: LIBQUERY with Callback: 
+3/28/2017 17:16:16 14: Path request:/api/search/
+3/28/2017 17:16:16 14: Path header:undefined
+3/28/2017 17:16:16 14: Path query:{"PARAM":["6293"]}
+3/28/2017 17:16:16 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'CLI0000001','abe','{HEINENS_CEN_UAT}', '{6293}','{HN}', :cursor); END;
+3/28/2017 17:16:35 14: 86 Object(s) returned... [FETCH]
+3/28/2017 17:16:35 14: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+3/28/2017 17:56:14 15: LIBQUERY with Callback: 
+3/28/2017 17:56:14 15: Path request:/api/user/
+3/28/2017 17:56:14 15: Path header:undefined
+3/28/2017 17:56:14 15: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:56:14 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:56:14 16: LIBQUERY with Callback: 
+3/28/2017 17:56:14 16: Path request:/api/environment/
+3/28/2017 17:56:14 16: Path header:undefined
+3/28/2017 17:56:14 16: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:56:14 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:56:14 16: 1 Object(s) returned... [FETCH]
+3/28/2017 17:56:14 16: [object Object]
+3/28/2017 17:56:14 16: 2 Object(s) returned... [FETCH]
+3/28/2017 17:56:14 16: [object Object],[object Object]
+3/28/2017 17:57:4 17: LIBQUERY with Callback: 
+3/28/2017 17:57:4 17: Path request:/api/user/
+3/28/2017 17:57:4 17: Path header:undefined
+3/28/2017 17:57:4 17: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:57:4 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:57:4 18: LIBQUERY with Callback: 
+3/28/2017 17:57:4 18: Path request:/api/environment/
+3/28/2017 17:57:4 18: Path header:undefined
+3/28/2017 17:57:4 18: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:57:4 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:57:4 18: 1 Object(s) returned... [FETCH]
+3/28/2017 17:57:4 18: [object Object]
+3/28/2017 17:57:4 18: 2 Object(s) returned... [FETCH]
+3/28/2017 17:57:4 18: [object Object],[object Object]
+3/28/2017 17:57:21 19: LIBQUERY with Callback: 
+3/28/2017 17:57:21 19: Path request:/api/user/
+3/28/2017 17:57:21 19: Path header:undefined
+3/28/2017 17:57:21 19: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:57:21 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:57:21 20: LIBQUERY with Callback: 
+3/28/2017 17:57:21 20: Path request:/api/environment/
+3/28/2017 17:57:21 20: Path header:undefined
+3/28/2017 17:57:21 20: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:57:21 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:57:21 20: 1 Object(s) returned... [FETCH]
+3/28/2017 17:57:21 20: [object Object]
+3/28/2017 17:57:21 20: 2 Object(s) returned... [FETCH]
+3/28/2017 17:57:21 20: [object Object],[object Object]
+3/28/2017 17:57:55 21: LIBQUERY with Callback: 
+3/28/2017 17:57:55 21: Path request:/api/user/
+3/28/2017 17:57:55 21: Path header:undefined
+3/28/2017 17:57:55 21: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:57:55 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:57:55 21: 1 Object(s) returned... [FETCH]
+3/28/2017 17:57:55 21: [object Object]
+3/28/2017 17:57:55 22: LIBQUERY with Callback: 
+3/28/2017 17:57:55 22: Path request:/api/environment/
+3/28/2017 17:57:56 22: Path header:undefined
+3/28/2017 17:57:56 22: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:57:56 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:57:56 22: 2 Object(s) returned... [FETCH]
+3/28/2017 17:57:56 22: [object Object],[object Object]
+3/28/2017 17:58:22 23: LIBQUERY with Callback: 
+3/28/2017 17:58:22 23: Path request:/api/user/
+3/28/2017 17:58:22 23: Path header:undefined
+3/28/2017 17:58:22 23: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:58:22 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:58:22 24: LIBQUERY with Callback: 
+3/28/2017 17:58:22 24: Path request:/api/environment/
+3/28/2017 17:58:22 24: Path header:undefined
+3/28/2017 17:58:22 24: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:58:22 24: BEGIN PKREQUESTMANAGER.CALLQUERY(24,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:58:22 24: 1 Object(s) returned... [FETCH]
+3/28/2017 17:58:22 24: [object Object]
+3/28/2017 17:58:22 24: 2 Object(s) returned... [FETCH]
+3/28/2017 17:58:22 24: [object Object],[object Object]
+3/28/2017 17:59:13 25: LIBQUERY with Callback: 
+3/28/2017 17:59:13 25: Path request:/api/user/
+3/28/2017 17:59:13 25: Path header:undefined
+3/28/2017 17:59:13 25: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:59:13 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:59:13 25: 1 Object(s) returned... [FETCH]
+3/28/2017 17:59:13 25: [object Object]
+3/28/2017 17:59:13 26: LIBQUERY with Callback: 
+3/28/2017 17:59:13 26: Path request:/api/environment/
+3/28/2017 17:59:13 26: Path header:undefined
+3/28/2017 17:59:13 26: Path query:{"USER_NAME":"abe"}
+3/28/2017 17:59:13 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 17:59:13 26: 2 Object(s) returned... [FETCH]
+3/28/2017 17:59:13 26: [object Object],[object Object]
+3/28/2017 18:0:11 27: LIBQUERY with Callback: 
+3/28/2017 18:0:11 27: Path request:/api/user/
+3/28/2017 18:0:11 27: Path header:undefined
+3/28/2017 18:0:11 27: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:0:11 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:0:11 28: LIBQUERY with Callback: 
+3/28/2017 18:0:11 28: Path request:/api/environment/
+3/28/2017 18:0:11 28: Path header:undefined
+3/28/2017 18:0:11 28: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:0:11 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:0:11 28: 1 Object(s) returned... [FETCH]
+3/28/2017 18:0:11 28: [object Object]
+3/28/2017 18:0:11 28: 2 Object(s) returned... [FETCH]
+3/28/2017 18:0:11 28: [object Object],[object Object]
+3/28/2017 18:0:57 29: LIBQUERY with Callback: 
+3/28/2017 18:0:57 29: Path request:/api/user/
+3/28/2017 18:0:57 29: Path header:undefined
+3/28/2017 18:0:57 29: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:0:57 29: BEGIN PKREQUESTMANAGER.CALLQUERY(29,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:0:57 29: 1 Object(s) returned... [FETCH]
+3/28/2017 18:0:57 29: [object Object]
+3/28/2017 18:0:57 30: LIBQUERY with Callback: 
+3/28/2017 18:0:57 30: Path request:/api/environment/
+3/28/2017 18:0:57 30: Path header:undefined
+3/28/2017 18:0:57 30: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:0:57 30: BEGIN PKREQUESTMANAGER.CALLQUERY(30,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:0:57 30: 2 Object(s) returned... [FETCH]
+3/28/2017 18:0:57 30: [object Object],[object Object]
+3/28/2017 18:1:38 31: LIBQUERY with Callback: 
+3/28/2017 18:1:38 31: Path request:/api/user/
+3/28/2017 18:1:38 31: Path header:undefined
+3/28/2017 18:1:38 31: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:1:38 31: BEGIN PKREQUESTMANAGER.CALLQUERY(31,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:1:38 31: 1 Object(s) returned... [FETCH]
+3/28/2017 18:1:38 31: [object Object]
+3/28/2017 18:1:38 32: LIBQUERY with Callback: 
+3/28/2017 18:1:38 32: Path request:/api/environment/
+3/28/2017 18:1:38 32: Path header:undefined
+3/28/2017 18:1:38 32: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:1:38 32: BEGIN PKREQUESTMANAGER.CALLQUERY(32,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:1:38 32: 2 Object(s) returned... [FETCH]
+3/28/2017 18:1:38 32: [object Object],[object Object]
+3/28/2017 18:2:1 33: LIBQUERY with Callback: 
+3/28/2017 18:2:1 33: Path request:/api/user/
+3/28/2017 18:2:1 33: Path header:undefined
+3/28/2017 18:2:1 33: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:2:1 33: BEGIN PKREQUESTMANAGER.CALLQUERY(33,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:2:1 34: LIBQUERY with Callback: 
+3/28/2017 18:2:1 34: Path request:/api/environment/
+3/28/2017 18:2:1 34: Path header:undefined
+3/28/2017 18:2:1 34: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:2:1 34: BEGIN PKREQUESTMANAGER.CALLQUERY(34,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:2:1 34: 1 Object(s) returned... [FETCH]
+3/28/2017 18:2:1 34: [object Object]
+3/28/2017 18:2:1 34: 2 Object(s) returned... [FETCH]
+3/28/2017 18:2:1 34: [object Object],[object Object]
+3/28/2017 18:2:31 35: LIBQUERY with Callback: 
+3/28/2017 18:2:31 35: Path request:/api/user/
+3/28/2017 18:2:31 35: Path header:undefined
+3/28/2017 18:2:31 35: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:2:31 35: BEGIN PKREQUESTMANAGER.CALLQUERY(35,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:2:31 35: 1 Object(s) returned... [FETCH]
+3/28/2017 18:2:31 35: [object Object]
+3/28/2017 18:2:31 36: LIBQUERY with Callback: 
+3/28/2017 18:2:31 36: Path request:/api/environment/
+3/28/2017 18:2:31 36: Path header:undefined
+3/28/2017 18:2:31 36: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:2:31 36: BEGIN PKREQUESTMANAGER.CALLQUERY(36,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:2:31 36: 2 Object(s) returned... [FETCH]
+3/28/2017 18:2:31 36: [object Object],[object Object]
+3/28/2017 18:4:2 37: LIBQUERY with Callback: 
+3/28/2017 18:4:2 37: Path request:/api/user/
+3/28/2017 18:4:2 37: Path header:undefined
+3/28/2017 18:4:2 37: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:4:2 37: BEGIN PKREQUESTMANAGER.CALLQUERY(37,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:4:2 38: LIBQUERY with Callback: 
+3/28/2017 18:4:2 38: Path request:/api/environment/
+3/28/2017 18:4:2 38: Path header:undefined
+3/28/2017 18:4:2 38: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:4:2 38: BEGIN PKREQUESTMANAGER.CALLQUERY(38,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:4:2 38: 1 Object(s) returned... [FETCH]
+3/28/2017 18:4:2 38: [object Object]
+3/28/2017 18:4:2 38: 2 Object(s) returned... [FETCH]
+3/28/2017 18:4:2 38: [object Object],[object Object]
+3/28/2017 18:4:49 39: LIBQUERY with Callback: 
+3/28/2017 18:4:49 39: Path request:/api/user/
+3/28/2017 18:4:49 39: Path header:undefined
+3/28/2017 18:4:49 39: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:4:49 39: BEGIN PKREQUESTMANAGER.CALLQUERY(39,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:4:49 40: LIBQUERY with Callback: 
+3/28/2017 18:4:49 40: Path request:/api/environment/
+3/28/2017 18:4:49 40: Path header:undefined
+3/28/2017 18:4:49 40: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:4:49 40: BEGIN PKREQUESTMANAGER.CALLQUERY(40,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:4:49 40: 1 Object(s) returned... [FETCH]
+3/28/2017 18:4:49 40: [object Object]
+3/28/2017 18:4:49 40: 2 Object(s) returned... [FETCH]
+3/28/2017 18:4:49 40: [object Object],[object Object]
+3/28/2017 18:5:49 41: LIBQUERY with Callback: 
+3/28/2017 18:5:49 41: Path request:/api/user/
+3/28/2017 18:5:49 41: Path header:undefined
+3/28/2017 18:5:49 41: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:5:49 41: BEGIN PKREQUESTMANAGER.CALLQUERY(41,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:5:49 41: 1 Object(s) returned... [FETCH]
+3/28/2017 18:5:49 41: [object Object]
+3/28/2017 18:5:50 42: LIBQUERY with Callback: 
+3/28/2017 18:5:50 42: Path request:/api/environment/
+3/28/2017 18:5:50 42: Path header:undefined
+3/28/2017 18:5:50 42: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:5:50 42: BEGIN PKREQUESTMANAGER.CALLQUERY(42,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:5:50 42: 2 Object(s) returned... [FETCH]
+3/28/2017 18:5:50 42: [object Object],[object Object]
+3/28/2017 18:8:31 43: LIBQUERY with Callback: 
+3/28/2017 18:8:31 43: Path request:/api/user/
+3/28/2017 18:8:31 43: Path header:undefined
+3/28/2017 18:8:31 43: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:8:31 43: BEGIN PKREQUESTMANAGER.CALLQUERY(43,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:8:31 44: LIBQUERY with Callback: 
+3/28/2017 18:8:31 44: Path request:/api/environment/
+3/28/2017 18:8:31 44: Path header:undefined
+3/28/2017 18:8:31 44: Path query:{"USER_NAME":"abe"}
+3/28/2017 18:8:31 44: BEGIN PKREQUESTMANAGER.CALLQUERY(44,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 18:8:32 44: 1 Object(s) returned... [FETCH]
+3/28/2017 18:8:32 44: [object Object]
+3/28/2017 18:8:32 44: 2 Object(s) returned... [FETCH]
+3/28/2017 18:8:32 44: [object Object],[object Object]
+3/28/2017 20:32:32 45: LIBQUERY with Callback: 
+3/28/2017 20:32:32 45: Path request:/api/user/
+3/28/2017 20:32:32 45: Path header:undefined
+3/28/2017 20:32:32 45: Path query:{"USER_NAME":"abe"}
+3/28/2017 20:32:32 45: BEGIN PKREQUESTMANAGER.CALLQUERY(45,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 20:32:32 46: LIBQUERY with Callback: 
+3/28/2017 20:32:32 46: Path request:/api/environment/
+3/28/2017 20:32:32 46: Path header:undefined
+3/28/2017 20:32:32 46: Path query:{"USER_NAME":"abe"}
+3/28/2017 20:32:32 46: BEGIN PKREQUESTMANAGER.CALLQUERY(46,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 20:32:32 46: 1 Object(s) returned... [FETCH]
+3/28/2017 20:32:32 46: [object Object]
+3/28/2017 20:32:32 46: 2 Object(s) returned... [FETCH]
+3/28/2017 20:32:32 46: [object Object],[object Object]
+3/28/2017 20:42:23 47: LIBQUERY with Callback: 
+3/28/2017 20:42:23 47: Path request:/api/user/
+3/28/2017 20:42:23 47: Path header:undefined
+3/28/2017 20:42:23 47: Path query:{"USER_NAME":"abe"}
+3/28/2017 20:42:23 47: BEGIN PKREQUESTMANAGER.CALLQUERY(47,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 20:42:23 48: LIBQUERY with Callback: 
+3/28/2017 20:42:23 48: Path request:/api/environment/
+3/28/2017 20:42:23 48: Path header:undefined
+3/28/2017 20:42:23 48: Path query:{"USER_NAME":"abe"}
+3/28/2017 20:42:23 48: BEGIN PKREQUESTMANAGER.CALLQUERY(48,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 20:42:23 48: 1 Object(s) returned... [FETCH]
+3/28/2017 20:42:23 48: [object Object]
+3/28/2017 20:42:23 48: 2 Object(s) returned... [FETCH]
+3/28/2017 20:42:23 48: [object Object],[object Object]
+3/28/2017 20:46:39 49: LIBQUERY with Callback: 
+3/28/2017 20:46:39 49: Path request:/api/user/
+3/28/2017 20:46:39 49: Path header:undefined
+3/28/2017 20:46:39 49: Path query:{"USER_NAME":"abe"}
+3/28/2017 20:46:39 49: BEGIN PKREQUESTMANAGER.CALLQUERY(49,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 20:46:39 50: LIBQUERY with Callback: 
+3/28/2017 20:46:39 50: Path request:/api/environment/
+3/28/2017 20:46:39 50: Path header:undefined
+3/28/2017 20:46:39 50: Path query:{"USER_NAME":"abe"}
+3/28/2017 20:46:39 50: BEGIN PKREQUESTMANAGER.CALLQUERY(50,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 20:46:39 50: 1 Object(s) returned... [FETCH]
+3/28/2017 20:46:39 50: [object Object]
+3/28/2017 20:46:39 50: 2 Object(s) returned... [FETCH]
+3/28/2017 20:46:39 50: [object Object],[object Object]
+3/28/2017 20:47:39 51: LIBQUERY with Callback: 
+3/28/2017 20:47:39 51: Path request:/api/user/
+3/28/2017 20:47:39 51: Path header:undefined
+3/28/2017 20:47:39 51: Path query:{"USER_NAME":"abe"}
+3/28/2017 20:47:39 51: BEGIN PKREQUESTMANAGER.CALLQUERY(51,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 20:47:39 51: 1 Object(s) returned... [FETCH]
+3/28/2017 20:47:39 51: [object Object]
+3/28/2017 20:47:39 52: LIBQUERY with Callback: 
+3/28/2017 20:47:39 52: Path request:/api/environment/
+3/28/2017 20:47:39 52: Path header:undefined
+3/28/2017 20:47:39 52: Path query:{"USER_NAME":"abe"}
+3/28/2017 20:47:39 52: BEGIN PKREQUESTMANAGER.CALLQUERY(52,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 20:47:39 52: 2 Object(s) returned... [FETCH]
+3/28/2017 20:47:39 52: [object Object],[object Object]
+3/28/2017 20:47:49 53: LIBQUERY with Callback: 
+3/28/2017 20:47:49 53: Path request:/api/user/
+3/28/2017 20:47:49 53: Path header:undefined
+3/28/2017 20:47:49 53: Path query:{"USER_NAME":"abe"}
+3/28/2017 20:47:49 53: BEGIN PKREQUESTMANAGER.CALLQUERY(53,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 20:47:49 54: LIBQUERY with Callback: 
+3/28/2017 20:47:49 54: Path request:/api/environment/
+3/28/2017 20:47:49 54: Path header:undefined
+3/28/2017 20:47:49 54: Path query:{"USER_NAME":"abe"}
+3/28/2017 20:47:49 54: BEGIN PKREQUESTMANAGER.CALLQUERY(54,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+3/28/2017 20:47:49 54: 1 Object(s) returned... [FETCH]
+3/28/2017 20:47:49 54: [object Object]
+3/28/2017 20:47:49 54: 2 Object(s) returned... [FETCH]
+3/28/2017 20:47:49 54: [object Object],[object Object]

@@ -1,0 +1,36 @@
+5/8/2017 7:24:49 10: LIBQUERY with Callback: 
+5/8/2017 7:24:49 10: Path request:/api/authentification/
+5/8/2017 7:24:49 10: Path header:undefined
+5/8/2017 7:24:49 10: Path query:{}
+5/8/2017 7:24:49 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'ADM0000001','ahmed','{}', '{ahmed,dkskds}','{}', :cursor); END;
+5/8/2017 7:24:49 11: LIBQUERY with Callback: 
+5/8/2017 7:24:49 11: Path request:/api/authentification/
+5/8/2017 7:24:49 11: Path header:undefined
+5/8/2017 7:24:49 11: Path query:{}
+5/8/2017 7:24:49 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'ADM0000001','ahmed','{}', '{ahmed,dkskds}','{}', :cursor); END;
+5/8/2017 7:24:49 11: 0 Object(s) returned... [FETCH] :)
+5/8/2017 7:24:49 11: 0 Object(s) returned... [FETCH] :)
+5/8/2017 7:25:21 12: LIBQUERY with Callback: 
+5/8/2017 7:25:21 12: Path request:/api/authentification/
+5/8/2017 7:25:21 12: Path header:undefined
+5/8/2017 7:25:21 12: Path query:{}
+5/8/2017 7:25:21 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'ADM0000001','ahmed','{}', '{ahmed,abe}','{}', :cursor); END;
+5/8/2017 7:25:21 13: LIBQUERY with Callback: 
+5/8/2017 7:25:21 13: Path request:/api/authentification/
+5/8/2017 7:25:21 13: Path header:undefined
+5/8/2017 7:25:21 13: Path query:{}
+5/8/2017 7:25:21 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'ADM0000001','ahmed','{}', '{ahmed,abe}','{}', :cursor); END;
+5/8/2017 7:25:21 13: 0 Object(s) returned... [FETCH] :)
+5/8/2017 7:25:21 13: 0 Object(s) returned... [FETCH] :)
+5/8/2017 7:27:5 14: LIBQUERY with Callback: 
+5/8/2017 7:27:5 14: Path request:/api/authentification/
+5/8/2017 7:27:5 14: Path header:undefined
+5/8/2017 7:27:5 14: Path query:{}
+5/8/2017 7:27:5 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'ADM0000001','ahmed','{}', '{ahmed,abe}','{}', :cursor); END;
+5/8/2017 7:27:5 15: LIBQUERY with Callback: 
+5/8/2017 7:27:5 15: Path request:/api/authentification/
+5/8/2017 7:27:5 15: Path header:undefined
+5/8/2017 7:27:5 15: Path query:{}
+5/8/2017 7:27:5 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'ADM0000001','ahmed','{}', '{ahmed,abe}','{}', :cursor); END;
+5/8/2017 7:27:5 15: 0 Object(s) returned... [FETCH] :)
+5/8/2017 7:27:5 15: 0 Object(s) returned... [FETCH] :)

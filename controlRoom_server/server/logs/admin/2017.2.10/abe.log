@@ -1,0 +1,636 @@
+2/10/2017 17:17:43 1: Path request:/authentification/
+2/10/2017 17:17:43 1: Executing query.... 
+2/10/2017 17:17:43 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:17:43 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:21:51 1: Path request:/authentification/
+2/10/2017 17:21:51 1: Executing query.... 
+2/10/2017 17:21:51 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:21:51 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:33:7 1: Path request:/authentification/
+2/10/2017 17:33:7 1: Executing query.... 
+2/10/2017 17:33:7 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:33:7 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:34:31 1: Path request:/authentification/
+2/10/2017 17:34:31 1: Executing query.... 
+2/10/2017 17:34:31 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:34:31 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:40:25 1: Path request:/authentification/
+2/10/2017 17:40:25 1: Executing query.... 
+2/10/2017 17:40:25 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:40:25 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:45:51 1: Path request:/authentification/
+2/10/2017 17:45:51 1: Executing query.... 
+2/10/2017 17:45:51 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:45:51 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:46:31 1: Path request:/authentification/
+2/10/2017 17:46:31 1: Executing query.... 
+2/10/2017 17:46:31 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:46:31 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:47:43 1: Path request:/authentification/
+2/10/2017 17:47:43 1: Executing query.... 
+2/10/2017 17:47:43 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:47:43 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:50:42 1: Path request:/authentification/
+2/10/2017 17:50:42 1: Executing query.... 
+2/10/2017 17:50:42 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:50:42 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:53:37 1: Path request:/authentification/
+2/10/2017 17:53:37 1: Executing query.... 
+2/10/2017 17:53:37 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:53:37 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:53:48 1: Path request:/authentification/
+2/10/2017 17:53:48 1: Executing query.... 
+2/10/2017 17:53:48 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:53:48 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:54:2 1: Path request:/authentification/
+2/10/2017 17:54:2 1: Executing query.... 
+2/10/2017 17:54:2 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:54:2 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:55:51 1: Path request:/authentification/
+2/10/2017 17:55:51 1: Executing query.... 
+2/10/2017 17:55:51 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:55:51 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:56:3 1: Path request:/authentification/
+2/10/2017 17:56:3 1: Executing query.... 
+2/10/2017 17:56:3 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:56:3 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:56:19 1: Path request:/authentification/
+2/10/2017 17:56:19 1: Executing query.... 
+2/10/2017 17:56:19 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:56:19 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:56:48 1: Path request:/authentification/
+2/10/2017 17:56:48 1: Executing query.... 
+2/10/2017 17:56:48 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:56:48 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 17:57:26 1: Path request:/authentification/
+2/10/2017 17:57:26 1: Executing query.... 
+2/10/2017 17:57:26 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 17:57:26 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:3:30 1: Path request:/authentification/
+2/10/2017 18:3:30 1: Executing query.... 
+2/10/2017 18:3:30 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 18:3:30 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:5:0 1: Path request:/authentification/
+2/10/2017 18:5:0 1: Executing query.... 
+2/10/2017 18:5:0 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 18:5:0 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:7:1 1: Path request:/authentification/
+2/10/2017 18:7:1 1: Executing query.... 
+2/10/2017 18:7:1 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 18:7:1 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:8:22 1: Path request:/authentification/
+2/10/2017 18:8:22 1: Executing query.... 
+2/10/2017 18:8:22 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(:USERID:, :USER_NAME),(:USERPASSWORD:, :PASSWORD)}', :cursor); END;
+2/10/2017 18:8:22 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:12:0 1: Path request:/authentification/
+2/10/2017 18:12:0 1: Executing query.... 
+2/10/2017 18:12:0 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:12:0 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:12:20 1: Path request:/authentification/
+2/10/2017 18:12:20 1: Executing query.... 
+2/10/2017 18:12:20 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:12:20 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:13:58 1: Path request:/authentification/
+2/10/2017 18:13:58 1: Executing query.... 
+2/10/2017 18:13:58 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:13:58 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:17:4 1: Path request:/authentification/
+2/10/2017 18:17:4 1: Executing query.... 
+2/10/2017 18:17:4 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:17:4 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:17:32 1: Path request:/authentification/
+2/10/2017 18:17:32 1: Executing query.... 
+2/10/2017 18:17:32 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:17:32 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:18:52 1: Path request:/authentification/
+2/10/2017 18:18:52 1: Executing query.... 
+2/10/2017 18:18:52 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:18:52 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:19:10 1: Path request:/authentification/
+2/10/2017 18:19:10 1: Executing query.... 
+2/10/2017 18:19:10 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:19:10 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:19:57 1: Path request:/authentification/
+2/10/2017 18:19:57 1: Executing query.... 
+2/10/2017 18:19:57 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:19:57 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:21:14 1: Path request:/authentification/
+2/10/2017 18:21:14 1: Executing query.... 
+2/10/2017 18:21:14 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:21:14 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:21:57 1: Path request:/authentification/
+2/10/2017 18:21:57 1: Executing query.... 
+2/10/2017 18:21:57 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:21:57 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:23:17 1: Path request:/authentification/
+2/10/2017 18:23:17 1: Executing query.... 
+2/10/2017 18:23:17 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:23:17 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:43:29 1: Path request:/authentification/
+2/10/2017 18:43:29 1: Executing query.... 
+2/10/2017 18:43:29 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:43:29 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:45:22 1: Path request:/authentification/
+2/10/2017 18:45:22 1: Executing query.... 
+2/10/2017 18:45:22 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:45:22 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:45:49 1: Path request:/authentification/
+2/10/2017 18:45:49 1: Executing query.... 
+2/10/2017 18:45:49 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:45:49 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:49:21 1: Path request:/authentification/
+2/10/2017 18:49:21 1: Executing query.... 
+2/10/2017 18:49:21 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:49:21 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 18:49:52 1: Path request:/authentification/
+2/10/2017 18:49:52 1: Executing query.... 
+2/10/2017 18:49:52 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 18:49:52 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 20:56:26 1: Path request:/authentification/
+2/10/2017 20:56:26 1: Executing query.... 
+2/10/2017 20:56:26 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 20:56:26 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 20:57:49 1: Path request:/authentification/
+2/10/2017 20:57:49 1: Executing query.... 
+2/10/2017 20:57:49 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 20:57:49 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 20:58:52 1: Path request:/authentification/
+2/10/2017 20:58:52 1: Executing query.... 
+2/10/2017 20:58:52 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 20:58:52 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 20:59:18 1: Path request:/authentification/
+2/10/2017 20:59:18 1: Executing query.... 
+2/10/2017 20:59:18 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 20:59:18 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 21:8:42 1: Path request:/authentification/
+2/10/2017 21:8:42 1: Executing query.... 
+2/10/2017 21:8:42 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 21:8:42 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 21:9:9 1: Path request:/authentification/
+2/10/2017 21:9:9 1: Executing query.... 
+2/10/2017 21:9:9 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 21:9:9 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 21:10:25 1: Path request:/authentification/
+2/10/2017 21:10:25 1: Executing query.... 
+2/10/2017 21:10:25 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 21:10:25 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:6:50 1: Path request:/authentification/
+2/10/2017 22:6:50 1: Executing query.... 
+2/10/2017 22:6:50 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 22:6:50 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:8:2 1: Connection to database...  [IN PROGRESS]
+2/10/2017 22:8:2 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:8:2 1: Path request:/authentification/
+2/10/2017 22:8:2 1: Executing query.... 
+2/10/2017 22:8:2 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '{(!USERID!, :USER_NAME),(!USERPASSWORD!, :PASSWORD)}', :cursor); END;
+2/10/2017 22:8:2 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:9:40 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:9:41 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:9:41 1: Path request:/authentification/
+2/10/2017 22:9:41 1: Executing query.... 
+2/10/2017 22:9:41 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[':USER_NAME',':PASSWORD']', :cursor); END;
+2/10/2017 22:9:41 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:10:58 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:10:59 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:10:59 1: Path request:/authentification/
+2/10/2017 22:10:59 1: Executing query.... 
+2/10/2017 22:10:59 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:10:59 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:12:12 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:12:12 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:12:12 1: Path request:/authentification/
+2/10/2017 22:12:12 1: Executing query.... 
+2/10/2017 22:12:12 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:12:12 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:12:47 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:12:47 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:12:47 1: Path request:/authentification/
+2/10/2017 22:12:47 1: Executing query.... 
+2/10/2017 22:12:47 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:12:47 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:13:28 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:13:28 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:13:28 1: Path request:/authentification/
+2/10/2017 22:13:28 1: Executing query.... 
+2/10/2017 22:13:28 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:13:28 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:13:42 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:13:42 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:13:42 1: Path request:/authentification/
+2/10/2017 22:13:42 1: Executing query.... 
+2/10/2017 22:13:42 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:13:42 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:14:9 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:14:9 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:14:9 1: Path request:/authentification/
+2/10/2017 22:14:9 1: Executing query.... 
+2/10/2017 22:14:9 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:14:9 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:14:31 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:14:31 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:14:31 1: Path request:/authentification/
+2/10/2017 22:14:31 1: Executing query.... 
+2/10/2017 22:14:31 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:14:31 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:14:55 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:14:55 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:14:55 1: Path request:/authentification/
+2/10/2017 22:14:55 1: Executing query.... 
+2/10/2017 22:14:55 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:14:55 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:14:56 1: undefined Object(s) returned...
+2/10/2017 22:14:56 1: 1 Object(s) returned... [FETCH]
+2/10/2017 22:16:39 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:16:39 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:16:39 1: Path request:/authentification/
+2/10/2017 22:16:39 1: Executing query.... 
+2/10/2017 22:16:39 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:16:39 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:16:53 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:16:54 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:16:54 1: Path request:/authentification/
+2/10/2017 22:16:54 1: Executing query.... 
+2/10/2017 22:16:54 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:16:54 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:16:54 1: undefined Object(s) returned...
+2/10/2017 22:18:6 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:18:6 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:18:6 1: Path request:/authentification/
+2/10/2017 22:18:6 1: Executing query.... 
+2/10/2017 22:18:6 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[:USER_NAME,:PASSWORD]', :cursor); END;
+2/10/2017 22:18:6 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:18:55 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:18:55 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:18:55 1: Path request:/authentification/
+2/10/2017 22:18:55 1: Executing query.... 
+2/10/2017 22:18:55 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', [:USER_NAME,:PASSWORD], :cursor); END;
+2/10/2017 22:18:55 1: 
+
+{"USER_NAME":"admin","PASSWORD":"youpi"}
+2/10/2017 22:29:15 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:29:15 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:29:15 1: Path request:/authentification/
+2/10/2017 22:29:15 1: Executing query.... 
+2/10/2017 22:29:15 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', ['admin','youpi'], :cursor); END;
+2/10/2017 22:29:15 1: 
+
+"['admin','youpi']"
+2/10/2017 22:29:42 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:29:42 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:29:42 1: Path request:/authentification/
+2/10/2017 22:29:42 1: Executing query.... 
+2/10/2017 22:29:42 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', ['admin','youpi'], :cursor); END;
+2/10/2017 22:29:42 1: 
+
+"['admin','youpi']"
+2/10/2017 22:29:52 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:29:52 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:29:52 1: Path request:/authentification/
+2/10/2017 22:29:52 1: Executing query.... 
+2/10/2017 22:29:52 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', ['admin','youpi'], :cursor); END;
+2/10/2017 22:29:52 1: 
+
+"['admin','youpi']"
+2/10/2017 22:30:43 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:30:43 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:30:43 1: Path request:/authentification/
+2/10/2017 22:30:43 1: Executing query.... 
+2/10/2017 22:30:43 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '['admin','youpi']', :cursor); END;
+2/10/2017 22:30:43 1: 
+
+"'['admin','youpi']'"
+2/10/2017 22:31:17 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:31:17 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:31:17 1: Path request:/authentification/
+2/10/2017 22:31:17 1: Executing query.... 
+2/10/2017 22:31:17 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[admin,youpi]', :cursor); END;
+2/10/2017 22:31:17 1: 
+
+"'[admin,youpi]'"
+2/10/2017 22:31:17 1: undefined Object(s) returned...
+2/10/2017 22:31:44 2: Connection to database... [IN PROGRESS]
+2/10/2017 22:31:44 2: Connection to database... [ESTABLISHED]
+2/10/2017 22:31:44 2: Path request:/authentification/
+2/10/2017 22:31:44 2: Executing query.... 
+2/10/2017 22:31:44 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:31:44 2: 
+
+"'[admin,admin]'"
+2/10/2017 22:31:44 2: undefined Object(s) returned...
+2/10/2017 22:31:44 2: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:22 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:22 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:22 1: Path request:/authentification/
+2/10/2017 22:34:22 1: Executing query.... 
+2/10/2017 22:34:22 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:22 1: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:22 1: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:43 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:43 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:43 1: Path request:/authentification/
+2/10/2017 22:34:43 1: Executing query.... 
+2/10/2017 22:34:43 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:43 1: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:43 1: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:52 2: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:52 2: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:52 2: Path request:/authentification/
+2/10/2017 22:34:52 2: Executing query.... 
+2/10/2017 22:34:52 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:52 2: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:52 2: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:53 3: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:53 3: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:53 3: Path request:/authentification/
+2/10/2017 22:34:53 3: Executing query.... 
+2/10/2017 22:34:53 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:53 3: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:53 3: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:53 4: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:53 4: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:53 4: Path request:/authentification/
+2/10/2017 22:34:53 4: Executing query.... 
+2/10/2017 22:34:53 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:53 4: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:53 4: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:54 5: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:54 5: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:54 5: Path request:/authentification/
+2/10/2017 22:34:54 5: Executing query.... 
+2/10/2017 22:34:54 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:54 5: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:54 5: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:55 6: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:55 6: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:55 6: Path request:/authentification/
+2/10/2017 22:34:55 6: Executing query.... 
+2/10/2017 22:34:55 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:55 6: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:55 6: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:55 7: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:55 7: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:55 7: Path request:/authentification/
+2/10/2017 22:34:55 7: Executing query.... 
+2/10/2017 22:34:55 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:55 7: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:55 7: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:55 8: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:55 8: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:55 8: Path request:/authentification/
+2/10/2017 22:34:55 8: Executing query.... 
+2/10/2017 22:34:55 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:55 8: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:55 8: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:56 9: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:56 9: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:56 9: Path request:/authentification/
+2/10/2017 22:34:56 9: Executing query.... 
+2/10/2017 22:34:56 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:56 9: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:56 9: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:56 10: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:56 10: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:56 10: Path request:/authentification/
+2/10/2017 22:34:56 10: Executing query.... 
+2/10/2017 22:34:56 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:56 10: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:56 10: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:56 11: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:56 11: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:56 11: Path request:/authentification/
+2/10/2017 22:34:56 11: Executing query.... 
+2/10/2017 22:34:56 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:56 11: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:56 11: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:57 12: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:57 12: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:57 12: Path request:/authentification/
+2/10/2017 22:34:57 12: Executing query.... 
+2/10/2017 22:34:57 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:57 12: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:57 12: 1 Object(s) returned... [FETCH]
+2/10/2017 22:34:59 13: Connection to database... [IN PROGRESS]
+2/10/2017 22:34:59 13: Connection to database... [ESTABLISHED]
+2/10/2017 22:34:59 13: Path request:/authentification/
+2/10/2017 22:34:59 13: Executing query.... 
+2/10/2017 22:34:59 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:34:59 13: 
+
+"'[admin,admin]'"
+2/10/2017 22:34:59 13: 1 Object(s) returned... [FETCH]
+2/10/2017 22:35:20 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:35:20 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:35:20 1: Path request:/authentification/
+2/10/2017 22:35:20 1: Executing query.... 
+2/10/2017 22:35:20 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:35:20 1: 
+
+"'[admin,admin]'"
+2/10/2017 22:35:20 1: 1 Object(s) returned... [FETCH]
+2/10/2017 22:35:27 2: Connection to database... [IN PROGRESS]
+2/10/2017 22:35:27 2: Connection to database... [ESTABLISHED]
+2/10/2017 22:35:27 2: Path request:/authentification/
+2/10/2017 22:35:27 2: Executing query.... 
+2/10/2017 22:35:27 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:35:27 2: 
+
+"'[admin,admin]'"
+2/10/2017 22:35:27 2: 1 Object(s) returned... [FETCH]
+2/10/2017 22:35:31 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:35:31 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:35:31 1: Path request:/authentification/
+2/10/2017 22:35:31 1: Executing query.... 
+2/10/2017 22:35:31 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:35:31 1: 
+
+"'[admin,admin]'"
+2/10/2017 22:35:32 1: 1 Object(s) returned... [FETCH]
+2/10/2017 22:35:51 1: Connection to database... [IN PROGRESS]
+2/10/2017 22:35:51 1: Connection to database... [ESTABLISHED]
+2/10/2017 22:35:51 1: Path request:/authentification/
+2/10/2017 22:35:51 1: Executing query.... 
+2/10/2017 22:35:51 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:35:51 1: 1 Object(s) returned... [FETCH]
+2/10/2017 22:37:37 2: Connection to database... [IN PROGRESS]
+2/10/2017 22:37:37 2: Connection to database... [ESTABLISHED]
+2/10/2017 22:37:37 2: Path request:/authentification/
+2/10/2017 22:37:37 2: Executing query.... 
+2/10/2017 22:37:37 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'abe','ADM0000001', '[admin,adm]', :cursor); END;
+2/10/2017 22:39:41 3: Connection to database... [IN PROGRESS]
+2/10/2017 22:39:42 3: Connection to database... [ESTABLISHED]
+2/10/2017 22:39:42 3: Path request:/authentification/
+2/10/2017 22:39:42 3: Executing query.... 
+2/10/2017 22:39:42 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 22:39:42 3: 1 Object(s) returned... [FETCH]
+2/10/2017 23:29:39 1: Connection to database... [IN PROGRESS]
+2/10/2017 23:29:39 1: Connection to database... [ESTABLISHED]
+2/10/2017 23:29:39 1: Path request:/api/authentification/
+2/10/2017 23:29:39 1: Executing query.... 
+2/10/2017 23:29:39 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 23:29:39 1: 1 Object(s) returned... [FETCH]
+2/10/2017 23:39:37 1: Connection to database... [IN PROGRESS]
+2/10/2017 23:39:37 1: Connection to database... [ESTABLISHED]
+2/10/2017 23:39:37 1: Path request:/api/authentification/
+2/10/2017 23:39:37 1: Executing query.... 
+2/10/2017 23:39:37 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 23:39:37 1: 1 Object(s) returned... [FETCH]
+2/10/2017 23:44:35 2: Connection to database... [IN PROGRESS]
+2/10/2017 23:44:35 2: Connection to database... [ESTABLISHED]
+2/10/2017 23:44:35 2: Path request:/api/authentification/
+2/10/2017 23:44:35 2: Executing query.... 
+2/10/2017 23:44:35 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 23:44:35 2: 1 Object(s) returned... [FETCH]
+2/10/2017 23:48:9 8: Connection to database... [IN PROGRESS]
+2/10/2017 23:48:9 8: Connection to database... [ESTABLISHED]
+2/10/2017 23:48:9 8: Path request:/api/authentification/
+2/10/2017 23:48:9 8: Executing query.... 
+2/10/2017 23:48:9 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 23:48:9 8: 1 Object(s) returned... [FETCH]
+2/10/2017 23:58:15 18: Connection to database... [IN PROGRESS]
+2/10/2017 23:58:15 18: Connection to database... [ESTABLISHED]
+2/10/2017 23:58:15 18: Path request:/api/authentification/
+2/10/2017 23:58:15 18: Executing query.... 
+2/10/2017 23:58:15 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'abe','ADM0000001', '[admin,admin]', :cursor); END;
+2/10/2017 23:58:15 18: 1 Object(s) returned... [FETCH]

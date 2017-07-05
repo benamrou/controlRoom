@@ -1,0 +1,100 @@
+4/10/2017 8:56:12 54: LIBQUERY with Callback: 
+4/10/2017 8:56:12 54: Path request:/api/authentification/
+4/10/2017 8:56:12 54: Path header:undefined
+4/10/2017 8:56:12 54: Path query:{}
+4/10/2017 8:56:12 54: BEGIN PKREQUESTMANAGER.CALLQUERY(54,'ADM0000001','admin','{}', '{admin,admin}','{}', :cursor); END;
+4/10/2017 8:56:12 54: 1 Object(s) returned... [FETCH]
+4/10/2017 8:56:12 54: [object Object]
+4/10/2017 8:56:12 55: LIBQUERY with Callback: 
+4/10/2017 8:56:12 55: Path request:/api/user/
+4/10/2017 8:56:12 55: Path header:undefined
+4/10/2017 8:56:12 55: Path query:{"USER_NAME":"admin"}
+4/10/2017 8:56:12 55: BEGIN PKREQUESTMANAGER.CALLQUERY(55,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/10/2017 8:56:12 56: LIBQUERY with Callback: 
+4/10/2017 8:56:12 56: Path request:/api/environment/
+4/10/2017 8:56:12 56: Path header:undefined
+4/10/2017 8:56:12 56: Path query:{"USER_NAME":"admin"}
+4/10/2017 8:56:12 56: BEGIN PKREQUESTMANAGER.CALLQUERY(56,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/10/2017 8:56:12 56: 1 Object(s) returned... [FETCH]
+4/10/2017 8:56:12 56: [object Object]
+4/10/2017 8:56:12 56: 2 Object(s) returned... [FETCH]
+4/10/2017 8:56:12 56: [object Object],[object Object]
+4/10/2017 17:30:57 5: LIBQUERY with Callback: 
+4/10/2017 17:30:57 5: Path request:/api/environment/
+4/10/2017 17:30:57 5: Path header:undefined
+4/10/2017 17:30:57 5: Path query:{"USER_NAME":"admin"}
+4/10/2017 17:30:57 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/10/2017 17:30:57 6: LIBQUERY with Callback: 
+4/10/2017 17:30:57 6: Path request:/api/user/
+4/10/2017 17:30:57 6: Path header:undefined
+4/10/2017 17:30:57 6: Path query:{"USER_NAME":"admin"}
+4/10/2017 17:30:57 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/10/2017 17:30:57 6: 2 Object(s) returned... [FETCH]
+4/10/2017 17:30:57 6: [object Object],[object Object]
+4/10/2017 17:30:57 6: 1 Object(s) returned... [FETCH]
+4/10/2017 17:30:57 6: [object Object]
+4/10/2017 17:31:5 7: LIBQUERY with Callback: 
+4/10/2017 17:31:5 7: Path request:/api/supplierschedule/
+4/10/2017 17:31:5 7: Path header:undefined
+4/10/2017 17:31:5 7: Path query:{}
+4/10/2017 17:31:5 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'SUP0000001','admin','{HEINENS_CEN_UAT}', '{undefined}','{HN}', :cursor); END;
+4/10/2017 17:31:8 7: 0 Object(s) returned... [FETCH] :)
+4/10/2017 17:31:33 1: LIBQUERY with Callback: 
+4/10/2017 17:31:33 1: Path request:/api/supplierschedule/
+4/10/2017 17:31:33 1: Path header:undefined
+4/10/2017 17:31:33 1: Path query:{}
+4/10/2017 17:31:33 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'SUP0000001','admin','{HEINENS_CEN_UAT}', '{undefined}','{HN}', :cursor); END;
+4/10/2017 17:31:36 1: 0 Object(s) returned... [FETCH] :)
+4/10/2017 17:32:32 2: LIBQUERY with Callback: 
+4/10/2017 17:32:32 2: Path request:/api/user/
+4/10/2017 17:32:32 2: Path header:undefined
+4/10/2017 17:32:32 2: Path query:{"USER_NAME":"admin"}
+4/10/2017 17:32:32 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/10/2017 17:32:32 3: LIBQUERY with Callback: 
+4/10/2017 17:32:32 3: Path request:/api/environment/
+4/10/2017 17:32:32 3: Path header:undefined
+4/10/2017 17:32:32 3: Path query:{"USER_NAME":"admin"}
+4/10/2017 17:32:32 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/10/2017 17:32:32 3: 1 Object(s) returned... [FETCH]
+4/10/2017 17:32:32 3: [object Object]
+4/10/2017 17:32:32 3: 2 Object(s) returned... [FETCH]
+4/10/2017 17:32:32 3: [object Object],[object Object]
+4/10/2017 17:32:41 4: LIBQUERY with Callback: 
+4/10/2017 17:32:41 4: Path request:/api/supplierschedule/
+4/10/2017 17:32:41 4: Path header:undefined
+4/10/2017 17:32:41 4: Path query:{}
+4/10/2017 17:32:41 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'SUP0000001','admin','{HEINENS_CEN_UAT}', '{undefined}','{HN}', :cursor); END;
+4/10/2017 17:32:46 4: 0 Object(s) returned... [FETCH] :)
+4/10/2017 19:30:2 5: LIBQUERY with Callback: 
+4/10/2017 19:30:2 5: Path request:/api/supplierschedule/
+4/10/2017 19:30:2 5: Path header:undefined
+4/10/2017 19:30:2 5: Path query:{}
+4/10/2017 19:30:2 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'SUP0000001','admin','{HEINENS_CEN_UAT}', '{undefined}','{HN}', :cursor); END;
+4/10/2017 19:31:2 6: LIBQUERY with Callback: 
+4/10/2017 19:31:2 6: Path request:/api/user/
+4/10/2017 19:31:2 6: Path header:undefined
+4/10/2017 19:31:2 6: Path query:{"USER_NAME":"admin"}
+4/10/2017 19:31:2 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/10/2017 19:31:2 7: LIBQUERY with Callback: 
+4/10/2017 19:31:2 7: Path request:/api/environment/
+4/10/2017 19:31:2 7: Path header:undefined
+4/10/2017 19:31:2 7: Path query:{"USER_NAME":"admin"}
+4/10/2017 19:31:2 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/10/2017 19:31:2 7: 1 Object(s) returned... [FETCH]
+4/10/2017 19:31:2 7: [object Object]
+4/10/2017 19:31:2 7: 2 Object(s) returned... [FETCH]
+4/10/2017 19:31:2 7: [object Object],[object Object]
+4/10/2017 19:31:34 8: LIBQUERY with Callback: 
+4/10/2017 19:31:34 8: Path request:/api/user/
+4/10/2017 19:31:34 8: Path header:undefined
+4/10/2017 19:31:34 8: Path query:{"USER_NAME":"admin"}
+4/10/2017 19:31:34 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/10/2017 19:31:34 9: LIBQUERY with Callback: 
+4/10/2017 19:31:34 9: Path request:/api/environment/
+4/10/2017 19:31:34 9: Path header:undefined
+4/10/2017 19:31:34 9: Path query:{"USER_NAME":"admin"}
+4/10/2017 19:31:34 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/10/2017 19:31:34 9: 1 Object(s) returned... [FETCH]
+4/10/2017 19:31:34 9: [object Object]
+4/10/2017 19:31:34 9: 2 Object(s) returned... [FETCH]
+4/10/2017 19:31:34 9: [object Object],[object Object]

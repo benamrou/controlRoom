@@ -1,0 +1,5 @@
+6/14/2017 18:6:32 ADM0000002: LIBQUERY with Callback: 
+6/14/2017 18:6:32 ADM0000002: Path request:undefined
+6/14/2017 18:6:32 ADM0000002: Path header:undefined
+6/14/2017 18:6:32 ADM0000002: Path query:undefined
+6/14/2017 18:6:32 ADM0000002: BEGIN PKREQUESTMANAGER.CALLQUERY(ADM0000002,''{admin,admin}'',''{}'','{}', abe,[object Object], :cursor); END;

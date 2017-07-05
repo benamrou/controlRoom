@@ -1,0 +1,1957 @@
+4/4/2017 7:43:27 1: LIBQUERY with Callback: 
+4/4/2017 7:43:27 1: Path request:/api/search/
+4/4/2017 7:43:27 1: Path header:undefined
+4/4/2017 7:43:27 1: Path query:{"PARAM":["111770"]}
+4/4/2017 7:43:27 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 7:43:43 1: 2 Object(s) returned... [FETCH]
+4/4/2017 7:43:43 1: [object Object],[object Object]
+4/4/2017 7:43:47 2: LIBQUERY with Callback: 
+4/4/2017 7:43:47 2: Path request:/api/item/
+4/4/2017 7:43:47 2: Path header:undefined
+4/4/2017 7:43:47 2: Path query:{"PARAM":"18841"}
+4/4/2017 7:43:47 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 7:43:47 3: LIBQUERY with Callback: 
+4/4/2017 7:43:47 3: Path request:/api/itemretail/
+4/4/2017 7:43:47 3: Path header:undefined
+4/4/2017 7:43:47 3: Path query:{"PARAM":"18841"}
+4/4/2017 7:43:47 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 7:43:47 4: LIBQUERY with Callback: 
+4/4/2017 7:43:47 4: Path request:/api/itemcost/
+4/4/2017 7:43:47 4: Path header:undefined
+4/4/2017 7:43:47 4: Path query:{"PARAM":"18841"}
+4/4/2017 7:43:47 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 7:43:51 4: 4 Object(s) returned... [FETCH]
+4/4/2017 7:43:51 4: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 7:43:53 4: 3 Object(s) returned... [FETCH]
+4/4/2017 7:43:53 4: [object Object],[object Object],[object Object]
+4/4/2017 7:53:38 3: LIBQUERY with Callback: 
+4/4/2017 7:53:38 3: Path request:/api/search/
+4/4/2017 7:53:38 3: Path header:undefined
+4/4/2017 7:53:38 3: Path query:{"PARAM":["111770"]}
+4/4/2017 7:53:38 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 7:53:47 3: 2 Object(s) returned... [FETCH]
+4/4/2017 7:53:47 3: [object Object],[object Object]
+4/4/2017 7:53:52 4: LIBQUERY with Callback: 
+4/4/2017 7:53:52 4: Path request:/api/item/
+4/4/2017 7:53:52 4: Path header:undefined
+4/4/2017 7:53:52 4: Path query:{"PARAM":"18841"}
+4/4/2017 7:53:52 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 7:53:52 5: LIBQUERY with Callback: 
+4/4/2017 7:53:52 5: Path request:/api/itemcost/
+4/4/2017 7:53:52 5: Path header:undefined
+4/4/2017 7:53:52 5: Path query:{"PARAM":"18841"}
+4/4/2017 7:53:52 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 7:53:52 6: LIBQUERY with Callback: 
+4/4/2017 7:53:52 6: Path request:/api/itemretail/
+4/4/2017 7:53:52 6: Path header:undefined
+4/4/2017 7:53:52 6: Path query:{"PARAM":"18841"}
+4/4/2017 7:53:52 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 7:53:55 6: 3 Object(s) returned... [FETCH]
+4/4/2017 7:53:55 6: [object Object],[object Object],[object Object]
+4/4/2017 7:53:58 6: 4 Object(s) returned... [FETCH]
+4/4/2017 7:53:58 6: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 7:54:0 6: 3 Object(s) returned... [FETCH]
+4/4/2017 7:54:0 6: [object Object],[object Object],[object Object]
+4/4/2017 7:55:59 7: LIBQUERY with Callback: 
+4/4/2017 7:55:59 7: Path request:/api/user/
+4/4/2017 7:55:59 7: Path header:undefined
+4/4/2017 7:55:59 7: Path query:{"USER_NAME":"admin"}
+4/4/2017 7:55:59 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 7:55:59 8: LIBQUERY with Callback: 
+4/4/2017 7:55:59 8: Path request:/api/environment/
+4/4/2017 7:55:59 8: Path header:undefined
+4/4/2017 7:55:59 8: Path query:{"USER_NAME":"admin"}
+4/4/2017 7:55:59 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 7:55:59 8: 1 Object(s) returned... [FETCH]
+4/4/2017 7:55:59 8: [object Object]
+4/4/2017 7:55:59 8: 2 Object(s) returned... [FETCH]
+4/4/2017 7:55:59 8: [object Object],[object Object]
+4/4/2017 7:56:51 9: LIBQUERY with Callback: 
+4/4/2017 7:56:51 9: Path request:/api/user/
+4/4/2017 7:56:51 9: Path header:undefined
+4/4/2017 7:56:51 9: Path query:{"USER_NAME":"admin"}
+4/4/2017 7:56:51 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 7:56:51 10: LIBQUERY with Callback: 
+4/4/2017 7:56:51 10: Path request:/api/environment/
+4/4/2017 7:56:51 10: Path header:undefined
+4/4/2017 7:56:51 10: Path query:{"USER_NAME":"admin"}
+4/4/2017 7:56:51 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 7:56:51 10: 1 Object(s) returned... [FETCH]
+4/4/2017 7:56:51 10: [object Object]
+4/4/2017 7:56:51 10: 2 Object(s) returned... [FETCH]
+4/4/2017 7:56:51 10: [object Object],[object Object]
+4/4/2017 7:57:9 11: LIBQUERY with Callback: 
+4/4/2017 7:57:9 11: Path request:/api/search/
+4/4/2017 7:57:9 11: Path header:undefined
+4/4/2017 7:57:9 11: Path query:{"PARAM":["111770"]}
+4/4/2017 7:57:9 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 7:57:22 11: 2 Object(s) returned... [FETCH]
+4/4/2017 7:57:22 11: [object Object],[object Object]
+4/4/2017 7:57:29 12: LIBQUERY with Callback: 
+4/4/2017 7:57:29 12: Path request:/api/item/
+4/4/2017 7:57:29 12: Path header:undefined
+4/4/2017 7:57:29 12: Path query:{"PARAM":"18841"}
+4/4/2017 7:57:29 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 7:57:29 13: LIBQUERY with Callback: 
+4/4/2017 7:57:29 13: Path request:/api/itemcost/
+4/4/2017 7:57:29 13: Path header:undefined
+4/4/2017 7:57:29 13: Path query:{"PARAM":"18841"}
+4/4/2017 7:57:29 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 7:57:29 14: LIBQUERY with Callback: 
+4/4/2017 7:57:29 14: Path request:/api/itemretail/
+4/4/2017 7:57:29 14: Path header:undefined
+4/4/2017 7:57:29 14: Path query:{"PARAM":"18841"}
+4/4/2017 7:57:29 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 7:57:32 14: 3 Object(s) returned... [FETCH]
+4/4/2017 7:57:32 14: [object Object],[object Object],[object Object]
+4/4/2017 7:57:33 14: 3 Object(s) returned... [FETCH]
+4/4/2017 7:57:33 14: [object Object],[object Object],[object Object]
+4/4/2017 7:57:34 14: 4 Object(s) returned... [FETCH]
+4/4/2017 7:57:34 14: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 7:59:45 15: LIBQUERY with Callback: 
+4/4/2017 7:59:45 15: Path request:/api/user/
+4/4/2017 7:59:45 15: Path header:undefined
+4/4/2017 7:59:45 15: Path query:{"USER_NAME":"admin"}
+4/4/2017 7:59:45 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 7:59:45 16: LIBQUERY with Callback: 
+4/4/2017 7:59:45 16: Path request:/api/environment/
+4/4/2017 7:59:45 16: Path header:undefined
+4/4/2017 7:59:45 16: Path query:{"USER_NAME":"admin"}
+4/4/2017 7:59:45 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 7:59:45 16: 1 Object(s) returned... [FETCH]
+4/4/2017 7:59:45 16: [object Object]
+4/4/2017 7:59:45 16: 2 Object(s) returned... [FETCH]
+4/4/2017 7:59:45 16: [object Object],[object Object]
+4/4/2017 7:59:51 17: LIBQUERY with Callback: 
+4/4/2017 7:59:51 17: Path request:/api/search/
+4/4/2017 7:59:51 17: Path header:undefined
+4/4/2017 7:59:51 17: Path query:{"PARAM":["111770"]}
+4/4/2017 7:59:51 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 8:0:2 17: 2 Object(s) returned... [FETCH]
+4/4/2017 8:0:2 17: [object Object],[object Object]
+4/4/2017 8:0:20 18: LIBQUERY with Callback: 
+4/4/2017 8:0:20 18: Path request:/api/item/
+4/4/2017 8:0:20 18: Path header:undefined
+4/4/2017 8:0:20 18: Path query:{"PARAM":"18841"}
+4/4/2017 8:0:20 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:0:20 19: LIBQUERY with Callback: 
+4/4/2017 8:0:20 19: Path request:/api/itemcost/
+4/4/2017 8:0:20 19: Path header:undefined
+4/4/2017 8:0:20 19: Path query:{"PARAM":"18841"}
+4/4/2017 8:0:20 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:0:20 20: LIBQUERY with Callback: 
+4/4/2017 8:0:20 20: Path request:/api/itemretail/
+4/4/2017 8:0:20 20: Path header:undefined
+4/4/2017 8:0:20 20: Path query:{"PARAM":"18841"}
+4/4/2017 8:0:20 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:0:23 20: 3 Object(s) returned... [FETCH]
+4/4/2017 8:0:23 20: [object Object],[object Object],[object Object]
+4/4/2017 8:0:24 20: 3 Object(s) returned... [FETCH]
+4/4/2017 8:0:24 20: [object Object],[object Object],[object Object]
+4/4/2017 8:0:24 20: 4 Object(s) returned... [FETCH]
+4/4/2017 8:0:24 20: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:3:26 21: LIBQUERY with Callback: 
+4/4/2017 8:3:26 21: Path request:/api/user/
+4/4/2017 8:3:26 21: Path header:undefined
+4/4/2017 8:3:26 21: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:3:26 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:3:26 22: LIBQUERY with Callback: 
+4/4/2017 8:3:26 22: Path request:/api/environment/
+4/4/2017 8:3:26 22: Path header:undefined
+4/4/2017 8:3:26 22: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:3:26 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:3:27 22: 1 Object(s) returned... [FETCH]
+4/4/2017 8:3:27 22: [object Object]
+4/4/2017 8:3:27 22: 2 Object(s) returned... [FETCH]
+4/4/2017 8:3:27 22: [object Object],[object Object]
+4/4/2017 8:3:32 23: LIBQUERY with Callback: 
+4/4/2017 8:3:32 23: Path request:/api/search/
+4/4/2017 8:3:32 23: Path header:undefined
+4/4/2017 8:3:32 23: Path query:{"PARAM":["111770"]}
+4/4/2017 8:3:32 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 8:3:41 23: 2 Object(s) returned... [FETCH]
+4/4/2017 8:3:41 23: [object Object],[object Object]
+4/4/2017 8:3:45 24: LIBQUERY with Callback: 
+4/4/2017 8:3:45 24: Path request:/api/item/
+4/4/2017 8:3:45 24: Path header:undefined
+4/4/2017 8:3:45 24: Path query:{"PARAM":"18841"}
+4/4/2017 8:3:45 24: BEGIN PKREQUESTMANAGER.CALLQUERY(24,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:3:45 25: LIBQUERY with Callback: 
+4/4/2017 8:3:45 25: Path request:/api/itemcost/
+4/4/2017 8:3:45 25: Path header:undefined
+4/4/2017 8:3:45 25: Path query:{"PARAM":"18841"}
+4/4/2017 8:3:45 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:3:45 26: LIBQUERY with Callback: 
+4/4/2017 8:3:45 26: Path request:/api/itemretail/
+4/4/2017 8:3:45 26: Path header:undefined
+4/4/2017 8:3:45 26: Path query:{"PARAM":"18841"}
+4/4/2017 8:3:45 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:3:49 26: 3 Object(s) returned... [FETCH]
+4/4/2017 8:3:49 26: [object Object],[object Object],[object Object]
+4/4/2017 8:3:49 26: 4 Object(s) returned... [FETCH]
+4/4/2017 8:3:49 26: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:3:49 26: 3 Object(s) returned... [FETCH]
+4/4/2017 8:3:49 26: [object Object],[object Object],[object Object]
+4/4/2017 8:7:14 27: LIBQUERY with Callback: 
+4/4/2017 8:7:14 27: Path request:/api/environment/
+4/4/2017 8:7:14 27: Path header:undefined
+4/4/2017 8:7:14 27: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:7:14 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:7:14 28: LIBQUERY with Callback: 
+4/4/2017 8:7:14 28: Path request:/api/user/
+4/4/2017 8:7:14 28: Path header:undefined
+4/4/2017 8:7:14 28: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:7:14 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:7:14 28: 2 Object(s) returned... [FETCH]
+4/4/2017 8:7:14 28: [object Object],[object Object]
+4/4/2017 8:7:14 28: 1 Object(s) returned... [FETCH]
+4/4/2017 8:7:14 28: [object Object]
+4/4/2017 8:8:43 29: LIBQUERY with Callback: 
+4/4/2017 8:8:43 29: Path request:/api/user/
+4/4/2017 8:8:43 29: Path header:undefined
+4/4/2017 8:8:43 29: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:8:43 29: BEGIN PKREQUESTMANAGER.CALLQUERY(29,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:8:43 30: LIBQUERY with Callback: 
+4/4/2017 8:8:43 30: Path request:/api/environment/
+4/4/2017 8:8:43 30: Path header:undefined
+4/4/2017 8:8:43 30: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:8:43 30: BEGIN PKREQUESTMANAGER.CALLQUERY(30,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:8:43 30: 1 Object(s) returned... [FETCH]
+4/4/2017 8:8:43 30: [object Object]
+4/4/2017 8:8:43 30: 2 Object(s) returned... [FETCH]
+4/4/2017 8:8:43 30: [object Object],[object Object]
+4/4/2017 8:8:57 31: LIBQUERY with Callback: 
+4/4/2017 8:8:57 31: Path request:/api/user/
+4/4/2017 8:8:57 31: Path header:undefined
+4/4/2017 8:8:57 31: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:8:57 31: BEGIN PKREQUESTMANAGER.CALLQUERY(31,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:8:58 32: LIBQUERY with Callback: 
+4/4/2017 8:8:58 32: Path request:/api/environment/
+4/4/2017 8:8:58 32: Path header:undefined
+4/4/2017 8:8:58 32: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:8:58 32: BEGIN PKREQUESTMANAGER.CALLQUERY(32,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:8:58 32: 1 Object(s) returned... [FETCH]
+4/4/2017 8:8:58 32: [object Object]
+4/4/2017 8:8:58 32: 2 Object(s) returned... [FETCH]
+4/4/2017 8:8:58 32: [object Object],[object Object]
+4/4/2017 8:9:25 33: LIBQUERY with Callback: 
+4/4/2017 8:9:25 33: Path request:/api/user/
+4/4/2017 8:9:25 33: Path header:undefined
+4/4/2017 8:9:25 33: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:9:25 33: BEGIN PKREQUESTMANAGER.CALLQUERY(33,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:9:25 34: LIBQUERY with Callback: 
+4/4/2017 8:9:25 34: Path request:/api/environment/
+4/4/2017 8:9:25 34: Path header:undefined
+4/4/2017 8:9:25 34: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:9:25 34: BEGIN PKREQUESTMANAGER.CALLQUERY(34,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:9:25 34: 1 Object(s) returned... [FETCH]
+4/4/2017 8:9:25 34: [object Object]
+4/4/2017 8:9:25 34: 2 Object(s) returned... [FETCH]
+4/4/2017 8:9:25 34: [object Object],[object Object]
+4/4/2017 8:11:55 35: LIBQUERY with Callback: 
+4/4/2017 8:11:55 35: Path request:/api/user/
+4/4/2017 8:11:55 35: Path header:undefined
+4/4/2017 8:11:55 35: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:11:55 35: BEGIN PKREQUESTMANAGER.CALLQUERY(35,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:11:55 36: LIBQUERY with Callback: 
+4/4/2017 8:11:55 36: Path request:/api/environment/
+4/4/2017 8:11:55 36: Path header:undefined
+4/4/2017 8:11:55 36: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:11:55 36: BEGIN PKREQUESTMANAGER.CALLQUERY(36,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:11:55 36: 1 Object(s) returned... [FETCH]
+4/4/2017 8:11:55 36: [object Object]
+4/4/2017 8:11:55 36: 2 Object(s) returned... [FETCH]
+4/4/2017 8:11:55 36: [object Object],[object Object]
+4/4/2017 8:12:2 37: LIBQUERY with Callback: 
+4/4/2017 8:12:2 37: Path request:/api/search/
+4/4/2017 8:12:2 37: Path header:undefined
+4/4/2017 8:12:2 37: Path query:{"PARAM":["111770"]}
+4/4/2017 8:12:2 37: BEGIN PKREQUESTMANAGER.CALLQUERY(37,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 8:12:14 37: 2 Object(s) returned... [FETCH]
+4/4/2017 8:12:14 37: [object Object],[object Object]
+4/4/2017 8:12:18 38: LIBQUERY with Callback: 
+4/4/2017 8:12:18 38: Path request:/api/item/
+4/4/2017 8:12:18 38: Path header:undefined
+4/4/2017 8:12:18 38: Path query:{"PARAM":"18841"}
+4/4/2017 8:12:18 38: BEGIN PKREQUESTMANAGER.CALLQUERY(38,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:12:18 39: LIBQUERY with Callback: 
+4/4/2017 8:12:18 39: Path request:/api/itemcost/
+4/4/2017 8:12:18 39: Path header:undefined
+4/4/2017 8:12:18 39: Path query:{"PARAM":"18841"}
+4/4/2017 8:12:18 39: BEGIN PKREQUESTMANAGER.CALLQUERY(39,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:12:18 40: LIBQUERY with Callback: 
+4/4/2017 8:12:18 40: Path request:/api/itemretail/
+4/4/2017 8:12:18 40: Path header:undefined
+4/4/2017 8:12:18 40: Path query:{"PARAM":"18841"}
+4/4/2017 8:12:18 40: BEGIN PKREQUESTMANAGER.CALLQUERY(40,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:12:21 40: 3 Object(s) returned... [FETCH]
+4/4/2017 8:12:21 40: [object Object],[object Object],[object Object]
+4/4/2017 8:12:22 40: 4 Object(s) returned... [FETCH]
+4/4/2017 8:12:22 40: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:12:22 40: 3 Object(s) returned... [FETCH]
+4/4/2017 8:12:22 40: [object Object],[object Object],[object Object]
+4/4/2017 8:15:27 41: LIBQUERY with Callback: 
+4/4/2017 8:15:27 41: Path request:/api/search/
+4/4/2017 8:15:27 41: Path header:undefined
+4/4/2017 8:15:27 41: Path query:{"PARAM":["962936"]}
+4/4/2017 8:15:27 41: BEGIN PKREQUESTMANAGER.CALLQUERY(41,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{962936}','{HN}', :cursor); END;
+4/4/2017 8:15:38 41: 1 Object(s) returned... [FETCH]
+4/4/2017 8:15:38 41: [object Object]
+4/4/2017 8:15:43 42: LIBQUERY with Callback: 
+4/4/2017 8:15:43 42: Path request:/api/item/
+4/4/2017 8:15:43 42: Path header:undefined
+4/4/2017 8:15:43 42: Path query:{"PARAM":"31201"}
+4/4/2017 8:15:43 42: BEGIN PKREQUESTMANAGER.CALLQUERY(42,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31201}','{HN}', :cursor); END;
+4/4/2017 8:15:43 43: LIBQUERY with Callback: 
+4/4/2017 8:15:43 43: Path request:/api/itemretail/
+4/4/2017 8:15:43 43: Path header:undefined
+4/4/2017 8:15:43 43: Path query:{"PARAM":"31201"}
+4/4/2017 8:15:43 43: BEGIN PKREQUESTMANAGER.CALLQUERY(43,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31201}','{HN}', :cursor); END;
+4/4/2017 8:15:43 44: LIBQUERY with Callback: 
+4/4/2017 8:15:43 44: Path request:/api/itemcost/
+4/4/2017 8:15:43 44: Path header:undefined
+4/4/2017 8:15:43 44: Path query:{"PARAM":"31201"}
+4/4/2017 8:15:43 44: BEGIN PKREQUESTMANAGER.CALLQUERY(44,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31201}','{HN}', :cursor); END;
+4/4/2017 8:15:46 44: 3 Object(s) returned... [FETCH]
+4/4/2017 8:15:46 44: [object Object],[object Object],[object Object]
+4/4/2017 8:15:47 44: 4 Object(s) returned... [FETCH]
+4/4/2017 8:15:47 44: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:15:52 44: 14 Object(s) returned... [FETCH]
+4/4/2017 8:15:52 44: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:17:0 45: LIBQUERY with Callback: 
+4/4/2017 8:17:0 45: Path request:/api/user/
+4/4/2017 8:17:0 45: Path header:undefined
+4/4/2017 8:17:0 45: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:17:0 45: BEGIN PKREQUESTMANAGER.CALLQUERY(45,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:17:0 46: LIBQUERY with Callback: 
+4/4/2017 8:17:0 46: Path request:/api/environment/
+4/4/2017 8:17:0 46: Path header:undefined
+4/4/2017 8:17:0 46: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:17:0 46: BEGIN PKREQUESTMANAGER.CALLQUERY(46,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:17:0 46: 1 Object(s) returned... [FETCH]
+4/4/2017 8:17:0 46: [object Object]
+4/4/2017 8:17:0 46: 2 Object(s) returned... [FETCH]
+4/4/2017 8:17:0 46: [object Object],[object Object]
+4/4/2017 8:18:35 47: LIBQUERY with Callback: 
+4/4/2017 8:18:35 47: Path request:/api/environment/
+4/4/2017 8:18:35 47: Path header:undefined
+4/4/2017 8:18:35 47: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:18:35 47: BEGIN PKREQUESTMANAGER.CALLQUERY(47,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:18:35 48: LIBQUERY with Callback: 
+4/4/2017 8:18:35 48: Path request:/api/user/
+4/4/2017 8:18:35 48: Path header:undefined
+4/4/2017 8:18:35 48: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:18:35 48: BEGIN PKREQUESTMANAGER.CALLQUERY(48,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:18:36 48: 2 Object(s) returned... [FETCH]
+4/4/2017 8:18:36 48: [object Object],[object Object]
+4/4/2017 8:18:36 48: 1 Object(s) returned... [FETCH]
+4/4/2017 8:18:36 48: [object Object]
+4/4/2017 8:18:43 49: LIBQUERY with Callback: 
+4/4/2017 8:18:43 49: Path request:/api/search/
+4/4/2017 8:18:43 49: Path header:undefined
+4/4/2017 8:18:43 49: Path query:{"PARAM":["962693"]}
+4/4/2017 8:18:43 49: BEGIN PKREQUESTMANAGER.CALLQUERY(49,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{962693}','{HN}', :cursor); END;
+4/4/2017 8:18:54 49: 2 Object(s) returned... [FETCH]
+4/4/2017 8:18:54 49: [object Object],[object Object]
+4/4/2017 8:19:26 50: LIBQUERY with Callback: 
+4/4/2017 8:19:26 50: Path request:/api/user/
+4/4/2017 8:19:26 50: Path header:undefined
+4/4/2017 8:19:26 50: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:19:26 50: BEGIN PKREQUESTMANAGER.CALLQUERY(50,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:19:26 51: LIBQUERY with Callback: 
+4/4/2017 8:19:26 51: Path request:/api/environment/
+4/4/2017 8:19:26 51: Path header:undefined
+4/4/2017 8:19:26 51: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:19:26 51: BEGIN PKREQUESTMANAGER.CALLQUERY(51,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:19:26 51: 2 Object(s) returned... [FETCH]
+4/4/2017 8:19:26 51: [object Object],[object Object]
+4/4/2017 8:19:26 51: 1 Object(s) returned... [FETCH]
+4/4/2017 8:19:26 51: [object Object]
+4/4/2017 8:19:30 52: LIBQUERY with Callback: 
+4/4/2017 8:19:30 52: Path request:/api/search/
+4/4/2017 8:19:30 52: Path header:undefined
+4/4/2017 8:19:30 52: Path query:{"PARAM":["962693"]}
+4/4/2017 8:19:30 52: BEGIN PKREQUESTMANAGER.CALLQUERY(52,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{962693}','{HN}', :cursor); END;
+4/4/2017 8:20:29 1: LIBQUERY with Callback: 
+4/4/2017 8:20:29 1: Path request:/api/user/
+4/4/2017 8:20:29 1: Path header:undefined
+4/4/2017 8:20:29 1: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:20:29 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:20:29 2: LIBQUERY with Callback: 
+4/4/2017 8:20:29 2: Path request:/api/environment/
+4/4/2017 8:20:29 2: Path header:undefined
+4/4/2017 8:20:29 2: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:20:29 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:20:29 2: 1 Object(s) returned... [FETCH]
+4/4/2017 8:20:29 2: [object Object]
+4/4/2017 8:20:30 2: 2 Object(s) returned... [FETCH]
+4/4/2017 8:20:30 2: [object Object],[object Object]
+4/4/2017 8:20:35 3: LIBQUERY with Callback: 
+4/4/2017 8:20:35 3: Path request:/api/search/
+4/4/2017 8:20:35 3: Path header:undefined
+4/4/2017 8:20:35 3: Path query:{"PARAM":["962693"]}
+4/4/2017 8:20:35 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{962693}','{HN}', :cursor); END;
+4/4/2017 8:20:47 3: 2 Object(s) returned... [FETCH]
+4/4/2017 8:20:47 3: [object Object],[object Object]
+4/4/2017 8:20:52 4: LIBQUERY with Callback: 
+4/4/2017 8:20:52 4: Path request:/api/item/
+4/4/2017 8:20:52 4: Path header:undefined
+4/4/2017 8:20:52 4: Path query:{"PARAM":"1076875"}
+4/4/2017 8:20:52 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'ART0000001','admin','{HEINENS_CEN_UAT}', '{1076875}','{HN}', :cursor); END;
+4/4/2017 8:20:52 5: LIBQUERY with Callback: 
+4/4/2017 8:20:52 5: Path request:/api/itemcost/
+4/4/2017 8:20:52 5: Path header:undefined
+4/4/2017 8:20:52 5: Path query:{"PARAM":"1076875"}
+4/4/2017 8:20:52 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'ART0000002','admin','{HEINENS_CEN_UAT}', '{1076875}','{HN}', :cursor); END;
+4/4/2017 8:20:52 6: LIBQUERY with Callback: 
+4/4/2017 8:20:52 6: Path request:/api/itemretail/
+4/4/2017 8:20:52 6: Path header:undefined
+4/4/2017 8:20:52 6: Path query:{"PARAM":"1076875"}
+4/4/2017 8:20:52 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'ART0000003','admin','{HEINENS_CEN_UAT}', '{1076875}','{HN}', :cursor); END;
+4/4/2017 8:20:55 6: 3 Object(s) returned... [FETCH]
+4/4/2017 8:20:55 6: [object Object],[object Object],[object Object]
+4/4/2017 8:20:55 6: 4 Object(s) returned... [FETCH]
+4/4/2017 8:20:55 6: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:20:58 6: 4 Object(s) returned... [FETCH]
+4/4/2017 8:20:58 6: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:21:49 7: LIBQUERY with Callback: 
+4/4/2017 8:21:49 7: Path request:/api/user/
+4/4/2017 8:21:49 7: Path header:undefined
+4/4/2017 8:21:49 7: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:21:49 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:21:49 8: LIBQUERY with Callback: 
+4/4/2017 8:21:49 8: Path request:/api/environment/
+4/4/2017 8:21:49 8: Path header:undefined
+4/4/2017 8:21:49 8: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:21:49 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:21:49 8: 1 Object(s) returned... [FETCH]
+4/4/2017 8:21:49 8: [object Object]
+4/4/2017 8:21:49 8: 2 Object(s) returned... [FETCH]
+4/4/2017 8:21:49 8: [object Object],[object Object]
+4/4/2017 8:22:2 9: LIBQUERY with Callback: 
+4/4/2017 8:22:2 9: Path request:/api/search/
+4/4/2017 8:22:2 9: Path header:undefined
+4/4/2017 8:22:2 9: Path query:{"PARAM":["YOGO"]}
+4/4/2017 8:22:2 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{YOGO}','{HN}', :cursor); END;
+4/4/2017 8:22:11 9: 1 Object(s) returned... [FETCH]
+4/4/2017 8:22:11 9: [object Object]
+4/4/2017 8:22:17 10: LIBQUERY with Callback: 
+4/4/2017 8:22:17 10: Path request:/api/item/
+4/4/2017 8:22:17 10: Path header:undefined
+4/4/2017 8:22:17 10: Path query:{"PARAM":"259496"}
+4/4/2017 8:22:17 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'ART0000001','admin','{HEINENS_CEN_UAT}', '{259496}','{HN}', :cursor); END;
+4/4/2017 8:22:17 11: LIBQUERY with Callback: 
+4/4/2017 8:22:17 11: Path request:/api/itemcost/
+4/4/2017 8:22:17 11: Path header:undefined
+4/4/2017 8:22:17 11: Path query:{"PARAM":"259496"}
+4/4/2017 8:22:17 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'ART0000002','admin','{HEINENS_CEN_UAT}', '{259496}','{HN}', :cursor); END;
+4/4/2017 8:22:17 12: LIBQUERY with Callback: 
+4/4/2017 8:22:17 12: Path request:/api/itemretail/
+4/4/2017 8:22:17 12: Path header:undefined
+4/4/2017 8:22:17 12: Path query:{"PARAM":"259496"}
+4/4/2017 8:22:17 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'ART0000003','admin','{HEINENS_CEN_UAT}', '{259496}','{HN}', :cursor); END;
+4/4/2017 8:22:21 12: 2 Object(s) returned... [FETCH]
+4/4/2017 8:22:21 12: [object Object],[object Object]
+4/4/2017 8:22:21 12: 4 Object(s) returned... [FETCH]
+4/4/2017 8:22:21 12: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:22:23 12: 0 Object(s) returned... [FETCH]
+4/4/2017 8:25:26 13: LIBQUERY with Callback: 
+4/4/2017 8:25:26 13: Path request:/api/user/
+4/4/2017 8:25:26 13: Path header:undefined
+4/4/2017 8:25:26 13: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:25:26 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:25:26 14: LIBQUERY with Callback: 
+4/4/2017 8:25:26 14: Path request:/api/environment/
+4/4/2017 8:25:26 14: Path header:undefined
+4/4/2017 8:25:26 14: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:25:26 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:25:26 14: 1 Object(s) returned... [FETCH]
+4/4/2017 8:25:26 14: [object Object]
+4/4/2017 8:25:26 14: 2 Object(s) returned... [FETCH]
+4/4/2017 8:25:26 14: [object Object],[object Object]
+4/4/2017 8:28:15 15: LIBQUERY with Callback: 
+4/4/2017 8:28:15 15: Path request:/api/user/
+4/4/2017 8:28:15 15: Path header:undefined
+4/4/2017 8:28:15 15: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:28:15 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:28:15 16: LIBQUERY with Callback: 
+4/4/2017 8:28:15 16: Path request:/api/environment/
+4/4/2017 8:28:15 16: Path header:undefined
+4/4/2017 8:28:15 16: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:28:15 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:28:15 16: 1 Object(s) returned... [FETCH]
+4/4/2017 8:28:15 16: [object Object]
+4/4/2017 8:28:15 16: 2 Object(s) returned... [FETCH]
+4/4/2017 8:28:15 16: [object Object],[object Object]
+4/4/2017 8:38:43 17: LIBQUERY with Callback: 
+4/4/2017 8:38:43 17: Path request:/api/search/
+4/4/2017 8:38:43 17: Path header:undefined
+4/4/2017 8:38:43 17: Path query:{"PARAM":["CAKE"]}
+4/4/2017 8:38:43 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{CAKE}','{HN}', :cursor); END;
+4/4/2017 8:38:53 17: 1429 Object(s) returned... [FETCH]
+4/4/2017 8:38:53 17: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:38:58 18: LIBQUERY with Callback: 
+4/4/2017 8:38:58 18: Path request:/api/item/
+4/4/2017 8:38:58 18: Path header:undefined
+4/4/2017 8:38:58 18: Path query:{"PARAM":"1000452"}
+4/4/2017 8:38:58 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'ART0000001','admin','{HEINENS_CEN_UAT}', '{1000452}','{HN}', :cursor); END;
+4/4/2017 8:38:58 19: LIBQUERY with Callback: 
+4/4/2017 8:38:58 19: Path request:/api/itemcost/
+4/4/2017 8:38:58 19: Path header:undefined
+4/4/2017 8:38:58 19: Path query:{"PARAM":"1000452"}
+4/4/2017 8:38:58 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'ART0000002','admin','{HEINENS_CEN_UAT}', '{1000452}','{HN}', :cursor); END;
+4/4/2017 8:38:58 20: LIBQUERY with Callback: 
+4/4/2017 8:38:58 20: Path request:/api/itemretail/
+4/4/2017 8:38:58 20: Path header:undefined
+4/4/2017 8:38:58 20: Path query:{"PARAM":"1000452"}
+4/4/2017 8:38:58 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'ART0000003','admin','{HEINENS_CEN_UAT}', '{1000452}','{HN}', :cursor); END;
+4/4/2017 8:39:1 20: 3 Object(s) returned... [FETCH]
+4/4/2017 8:39:1 20: [object Object],[object Object],[object Object]
+4/4/2017 8:39:1 20: 4 Object(s) returned... [FETCH]
+4/4/2017 8:39:1 20: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:39:4 20: 4 Object(s) returned... [FETCH]
+4/4/2017 8:39:4 20: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:41:56 21: LIBQUERY with Callback: 
+4/4/2017 8:41:56 21: Path request:/api/user/
+4/4/2017 8:41:56 21: Path header:undefined
+4/4/2017 8:41:56 21: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:41:56 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:41:56 22: LIBQUERY with Callback: 
+4/4/2017 8:41:56 22: Path request:/api/environment/
+4/4/2017 8:41:56 22: Path header:undefined
+4/4/2017 8:41:56 22: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:41:56 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:41:56 22: 1 Object(s) returned... [FETCH]
+4/4/2017 8:41:56 22: [object Object]
+4/4/2017 8:41:56 22: 2 Object(s) returned... [FETCH]
+4/4/2017 8:41:56 22: [object Object],[object Object]
+4/4/2017 8:42:51 23: LIBQUERY with Callback: 
+4/4/2017 8:42:51 23: Path request:/api/user/
+4/4/2017 8:42:51 23: Path header:undefined
+4/4/2017 8:42:51 23: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:42:51 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:42:51 24: LIBQUERY with Callback: 
+4/4/2017 8:42:51 24: Path request:/api/environment/
+4/4/2017 8:42:51 24: Path header:undefined
+4/4/2017 8:42:51 24: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:42:51 24: BEGIN PKREQUESTMANAGER.CALLQUERY(24,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:42:51 24: 1 Object(s) returned... [FETCH]
+4/4/2017 8:42:51 24: [object Object]
+4/4/2017 8:42:51 24: 2 Object(s) returned... [FETCH]
+4/4/2017 8:42:51 24: [object Object],[object Object]
+4/4/2017 8:44:42 25: LIBQUERY with Callback: 
+4/4/2017 8:44:42 25: Path request:/api/user/
+4/4/2017 8:44:42 25: Path header:undefined
+4/4/2017 8:44:42 25: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:44:42 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:44:43 26: LIBQUERY with Callback: 
+4/4/2017 8:44:43 26: Path request:/api/environment/
+4/4/2017 8:44:43 26: Path header:undefined
+4/4/2017 8:44:43 26: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:44:43 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:44:43 26: 1 Object(s) returned... [FETCH]
+4/4/2017 8:44:43 26: [object Object]
+4/4/2017 8:44:43 26: 2 Object(s) returned... [FETCH]
+4/4/2017 8:44:43 26: [object Object],[object Object]
+4/4/2017 8:44:49 27: LIBQUERY with Callback: 
+4/4/2017 8:44:49 27: Path request:/api/search/
+4/4/2017 8:44:49 27: Path header:undefined
+4/4/2017 8:44:49 27: Path query:{"PARAM":["111770"]}
+4/4/2017 8:44:49 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 8:44:59 27: 2 Object(s) returned... [FETCH]
+4/4/2017 8:44:59 27: [object Object],[object Object]
+4/4/2017 8:45:3 28: LIBQUERY with Callback: 
+4/4/2017 8:45:3 28: Path request:/api/item/
+4/4/2017 8:45:3 28: Path header:undefined
+4/4/2017 8:45:3 28: Path query:{"PARAM":"18841"}
+4/4/2017 8:45:3 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:45:3 29: LIBQUERY with Callback: 
+4/4/2017 8:45:3 29: Path request:/api/itemcost/
+4/4/2017 8:45:3 29: Path header:undefined
+4/4/2017 8:45:3 29: Path query:{"PARAM":"18841"}
+4/4/2017 8:45:3 29: BEGIN PKREQUESTMANAGER.CALLQUERY(29,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:45:3 30: LIBQUERY with Callback: 
+4/4/2017 8:45:3 30: Path request:/api/itemretail/
+4/4/2017 8:45:3 30: Path header:undefined
+4/4/2017 8:45:3 30: Path query:{"PARAM":"18841"}
+4/4/2017 8:45:3 30: BEGIN PKREQUESTMANAGER.CALLQUERY(30,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:45:6 30: 3 Object(s) returned... [FETCH]
+4/4/2017 8:45:6 30: [object Object],[object Object],[object Object]
+4/4/2017 8:45:7 30: 4 Object(s) returned... [FETCH]
+4/4/2017 8:45:7 30: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:45:9 30: 3 Object(s) returned... [FETCH]
+4/4/2017 8:45:9 30: [object Object],[object Object],[object Object]
+4/4/2017 8:47:25 31: LIBQUERY with Callback: 
+4/4/2017 8:47:25 31: Path request:/api/user/
+4/4/2017 8:47:25 31: Path header:undefined
+4/4/2017 8:47:25 31: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:47:25 31: BEGIN PKREQUESTMANAGER.CALLQUERY(31,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:47:25 32: LIBQUERY with Callback: 
+4/4/2017 8:47:25 32: Path request:/api/environment/
+4/4/2017 8:47:25 32: Path header:undefined
+4/4/2017 8:47:25 32: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:47:25 32: BEGIN PKREQUESTMANAGER.CALLQUERY(32,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:47:25 32: 1 Object(s) returned... [FETCH]
+4/4/2017 8:47:25 32: [object Object]
+4/4/2017 8:47:25 32: 2 Object(s) returned... [FETCH]
+4/4/2017 8:47:25 32: [object Object],[object Object]
+4/4/2017 8:47:40 33: LIBQUERY with Callback: 
+4/4/2017 8:47:40 33: Path request:/api/search/
+4/4/2017 8:47:40 33: Path header:undefined
+4/4/2017 8:47:40 33: Path query:{"PARAM":["111770"]}
+4/4/2017 8:47:40 33: BEGIN PKREQUESTMANAGER.CALLQUERY(33,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 8:47:54 33: 2 Object(s) returned... [FETCH]
+4/4/2017 8:47:54 33: [object Object],[object Object]
+4/4/2017 8:47:58 34: LIBQUERY with Callback: 
+4/4/2017 8:47:58 34: Path request:/api/item/
+4/4/2017 8:47:58 34: Path header:undefined
+4/4/2017 8:47:58 34: Path query:{"PARAM":"18841"}
+4/4/2017 8:47:58 34: BEGIN PKREQUESTMANAGER.CALLQUERY(34,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:47:58 35: LIBQUERY with Callback: 
+4/4/2017 8:47:58 35: Path request:/api/itemcost/
+4/4/2017 8:47:58 35: Path header:undefined
+4/4/2017 8:47:58 35: Path query:{"PARAM":"18841"}
+4/4/2017 8:47:58 35: BEGIN PKREQUESTMANAGER.CALLQUERY(35,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:47:58 36: LIBQUERY with Callback: 
+4/4/2017 8:47:58 36: Path request:/api/itemretail/
+4/4/2017 8:47:58 36: Path header:undefined
+4/4/2017 8:47:58 36: Path query:{"PARAM":"18841"}
+4/4/2017 8:47:58 36: BEGIN PKREQUESTMANAGER.CALLQUERY(36,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:48:2 36: 3 Object(s) returned... [FETCH]
+4/4/2017 8:48:2 36: [object Object],[object Object],[object Object]
+4/4/2017 8:48:3 36: 4 Object(s) returned... [FETCH]
+4/4/2017 8:48:3 36: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:48:5 36: 3 Object(s) returned... [FETCH]
+4/4/2017 8:48:5 36: [object Object],[object Object],[object Object]
+4/4/2017 8:50:24 37: LIBQUERY with Callback: 
+4/4/2017 8:50:24 37: Path request:/api/user/
+4/4/2017 8:50:24 37: Path header:undefined
+4/4/2017 8:50:24 37: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:50:24 37: BEGIN PKREQUESTMANAGER.CALLQUERY(37,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:50:24 38: LIBQUERY with Callback: 
+4/4/2017 8:50:24 38: Path request:/api/environment/
+4/4/2017 8:50:24 38: Path header:undefined
+4/4/2017 8:50:24 38: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:50:24 38: BEGIN PKREQUESTMANAGER.CALLQUERY(38,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:50:24 38: 1 Object(s) returned... [FETCH]
+4/4/2017 8:50:24 38: [object Object]
+4/4/2017 8:50:24 38: 2 Object(s) returned... [FETCH]
+4/4/2017 8:50:24 38: [object Object],[object Object]
+4/4/2017 8:50:30 39: LIBQUERY with Callback: 
+4/4/2017 8:50:30 39: Path request:/api/search/
+4/4/2017 8:50:30 39: Path header:undefined
+4/4/2017 8:50:30 39: Path query:{"PARAM":["962693"]}
+4/4/2017 8:50:30 39: BEGIN PKREQUESTMANAGER.CALLQUERY(39,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{962693}','{HN}', :cursor); END;
+4/4/2017 8:50:41 39: 2 Object(s) returned... [FETCH]
+4/4/2017 8:50:41 39: [object Object],[object Object]
+4/4/2017 8:50:46 40: LIBQUERY with Callback: 
+4/4/2017 8:50:46 40: Path request:/api/item/
+4/4/2017 8:50:46 40: Path header:undefined
+4/4/2017 8:50:46 40: Path query:{"PARAM":"1076875"}
+4/4/2017 8:50:46 40: BEGIN PKREQUESTMANAGER.CALLQUERY(40,'ART0000001','admin','{HEINENS_CEN_UAT}', '{1076875}','{HN}', :cursor); END;
+4/4/2017 8:50:46 41: LIBQUERY with Callback: 
+4/4/2017 8:50:46 41: Path request:/api/itemcost/
+4/4/2017 8:50:46 41: Path header:undefined
+4/4/2017 8:50:46 41: Path query:{"PARAM":"1076875"}
+4/4/2017 8:50:46 41: BEGIN PKREQUESTMANAGER.CALLQUERY(41,'ART0000002','admin','{HEINENS_CEN_UAT}', '{1076875}','{HN}', :cursor); END;
+4/4/2017 8:50:46 42: LIBQUERY with Callback: 
+4/4/2017 8:50:46 42: Path request:/api/itemretail/
+4/4/2017 8:50:46 42: Path header:undefined
+4/4/2017 8:50:46 42: Path query:{"PARAM":"1076875"}
+4/4/2017 8:50:46 42: BEGIN PKREQUESTMANAGER.CALLQUERY(42,'ART0000003','admin','{HEINENS_CEN_UAT}', '{1076875}','{HN}', :cursor); END;
+4/4/2017 8:50:49 42: 3 Object(s) returned... [FETCH]
+4/4/2017 8:50:49 42: [object Object],[object Object],[object Object]
+4/4/2017 8:50:51 42: 4 Object(s) returned... [FETCH]
+4/4/2017 8:50:51 42: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:50:52 42: 4 Object(s) returned... [FETCH]
+4/4/2017 8:50:52 42: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:52:45 43: LIBQUERY with Callback: 
+4/4/2017 8:52:45 43: Path request:/api/user/
+4/4/2017 8:52:45 43: Path header:undefined
+4/4/2017 8:52:45 43: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:52:45 43: BEGIN PKREQUESTMANAGER.CALLQUERY(43,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:52:45 44: LIBQUERY with Callback: 
+4/4/2017 8:52:45 44: Path request:/api/environment/
+4/4/2017 8:52:45 44: Path header:undefined
+4/4/2017 8:52:45 44: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:52:45 44: BEGIN PKREQUESTMANAGER.CALLQUERY(44,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:52:45 44: 1 Object(s) returned... [FETCH]
+4/4/2017 8:52:45 44: [object Object]
+4/4/2017 8:52:45 44: 2 Object(s) returned... [FETCH]
+4/4/2017 8:52:45 44: [object Object],[object Object]
+4/4/2017 8:52:52 45: LIBQUERY with Callback: 
+4/4/2017 8:52:52 45: Path request:/api/search/
+4/4/2017 8:52:52 45: Path header:undefined
+4/4/2017 8:52:52 45: Path query:{"PARAM":["COOKIES"]}
+4/4/2017 8:52:52 45: BEGIN PKREQUESTMANAGER.CALLQUERY(45,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{COOKIES}','{HN}', :cursor); END;
+4/4/2017 8:53:2 45: 378 Object(s) returned... [FETCH]
+4/4/2017 8:53:2 45: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:53:8 46: LIBQUERY with Callback: 
+4/4/2017 8:53:8 46: Path request:/api/item/
+4/4/2017 8:53:8 46: Path header:undefined
+4/4/2017 8:53:8 46: Path query:{"PARAM":"1008814"}
+4/4/2017 8:53:8 46: BEGIN PKREQUESTMANAGER.CALLQUERY(46,'ART0000001','admin','{HEINENS_CEN_UAT}', '{1008814}','{HN}', :cursor); END;
+4/4/2017 8:53:8 47: LIBQUERY with Callback: 
+4/4/2017 8:53:8 47: Path request:/api/itemcost/
+4/4/2017 8:53:8 47: Path header:undefined
+4/4/2017 8:53:8 47: Path query:{"PARAM":"1008814"}
+4/4/2017 8:53:8 47: BEGIN PKREQUESTMANAGER.CALLQUERY(47,'ART0000002','admin','{HEINENS_CEN_UAT}', '{1008814}','{HN}', :cursor); END;
+4/4/2017 8:53:8 48: LIBQUERY with Callback: 
+4/4/2017 8:53:8 48: Path request:/api/itemretail/
+4/4/2017 8:53:8 48: Path header:undefined
+4/4/2017 8:53:8 48: Path query:{"PARAM":"1008814"}
+4/4/2017 8:53:8 48: BEGIN PKREQUESTMANAGER.CALLQUERY(48,'ART0000003','admin','{HEINENS_CEN_UAT}', '{1008814}','{HN}', :cursor); END;
+4/4/2017 8:53:12 48: 4 Object(s) returned... [FETCH]
+4/4/2017 8:53:12 48: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:53:12 48: 2 Object(s) returned... [FETCH]
+4/4/2017 8:53:12 48: [object Object],[object Object]
+4/4/2017 8:53:14 48: 0 Object(s) returned... [FETCH]
+4/4/2017 8:54:7 49: LIBQUERY with Callback: 
+4/4/2017 8:54:7 49: Path request:/api/user/
+4/4/2017 8:54:7 49: Path header:undefined
+4/4/2017 8:54:7 49: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:54:7 49: BEGIN PKREQUESTMANAGER.CALLQUERY(49,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:54:7 50: LIBQUERY with Callback: 
+4/4/2017 8:54:7 50: Path request:/api/environment/
+4/4/2017 8:54:7 50: Path header:undefined
+4/4/2017 8:54:7 50: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:54:7 50: BEGIN PKREQUESTMANAGER.CALLQUERY(50,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:54:7 50: 2 Object(s) returned... [FETCH]
+4/4/2017 8:54:7 50: [object Object],[object Object]
+4/4/2017 8:54:7 50: 1 Object(s) returned... [FETCH]
+4/4/2017 8:54:7 50: [object Object]
+4/4/2017 8:54:16 51: LIBQUERY with Callback: 
+4/4/2017 8:54:16 51: Path request:/api/search/
+4/4/2017 8:54:16 51: Path header:undefined
+4/4/2017 8:54:16 51: Path query:{"PARAM":["111770"]}
+4/4/2017 8:54:16 51: BEGIN PKREQUESTMANAGER.CALLQUERY(51,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 8:54:26 51: 2 Object(s) returned... [FETCH]
+4/4/2017 8:54:26 51: [object Object],[object Object]
+4/4/2017 8:54:31 52: LIBQUERY with Callback: 
+4/4/2017 8:54:31 52: Path request:/api/item/
+4/4/2017 8:54:31 52: Path header:undefined
+4/4/2017 8:54:31 52: Path query:{"PARAM":"18841"}
+4/4/2017 8:54:31 52: BEGIN PKREQUESTMANAGER.CALLQUERY(52,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:54:31 53: LIBQUERY with Callback: 
+4/4/2017 8:54:31 53: Path request:/api/itemcost/
+4/4/2017 8:54:31 53: Path header:undefined
+4/4/2017 8:54:31 53: Path query:{"PARAM":"18841"}
+4/4/2017 8:54:31 53: BEGIN PKREQUESTMANAGER.CALLQUERY(53,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:54:31 54: LIBQUERY with Callback: 
+4/4/2017 8:54:31 54: Path request:/api/itemretail/
+4/4/2017 8:54:31 54: Path header:undefined
+4/4/2017 8:54:31 54: Path query:{"PARAM":"18841"}
+4/4/2017 8:54:31 54: BEGIN PKREQUESTMANAGER.CALLQUERY(54,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:54:35 54: 4 Object(s) returned... [FETCH]
+4/4/2017 8:54:35 54: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:55:17 1: LIBQUERY with Callback: 
+4/4/2017 8:55:17 1: Path request:/api/search/
+4/4/2017 8:55:17 1: Path header:undefined
+4/4/2017 8:55:17 1: Path query:{"PARAM":["111770"]}
+4/4/2017 8:55:17 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 8:55:28 1: 2 Object(s) returned... [FETCH]
+4/4/2017 8:55:28 1: [object Object],[object Object]
+4/4/2017 8:55:31 2: LIBQUERY with Callback: 
+4/4/2017 8:55:31 2: Path request:/api/item/
+4/4/2017 8:55:31 2: Path header:undefined
+4/4/2017 8:55:31 2: Path query:{"PARAM":"18841"}
+4/4/2017 8:55:31 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:55:31 3: LIBQUERY with Callback: 
+4/4/2017 8:55:31 3: Path request:/api/itemretail/
+4/4/2017 8:55:31 3: Path header:undefined
+4/4/2017 8:55:31 3: Path query:{"PARAM":"18841"}
+4/4/2017 8:55:31 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:55:31 4: LIBQUERY with Callback: 
+4/4/2017 8:55:31 4: Path request:/api/itemcost/
+4/4/2017 8:55:31 4: Path header:undefined
+4/4/2017 8:55:31 4: Path query:{"PARAM":"18841"}
+4/4/2017 8:55:31 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:55:36 4: 4 Object(s) returned... [FETCH]
+4/4/2017 8:55:36 4: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:55:37 4: 3 Object(s) returned... [FETCH]
+4/4/2017 8:55:37 4: [object Object],[object Object],[object Object]
+4/4/2017 8:55:38 4: 3 Object(s) returned... [FETCH]
+4/4/2017 8:55:38 4: [object Object],[object Object],[object Object]
+4/4/2017 8:56:48 5: LIBQUERY with Callback: 
+4/4/2017 8:56:48 5: Path request:/api/user/
+4/4/2017 8:56:48 5: Path header:undefined
+4/4/2017 8:56:48 5: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:56:48 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:56:48 6: LIBQUERY with Callback: 
+4/4/2017 8:56:48 6: Path request:/api/environment/
+4/4/2017 8:56:48 6: Path header:undefined
+4/4/2017 8:56:48 6: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:56:48 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:56:48 6: 1 Object(s) returned... [FETCH]
+4/4/2017 8:56:48 6: [object Object]
+4/4/2017 8:56:48 6: 2 Object(s) returned... [FETCH]
+4/4/2017 8:56:48 6: [object Object],[object Object]
+4/4/2017 8:56:51 7: LIBQUERY with Callback: 
+4/4/2017 8:56:51 7: Path request:/api/search/
+4/4/2017 8:56:51 7: Path header:undefined
+4/4/2017 8:56:51 7: Path query:{"PARAM":["111770"]}
+4/4/2017 8:56:51 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 8:57:2 7: 2 Object(s) returned... [FETCH]
+4/4/2017 8:57:2 7: [object Object],[object Object]
+4/4/2017 8:57:6 8: LIBQUERY with Callback: 
+4/4/2017 8:57:6 8: Path request:/api/item/
+4/4/2017 8:57:6 8: Path header:undefined
+4/4/2017 8:57:6 8: Path query:{"PARAM":"18841"}
+4/4/2017 8:57:6 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:57:6 9: LIBQUERY with Callback: 
+4/4/2017 8:57:6 9: Path request:/api/itemcost/
+4/4/2017 8:57:6 9: Path header:undefined
+4/4/2017 8:57:6 9: Path query:{"PARAM":"18841"}
+4/4/2017 8:57:6 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:57:6 10: LIBQUERY with Callback: 
+4/4/2017 8:57:6 10: Path request:/api/itemretail/
+4/4/2017 8:57:6 10: Path header:undefined
+4/4/2017 8:57:6 10: Path query:{"PARAM":"18841"}
+4/4/2017 8:57:6 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:57:8 10: 3 Object(s) returned... [FETCH]
+4/4/2017 8:57:8 10: [object Object],[object Object],[object Object]
+4/4/2017 8:57:10 10: 4 Object(s) returned... [FETCH]
+4/4/2017 8:57:10 10: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:57:10 10: 3 Object(s) returned... [FETCH]
+4/4/2017 8:57:10 10: [object Object],[object Object],[object Object]
+4/4/2017 8:58:44 11: LIBQUERY with Callback: 
+4/4/2017 8:58:44 11: Path request:/api/user/
+4/4/2017 8:58:44 11: Path header:undefined
+4/4/2017 8:58:44 11: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:58:44 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:58:44 12: LIBQUERY with Callback: 
+4/4/2017 8:58:44 12: Path request:/api/environment/
+4/4/2017 8:58:44 12: Path header:undefined
+4/4/2017 8:58:44 12: Path query:{"USER_NAME":"admin"}
+4/4/2017 8:58:44 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 8:58:44 12: 1 Object(s) returned... [FETCH]
+4/4/2017 8:58:44 12: [object Object]
+4/4/2017 8:58:44 12: 2 Object(s) returned... [FETCH]
+4/4/2017 8:58:44 12: [object Object],[object Object]
+4/4/2017 8:58:48 13: LIBQUERY with Callback: 
+4/4/2017 8:58:48 13: Path request:/api/search/
+4/4/2017 8:58:48 13: Path header:undefined
+4/4/2017 8:58:48 13: Path query:{"PARAM":["111770"]}
+4/4/2017 8:58:48 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 8:58:59 13: 2 Object(s) returned... [FETCH]
+4/4/2017 8:58:59 13: [object Object],[object Object]
+4/4/2017 8:59:3 14: LIBQUERY with Callback: 
+4/4/2017 8:59:3 14: Path request:/api/item/
+4/4/2017 8:59:3 14: Path header:undefined
+4/4/2017 8:59:3 14: Path query:{"PARAM":"18841"}
+4/4/2017 8:59:3 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:59:3 15: LIBQUERY with Callback: 
+4/4/2017 8:59:3 15: Path request:/api/itemcost/
+4/4/2017 8:59:3 15: Path header:undefined
+4/4/2017 8:59:3 15: Path query:{"PARAM":"18841"}
+4/4/2017 8:59:3 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:59:3 16: LIBQUERY with Callback: 
+4/4/2017 8:59:3 16: Path request:/api/itemretail/
+4/4/2017 8:59:3 16: Path header:undefined
+4/4/2017 8:59:3 16: Path query:{"PARAM":"18841"}
+4/4/2017 8:59:3 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 8:59:7 16: 3 Object(s) returned... [FETCH]
+4/4/2017 8:59:7 16: [object Object],[object Object],[object Object]
+4/4/2017 8:59:7 16: 4 Object(s) returned... [FETCH]
+4/4/2017 8:59:7 16: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 8:59:8 16: 3 Object(s) returned... [FETCH]
+4/4/2017 8:59:8 16: [object Object],[object Object],[object Object]
+4/4/2017 9:0:7 17: LIBQUERY with Callback: 
+4/4/2017 9:0:7 17: Path request:/api/user/
+4/4/2017 9:0:7 17: Path header:undefined
+4/4/2017 9:0:7 17: Path query:{"USER_NAME":"admin"}
+4/4/2017 9:0:7 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 9:0:7 18: LIBQUERY with Callback: 
+4/4/2017 9:0:7 18: Path request:/api/environment/
+4/4/2017 9:0:7 18: Path header:undefined
+4/4/2017 9:0:7 18: Path query:{"USER_NAME":"admin"}
+4/4/2017 9:0:7 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 9:0:8 18: 2 Object(s) returned... [FETCH]
+4/4/2017 9:0:8 18: [object Object],[object Object]
+4/4/2017 9:0:8 18: 1 Object(s) returned... [FETCH]
+4/4/2017 9:0:8 18: [object Object]
+4/4/2017 10:6:12 3: LIBQUERY with Callback: 
+4/4/2017 10:6:12 3: Path request:/api/user/
+4/4/2017 10:6:12 3: Path header:undefined
+4/4/2017 10:6:12 3: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:6:12 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:6:12 4: LIBQUERY with Callback: 
+4/4/2017 10:6:12 4: Path request:/api/environment/
+4/4/2017 10:6:12 4: Path header:undefined
+4/4/2017 10:6:12 4: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:6:12 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:6:12 4: 1 Object(s) returned... [FETCH]
+4/4/2017 10:6:12 4: [object Object]
+4/4/2017 10:6:12 4: 2 Object(s) returned... [FETCH]
+4/4/2017 10:6:12 4: [object Object],[object Object]
+4/4/2017 10:7:32 5: LIBQUERY with Callback: 
+4/4/2017 10:7:32 5: Path request:/api/user/
+4/4/2017 10:7:32 5: Path header:undefined
+4/4/2017 10:7:32 5: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:7:32 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:7:32 6: LIBQUERY with Callback: 
+4/4/2017 10:7:32 6: Path request:/api/environment/
+4/4/2017 10:7:32 6: Path header:undefined
+4/4/2017 10:7:32 6: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:7:32 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:7:32 6: 1 Object(s) returned... [FETCH]
+4/4/2017 10:7:32 6: [object Object]
+4/4/2017 10:7:32 6: 2 Object(s) returned... [FETCH]
+4/4/2017 10:7:32 6: [object Object],[object Object]
+4/4/2017 10:23:55 7: LIBQUERY with Callback: 
+4/4/2017 10:23:55 7: Path request:/api/user/
+4/4/2017 10:23:55 7: Path header:undefined
+4/4/2017 10:23:55 7: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:23:55 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:23:55 8: LIBQUERY with Callback: 
+4/4/2017 10:23:55 8: Path request:/api/environment/
+4/4/2017 10:23:55 8: Path header:undefined
+4/4/2017 10:23:55 8: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:23:55 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:23:55 8: 1 Object(s) returned... [FETCH]
+4/4/2017 10:23:55 8: [object Object]
+4/4/2017 10:23:55 8: 2 Object(s) returned... [FETCH]
+4/4/2017 10:23:55 8: [object Object],[object Object]
+4/4/2017 10:27:41 9: LIBQUERY with Callback: 
+4/4/2017 10:27:41 9: Path request:/api/user/
+4/4/2017 10:27:41 9: Path header:undefined
+4/4/2017 10:27:41 9: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:27:41 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:27:41 10: LIBQUERY with Callback: 
+4/4/2017 10:27:41 10: Path request:/api/environment/
+4/4/2017 10:27:41 10: Path header:undefined
+4/4/2017 10:27:41 10: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:27:41 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:27:41 10: 1 Object(s) returned... [FETCH]
+4/4/2017 10:27:41 10: [object Object]
+4/4/2017 10:27:41 10: 2 Object(s) returned... [FETCH]
+4/4/2017 10:27:41 10: [object Object],[object Object]
+4/4/2017 10:28:51 11: LIBQUERY with Callback: 
+4/4/2017 10:28:51 11: Path request:/api/user/
+4/4/2017 10:28:51 11: Path header:undefined
+4/4/2017 10:28:51 11: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:28:51 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:28:51 12: LIBQUERY with Callback: 
+4/4/2017 10:28:51 12: Path request:/api/environment/
+4/4/2017 10:28:51 12: Path header:undefined
+4/4/2017 10:28:51 12: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:28:51 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:28:51 12: 1 Object(s) returned... [FETCH]
+4/4/2017 10:28:51 12: [object Object]
+4/4/2017 10:28:52 12: 2 Object(s) returned... [FETCH]
+4/4/2017 10:28:52 12: [object Object],[object Object]
+4/4/2017 10:31:20 13: LIBQUERY with Callback: 
+4/4/2017 10:31:20 13: Path request:/api/user/
+4/4/2017 10:31:20 13: Path header:undefined
+4/4/2017 10:31:20 13: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:31:20 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:31:20 14: LIBQUERY with Callback: 
+4/4/2017 10:31:20 14: Path request:/api/environment/
+4/4/2017 10:31:20 14: Path header:undefined
+4/4/2017 10:31:20 14: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:31:20 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:31:20 14: 1 Object(s) returned... [FETCH]
+4/4/2017 10:31:20 14: [object Object]
+4/4/2017 10:31:20 14: 2 Object(s) returned... [FETCH]
+4/4/2017 10:31:20 14: [object Object],[object Object]
+4/4/2017 10:31:51 15: LIBQUERY with Callback: 
+4/4/2017 10:31:51 15: Path request:/api/search/
+4/4/2017 10:31:51 15: Path header:undefined
+4/4/2017 10:31:51 15: Path query:{"PARAM":["107972"]}
+4/4/2017 10:31:51 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{107972}','{HN}', :cursor); END;
+4/4/2017 10:32:4 15: 1 Object(s) returned... [FETCH]
+4/4/2017 10:32:4 15: [object Object]
+4/4/2017 10:32:8 16: LIBQUERY with Callback: 
+4/4/2017 10:32:8 16: Path request:/api/item/
+4/4/2017 10:32:8 16: Path header:undefined
+4/4/2017 10:32:8 16: Path query:{"PARAM":"31027"}
+4/4/2017 10:32:8 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:32:8 17: LIBQUERY with Callback: 
+4/4/2017 10:32:8 17: Path request:/api/itemcost/
+4/4/2017 10:32:8 17: Path header:undefined
+4/4/2017 10:32:8 17: Path query:{"PARAM":"31027"}
+4/4/2017 10:32:8 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:32:8 18: LIBQUERY with Callback: 
+4/4/2017 10:32:8 18: Path request:/api/itemretail/
+4/4/2017 10:32:8 18: Path header:undefined
+4/4/2017 10:32:8 18: Path query:{"PARAM":"31027"}
+4/4/2017 10:32:8 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:32:8 19: LIBQUERY with Callback: 
+4/4/2017 10:32:8 19: Path request:/api/itemretail/
+4/4/2017 10:32:8 19: Path header:undefined
+4/4/2017 10:32:8 19: Path query:{"PARAM":"31027"}
+4/4/2017 10:32:8 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:32:11 19: 8 Object(s) returned... [FETCH]
+4/4/2017 10:32:11 19: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:32:12 19: 4 Object(s) returned... [FETCH]
+4/4/2017 10:32:12 19: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:32:13 19: 4 Object(s) returned... [FETCH]
+4/4/2017 10:32:13 19: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:32:15 19: 0 Object(s) returned... [FETCH]
+4/4/2017 10:33:51 20: LIBQUERY with Callback: 
+4/4/2017 10:33:51 20: Path request:/api/user/
+4/4/2017 10:33:51 20: Path header:undefined
+4/4/2017 10:33:51 20: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:33:51 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:33:51 21: LIBQUERY with Callback: 
+4/4/2017 10:33:51 21: Path request:/api/environment/
+4/4/2017 10:33:51 21: Path header:undefined
+4/4/2017 10:33:51 21: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:33:51 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:33:51 21: 1 Object(s) returned... [FETCH]
+4/4/2017 10:33:51 21: [object Object]
+4/4/2017 10:33:51 21: 2 Object(s) returned... [FETCH]
+4/4/2017 10:33:51 21: [object Object],[object Object]
+4/4/2017 10:34:41 22: LIBQUERY with Callback: 
+4/4/2017 10:34:41 22: Path request:/api/search/
+4/4/2017 10:34:41 22: Path header:undefined
+4/4/2017 10:34:41 22: Path query:{"PARAM":["107972"]}
+4/4/2017 10:34:41 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{107972}','{HN}', :cursor); END;
+4/4/2017 10:34:52 22: 1 Object(s) returned... [FETCH]
+4/4/2017 10:34:52 22: [object Object]
+4/4/2017 10:44:20 23: LIBQUERY with Callback: 
+4/4/2017 10:44:20 23: Path request:/api/item/
+4/4/2017 10:44:20 23: Path header:undefined
+4/4/2017 10:44:20 23: Path query:{"PARAM":"31027"}
+4/4/2017 10:44:20 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:44:20 24: LIBQUERY with Callback: 
+4/4/2017 10:44:20 24: Path request:/api/itemcost/
+4/4/2017 10:44:20 24: Path header:undefined
+4/4/2017 10:44:20 24: Path query:{"PARAM":"31027"}
+4/4/2017 10:44:20 24: BEGIN PKREQUESTMANAGER.CALLQUERY(24,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:44:20 25: LIBQUERY with Callback: 
+4/4/2017 10:44:20 25: Path request:/api/itemsubstitution/
+4/4/2017 10:44:20 25: Path header:undefined
+4/4/2017 10:44:20 25: Path query:{"PARAM":"31027"}
+4/4/2017 10:44:20 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'ART0000004','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:44:20 26: LIBQUERY with Callback: 
+4/4/2017 10:44:20 26: Path request:/api/itemretail/
+4/4/2017 10:44:20 26: Path header:undefined
+4/4/2017 10:44:20 26: Path query:{"PARAM":"31027"}
+4/4/2017 10:44:20 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:44:24 26: 4 Object(s) returned... [FETCH]
+4/4/2017 10:44:24 26: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:44:24 26: 0 Object(s) returned... [FETCH]
+4/4/2017 10:44:26 26: 8 Object(s) returned... [FETCH]
+4/4/2017 10:44:26 26: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:44:33 26: 0 Object(s) returned... [FETCH]
+4/4/2017 10:44:56 27: LIBQUERY with Callback: 
+4/4/2017 10:44:56 27: Path request:/api/user/
+4/4/2017 10:44:56 27: Path header:undefined
+4/4/2017 10:44:56 27: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:44:56 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:44:56 28: LIBQUERY with Callback: 
+4/4/2017 10:44:56 28: Path request:/api/environment/
+4/4/2017 10:44:56 28: Path header:undefined
+4/4/2017 10:44:56 28: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:44:56 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:44:57 28: 1 Object(s) returned... [FETCH]
+4/4/2017 10:44:57 28: [object Object]
+4/4/2017 10:44:57 28: 2 Object(s) returned... [FETCH]
+4/4/2017 10:44:57 28: [object Object],[object Object]
+4/4/2017 10:45:9 29: LIBQUERY with Callback: 
+4/4/2017 10:45:9 29: Path request:/api/search/
+4/4/2017 10:45:9 29: Path header:undefined
+4/4/2017 10:45:9 29: Path query:{"PARAM":["107972"]}
+4/4/2017 10:45:9 29: BEGIN PKREQUESTMANAGER.CALLQUERY(29,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{107972}','{HN}', :cursor); END;
+4/4/2017 10:45:17 29: 1 Object(s) returned... [FETCH]
+4/4/2017 10:45:17 29: [object Object]
+4/4/2017 10:45:23 30: LIBQUERY with Callback: 
+4/4/2017 10:45:23 30: Path request:/api/item/
+4/4/2017 10:45:23 30: Path header:undefined
+4/4/2017 10:45:23 30: Path query:{"PARAM":"31027"}
+4/4/2017 10:45:23 30: BEGIN PKREQUESTMANAGER.CALLQUERY(30,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:45:23 31: LIBQUERY with Callback: 
+4/4/2017 10:45:23 31: Path request:/api/itemcost/
+4/4/2017 10:45:23 31: Path header:undefined
+4/4/2017 10:45:23 31: Path query:{"PARAM":"31027"}
+4/4/2017 10:45:23 31: BEGIN PKREQUESTMANAGER.CALLQUERY(31,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:45:23 32: LIBQUERY with Callback: 
+4/4/2017 10:45:23 32: Path request:/api/itemretail/
+4/4/2017 10:45:23 32: Path header:undefined
+4/4/2017 10:45:23 32: Path query:{"PARAM":"31027"}
+4/4/2017 10:45:23 32: BEGIN PKREQUESTMANAGER.CALLQUERY(32,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:45:23 33: LIBQUERY with Callback: 
+4/4/2017 10:45:23 33: Path request:/api/itemsubstitution/
+4/4/2017 10:45:23 33: Path header:undefined
+4/4/2017 10:45:23 33: Path query:{"PARAM":"31027"}
+4/4/2017 10:45:23 33: BEGIN PKREQUESTMANAGER.CALLQUERY(33,'ART0000004','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:45:26 33: 4 Object(s) returned... [FETCH]
+4/4/2017 10:45:26 33: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:45:26 33: 0 Object(s) returned... [FETCH]
+4/4/2017 10:45:27 33: 8 Object(s) returned... [FETCH]
+4/4/2017 10:45:27 33: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:45:28 33: 0 Object(s) returned... [FETCH]
+4/4/2017 10:47:26 34: LIBQUERY with Callback: 
+4/4/2017 10:47:26 34: Path request:/api/user/
+4/4/2017 10:47:26 34: Path header:undefined
+4/4/2017 10:47:26 34: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:47:26 34: BEGIN PKREQUESTMANAGER.CALLQUERY(34,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:47:26 35: LIBQUERY with Callback: 
+4/4/2017 10:47:26 35: Path request:/api/environment/
+4/4/2017 10:47:26 35: Path header:undefined
+4/4/2017 10:47:26 35: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:47:26 35: BEGIN PKREQUESTMANAGER.CALLQUERY(35,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:47:27 35: 1 Object(s) returned... [FETCH]
+4/4/2017 10:47:27 35: [object Object]
+4/4/2017 10:47:27 35: 2 Object(s) returned... [FETCH]
+4/4/2017 10:47:27 35: [object Object],[object Object]
+4/4/2017 10:47:40 36: LIBQUERY with Callback: 
+4/4/2017 10:47:40 36: Path request:/api/search/
+4/4/2017 10:47:40 36: Path header:undefined
+4/4/2017 10:47:40 36: Path query:{"PARAM":[" 107972"]}
+4/4/2017 10:47:40 36: BEGIN PKREQUESTMANAGER.CALLQUERY(36,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{ 107972}','{HN}', :cursor); END;
+4/4/2017 10:47:50 36: 1 Object(s) returned... [FETCH]
+4/4/2017 10:47:50 36: [object Object]
+4/4/2017 10:47:53 37: LIBQUERY with Callback: 
+4/4/2017 10:47:53 37: Path request:/api/item/
+4/4/2017 10:47:53 37: Path header:undefined
+4/4/2017 10:47:53 37: Path query:{"PARAM":"31027"}
+4/4/2017 10:47:53 37: BEGIN PKREQUESTMANAGER.CALLQUERY(37,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:47:53 38: LIBQUERY with Callback: 
+4/4/2017 10:47:53 38: Path request:/api/itemcost/
+4/4/2017 10:47:53 38: Path header:undefined
+4/4/2017 10:47:53 38: Path query:{"PARAM":"31027"}
+4/4/2017 10:47:53 38: BEGIN PKREQUESTMANAGER.CALLQUERY(38,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:47:53 39: LIBQUERY with Callback: 
+4/4/2017 10:47:53 39: Path request:/api/itemretail/
+4/4/2017 10:47:53 39: Path header:undefined
+4/4/2017 10:47:53 39: Path query:{"PARAM":"31027"}
+4/4/2017 10:47:53 39: BEGIN PKREQUESTMANAGER.CALLQUERY(39,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:47:53 40: LIBQUERY with Callback: 
+4/4/2017 10:47:53 40: Path request:/api/itemsubstitution/
+4/4/2017 10:47:53 40: Path header:undefined
+4/4/2017 10:47:53 40: Path query:{"PARAM":"31027"}
+4/4/2017 10:47:53 40: BEGIN PKREQUESTMANAGER.CALLQUERY(40,'ART0000004','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:47:56 40: 4 Object(s) returned... [FETCH]
+4/4/2017 10:47:56 40: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:47:56 40: 0 Object(s) returned... [FETCH]
+4/4/2017 10:47:57 40: 8 Object(s) returned... [FETCH]
+4/4/2017 10:47:57 40: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:47:57 40: 0 Object(s) returned... [FETCH]
+4/4/2017 10:50:25 41: LIBQUERY with Callback: 
+4/4/2017 10:50:25 41: Path request:/api/user/
+4/4/2017 10:50:25 41: Path header:undefined
+4/4/2017 10:50:25 41: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:50:25 41: BEGIN PKREQUESTMANAGER.CALLQUERY(41,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:50:25 42: LIBQUERY with Callback: 
+4/4/2017 10:50:25 42: Path request:/api/environment/
+4/4/2017 10:50:25 42: Path header:undefined
+4/4/2017 10:50:25 42: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:50:25 42: BEGIN PKREQUESTMANAGER.CALLQUERY(42,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:50:26 42: 1 Object(s) returned... [FETCH]
+4/4/2017 10:50:26 42: [object Object]
+4/4/2017 10:50:26 42: 2 Object(s) returned... [FETCH]
+4/4/2017 10:50:26 42: [object Object],[object Object]
+4/4/2017 10:50:37 43: LIBQUERY with Callback: 
+4/4/2017 10:50:37 43: Path request:/api/search/
+4/4/2017 10:50:37 43: Path header:undefined
+4/4/2017 10:50:37 43: Path query:{"PARAM":["107972"]}
+4/4/2017 10:50:37 43: BEGIN PKREQUESTMANAGER.CALLQUERY(43,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{107972}','{HN}', :cursor); END;
+4/4/2017 10:50:49 43: 1 Object(s) returned... [FETCH]
+4/4/2017 10:50:49 43: [object Object]
+4/4/2017 10:50:52 44: LIBQUERY with Callback: 
+4/4/2017 10:50:52 44: Path request:/api/item/
+4/4/2017 10:50:52 44: Path header:undefined
+4/4/2017 10:50:52 44: Path query:{"PARAM":"31027"}
+4/4/2017 10:50:52 44: BEGIN PKREQUESTMANAGER.CALLQUERY(44,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:50:52 45: LIBQUERY with Callback: 
+4/4/2017 10:50:52 45: Path request:/api/itemcost/
+4/4/2017 10:50:52 45: Path header:undefined
+4/4/2017 10:50:52 45: Path query:{"PARAM":"31027"}
+4/4/2017 10:50:52 45: BEGIN PKREQUESTMANAGER.CALLQUERY(45,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:50:52 46: LIBQUERY with Callback: 
+4/4/2017 10:50:52 46: Path request:/api/itemretail/
+4/4/2017 10:50:52 46: Path header:undefined
+4/4/2017 10:50:52 46: Path query:{"PARAM":"31027"}
+4/4/2017 10:50:52 46: BEGIN PKREQUESTMANAGER.CALLQUERY(46,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:50:52 47: LIBQUERY with Callback: 
+4/4/2017 10:50:52 47: Path request:/api/itemsubstitution/
+4/4/2017 10:50:52 47: Path header:undefined
+4/4/2017 10:50:52 47: Path query:{"PARAM":"31027"}
+4/4/2017 10:50:52 47: BEGIN PKREQUESTMANAGER.CALLQUERY(47,'ART0000004','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:50:55 47: 4 Object(s) returned... [FETCH]
+4/4/2017 10:50:55 47: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:50:55 47: 0 Object(s) returned... [FETCH]
+4/4/2017 10:50:56 47: 8 Object(s) returned... [FETCH]
+4/4/2017 10:50:56 47: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:50:56 47: 0 Object(s) returned... [FETCH]
+4/4/2017 10:51:33 48: LIBQUERY with Callback: 
+4/4/2017 10:51:33 48: Path request:/api/user/
+4/4/2017 10:51:33 48: Path header:undefined
+4/4/2017 10:51:33 48: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:51:33 48: BEGIN PKREQUESTMANAGER.CALLQUERY(48,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:51:33 49: LIBQUERY with Callback: 
+4/4/2017 10:51:33 49: Path request:/api/environment/
+4/4/2017 10:51:33 49: Path header:undefined
+4/4/2017 10:51:33 49: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:51:33 49: BEGIN PKREQUESTMANAGER.CALLQUERY(49,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:51:33 49: 2 Object(s) returned... [FETCH]
+4/4/2017 10:51:33 49: [object Object],[object Object]
+4/4/2017 10:51:33 49: 1 Object(s) returned... [FETCH]
+4/4/2017 10:51:33 49: [object Object]
+4/4/2017 10:51:35 50: LIBQUERY with Callback: 
+4/4/2017 10:51:35 50: Path request:/api/search/
+4/4/2017 10:51:35 50: Path header:undefined
+4/4/2017 10:51:35 50: Path query:{"PARAM":["107972"]}
+4/4/2017 10:51:35 50: BEGIN PKREQUESTMANAGER.CALLQUERY(50,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{107972}','{HN}', :cursor); END;
+4/4/2017 10:52:11 1: LIBQUERY with Callback: 
+4/4/2017 10:52:11 1: Path request:/api/user/
+4/4/2017 10:52:11 1: Path header:undefined
+4/4/2017 10:52:11 1: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:52:11 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:52:11 2: LIBQUERY with Callback: 
+4/4/2017 10:52:11 2: Path request:/api/environment/
+4/4/2017 10:52:11 2: Path header:undefined
+4/4/2017 10:52:11 2: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:52:11 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:52:11 2: 1 Object(s) returned... [FETCH]
+4/4/2017 10:52:11 2: [object Object]
+4/4/2017 10:52:11 2: 2 Object(s) returned... [FETCH]
+4/4/2017 10:52:11 2: [object Object],[object Object]
+4/4/2017 10:52:17 3: LIBQUERY with Callback: 
+4/4/2017 10:52:17 3: Path request:/api/search/
+4/4/2017 10:52:17 3: Path header:undefined
+4/4/2017 10:52:17 3: Path query:{"PARAM":["107972"]}
+4/4/2017 10:52:17 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{107972}','{HN}', :cursor); END;
+4/4/2017 10:52:28 3: 1 Object(s) returned... [FETCH]
+4/4/2017 10:52:28 3: [object Object]
+4/4/2017 10:52:36 4: LIBQUERY with Callback: 
+4/4/2017 10:52:36 4: Path request:/api/item/
+4/4/2017 10:52:36 4: Path header:undefined
+4/4/2017 10:52:36 4: Path query:{"PARAM":"31027"}
+4/4/2017 10:52:36 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:52:36 5: LIBQUERY with Callback: 
+4/4/2017 10:52:36 5: Path request:/api/itemcost/
+4/4/2017 10:52:36 5: Path header:undefined
+4/4/2017 10:52:36 5: Path query:{"PARAM":"31027"}
+4/4/2017 10:52:36 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:52:36 6: LIBQUERY with Callback: 
+4/4/2017 10:52:36 6: Path request:/api/itemretail/
+4/4/2017 10:52:36 6: Path header:undefined
+4/4/2017 10:52:36 6: Path query:{"PARAM":"31027"}
+4/4/2017 10:52:36 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:52:36 7: LIBQUERY with Callback: 
+4/4/2017 10:52:36 7: Path request:/api/itemsubstitution/
+4/4/2017 10:52:36 7: Path header:undefined
+4/4/2017 10:52:36 7: Path query:{"PARAM":"31027"}
+4/4/2017 10:52:36 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'ART0000004','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:52:39 7: 0 Object(s) returned... [FETCH]
+4/4/2017 10:52:39 7: 4 Object(s) returned... [FETCH]
+4/4/2017 10:52:39 7: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:52:43 7: 8 Object(s) returned... [FETCH]
+4/4/2017 10:52:43 7: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:52:44 7: 0 Object(s) returned... [FETCH]
+4/4/2017 10:53:24 8: LIBQUERY with Callback: 
+4/4/2017 10:53:24 8: Path request:/api/user/
+4/4/2017 10:53:24 8: Path header:undefined
+4/4/2017 10:53:24 8: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:53:24 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:53:24 9: LIBQUERY with Callback: 
+4/4/2017 10:53:24 9: Path request:/api/environment/
+4/4/2017 10:53:24 9: Path header:undefined
+4/4/2017 10:53:25 9: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:53:25 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:53:25 9: 2 Object(s) returned... [FETCH]
+4/4/2017 10:53:25 9: [object Object],[object Object]
+4/4/2017 10:53:26 9: 1 Object(s) returned... [FETCH]
+4/4/2017 10:53:26 9: [object Object]
+4/4/2017 10:53:41 10: LIBQUERY with Callback: 
+4/4/2017 10:53:41 10: Path request:/api/search/
+4/4/2017 10:53:41 10: Path header:undefined
+4/4/2017 10:53:41 10: Path query:{"PARAM":["107972"]}
+4/4/2017 10:53:41 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{107972}','{HN}', :cursor); END;
+4/4/2017 10:53:51 10: 1 Object(s) returned... [FETCH]
+4/4/2017 10:53:51 10: [object Object]
+4/4/2017 10:53:54 11: LIBQUERY with Callback: 
+4/4/2017 10:53:54 11: Path request:/api/item/
+4/4/2017 10:53:54 11: Path header:undefined
+4/4/2017 10:53:54 11: Path query:{"PARAM":"31027"}
+4/4/2017 10:53:54 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:53:54 12: LIBQUERY with Callback: 
+4/4/2017 10:53:54 12: Path request:/api/itemcost/
+4/4/2017 10:53:54 12: Path header:undefined
+4/4/2017 10:53:54 12: Path query:{"PARAM":"31027"}
+4/4/2017 10:53:54 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:53:54 13: LIBQUERY with Callback: 
+4/4/2017 10:53:54 13: Path request:/api/itemretail/
+4/4/2017 10:53:54 13: Path header:undefined
+4/4/2017 10:53:54 13: Path query:{"PARAM":"31027"}
+4/4/2017 10:53:54 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:53:54 14: LIBQUERY with Callback: 
+4/4/2017 10:53:54 14: Path request:/api/itemsubstitution/
+4/4/2017 10:53:54 14: Path header:undefined
+4/4/2017 10:53:54 14: Path query:{"PARAM":"31027"}
+4/4/2017 10:53:54 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'ART0000004','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:53:58 14: 0 Object(s) returned... [FETCH]
+4/4/2017 10:53:58 14: 4 Object(s) returned... [FETCH]
+4/4/2017 10:53:58 14: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:53:58 14: 8 Object(s) returned... [FETCH]
+4/4/2017 10:53:58 14: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:53:58 14: 0 Object(s) returned... [FETCH]
+4/4/2017 10:56:50 15: LIBQUERY with Callback: 
+4/4/2017 10:56:50 15: Path request:/api/user/
+4/4/2017 10:56:50 15: Path header:undefined
+4/4/2017 10:56:50 15: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:56:50 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:56:50 16: LIBQUERY with Callback: 
+4/4/2017 10:56:50 16: Path request:/api/environment/
+4/4/2017 10:56:50 16: Path header:undefined
+4/4/2017 10:56:50 16: Path query:{"USER_NAME":"admin"}
+4/4/2017 10:56:50 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 10:56:51 16: 1 Object(s) returned... [FETCH]
+4/4/2017 10:56:51 16: [object Object]
+4/4/2017 10:56:51 16: 2 Object(s) returned... [FETCH]
+4/4/2017 10:56:51 16: [object Object],[object Object]
+4/4/2017 10:57:5 17: LIBQUERY with Callback: 
+4/4/2017 10:57:5 17: Path request:/api/search/
+4/4/2017 10:57:5 17: Path header:undefined
+4/4/2017 10:57:5 17: Path query:{"PARAM":["107972"]}
+4/4/2017 10:57:5 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{107972}','{HN}', :cursor); END;
+4/4/2017 10:57:15 17: 1 Object(s) returned... [FETCH]
+4/4/2017 10:57:15 17: [object Object]
+4/4/2017 10:57:18 18: LIBQUERY with Callback: 
+4/4/2017 10:57:18 18: Path request:/api/itemretail/
+4/4/2017 10:57:18 18: Path header:undefined
+4/4/2017 10:57:18 18: Path query:{"PARAM":"31027"}
+4/4/2017 10:57:18 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:57:18 19: LIBQUERY with Callback: 
+4/4/2017 10:57:18 19: Path request:/api/itemcost/
+4/4/2017 10:57:18 19: Path header:undefined
+4/4/2017 10:57:18 19: Path query:{"PARAM":"31027"}
+4/4/2017 10:57:18 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:57:18 20: LIBQUERY with Callback: 
+4/4/2017 10:57:18 20: Path request:/api/item/
+4/4/2017 10:57:18 20: Path header:undefined
+4/4/2017 10:57:18 20: Path query:{"PARAM":"31027"}
+4/4/2017 10:57:18 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:57:18 21: LIBQUERY with Callback: 
+4/4/2017 10:57:18 21: Path request:/api/itemsubstitution/
+4/4/2017 10:57:18 21: Path header:undefined
+4/4/2017 10:57:18 21: Path query:{"PARAM":"31027"}
+4/4/2017 10:57:18 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'ART0000004','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 10:57:20 21: 4 Object(s) returned... [FETCH]
+4/4/2017 10:57:20 21: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:57:21 21: 0 Object(s) returned... [FETCH]
+4/4/2017 10:57:23 21: 8 Object(s) returned... [FETCH]
+4/4/2017 10:57:23 21: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 10:57:23 21: 0 Object(s) returned... [FETCH]
+4/4/2017 11:0:55 22: LIBQUERY with Callback: 
+4/4/2017 11:0:55 22: Path request:/api/user/
+4/4/2017 11:0:55 22: Path header:undefined
+4/4/2017 11:0:55 22: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:0:55 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:0:55 23: LIBQUERY with Callback: 
+4/4/2017 11:0:55 23: Path request:/api/environment/
+4/4/2017 11:0:55 23: Path header:undefined
+4/4/2017 11:0:55 23: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:0:55 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:0:55 23: 1 Object(s) returned... [FETCH]
+4/4/2017 11:0:55 23: [object Object]
+4/4/2017 11:0:55 23: 2 Object(s) returned... [FETCH]
+4/4/2017 11:0:55 23: [object Object],[object Object]
+4/4/2017 11:1:8 24: LIBQUERY with Callback: 
+4/4/2017 11:1:8 24: Path request:/api/search/
+4/4/2017 11:1:8 24: Path header:undefined
+4/4/2017 11:1:8 24: Path query:{"PARAM":["107972"]}
+4/4/2017 11:1:8 24: BEGIN PKREQUESTMANAGER.CALLQUERY(24,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{107972}','{HN}', :cursor); END;
+4/4/2017 11:1:22 24: 1 Object(s) returned... [FETCH]
+4/4/2017 11:1:22 24: [object Object]
+4/4/2017 11:1:40 25: LIBQUERY with Callback: 
+4/4/2017 11:1:40 25: Path request:/api/item/
+4/4/2017 11:1:40 25: Path header:undefined
+4/4/2017 11:1:40 25: Path query:{"PARAM":"31027"}
+4/4/2017 11:1:40 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 11:1:40 26: LIBQUERY with Callback: 
+4/4/2017 11:1:40 26: Path request:/api/itemcost/
+4/4/2017 11:1:40 26: Path header:undefined
+4/4/2017 11:1:40 26: Path query:{"PARAM":"31027"}
+4/4/2017 11:1:40 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 11:1:40 27: LIBQUERY with Callback: 
+4/4/2017 11:1:40 27: Path request:/api/itemretail/
+4/4/2017 11:1:40 27: Path header:undefined
+4/4/2017 11:1:40 27: Path query:{"PARAM":"31027"}
+4/4/2017 11:1:40 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 11:1:40 28: LIBQUERY with Callback: 
+4/4/2017 11:1:40 28: Path request:/api/itemsubstitution/
+4/4/2017 11:1:40 28: Path header:undefined
+4/4/2017 11:1:40 28: Path query:{"PARAM":"31027"}
+4/4/2017 11:1:40 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'ART0000004','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 11:1:44 28: 0 Object(s) returned... [FETCH]
+4/4/2017 11:1:44 28: 4 Object(s) returned... [FETCH]
+4/4/2017 11:1:44 28: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:1:45 28: 8 Object(s) returned... [FETCH]
+4/4/2017 11:1:45 28: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:1:45 28: 0 Object(s) returned... [FETCH]
+4/4/2017 11:9:45 30: LIBQUERY with Callback: 
+4/4/2017 11:9:45 30: Path request:/api/user/
+4/4/2017 11:9:45 30: Path header:undefined
+4/4/2017 11:9:45 30: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:9:45 30: BEGIN PKREQUESTMANAGER.CALLQUERY(30,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:9:45 31: LIBQUERY with Callback: 
+4/4/2017 11:9:45 31: Path request:/api/environment/
+4/4/2017 11:9:45 31: Path header:undefined
+4/4/2017 11:9:45 31: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:9:45 31: BEGIN PKREQUESTMANAGER.CALLQUERY(31,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:9:45 31: 1 Object(s) returned... [FETCH]
+4/4/2017 11:9:45 31: [object Object]
+4/4/2017 11:9:45 31: 2 Object(s) returned... [FETCH]
+4/4/2017 11:9:45 31: [object Object],[object Object]
+4/4/2017 11:10:8 32: LIBQUERY with Callback: 
+4/4/2017 11:10:8 32: Path request:/api/search/
+4/4/2017 11:10:8 32: Path header:undefined
+4/4/2017 11:10:8 32: Path query:{"PARAM":["107972"]}
+4/4/2017 11:10:8 32: BEGIN PKREQUESTMANAGER.CALLQUERY(32,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{107972}','{HN}', :cursor); END;
+4/4/2017 11:10:21 32: 1 Object(s) returned... [FETCH]
+4/4/2017 11:10:21 32: [object Object]
+4/4/2017 11:10:27 33: LIBQUERY with Callback: 
+4/4/2017 11:10:27 33: Path request:/api/item/
+4/4/2017 11:10:27 33: Path header:undefined
+4/4/2017 11:10:27 33: Path query:{"PARAM":"31027"}
+4/4/2017 11:10:27 33: BEGIN PKREQUESTMANAGER.CALLQUERY(33,'ART0000001','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 11:10:27 34: LIBQUERY with Callback: 
+4/4/2017 11:10:27 34: Path request:/api/itemsubstitution/
+4/4/2017 11:10:27 34: Path header:undefined
+4/4/2017 11:10:27 34: Path query:{"PARAM":"31027"}
+4/4/2017 11:10:27 34: BEGIN PKREQUESTMANAGER.CALLQUERY(34,'ART0000004','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 11:10:27 35: LIBQUERY with Callback: 
+4/4/2017 11:10:27 35: Path request:/api/itemcost/
+4/4/2017 11:10:27 35: Path header:undefined
+4/4/2017 11:10:27 35: Path query:{"PARAM":"31027"}
+4/4/2017 11:10:27 35: BEGIN PKREQUESTMANAGER.CALLQUERY(35,'ART0000002','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 11:10:27 36: LIBQUERY with Callback: 
+4/4/2017 11:10:27 36: Path request:/api/itemretail/
+4/4/2017 11:10:27 36: Path header:undefined
+4/4/2017 11:10:27 36: Path query:{"PARAM":"31027"}
+4/4/2017 11:10:27 36: BEGIN PKREQUESTMANAGER.CALLQUERY(36,'ART0000003','admin','{HEINENS_CEN_UAT}', '{31027}','{HN}', :cursor); END;
+4/4/2017 11:10:30 36: 4 Object(s) returned... [FETCH]
+4/4/2017 11:10:30 36: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:10:30 36: 3 Object(s) returned... [FETCH]
+4/4/2017 11:10:30 36: [object Object],[object Object],[object Object]
+4/4/2017 11:10:30 36: 8 Object(s) returned... [FETCH]
+4/4/2017 11:10:30 36: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:10:32 36: 0 Object(s) returned... [FETCH]
+4/4/2017 11:12:49 37: LIBQUERY with Callback: 
+4/4/2017 11:12:49 37: Path request:/api/user/
+4/4/2017 11:12:49 37: Path header:undefined
+4/4/2017 11:12:49 37: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:12:49 37: BEGIN PKREQUESTMANAGER.CALLQUERY(37,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:12:49 38: LIBQUERY with Callback: 
+4/4/2017 11:12:49 38: Path request:/api/environment/
+4/4/2017 11:12:49 38: Path header:undefined
+4/4/2017 11:12:49 38: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:12:49 38: BEGIN PKREQUESTMANAGER.CALLQUERY(38,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:12:50 38: 1 Object(s) returned... [FETCH]
+4/4/2017 11:12:50 38: [object Object]
+4/4/2017 11:12:50 38: 2 Object(s) returned... [FETCH]
+4/4/2017 11:12:50 38: [object Object],[object Object]
+4/4/2017 11:14:23 39: LIBQUERY with Callback: 
+4/4/2017 11:14:23 39: Path request:/api/user/
+4/4/2017 11:14:23 39: Path header:undefined
+4/4/2017 11:14:23 39: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:14:23 39: BEGIN PKREQUESTMANAGER.CALLQUERY(39,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:14:24 40: LIBQUERY with Callback: 
+4/4/2017 11:14:24 40: Path request:/api/environment/
+4/4/2017 11:14:24 40: Path header:undefined
+4/4/2017 11:14:24 40: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:14:24 40: BEGIN PKREQUESTMANAGER.CALLQUERY(40,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:14:24 40: 1 Object(s) returned... [FETCH]
+4/4/2017 11:14:24 40: [object Object]
+4/4/2017 11:14:24 40: 2 Object(s) returned... [FETCH]
+4/4/2017 11:14:24 40: [object Object],[object Object]
+4/4/2017 11:14:32 41: LIBQUERY with Callback: 
+4/4/2017 11:14:32 41: Path request:/api/search/
+4/4/2017 11:14:32 41: Path header:undefined
+4/4/2017 11:14:32 41: Path query:{"PARAM":["10797"]}
+4/4/2017 11:14:32 41: BEGIN PKREQUESTMANAGER.CALLQUERY(41,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{10797}','{HN}', :cursor); END;
+4/4/2017 11:14:44 41: 10 Object(s) returned... [FETCH]
+4/4/2017 11:14:44 41: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:17:56 42: LIBQUERY with Callback: 
+4/4/2017 11:17:56 42: Path request:/api/user/
+4/4/2017 11:17:56 42: Path header:undefined
+4/4/2017 11:17:56 42: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:17:56 42: BEGIN PKREQUESTMANAGER.CALLQUERY(42,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:17:56 43: LIBQUERY with Callback: 
+4/4/2017 11:17:56 43: Path request:/api/environment/
+4/4/2017 11:17:56 43: Path header:undefined
+4/4/2017 11:17:56 43: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:17:56 43: BEGIN PKREQUESTMANAGER.CALLQUERY(43,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:17:56 43: 1 Object(s) returned... [FETCH]
+4/4/2017 11:17:56 43: [object Object]
+4/4/2017 11:17:56 43: 2 Object(s) returned... [FETCH]
+4/4/2017 11:17:56 43: [object Object],[object Object]
+4/4/2017 11:18:12 44: LIBQUERY with Callback: 
+4/4/2017 11:18:12 44: Path request:/api/search/
+4/4/2017 11:18:12 44: Path header:undefined
+4/4/2017 11:18:12 44: Path query:{"PARAM":["1079"]}
+4/4/2017 11:18:12 44: BEGIN PKREQUESTMANAGER.CALLQUERY(44,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{1079}','{HN}', :cursor); END;
+4/4/2017 11:18:25 44: 229 Object(s) returned... [FETCH]
+4/4/2017 11:18:25 44: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:19:49 45: LIBQUERY with Callback: 
+4/4/2017 11:19:49 45: Path request:/api/user/
+4/4/2017 11:19:49 45: Path header:undefined
+4/4/2017 11:19:49 45: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:19:49 45: BEGIN PKREQUESTMANAGER.CALLQUERY(45,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:19:49 46: LIBQUERY with Callback: 
+4/4/2017 11:19:49 46: Path request:/api/environment/
+4/4/2017 11:19:49 46: Path header:undefined
+4/4/2017 11:19:49 46: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:19:49 46: BEGIN PKREQUESTMANAGER.CALLQUERY(46,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:19:49 46: 1 Object(s) returned... [FETCH]
+4/4/2017 11:19:49 46: [object Object]
+4/4/2017 11:19:49 46: 2 Object(s) returned... [FETCH]
+4/4/2017 11:19:49 46: [object Object],[object Object]
+4/4/2017 11:19:57 47: LIBQUERY with Callback: 
+4/4/2017 11:19:57 47: Path request:/api/search/
+4/4/2017 11:19:57 47: Path header:undefined
+4/4/2017 11:19:57 47: Path query:{"PARAM":["1079"]}
+4/4/2017 11:19:57 47: BEGIN PKREQUESTMANAGER.CALLQUERY(47,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{1079}','{HN}', :cursor); END;
+4/4/2017 11:20:8 47: 229 Object(s) returned... [FETCH]
+4/4/2017 11:20:8 47: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:20:21 48: LIBQUERY with Callback: 
+4/4/2017 11:20:21 48: Path request:/api/item/
+4/4/2017 11:20:21 48: Path header:undefined
+4/4/2017 11:20:21 48: Path query:{"PARAM":"1021254"}
+4/4/2017 11:20:21 48: BEGIN PKREQUESTMANAGER.CALLQUERY(48,'ART0000001','admin','{HEINENS_CEN_UAT}', '{1021254}','{HN}', :cursor); END;
+4/4/2017 11:20:21 49: LIBQUERY with Callback: 
+4/4/2017 11:20:21 49: Path request:/api/itemcost/
+4/4/2017 11:20:21 49: Path header:undefined
+4/4/2017 11:20:21 49: Path query:{"PARAM":"1021254"}
+4/4/2017 11:20:21 49: BEGIN PKREQUESTMANAGER.CALLQUERY(49,'ART0000002','admin','{HEINENS_CEN_UAT}', '{1021254}','{HN}', :cursor); END;
+4/4/2017 11:20:21 50: LIBQUERY with Callback: 
+4/4/2017 11:20:21 50: Path request:/api/itemretail/
+4/4/2017 11:20:21 50: Path header:undefined
+4/4/2017 11:20:21 50: Path query:{"PARAM":"1021254"}
+4/4/2017 11:20:21 50: BEGIN PKREQUESTMANAGER.CALLQUERY(50,'ART0000003','admin','{HEINENS_CEN_UAT}', '{1021254}','{HN}', :cursor); END;
+4/4/2017 11:20:21 51: LIBQUERY with Callback: 
+4/4/2017 11:20:21 51: Path request:/api/itemsubstitution/
+4/4/2017 11:20:21 51: Path header:undefined
+4/4/2017 11:20:21 51: Path query:{"PARAM":"1021254"}
+4/4/2017 11:20:21 51: BEGIN PKREQUESTMANAGER.CALLQUERY(51,'ART0000004','admin','{HEINENS_CEN_UAT}', '{1021254}','{HN}', :cursor); END;
+4/4/2017 11:20:31 51: 4 Object(s) returned... [FETCH]
+4/4/2017 11:20:31 51: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:20:32 51: 1 Object(s) returned... [FETCH]
+4/4/2017 11:20:32 51: [object Object]
+4/4/2017 11:20:32 51: 0 Object(s) returned... [FETCH]
+4/4/2017 11:20:36 51: 1 Object(s) returned... [FETCH]
+4/4/2017 11:20:36 51: [object Object]
+4/4/2017 11:24:30 52: LIBQUERY with Callback: 
+4/4/2017 11:24:30 52: Path request:/api/search/
+4/4/2017 11:24:30 52: Path header:undefined
+4/4/2017 11:24:30 52: Path query:{"PARAM":["121796"]}
+4/4/2017 11:24:30 52: BEGIN PKREQUESTMANAGER.CALLQUERY(52,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{121796}','{HN}', :cursor); END;
+4/4/2017 11:24:48 52: 1 Object(s) returned... [FETCH]
+4/4/2017 11:24:48 52: [object Object]
+4/4/2017 11:26:3 53: LIBQUERY with Callback: 
+4/4/2017 11:26:3 53: Path request:/api/user/
+4/4/2017 11:26:3 53: Path header:undefined
+4/4/2017 11:26:3 53: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:26:3 53: BEGIN PKREQUESTMANAGER.CALLQUERY(53,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:26:4 54: LIBQUERY with Callback: 
+4/4/2017 11:26:4 54: Path request:/api/environment/
+4/4/2017 11:26:4 54: Path header:undefined
+4/4/2017 11:26:4 54: Path query:{"USER_NAME":"admin"}
+4/4/2017 11:26:4 54: BEGIN PKREQUESTMANAGER.CALLQUERY(54,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 11:26:4 54: 1 Object(s) returned... [FETCH]
+4/4/2017 11:26:4 54: [object Object]
+4/4/2017 11:26:4 54: 2 Object(s) returned... [FETCH]
+4/4/2017 11:26:4 54: [object Object],[object Object]
+4/4/2017 11:26:8 55: LIBQUERY with Callback: 
+4/4/2017 11:26:8 55: Path request:/api/search/
+4/4/2017 11:26:8 55: Path header:undefined
+4/4/2017 11:26:8 55: Path query:{"PARAM":["121796"]}
+4/4/2017 11:26:8 55: BEGIN PKREQUESTMANAGER.CALLQUERY(55,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{121796}','{HN}', :cursor); END;
+4/4/2017 11:26:29 55: 1 Object(s) returned... [FETCH]
+4/4/2017 11:26:29 55: [object Object]
+4/4/2017 11:26:33 56: LIBQUERY with Callback: 
+4/4/2017 11:26:33 56: Path request:/api/item/
+4/4/2017 11:26:33 56: Path header:undefined
+4/4/2017 11:26:33 56: Path query:{"PARAM":"272561"}
+4/4/2017 11:26:33 56: BEGIN PKREQUESTMANAGER.CALLQUERY(56,'ART0000001','admin','{HEINENS_CEN_UAT}', '{272561}','{HN}', :cursor); END;
+4/4/2017 11:26:33 57: LIBQUERY with Callback: 
+4/4/2017 11:26:33 57: Path request:/api/itemcost/
+4/4/2017 11:26:33 57: Path header:undefined
+4/4/2017 11:26:33 57: Path query:{"PARAM":"272561"}
+4/4/2017 11:26:33 57: BEGIN PKREQUESTMANAGER.CALLQUERY(57,'ART0000002','admin','{HEINENS_CEN_UAT}', '{272561}','{HN}', :cursor); END;
+4/4/2017 11:26:33 58: LIBQUERY with Callback: 
+4/4/2017 11:26:33 58: Path request:/api/itemretail/
+4/4/2017 11:26:33 58: Path header:undefined
+4/4/2017 11:26:33 58: Path query:{"PARAM":"272561"}
+4/4/2017 11:26:33 58: BEGIN PKREQUESTMANAGER.CALLQUERY(58,'ART0000003','admin','{HEINENS_CEN_UAT}', '{272561}','{HN}', :cursor); END;
+4/4/2017 11:26:33 59: LIBQUERY with Callback: 
+4/4/2017 11:26:33 59: Path request:/api/itemsubstitution/
+4/4/2017 11:26:33 59: Path header:undefined
+4/4/2017 11:26:33 59: Path query:{"PARAM":"272561"}
+4/4/2017 11:26:33 59: BEGIN PKREQUESTMANAGER.CALLQUERY(59,'ART0000004','admin','{HEINENS_CEN_UAT}', '{272561}','{HN}', :cursor); END;
+4/4/2017 11:26:40 59: 4 Object(s) returned... [FETCH]
+4/4/2017 11:26:40 59: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:27:27 1: LIBQUERY with Callback: 
+4/4/2017 11:27:27 1: Path request:/api/search/
+4/4/2017 11:27:27 1: Path header:undefined
+4/4/2017 11:27:27 1: Path query:{"PARAM":["121796"]}
+4/4/2017 11:27:27 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{121796}','{HN}', :cursor); END;
+4/4/2017 11:27:41 1: 1 Object(s) returned... [FETCH]
+4/4/2017 11:27:41 1: [object Object]
+4/4/2017 11:27:46 2: LIBQUERY with Callback: 
+4/4/2017 11:27:46 2: Path request:/api/item/
+4/4/2017 11:27:46 2: Path header:undefined
+4/4/2017 11:27:46 2: Path query:{"PARAM":"272561"}
+4/4/2017 11:27:46 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'ART0000001','admin','{HEINENS_CEN_UAT}', '{272561}','{HN}', :cursor); END;
+4/4/2017 11:27:46 3: LIBQUERY with Callback: 
+4/4/2017 11:27:46 3: Path request:/api/itemcost/
+4/4/2017 11:27:46 3: Path header:undefined
+4/4/2017 11:27:46 3: Path query:{"PARAM":"272561"}
+4/4/2017 11:27:46 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'ART0000002','admin','{HEINENS_CEN_UAT}', '{272561}','{HN}', :cursor); END;
+4/4/2017 11:27:46 4: LIBQUERY with Callback: 
+4/4/2017 11:27:46 4: Path request:/api/itemretail/
+4/4/2017 11:27:46 4: Path header:undefined
+4/4/2017 11:27:46 4: Path query:{"PARAM":"272561"}
+4/4/2017 11:27:46 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'ART0000003','admin','{HEINENS_CEN_UAT}', '{272561}','{HN}', :cursor); END;
+4/4/2017 11:27:46 5: LIBQUERY with Callback: 
+4/4/2017 11:27:46 5: Path request:/api/itemsubstitution/
+4/4/2017 11:27:46 5: Path header:undefined
+4/4/2017 11:27:46 5: Path query:{"PARAM":"272561"}
+4/4/2017 11:27:46 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'ART0000004','admin','{HEINENS_CEN_UAT}', '{272561}','{HN}', :cursor); END;
+4/4/2017 11:27:49 5: 0 Object(s) returned... [FETCH]
+4/4/2017 11:27:50 5: 4 Object(s) returned... [FETCH]
+4/4/2017 11:27:50 5: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:27:50 5: 4 Object(s) returned... [FETCH]
+4/4/2017 11:27:50 5: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 11:27:52 5: 2 Object(s) returned... [FETCH]
+4/4/2017 11:27:52 5: [object Object],[object Object]
+4/4/2017 19:12:0 6: LIBQUERY with Callback: 
+4/4/2017 19:12:0 6: Path request:/api/user/
+4/4/2017 19:12:0 6: Path header:undefined
+4/4/2017 19:12:0 6: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:12:0 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:12:0 7: LIBQUERY with Callback: 
+4/4/2017 19:12:0 7: Path request:/api/environment/
+4/4/2017 19:12:0 7: Path header:undefined
+4/4/2017 19:12:0 7: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:12:0 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:12:0 7: 1 Object(s) returned... [FETCH]
+4/4/2017 19:12:0 7: [object Object]
+4/4/2017 19:12:0 7: 2 Object(s) returned... [FETCH]
+4/4/2017 19:12:0 7: [object Object],[object Object]
+4/4/2017 19:14:24 8: LIBQUERY with Callback: 
+4/4/2017 19:14:24 8: Path request:/api/user/
+4/4/2017 19:14:24 8: Path header:undefined
+4/4/2017 19:14:24 8: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:14:24 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:14:24 9: LIBQUERY with Callback: 
+4/4/2017 19:14:24 9: Path request:/api/environment/
+4/4/2017 19:14:24 9: Path header:undefined
+4/4/2017 19:14:24 9: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:14:24 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:14:24 9: 1 Object(s) returned... [FETCH]
+4/4/2017 19:14:24 9: [object Object]
+4/4/2017 19:14:24 9: 2 Object(s) returned... [FETCH]
+4/4/2017 19:14:24 9: [object Object],[object Object]
+4/4/2017 19:14:57 10: LIBQUERY with Callback: 
+4/4/2017 19:14:57 10: Path request:/api/user/
+4/4/2017 19:14:57 10: Path header:undefined
+4/4/2017 19:14:57 10: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:14:57 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:14:57 11: LIBQUERY with Callback: 
+4/4/2017 19:14:57 11: Path request:/api/environment/
+4/4/2017 19:14:57 11: Path header:undefined
+4/4/2017 19:14:57 11: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:14:57 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:14:57 11: 1 Object(s) returned... [FETCH]
+4/4/2017 19:14:57 11: [object Object]
+4/4/2017 19:14:57 11: 2 Object(s) returned... [FETCH]
+4/4/2017 19:14:57 11: [object Object],[object Object]
+4/4/2017 19:16:0 12: LIBQUERY with Callback: 
+4/4/2017 19:16:0 12: Path request:/api/user/
+4/4/2017 19:16:0 12: Path header:undefined
+4/4/2017 19:16:0 12: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:16:0 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:16:0 13: LIBQUERY with Callback: 
+4/4/2017 19:16:0 13: Path request:/api/environment/
+4/4/2017 19:16:0 13: Path header:undefined
+4/4/2017 19:16:0 13: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:16:0 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:16:1 13: 1 Object(s) returned... [FETCH]
+4/4/2017 19:16:1 13: [object Object]
+4/4/2017 19:16:1 13: 2 Object(s) returned... [FETCH]
+4/4/2017 19:16:1 13: [object Object],[object Object]
+4/4/2017 19:18:13 14: LIBQUERY with Callback: 
+4/4/2017 19:18:13 14: Path request:/api/user/
+4/4/2017 19:18:13 14: Path header:undefined
+4/4/2017 19:18:13 14: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:18:13 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:18:13 15: LIBQUERY with Callback: 
+4/4/2017 19:18:13 15: Path request:/api/environment/
+4/4/2017 19:18:13 15: Path header:undefined
+4/4/2017 19:18:13 15: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:18:13 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:18:13 15: 1 Object(s) returned... [FETCH]
+4/4/2017 19:18:13 15: [object Object]
+4/4/2017 19:18:14 15: 2 Object(s) returned... [FETCH]
+4/4/2017 19:18:14 15: [object Object],[object Object]
+4/4/2017 19:19:24 16: LIBQUERY with Callback: 
+4/4/2017 19:19:24 16: Path request:/api/user/
+4/4/2017 19:19:24 16: Path header:undefined
+4/4/2017 19:19:24 16: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:19:24 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:19:24 16: 1 Object(s) returned... [FETCH]
+4/4/2017 19:19:24 16: [object Object]
+4/4/2017 19:19:24 17: LIBQUERY with Callback: 
+4/4/2017 19:19:25 17: Path request:/api/environment/
+4/4/2017 19:19:25 17: Path header:undefined
+4/4/2017 19:19:25 17: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:19:25 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:19:25 17: 2 Object(s) returned... [FETCH]
+4/4/2017 19:19:25 17: [object Object],[object Object]
+4/4/2017 19:19:53 18: LIBQUERY with Callback: 
+4/4/2017 19:19:53 18: Path request:/api/user/
+4/4/2017 19:19:53 18: Path header:undefined
+4/4/2017 19:19:53 18: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:19:53 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:19:54 19: LIBQUERY with Callback: 
+4/4/2017 19:19:54 19: Path request:/api/environment/
+4/4/2017 19:19:54 19: Path header:undefined
+4/4/2017 19:19:54 19: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:19:54 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:19:55 19: 1 Object(s) returned... [FETCH]
+4/4/2017 19:19:55 19: [object Object]
+4/4/2017 19:19:55 19: 2 Object(s) returned... [FETCH]
+4/4/2017 19:19:55 19: [object Object],[object Object]
+4/4/2017 19:19:59 20: LIBQUERY with Callback: 
+4/4/2017 19:19:59 20: Path request:/api/search/
+4/4/2017 19:19:59 20: Path header:undefined
+4/4/2017 19:19:59 20: Path query:{"PARAM":["111770"]}
+4/4/2017 19:19:59 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 19:20:14 20: 2 Object(s) returned... [FETCH]
+4/4/2017 19:20:14 20: [object Object],[object Object]
+4/4/2017 19:20:23 21: LIBQUERY with Callback: 
+4/4/2017 19:20:23 21: Path request:/api/item/
+4/4/2017 19:20:23 21: Path header:undefined
+4/4/2017 19:20:23 21: Path query:{"PARAM":"18841"}
+4/4/2017 19:20:23 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:20:23 22: LIBQUERY with Callback: 
+4/4/2017 19:20:23 22: Path request:/api/itemsubstitution/
+4/4/2017 19:20:23 22: Path header:undefined
+4/4/2017 19:20:23 22: Path query:{"PARAM":"18841"}
+4/4/2017 19:20:23 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'ART0000004','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:20:23 23: LIBQUERY with Callback: 
+4/4/2017 19:20:23 23: Path request:/api/itemcost/
+4/4/2017 19:20:23 23: Path header:undefined
+4/4/2017 19:20:23 23: Path query:{"PARAM":"18841"}
+4/4/2017 19:20:23 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:20:23 24: LIBQUERY with Callback: 
+4/4/2017 19:20:23 24: Path request:/api/itemretail/
+4/4/2017 19:20:23 24: Path header:undefined
+4/4/2017 19:20:23 24: Path query:{"PARAM":"18841"}
+4/4/2017 19:20:23 24: BEGIN PKREQUESTMANAGER.CALLQUERY(24,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:20:27 24: 0 Object(s) returned... [FETCH]
+4/4/2017 19:20:28 24: 3 Object(s) returned... [FETCH]
+4/4/2017 19:20:28 24: [object Object],[object Object],[object Object]
+4/4/2017 19:20:28 24: 4 Object(s) returned... [FETCH]
+4/4/2017 19:20:28 24: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 19:20:29 24: 3 Object(s) returned... [FETCH]
+4/4/2017 19:20:29 24: [object Object],[object Object],[object Object]
+4/4/2017 19:23:2 25: LIBQUERY with Callback: 
+4/4/2017 19:23:2 25: Path request:/api/user/
+4/4/2017 19:23:2 25: Path header:undefined
+4/4/2017 19:23:2 25: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:23:2 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:23:2 26: LIBQUERY with Callback: 
+4/4/2017 19:23:2 26: Path request:/api/environment/
+4/4/2017 19:23:2 26: Path header:undefined
+4/4/2017 19:23:2 26: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:23:2 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:26:52 1: LIBQUERY with Callback: 
+4/4/2017 19:26:52 1: Path request:/api/authentification/
+4/4/2017 19:26:52 1: Path header:undefined
+4/4/2017 19:26:52 1: Path query:{}
+4/4/2017 19:26:52 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','admin','{}', '{admin,admin}','{}', :cursor); END;
+4/4/2017 19:26:52 1: 1 Object(s) returned... [FETCH]
+4/4/2017 19:26:52 1: [object Object]
+4/4/2017 19:26:52 2: LIBQUERY with Callback: 
+4/4/2017 19:26:52 2: Path request:/api/user/
+4/4/2017 19:26:52 2: Path header:undefined
+4/4/2017 19:26:52 2: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:26:52 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:26:52 3: LIBQUERY with Callback: 
+4/4/2017 19:26:52 3: Path request:/api/environment/
+4/4/2017 19:26:52 3: Path header:undefined
+4/4/2017 19:26:52 3: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:26:52 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:26:52 3: 1 Object(s) returned... [FETCH]
+4/4/2017 19:26:52 3: [object Object]
+4/4/2017 19:26:53 3: 2 Object(s) returned... [FETCH]
+4/4/2017 19:26:53 3: [object Object],[object Object]
+4/4/2017 19:27:0 4: LIBQUERY with Callback: 
+4/4/2017 19:27:0 4: Path request:/api/search/
+4/4/2017 19:27:0 4: Path header:undefined
+4/4/2017 19:27:0 4: Path query:{"PARAM":["111770"]}
+4/4/2017 19:27:0 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 19:28:1 5: LIBQUERY with Callback: 
+4/4/2017 19:28:1 5: Path request:/api/user/
+4/4/2017 19:28:1 5: Path header:undefined
+4/4/2017 19:28:1 5: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:28:1 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:28:1 6: LIBQUERY with Callback: 
+4/4/2017 19:28:1 6: Path request:/api/environment/
+4/4/2017 19:28:1 6: Path header:undefined
+4/4/2017 19:28:1 6: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:28:1 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:28:3 6: 1 Object(s) returned... [FETCH]
+4/4/2017 19:28:3 6: [object Object]
+4/4/2017 19:28:3 6: 2 Object(s) returned... [FETCH]
+4/4/2017 19:28:3 6: [object Object],[object Object]
+4/4/2017 19:28:10 7: LIBQUERY with Callback: 
+4/4/2017 19:28:10 7: Path request:/api/search/
+4/4/2017 19:28:10 7: Path header:undefined
+4/4/2017 19:28:10 7: Path query:{"PARAM":["111770"]}
+4/4/2017 19:28:10 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 19:28:20 7: 2 Object(s) returned... [FETCH]
+4/4/2017 19:28:20 7: [object Object],[object Object]
+4/4/2017 19:28:28 8: LIBQUERY with Callback: 
+4/4/2017 19:28:28 8: Path request:/api/item/
+4/4/2017 19:28:28 8: Path header:undefined
+4/4/2017 19:28:28 8: Path query:{"PARAM":"18841"}
+4/4/2017 19:28:28 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:28:28 9: LIBQUERY with Callback: 
+4/4/2017 19:28:28 9: Path request:/api/itemcost/
+4/4/2017 19:28:28 9: Path header:undefined
+4/4/2017 19:28:28 9: Path query:{"PARAM":"18841"}
+4/4/2017 19:28:28 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:28:28 10: LIBQUERY with Callback: 
+4/4/2017 19:28:28 10: Path request:/api/itemretail/
+4/4/2017 19:28:28 10: Path header:undefined
+4/4/2017 19:28:28 10: Path query:{"PARAM":"18841"}
+4/4/2017 19:28:28 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:28:28 11: LIBQUERY with Callback: 
+4/4/2017 19:28:28 11: Path request:/api/itemsubstitution/
+4/4/2017 19:28:28 11: Path header:undefined
+4/4/2017 19:28:28 11: Path query:{"PARAM":"18841"}
+4/4/2017 19:28:28 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'ART0000004','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:28:31 11: 3 Object(s) returned... [FETCH]
+4/4/2017 19:28:31 11: [object Object],[object Object],[object Object]
+4/4/2017 19:28:31 11: 0 Object(s) returned... [FETCH]
+4/4/2017 19:28:32 11: 4 Object(s) returned... [FETCH]
+4/4/2017 19:28:32 11: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 19:28:33 11: 3 Object(s) returned... [FETCH]
+4/4/2017 19:28:33 11: [object Object],[object Object],[object Object]
+4/4/2017 19:30:27 12: LIBQUERY with Callback: 
+4/4/2017 19:30:27 12: Path request:/api/user/
+4/4/2017 19:30:27 12: Path header:undefined
+4/4/2017 19:30:27 12: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:30:27 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:30:27 13: LIBQUERY with Callback: 
+4/4/2017 19:30:27 13: Path request:/api/environment/
+4/4/2017 19:30:27 13: Path header:undefined
+4/4/2017 19:30:27 13: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:30:27 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:30:27 13: 1 Object(s) returned... [FETCH]
+4/4/2017 19:30:27 13: [object Object]
+4/4/2017 19:30:27 13: 2 Object(s) returned... [FETCH]
+4/4/2017 19:30:27 13: [object Object],[object Object]
+4/4/2017 19:30:33 14: LIBQUERY with Callback: 
+4/4/2017 19:30:33 14: Path request:/api/search/
+4/4/2017 19:30:33 14: Path header:undefined
+4/4/2017 19:30:33 14: Path query:{"PARAM":["111770"]}
+4/4/2017 19:30:33 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 19:30:43 14: 2 Object(s) returned... [FETCH]
+4/4/2017 19:30:43 14: [object Object],[object Object]
+4/4/2017 19:30:47 15: LIBQUERY with Callback: 
+4/4/2017 19:30:47 15: Path request:/api/item/
+4/4/2017 19:30:47 15: Path header:undefined
+4/4/2017 19:30:47 15: Path query:{"PARAM":"18841"}
+4/4/2017 19:30:47 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:30:47 16: LIBQUERY with Callback: 
+4/4/2017 19:30:47 16: Path request:/api/itemcost/
+4/4/2017 19:30:47 16: Path header:undefined
+4/4/2017 19:30:47 16: Path query:{"PARAM":"18841"}
+4/4/2017 19:30:47 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:30:47 17: LIBQUERY with Callback: 
+4/4/2017 19:30:47 17: Path request:/api/iteminventory/
+4/4/2017 19:30:47 17: Path header:undefined
+4/4/2017 19:30:47 17: Path query:{"PARAM":"18841"}
+4/4/2017 19:30:47 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'ART0000005','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:30:47 18: LIBQUERY with Callback: 
+4/4/2017 19:30:47 18: Path request:/api/itemretail/
+4/4/2017 19:30:47 18: Path header:undefined
+4/4/2017 19:30:47 18: Path query:{"PARAM":"18841"}
+4/4/2017 19:30:47 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:30:47 19: LIBQUERY with Callback: 
+4/4/2017 19:30:47 19: Path request:/api/itemsubstitution/
+4/4/2017 19:30:47 19: Path header:undefined
+4/4/2017 19:30:47 19: Path query:{"PARAM":"18841"}
+4/4/2017 19:30:47 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'ART0000004','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:30:50 19: 3 Object(s) returned... [FETCH]
+4/4/2017 19:30:50 19: [object Object],[object Object],[object Object]
+4/4/2017 19:30:51 19: 36 Object(s) returned... [FETCH]
+4/4/2017 19:30:51 19: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 19:30:51 19: 4 Object(s) returned... [FETCH]
+4/4/2017 19:30:51 19: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 19:30:52 19: 3 Object(s) returned... [FETCH]
+4/4/2017 19:30:52 19: [object Object],[object Object],[object Object]
+4/4/2017 19:30:54 19: 0 Object(s) returned... [FETCH]
+4/4/2017 19:34:0 20: LIBQUERY with Callback: 
+4/4/2017 19:34:0 20: Path request:/api/user/
+4/4/2017 19:34:0 20: Path header:undefined
+4/4/2017 19:34:0 20: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:34:0 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:34:0 21: LIBQUERY with Callback: 
+4/4/2017 19:34:0 21: Path request:/api/environment/
+4/4/2017 19:34:0 21: Path header:undefined
+4/4/2017 19:34:0 21: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:34:0 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:34:0 21: 1 Object(s) returned... [FETCH]
+4/4/2017 19:34:0 21: [object Object]
+4/4/2017 19:34:0 21: 2 Object(s) returned... [FETCH]
+4/4/2017 19:34:0 21: [object Object],[object Object]
+4/4/2017 19:34:13 22: LIBQUERY with Callback: 
+4/4/2017 19:34:13 22: Path request:/api/search/
+4/4/2017 19:34:13 22: Path header:undefined
+4/4/2017 19:34:13 22: Path query:{"PARAM":["111770"]}
+4/4/2017 19:34:13 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'CLI0000001','admin','{HEINENS_CEN_UAT}', '{111770}','{HN}', :cursor); END;
+4/4/2017 19:34:23 22: 2 Object(s) returned... [FETCH]
+4/4/2017 19:34:23 22: [object Object],[object Object]
+4/4/2017 19:34:27 23: LIBQUERY with Callback: 
+4/4/2017 19:34:27 23: Path request:/api/item/
+4/4/2017 19:34:27 23: Path header:undefined
+4/4/2017 19:34:27 23: Path query:{"PARAM":"18841"}
+4/4/2017 19:34:27 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'ART0000001','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:34:27 24: LIBQUERY with Callback: 
+4/4/2017 19:34:27 24: Path request:/api/itemcost/
+4/4/2017 19:34:27 24: Path header:undefined
+4/4/2017 19:34:27 24: Path query:{"PARAM":"18841"}
+4/4/2017 19:34:27 24: BEGIN PKREQUESTMANAGER.CALLQUERY(24,'ART0000002','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:34:27 25: LIBQUERY with Callback: 
+4/4/2017 19:34:27 25: Path request:/api/itemretail/
+4/4/2017 19:34:27 25: Path header:undefined
+4/4/2017 19:34:27 25: Path query:{"PARAM":"18841"}
+4/4/2017 19:34:27 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'ART0000003','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:34:27 26: LIBQUERY with Callback: 
+4/4/2017 19:34:27 26: Path request:/api/itemsubstitution/
+4/4/2017 19:34:27 26: Path header:undefined
+4/4/2017 19:34:27 26: Path query:{"PARAM":"18841"}
+4/4/2017 19:34:27 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'ART0000004','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:34:27 27: LIBQUERY with Callback: 
+4/4/2017 19:34:27 27: Path request:/api/iteminventory/
+4/4/2017 19:34:27 27: Path header:undefined
+4/4/2017 19:34:27 27: Path query:{"PARAM":"18841"}
+4/4/2017 19:34:27 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'ART0000005','admin','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+4/4/2017 19:34:30 27: 3 Object(s) returned... [FETCH]
+4/4/2017 19:34:30 27: [object Object],[object Object],[object Object]
+4/4/2017 19:34:30 27: 0 Object(s) returned... [FETCH]
+4/4/2017 19:34:31 27: 4 Object(s) returned... [FETCH]
+4/4/2017 19:34:31 27: [object Object],[object Object],[object Object],[object Object]
+4/4/2017 19:34:31 27: 3 Object(s) returned... [FETCH]
+4/4/2017 19:34:31 27: [object Object],[object Object],[object Object]
+4/4/2017 19:34:34 27: 36 Object(s) returned... [FETCH]
+4/4/2017 19:34:34 27: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+4/4/2017 19:36:51 28: LIBQUERY with Callback: 
+4/4/2017 19:36:51 28: Path request:/api/environment/
+4/4/2017 19:36:51 28: Path header:undefined
+4/4/2017 19:36:51 28: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:36:51 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'CLI0000003','admin','{}', '{admin}','{}', :cursor); END;
+4/4/2017 19:36:51 29: LIBQUERY with Callback: 
+4/4/2017 19:36:51 29: Path request:/api/user/
+4/4/2017 19:36:51 29: Path header:undefined
+4/4/2017 19:36:51 29: Path query:{"USER_NAME":"admin"}
+4/4/2017 19:36:51 29: BEGIN PKREQUESTMANAGER.CALLQUERY(29,'CLI0000002','admin','{}', '{admin}','{}', :cursor); END;

@@ -1,0 +1,275 @@
+
+<div class="container-fluid">
+    <h2 class="text-muted"><small>Third-Party counting integration follow-up</small></h2>
+</div>
+<br>
+<div class="content-section implementation" style="padding: 5px;">
+    <p-growl [value]="msgs" sticky="sticky"></p-growl>
+</div>
+<br>
+
+<div id="wrapper" style="clear: both" >
+    <div class="row pull-right"  >
+        <div class="col-xs-4">
+            Counting date : 
+        </div>
+        <div style="overflow: hidden; padding-right: .5em; pull-right;">
+            <!--p-calendar [(ngModel)]="countingDate" [showIcon]="true"></p-calendar--> 
+            <input type="date"  [(ngModel)]="countingDate" placeholder=today style="width: 60%;" />
+            <button type="submit" pButton (click)="search()" icon="fa-search" label="Search" [disabled]="countingDate === ''"></button>
+        </div>
+    </div>
+</div>
+<p></p>
+
+
+<!-- Panel resul -->
+<!-- Result panel of the resarch --> 
+<!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
+
+<!-- Step 1 - File upload -->
+<!-- Step 2 - File to GOLD connector -->
+<!-- Step 3 - GOLD Batch integration -->
+<!-- Step 4 - Inventory closure -->
+<!-- Step 5 - Review rejection & Analysis -->
+<br><br><br><br>
+
+<div  item-width="400px" table-layout="fixed" *ngIf="performedResearch == true">
+<p-dataTable #result [value]="searchResult.counts" sortMode="multiple"
+             [resizableColumns]="true" columnResizeMode="expand"
+             [rows]="15"  [rowsPerPageOptions]="[10,20,50]"
+             [paginator]="true" [pageLinks]="3" 
+             [responsive]="true" [totalRecords]="totalRecords"
+             [reorderableColumns]="true" scrollHeight="400px"
+             [globalFilter]="gb"
+             selectionMode="single" [(selection)]="selectedElement" tableStyleClass="table-layout: auto;"
+             (onRowSelect)="handleRowSelect($event)">
+
+    <p-header >
+        <div class="ui-widget-header pull-right ui-left-inner-addon">
+            <span class="fa fa-search"></span>
+            <input  type="text" #gb
+              placeholder="Type text to filter..." width="500px">
+        </div>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa-file-o" iconPos="left" label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+        </div>
+        <!--div style="text-align:right">
+            <p-multiSelect [options]="columnOptions" [(ngModel)]="columns"></p-multiSelect>
+        </div-->
+    </p-header>
+    <p-column *ngFor="let col of columnsResult" [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
+</p-dataTable>
+</div>
+<p></p>
+
+<!-- Counting integration information result -->
+<div class="row" *ngIf="selectedElement">
+    <div class="col-xl-3 col-lg-6">
+        <div class="card card-primary card-inverse">
+            <p-panel [toggleable]="true">
+                <p-header>
+                    <b>Load and Mapping integration</b>
+                </p-header>
+                <div class="ui-grid">
+                    <div class="ui-grid ui-grid-responsive ui-fluid ">
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Total # references:</div>
+                            <div class="col-md-4 pull-right">{{selectedElement.totalcount}} </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Counts not processed:</div>
+                            <div class="col-md-4 pull-right">{{selectedElement.tobeprocessed.total}} </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Unknown code:</div>
+                            <div class="col-md-4 pull-right">{{selectedElement.unknown.total}}</div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Failure:</div>
+                            <div class="col-md-4 pull-right">{{selectedElement.failure.total}}</div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Success:</div>
+                            <div class="col-md-4 pull-right">{{selectedElement.success.total}}</div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Others:</div>
+                            <div class="col-md-4 pull-right">{{selectedElement.others.total}}</div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Success (%):</div>
+                            <div class="col-md-4 pull-right">{{selectedElement.percentage | percent }}</div>
+                        </div>
+                    </div>
+                </div>    
+            </p-panel>
+        </div>    
+    </div>
+
+    <div class="col-xl-3 col-lg-6">
+        <div class="card card-primary card-inverse">
+            <p-panel [toggleable]="true">
+                <p-header>
+                    <b>Interface GOLD integration</b>
+                </p-header>
+                <div class="ui-grid">
+                    <div class="ui-grid ui-grid-responsive ui-fluid ">
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Total # references:</div>
+                            <div class="col-md-4 pull-right">{{search_STEP2_Result.totalcount}} </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Counts not processed:</div>
+                            <div class="col-md-4 pull-right">{{search_STEP2_Result.tobeprocessed.total}} </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Failure:</div>
+                            <div class="col-md-4 pull-right">{{search_STEP2_Result.failure.total}}</div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Success:</div>
+                            <div class="col-md-4 pull-right">{{search_STEP2_Result.success.total}}</div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Success (%):</div>
+                            <div class="col-md-4 pull-right">{{search_STEP2_Result.percentage | percent }}</div>
+                        </div>
+                    </div>
+                </div>    
+            </p-panel>
+        </div>    
+    </div>
+    <div class="col-xl-3 col-lg-6">
+        <div class="card card-primary card-inverse">
+            <p-panel [toggleable]="true">
+                <p-header>
+                    <b>GOLD Counting steps</b>
+                </p-header>
+                <div class="ui-grid">
+                    <div class="ui-grid ui-grid-responsive ui-fluid ">
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Initialisation</div>
+                            <i class="fa fa-check col-md-4 pull-right" style="color: green" aria-hidden="true" *ngIf="search_STEP3_Result.initialisation >= 1"></i>
+                            <i class="fa fa-times col-md-4 pull-right" style="color: red"  aria-hidden="true" *ngIf="search_STEP3_Result.initialisation===0"></i>
+                        </div>
+                        <div class="ui-grid-row" style="color: gray">
+                            <div class="col-md-8">Stock Copy (Optional):</div>
+                            <i class="fa fa-check col-md-4 pull-right" aria-hidden="true" *ngIf="search_STEP3_Result.stkcopy >=1"></i>
+                            <i class="fa fa-times col-md-4 pull-right" aria-hidden="true" *ngIf="search_STEP3_Result.stkcopy===0"></i>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Qty Input:</div>
+                            <i class="fa fa-check col-md-4 pull-right" style="color: green"  aria-hidden="true" *ngIf="search_STEP3_Result.qty >=1"></i>
+                            <i class="fa fa-times col-md-4 pull-right" style="color: red" aria-hidden="true" *ngIf="search_STEP3_Result.qty===0"></i>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Input val.:</div>
+                            <i class="fa fa-check col-md-4 pull-right" style="color: green" aria-hidden="true" *ngIf="search_STEP3_Result.inputvalidation >=1"></i>
+                            <i class="fa fa-times col-md-4 pull-right" style="color: red" aria-hidden="true" *ngIf="search_STEP3_Result.inputvalidation===0"></i>
+                        </div>
+                        <div class="ui-grid-row" style="color: gray" >
+                            <div class="col-md-8">Qty adjustment (Opt.).:</div>
+                            <i class="fa fa-check col-md-4 pull-right" aria-hidden="true" *ngIf="search_STEP3_Result.qtyadjustment >=1"></i>
+                            <i class="fa fa-times col-md-4 pull-right" aria-hidden="true" *ngIf="search_STEP3_Result.qtyadjustment===0"></i>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="col-md-8">Stock update:</div>
+                            <i class="fa fa-check col-md-4 pull-right" style="color: green" aria-hidden="true" *ngIf="search_STEP3_Result.stkupdate >=1"></i>
+                            <i class="fa fa-times col-md-4 pull-right" style="color: red" aria-hidden="true" *ngIf="search_STEP3_Result.stkupdate===0"></i>
+                        </div>
+                    </div>
+                </div>    
+            </p-panel>
+        </div>    
+    </div>
+    <div class="col-xl-3 col-lg-6">
+        <div class="card card-primary card-inverse">
+            <p-panel [toggleable]="true">
+                <p-header>
+                    <b>Overall integration</b>
+                </p-header>
+                <div class="ui-grid">
+                    <div class="ui-grid ui-grid-responsive ui-fluid ">
+                        <h1 class="ui-grid-row" style="display: flex;justify-content: center;align-items: center;background-color: yellow;">
+                            {{overallPercentage | percent}}
+                        </h1>
+                    </div>
+                </div>    
+            </p-panel>
+        </div>    
+    </div>
+</div>
+
+<p></p>
+<!-- Bstch processing and alerts result -->
+<ng-template [ngIf]="alerts.length > 0 && selectedElement">
+    <div *ngFor="let messages of alerts">
+        <alert *ngFor="let alert of messages" [type]="alert.type">
+            {{ alert?.msg }}
+            <i *ngIf="alert.type === 'danger'" class="fa fa-exclamation-triangle pull-right" aria-hidden="true"></i>
+            <i *ngIf="alert.type === 'warning'" class="fa fa-exclamation-triangle pull-right" aria-hidden="true"></i>
+            <i *ngIf="alert.type === 'success'" class="fa fa-thumbs-o-up pull-right" aria-hidden="true"></i>
+            <i *ngIf="alert.type === 'info'" class="fa fa-info-circle pull-right" aria-hidden="true"></i>
+        </alert>
+    </div>
+</ng-template>
+<p></p>
+
+<!-- Panel for rejection and In-between Operations -->
+<p-tabView *ngIf="selectedElement">
+    <p-tabPanel header="Rejection" leftIcon="fa-times">
+        <div  item-width="400px" table-layout="fixed" *ngIf="rejectionData">
+            <p-dataTable #resultRejection [value]="rejectionData.rejections" sortMode="multiple"
+                        [resizableColumns]="true" columnResizeMode="expand"
+                        [rows]="100"  [rowsPerPageOptions]="[100,1000,5000]"
+                        [paginator]="true" [pageLinks]="3" 
+                        [responsive]="true" [totalRecords]="totalRecords"
+                        [reorderableColumns]="true" scrollHeight="400px"
+                        [globalFilter]="gb"
+                        selectionMode="single" tableStyleClass="table-layout: auto;">
+                <p-header >
+                    <div class="ui-widget-header pull-right ui-left-inner-addon">
+                        <span class="fa fa-search"></span>
+                        <input  type="text" #gb
+                        placeholder="Type text to filter..." width="500px">
+                    </div>
+                    <div class="ui-helper-clearfix">
+                        <button type="button" pButton icon="fa-file-o" iconPos="left" label="CSV" (click)="resultRejection.exportCSV()" style="float:left"></button>
+                    </div>
+                    <!--div style="text-align:right">
+                        <p-multiSelect [options]="columnOptions" [(ngModel)]="columns"></p-multiSelect>
+                    </div-->
+                </p-header>
+                <p-column *ngFor="let col of columnsResultRejection" [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
+            </p-dataTable>
+        </div>   
+    </p-tabPanel>
+    <p-tabPanel header="In-Between Operation" leftIcon="fa-cogs" >
+        <div  item-width="400px" table-layout="fixed" *ngIf="movementData">
+            <p-dataTable #resultMVT [value]="movementData.movements" sortMode="multiple"
+                        [resizableColumns]="true" columnResizeMode="expand"
+                        [rows]="15"  [rowsPerPageOptions]="[10,20,50]"
+                        [paginator]="true" [pageLinks]="3" 
+                        [responsive]="true" [totalRecords]="totalRecords"
+                        [reorderableColumns]="true" scrollHeight="400px"
+                        [globalFilter]="gb"
+                        selectionMode="single" tableStyleClass="table-layout: auto;">
+                <p-header >
+                    <div class="ui-widget-header pull-right ui-left-inner-addon">
+                        <span class="fa fa-search"></span>
+                        <input  type="text" #gb
+                        placeholder="Type text to filter..." width="500px">
+                    </div>
+                    <div class="ui-helper-clearfix">
+                        <button type="button" pButton icon="fa-file-o" iconPos="left" label="CSV" (click)="resultMVT.exportCSV()" style="float:left"></button>
+                    </div>
+                    <!--div style="text-align:right">
+                        <p-multiSelect [options]="columnOptions" [(ngModel)]="columns"></p-multiSelect>
+                    </div-->
+                </p-header>
+                <p-column *ngFor="let col of columnsResultMVT" [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
+            </p-dataTable>
+        </div>
+    </p-tabPanel>
+</p-tabView>

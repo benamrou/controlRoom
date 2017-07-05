@@ -1,0 +1,32 @@
+2/11/2017 0:13:55 1: Connection to database... [IN PROGRESS]
+2/11/2017 0:13:55 1: Connection to database... [ESTABLISHED]
+2/11/2017 0:13:55 1: Path request:/api/authentification/
+2/11/2017 0:13:55 1: Executing query.... 
+2/11/2017 0:13:55 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/11/2017 0:38:4 1: Connection to database... [IN PROGRESS]
+2/11/2017 0:38:4 1: Connection to database... [ESTABLISHED]
+2/11/2017 0:38:4 1: Path request:/api/authentification/
+2/11/2017 0:38:4 1: Executing query.... 
+2/11/2017 0:38:4 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/11/2017 0:40:4 2: Connection to database... [IN PROGRESS]
+2/11/2017 0:40:4 2: Connection to database... [ESTABLISHED]
+2/11/2017 0:40:4 2: Path request:/api/authentification/
+2/11/2017 0:40:4 2: Executing query.... 
+2/11/2017 0:40:4 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/11/2017 0:42:4 3: Connection to database... [IN PROGRESS]
+2/11/2017 0:42:4 3: Connection to database... [ESTABLISHED]
+2/11/2017 0:42:4 3: Path request:/api/authentification/
+2/11/2017 0:42:4 3: Executing query.... 
+2/11/2017 0:42:4 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/11/2017 0:44:4 4: Connection to database... [IN PROGRESS]
+2/11/2017 0:44:4 4: Connection to database... [ESTABLISHED]
+2/11/2017 0:44:4 4: Path request:/api/authentification/
+2/11/2017 0:44:4 4: Executing query.... 
+2/11/2017 0:44:4 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/11/2017 0:46:4 5: Connection to database... [IN PROGRESS]
+2/11/2017 0:46:4 5: Connection to database... [ESTABLISHED]
+2/11/2017 0:46:4 5: Path request:/api/authentification/
+2/11/2017 0:46:4 5: Executing query.... 
+2/11/2017 0:46:4 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/11/2017 21:7:40 7: 0 Object(s) returned... [FETCH]
+2/11/2017 21:9:52 1: 0 Object(s) returned... [FETCH]

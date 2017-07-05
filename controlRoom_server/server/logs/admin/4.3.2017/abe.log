@@ -1,0 +1,49 @@
+4/3/2017 9:57:34 1: LIBQUERY with Callback: 
+4/3/2017 9:57:34 1: Path request:/api/itemcost/
+4/3/2017 9:57:34 1: Path header:undefined
+4/3/2017 9:57:34 1: Path query:{"PARAM":"33777"}
+4/3/2017 9:57:34 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ART0000002','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{33777}','{HN}', :cursor); END;
+4/3/2017 9:58:12 1: LIBQUERY with Callback: 
+4/3/2017 9:58:12 1: Path request:/api/itemcost/
+4/3/2017 9:58:12 1: Path header:undefined
+4/3/2017 9:58:12 1: Path query:{"PARAM":"33777"}
+4/3/2017 9:58:12 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ART0000002','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{33777}','{HN}', :cursor); END;
+4/3/2017 13:33:54 2: LIBQUERY with Callback: 
+4/3/2017 13:33:54 2: Path request:/api/itemcost/
+4/3/2017 13:33:54 2: Path header:undefined
+4/3/2017 13:33:54 2: Path query:{"PARAM":"33777"}
+4/3/2017 13:33:54 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'ART0000002','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{33777}','{HN}', :cursor); END;
+4/3/2017 13:33:58 2: 2 Object(s) returned... [FETCH]
+4/3/2017 13:33:58 2: [object Object],[object Object]
+4/3/2017 13:34:53 3: LIBQUERY with Callback: 
+4/3/2017 13:34:53 3: Path request:/api/itemcost/
+4/3/2017 13:34:53 3: Path header:undefined
+4/3/2017 13:34:53 3: Path query:{"PARAM":"33777"}
+4/3/2017 13:34:53 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'ART0000002','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{33777}','{HN}', :cursor); END;
+4/3/2017 13:34:56 3: 2 Object(s) returned... [FETCH]
+4/3/2017 13:34:56 3: [object Object],[object Object]
+4/3/2017 18:31:57 4: LIBQUERY with Callback: 
+4/3/2017 18:31:57 4: Path request:/api/itemcost/
+4/3/2017 18:31:57 4: Path header:undefined
+4/3/2017 18:31:57 4: Path query:{"PARAM":"18841"}
+4/3/2017 18:31:57 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'ART0000002','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{18841}','{HN}', :cursor); END;
+4/3/2017 20:37:46 27: LIBQUERY with Callback: 
+4/3/2017 20:37:46 27: Path request:/api/itemretail/
+4/3/2017 20:37:46 27: Path header:undefined
+4/3/2017 20:37:46 27: Path query:{"PARAM":"18841"}
+4/3/2017 20:37:46 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'ART0000003','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{18841}','{HN}', :cursor); END;
+4/3/2017 20:38:21 1: LIBQUERY with Callback: 
+4/3/2017 20:38:21 1: Path request:/api/itemretail/
+4/3/2017 20:38:21 1: Path header:undefined
+4/3/2017 20:38:21 1: Path query:{"PARAM":"18841"}
+4/3/2017 20:38:21 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ART0000003','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{18841}','{HN}', :cursor); END;
+4/3/2017 20:39:54 1: LIBQUERY with Callback: 
+4/3/2017 20:39:54 1: Path request:/api/itemretail/
+4/3/2017 20:39:54 1: Path header:undefined
+4/3/2017 20:39:54 1: Path query:{"PARAM":"18841"}
+4/3/2017 20:39:54 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ART0000003','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{18841}','{HN}', :cursor); END;
+4/3/2017 20:40:35 1: LIBQUERY with Callback: 
+4/3/2017 20:40:35 1: Path request:/api/itemretail/
+4/3/2017 20:40:35 1: Path header:undefined
+4/3/2017 20:40:35 1: Path query:{"PARAM":"18841"}
+4/3/2017 20:40:35 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ART0000003','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{18841}','{HN}', :cursor); END;

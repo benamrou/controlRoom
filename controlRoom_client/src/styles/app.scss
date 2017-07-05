@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+@import "bootstrap/bootstrap";
+@import "spinner";
+@import "utils";
+@import "rtl";
+@import "responsive";
+$fa-font-path: "~font-awesome/fonts";
+@import "../../node_modules/font-awesome/scss/font-awesome";
+@import "../../node_modules/fullcalendar/dist/fullcalendar.min.css";
+
+@import "component.theme/component.css";
+@import "component.theme/component.min.css";
+@import "component.theme/omega/theme.scss";

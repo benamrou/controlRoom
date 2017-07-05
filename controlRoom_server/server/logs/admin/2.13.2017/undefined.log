@@ -1,0 +1,5 @@
+2/13/2017 18:44:14 Connection execution:ORA-06550: line 1, column 7:
+PLS-00201: identifier 'PKREQUESTUESTMANAGER.CALLQUERY' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+: abe

@@ -1,0 +1,22 @@
+4/10/2017 17:14:35 1: LIBQUERY with Callback: 
+4/10/2017 17:14:35 1: Path request:/api/supplierschedule/
+4/10/2017 17:14:35 1: Path header:undefined
+4/10/2017 17:14:35 1: Path query:{"PARAM":"18841"}
+4/10/2017 17:14:35 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'SUP0000001','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{18841}','{HN}', :cursor); END;
+4/10/2017 17:23:53 2: LIBQUERY with Callback: 
+4/10/2017 17:23:53 2: Path request:/api/supplierschedule/
+4/10/2017 17:23:53 2: Path header:undefined
+4/10/2017 17:23:53 2: Path query:{"PARAM":"LEO"}
+4/10/2017 17:23:53 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'SUP0000001','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{LEO}','{HN}', :cursor); END;
+4/10/2017 17:25:40 3: LIBQUERY with Callback: 
+4/10/2017 17:25:40 3: Path request:/api/supplierschedule/
+4/10/2017 17:25:40 3: Path header:undefined
+4/10/2017 17:25:40 3: Path query:{"PARAM":"LEO"}
+4/10/2017 17:25:40 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'SUP0000001','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{LEO}','{HN}', :cursor); END;
+4/10/2017 17:26:53 4: LIBQUERY with Callback: 
+4/10/2017 17:26:53 4: Path request:/api/supplierschedule/
+4/10/2017 17:26:53 4: Path header:undefined
+4/10/2017 17:26:53 4: Path query:{"PARAM":"LEO"}
+4/10/2017 17:26:53 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'SUP0000001','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{LEO}','{HN}', :cursor); END;
+4/10/2017 17:26:57 4: 56 Object(s) returned... [FETCH]
+4/10/2017 17:26:57 4: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]

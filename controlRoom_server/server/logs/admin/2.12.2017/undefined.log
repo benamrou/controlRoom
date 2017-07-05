@@ -1,0 +1,6 @@
+2/12/2017 16:12:6 28: Connection to database... [IN PROGRESS]
+2/12/2017 16:12:6 28: Connection to database... [ESTABLISHED]
+2/12/2017 16:12:6 28: Path request:/api/authentification/
+2/12/2017 16:12:6 28: Executing query.... 
+2/12/2017 16:12:6 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'undefined','ADM0000001', '[admin,undefined]', :cursor); END;
+2/12/2017 16:12:6 28: 0 Object(s) returned... [FETCH]

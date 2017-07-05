@@ -1,0 +1,330 @@
+2/11/2017 1:45:4 2: Connection to database... [IN PROGRESS]
+2/11/2017 1:45:4 2: Connection to database... [ESTABLISHED]
+2/11/2017 1:45:4 2: Path request:/api/authentification/
+2/11/2017 1:45:4 2: Executing query.... 
+2/11/2017 1:45:4 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 1:45:4 2: 1 Object(s) returned... [FETCH]
+2/11/2017 1:45:14 3: Connection to database... [IN PROGRESS]
+2/11/2017 1:45:14 3: Connection to database... [ESTABLISHED]
+2/11/2017 1:45:14 3: Path request:/api/authentification/
+2/11/2017 1:45:14 3: Executing query.... 
+2/11/2017 1:45:14 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 1:45:14 3: 1 Object(s) returned... [FETCH]
+2/11/2017 1:45:14 4: Connection to database... [IN PROGRESS]
+2/11/2017 1:45:14 4: Connection to database... [ESTABLISHED]
+2/11/2017 1:45:14 4: Path request:/api/authentification/
+2/11/2017 1:45:14 4: Executing query.... 
+2/11/2017 1:45:14 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 1:45:14 4: 1 Object(s) returned... [FETCH]
+2/11/2017 16:33:21 1: Connection to database... [IN PROGRESS]
+2/11/2017 16:34:21 2: Connection to database... [IN PROGRESS]
+2/11/2017 16:34:21 2: Connection to database... [ESTABLISHED]
+2/11/2017 16:34:21 2: Path request:/api/authentification/
+2/11/2017 16:34:21 2: Executing query.... 
+2/11/2017 16:34:21 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 16:34:21 2: 1 Object(s) returned... [FETCH]
+2/11/2017 17:7:16 3: Connection to database... [IN PROGRESS]
+2/11/2017 17:7:16 3: Connection to database... [ESTABLISHED]
+2/11/2017 17:7:16 3: Path request:/api/authentification/
+2/11/2017 17:7:16 3: Executing query.... 
+2/11/2017 17:7:16 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:7:16 3: 1 Object(s) returned... [FETCH]
+2/11/2017 17:8:34 4: Connection to database... [IN PROGRESS]
+2/11/2017 17:8:34 4: Connection to database... [ESTABLISHED]
+2/11/2017 17:8:34 4: Path request:/api/authentification/
+2/11/2017 17:8:34 4: Executing query.... 
+2/11/2017 17:8:34 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:8:35 4: 1 Object(s) returned... [FETCH]
+2/11/2017 17:8:36 5: Connection to database... [IN PROGRESS]
+2/11/2017 17:8:36 5: Connection to database... [ESTABLISHED]
+2/11/2017 17:8:36 5: Path request:/api/authentification/
+2/11/2017 17:8:36 5: Executing query.... 
+2/11/2017 17:8:36 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:8:36 5: 1 Object(s) returned... [FETCH]
+2/11/2017 17:10:1 6: Connection to database... [IN PROGRESS]
+2/11/2017 17:10:1 6: Connection to database... [ESTABLISHED]
+2/11/2017 17:10:1 6: Path request:/api/authentification/
+2/11/2017 17:10:1 6: Executing query.... 
+2/11/2017 17:10:1 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:10:1 6: 1 Object(s) returned... [FETCH]
+2/11/2017 17:10:9 7: Connection to database... [IN PROGRESS]
+2/11/2017 17:10:9 7: Connection to database... [ESTABLISHED]
+2/11/2017 17:10:9 7: Path request:/api/authentification/
+2/11/2017 17:10:9 7: Executing query.... 
+2/11/2017 17:10:9 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:10:9 7: 1 Object(s) returned... [FETCH]
+2/11/2017 17:31:22 8: Connection to database... [IN PROGRESS]
+2/11/2017 17:31:22 8: Connection to database... [ESTABLISHED]
+2/11/2017 17:31:22 8: Path request:/api/authentification/
+2/11/2017 17:31:22 8: Executing query.... 
+2/11/2017 17:31:22 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:31:22 8: 1 Object(s) returned... [FETCH]
+2/11/2017 17:31:23 9: Connection to database... [IN PROGRESS]
+2/11/2017 17:31:23 9: Connection to database... [ESTABLISHED]
+2/11/2017 17:31:23 9: Path request:/api/authentification/
+2/11/2017 17:31:23 9: Executing query.... 
+2/11/2017 17:31:23 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:31:23 9: 1 Object(s) returned... [FETCH]
+2/11/2017 17:31:24 10: Connection to database... [IN PROGRESS]
+2/11/2017 17:31:24 10: Connection to database... [ESTABLISHED]
+2/11/2017 17:31:24 10: Path request:/api/authentification/
+2/11/2017 17:31:24 10: Executing query.... 
+2/11/2017 17:31:24 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:31:24 10: 1 Object(s) returned... [FETCH]
+2/11/2017 17:31:24 11: Connection to database... [IN PROGRESS]
+2/11/2017 17:31:24 11: Connection to database... [ESTABLISHED]
+2/11/2017 17:31:24 11: Path request:/api/authentification/
+2/11/2017 17:31:24 11: Executing query.... 
+2/11/2017 17:31:24 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:31:24 11: 1 Object(s) returned... [FETCH]
+2/11/2017 17:31:24 12: Connection to database... [IN PROGRESS]
+2/11/2017 17:31:24 12: Connection to database... [ESTABLISHED]
+2/11/2017 17:31:24 12: Path request:/api/authentification/
+2/11/2017 17:31:24 12: Executing query.... 
+2/11/2017 17:31:24 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:31:24 12: 1 Object(s) returned... [FETCH]
+2/11/2017 17:31:24 13: Connection to database... [IN PROGRESS]
+2/11/2017 17:31:24 13: Connection to database... [ESTABLISHED]
+2/11/2017 17:31:24 13: Path request:/api/authentification/
+2/11/2017 17:31:24 13: Executing query.... 
+2/11/2017 17:31:24 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:31:24 13: 1 Object(s) returned... [FETCH]
+2/11/2017 17:31:28 14: Connection to database... [IN PROGRESS]
+2/11/2017 17:31:28 14: Connection to database... [ESTABLISHED]
+2/11/2017 17:31:28 14: Path request:/api/authentification/
+2/11/2017 17:31:28 14: Executing query.... 
+2/11/2017 17:31:28 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'admin','ADM0000001', '[admin,s]', :cursor); END;
+2/11/2017 17:44:39 25: Connection to database... [IN PROGRESS]
+2/11/2017 17:44:39 25: Connection to database... [ESTABLISHED]
+2/11/2017 17:44:39 25: Path request:/api/authentification/
+2/11/2017 17:44:39 25: Executing query.... 
+2/11/2017 17:44:39 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:44:39 25: 1 Object(s) returned... [FETCH]
+2/11/2017 17:44:49 26: Connection to database... [IN PROGRESS]
+2/11/2017 17:44:49 26: Connection to database... [ESTABLISHED]
+2/11/2017 17:44:49 26: Path request:/api/authentification/
+2/11/2017 17:44:49 26: Executing query.... 
+2/11/2017 17:44:49 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:44:49 26: 1 Object(s) returned... [FETCH]
+2/11/2017 17:44:58 27: Connection to database... [IN PROGRESS]
+2/11/2017 17:44:58 27: Connection to database... [ESTABLISHED]
+2/11/2017 17:44:58 27: Path request:/api/authentification/
+2/11/2017 17:44:58 27: Executing query.... 
+2/11/2017 17:44:58 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:44:58 27: 1 Object(s) returned... [FETCH]
+2/11/2017 17:51:26 29: Connection to database... [IN PROGRESS]
+2/11/2017 17:51:26 29: Connection to database... [ESTABLISHED]
+2/11/2017 17:51:26 29: Path request:/api/authentification/
+2/11/2017 17:51:26 29: Executing query.... 
+2/11/2017 17:51:26 29: BEGIN PKREQUESTMANAGER.CALLQUERY(29,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 17:51:26 29: 1 Object(s) returned... [FETCH]
+2/11/2017 19:6:59 33: Connection to database... [IN PROGRESS]
+2/11/2017 19:6:59 33: Connection to database... [ESTABLISHED]
+2/11/2017 19:6:59 33: Path request:/api/authentification/
+2/11/2017 19:6:59 33: Executing query.... 
+2/11/2017 19:6:59 33: BEGIN PKREQUESTMANAGER.CALLQUERY(33,'admin','ADM0000001', '[admin,dmin]', :cursor); END;
+2/11/2017 19:7:54 1: Connection to database... [IN PROGRESS]
+2/11/2017 19:7:54 1: Connection to database... [ESTABLISHED]
+2/11/2017 19:7:54 1: Path request:/api/authentification/
+2/11/2017 19:7:54 1: Executing query.... 
+2/11/2017 19:7:54 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,dmin]', :cursor); END;
+2/11/2017 19:8:47 1: Connection to database... [IN PROGRESS]
+2/11/2017 19:8:47 1: Connection to database... [ESTABLISHED]
+2/11/2017 19:8:47 1: Path request:/api/authentification/
+2/11/2017 19:8:47 1: Executing query.... 
+2/11/2017 19:8:47 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:8:47 1: 1 Object(s) returned... [FETCH]
+2/11/2017 19:13:53 2: Connection to database... [IN PROGRESS]
+2/11/2017 19:13:53 2: Connection to database... [ESTABLISHED]
+2/11/2017 19:13:53 2: Path request:/api/authentification/
+2/11/2017 19:13:53 2: Executing query.... 
+2/11/2017 19:13:53 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:13:53 2: 1 Object(s) returned... [FETCH]
+2/11/2017 19:14:21 3: Connection to database... [IN PROGRESS]
+2/11/2017 19:14:21 3: Connection to database... [ESTABLISHED]
+2/11/2017 19:14:21 3: Path request:/api/authentification/
+2/11/2017 19:14:21 3: Executing query.... 
+2/11/2017 19:14:21 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:14:21 3: 1 Object(s) returned... [FETCH]
+2/11/2017 19:14:32 4: Connection to database... [IN PROGRESS]
+2/11/2017 19:14:32 4: Connection to database... [ESTABLISHED]
+2/11/2017 19:14:32 4: Path request:/api/authentification/
+2/11/2017 19:14:32 4: Executing query.... 
+2/11/2017 19:14:32 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:14:32 4: 1 Object(s) returned... [FETCH]
+2/11/2017 19:19:21 5: Connection to database... [IN PROGRESS]
+2/11/2017 19:19:21 5: Connection to database... [ESTABLISHED]
+2/11/2017 19:19:21 5: Path request:/api/authentification/
+2/11/2017 19:19:21 5: Executing query.... 
+2/11/2017 19:19:21 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:19:21 5: 1 Object(s) returned... [FETCH]
+2/11/2017 19:19:22 6: Connection to database... [IN PROGRESS]
+2/11/2017 19:19:22 6: Connection to database... [ESTABLISHED]
+2/11/2017 19:19:22 6: Path request:/api/authentification/
+2/11/2017 19:19:22 6: Executing query.... 
+2/11/2017 19:19:22 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:19:22 6: 1 Object(s) returned... [FETCH]
+2/11/2017 19:19:23 7: Connection to database... [IN PROGRESS]
+2/11/2017 19:19:23 7: Connection to database... [ESTABLISHED]
+2/11/2017 19:19:23 7: Path request:/api/authentification/
+2/11/2017 19:19:23 7: Executing query.... 
+2/11/2017 19:19:23 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:19:23 7: 1 Object(s) returned... [FETCH]
+2/11/2017 19:24:26 8: Connection to database... [IN PROGRESS]
+2/11/2017 19:24:26 8: Connection to database... [ESTABLISHED]
+2/11/2017 19:24:26 8: Path request:/api/authentification/
+2/11/2017 19:24:26 8: Executing query.... 
+2/11/2017 19:24:26 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:24:26 8: 1 Object(s) returned... [FETCH]
+2/11/2017 19:26:12 9: Connection to database... [IN PROGRESS]
+2/11/2017 19:26:12 9: Connection to database... [ESTABLISHED]
+2/11/2017 19:26:12 9: Path request:/api/authentification/
+2/11/2017 19:26:12 9: Executing query.... 
+2/11/2017 19:26:12 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:26:12 9: 1 Object(s) returned... [FETCH]
+2/11/2017 19:28:11 10: Connection to database... [IN PROGRESS]
+2/11/2017 19:28:11 10: Connection to database... [ESTABLISHED]
+2/11/2017 19:28:11 10: Path request:/api/authentification/
+2/11/2017 19:28:11 10: Executing query.... 
+2/11/2017 19:28:11 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:28:11 10: 1 Object(s) returned... [FETCH]
+2/11/2017 19:28:40 11: Connection to database... [IN PROGRESS]
+2/11/2017 19:28:40 11: Connection to database... [ESTABLISHED]
+2/11/2017 19:28:40 11: Path request:/api/authentification/
+2/11/2017 19:28:40 11: Executing query.... 
+2/11/2017 19:28:40 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:28:40 11: 1 Object(s) returned... [FETCH]
+2/11/2017 19:35:24 12: Connection to database... [IN PROGRESS]
+2/11/2017 19:35:24 12: Connection to database... [ESTABLISHED]
+2/11/2017 19:35:24 12: Path request:/api/authentification/
+2/11/2017 19:35:24 12: Executing query.... 
+2/11/2017 19:35:24 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 19:35:24 12: 1 Object(s) returned... [FETCH]
+2/11/2017 20:47:44 1: Connection to database... [IN PROGRESS]
+2/11/2017 20:47:45 1: Connection to database... [ESTABLISHED]
+2/11/2017 20:47:45 1: Path request:/api/authentification/
+2/11/2017 20:47:45 1: Executing query.... 
+2/11/2017 20:47:45 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 20:47:45 1: 1 Object(s) returned... [FETCH]
+2/11/2017 20:50:26 1: Connection to database... [IN PROGRESS]
+2/11/2017 20:50:26 1: Connection to database... [ESTABLISHED]
+2/11/2017 20:50:26 1: Path request:/api/authentification/
+2/11/2017 20:50:26 1: Executing query.... 
+2/11/2017 20:50:26 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,admi]', :cursor); END;
+2/11/2017 20:50:57 1: Connection to database... [IN PROGRESS]
+2/11/2017 20:50:57 1: Connection to database... [ESTABLISHED]
+2/11/2017 20:50:57 1: Path request:/api/authentification/
+2/11/2017 20:50:57 1: Executing query.... 
+2/11/2017 20:50:57 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,admi]', :cursor); END;
+2/11/2017 20:51:18 1: Connection to database... [IN PROGRESS]
+2/11/2017 20:51:18 1: Connection to database... [ESTABLISHED]
+2/11/2017 20:51:18 1: Path request:/api/authentification/
+2/11/2017 20:51:18 1: Executing query.... 
+2/11/2017 20:51:18 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,admi]', :cursor); END;
+2/11/2017 20:51:46 1: Connection to database... [IN PROGRESS]
+2/11/2017 20:51:46 1: Connection to database... [ESTABLISHED]
+2/11/2017 20:51:46 1: Path request:/api/authentification/
+2/11/2017 20:51:46 1: Executing query.... 
+2/11/2017 20:51:46 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,admi]', :cursor); END;
+2/11/2017 20:57:24 1: Connection to database... [IN PROGRESS]
+2/11/2017 20:57:24 1: Connection to database... [ESTABLISHED]
+2/11/2017 20:57:24 1: Path request:/api/authentification/
+2/11/2017 20:57:24 1: Executing query.... 
+2/11/2017 20:57:24 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,admi]', :cursor); END;
+2/11/2017 20:57:24 1: 0 Object(s) returned... [FETCH]
+2/11/2017 20:59:12 2: Connection to database... [IN PROGRESS]
+2/11/2017 20:59:12 2: Connection to database... [ESTABLISHED]
+2/11/2017 20:59:12 2: Path request:/api/authentification/
+2/11/2017 20:59:12 2: Executing query.... 
+2/11/2017 20:59:12 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'admin','ADM0000001', '[admin,admi]', :cursor); END;
+2/11/2017 20:59:12 2: 0 Object(s) returned... [FETCH]
+2/11/2017 21:0:9 3: Connection to database... [IN PROGRESS]
+2/11/2017 21:0:9 3: Connection to database... [ESTABLISHED]
+2/11/2017 21:0:9 3: Path request:/api/authentification/
+2/11/2017 21:0:9 3: Executing query.... 
+2/11/2017 21:0:9 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'admin','ADM0000001', '[admin,admi]', :cursor); END;
+2/11/2017 21:0:9 3: 0 Object(s) returned... [FETCH]
+2/11/2017 21:3:6 4: Connection to database... [IN PROGRESS]
+2/11/2017 21:3:6 4: Connection to database... [ESTABLISHED]
+2/11/2017 21:3:6 4: Path request:/api/authentification/
+2/11/2017 21:3:6 4: Executing query.... 
+2/11/2017 21:3:6 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'admin','ADM0000001', '[admin,adm]', :cursor); END;
+2/11/2017 21:3:6 4: 0 Object(s) returned... [FETCH]
+2/11/2017 21:3:15 5: Connection to database... [IN PROGRESS]
+2/11/2017 21:3:15 5: Connection to database... [ESTABLISHED]
+2/11/2017 21:3:15 5: Path request:/api/authentification/
+2/11/2017 21:3:15 5: Executing query.... 
+2/11/2017 21:3:15 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'admin','ADM0000001', '[admin,adm]', :cursor); END;
+2/11/2017 21:3:15 5: 0 Object(s) returned... [FETCH]
+2/11/2017 21:6:48 6: Connection to database... [IN PROGRESS]
+2/11/2017 21:6:48 6: Connection to database... [ESTABLISHED]
+2/11/2017 21:6:48 6: Path request:/api/authentification/
+2/11/2017 21:6:48 6: Executing query.... 
+2/11/2017 21:6:48 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'admin','ADM0000001', '[admin,adm]', :cursor); END;
+2/11/2017 21:6:48 6: 0 Object(s) returned... [FETCH]
+2/11/2017 21:7:40 7: Connection to database... [IN PROGRESS]
+2/11/2017 21:7:40 7: Connection to database... [ESTABLISHED]
+2/11/2017 21:7:40 7: Path request:/api/authentification/
+2/11/2017 21:7:40 7: Executing query.... 
+2/11/2017 21:7:40 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 21:7:40 7: 1 Object(s) returned... [FETCH]
+2/11/2017 21:9:52 1: Connection to database... [IN PROGRESS]
+2/11/2017 21:9:52 1: Connection to database... [ESTABLISHED]
+2/11/2017 21:9:52 1: Path request:/api/authentification/
+2/11/2017 21:9:52 1: Executing query.... 
+2/11/2017 21:9:52 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 21:9:52 1: 1 Object(s) returned... [FETCH]
+2/11/2017 21:10:51 1: Connection to database... [IN PROGRESS]
+2/11/2017 21:10:51 1: Connection to database... [ESTABLISHED]
+2/11/2017 21:10:51 1: Path request:/api/authentification/
+2/11/2017 21:10:51 1: Executing query.... 
+2/11/2017 21:10:51 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 21:10:51 1: 1 Object(s) returned... [FETCH]
+2/11/2017 21:11:52 1: Connection to database... [IN PROGRESS]
+2/11/2017 21:11:52 1: Connection to database... [ESTABLISHED]
+2/11/2017 21:11:52 1: Path request:/api/authentification/
+2/11/2017 21:11:52 1: Executing query.... 
+2/11/2017 21:11:52 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 21:11:52 1: 1 Object(s) returned... [FETCH]
+2/11/2017 21:11:58 2: Connection to database... [IN PROGRESS]
+2/11/2017 21:11:58 2: Connection to database... [ESTABLISHED]
+2/11/2017 21:11:58 2: Path request:/api/authentification/
+2/11/2017 21:11:58 2: Executing query.... 
+2/11/2017 21:11:58 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'admin','ADM0000001', '[admin,admi]', :cursor); END;
+2/11/2017 21:11:58 2: 0 Object(s) returned... [FETCH]
+2/11/2017 21:12:4 3: Connection to database... [IN PROGRESS]
+2/11/2017 21:12:4 3: Connection to database... [ESTABLISHED]
+2/11/2017 21:12:4 3: Path request:/api/authentification/
+2/11/2017 21:12:4 3: Executing query.... 
+2/11/2017 21:12:4 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 21:12:4 3: 1 Object(s) returned... [FETCH]
+2/11/2017 21:13:9 4: Connection to database... [IN PROGRESS]
+2/11/2017 21:13:9 4: Connection to database... [ESTABLISHED]
+2/11/2017 21:13:9 4: Path request:/api/authentification/
+2/11/2017 21:13:9 4: Executing query.... 
+2/11/2017 21:13:9 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'admin','ADM0000001', '[admin,ad]', :cursor); END;
+2/11/2017 21:13:9 4: 0 Object(s) returned... [FETCH]
+2/11/2017 21:13:19 5: Connection to database... [IN PROGRESS]
+2/11/2017 21:13:19 5: Connection to database... [ESTABLISHED]
+2/11/2017 21:13:19 5: Path request:/api/authentification/
+2/11/2017 21:13:19 5: Executing query.... 
+2/11/2017 21:13:19 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 21:13:19 5: 1 Object(s) returned... [FETCH]
+2/11/2017 21:13:24 6: Connection to database... [IN PROGRESS]
+2/11/2017 21:13:24 6: Connection to database... [ESTABLISHED]
+2/11/2017 21:13:24 6: Path request:/api/authentification/
+2/11/2017 21:13:24 6: Executing query.... 
+2/11/2017 21:13:24 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 21:13:24 6: 1 Object(s) returned... [FETCH]
+2/11/2017 21:13:29 7: Connection to database... [IN PROGRESS]
+2/11/2017 21:13:29 7: Connection to database... [ESTABLISHED]
+2/11/2017 21:13:29 7: Path request:/api/authentification/
+2/11/2017 21:13:29 7: Executing query.... 
+2/11/2017 21:13:29 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 21:13:29 7: 1 Object(s) returned... [FETCH]
+2/11/2017 21:23:14 8: Connection to database... [IN PROGRESS]
+2/11/2017 21:23:14 8: Connection to database... [ESTABLISHED]
+2/11/2017 21:23:14 8: Path request:/api/authentification/
+2/11/2017 21:23:14 8: Executing query.... 
+2/11/2017 21:23:14 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'admin','ADM0000001', '[admin,admin]', :cursor); END;
+2/11/2017 21:23:14 8: 1 Object(s) returned... [FETCH]

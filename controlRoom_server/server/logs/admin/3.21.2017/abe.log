@@ -1,0 +1,209 @@
+3/21/2017 8:12:59 1: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 8:12:59 1: Path request:/api/user/
+3/21/2017 8:12:59 1: Path query:{"USER_NAME":"admin"}
+3/21/2017 8:12:59 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+3/21/2017 8:12:59 1: 1 Object(s) returned... [FETCH]
+3/21/2017 8:12:59 1: [object Object]
+3/21/2017 10:6:26 22: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:6:26 22: LIBQUERY with Callback: 
+3/21/2017 10:6:26 22: Path request:/api/authentification/
+3/21/2017 10:6:26 22: Path header:undefined
+3/21/2017 10:6:26 22: Path query:{}
+3/21/2017 10:6:26 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'ADM0000001','abe','{}', '{abe,aeb}','{}', :cursor); END;
+3/21/2017 10:6:26 22: 0 Object(s) returned... [FETCH]
+3/21/2017 10:6:31 23: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:6:31 23: LIBQUERY with Callback: 
+3/21/2017 10:6:31 23: Path request:/api/authentification/
+3/21/2017 10:6:31 23: Path header:undefined
+3/21/2017 10:6:31 23: Path query:{}
+3/21/2017 10:6:31 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:6:31 23: 1 Object(s) returned... [FETCH]
+3/21/2017 10:6:31 23: [object Object]
+3/21/2017 10:10:45 26: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:10:45 26: LIBQUERY with Callback: 
+3/21/2017 10:10:45 26: Path request:/api/authentification/
+3/21/2017 10:10:45 26: Path header:undefined
+3/21/2017 10:10:45 26: Path query:{}
+3/21/2017 10:10:45 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:10:45 26: 1 Object(s) returned... [FETCH]
+3/21/2017 10:10:45 26: [object Object]
+3/21/2017 10:11:18 28: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:11:18 28: LIBQUERY with Callback: 
+3/21/2017 10:11:18 28: Path request:/api/authentification/
+3/21/2017 10:11:18 28: Path header:undefined
+3/21/2017 10:11:18 28: Path query:{}
+3/21/2017 10:11:18 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:11:18 28: 1 Object(s) returned... [FETCH]
+3/21/2017 10:11:18 28: [object Object]
+3/21/2017 10:16:33 32: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:16:33 32: LIBQUERY with Callback: 
+3/21/2017 10:16:33 32: Path request:/api/authentification/
+3/21/2017 10:16:33 32: Path header:undefined
+3/21/2017 10:16:33 32: Path query:{}
+3/21/2017 10:16:33 32: BEGIN PKREQUESTMANAGER.CALLQUERY(32,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:16:33 32: 1 Object(s) returned... [FETCH]
+3/21/2017 10:16:33 32: [object Object]
+3/21/2017 10:19:20 33: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:19:20 33: LIBQUERY with Callback: 
+3/21/2017 10:19:20 33: Path request:/api/authentification/
+3/21/2017 10:19:20 33: Path header:undefined
+3/21/2017 10:19:20 33: Path query:{}
+3/21/2017 10:19:20 33: BEGIN PKREQUESTMANAGER.CALLQUERY(33,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:19:20 33: 1 Object(s) returned... [FETCH]
+3/21/2017 10:19:20 33: [object Object]
+3/21/2017 10:20:45 34: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:20:45 34: LIBQUERY with Callback: 
+3/21/2017 10:20:45 34: Path request:/api/authentification/
+3/21/2017 10:20:45 34: Path header:undefined
+3/21/2017 10:20:45 34: Path query:{}
+3/21/2017 10:20:45 34: BEGIN PKREQUESTMANAGER.CALLQUERY(34,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:20:45 34: 1 Object(s) returned... [FETCH]
+3/21/2017 10:20:45 34: [object Object]
+3/21/2017 10:22:42 1: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:22:42 1: LIBQUERY with Callback: 
+3/21/2017 10:22:42 1: Path request:/api/authentification/
+3/21/2017 10:22:42 1: Path header:undefined
+3/21/2017 10:22:42 1: Path query:{}
+3/21/2017 10:22:42 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:22:42 1: 1 Object(s) returned... [FETCH]
+3/21/2017 10:22:42 1: [object Object]
+3/21/2017 10:22:49 2: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:22:49 2: LIBQUERY with Callback: 
+3/21/2017 10:22:49 2: Path request:/api/authentification/
+3/21/2017 10:22:49 2: Path header:undefined
+3/21/2017 10:22:49 2: Path query:{}
+3/21/2017 10:22:49 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:22:49 2: 1 Object(s) returned... [FETCH]
+3/21/2017 10:22:49 2: [object Object]
+3/21/2017 10:30:17 5: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:30:17 5: LIBQUERY with Callback: 
+3/21/2017 10:30:17 5: Path request:/api/authentification/
+3/21/2017 10:30:17 5: Path header:undefined
+3/21/2017 10:30:17 5: Path query:{}
+3/21/2017 10:30:17 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:30:17 5: 1 Object(s) returned... [FETCH]
+3/21/2017 10:30:17 5: [object Object]
+3/21/2017 10:31:30 6: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:31:30 6: LIBQUERY with Callback: 
+3/21/2017 10:31:30 6: Path request:/api/authentification/
+3/21/2017 10:31:30 6: Path header:undefined
+3/21/2017 10:31:30 6: Path query:{}
+3/21/2017 10:31:30 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:31:30 6: 1 Object(s) returned... [FETCH]
+3/21/2017 10:31:30 6: [object Object]
+3/21/2017 10:34:54 9: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:34:54 9: LIBQUERY with Callback: 
+3/21/2017 10:34:54 9: Path request:/api/authentification/
+3/21/2017 10:34:54 9: Path header:undefined
+3/21/2017 10:34:54 9: Path query:{}
+3/21/2017 10:34:54 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:34:54 9: 1 Object(s) returned... [FETCH]
+3/21/2017 10:34:54 9: [object Object]
+3/21/2017 10:34:55 10: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:34:55 10: Path request:/api/user/
+3/21/2017 10:34:55 10: Path query:{"USER_NAME":"abe"}
+3/21/2017 10:34:55 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 10:34:55 10: 1 Object(s) returned... [FETCH]
+3/21/2017 10:34:55 10: [object Object]
+3/21/2017 10:38:0 11: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:38:0 11: Path request:/api/user/
+3/21/2017 10:38:0 11: Path query:{"USER_NAME":"abe"}
+3/21/2017 10:38:0 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 10:38:0 11: 1 Object(s) returned... [FETCH]
+3/21/2017 10:38:0 11: [object Object]
+3/21/2017 10:44:21 16: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:44:21 16: LIBQUERY with Callback: 
+3/21/2017 10:44:21 16: Path request:/api/authentification/
+3/21/2017 10:44:21 16: Path header:undefined
+3/21/2017 10:44:21 16: Path query:{}
+3/21/2017 10:44:21 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 10:44:21 16: 1 Object(s) returned... [FETCH]
+3/21/2017 10:44:21 16: [object Object]
+3/21/2017 10:44:21 17: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:44:21 17: Path request:/api/user/
+3/21/2017 10:44:21 17: Path query:{"USER_NAME":"abe"}
+3/21/2017 10:44:21 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 10:44:21 17: 1 Object(s) returned... [FETCH]
+3/21/2017 10:44:21 17: [object Object]
+3/21/2017 10:45:8 18: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:45:8 18: Path request:/api/user/
+3/21/2017 10:45:8 18: Path query:{"USER_NAME":"abe"}
+3/21/2017 10:45:8 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 10:45:8 18: 1 Object(s) returned... [FETCH]
+3/21/2017 10:45:8 18: [object Object]
+3/21/2017 10:45:22 19: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 10:45:22 19: Path request:/api/user/
+3/21/2017 10:45:22 19: Path query:{"USER_NAME":"abe"}
+3/21/2017 10:45:22 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 10:45:22 19: 1 Object(s) returned... [FETCH]
+3/21/2017 10:45:22 19: [object Object]
+3/21/2017 16:2:7 6: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:2:7 6: LIBQUERY with Callback: 
+3/21/2017 16:2:7 6: Path request:/api/authentification/
+3/21/2017 16:2:7 6: Path header:undefined
+3/21/2017 16:2:7 6: Path query:{}
+3/21/2017 16:2:7 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 16:2:7 6: 1 Object(s) returned... [FETCH]
+3/21/2017 16:2:7 6: [object Object]
+3/21/2017 16:2:7 7: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:2:7 7: Path request:/api/user/
+3/21/2017 16:2:7 7: Path query:{"USER_NAME":"abe"}
+3/21/2017 16:2:7 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 16:2:7 7: 1 Object(s) returned... [FETCH]
+3/21/2017 16:2:7 7: [object Object]
+3/21/2017 16:16:3 8: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:16:3 8: Path request:/api/user/
+3/21/2017 16:16:3 8: Path query:{"USER_NAME":"abe"}
+3/21/2017 16:16:3 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 16:16:3 8: 1 Object(s) returned... [FETCH]
+3/21/2017 16:16:3 8: [object Object]
+3/21/2017 16:18:48 9: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:18:48 9: Path request:/api/user/
+3/21/2017 16:18:48 9: Path query:{"USER_NAME":"abe"}
+3/21/2017 16:18:48 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 16:18:48 9: 1 Object(s) returned... [FETCH]
+3/21/2017 16:18:48 9: [object Object]
+3/21/2017 16:20:5 10: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:20:5 10: Path request:/api/user/
+3/21/2017 16:20:5 10: Path query:{"USER_NAME":"abe"}
+3/21/2017 16:20:5 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 16:20:5 10: 1 Object(s) returned... [FETCH]
+3/21/2017 16:20:5 10: [object Object]
+3/21/2017 16:20:53 11: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:20:53 11: Path request:/api/user/
+3/21/2017 16:20:53 11: Path query:{"USER_NAME":"abe"}
+3/21/2017 16:20:53 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 16:20:53 11: 1 Object(s) returned... [FETCH]
+3/21/2017 16:20:53 11: [object Object]
+3/21/2017 16:22:39 12: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:22:39 12: Path request:/api/user/
+3/21/2017 16:22:39 12: Path query:{"USER_NAME":"abe"}
+3/21/2017 16:22:39 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 16:22:39 12: 1 Object(s) returned... [FETCH]
+3/21/2017 16:22:39 12: [object Object]
+3/21/2017 16:22:59 13: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:22:59 13: Path request:/api/user/
+3/21/2017 16:22:59 13: Path query:{"USER_NAME":"abe"}
+3/21/2017 16:22:59 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 16:22:59 13: 1 Object(s) returned... [FETCH]
+3/21/2017 16:22:59 13: [object Object]
+3/21/2017 16:26:5 14: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:26:5 14: Path request:/api/user/
+3/21/2017 16:26:5 14: Path query:{"USER_NAME":"abe"}
+3/21/2017 16:26:5 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 16:26:5 14: 1 Object(s) returned... [FETCH]
+3/21/2017 16:26:5 14: [object Object]
+3/21/2017 16:26:11 15: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:26:11 15: LIBQUERY with Callback: 
+3/21/2017 16:26:11 15: Path request:/api/authentification/
+3/21/2017 16:26:11 15: Path header:undefined
+3/21/2017 16:26:11 15: Path query:{}
+3/21/2017 16:26:11 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+3/21/2017 16:26:11 15: 1 Object(s) returned... [FETCH]
+3/21/2017 16:26:11 15: [object Object]
+3/21/2017 16:26:11 16: Connecting to database:{"user":"controlroom","password":"controlroom","connectString":"192.168.56.101/xe"}
+3/21/2017 16:26:11 16: Path request:/api/user/
+3/21/2017 16:26:11 16: Path query:{"USER_NAME":"abe"}
+3/21/2017 16:26:11 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+3/21/2017 16:26:11 16: 1 Object(s) returned... [FETCH]
+3/21/2017 16:26:11 16: [object Object]

@@ -1,0 +1,5 @@
+2/11/2017 17:48:10 28: Connection to database... [IN PROGRESS]
+2/11/2017 17:48:10 28: Connection to database... [ESTABLISHED]
+2/11/2017 17:48:10 28: Path request:/api/authentification/
+2/11/2017 17:48:10 28: Executing query.... 
+2/11/2017 17:48:10 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'dd','ADM0000001', '[dd,dd]', :cursor); END;

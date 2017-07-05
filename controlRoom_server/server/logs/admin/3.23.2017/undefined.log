@@ -1,0 +1,3 @@
+3/23/2017 8:59:20 4: Path request:/api/environment/
+3/23/2017 8:59:20 4: Path query:{"USER_NAME":"abe"}
+3/23/2017 8:59:20 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'CLI0000003','undefined','{}', '{abe}','{}', :cursor); END;
