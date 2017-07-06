@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Http, XHRBackend, RequestOptions, Request, RequestOptionsArgs, Response, Headers} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
+import {environment} from '../../../../environments/environment'
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -9,9 +10,10 @@ export class HttpService extends Http{
 
   //baseUrl: string = 'http://localhost:8090';
 
-  baseUrl: string = 'http://10.100.1.113:8090';
+  baseUrl: string = environment.serverURL;
   constructor(backend: XHRBackend, option: RequestOptions ) {
     super(backend,option);
+    console.log('BASEURL : ' + this.baseUrl);
   }
 
   get(url: string, options?: RequestOptionsArgs): Observable<Response> {

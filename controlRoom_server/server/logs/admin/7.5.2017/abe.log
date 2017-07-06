@@ -334,3 +334,202 @@
 7/5/2017 14:18:51 10: Path header:undefined
 7/5/2017 14:18:51 10: Path query:{}
 7/5/2017 14:18:51 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CLI0000001','abe','{HEINENS_CUSTOM_PROD}', '{undefined}','{HN}', :cursor); END;
+7/5/2017 18:59:22 1: LIBQUERY with Callback: 
+7/5/2017 18:59:22 1: Path request:/api/authentification/
+7/5/2017 18:59:22 1: Path header:undefined
+7/5/2017 18:59:22 1: Path query:{}
+7/5/2017 18:59:22 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+7/5/2017 18:59:22 1: 1 Object(s) returned... [FETCH]
+7/5/2017 18:59:22 1: [object Object]
+7/5/2017 18:59:22 2: LIBQUERY with Callback: 
+7/5/2017 18:59:22 2: Path request:/api/user/
+7/5/2017 18:59:22 2: Path header:undefined
+7/5/2017 18:59:22 2: Path query:{"USER_NAME":"abe"}
+7/5/2017 18:59:22 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 18:59:22 3: LIBQUERY with Callback: 
+7/5/2017 18:59:22 3: Path request:/api/environment/
+7/5/2017 18:59:22 3: Path header:undefined
+7/5/2017 18:59:22 3: Path query:{"USER_NAME":"abe"}
+7/5/2017 18:59:22 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 18:59:23 3: 1 Object(s) returned... [FETCH]
+7/5/2017 18:59:23 3: [object Object]
+7/5/2017 18:59:23 3: 6 Object(s) returned... [FETCH]
+7/5/2017 18:59:23 3: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 18:59:23 4: LIBQUERY with Callback: 
+7/5/2017 18:59:23 4: Path request:/api/authentification/
+7/5/2017 18:59:23 4: Path header:undefined
+7/5/2017 18:59:23 4: Path query:{}
+7/5/2017 18:59:23 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+7/5/2017 18:59:23 4: 1 Object(s) returned... [FETCH]
+7/5/2017 18:59:23 4: [object Object]
+7/5/2017 18:59:23 5: LIBQUERY with Callback: 
+7/5/2017 18:59:23 5: Path request:/api/user/
+7/5/2017 18:59:23 5: Path header:undefined
+7/5/2017 18:59:23 5: Path query:{"USER_NAME":"abe"}
+7/5/2017 18:59:23 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 18:59:23 6: LIBQUERY with Callback: 
+7/5/2017 18:59:23 6: Path request:/api/environment/
+7/5/2017 18:59:23 6: Path header:undefined
+7/5/2017 18:59:23 6: Path query:{"USER_NAME":"abe"}
+7/5/2017 18:59:23 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 18:59:23 6: 1 Object(s) returned... [FETCH]
+7/5/2017 18:59:23 6: [object Object]
+7/5/2017 18:59:23 6: 6 Object(s) returned... [FETCH]
+7/5/2017 18:59:23 6: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 19:0:15 7: LIBQUERY with Callback: 
+7/5/2017 19:0:15 7: Path request:/api/authentification/
+7/5/2017 19:0:15 7: Path header:undefined
+7/5/2017 19:0:15 7: Path query:{}
+7/5/2017 19:0:15 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+7/5/2017 19:0:15 7: 1 Object(s) returned... [FETCH]
+7/5/2017 19:0:15 7: [object Object]
+7/5/2017 19:0:15 8: LIBQUERY with Callback: 
+7/5/2017 19:0:15 8: Path request:/api/user/
+7/5/2017 19:0:15 8: Path header:undefined
+7/5/2017 19:0:15 8: Path query:{"USER_NAME":"abe"}
+7/5/2017 19:0:15 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 19:0:15 9: LIBQUERY with Callback: 
+7/5/2017 19:0:15 9: Path request:/api/environment/
+7/5/2017 19:0:15 9: Path header:undefined
+7/5/2017 19:0:15 9: Path query:{"USER_NAME":"abe"}
+7/5/2017 19:0:15 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 19:0:15 9: 1 Object(s) returned... [FETCH]
+7/5/2017 19:0:15 9: [object Object]
+7/5/2017 19:0:15 9: 6 Object(s) returned... [FETCH]
+7/5/2017 19:0:15 9: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 19:0:47 10: LIBQUERY with Callback: 
+7/5/2017 19:0:47 10: Path request:/api/authentification/
+7/5/2017 19:0:47 10: Path header:undefined
+7/5/2017 19:0:47 10: Path query:{}
+7/5/2017 19:0:47 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+7/5/2017 19:0:47 10: 1 Object(s) returned... [FETCH]
+7/5/2017 19:0:47 10: [object Object]
+7/5/2017 19:0:47 11: LIBQUERY with Callback: 
+7/5/2017 19:0:47 11: Path request:/api/user/
+7/5/2017 19:0:47 11: Path header:undefined
+7/5/2017 19:0:47 11: Path query:{"USER_NAME":"abe"}
+7/5/2017 19:0:47 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 19:0:47 12: LIBQUERY with Callback: 
+7/5/2017 19:0:47 12: Path request:/api/environment/
+7/5/2017 19:0:47 12: Path header:undefined
+7/5/2017 19:0:47 12: Path query:{"USER_NAME":"abe"}
+7/5/2017 19:0:47 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 19:0:47 12: 1 Object(s) returned... [FETCH]
+7/5/2017 19:0:47 12: [object Object]
+7/5/2017 19:0:47 12: 6 Object(s) returned... [FETCH]
+7/5/2017 19:0:47 12: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 21:27:23 1: LIBQUERY with Callback: 
+7/5/2017 21:27:23 1: Path request:/api/authentification/
+7/5/2017 21:27:23 1: Path header:undefined
+7/5/2017 21:27:23 1: Path query:{}
+7/5/2017 21:27:23 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+7/5/2017 21:27:23 1: 1 Object(s) returned... [FETCH]
+7/5/2017 21:27:23 1: [object Object]
+7/5/2017 21:27:23 2: LIBQUERY with Callback: 
+7/5/2017 21:27:23 2: Path request:/api/environment/
+7/5/2017 21:27:23 2: Path header:undefined
+7/5/2017 21:27:23 2: Path query:{"USER_NAME":"abe"}
+7/5/2017 21:27:23 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 21:27:23 3: LIBQUERY with Callback: 
+7/5/2017 21:27:23 3: Path request:/api/user/
+7/5/2017 21:27:23 3: Path header:undefined
+7/5/2017 21:27:23 3: Path query:{"USER_NAME":"abe"}
+7/5/2017 21:27:23 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 21:27:23 3: 6 Object(s) returned... [FETCH]
+7/5/2017 21:27:23 3: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 21:27:23 3: 1 Object(s) returned... [FETCH]
+7/5/2017 21:27:23 3: [object Object]
+7/5/2017 21:35:6 1: LIBQUERY with Callback: 
+7/5/2017 21:35:6 1: Path request:/api/authentification/
+7/5/2017 21:35:6 1: Path header:undefined
+7/5/2017 21:35:6 1: Path query:{}
+7/5/2017 21:35:6 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+7/5/2017 21:35:6 1: 1 Object(s) returned... [FETCH]
+7/5/2017 21:35:6 1: [object Object]
+7/5/2017 21:35:6 2: LIBQUERY with Callback: 
+7/5/2017 21:35:6 2: Path request:/api/user/
+7/5/2017 21:35:6 2: Path header:undefined
+7/5/2017 21:35:6 2: Path query:{"USER_NAME":"abe"}
+7/5/2017 21:35:6 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 21:35:6 3: LIBQUERY with Callback: 
+7/5/2017 21:35:6 3: Path request:/api/environment/
+7/5/2017 21:35:6 3: Path header:undefined
+7/5/2017 21:35:6 3: Path query:{"USER_NAME":"abe"}
+7/5/2017 21:35:6 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 21:35:6 3: 1 Object(s) returned... [FETCH]
+7/5/2017 21:35:6 3: [object Object]
+7/5/2017 21:35:6 3: 6 Object(s) returned... [FETCH]
+7/5/2017 21:35:6 3: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 21:35:6 4: LIBQUERY with Callback: 
+7/5/2017 21:35:6 4: Path request:/api/labels/
+7/5/2017 21:35:6 4: Path header:undefined
+7/5/2017 21:35:6 4: Path query:{}
+7/5/2017 21:35:6 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'LAB0000001','abe','{undefined}', '{undefined}','{}', :cursor); END;
+7/5/2017 21:35:6 4: 36 Object(s) returned... [FETCH]
+7/5/2017 21:35:6 4: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 21:36:41 5: LIBQUERY with Callback: 
+7/5/2017 21:36:41 5: Path request:/api/authentification/
+7/5/2017 21:36:41 5: Path header:undefined
+7/5/2017 21:36:41 5: Path query:{}
+7/5/2017 21:36:41 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+7/5/2017 21:36:41 5: 1 Object(s) returned... [FETCH]
+7/5/2017 21:36:41 5: [object Object]
+7/5/2017 21:36:41 6: LIBQUERY with Callback: 
+7/5/2017 21:36:41 6: Path request:/api/user/
+7/5/2017 21:36:41 6: Path header:undefined
+7/5/2017 21:36:41 6: Path query:{"USER_NAME":"abe"}
+7/5/2017 21:36:41 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 21:36:41 7: LIBQUERY with Callback: 
+7/5/2017 21:36:41 7: Path request:/api/environment/
+7/5/2017 21:36:41 7: Path header:undefined
+7/5/2017 21:36:41 7: Path query:{"USER_NAME":"abe"}
+7/5/2017 21:36:41 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 21:36:41 7: 1 Object(s) returned... [FETCH]
+7/5/2017 21:36:41 7: [object Object]
+7/5/2017 21:36:41 7: 6 Object(s) returned... [FETCH]
+7/5/2017 21:36:41 7: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 21:36:43 8: LIBQUERY with Callback: 
+7/5/2017 21:36:43 8: Path request:/api/labels/
+7/5/2017 21:36:43 8: Path header:undefined
+7/5/2017 21:36:43 8: Path query:{}
+7/5/2017 21:36:43 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'LAB0000001','abe','{undefined}', '{undefined}','{HN}', :cursor); END;
+7/5/2017 21:36:43 8: 36 Object(s) returned... [FETCH]
+7/5/2017 21:36:43 8: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 21:37:41 9: LIBQUERY with Callback: 
+7/5/2017 21:37:41 9: Path request:/api/counting/2/
+7/5/2017 21:37:41 9: Path header:undefined
+7/5/2017 21:37:41 9: Path query:{"PARAM":"05/01/2017"}
+7/5/2017 21:37:41 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CNT0000002','abe','{HEINENS_CUSTOM_PROD}', '{05/01/2017}','{HN}', :cursor); END;
+7/5/2017 21:39:17 10: LIBQUERY with Callback: 
+7/5/2017 21:39:17 10: Path request:/api/authentification/
+7/5/2017 21:39:17 10: Path header:undefined
+7/5/2017 21:39:17 10: Path query:{}
+7/5/2017 21:39:17 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+7/5/2017 21:39:17 10: 1 Object(s) returned... [FETCH]
+7/5/2017 21:39:17 10: [object Object]
+7/5/2017 21:39:17 11: LIBQUERY with Callback: 
+7/5/2017 21:39:17 11: Path request:/api/user/
+7/5/2017 21:39:17 11: Path header:undefined
+7/5/2017 21:39:17 11: Path query:{"USER_NAME":"abe"}
+7/5/2017 21:39:17 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 21:39:17 12: LIBQUERY with Callback: 
+7/5/2017 21:39:17 12: Path request:/api/environment/
+7/5/2017 21:39:17 12: Path header:undefined
+7/5/2017 21:39:17 12: Path query:{"USER_NAME":"abe"}
+7/5/2017 21:39:17 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+7/5/2017 21:39:17 12: 1 Object(s) returned... [FETCH]
+7/5/2017 21:39:17 12: [object Object]
+7/5/2017 21:39:17 12: 6 Object(s) returned... [FETCH]
+7/5/2017 21:39:17 12: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 21:39:17 13: LIBQUERY with Callback: 
+7/5/2017 21:39:17 13: Path request:/api/labels/
+7/5/2017 21:39:17 13: Path header:undefined
+7/5/2017 21:39:17 13: Path query:{}
+7/5/2017 21:39:17 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'LAB0000001','abe','{undefined}', '{undefined}','{}', :cursor); END;
+7/5/2017 21:39:17 13: 36 Object(s) returned... [FETCH]
+7/5/2017 21:39:17 13: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+7/5/2017 21:39:49 14: LIBQUERY with Callback: 
+7/5/2017 21:39:49 14: Path request:/api/counting/2/
+7/5/2017 21:39:49 14: Path header:undefined
+7/5/2017 21:39:49 14: Path query:{}
+7/5/2017 21:39:49 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'CNT0000002','abe','{HEINENS_CUSTOM_PROD}', '{undefined}','{HN}', :cursor); END;
