@@ -1,7 +1,9 @@
 import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
 import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
 import {Router} from '@angular/router';
-import {HttpService, UserService} from '../index';
+import {HttpService} from '../request/html.service';
+import {UserService} from '../user/user.service';
+import {DatePipe} from '@angular/common';
 
 import {Observable} from 'rxjs';
 
@@ -27,6 +29,7 @@ export class Supplier {
 }
 
 export class SupplierSchedule {
+   public uniqueid: string;
    public internalcode: string;
    public externalcode: string;
    public sites: Site [] = [];
@@ -94,6 +97,57 @@ export class SupplierSchedule {
    public end: string;
 }
 
+export class SupplierPlanning {
+   public uniqueid: string;
+   public externalcode: string;
+   public description: string;
+   public commercialcontract: string;
+   public servicecontract: string;
+   public addresschain: string;
+   public sites: Site [] = [];
+   public orderDate: string;
+   public orderTime: string;
+   public deliveryDate: string;
+   public deliveryTime: string;
+   public shippingDueDate: string;
+   public shippingDueTime: string;
+   public deliveryTimeWednesday1: string;
+   public deliveryTimeThursday1: string;
+   public deliveryTimeFriday1: string;
+   public deliveryTimeSaturday1: string;
+   public deliveryTimeSunday1: string;
+   public collectionTimeMonday2: string;
+   public collectionTimeTuesday2: string;
+   public collectionTimeWednesday2: string;
+   public collectionTimeThursday2: string;
+   public collectionTimeFriday2: string;
+   public collectionTimeSaturday2: string;
+   public collectionTimeSunday2: string;
+   public deliveryTimeMonday2: string;
+   public deliveryTimeTuesday2: string;
+   public deliveryTimeWednesday2: string;
+   public deliveryTimeThursday2: string;
+   public deliveryTimeFriday2: string;
+   public deliveryTimeSaturday2: string;
+   public deliveryTimeSunday2: string;
+   public collectionTimeMonday3: string;
+   public collectionTimeTuesday3: string;
+   public collectionTimeWednesday3: string;
+   public collectionTimeThursday3: string;
+   public collectionTimeFriday3: string;
+   public collectionTimeSaturday3: string;
+   public collectionTimeSunday3: string;
+   public deliveryTimeMonday3: string;
+   public deliveryTimeTuesday3: string;
+   public deliveryTimeWednesday3: string;
+   public deliveryTimeThursday3: string;
+   public deliveryTimeFriday3: string;
+   public deliveryTimeSaturday3: string;
+   public deliveryTimeSunday3: string;
+   public start: string;
+   public end: string;
+}
+
 export class Site {
     public code: string;
     public description;
@@ -114,7 +168,7 @@ export class SupplierScheduleService {
   private paramsItem: URLSearchParams;
   private options: RequestOptions;
 
-  constructor(private http : HttpService,private _userService: UserService){ }
+  constructor(private http : HttpService,private _userService: UserService, private datePipe: DatePipe){ }
 
     /**
      * This function retrieves the User information.
@@ -131,12 +185,14 @@ export class SupplierScheduleService {
         headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
     
-        return this.http.get(this.request, this.options)
+        //return this.http.get(this.request, this.options)
+        return this.http.getMock('assets/schedule.json', this.options)
             .map((response: Response) => {
                 let data = response.json();
                 let schedule, site;
                 this.suppliers = [];
-                //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
+                console.log('Supplier schedule data: ' +  data);
+                console.log('Supplier schedule JSON: ' +  data.length + ' => ' + JSON.stringify(data));
                 if (data.length > 0 ) {
                     for(let i = 0; i < data.length; i ++) {
                         //console.log ('i: ' + i + ' itemInfo: ' + JSON.stringify(this.itemInfo));
@@ -163,6 +219,8 @@ export class SupplierScheduleService {
                             if (i > 0 && this.isNewSchedule(schedule, data[i])) {
                                 //console.log('Pushing data svcode :' + JSON.stringify(svcode));
                                 schedule.sites.push(site);
+                                schedule.uniqueid = this.supplier.schedules.length + 1;
+                                
                                 this.supplier.schedules.push(schedule);
                                 site = new Site();
                                 schedule = new SupplierSchedule();
@@ -187,6 +245,8 @@ export class SupplierScheduleService {
                         site.description = data[i].SOCLMAG;
                         site.addresscChain = data[i].LISNFILC;
     
+                        schedule.internalcode = data[i].LISCSIN;
+                        schedule.externalcode = data[i].FCSNUM;
                         schedule.frequency = data[i].LISREAP;
                         schedule.frequencyUnit = data[i].LISUREAP;
                         schedule.frequencyUnitLabel = data[i].LISUREAP_LIB;
@@ -255,8 +315,8 @@ export class SupplierScheduleService {
                         schedule.deliveryTimeSaturday3 = data[i].LISHLSA3;
                         schedule.deliveryTimeSunday3 = data[i].LISHLDI3;
     
-                        schedule.start = data[i].LISDDEB;
-                        schedule.end = data[i].LISDFIN;
+                        schedule.start = this.datePipe.transform(data[i].LISDDEB, 'yyyy-MM-dd');
+                        schedule.end = this.datePipe.transform(data[i].LISDFIN, 'yyyy-MM-dd');
                     }
                 
                     //console.log('Push data final');

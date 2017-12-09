@@ -1,27 +1,27 @@
-import {NgModule,Component,ElementRef,AfterViewInit,AfterContentInit,OnDestroy,Input,Output,SimpleChange,EventEmitter,ContentChild,ContentChildren,TemplateRef,QueryList} from '@angular/core';
+import {NgModule,Component,ElementRef,AfterViewInit,AfterContentInit,DoCheck,OnDestroy,Input,Output,SimpleChange,EventEmitter,ContentChild,ContentChildren,TemplateRef,QueryList,IterableDiffers} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {SharedModule,Header,Footer,PrimeTemplate} from '../common/shared';
 import {PaginatorModule} from '../paginator/paginator';
-import {BlockableUI} from '../common/api';
+import {BlockableUI} from '../common/blockableui';
 
 @Component({
     selector: 'p-dataList',
     template: `
-        <div [ngClass]="'ui-datalist ui-widget'" [ngStyle]="style" [class]="styleClass">
+        <div [ngClass]="{'ui-datalist ui-widget': true, 'ui-datalist-scrollable': scrollable}" [ngStyle]="style" [class]="styleClass">
             <div class="ui-datalist-header ui-widget-header ui-corner-top" *ngIf="header">
                 <ng-content select="p-header"></ng-content>
             </div>
-            <p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks" 
+            <p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks" [alwaysShow]="alwaysShowPaginator"
             (onPageChange)="paginate($event)" styleClass="ui-paginator-bottom" [rowsPerPageOptions]="rowsPerPageOptions" *ngIf="paginator  && paginatorPosition!='bottom' || paginatorPosition =='both'"></p-paginator>
-            <div class="ui-datalist-content ui-widget-content">
+            <div class="ui-datalist-content ui-widget-content" [ngStyle]="{'max-height': scrollHeight}">
                 <div *ngIf="isEmpty()" class="ui-datalist-emptymessage">{{emptyMessage}}</div>
                 <ul class="ui-datalist-data">
-                    <li *ngFor="let item of dataToRender;let i = index">
-                        <ng-template [pTemplateWrapper]="itemTemplate" [item]="item" [index]="i"></ng-template>
+                    <li *ngFor="let item of dataToRender;let i = index;trackBy: trackBy">
+                        <ng-template [pTemplateWrapper]="itemTemplate" [item]="item" [index]="i + first"></ng-template>
                     </li>
                 </ul>
             </div>
-            <p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks" 
+            <p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks" [alwaysShow]="alwaysShowPaginator"
             (onPageChange)="paginate($event)" styleClass="ui-paginator-bottom" [rowsPerPageOptions]="rowsPerPageOptions" *ngIf="paginator  && paginatorPosition!='top' || paginatorPosition =='both'"></p-paginator>
             <div class="ui-datalist-footer ui-widget-header ui-corner-bottom" *ngIf="footer">
                 <ng-content select="p-footer"></ng-content>
@@ -29,7 +29,7 @@ import {BlockableUI} from '../common/api';
         </div>
     `
 })
-export class DataList implements AfterViewInit,AfterContentInit,BlockableUI {
+export class DataList implements AfterViewInit,AfterContentInit,DoCheck,BlockableUI {
 
     @Input() paginator: boolean;
 
@@ -53,6 +53,16 @@ export class DataList implements AfterViewInit,AfterContentInit,BlockableUI {
 
     @Input() emptyMessage: string = 'No records found';
     
+    @Input() alwaysShowPaginator: boolean = true;
+    
+    @Input() trackBy: Function = (index: number, item: any) => item;
+    
+    @Input() immutable: boolean = true;
+    
+    @Input() scrollable: boolean;
+    
+    @Input() scrollHeight: string;
+    
     @Output() onPage: EventEmitter<any> = new EventEmitter();
         
     @ContentChild(Header) header;
@@ -70,8 +80,12 @@ export class DataList implements AfterViewInit,AfterContentInit,BlockableUI {
     public first: number = 0;
     
     public page: number = 0;
-
-    constructor(public el: ElementRef) {}
+    
+    differ: any;
+    
+    constructor(public el: ElementRef, public differs: IterableDiffers) {
+		this.differ = differs.find([]).create(null);
+	}
     
     ngAfterContentInit() {
         this.templates.forEach((item) => {
@@ -102,7 +116,10 @@ export class DataList implements AfterViewInit,AfterContentInit,BlockableUI {
 
     set value(val:any[]) {
         this._value = val;
-        this.handleDataChange();
+        
+        if(this.immutable) {
+            this.handleDataChange();
+        }
     }
     
     handleDataChange() {
@@ -110,6 +127,15 @@ export class DataList implements AfterViewInit,AfterContentInit,BlockableUI {
             this.updatePaginator();
         }
         this.updateDataToRender(this.value);
+    }
+    
+    ngDoCheck() {
+        if(!this.immutable) {
+            let changes = this.differ.diff(this.value);
+            if(changes) {
+                this.handleDataChange();
+            }
+        }
     }
     
     updatePaginator() {

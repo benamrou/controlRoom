@@ -1,7 +1,8 @@
 import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
 import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
 import {Router} from '@angular/router';
-import {HttpService, UserService} from '../index';
+import {HttpService} from '../request/html.service';
+import {UserService} from '../user/user.service';
 
 
 

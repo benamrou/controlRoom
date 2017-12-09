@@ -5,6 +5,8 @@ export class DomHandler {
 
     public static zindex: number = 1000;
 
+    private calculatedScrollbarWidth: number = null;
+
     public addClass(element: any, className: string): void {
         if (element.classList)
             element.classList.add(className);
@@ -71,13 +73,20 @@ export class DomHandler {
         let targetHeight = target.offsetHeight;
         let targetWidth = target.offsetWidth;
         let targetOffset = target.getBoundingClientRect();
+        let windowScrollTop = this.getWindowScrollTop();
         let viewport = this.getViewport();
         let top, left;
-
-        if ((targetOffset.top + targetHeight + elementDimensions.height) > viewport.height)
+        
+        if ((targetOffset.top + targetHeight + elementDimensions.height) > viewport.height) {
             top = -1 * (elementDimensions.height);
-        else
+            if(targetOffset.top + top < 0) {
+                top = 0;
+            }
+        }
+        else {
             top = targetHeight;
+        }
+            
             
         if ((targetOffset.left + elementDimensions.width) > viewport.width)
             left = targetWidth - elementDimensions.width;
@@ -177,7 +186,7 @@ export class DomHandler {
         let last = +new Date();
         let opacity = 0;
         let tick = function () {
-            opacity = +element.style.opacity + (new Date().getTime() - last) / duration;
+            opacity = +element.style.opacity.replace(",", ".") + (new Date().getTime() - last) / duration;
             element.style.opacity = opacity;
             last = +new Date();
 
@@ -261,6 +270,14 @@ export class DomHandler {
         width -= parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
         return width;
     }
+    
+    public getInnerHeight(el) {
+        let height = el.offsetHeight;
+        let style = getComputedStyle(el);
+
+        height += parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+        return height;
+    }
 
     public getOuterHeight(el, margin?) {
         let height = el.offsetHeight;
@@ -303,15 +320,12 @@ export class DomHandler {
     }
     
     public getOffset(el) {
-        let x = el.offsetLeft;
-        let y = el.offsetTop;
-
-        while (el = el.offsetParent) {
-            x += el.offsetLeft;
-            y += el.offsetTop;
-        }
-
-        return {left: x, top: y};
+        let rect = el.getBoundingClientRect();
+        
+        return {
+            top: rect.top + document.body.scrollTop,
+            left: rect.left + document.body.scrollLeft
+        };
     }
 
     getUserAgent(): string {
@@ -369,13 +383,39 @@ export class DomHandler {
     }
     
     calculateScrollbarWidth(): number {
+        if(this.calculatedScrollbarWidth !== null)
+            return this.calculatedScrollbarWidth;
+        
         let scrollDiv = document.createElement("div");
         scrollDiv.className = "ui-scrollbar-measure";
         document.body.appendChild(scrollDiv);
 
         let scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
         document.body.removeChild(scrollDiv);
+
+        this.calculatedScrollbarWidth = scrollbarWidth;
         
         return scrollbarWidth;
+    }
+    
+    public invokeElementMethod(element: any, methodName: string, args?: any[]): void {
+        (element as any)[methodName].apply(element, args);
+    }
+    
+    public clearSelection(): void {
+        if(window.getSelection) {
+            if(window.getSelection().empty) {
+                window.getSelection().empty();
+            } else if(window.getSelection().removeAllRanges && window.getSelection().rangeCount > 0 && window.getSelection().getRangeAt(0).getClientRects().length > 0) {
+                window.getSelection().removeAllRanges();
+            }
+        }
+        else if(document['selection'] && document['selection'].empty) {
+            try {
+                document['selection'].empty();
+            } catch(error) {
+                //ignore IE bug
+            }
+        }
     }
 }

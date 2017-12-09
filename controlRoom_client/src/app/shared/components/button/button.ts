@@ -25,13 +25,13 @@ export class Button implements AfterViewInit, OnDestroy {
         if(this.icon) {
             let iconElement = document.createElement("span");
             let iconPosClass = (this.iconPos == 'right') ? 'ui-button-icon-right': 'ui-button-icon-left';
-            iconElement.className = iconPosClass  + ' ui-c fa fa-fw ' + this.icon;
+            iconElement.className = iconPosClass  + ' ui-clickable fa fa-fw ' + this.icon;
             this.el.nativeElement.appendChild(iconElement);
         }
         
         let labelElement = document.createElement("span");
-        labelElement.className = 'ui-button-text ui-c';
-        labelElement.appendChild(document.createTextNode(this.label||'ui-button'));
+        labelElement.className = 'ui-button-text ui-clickable';
+        labelElement.appendChild(document.createTextNode(this.label||'ui-btn'));
         this.el.nativeElement.appendChild(labelElement);
         this.initialized = true;
     }
@@ -50,7 +50,12 @@ export class Button implements AfterViewInit, OnDestroy {
             }
         }
         else {
-            styleClass = styleClass + ' ui-button-text-only';
+            if(this.label) {
+                styleClass = styleClass + ' ui-button-text-only';
+            }
+            else {
+                styleClass = styleClass + ' ui-button-text-empty';
+            }
         }
         
         return styleClass;
@@ -77,7 +82,8 @@ export class Button implements AfterViewInit, OnDestroy {
         
         if(this.initialized) {
             let iconPosClass = (this.iconPos == 'right') ? 'ui-button-icon-right': 'ui-button-icon-left';
-            this.domHandler.findSingle(this.el.nativeElement, '.fa').className = iconPosClass  + ' ui-c fa fa-fw ' + this.icon;
+            this.domHandler.findSingle(this.el.nativeElement, '.fa').className =
+                iconPosClass + ' ui-clickable fa fa-fw ' + this.icon;
         }
     }
         

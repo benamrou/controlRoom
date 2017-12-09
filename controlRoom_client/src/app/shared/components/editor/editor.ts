@@ -79,11 +79,13 @@ export class Editor implements AfterViewInit,ControlValueAccessor {
     
     @Input() placeholder: string;
     
-    @Input() readOnly: boolean;
-    
     @Input() formats: string[];
     
+    @Output() onInit: EventEmitter<any> = new EventEmitter();
+    
     value: string;
+    
+    _readonly: boolean;
     
     onModelChange: Function = () => {};
     
@@ -102,7 +104,7 @@ export class Editor implements AfterViewInit,ControlValueAccessor {
               toolbar: toolbarElement
           },
           placeholder: this.placeholder,
-          readOnly: this.readOnly,
+          readOnly: this.readonly,
           theme: 'snow',
           formats: this.formats
         });
@@ -139,6 +141,10 @@ export class Editor implements AfterViewInit,ControlValueAccessor {
                 source: source
             });
         });
+        
+        this.onInit.emit({
+            editor: this.quill
+        });
     }
         
     writeValue(value: any) : void {
@@ -158,6 +164,25 @@ export class Editor implements AfterViewInit,ControlValueAccessor {
 
     registerOnTouched(fn: Function): void {
         this.onModelTouched = fn;
+    }
+    
+    getQuill() {
+        return this.quill;
+    }
+    
+    @Input() get readonly(): boolean {
+        return this._readonly;
+    }
+
+    set readonly(val:boolean) {
+        this._readonly = val;
+        
+        if(this.quill) {
+            if(this._readonly)
+                this.quill.disable();
+            else
+                this.quill.enable();
+        }
     }
 }
 

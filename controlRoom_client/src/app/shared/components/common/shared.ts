@@ -1,4 +1,4 @@
-import {NgModule,EventEmitter,Directive,ViewContainerRef,Input,Output,ContentChildren,ContentChild,TemplateRef,OnInit,OnDestroy,AfterContentInit,QueryList,EmbeddedViewRef} from '@angular/core';
+import {NgModule,EventEmitter,Directive,ViewContainerRef,Input,Output,ContentChildren,ContentChild,TemplateRef,OnInit,OnChanges,OnDestroy,AfterContentInit,QueryList,SimpleChanges,EmbeddedViewRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {Component} from '@angular/core';
 
@@ -28,13 +28,7 @@ export class PrimeTemplate {
     constructor(public template: TemplateRef<any>) {}
     
     getType(): string {
-        if(this.type) {
-            console.log('Defining a pTemplate with type property is deprecated use pTemplate="type" instead.');
-            return this.type;
-        }
-        else {
-            return this.name;
-        }
+        return this.name;
     }
 }
 
@@ -67,11 +61,13 @@ export class TemplateWrapper implements OnInit, OnDestroy {
 
 @Component({
     selector: 'p-column',
-    template: ``
+    template: ''
 })
 export class Column implements AfterContentInit{
     @Input() field: string;
+    @Input() colId: string;
     @Input() sortField: string;
+    @Input() filterField: string;
     @Input() header: string;
     @Input() footer: string;
     @Input() sortable: any;
@@ -79,15 +75,26 @@ export class Column implements AfterContentInit{
     @Input() filter: boolean;
     @Input() filterMatchMode: string;
     @Input() filterType: string = 'text';
+    @Input() excludeGlobalFilter: boolean;
     @Input() rowspan: number;
     @Input() colspan: number;
+    @Input() scope: string;
     @Input() style: any;
     @Input() styleClass: string;
+    @Input() exportable: boolean = true;
+    @Input() headerStyle: any;
+    @Input() headerStyleClass: string;
+    @Input() bodyStyle: any;
+    @Input() bodyStyleClass: string;
+    @Input() footerStyle: any;
+    @Input() footerStyleClass: string;
     @Input() hidden: boolean;
     @Input() expander: boolean;
     @Input() selectionMode: string;
     @Input() filterPlaceholder: string;
+    @Input() filterMaxlength: number;
     @Input() frozen: boolean;
+    @Input() resizable: boolean = true;
     @Output() sortFunction: EventEmitter<any> = new EventEmitter();
     @ContentChildren(PrimeTemplate) templates: QueryList<any>;
     @ContentChild(TemplateRef) template: TemplateRef<any>;
@@ -144,6 +151,8 @@ export class Row {
     template: ``
 })
 export class HeaderColumnGroup {
+    
+    @Input() frozen: boolean;
         
     @ContentChildren(Row) rows: QueryList<any>;
 }
@@ -154,6 +163,8 @@ export class HeaderColumnGroup {
 })
 export class FooterColumnGroup {
         
+    @Input() frozen: boolean;
+        
     @ContentChildren(Row) rows: QueryList<any>;
 }
 
@@ -161,7 +172,7 @@ export class FooterColumnGroup {
     selector: 'p-columnBodyTemplateLoader',
     template: ``
 })
-export class ColumnBodyTemplateLoader implements OnInit, OnDestroy {
+export class ColumnBodyTemplateLoader implements OnInit, OnChanges, OnDestroy {
         
     @Input() column: any;
         
@@ -179,6 +190,16 @@ export class ColumnBodyTemplateLoader implements OnInit, OnDestroy {
             'rowData': this.rowData,
             'rowIndex': this.rowIndex
         });
+    }
+    
+    ngOnChanges(changes: SimpleChanges) {
+        if(!this.view) {
+            return;
+        }
+        
+        if('rowIndex' in changes) {
+            this.view.context.rowIndex = changes['rowIndex'].currentValue;
+        }
     }
 	
     ngOnDestroy() {
@@ -292,22 +313,41 @@ export class TemplateLoader implements OnInit, OnDestroy {
         
     @Input() template: TemplateRef<any>;
     
-    @Input() data: any;
+    _data: any;
             
     view: EmbeddedViewRef<any>;
     
     constructor(public viewContainer: ViewContainerRef) {}
     
     ngOnInit() {
+        this.render();
+    }
+    
+    render() {
+        if(this.view) {
+            this.view.destroy();
+        }
+        
         if(this.template) {
             this.view = this.viewContainer.createEmbeddedView(this.template, {
                 '\$implicit': this.data
             });
         }
     }
+    
+    @Input() get data(): any {
+        return this._data;
+    }
+
+    set data(val: any) {
+        this._data = val;
+        this.render();
+    }
 	
     ngOnDestroy() {
-		if (this.view) this.view.destroy();
+		if (this.view) {
+            this.view.destroy();
+        }
 	}
 }
 

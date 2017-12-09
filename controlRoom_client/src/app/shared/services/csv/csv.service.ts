@@ -1,7 +1,7 @@
 import { Response, Jsonp, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { Injectable } from '@angular/core';
-import { HttpService} from '../../services/index';
+import {HttpService} from '../request/html.service';
 
 
 @Injectable()

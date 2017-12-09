@@ -1,7 +1,8 @@
 import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { Injectable} from '@angular/core';
-import { HttpService, UserService } from '../index';
+import {HttpService} from '../request/html.service';
+import {UserService} from '../user/user.service';
 
 @Injectable()
 export class SearchService {

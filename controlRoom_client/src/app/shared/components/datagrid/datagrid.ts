@@ -1,8 +1,8 @@
-import {NgModule,Component,ElementRef,AfterViewInit,AfterContentInit,OnDestroy,Input,Output,SimpleChange,EventEmitter,ContentChild,ContentChildren,QueryList,TemplateRef} from '@angular/core';
+import {NgModule,Component,ElementRef,AfterViewInit,AfterContentInit,DoCheck,OnDestroy,Input,Output,SimpleChange,EventEmitter,ContentChild,ContentChildren,QueryList,TemplateRef,IterableDiffers} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {Header,Footer,PrimeTemplate,SharedModule} from '../common/shared';
 import {PaginatorModule} from '../paginator/paginator';
-import {BlockableUI} from '../common/api';
+import {BlockableUI} from '../common/blockableui';
 
 @Component({
     selector: 'p-dataGrid',
@@ -11,15 +11,15 @@ import {BlockableUI} from '../common/api';
             <div class="ui-datagrid-header ui-widget-header ui-corner-top" *ngIf="header">
                 <ng-content select="p-header"></ng-content>
             </div>
-            <p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks" 
+            <p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks" [alwaysShow]="alwaysShowPaginator"
                 (onPageChange)="paginate($event)" styleClass="ui-paginator-bottom" [rowsPerPageOptions]="rowsPerPageOptions" *ngIf="paginator && paginatorPosition!='bottom' || paginatorPosition =='both'"></p-paginator>
             <div class="ui-datagrid-content ui-widget-content">
                 <div class="ui-g">
-                    <ng-template ngFor [ngForOf]="dataToRender" [ngForTemplate]="itemTemplate"></ng-template>
+                    <ng-template ngFor [ngForOf]="dataToRender" [ngForTemplate]="itemTemplate" [ngForTrackBy]="trackBy"></ng-template>
                     <div *ngIf="isEmpty()" class="ui-widget-content ui-g-12">{{emptyMessage}}</div>
                 </div>
             </div>
-            <p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks" 
+            <p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks" [alwaysShow]="alwaysShowPaginator"
                 (onPageChange)="paginate($event)" styleClass="ui-paginator-bottom" [rowsPerPageOptions]="rowsPerPageOptions" *ngIf="paginator && paginatorPosition!='top' || paginatorPosition =='both'"></p-paginator>
             <div class="ui-datagrid-footer ui-widget-header ui-corner-top" *ngIf="footer">
                 <ng-content select="p-footer"></ng-content>
@@ -27,7 +27,7 @@ import {BlockableUI} from '../common/api';
         </div>
     `
 })
-export class DataGrid implements AfterViewInit,AfterContentInit,BlockableUI {
+export class DataGrid implements AfterViewInit,AfterContentInit,DoCheck,BlockableUI {
 
     @Input() paginator: boolean;
 
@@ -51,6 +51,12 @@ export class DataGrid implements AfterViewInit,AfterContentInit,BlockableUI {
     
     @Input() paginatorPosition: string = 'bottom';
     
+    @Input() alwaysShowPaginator: boolean = true;
+    
+    @Input() trackBy: Function = (index: number, item: any) => item;
+    
+    @Input() immutable: boolean = true;
+    
     @Output() onPage: EventEmitter<any> = new EventEmitter();
             
     @ContentChild(Header) header;
@@ -59,18 +65,22 @@ export class DataGrid implements AfterViewInit,AfterContentInit,BlockableUI {
     
     @ContentChildren(PrimeTemplate) templates: QueryList<any>;
     
-    public _value: any[];
+    _value: any[];
     
-    public itemTemplate: TemplateRef<any>;
+    itemTemplate: TemplateRef<any>;
 
-    public dataToRender: any[];
+    dataToRender: any[];
 
-    public first: number = 0;
+    first: number = 0;
     
-    public page: number = 0;
+    page: number = 0;
     
-    constructor(public el: ElementRef) {}
-
+    differ: any;
+    
+    constructor(public el: ElementRef, public differs: IterableDiffers) {
+		this.differ = differs.find([]).create(null);
+	}
+    
     ngAfterViewInit() {
         if(this.lazy) {
             this.onLazyLoad.emit({
@@ -100,7 +110,10 @@ export class DataGrid implements AfterViewInit,AfterContentInit,BlockableUI {
 
     set value(val:any[]) {
         this._value = val;
-        this.handleDataChange();
+        
+        if(this.immutable) {
+            this.handleDataChange();
+        }
     }
     
     handleDataChange() {
@@ -110,6 +123,15 @@ export class DataGrid implements AfterViewInit,AfterContentInit,BlockableUI {
         this.updateDataToRender(this.value);
     }
     
+    ngDoCheck() {
+        if(!this.immutable) {
+            let changes = this.differ.diff(this.value);
+            if(changes) {
+                this.handleDataChange();
+            }
+        }
+    }
+
     updatePaginator() {
         //total records
         this.totalRecords = this.lazy ? this.totalRecords : (this.value ? this.value.length: 0);

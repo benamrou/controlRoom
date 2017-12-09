@@ -28,7 +28,7 @@ export * from  './fileupload/fileupload';
 export * from  './galleria/galleria';
 export * from  './gmap/gmap';
 export * from  './growl/growl';
-export * from  './index';
+//export * from  './index';
 export * from  './inplace/inplace';
 export * from  './inputmask/inputmask';
 export * from  './inputswitch/inputswitch';

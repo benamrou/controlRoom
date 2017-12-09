@@ -2,19 +2,24 @@ import {NgModule,Component,Input,Output,EventEmitter,ElementRef} from '@angular/
 import {trigger,state,style,transition,animate} from '@angular/animations';
 import {CommonModule} from '@angular/common';
 import {SharedModule} from '../common/shared';
-import {BlockableUI} from '../common/api';
+import {BlockableUI} from '../common/blockableui';
+
+let idx: number = 0;
 
 @Component({
     selector: 'p-fieldset',
     template: `
-        <fieldset [ngClass]="{'ui-fieldset ui-widget ui-widget-content ui-corner-all': true, 'ui-fieldset-toggleable': toggleable}" [ngStyle]="style" [class]="styleClass">
-            <legend class="ui-fieldset-legend ui-corner-all ui-state-default ui-unselectable-text" (click)="toggle($event)">
-                <span *ngIf="toggleable" class="ui-fieldset-toggler fa fa-w" [ngClass]="{'fa-minus': !collapsed,'fa-plus':collapsed}"></span>
-                {{legend}}
-                <ng-content select="p-header"></ng-content>
+        <fieldset [attr.id]="id" [ngClass]="{'ui-fieldset ui-widget ui-widget-content ui-corner-all': true, 'ui-fieldset-toggleable': toggleable}" [ngStyle]="style" [class]="styleClass">
+            <legend class="ui-fieldset-legend ui-corner-all ui-state-default ui-unselectable-text">
+                <a href="#" (click)="toggle($event)" [attr.aria-controls]="id + '-content'" [attr.aria-expanded]="!collapsed" [attr.tabindex]="toggleable ? null : -1">
+                    <span class="ui-fieldset-toggler fa fa-w" *ngIf="toggleable" [ngClass]="{'fa-minus': !collapsed,'fa-plus':collapsed}"></span>
+                    <span class="ui-fieldset-legend-text">{{legend}}</span>
+                    <ng-content select="p-header"></ng-content>
+                </a>
             </legend>
-            <div class="ui-fieldset-content-wrapper" [@fieldsetContent]="collapsed ? 'hidden' : 'visible'" 
-                        [ngClass]="{'ui-fieldset-content-wrapper-overflown': collapsed||animating}">
+            <div [attr.id]="id + '-content'" class="ui-fieldset-content-wrapper" [@fieldsetContent]="collapsed ? 'hidden' : 'visible'" 
+                        [ngClass]="{'ui-fieldset-content-wrapper-overflown': collapsed||animating}" [attr.aria-hidden]="collapsed"
+                         (@fieldsetContent.done)="onToggleDone($event)" role="region">
                 <div class="ui-fieldset-content">
                     <ng-content></ng-content>
                 </div>
@@ -53,24 +58,24 @@ export class Fieldset implements BlockableUI {
     public animating: boolean;
     
     constructor(private el: ElementRef) {}
+    
+    id: string = `ui-fieldset-${idx++}`;
         
     toggle(event) {
-        if(this.toggleable) {
-            this.animating = true;
-            this.onBeforeToggle.emit({originalEvent: event, collapsed: this.collapsed});
-            
-            if(this.collapsed)
-                this.expand(event);
-            else
-                this.collapse(event);
-                
-            this.onAfterToggle.emit({originalEvent: event, collapsed: this.collapsed});   
-            
-            //TODO: Use onDone of animate callback instead with RC6
-            setTimeout(() => {
-                this.animating = false;
-            }, 400);
+        if(this.animating) {
+            return false;
         }
+        
+        this.animating = true;
+        this.onBeforeToggle.emit({originalEvent: event, collapsed: this.collapsed});
+        
+        if(this.collapsed)
+            this.expand(event);
+        else
+            this.collapse(event);
+            
+        this.onAfterToggle.emit({originalEvent: event, collapsed: this.collapsed});   
+        event.preventDefault();
     }
     
     expand(event) {
@@ -83,6 +88,10 @@ export class Fieldset implements BlockableUI {
     
     getBlockableElement(): HTMLElement {
         return this.el.nativeElement.children[0];
+    }
+    
+    onToggleDone(event: Event) {
+        this.animating = false;
     }
 
 }

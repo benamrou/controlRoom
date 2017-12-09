@@ -17,13 +17,13 @@ export const CHIPS_VALUE_ACCESSOR: any = {
         <div [ngClass]="'ui-chips ui-widget'" [ngStyle]="style" [class]="styleClass">
             <ul [ngClass]="{'ui-inputtext ui-state-default ui-corner-all':true,'ui-state-focus':focus,'ui-state-disabled':disabled}" (click)="inputtext.focus()">
                 <li #token *ngFor="let item of value; let i = index;" class="ui-chips-token ui-state-highlight ui-corner-all">
-                    <span *ngIf="!itemTemplate&&!disabled" class="ui-chips-token-icon fa fa-fw fa-close" (click)="removeItem($event,i)"></span>
+                    <span *ngIf="!disabled" class="ui-chips-token-icon fa fa-fw fa-close" (click)="removeItem($event,i)"></span>
                     <span *ngIf="!itemTemplate" class="ui-chips-token-label">{{field ? resolveFieldData(item,field) : item}}</span>
                     <ng-template *ngIf="itemTemplate" [pTemplateWrapper]="itemTemplate" [item]="item"></ng-template>
                 </li>
                 <li class="ui-chips-input-token">
-                    <input #inputtext type="text" [attr.id]="inputId" [attr.placeholder]="placeholder" [attr.tabindex]="tabindex" (keydown)="onKeydown($event,inputtext)" 
-                        (focus)="onFocus()" (blur)="onBlur()" [disabled]="maxedOut||disabled" [disabled]="disabled">
+                    <input #inputtext type="text" [attr.id]="inputId" [attr.placeholder]="(value && value.length ? null : placeholder)" [attr.tabindex]="tabindex" (keydown)="onKeydown($event,inputtext)" 
+                        (focus)="onInputFocus($event)" (blur)="onInputBlur($event,inputtext)" [disabled]="maxedOut||disabled" [disabled]="disabled" [ngStyle]="inputStyle" [class]="inputStyleClass">
                 </li>
             </ul>
         </div>
@@ -51,6 +51,20 @@ export class Chips implements AfterContentInit,ControlValueAccessor {
     @Input() tabindex: number;
 
     @Input() inputId: string;
+    
+    @Input() allowDuplicate: boolean = true;
+    
+    @Input() inputStyle: any;
+    
+    @Input() inputStyleClass: any;
+    
+    @Input() addOnTab: boolean;
+
+    @Input() addOnBlur: boolean;
+
+    @Output() onFocus: EventEmitter<any> = new EventEmitter();
+    
+    @Output() onBlur: EventEmitter<any> = new EventEmitter();
     
     @ContentChildren(PrimeTemplate) templates: QueryList<any>;
     
@@ -117,13 +131,19 @@ export class Chips implements AfterContentInit,ControlValueAccessor {
         }
     }
     
-    onFocus() {
+    onInputFocus(event: FocusEvent) {
         this.focus = true;
+        this.onFocus.emit(event);
     }
-    
-    onBlur() {
+
+    onInputBlur(event: FocusEvent, inputEL: HTMLInputElement) {
         this.focus = false;
+        if(this.addOnBlur && inputEL.value) {
+            this.addItem(event, inputEL.value);
+            inputEL.value = '';
+        }
         this.onModelTouched();
+        this.onBlur.emit(event);
     }
     
     removeItem(event: Event, index: number): void {
@@ -138,6 +158,20 @@ export class Chips implements AfterContentInit,ControlValueAccessor {
             originalEvent: event,
             value: removedItem
         });
+    }
+    
+    addItem(event: Event, item: string): void {
+        this.value = this.value||[];
+        if(item && item.trim().length && (!this.max||this.max > item.length)) {
+            if(this.allowDuplicate || this.value.indexOf(item) === -1) {
+                this.value = [...this.value, item];
+                this.onModelChange(this.value);
+                this.onAdd.emit({
+                    originalEvent: event,
+                    value: item
+                });
+            }
+        }     
     }
     
     onKeydown(event: KeyboardEvent, inputEL: HTMLInputElement): void {
@@ -157,17 +191,19 @@ export class Chips implements AfterContentInit,ControlValueAccessor {
             
             //enter
             case 13:
-                this.value = this.value||[];
-                if(inputEL.value && inputEL.value.trim().length && (!this.max||this.max > this.value.length)) {
-                    this.value = [...this.value,inputEL.value];
-                    this.onModelChange(this.value);
-                    this.onAdd.emit({
-                        originalEvent: event,
-                        value: inputEL.value
-                    });
-                }     
+                this.addItem(event, inputEL.value);
                 inputEL.value = '';
+                
                 event.preventDefault();
+            break;
+            
+            case 9:
+                if(this.addOnTab && inputEL.value !== '') {
+                    this.addItem(event, inputEL.value);
+                    inputEL.value = '';
+
+                    event.preventDefault();
+                }
             break;
             
             default:

@@ -6,7 +6,7 @@ import { Labels, LabelService } from './labels.service';
 @Injectable()
 export class LabelsResolver implements Resolve<Labels> {
   constructor(private _labelService: LabelService, private router: Router) {}
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<Labels> {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<any> {
     let id = route.params['id'];
     return this._labelService.getAllLabelsPromise().then(labels => {
       if (labels) {

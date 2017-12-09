@@ -1,7 +1,7 @@
 import {NgModule,Component,Input,AfterViewInit,OnDestroy,EventEmitter,ElementRef,ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {DomHandler} from '../dom/domhandler';
-import {BlockableUI} from '../common/api';
+import {BlockableUI} from '../common/blockableui';
 
 @Component({
     selector: 'p-blockUI',
@@ -15,6 +15,10 @@ import {BlockableUI} from '../common/api';
 export class BlockUI implements AfterViewInit,OnDestroy {
 
     @Input() target: any;
+    
+    @Input() autoZIndex: boolean = true;
+    
+    @Input() baseZIndex: number = 0;
     
     @ViewChild('mask') mask: ElementRef;
     
@@ -54,7 +58,9 @@ export class BlockUI implements AfterViewInit,OnDestroy {
             document.body.appendChild(this.mask.nativeElement);
         }
         
-        this.mask.nativeElement.style.zIndex = String(++DomHandler.zindex);
+        if(this.autoZIndex) {
+            this.mask.nativeElement.style.zIndex = String(this.baseZIndex + (++DomHandler.zindex));
+        }
     }
     
     unblock() {
@@ -62,7 +68,7 @@ export class BlockUI implements AfterViewInit,OnDestroy {
     }
     
     ngOnDestroy() {
-        
+        this.unblock();
     }
 }
 

@@ -1,4 +1,4 @@
-import {NgModule,Component,ElementRef,OnInit,AfterViewInit,AfterViewChecked,AfterContentInit,EventEmitter,OnDestroy,Input,Output,TemplateRef,ContentChildren,QueryList,Renderer} from '@angular/core';
+import {NgModule,Component,ElementRef,AfterViewInit,AfterViewChecked,AfterContentInit,EventEmitter,OnDestroy,Input,Output,TemplateRef,ContentChildren,QueryList,Renderer2,ViewChild,ChangeDetectorRef} from '@angular/core';
 import {DomHandler} from '../dom/domhandler';
 import {SharedModule,PrimeTemplate} from '../common/shared';
 import {CommonModule} from '@angular/common';
@@ -6,26 +6,26 @@ import {CommonModule} from '@angular/common';
 @Component({
     selector: 'p-carousel',
     template: `
-        <div [ngClass]="{'ui-carousel ui-widget ui-widget-content ui-corner-all':true}" [ngStyle]="style" [class]="styleClass">
+        <div #container [ngClass]="{'ui-carousel ui-widget ui-widget-content ui-corner-all':true}" [ngStyle]="style" [class]="styleClass">
             <div class="ui-carousel-header ui-widget-header ui-corner-all">
                 <span class="ui-carousel-header-title">{{headerText}}</span>
                 <span class="ui-carousel-button ui-carousel-next-button fa fa-arrow-circle-right" (click)="onNextNav()" 
-                        [ngClass]="{'ui-state-disabled':(page === (totalPages-1)) && !circular}"></span>
+                        [ngClass]="{'ui-state-disabled':(page === (totalPages-1)) && !circular}" *ngIf="value&&value.length"></span>
                 <span class="ui-carousel-button ui-carousel-prev-button fa fa-arrow-circle-left" (click)="onPrevNav()" 
-                        [ngClass]="{'ui-state-disabled':(page === 0 && !circular)}"></span>
+                        [ngClass]="{'ui-state-disabled':(page === 0 && !circular)}" *ngIf="value&&value.length"></span>
                 <div *ngIf="displayPageLinks" class="ui-carousel-page-links">
                     <a href="#" (click)="setPageWithLink($event,i)" class="ui-carousel-page-link fa fa-circle-o" *ngFor="let links of anchorPageLinks;let i=index" [ngClass]="{'fa-dot-circle-o':page===i}"></a>
                 </div>
                 <select *ngIf="displayPageDropdown" class="ui-carousel-dropdown ui-widget ui-state-default ui-corner-left" [value]="page" (change)="onDropdownChange($event.target.value)">
                     <option *ngFor="let option of selectDropdownOptions" [value]="option" [selected]="value == option">{{option+1}}</option>
                 </select>
-                <select *ngIf="responsive" class="ui-carousel-mobiledropdown ui-widget ui-state-default ui-corner-left" [value]="page" (change)="onDropdownChange($event.target.value)"
+                <select *ngIf="responsive&&value&&value.length" class="ui-carousel-mobiledropdown ui-widget ui-state-default ui-corner-left" [value]="page" (change)="onDropdownChange($event.target.value)"
                     [style.display]="shrinked ? 'block' : 'none'">
                     <option *ngFor="let option of mobileDropdownOptions" [value]="option" [selected]="value == option">{{option+1}}</option>
                 </select>
             </div>
-            <div class="ui-carousel-viewport">
-                <ul class="ui-carousel-items" [style.left.px]="left" [style.transitionProperty]="'left'" 
+            <div #viewport class="ui-carousel-viewport">
+                <ul #items class="ui-carousel-items" [style.left.px]="left" [style.transitionProperty]="'left'" 
                             [style.transitionDuration]="effectDuration" [style.transitionTimingFunction]="easing">
                     <li *ngFor="let item of value" class="ui-carousel-item ui-widget-content ui-corner-all">
                         <ng-template [pTemplateWrapper]="itemTemplate" [item]="item"></ng-template>
@@ -36,7 +36,7 @@ import {CommonModule} from '@angular/common';
     `,
     providers: [DomHandler]
 })
-export class Carousel implements OnInit,AfterViewChecked,AfterViewInit,OnDestroy{
+export class Carousel implements AfterViewChecked,AfterViewInit,OnDestroy{
     
     @Input() numVisible: number = 3;
 
@@ -63,21 +63,15 @@ export class Carousel implements OnInit,AfterViewChecked,AfterViewInit,OnDestroy
     @Input() styleClass: string;
     
     @Output() onPage: EventEmitter<any> = new EventEmitter();
-    
+        
     @ContentChildren(PrimeTemplate) templates: QueryList<any>;
     
     public _value: any[];
     
     public itemTemplate: TemplateRef<any>;
-        
-    public container: any;    
-    
+            
     public left: any = 0;
-    
-    public viewport: any;
-    
-    public itemsContainer: any;
-    
+        
     public items: any;
     
     public columns: any;
@@ -96,13 +90,17 @@ export class Carousel implements OnInit,AfterViewChecked,AfterViewInit,OnDestroy
     
     public shrinked: boolean;
     
+    @ViewChild('container') containerViewChild: ElementRef;
+    
+    @ViewChild('viewport') viewportViewChild: ElementRef;
+        
+    @ViewChild('items') itemsViewChild: ElementRef;
+    
     documentResponsiveListener: any;
     
     differ: any;
 
-    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer) {
-        
-    }
+    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer2, public cd: ChangeDetectorRef) {}
     
     ngAfterContentInit() {
         this.templates.forEach((item) => {
@@ -138,48 +136,20 @@ export class Carousel implements OnInit,AfterViewChecked,AfterViewInit,OnDestroy
         }
 
         this.valuesChanged = true;
-        
-        if(this.autoplayInterval) {
-            this.stopAutoplay();
-        }
-        
-        this.updateMobileDropdown();
-        this.updateLinks();
-        this.updateDropdown();
     }
         
     ngAfterViewChecked() {
-        if(this.valuesChanged) {
+        if(this.valuesChanged && this.containerViewChild.nativeElement.offsetParent) {
             this.render();
             this.valuesChanged = false;
         }
     }
     
-    ngOnInit() {
-        if(window.innerWidth <= this.breakpoint) {
-            this.shrinked = true;
-            this.columns = 1;
-        }
-        else {
-            this.shrinked = false;
-            this.columns = this.numVisible;
-        }
-        this.page = Math.floor(this.firstVisible / this.columns);
-    }
-
     ngAfterViewInit() {
-        this.container = this.el.nativeElement.children[0];
-        this.viewport = this.domHandler.findSingle(this.el.nativeElement, 'div.ui-carousel-viewport');
-        this.itemsContainer = this.domHandler.findSingle(this.el.nativeElement, 'ul.ui-carousel-items');    
-
         if(this.responsive) {
-            this.documentResponsiveListener = this.renderer.listenGlobal('window', 'resize', (event) => {
+            this.documentResponsiveListener = this.renderer.listen('window', 'resize', (event) => {
                 this.updateState();
             });
-        }
-        
-        if(this.value && this.value.length) {
-            this.render();
         }
     }
     
@@ -199,32 +169,56 @@ export class Carousel implements OnInit,AfterViewChecked,AfterViewInit,OnDestroy
     
     updateMobileDropdown() {
         this.mobileDropdownOptions = [];
-        for (let i = 0; i < this.value.length; i++) {
-            this.mobileDropdownOptions.push(i);
-        }
+        if(this.value && this.value.length) {
+            for (let i = 0; i < this.value.length; i++) {
+                this.mobileDropdownOptions.push(i);
+            }
+        } 
     }
     
     render() {
-        this.items = this.domHandler.find(this.itemsContainer,'li');
+        if(this.autoplayInterval) {
+            this.stopAutoplay();
+        }
+        
+        this.items = this.domHandler.find(this.itemsViewChild.nativeElement, 'li');
+        this.calculateColumns();
         this.calculateItemWidths();
         
         if(!this.responsive) {
-            this.container.style.width = (this.domHandler.width(this.container)) + 'px';
+            this.containerViewChild.nativeElement.style.width = (this.domHandler.width(this.containerViewChild.nativeElement)) + 'px';
         }
         
         if(this.autoplayInterval) {
             this.circular = true;
             this.startAutoplay();
         }
+        
+        this.updateMobileDropdown();
+        this.updateLinks();
+        this.updateDropdown();
+        this.cd.detectChanges();
     }
     
     calculateItemWidths () {
         let firstItem = (this.items && this.items.length) ? this.items[0] : null;
         if(firstItem) {
             for (let i = 0; i < this.items.length; i++) {
-                this.items[i].style.width = ((this.domHandler.innerWidth(this.viewport) - (this.domHandler.getHorizontalMargin(firstItem) * this.columns)) / this.columns) + 'px';
+                this.items[i].style.width = ((this.domHandler.innerWidth(this.viewportViewChild.nativeElement) - (this.domHandler.getHorizontalMargin(firstItem) * this.columns)) / this.columns) + 'px';
             }
         }
+    }
+    
+    calculateColumns() {
+        if(window.innerWidth <= this.breakpoint) {
+            this.shrinked = true;
+            this.columns = 1;
+        }
+        else {
+            this.shrinked = false;
+            this.columns = this.numVisible;
+        }
+        this.page = Math.floor(this.firstVisible / this.columns);
     }
     
     onNextNav() {
@@ -251,7 +245,7 @@ export class Carousel implements OnInit,AfterViewChecked,AfterViewInit,OnDestroy
     setPage(p, enforce?: boolean) {
         if(p !== this.page || enforce) {
             this.page = p;
-            this.left = (-1 * (this.domHandler.innerWidth(this.viewport) * this.page));
+            this.left = (-1 * (this.domHandler.innerWidth(this.viewportViewChild.nativeElement) * this.page));
             this.firstVisible = this.page * this.columns;
             this.onPage.emit({
                 page: this.page

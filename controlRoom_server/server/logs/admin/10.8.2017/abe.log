@@ -1,0 +1,479 @@
+10/8/2017 10:43:51 1: LIBQUERY with Callback: 
+10/8/2017 10:43:51 1: Path request:/api/authentification/
+10/8/2017 10:43:51 1: Path header:undefined
+10/8/2017 10:43:51 1: Path query:{}
+10/8/2017 10:43:51 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+10/8/2017 10:43:51 1: 1 Object(s) returned... [FETCH]
+10/8/2017 10:43:51 1: [object Object]
+10/8/2017 10:43:51 2: LIBQUERY with Callback: 
+10/8/2017 10:43:51 2: Path request:/api/user/
+10/8/2017 10:43:51 2: Path header:undefined
+10/8/2017 10:43:51 2: Path query:{"USER_NAME":"abe"}
+10/8/2017 10:43:51 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+10/8/2017 10:43:51 3: LIBQUERY with Callback: 
+10/8/2017 10:43:51 3: Path request:/api/environment/
+10/8/2017 10:43:51 3: Path header:undefined
+10/8/2017 10:43:51 3: Path query:{"USER_NAME":"abe"}
+10/8/2017 10:43:51 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+10/8/2017 10:43:51 4: LIBQUERY with Callback: 
+10/8/2017 10:43:51 4: Path request:/api/labels/
+10/8/2017 10:43:51 4: Path header:undefined
+10/8/2017 10:43:51 4: Path query:{}
+10/8/2017 10:43:51 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'LAB0000001','abe','{undefined}', '{undefined}','{}', :cursor); END;
+10/8/2017 10:43:53 4: 1 Object(s) returned... [FETCH]
+10/8/2017 10:43:53 4: [object Object]
+10/8/2017 10:43:56 4: 6 Object(s) returned... [FETCH]
+10/8/2017 10:43:56 4: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 10:43:56 4: 36 Object(s) returned... [FETCH]
+10/8/2017 10:43:56 4: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 10:44:7 5: LIBQUERY with Callback: 
+10/8/2017 10:44:7 5: Path request:/api/counting/2/
+10/8/2017 10:44:7 5: Path header:undefined
+10/8/2017 10:44:7 5: Path query:{"PARAM":"10/08/2017"}
+10/8/2017 10:44:7 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CNT0000002','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017}','{HN}', :cursor); END;
+10/8/2017 10:44:15 5: 11 Object(s) returned... [FETCH]
+10/8/2017 10:44:15 5: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 10:44:22 6: LIBQUERY with Callback: 
+10/8/2017 10:44:22 6: Path request:/api/counting/3/
+10/8/2017 10:44:22 6: Path header:undefined
+10/8/2017 10:44:22 6: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 10:44:22 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 10:44:22 7: LIBQUERY with Callback: 
+10/8/2017 10:44:22 7: Path request:/api/counting/4/
+10/8/2017 10:44:22 7: Path header:undefined
+10/8/2017 10:44:22 7: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 10:44:22 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 10:44:30 7: 1 Object(s) returned... [FETCH]
+10/8/2017 10:44:30 7: [object Object]
+10/8/2017 10:44:30 8: LIBQUERY with Callback: 
+10/8/2017 10:44:30 8: Path request:/api/process/
+10/8/2017 10:44:30 8: Path header:undefined
+10/8/2017 10:44:30 8: Path query:{"PARAM":["10/08/2017","pssti12p","10 6"]}
+10/8/2017 10:44:30 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 6}','{HN}', :cursor); END;
+10/8/2017 10:44:30 9: LIBQUERY with Callback: 
+10/8/2017 10:44:30 9: Path request:/api/counting/5/
+10/8/2017 10:44:30 9: Path header:undefined
+10/8/2017 10:44:30 9: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 10:44:30 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 10:44:30 10: LIBQUERY with Callback: 
+10/8/2017 10:44:30 10: Path request:/api/counting/6/
+10/8/2017 10:44:30 10: Path header:undefined
+10/8/2017 10:44:30 10: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 10:44:30 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 10:44:36 10: 0 Object(s) returned... [FETCH] :)
+10/8/2017 10:44:37 10: 5 Object(s) returned... [FETCH]
+10/8/2017 10:44:37 10: [object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 10:44:42 10: 1 Object(s) returned... [FETCH]
+10/8/2017 10:44:42 10: [object Object]
+10/8/2017 10:44:57 10: 0 Object(s) returned... [FETCH] :)
+10/8/2017 13:34:53 11: LIBQUERY with Callback: 
+10/8/2017 13:34:53 11: Path request:/api/counting/2/
+10/8/2017 13:34:53 11: Path header:undefined
+10/8/2017 13:34:53 11: Path query:{"PARAM":"10/08/2017"}
+10/8/2017 13:34:53 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CNT0000002','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017}','{HN}', :cursor); END;
+10/8/2017 13:35:1 11: 4 Object(s) returned... [FETCH]
+10/8/2017 13:35:1 11: [object Object],[object Object],[object Object],[object Object]
+10/8/2017 13:35:4 12: LIBQUERY with Callback: 
+10/8/2017 13:35:4 12: Path request:/api/counting/3/
+10/8/2017 13:35:4 12: Path header:undefined
+10/8/2017 13:35:4 12: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:35:4 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:35:4 13: LIBQUERY with Callback: 
+10/8/2017 13:35:4 13: Path request:/api/counting/4/
+10/8/2017 13:35:4 13: Path header:undefined
+10/8/2017 13:35:4 13: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:35:4 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:35:10 13: 1 Object(s) returned... [FETCH]
+10/8/2017 13:35:10 13: [object Object]
+10/8/2017 13:35:10 14: LIBQUERY with Callback: 
+10/8/2017 13:35:10 14: Path request:/api/process/
+10/8/2017 13:35:10 14: Path header:undefined
+10/8/2017 13:35:10 14: Path query:{"PARAM":["10/08/2017","pssti12p","10 6"]}
+10/8/2017 13:35:10 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 6}','{HN}', :cursor); END;
+10/8/2017 13:35:10 15: LIBQUERY with Callback: 
+10/8/2017 13:35:10 15: Path request:/api/counting/5/
+10/8/2017 13:35:10 15: Path header:undefined
+10/8/2017 13:35:10 15: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:35:10 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:35:10 16: LIBQUERY with Callback: 
+10/8/2017 13:35:10 16: Path request:/api/counting/6/
+10/8/2017 13:35:10 16: Path header:undefined
+10/8/2017 13:35:10 16: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:35:10 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:35:12 16: 0 Object(s) returned... [FETCH] :)
+10/8/2017 13:35:17 16: 215 Object(s) returned... [FETCH]
+10/8/2017 13:35:17 16: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 13:35:20 16: 2 Object(s) returned... [FETCH]
+10/8/2017 13:35:20 16: [object Object],[object Object]
+10/8/2017 13:35:28 16: 0 Object(s) returned... [FETCH] :)
+10/8/2017 13:45:40 17: LIBQUERY with Callback: 
+10/8/2017 13:45:40 17: Path request:/api/counting/4/
+10/8/2017 13:45:40 17: Path header:undefined
+10/8/2017 13:45:40 17: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:45:40 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:45:40 18: LIBQUERY with Callback: 
+10/8/2017 13:45:40 18: Path request:/api/counting/3/
+10/8/2017 13:45:40 18: Path header:undefined
+10/8/2017 13:45:40 18: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:45:40 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:45:46 18: 0 Object(s) returned... [FETCH] :)
+10/8/2017 13:45:47 18: 1 Object(s) returned... [FETCH]
+10/8/2017 13:45:47 18: [object Object]
+10/8/2017 13:45:47 19: LIBQUERY with Callback: 
+10/8/2017 13:45:47 19: Path request:/api/process/
+10/8/2017 13:45:47 19: Path header:undefined
+10/8/2017 13:45:47 19: Path query:{"PARAM":["10/08/2017","pssti12p","10 6"]}
+10/8/2017 13:45:47 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 6}','{HN}', :cursor); END;
+10/8/2017 13:45:47 20: LIBQUERY with Callback: 
+10/8/2017 13:45:47 20: Path request:/api/counting/5/
+10/8/2017 13:45:47 20: Path header:undefined
+10/8/2017 13:45:47 20: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:45:47 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:45:47 21: LIBQUERY with Callback: 
+10/8/2017 13:45:47 21: Path request:/api/counting/6/
+10/8/2017 13:45:47 21: Path header:undefined
+10/8/2017 13:45:47 21: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:45:47 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:45:53 21: 215 Object(s) returned... [FETCH]
+10/8/2017 13:45:53 21: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 13:45:57 21: 2 Object(s) returned... [FETCH]
+10/8/2017 13:45:57 21: [object Object],[object Object]
+10/8/2017 13:46:2 21: 0 Object(s) returned... [FETCH] :)
+10/8/2017 13:47:9 22: LIBQUERY with Callback: 
+10/8/2017 13:47:9 22: Path request:/api/counting/3/
+10/8/2017 13:47:9 22: Path header:undefined
+10/8/2017 13:47:9 22: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:47:9 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:47:9 23: LIBQUERY with Callback: 
+10/8/2017 13:47:9 23: Path request:/api/counting/4/
+10/8/2017 13:47:9 23: Path header:undefined
+10/8/2017 13:47:9 23: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:47:9 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:47:14 23: 1 Object(s) returned... [FETCH]
+10/8/2017 13:47:14 23: [object Object]
+10/8/2017 13:47:14 24: LIBQUERY with Callback: 
+10/8/2017 13:47:14 24: Path request:/api/process/
+10/8/2017 13:47:14 24: Path header:undefined
+10/8/2017 13:47:14 24: Path query:{"PARAM":["10/08/2017","pssti12p","10 6"]}
+10/8/2017 13:47:14 24: BEGIN PKREQUESTMANAGER.CALLQUERY(24,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 6}','{HN}', :cursor); END;
+10/8/2017 13:47:14 25: LIBQUERY with Callback: 
+10/8/2017 13:47:14 25: Path request:/api/counting/5/
+10/8/2017 13:47:14 25: Path header:undefined
+10/8/2017 13:47:14 25: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:47:14 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:47:14 26: LIBQUERY with Callback: 
+10/8/2017 13:47:14 26: Path request:/api/counting/6/
+10/8/2017 13:47:14 26: Path header:undefined
+10/8/2017 13:47:14 26: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 13:47:14 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 13:47:14 23: 6 Object(s) returned... [FETCH]
+10/8/2017 13:47:14 23: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 13:47:19 26: 215 Object(s) returned... [FETCH]
+10/8/2017 13:47:19 26: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 13:47:21 26: 2 Object(s) returned... [FETCH]
+10/8/2017 13:47:21 26: [object Object],[object Object]
+10/8/2017 13:47:27 26: 0 Object(s) returned... [FETCH] :)
+10/8/2017 14:27:54 27: LIBQUERY with Callback: 
+10/8/2017 14:27:54 27: Path request:/api/counting/3/
+10/8/2017 14:27:54 27: Path header:undefined
+10/8/2017 14:27:54 27: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:27:54 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:27:54 28: LIBQUERY with Callback: 
+10/8/2017 14:27:54 28: Path request:/api/counting/4/
+10/8/2017 14:27:54 28: Path header:undefined
+10/8/2017 14:27:54 28: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:27:54 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:28:0 28: 6 Object(s) returned... [FETCH]
+10/8/2017 14:28:0 28: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 14:28:1 28: 1 Object(s) returned... [FETCH]
+10/8/2017 14:28:1 28: [object Object]
+10/8/2017 14:28:1 29: LIBQUERY with Callback: 
+10/8/2017 14:28:1 29: Path request:/api/process/
+10/8/2017 14:28:1 29: Path header:undefined
+10/8/2017 14:28:1 29: Path query:{"PARAM":["10/08/2017","pssti12p","10 6"]}
+10/8/2017 14:28:1 29: BEGIN PKREQUESTMANAGER.CALLQUERY(29,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 6}','{HN}', :cursor); END;
+10/8/2017 14:28:1 30: LIBQUERY with Callback: 
+10/8/2017 14:28:1 30: Path request:/api/counting/5/
+10/8/2017 14:28:1 30: Path header:undefined
+10/8/2017 14:28:1 30: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:28:1 30: BEGIN PKREQUESTMANAGER.CALLQUERY(30,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:28:1 31: LIBQUERY with Callback: 
+10/8/2017 14:28:1 31: Path request:/api/counting/6/
+10/8/2017 14:28:1 31: Path header:undefined
+10/8/2017 14:28:1 31: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:28:1 31: BEGIN PKREQUESTMANAGER.CALLQUERY(31,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:28:7 31: 215 Object(s) returned... [FETCH]
+10/8/2017 14:28:7 31: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 14:28:10 31: 2 Object(s) returned... [FETCH]
+10/8/2017 14:28:10 31: [object Object],[object Object]
+10/8/2017 14:28:11 31: 0 Object(s) returned... [FETCH] :)
+10/8/2017 14:31:47 32: LIBQUERY with Callback: 
+10/8/2017 14:31:47 32: Path request:/api/counting/3/
+10/8/2017 14:31:47 32: Path header:undefined
+10/8/2017 14:31:47 32: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:31:47 32: BEGIN PKREQUESTMANAGER.CALLQUERY(32,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:31:47 33: LIBQUERY with Callback: 
+10/8/2017 14:31:47 33: Path request:/api/counting/4/
+10/8/2017 14:31:47 33: Path header:undefined
+10/8/2017 14:31:47 33: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:31:47 33: BEGIN PKREQUESTMANAGER.CALLQUERY(33,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:31:53 33: 1 Object(s) returned... [FETCH]
+10/8/2017 14:31:53 33: [object Object]
+10/8/2017 14:31:53 34: LIBQUERY with Callback: 
+10/8/2017 14:31:53 34: Path request:/api/process/
+10/8/2017 14:31:53 34: Path header:undefined
+10/8/2017 14:31:53 34: Path query:{"PARAM":["10/08/2017","pssti12p","10 15"]}
+10/8/2017 14:31:53 34: BEGIN PKREQUESTMANAGER.CALLQUERY(34,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 15}','{HN}', :cursor); END;
+10/8/2017 14:31:53 35: LIBQUERY with Callback: 
+10/8/2017 14:31:53 35: Path request:/api/counting/5/
+10/8/2017 14:31:53 35: Path header:undefined
+10/8/2017 14:31:53 35: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:31:53 35: BEGIN PKREQUESTMANAGER.CALLQUERY(35,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:31:53 36: LIBQUERY with Callback: 
+10/8/2017 14:31:53 36: Path request:/api/counting/6/
+10/8/2017 14:31:53 36: Path header:undefined
+10/8/2017 14:31:53 36: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:31:53 36: BEGIN PKREQUESTMANAGER.CALLQUERY(36,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:31:54 36: 0 Object(s) returned... [FETCH] :)
+10/8/2017 14:31:58 36: 123 Object(s) returned... [FETCH]
+10/8/2017 14:31:58 36: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 14:32:7 37: LIBQUERY with Callback: 
+10/8/2017 14:32:7 37: Path request:/api/counting/3/
+10/8/2017 14:32:7 37: Path header:undefined
+10/8/2017 14:32:7 37: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:32:7 37: BEGIN PKREQUESTMANAGER.CALLQUERY(37,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:7 38: LIBQUERY with Callback: 
+10/8/2017 14:32:7 38: Path request:/api/counting/4/
+10/8/2017 14:32:7 38: Path header:undefined
+10/8/2017 14:32:7 38: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:32:7 38: BEGIN PKREQUESTMANAGER.CALLQUERY(38,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:7 36: 2 Object(s) returned... [FETCH]
+10/8/2017 14:32:7 36: [object Object],[object Object]
+10/8/2017 14:32:14 38: 1 Object(s) returned... [FETCH]
+10/8/2017 14:32:14 38: [object Object]
+10/8/2017 14:32:14 39: LIBQUERY with Callback: 
+10/8/2017 14:32:14 39: Path request:/api/process/
+10/8/2017 14:32:14 39: Path header:undefined
+10/8/2017 14:32:14 39: Path query:{"PARAM":["10/08/2017","pssti12p","10 6"]}
+10/8/2017 14:32:14 39: BEGIN PKREQUESTMANAGER.CALLQUERY(39,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 6}','{HN}', :cursor); END;
+10/8/2017 14:32:14 40: LIBQUERY with Callback: 
+10/8/2017 14:32:14 40: Path request:/api/counting/5/
+10/8/2017 14:32:14 40: Path header:undefined
+10/8/2017 14:32:14 40: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:32:14 40: BEGIN PKREQUESTMANAGER.CALLQUERY(40,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:14 41: LIBQUERY with Callback: 
+10/8/2017 14:32:14 41: Path request:/api/counting/6/
+10/8/2017 14:32:14 41: Path header:undefined
+10/8/2017 14:32:14 41: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:32:14 41: BEGIN PKREQUESTMANAGER.CALLQUERY(41,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:14 41: 0 Object(s) returned... [FETCH] :)
+10/8/2017 14:32:15 41: 6 Object(s) returned... [FETCH]
+10/8/2017 14:32:15 41: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 14:32:19 41: 2 Object(s) returned... [FETCH]
+10/8/2017 14:32:19 41: [object Object],[object Object]
+10/8/2017 14:32:21 41: 215 Object(s) returned... [FETCH]
+10/8/2017 14:32:21 41: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 14:32:22 42: LIBQUERY with Callback: 
+10/8/2017 14:32:22 42: Path request:/api/counting/3/
+10/8/2017 14:32:22 42: Path header:undefined
+10/8/2017 14:32:22 42: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:32:22 42: BEGIN PKREQUESTMANAGER.CALLQUERY(42,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:22 43: LIBQUERY with Callback: 
+10/8/2017 14:32:22 43: Path request:/api/counting/4/
+10/8/2017 14:32:22 43: Path header:undefined
+10/8/2017 14:32:22 43: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:32:22 43: BEGIN PKREQUESTMANAGER.CALLQUERY(43,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:23 44: LIBQUERY with Callback: 
+10/8/2017 14:32:23 44: Path request:/api/counting/3/
+10/8/2017 14:32:23 44: Path header:undefined
+10/8/2017 14:32:23 44: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:32:23 44: BEGIN PKREQUESTMANAGER.CALLQUERY(44,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:23 45: LIBQUERY with Callback: 
+10/8/2017 14:32:23 45: Path request:/api/counting/4/
+10/8/2017 14:32:23 45: Path header:undefined
+10/8/2017 14:32:23 45: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:32:23 45: BEGIN PKREQUESTMANAGER.CALLQUERY(45,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:28 45: 0 Object(s) returned... [FETCH] :)
+10/8/2017 14:32:29 45: 0 Object(s) returned... [FETCH] :)
+10/8/2017 14:32:29 45: 1 Object(s) returned... [FETCH]
+10/8/2017 14:32:29 45: [object Object]
+10/8/2017 14:32:29 46: LIBQUERY with Callback: 
+10/8/2017 14:32:29 46: Path request:/api/counting/4/
+10/8/2017 14:32:29 46: Path header:undefined
+10/8/2017 14:32:29 46: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:32:29 46: BEGIN PKREQUESTMANAGER.CALLQUERY(46,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:29 47: LIBQUERY with Callback: 
+10/8/2017 14:32:29 47: Path request:/api/counting/3/
+10/8/2017 14:32:29 47: Path header:undefined
+10/8/2017 14:32:29 47: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:32:29 47: BEGIN PKREQUESTMANAGER.CALLQUERY(47,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:29 48: LIBQUERY with Callback: 
+10/8/2017 14:32:29 48: Path request:/api/process/
+10/8/2017 14:32:29 48: Path header:undefined
+10/8/2017 14:32:29 48: Path query:{"PARAM":["10/08/2017","pssti12p","10 15"]}
+10/8/2017 14:32:29 48: BEGIN PKREQUESTMANAGER.CALLQUERY(48,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 15}','{HN}', :cursor); END;
+10/8/2017 14:32:29 49: LIBQUERY with Callback: 
+10/8/2017 14:32:29 49: Path request:/api/counting/5/
+10/8/2017 14:32:29 49: Path header:undefined
+10/8/2017 14:32:29 49: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:32:29 49: BEGIN PKREQUESTMANAGER.CALLQUERY(49,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:29 49: 1 Object(s) returned... [FETCH]
+10/8/2017 14:32:29 49: [object Object]
+10/8/2017 14:32:29 50: LIBQUERY with Callback: 
+10/8/2017 14:32:29 50: Path request:/api/counting/6/
+10/8/2017 14:32:29 50: Path header:undefined
+10/8/2017 14:32:29 50: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:32:29 50: BEGIN PKREQUESTMANAGER.CALLQUERY(50,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:34 50: 6 Object(s) returned... [FETCH]
+10/8/2017 14:32:34 50: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 14:32:34 51: LIBQUERY with Callback: 
+10/8/2017 14:32:34 51: Path request:/api/process/
+10/8/2017 14:32:34 51: Path header:undefined
+10/8/2017 14:32:34 51: Path query:{"PARAM":["10/08/2017","pssti12p","10 6"]}
+10/8/2017 14:32:34 51: BEGIN PKREQUESTMANAGER.CALLQUERY(51,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 6}','{HN}', :cursor); END;
+10/8/2017 14:32:34 50: 1 Object(s) returned... [FETCH]
+10/8/2017 14:32:34 50: [object Object]
+10/8/2017 14:32:34 52: LIBQUERY with Callback: 
+10/8/2017 14:32:34 52: Path request:/api/counting/5/
+10/8/2017 14:32:34 52: Path header:undefined
+10/8/2017 14:32:34 52: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:32:34 52: BEGIN PKREQUESTMANAGER.CALLQUERY(52,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:35 51: 0 Object(s) returned... [FETCH] :)
+10/8/2017 14:32:35 53: LIBQUERY with Callback: 
+10/8/2017 14:32:35 53: Path request:/api/counting/6/
+10/8/2017 14:32:35 53: Path header:undefined
+10/8/2017 14:32:35 53: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 14:32:35 53: BEGIN PKREQUESTMANAGER.CALLQUERY(53,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:37 53: 0 Object(s) returned... [FETCH] :)
+10/8/2017 14:32:37 54: LIBQUERY with Callback: 
+10/8/2017 14:32:37 54: Path request:/api/counting/5/
+10/8/2017 14:32:37 54: Path header:undefined
+10/8/2017 14:32:37 54: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:32:37 54: BEGIN PKREQUESTMANAGER.CALLQUERY(54,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:38 53: 2 Object(s) returned... [FETCH]
+10/8/2017 14:32:38 53: [object Object],[object Object]
+10/8/2017 14:32:38 55: LIBQUERY with Callback: 
+10/8/2017 14:32:38 55: Path request:/api/process/
+10/8/2017 14:32:38 55: Path header:undefined
+10/8/2017 14:32:38 55: Path query:{"PARAM":["10/08/2017","pssti12p","10 15"]}
+10/8/2017 14:32:38 55: BEGIN PKREQUESTMANAGER.CALLQUERY(55,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 15}','{HN}', :cursor); END;
+10/8/2017 14:32:39 55: 2 Object(s) returned... [FETCH]
+10/8/2017 14:32:39 55: [object Object],[object Object]
+10/8/2017 14:32:40 55: 123 Object(s) returned... [FETCH]
+10/8/2017 14:32:40 55: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 14:32:40 56: LIBQUERY with Callback: 
+10/8/2017 14:32:40 56: Path request:/api/counting/6/
+10/8/2017 14:32:40 56: Path header:undefined
+10/8/2017 14:32:40 56: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 14:32:40 56: BEGIN PKREQUESTMANAGER.CALLQUERY(56,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 14:32:43 56: 0 Object(s) returned... [FETCH] :)
+10/8/2017 14:32:43 56: 215 Object(s) returned... [FETCH]
+10/8/2017 14:32:43 56: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 14:32:45 56: 2 Object(s) returned... [FETCH]
+10/8/2017 14:32:45 56: [object Object],[object Object]
+10/8/2017 14:32:46 56: 0 Object(s) returned... [FETCH] :)
+10/8/2017 14:32:48 56: 123 Object(s) returned... [FETCH]
+10/8/2017 14:32:48 56: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 16:4:4 1: LIBQUERY with Callback: 
+10/8/2017 16:4:4 1: Path request:/api/authentification/
+10/8/2017 16:4:4 1: Path header:undefined
+10/8/2017 16:4:4 1: Path query:{}
+10/8/2017 16:4:4 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+10/8/2017 16:4:4 1: 1 Object(s) returned... [FETCH]
+10/8/2017 16:4:4 1: [object Object]
+10/8/2017 16:4:4 2: LIBQUERY with Callback: 
+10/8/2017 16:4:4 2: Path request:/api/user/
+10/8/2017 16:4:4 2: Path header:undefined
+10/8/2017 16:4:4 2: Path query:{"USER_NAME":"abe"}
+10/8/2017 16:4:4 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+10/8/2017 16:4:4 3: LIBQUERY with Callback: 
+10/8/2017 16:4:4 3: Path request:/api/environment/
+10/8/2017 16:4:4 3: Path header:undefined
+10/8/2017 16:4:4 3: Path query:{"USER_NAME":"abe"}
+10/8/2017 16:4:4 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+10/8/2017 16:4:4 3: 1 Object(s) returned... [FETCH]
+10/8/2017 16:4:4 3: [object Object]
+10/8/2017 16:4:4 3: 6 Object(s) returned... [FETCH]
+10/8/2017 16:4:4 3: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 16:4:5 4: LIBQUERY with Callback: 
+10/8/2017 16:4:5 4: Path request:/api/labels/
+10/8/2017 16:4:5 4: Path header:undefined
+10/8/2017 16:4:5 4: Path query:{}
+10/8/2017 16:4:5 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'LAB0000001','abe','{undefined}', '{undefined}','{}', :cursor); END;
+10/8/2017 16:4:5 4: 36 Object(s) returned... [FETCH]
+10/8/2017 16:4:5 4: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 16:4:13 5: LIBQUERY with Callback: 
+10/8/2017 16:4:13 5: Path request:/api/counting/2/
+10/8/2017 16:4:13 5: Path header:undefined
+10/8/2017 16:4:13 5: Path query:{"PARAM":"10/08/2017"}
+10/8/2017 16:4:13 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CNT0000002','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017}','{HN}', :cursor); END;
+10/8/2017 16:4:21 5: 6 Object(s) returned... [FETCH]
+10/8/2017 16:4:21 5: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 16:4:27 6: LIBQUERY with Callback: 
+10/8/2017 16:4:27 6: Path request:/api/counting/3/
+10/8/2017 16:4:27 6: Path header:undefined
+10/8/2017 16:4:27 6: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 16:4:27 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 16:4:27 7: LIBQUERY with Callback: 
+10/8/2017 16:4:27 7: Path request:/api/counting/4/
+10/8/2017 16:4:27 7: Path header:undefined
+10/8/2017 16:4:27 7: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 16:4:27 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 16:4:33 7: 6 Object(s) returned... [FETCH]
+10/8/2017 16:4:33 7: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 16:4:35 7: 1 Object(s) returned... [FETCH]
+10/8/2017 16:4:35 7: [object Object]
+10/8/2017 16:4:35 8: LIBQUERY with Callback: 
+10/8/2017 16:4:35 8: Path request:/api/process/
+10/8/2017 16:4:35 8: Path header:undefined
+10/8/2017 16:4:35 8: Path query:{"PARAM":["10/08/2017","pssti12p","10 6"]}
+10/8/2017 16:4:35 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 6}','{HN}', :cursor); END;
+10/8/2017 16:4:35 9: LIBQUERY with Callback: 
+10/8/2017 16:4:35 9: Path request:/api/counting/5/
+10/8/2017 16:4:35 9: Path header:undefined
+10/8/2017 16:4:35 9: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 16:4:35 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 16:4:35 10: LIBQUERY with Callback: 
+10/8/2017 16:4:35 10: Path request:/api/counting/6/
+10/8/2017 16:4:35 10: Path header:undefined
+10/8/2017 16:4:35 10: Path query:{"PARAM":["10/08/2017","6","201710076.csv"]}
+10/8/2017 16:4:35 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,6,201710076.csv}','{HN}', :cursor); END;
+10/8/2017 16:4:42 10: 215 Object(s) returned... [FETCH]
+10/8/2017 16:4:42 10: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 16:4:44 10: 2 Object(s) returned... [FETCH]
+10/8/2017 16:4:44 10: [object Object],[object Object]
+10/8/2017 16:4:54 10: 0 Object(s) returned... [FETCH] :)
+10/8/2017 16:55:25 11: LIBQUERY with Callback: 
+10/8/2017 16:55:25 11: Path request:/api/counting/3/
+10/8/2017 16:55:25 11: Path header:undefined
+10/8/2017 16:55:25 11: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 16:55:25 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CNT0000003','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 16:55:25 12: LIBQUERY with Callback: 
+10/8/2017 16:55:25 12: Path request:/api/counting/4/
+10/8/2017 16:55:25 12: Path header:undefined
+10/8/2017 16:55:25 12: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 16:55:25 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CNT0000004','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 16:55:33 12: 1 Object(s) returned... [FETCH]
+10/8/2017 16:55:33 12: [object Object]
+10/8/2017 16:55:33 13: LIBQUERY with Callback: 
+10/8/2017 16:55:33 13: Path request:/api/process/
+10/8/2017 16:55:33 13: Path header:undefined
+10/8/2017 16:55:33 13: Path query:{"PARAM":["10/08/2017","pssti12p","10 15"]}
+10/8/2017 16:55:33 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'BTH0000001','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,pssti12p,10 15}','{HN}', :cursor); END;
+10/8/2017 16:55:33 14: LIBQUERY with Callback: 
+10/8/2017 16:55:33 14: Path request:/api/counting/5/
+10/8/2017 16:55:33 14: Path header:undefined
+10/8/2017 16:55:33 14: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 16:55:33 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'CNT0000005','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 16:55:33 15: LIBQUERY with Callback: 
+10/8/2017 16:55:33 15: Path request:/api/counting/6/
+10/8/2017 16:55:33 15: Path header:undefined
+10/8/2017 16:55:33 15: Path query:{"PARAM":["10/08/2017","15","2017100715.csv"]}
+10/8/2017 16:55:33 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CNT0000006','abe','{HEINENS_CUSTOM_PROD}', '{10/08/2017,15,2017100715.csv}','{HN}', :cursor); END;
+10/8/2017 16:55:34 15: 6 Object(s) returned... [FETCH]
+10/8/2017 16:55:34 15: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 16:55:40 15: 123 Object(s) returned... [FETCH]
+10/8/2017 16:55:40 15: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+10/8/2017 16:55:46 15: 2 Object(s) returned... [FETCH]
+10/8/2017 16:55:46 15: [object Object],[object Object]
+10/8/2017 16:55:59 15: 0 Object(s) returned... [FETCH] :)

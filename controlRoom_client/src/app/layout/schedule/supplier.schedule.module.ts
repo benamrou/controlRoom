@@ -4,13 +4,13 @@ import { RouterModule } from '@angular/router';
 import { FormsModule }  from '@angular/forms';
 import { SupplierScheduleComponent } from './supplier.schedule.component';
 import { PanelModule, DataTableModule, MultiSelectModule,ButtonModule, 
-         MessagesModule, GrowlModule, DataGridModule} from '../../shared/components/index';
+         MessagesModule, GrowlModule, DataGridModule, ScheduleModule} from '../../shared/components/index';
 import { SupplierScheduleRoutingModule } from './supplier.schedule-routing.module';
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, SupplierScheduleRoutingModule,
                PanelModule, 
-               DataTableModule,MultiSelectModule, ButtonModule, DataGridModule, 
+               DataTableModule,MultiSelectModule, ButtonModule, DataGridModule, ScheduleModule,
                MessagesModule, GrowlModule ],
     declarations: [SupplierScheduleComponent],
     exports: [SupplierScheduleComponent],

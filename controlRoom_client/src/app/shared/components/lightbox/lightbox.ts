@@ -1,4 +1,4 @@
-import {NgModule,Component,ElementRef,Input,Output,Renderer,AfterViewInit,OnDestroy} from '@angular/core';
+import {NgModule,Component,ElementRef,Input,Output,Renderer2,AfterViewInit,OnDestroy} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {DomHandler} from '../dom/domhandler';
 
@@ -13,12 +13,13 @@ import {DomHandler} from '../dom/domhandler';
         <span [ngStyle]="style" [class]="styleClass" *ngIf="(type == 'content')" (click)="onLinkClick($event,content)">
             <ng-content select="a"></ng-content>
         </span>
-        <div class="ui-lightbox ui-widget ui-helper-hidden ui-corner-all ui-shadow" [style.display]="visible ? 'block' : 'none'" [style.zIndex]="zindex"
+        <div class="ui-lightbox ui-widget ui-corner-all ui-shadow" [style.display]="visible ? 'block' : 'none'" [style.zIndex]="zindex"
+            [ngClass]="{'ui-lightbox-loading': loading}"
             [style.transitionProperty]="'all'" [style.transitionDuration]="effectDuration" [style.transitionTimingFunction]="easing" (click)="preventDocumentClickListener=true">
            <div class="ui-lightbox-content-wrapper">
               <a class="ui-state-default ui-lightbox-nav-left ui-corner-right" [style.zIndex]="zindex + 1" (click)="prev(img)"
                 [ngClass]="{'ui-helper-hidden':!leftVisible}"><span class="fa fa-fw fa-caret-left"></span></a>
-              <div #content class="ui-lightbox-content ui-corner-all" #content [ngClass]="{'ui-lightbox-loading': loading}" 
+              <div #content class="ui-lightbox-content ui-corner-all" 
                 [style.transitionProperty]="'width,height'" [style.transitionDuration]="effectDuration" [style.transitionTimingFunction]="easing">
                 <img #img [src]="currentImage ? currentImage.source||'' : ''" (load)="onImageLoad($event,content)" style="display:none">
                 <ng-content></ng-content>
@@ -34,7 +35,7 @@ import {DomHandler} from '../dom/domhandler';
     `,
     providers: [DomHandler]
 })
-export class Lightbox implements AfterViewInit,OnDestroy{ 
+export class Lightbox implements AfterViewInit,OnDestroy {
 
     @Input() images: any[];
     
@@ -70,7 +71,7 @@ export class Lightbox implements AfterViewInit,OnDestroy{
     
     public documentClickListener: any;
 
-    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer) {}
+    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer2) {}
                 
     onImageClick(event,image,i,content) {
         this.index = i;
@@ -94,7 +95,7 @@ export class Lightbox implements AfterViewInit,OnDestroy{
                 this.domHandler.appendChild(this.panel, this.appendTo);
         }
         
-        this.documentClickListener = this.renderer.listenGlobal('document', 'click', (event) => {
+        this.documentClickListener = this.renderer.listen('document', 'click', (event) => {
             if(!this.preventDocumentClickListener&&this.visible) {
                 this.hide(event);
             }
@@ -112,6 +113,7 @@ export class Lightbox implements AfterViewInit,OnDestroy{
         setTimeout(() => {
             this.currentImage = image;
             this.captionText = image.title;
+            this.center();
         }, 1000);
     }
     

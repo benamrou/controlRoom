@@ -10,6 +10,9 @@ const routes: Routes = [
     },
     { path: 'login', loadChildren: './login/login.module#LoginModule' },
     { path: 'not-found', loadChildren: './not-found/not-found.module#NotFoundModule' },
+    { path: 'not-accessible', loadChildren: './not-accessible/not-accessible.module#NotAccessibleModule' },
+    { path: '404', redirectTo: 'not-found' },
+    { path: '403', redirectTo: 'not-accessible' },
     { path: '**', redirectTo: 'not-found' }
 ];
 

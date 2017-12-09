@@ -1,6 +1,8 @@
-import {NgModule,Component,ElementRef,AfterViewInit,OnDestroy,OnChanges,Input,Output,SimpleChange} from '@angular/core';
+import {NgModule,Component,OnDestroy,Input,Output,EventEmitter,Optional} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Message} from '../common/api';
+import {Message} from '../common/message';
+import {MessageService} from '../common/messageservice';
+import {Subscription}   from 'rxjs/Subscription';
 
 @Component({
     selector: 'p-messages',
@@ -16,18 +18,38 @@ import {Message} from '../common/api';
             <span class="ui-messages-icon fa fa-fw fa-2x" [ngClass]="icon"></span>
             <ul>
                 <li *ngFor="let msg of value">
-                    <span class="ui-messages-summary">{{msg.summary}}</span>
-                    <span class="ui-messages-detail">{{msg.detail}}</span>
+                    <span *ngIf="msg.summary" class="ui-messages-summary" [innerHTML]="msg.summary"></span>
+                    <span *ngIf="msg.detail" class="ui-messages-detail" [innerHTML]="msg.detail"></span>
                 </li>
             </ul>
         </div>
     `
 })
-export class Messages {
+export class Messages implements OnDestroy {
 
     @Input() value: Message[];
 
     @Input() closable: boolean = true;
+
+    @Output() valueChange: EventEmitter<Message[]> = new EventEmitter<Message[]>();
+
+    subscription: Subscription;
+
+    constructor(@Optional() public messageService: MessageService) {
+        if(messageService) {
+            this.subscription = messageService.messageObserver.subscribe((messages: any) => {
+                if(messages) {
+                    if(messages instanceof Array)
+                        this.value = this.value ? [...this.value, ...messages] : [...messages];
+                    else
+                        this.value = this.value ? [...this.value, ...[messages]]: [messages];
+                }
+                else {
+                    this.value = null;
+                }
+            });
+        }
+    }
 
     hasMessages() {
         return this.value && this.value.length > 0;
@@ -38,11 +60,12 @@ export class Messages {
     }
 
     clear(event) {
-        this.value.splice(0, this.value.length);
+        this.value = [];
+        this.valueChange.emit(this.value);
 
         event.preventDefault();
     }
-    
+
     get icon(): string {
         let icon: string = null;
         if(this.hasMessages()) {
@@ -51,30 +74,32 @@ export class Messages {
                 case 'success':
                     icon = 'fa-check';
                 break;
-                
+
                 case 'info':
                     icon = 'fa-info-circle';
                 break;
-                
+
                 case 'error':
                     icon = 'fa-close';
                 break;
-                
+
                 case 'warn':
                     icon = 'fa-warning';
                 break;
-                
-                case 'success':
-                    icon = 'fa-check';
-                break;
-                
+
                 default:
                     icon = 'fa-info-circle';
                 break;
             }
         }
-        
+
         return icon;
+    }
+
+    ngOnDestroy() {
+        if(this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 }
 

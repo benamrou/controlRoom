@@ -6,5 +6,7 @@
 export const environment = {
   production: false,
   serverURL: 'http://localhost:8090'
+  // @HOME
   //serverURL: 'http://192.168.1.101:8090'
+  // EYC Office
 };

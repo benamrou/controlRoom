@@ -1,7 +1,7 @@
-import {NgModule,Component,ElementRef,OnDestroy,Input,EventEmitter} from '@angular/core';
+import {NgModule,Component,ElementRef,OnDestroy,Input} from '@angular/core';
 import {trigger,state,style,transition,animate} from '@angular/animations';
 import {CommonModule} from '@angular/common';
-import {MenuItem} from '../common/api';
+import {MenuItem} from '../common/menuitem';
 import {RouterModule} from '@angular/router';
 
 export class BasePanelMenuItem {
@@ -19,12 +19,7 @@ export class BasePanelMenuItem {
         }
                    
         if(item.command) {
-            if(!item.eventEmitter) {
-                item.eventEmitter = new EventEmitter();
-                item.eventEmitter.subscribe(item.command);
-            }
-            
-            item.eventEmitter.emit({
+            item.command({
                 originalEvent: event,
                 item: item
             });
@@ -35,26 +30,41 @@ export class BasePanelMenuItem {
 @Component({
     selector: 'p-panelMenuSub',
     template: `
-        <ul class="ui-menu-list ui-helper-reset" [style.display]="expanded ? 'block' : 'none'">
-            <li *ngFor="let child of item.items" class="ui-menuitem ui-corner-all" [ngClass]="{'ui-menu-parent':child.items}">
-                <a *ngIf="!child.routerLink" [href]="child.url||'#'" class="ui-menuitem-link ui-corner-all" 
-                    [ngClass]="{'ui-menuitem-link-hasicon':child.icon&&child.items,'ui-state-disabled':child.disabled}" 
-                    (click)="handleClick($event,child)" [attr.target]="child.target">
-                    <span class="ui-panelmenu-icon fa fa-fw" [ngClass]="{'fa-caret-right':!child.expanded,'fa-caret-down':child.expanded}" *ngIf="child.items"></span
-                    ><span class="ui-menuitem-icon fa fa-fw" [ngClass]="child.icon" *ngIf="child.icon"></span
-                    ><span class="ui-menuitem-text">{{child.label}}</span>
-                </a>
-                <a *ngIf="child.routerLink" [routerLink]="child.routerLink" [routerLinkActive]="'ui-state-active'" class="ui-menuitem-link ui-corner-all" 
-                    [ngClass]="{'ui-menuitem-link-hasicon':child.icon&&child.items,'ui-state-disabled':child.disabled}" 
-                    (click)="handleClick($event,child)" [attr.target]="child.target">
-                    <span class="ui-panelmenu-icon fa fa-fw" [ngClass]="{'fa-caret-right':!child.expanded,'fa-caret-down':child.expanded}" *ngIf="child.items"></span
-                    ><span class="ui-menuitem-icon fa fa-fw" [ngClass]="child.icon" *ngIf="child.icon"></span
-                    ><span class="ui-menuitem-text">{{child.label}}</span>
-                </a>
-                <p-panelMenuSub [item]="child" [expanded]="child.expanded" *ngIf="child.items"></p-panelMenuSub>
-            </li>
+        <ul class="ui-menu-list ui-helper-reset" [@submenu]="expanded ? 'visible' : 'hidden'">
+            <ng-template ngFor let-child [ngForOf]="item.items">
+                <li *ngIf="child.separator" class="ui-menu-separator ui-widget-content">
+                <li *ngIf="!child.separator" class="ui-menuitem ui-corner-all" [ngClass]="{'ui-menu-parent':child.items}" [class]="child.styleClass" [ngStyle]="child.style">
+                    <a *ngIf="!child.routerLink" [href]="child.url||'#'" class="ui-menuitem-link ui-corner-all" [attr.tabindex]="item.expanded ? null : '-1'" [attr.id]="child.id"
+                        [ngClass]="{'ui-menuitem-link-hasicon':child.icon&&child.items,'ui-state-disabled':child.disabled}" 
+                        (click)="handleClick($event,child)" [attr.target]="child.target" [attr.title]="child.title">
+                        <span class="ui-panelmenu-icon fa fa-fw" [ngClass]="{'fa-caret-right':!child.expanded,'fa-caret-down':child.expanded}" *ngIf="child.items"></span
+                        ><span class="ui-menuitem-icon fa fa-fw" [ngClass]="child.icon" *ngIf="child.icon"></span
+                        ><span class="ui-menuitem-text">{{child.label}}</span>
+                    </a>
+                    <a *ngIf="child.routerLink" [routerLink]="child.routerLink" [queryParams]="child.queryParams" [routerLinkActive]="'ui-state-active'" [routerLinkActiveOptions]="child.routerLinkActiveOptions||{exact:false}" class="ui-menuitem-link ui-corner-all" 
+                        [ngClass]="{'ui-menuitem-link-hasicon':child.icon&&child.items,'ui-state-disabled':child.disabled}" [attr.tabindex]="item.expanded ? null : '-1'" [attr.id]="child.id"
+                        (click)="handleClick($event,child)" [attr.target]="child.target" [attr.title]="child.title">
+                        <span class="ui-panelmenu-icon fa fa-fw" [ngClass]="{'fa-caret-right':!child.expanded,'fa-caret-down':child.expanded}" *ngIf="child.items"></span
+                        ><span class="ui-menuitem-icon fa fa-fw" [ngClass]="child.icon" *ngIf="child.icon"></span
+                        ><span class="ui-menuitem-text">{{child.label}}</span>
+                    </a>
+                    <p-panelMenuSub [item]="child" [expanded]="child.expanded" *ngIf="child.items"></p-panelMenuSub>
+                </li>
+            </ng-template>
         </ul>
-    `
+    `,
+    animations: [
+        trigger('submenu', [
+            state('hidden', style({
+                height: '0px'
+            })),
+            state('visible', style({
+                height: '*'
+            })),
+            transition('visible => hidden', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)')),
+            transition('hidden => visible', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)'))
+        ])
+    ]
 })
 export class PanelMenuSub extends BasePanelMenuItem {
     
@@ -68,22 +78,22 @@ export class PanelMenuSub extends BasePanelMenuItem {
     template: `
         <div [class]="styleClass" [ngStyle]="style" [ngClass]="'ui-panelmenu ui-widget'">
             <div *ngFor="let item of model;let f=first;let l=last;" class="ui-panelmenu-panel">
-                <div tabindex="0" [ngClass]="{'ui-widget ui-panelmenu-header ui-state-default':true,'ui-corner-top':f,'ui-corner-bottom':l&&!item.expanded,
-                    'ui-state-active':item.expanded,'ui-state-disabled':item.disabled}">
+                <div [ngClass]="{'ui-widget ui-panelmenu-header ui-state-default':true,'ui-corner-top':f,'ui-corner-bottom':l&&!item.expanded,
+                    'ui-state-active':item.expanded,'ui-state-disabled':item.disabled}" [class]="item.styleClass" [ngStyle]="item.style">
                     <a *ngIf="!item.routerLink" [href]="item.url||'#'" [ngClass]="{'ui-panelmenu-headerlink-hasicon':item.icon}" (click)="handleClick($event,item)"
-                        [attr.target]="item.target">
+                        [attr.target]="item.target" [attr.title]="item.title">
                         <span *ngIf="item.items" class="ui-panelmenu-icon fa" [ngClass]="{'fa-caret-right':!item.expanded,'fa-caret-down':item.expanded}"></span
                         ><span class="ui-menuitem-icon fa" [ngClass]="item.icon" *ngIf="item.icon"></span
                         ><span class="ui-menuitem-text">{{item.label}}</span>
                     </a>
-                    <a *ngIf="item.routerLink" [routerLink]="item.routerLink" [routerLinkActive]="'ui-state-active'" [ngClass]="{'ui-panelmenu-headerlink-hasicon':item.icon}" (click)="handleClick($event,item)"
-                        [attr.target]="item.target">
+                    <a *ngIf="item.routerLink" [routerLink]="item.routerLink" [queryParams]="item.queryParams" [routerLinkActive]="'ui-state-active'" [routerLinkActiveOptions]="item.routerLinkActiveOptions||{exact:false}" [ngClass]="{'ui-panelmenu-headerlink-hasicon':item.icon}" (click)="handleClick($event,item)"
+                        [attr.target]="item.target" [attr.title]="item.title">
                         <span *ngIf="item.items" class="ui-panelmenu-icon fa" [ngClass]="{'fa-caret-right':!item.expanded,'fa-caret-down':item.expanded}"></span
                         ><span class="ui-menuitem-icon fa" [ngClass]="item.icon" *ngIf="item.icon"></span
                         ><span class="ui-menuitem-text">{{item.label}}</span>
                     </a>
                 </div>
-                <div *ngIf="item.items" class="ui-panelmenu-content-wrapper" [@rootItem]="item.expanded ? 'visible' : 'hidden'" 
+                <div *ngIf="item.items" class="ui-panelmenu-content-wrapper" [@rootItem]="item.expanded ? 'visible' : 'hidden'"  (@rootItem.done)="onToggleDone($event)"
                     [ngClass]="{'ui-panelmenu-content-wrapper-overflown': !item.expanded||animating}">
                     <div class="ui-panelmenu-content ui-widget-content">
                         <p-panelMenuSub [item]="item" [expanded]="true"></p-panelMenuSub>
@@ -112,36 +122,34 @@ export class PanelMenu extends BasePanelMenuItem {
     @Input() style: any;
 
     @Input() styleClass: string;
+
+    @Input() multiple: boolean = true;
     
     public animating: boolean;
                 
-    unsubscribe(item: any) {
-        if(item.eventEmitter) {
-            item.eventEmitter.unsubscribe();
-        }
-        
-        if(item.items) {
-            for(let childItem of item.items) {
-                this.unsubscribe(childItem);
-            }
-        }
+    collapseAll() {
+    	for(let item of this.model) {
+    		if(item.expanded) {
+    			item.expanded = false;
+    		}
+    	}
     }
-            
-    ngOnDestroy() {        
-        if(this.model) {
-            for(let item of this.model) {
-                this.unsubscribe(item);
-            }
-        }
-    }
-    
+
     handleClick(event, item) {
+    	if(!this.multiple) {
+            for(let modelItem of this.model) {
+        		if(item !== modelItem && modelItem.expanded) {
+        			modelItem.expanded = false;
+        		}
+        	}
+    	}
+        
         this.animating = true;
         super.handleClick(event, item);
-        //TODO: Use onDone of animate callback instead with RC6
-        setTimeout(() => {
-            this.animating = false;
-        }, 400);
+    }
+    
+    onToggleDone() {
+        this.animating = false;
     }
 
 }

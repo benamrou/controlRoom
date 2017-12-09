@@ -32,6 +32,7 @@
              [responsive]="true" [totalRecords]="totalRecords"
              [reorderableColumns]="true" scrollHeight="400px"
              [globalFilter]="gb"
+             (onRowSelect)="onRowSelect($event)"
              selectionMode="single" [(selection)]="selectedElement" tableStyleClass="table-layout: auto;">
 
     <p-header >
@@ -52,161 +53,411 @@
 <i class="pull-right" style="font-size:smaller;" *ngIf="searchResult">{{searchResult.length}} references</i>
 </div>
 <!-- List of Schedules -->
+<br>
+<!--div *ngIf="!selectedElement" style="text-align:center">
+    <button  disabled type="button" pButton icon="fa-file-o"  label="Review schedules" (click)="reviewSchedule()"></button>
+</div-->
 
-<div *ngIf="selectedElement">
+<div *ngIf="selectedElement" style="text-align:center">
+    <button  type="button" pButton icon="fa-file-o"  label="Review schedules" (click)="reviewSchedule()"></button>
+</div>
+
+<!--div *ngIf="selectedElement"-->
+<div *ngIf="processReviewSchedule">
     <p></p>
-    <div *ngFor="let schedule of selectedElement.schedules">
-        <!--*ngIf="selectedElement.externalcode" -->
-        <div class="ui-g-6"> 
+    <div *ngFor="let schedule of selectedElement.schedules; let indice=index">
+        <!--p>{{indice}}</p-->
+        <form ngNativeValidate>
+        <div class="ui-g-12" > 
                 <p-panel header="Schedule {{schedule.start | date:'MM/dd/yyyy' }} - {{schedule.end | date:'MM/dd/yyyy' }}" 
-                        [toggleable]="true">
+                        [toggleable]="true" collapsed="true">
                     <!-- Panel for the list of sites -->    
-                    <p-panel [toggleable]="true" collapsed="true">
-                        <p-header>Schedule applied on {{schedule.sites.length}} sites </p-header>
-                        <div class="alternateColor">
-                            <ng-container *ngFor="let site of schedule.sites">
-                                <div> {{ site.code }}  {{site.description}} </div>
-                            </ng-container>
+                    <div class="row">
+                        <div class="ui-g-9"> 
+                            <p-panel [toggleable]="true" collapsed="true">
+                                <p-header>Schedule applied on {{schedule.sites.length}} sites </p-header>
+                                <div class="alternateColor">
+                                    <ng-container *ngFor="let site of schedule.sites">
+                                        <div> {{ site.code }}  {{site.description}} </div>
+                                    </ng-container>
+                                </div>
+                            </p-panel>
                         </div>
-                    </p-panel>
+                        <div class="ui-g-3" style="text-align: right;">      
+                            <button type="submit" pButton (click)="createTemporarySchedule(temporarySchedule[indice])" icon="fa-search" 
+                                    label="Create Temp." [disabled]="isScheduleToChange(temporarySchedule[indice])"></button>
+                            <button type="submit" pButton (click)="undoTemporarySchedule(temporarySchedule[indice])" icon="fa-search" 
+                                    label="Undo/Remove" [disabled]="!isScheduleToChange(temporarySchedule[indice])"></button>
+                        </div>
+                    </div>
 
-                        <div class="row">
-                            <div class="ui-g-12" style="font-size: smaller; text-align:center;">
-                                <div class="ui-g-nopad">
-                                    <div class="ui-g-4"></div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">Monday</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">Tuesday</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">Wed.</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">Thurs.</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">Friday</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">Saturday</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">Sunday</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row rowcolorgray" >
-                            <div class="ui-g-12" style="font-size: smaller; text-align:center;">
-                                <div class="ui-g-nopad">
-                                    <div class="ui-g-2">Order day</div>
-                                    <div class="ui-g-2">(x {{schedule.frequency}} {{schedule.frequencyUnitLabel | lowercase }})  </div>         
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderMonday==1"></i></div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderTuesday==1"></i></div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderWednesday==1"></i></div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderThursday==1"></i></div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderFriday==1"></i></div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderSaturday==1"></i></div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderSunday==1"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="ui-g-12">
-                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
-                                    <div class="ui-g-2">Lead time</div>
-                                    <div class="ui-g-2">(days)</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.leadTimeMonday}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.leadTimeTuesday}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.leadTimeWednesday}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.leadTimeThursday}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.leadTimeFriday}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.leadTimeSaturday}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.leadTimeSunday}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row rowcolorgray">
-                            <div class="ui-g-12">
-                                <div class="ui-g-nopad"  style="font-size: smaller; text-align:center;">
-                                    <div class="ui-g-2">Collection time 1</div>
-                                    <div class="ui-g-2">(Time)</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.collectionTimeMonday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.collectionTuesday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.collectionTimeWednesday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.collectionTimeThursday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.collectionTimeFriday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.collectionTimeSaturday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.collectionTimeSunday1}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="ui-g-12">
-                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
-                                    <div class="ui-g-2">Delivery time 1</div>
-                                    <div class="ui-g-2">(Time)</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.deliveryTimeMonday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.deliveryTuesday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.deliveryTimeWednesday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.deliveryTimeThursday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.deliveryTimeFriday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.deliveryTimeSaturday1}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.deliveryTimeSunday1}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row rowcolorgray">
-                            <div class="ui-g-12">
-                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
-                                    <div class="ui-g-2">Collection time 2</div>
-                                    <div class="ui-g-2">(Time)</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.collectionTimeMonday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.collectionTuesday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.collectionTimeWednesday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.collectionTimeThursday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.collectionTimeFriday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.collectionTimeSaturday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.collectionTimeSunday2}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="ui-g-12">
-                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
-                                    <div class="ui-g-2">Delivery time 2</div>
-                                    <div class="ui-g-2">(Time)</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.deliveryTimeMonday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.deliveryTuesday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.deliveryTimeWednesday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.deliveryTimeThursday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.deliveryTimeFriday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.deliveryTimeSaturday2}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.deliveryTimeSunday2}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row rowcolorgray">
-                            <div class="ui-g-12">
-                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
-                                    <div class="ui-g-2">Collection time 3</div>
-                                    <div class="ui-g-2">(Time)</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.collectionTimeMonday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.collectionTuesday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.collectionTimeWednesday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.collectionTimeThursday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.collectionTimeFriday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.collectionTimeSaturday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.collectionTimeSunday3}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="ui-g-12">
-                                <div class="ui-g-nopad" style="font-size: smaller; text-align:center;">
-                                    <div class="ui-g-2">Delivery time 3</div>
-                                    <div class="ui-g-2">(Time)</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.deliveryTimeMonday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.deliveryTuesday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.deliveryTimeWednesday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.deliveryTimeThursday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.deliveryTimeFriday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.deliveryTimeSaturday3}}</div>
-                                    <div class="ui-g-1" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.deliveryTimeSunday3}}</div>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="tableContainer">
+                        <table class="all-table" [style.width]="widthTable+'px'">
+                            <colgroup>
+                                <col style="width:200px;" />
+                                <col style="width:200px;" />
+                                <col style="width:100px;" ng-repeat="i in temporarySchedule[indice].numberWeekDaysArray"/>
+                            </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th class="createTemporarySchedule">
+                                            <input *ngIf="isScheduleToChange(temporarySchedule[indice])" type="date"  
+                                                        [(ngModel)]="temporarySchedule[indice].start" name="scheduleStart{{indice}}" 
+                                                        value="{{temporarySchedule[indice].start | date:'yyyy-MM-dd'}}" 
+                                                        style="width: 75%; text-align: center;"
+                                                        (change)="refreshTimeline(temporarySchedule[indice])"  />
+                                        </th>
+                                        <th class="createTemporarySchedule">
+                                            <input *ngIf="isScheduleToChange(temporarySchedule[indice])" type="date"  
+                                                        [(ngModel)]="temporarySchedule[indice].end" name="scheduleEnd{{indice}}" 
+                                                        value="{{temporarySchedule[indice].end | date:'yyyy-MM-dd' }}" 
+                                                        style="width: 75%; text-align: center;" 
+                                                        (change)="refreshTimeline(temporarySchedule[indice])" />
+                                            <!--i *ngIf="isScheduleToChange(temporarySchedule[indice])" class="fa fa-refresh" aria-hidden="true" (click)="refreshTimeline(temporarySchedule[indice])"></i-->
+                                        </th>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray">
+                                            <th style="text-align:center;" [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{temporarySchedule[indice].columnSchedule[0+i*7]}}</th>
+                                            <th style="text-align:center;" [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{temporarySchedule[indice].columnSchedule[1+i*7]}}</th>
+                                            <th style="text-align:center;" [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{temporarySchedule[indice].columnSchedule[2+i*7]}}</th>
+                                            <th style="text-align:center;" [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{temporarySchedule[indice].columnSchedule[3+i*7]}}</th>
+                                            <th style="text-align:center;" [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{temporarySchedule[indice].columnSchedule[4+i*7]}}</th>
+                                            <th style="text-align:center;" [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{temporarySchedule[indice].columnSchedule[5+i*7]}}</th>
+                                            <th style="text-align:center;" [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{temporarySchedule[indice].columnSchedule[6+i*7]}}</th>
+                                        </ng-container>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="rowcolorgray">
+                                        <td class="">Order day & frequency</td>
+                                        <td class="">(x {{schedule.frequency}} {{schedule.frequencyUnitLabel | lowercase }})  </td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray">         
+                                            <td [ngClass]="{'isOrderDay': schedule.orderSunday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderSunday==1" ></i></td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderMonday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderMonday==1" ></i></td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderTuesday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderTuesday==1" ></i></td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderWednesday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderWednesday==1" ></i></td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderThursday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderThursday==1" ></i></td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderFriday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderFriday==1" ></i></td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderSaturday==1}"><i class="fa fa-check-square-o" *ngIf="schedule.orderSaturday==1" ></i></td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="createTemporarySchedule" *ngIf="isScheduleToChange(temporarySchedule[indice])">
+                                        <td class="">Order day & frequency</td>
+                                        <td class="">(x {{temporarySchedule[indice].weeklySchedule[0].schedule.frequency}} {{temporarySchedule[indice].weeklySchedule[0].schedule.frequencyUnitLabel | lowercase }})  </td>      
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray; trackBy:trackByIndex;">
+                                            <td><input type="checkbox" style="text-align: center" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.orderSunday"  name="orderSunday_{{indice}}_{{i}}" (change)="activateDay(temporarySchedule[indice].weeklySchedule[i],0)"/></td>     
+                                            <td><input type="checkbox" style="text-align: center" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.orderMonday" name="orderMonday_{{indice}}_{{i}}" (change)="activateDay(temporarySchedule[indice].weeklySchedule[i],1)"/></td>       
+                                            <td><input type="checkbox" style="text-align: center" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.orderTuesday" name="orderTuesday_{{indice}}_{{i}}" (change)="activateDay(temporarySchedule[indice].weeklySchedule[i],2)"/></td>       
+                                            <td><input type="checkbox" style="text-align: center" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.orderWednesday" name="orderWednesday_{{indice}}_{{i}}"  (change)="activateDay(temporarySchedule[indice].weeklySchedule[i],3)"/></td>       
+                                            <td><input type="checkbox" style="text-align: center" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.orderThursday" name="orderThursday_{{indice}}_{{i}}" (change)="activateDay(temporarySchedule[indice].weeklySchedule[i],4)"/></td>       
+                                            <td><input type="checkbox" style="text-align: center" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.orderFriday" name="orderFriday_{{indice}}_{{i}}" (change)="activateDay(temporarySchedule[indice].weeklySchedule[i],5)"/></td>       
+                                            <td><input type="checkbox" style="text-align: center" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.orderSaturday" name="orderSaturday_{{indice}}_{{i}}" (change)="activateDay(temporarySchedule[indice].weeklySchedule[i],6)"/></td>      
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="rowcolorgray" >
+                                        <td class="">Lead time</td>
+                                        <td class="">(days)</td>    
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray">         
+                                            <td [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.leadTimeSunday}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.leadTimeMonday}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.leadTimeTuesday}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.leadTimeWednesday}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.leadTimeThursday}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.leadTimeFriday}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.leadTimeSaturday}}</td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="createTemporarySchedule" *ngIf="isScheduleToChange(temporarySchedule[indice])">
+                                        <td class="">Lead time</td>
+                                        <td class="">(days)</td>  
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray">
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSunday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.leadTimeSunday" name="leadTimeSunday_{{indice}}_{{i}}" pattern="[0-9]{0,3}" title="Lead time is max on 3 decimals."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderMonday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.leadTimeMonday" name="leadTimeMonday_{{indice}}_{{i}}" pattern="[0-9]{0,3}" title="Lead time is max on 3 decimals."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderTuesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.leadTimeTuesday" name="leadTimeTuesday_{{indice}}_{{i}}" pattern="[0-9]{0,3}" title="Lead time is max on 3 decimals." />
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderWednesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.leadTimeWednesday" name="leadTimeWednesday_{{indice}}_{{i}}" pattern="[0-9]{0,3}" title="Lead time is max on 3 decimals."/>
+                                            </td>   
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderThursday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.leadTimeThursday" name="leadTimeThursday_{{indice}}_{{i}}" pattern="[0-9]{0,3}" title="Lead time is max on 3 decimals."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderFriday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.leadTimeFriday" name="leadTimeFriday_{{indice}}_{{i}}" pattern="[0-9]{0,3}" title="Lead time is max on 3 decimals."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSaturday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.leadTimeSaturday" name="leadTimeSaturday_{{indice}}_{{i}}" pattern="[0-9]{0,3}" title="Lead time is max on 3 decimals."/>
+                                            </td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="rowcolorgray">
+                                        <td class="">Collection time 1</td>
+                                        <td class="">(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray">
+                                            <td [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.collectionTimeSunday1}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.collectionTimeMonday1}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.collectionTimeTuesday1}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.collectionTimeWednesday1}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.collectionTimeThursday1}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.collectionTimeFriday1}}</td>
+                                            <td [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.collectionTimeSaturday1}}</td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="createTemporarySchedule" *ngIf="isScheduleToChange(temporarySchedule[indice])">
+                                        <td>Collection time 1</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray; trackBy:trackByIndex">
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSunday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeSunday1" name="collectionTimeSunday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)." />
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderMonday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeMonday1" name="collectionTimeMonday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderTuesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeTuesday1" name="collectionTimeTuesday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>     
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderWednesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeWednesday1" name="collectionTimeWednesday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)." />
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderThursday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeThursday1" name="collectionTimeThursday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)." />
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderFriday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeFriday1" name="collectionTimeFriday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)." />    
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSaturday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeSaturday1" name="collectionTimeSaturday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)." />
+                                            </td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="rowcolorgray">
+                                        <td>Delivery time 1</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray">
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.deliveryTimeSunday1}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.deliveryTimeMonday1}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.deliveryTimeTuesday1}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.deliveryTimeWednesday1}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.deliveryTimeThursday1}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.deliveryTimeFriday1}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.deliveryTimeSaturday1}}</td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="createTemporarySchedule" *ngIf="isScheduleToChange(temporarySchedule[indice])">
+                                        <td>Delivery time 1</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray; trackBy:trackByIndex"> 
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSunday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeSunday1" name="deliveryTimeSunday1._{{indice}}_{{i}}"  pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderMonday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeMonday1" name="deliveryTimeMonday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderTuesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeTuesday1" name="deliveryTimeTuesday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderWednesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeWednesday1" name="deliveryTimeWednesday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderThursday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeThursday1" name="deliveryTimeThursday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderFriday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeFriday1" name="deliveryTimeFriday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSaturday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeSaturday1" name="deliveryTimeSaturday1._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="rowcolorgray">
+                                        <td>Collection time 2</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray"> 
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.collectionTimeSunday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.collectionTimeMonday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.collectionTimeTuesday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.collectionTimeWednesday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.collectionTimeThursday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.collectionTimeFriday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.collectionTimeSaturday2}}</td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="createTemporarySchedule" *ngIf="isScheduleToChange(temporarySchedule[indice])">
+                                        <td>Collection time 2</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray; trackBy:trackByIndex">
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSunday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeSunday2" name="collectionTimeSunday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderMonday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeMonday2"  name="collectionTimeMonday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderTuesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeTuesday2"  name="collectionTimeTuesday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderWednesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeWednesday2" name="collectionTimeWednesday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderThursday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeThursday2" name="collectionTimeThursday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderFriday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeFriday2" name="collectionTimeFriday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSaturday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeSaturday2" name="collectionTimeSaturday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="rowcolorgray">
+                                        <td>Delivery time 2</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray">
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.deliveryTimeSunday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.deliveryTimeMonday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.deliveryTimeTuesday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.deliveryTimeWednesday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.deliveryTimeThursday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.deliveryTimeFriday2}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.deliveryTimeSaturday2}}</td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="createTemporarySchedule" *ngIf="isScheduleToChange(temporarySchedule[indice])">
+                                        <td>Delivery time 2</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray; trackBy:trackByIndex">
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSunday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeSunday2" name="deliveryTimeSunday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderMonday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeMonday2" name="deliveryTimeMonday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderTuesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeTuesday2" name="deliveryTimeTuesday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderWednesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeWednesday2" name="deliveryTimeWednesday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderThursday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeThursday2" name="deliveryTimeThursday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderFriday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeFriday2" name="deliveryTimeFriday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)." />
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSaturday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeSaturday2" name="deliveryTimeSaturday2._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="rowcolorgray">
+                                        <td>Collection time 3</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray">
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.collectionTimeSunday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.collectionTimeMonday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.collectionTimeTuesday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.collectionTimeWednesday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.collectionTimeThursday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.collectionTimeFriday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.collectionTimeSaturday3}}</td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="createTemporarySchedule" *ngIf="isScheduleToChange(temporarySchedule[indice])">
+                                        <td>Collection time 3</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray; trackBy:trackByIndex">
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSunday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeSunday3" name="collectionTimeSunday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderMonday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeMonday3" name="collectionTimeMonday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderTuesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeTuesday3" name="collectionTimeTuesday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderWednesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeWednesday3" name="collectionTimeWednesday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderThursday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeThursday3" name="collectionTimeThursday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td> 
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderFriday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeFriday3" name="collectionTimeFriday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSaturday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.collectionTimeSaturday3" name="collectionTimeSaturday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Collection time respect format HHMM (24 hours)."/>
+                                            </td>
+                                        </ng-container>
+                                    </tr>
+                                    <tr class="rowcolorgray">
+                                        <td>Delivery time 3</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray">
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderSunday==1}">{{schedule.deliveryTimeSunday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderMonday==1}">{{schedule.deliveryTimeMonday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderTuesday==1}">{{schedule.deliverTimeyTuesday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderWednesday==1}">{{schedule.deliveryTimeWednesday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderThursday==1}">{{schedule.deliveryTimeThursday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderFriday==1}">{{schedule.deliveryTimeFriday3}}</td>
+                                            <td  [ngClass]="{'isOrderDay': schedule.orderSaturday==1}">{{schedule.deliveryTimeSaturday3}}</td>
+                                        </ng-container>
+                                    </tr>
+                                <tr class="createTemporarySchedule" *ngIf="isScheduleToChange(temporarySchedule[indice])">
+                                        <td>Delivery time 3</td>
+                                        <td>(Time)</td>
+                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray; trackBy:trackByIndex">
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSunday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeSunday3" name="deliveryTimeSunday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderMonday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeMonday3" name="deliveryTimeMonday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderTuesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliverTimeyTuesday3" name="deliverTimeyTuesday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderWednesday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeWednesday3" name="deliveryTimeWednesday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderThursday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeThursday3" name="deliveryTimeThursday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderFriday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeFriday3" name="deliveryTimeFriday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)."/>
+                                            </td>
+                                            <td>
+                                                <input *ngIf="temporarySchedule[indice].weeklySchedule[i].schedule.orderSaturday" type="text" style="text-align: center; width: 50%" [(ngModel)]="temporarySchedule[indice].weeklySchedule[i].schedule.deliveryTimeSaturday3" name="deliveryTimeSaturday3._{{indice}}_{{i}}" pattern="[0-9]{4}" max="2359" title="Delivery time respect format HHMM (24 hours)." />
+                                            </td>
+                                        </ng-container>
+                                    </tr>
+                                </tbody>
+                        </table>
+                    </div>
 
                 </p-panel>
-
         </div>
+        </form>
     </div>
 </div>
+
+<!-- Simulation -->
+<br>
+<div *ngIf="processReviewSchedule&&temporarySchedule" style="text-align:center">
+    <button  type="button" pButton icon="fa-file-o"  label="Simulate" (click)="simulationSchedule()"></button>
+</div>
+<br>
+<div *ngIf="simulateReviewSchedule">
+    <p-schedule [events]="simulateSchedule" [header]="headersSimulation" [eventLimit]="4" [editable]="true"
+        (onEventClick)="handleSimulateClick($event)" >
+    </p-schedule>
+</div>
+
+<!-- Simulation -->
+<br>
+<div *ngIf="processReviewSchedule&&temporarySchedule&&simulateReviewSchedule" style="text-align:center">
+    <button  type="button" pButton icon="fa-dot-circle-o"  label="Validate" (click)="simulationSchedule()"></button>
+</div>
+<br>

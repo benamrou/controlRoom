@@ -12,17 +12,5 @@ export class AppComponent {
 
     constructor() {}
 
- /*   constructor(private translate: TranslateService) {
-        this.translate.addLangs(['en', 'fr', 'ur']);
-        this.translate.setDefaultLang('en');
-
-        const browserLang = translate.getBrowserLang();
-        //this.translate.use(browserLang.match(/en|fr|ur/) ? browserLang : 'en');
-        //this.translate.use('en');
-        this.translate.reloadLang('en');
-        console.log('Youpi ' + JSON.stringify(this.translate.translations));
-        
-    }*/
-
 }
 

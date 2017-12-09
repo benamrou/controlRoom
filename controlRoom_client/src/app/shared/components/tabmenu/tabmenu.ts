@@ -1,7 +1,7 @@
-import {NgModule,Component,ElementRef,OnDestroy,Input,Output,EventEmitter} from '@angular/core';
+import {NgModule,Component,ElementRef,Input,Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {DomHandler} from '../dom/domhandler';
-import {MenuItem} from '../common/api';
+import {MenuItem} from '../common/menuitem';
 import {Location} from '@angular/common';
 import {RouterModule} from '@angular/router';
 
@@ -12,15 +12,16 @@ import {RouterModule} from '@angular/router';
             <ul class="ui-tabmenu-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
                 <li *ngFor="let item of model" 
                     [ngClass]="{'ui-tabmenuitem ui-state-default ui-corner-top':true,'ui-state-disabled':item.disabled,
-                        'ui-tabmenuitem-hasicon':item.icon,'ui-state-active':activeItem==item}">
+                        'ui-tabmenuitem-hasicon':item.icon,'ui-state-active':activeItem==item,'ui-helper-hidden': item.visible === false}"
+                        [routerLinkActive]="'ui-state-active'" [routerLinkActiveOptions]="item.routerLinkActiveOptions||{exact:false}">
                     <a *ngIf="!item.routerLink" [href]="item.url||'#'" class="ui-menuitem-link ui-corner-all" (click)="itemClick($event,item)"
-                        [attr.target]="item.target">
-                        <span class="ui-menuitem-icon fa" [ngClass]="item.icon"></span>
+                        [attr.target]="item.target" [attr.title]="item.title" [attr.id]="item.id">
+                        <span class="ui-menuitem-icon fa" [ngClass]="item.icon" *ngIf="item.icon"></span>
                         <span class="ui-menuitem-text">{{item.label}}</span>
                     </a>
-                    <a *ngIf="item.routerLink" [routerLink]="item.routerLink" [routerLinkActive]="'ui-state-active'"  class="ui-menuitem-link ui-corner-all" (click)="itemClick($event,item)"
-                        [attr.target]="item.target">
-                        <span class="ui-menuitem-icon fa" [ngClass]="item.icon"></span>
+                    <a *ngIf="item.routerLink" [routerLink]="item.routerLink" [queryParams]="item.queryParams" class="ui-menuitem-link ui-corner-all" (click)="itemClick($event,item)"
+                        [attr.target]="item.target" [attr.title]="item.title">
+                        <span class="ui-menuitem-icon fa" [ngClass]="item.icon" *ngIf="item.icon"></span>
                         <span class="ui-menuitem-text">{{item.label}}</span>
                     </a>
                 </li>
@@ -29,10 +30,10 @@ import {RouterModule} from '@angular/router';
     `,
     providers: [DomHandler]
 })
-export class TabMenu implements OnDestroy {
+export class TabMenu {
 
     @Input() model: MenuItem[];
-    
+
     @Input() activeItem: MenuItem;
 
     @Input() popup: boolean;
@@ -40,58 +41,26 @@ export class TabMenu implements OnDestroy {
     @Input() style: any;
 
     @Input() styleClass: string;
-                
-    ngOnInit() {
-        if(!this.activeItem && this.model && this.model.length) {
-            this.activeItem = this.model[0];
-        }
-    }
-    
+
     itemClick(event: Event, item: MenuItem) {
         if(item.disabled) {
             event.preventDefault();
             return;
         }
-        
+
         if(!item.url) {
             event.preventDefault();
         }
-        
+
         if(item.command) {
-            if(!item.eventEmitter) {
-                item.eventEmitter = new EventEmitter();
-                item.eventEmitter.subscribe(item.command);
-            }
-            
-            item.eventEmitter.emit({
+            item.command({
                 originalEvent: event,
                 item: item
             });
         }
-        
+
         this.activeItem = item;
     }
-    
-    ngOnDestroy() {        
-        if(this.model) {
-            for(let item of this.model) {
-                this.unsubscribe(item);
-            }
-        }
-    }
-        
-    unsubscribe(item: any) {
-        if(item.eventEmitter) {
-            item.eventEmitter.unsubscribe();
-        }
-        
-        if(item.items) {
-            for(let childItem of item.items) {
-                this.unsubscribe(childItem);
-            }
-        }
-    }
-
 }
 
 @NgModule({
