@@ -90,9 +90,6 @@ function executeLibQueryCallback(ticketId, queryNum, params, user, database_sid,
     SQLquery = "BEGIN PKREQUESTMANAGER.CALLQUERY(" + ticketId;
 
     logger.log(ticketId, "LIBQUERY with Callback: ", user);
-    logger.log(ticketId, "Path request:" + request.path, user);
-    logger.log(ticketId, "Path header:" + JSON.stringify(request.header), user);
-    logger.log(ticketId, "Path query:" + JSON.stringify(request.query), user);
     SQLquery = SQLquery + ",'" + queryNum + "','" + user + "'," + database_sid + ", " + params  + "," +
                             language + ", :cursor); END;";
     logger.log(ticketId, SQLquery, user);
@@ -107,24 +104,23 @@ function executeLibQueryCallback(ticketId, queryNum, params, user, database_sid,
             if (result) {
                 fetchRowsFromRSCallback(id, dbConnect.getConnection(), result.outBinds.cursor, 
                         numRows, request, response, user, 0, callback);
-                resultSet.close();
+                //resultSet.close();
                 //dbConnect.releaseConnection();
             }
         }) .catch (function(err) {
-            resultSet.close();
+            //resultSet.close();
             //dbConnect.releaseConnection();
             console.log('SQLQuery - executeLibQueryCallback : ' + err); 
             //app.next(err);
         });
-        
     };
 
 module.exports.executeLibQueryCallback = executeLibQueryCallback; 
     function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, clear, callback)
     {
      if (resultSet == null) {
-            logger.log(ticketId, " Resulset empty...");
-            //doClose(resultSet);         // close the result set and release the connection
+            logger.log(ticketId, " Resulset empty...", user);
+            doClose(resultSet);         // close the result set and release the connection
             callback(null,[]);
      }
      else {
@@ -134,8 +130,8 @@ module.exports.executeLibQueryCallback = executeLibQueryCallback;
         {
           if (err) { 
             callback(null,err); 
-            logger.log(ticketId, " Error... : " + JSON.stringify(err));
-            logger.log (ticketId, "********* Resulset 1111 *********** : " + JSON.stringify(resultSet));
+            logger.log(ticketId, " Error... : " + JSON.stringify(err),user);
+            //logger.log (ticketId, "********* Resulset 1111 *********** : " + JSON.stringify(resultSet));
             //resultSet.close();
             return; 
           } 
@@ -146,7 +142,7 @@ module.exports.executeLibQueryCallback = executeLibQueryCallback;
                 callback(null,rows);  
                 logger.log(ticketId, rows.length + " Object(s) returned... [FETCH] :)", user);
             }
-            logger.log (ticketId, "********* Resulset 2222 *********** : " + JSON.stringify(resultSet));
+            logger.log (ticketId, JSON.stringify(resultSet), user);
             //resultSet.close();
             return;
           } else if (rows.length > 0) {
@@ -175,11 +171,11 @@ module.exports.executeLibQueryCallback = executeLibQueryCallback;
 
     function doRelease(connection)
     {
-  connection.close(
-    function(err)
-    {
-      if (err) { console.error(err.message); }
-    });
+        connection.doRelease(
+            function(err)
+            {
+            if (err) { console.error(err.message); }
+            });
     }
 
     function doClose(connection, resultSet)

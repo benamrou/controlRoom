@@ -1,0 +1,4 @@
+5/8/2018 23:45:44 19: LIBQUERY with Callback: 
+5/8/2018 23:45:44 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'ADM0000001','emorris','{}', '{emorris,Chambers27}','{}', :cursor); END;
+5/8/2018 23:45:44 19: 0 Object(s) returned... [FETCH] :)
+5/8/2018 23:45:44 19: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}

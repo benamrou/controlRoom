@@ -107,15 +107,15 @@ function getConnection() {
                     connection.execute(statement.sql, statement.binds, statement.options, function(err) {
                         callback(err);
                     });
-                },
-                function (err) {
+                },null
+                /*function (err) {
                     if (err) {
                         console.log ('002 - Error while getConnection() ' + err);
                         return reject(err);
                     }
 
                     resolve(connection);
-                }
+                }*/
             );
         });
     })
@@ -131,7 +131,7 @@ function execute(sql, bindParams, options, connection) {
     return new Promise(function(resolve, reject) {
         connection.execute(sql, bindParams, options, function(err, results) {
             if (err) {
-                return reject(err);
+                reject(err);
             }
 
             resolve(results);
@@ -139,7 +139,7 @@ function execute(sql, bindParams, options, connection) {
     })
     .catch(function(err) {
         console.log ('004 - execute connection rejection  ' + err);
-        return reject(err);
+        reject(err);
     });
 }
 
@@ -208,8 +208,10 @@ function executeCursor(sql, bindParams, options) {
             .then(function(connection){
                 execute(sql, bindParams, options, connection)
                     .then(function(results) {
-                        resolve(results);
-                        results.close();
+                        resolve(results)
+                         .then(function (r) {
+                            results.close();
+                        });
 
                         process.nextTick(function() {
                             releaseConnection(connection);

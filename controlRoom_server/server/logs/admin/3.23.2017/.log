@@ -1,6 +1,0 @@
-3/23/2017 12:24:8 1: LIBQUERY with Callback: 
-3/23/2017 12:24:8 1: Path request:/api/authentification/
-3/23/2017 12:24:8 1: Path header:undefined
-3/23/2017 12:24:8 1: Path query:{}
-3/23/2017 12:24:8 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','','{}', '{,}','{}', :cursor); END;
-3/23/2017 12:24:8 1: 0 Object(s) returned... [FETCH]

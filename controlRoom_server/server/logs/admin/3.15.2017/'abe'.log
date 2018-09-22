@@ -1,3 +1,0 @@
-3/15/2017 18:11:18 1: Path requestuest:/api/search/
-3/15/2017 18:11:18 1: Path query:{"PARAM":"10001,10002"}
-3/15/2017 18:11:18 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CLI0000001',''abe'','{HEINENS_UAT}', '{10001,10002}','{HN}', :cursor); END;
