@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { routerTransition } from '../router.animations';
 import { Message } from '../shared/components/index';
 import { LogginService, UserService, LabelService } from '../shared/services/index';
 
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    providers: [LogginService],
-    styleUrls: ['./login.component.scss']
+    styleUrls: ['./login.component.scss'],
+    animations: [routerTransition()]
 })
 export class LoginComponent implements OnInit {
+
 
 	authentification : any = {};
 	mess: string = '';
@@ -27,9 +29,10 @@ export class LoginComponent implements OnInit {
     
     }
 
-    ngOnInit() { }
+    ngOnInit() {}
 
     onLoggedin() {
+        console.log('Tentative de login');
         //localStorage.setItem('isLoggedin', 'true');
    		this._logginService.login(this.authentification.username, this.authentification.password) 
             .subscribe( result => {
@@ -48,9 +51,7 @@ export class LoginComponent implements OnInit {
 			}
         );
     }
-
-
-	showInvalidCredential() {
+    showInvalidCredential() {
 		this.connectionMessage = [];
         this.connectionMessage.push({severity:'error', summary:'Invalid credentials', detail:'Use your GOLD user/password'});
 	}

@@ -1,0 +1,129 @@
+<nav class="sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}">
+        <ul class="list-group">
+            <a routerLink="/dashboard" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                <i class="fa fa-fw fa-dashboard"></i>&nbsp; {{ 'Dashboard' | translate}}
+            </a>
+            <a routerLink="/counting" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                <i class="fa fa-fw fa-university"></i>&nbsp; {{ 'Counting' | translate}}
+            </a>
+            <div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('supplierschedule')">
+                    <span><i class="fa fa-calendar"></i> &nbsp; {{ 'Supplier schedule' | translate}} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'supplierschedule' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a routerLink="/schedule" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-calendar"></i> {{ 'Mgt by contract' | translate}}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <a routerLink="/search" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                <i class="fa fa-fw fa-search"></i> &nbsp; {{ 'Search' | translate}}
+            </a>
+            <div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('toolbox')">
+                    <span><i class="fa fa-plus"></i> &nbsp; {{ 'Toolbox' | translate}} </span>
+                </a>
+
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'toolbox' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a [routerLink]="['/charts']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;{{ 'charts' | translate }}
+                            </a>
+                        </li>
+                        <li>
+                            <a [routerLink]="['/tables']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-fw fa-table"></i>&nbsp;{{ 'tables' | translate }}
+                            </a>
+                        </li>
+                        <li>
+                            <a [routerLink]="['/forms']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-fw fa-edit"></i>&nbsp;{{ 'forms' | translate }}
+                            </a>
+                        </li>
+                        <li>
+                            <a [routerLink]="['/bs-element']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-fw fa-desktop"></i>&nbsp;{{ 'boostrapElement' | translate }}
+                            </a>
+                        </li>
+                        <li>
+                            <a [routerLink]="['/grid']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-fw fa-wrench"></i>&nbsp;{{ 'boostrapGrid' | translate }}
+                            </a>
+                        </li>
+                        <li>
+                            <a [routerLink]="['/components']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-th-list"></i>&nbsp;{{ 'component' | translate }}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <a [routerLink]="['/blank-page']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                <i class="fa fa-file-o"></i> &nbsp; {{ 'blankPage' | translate }}
+            </a>
+                <!-- a class="list-group-item more-themes" href="http://www.strapui.com/" >
+                    {{ 'moretheme' | translate }}
+                </a -->
+        </ul>
+    <!-- Administration section -->
+        <div class="at-button">
+            <ul class="list-group">
+            <div class="nested-menu" >
+                    <a class="list-group-item" (click)="addExpandClass('settings')">
+                        <span><i class="fa fa-cogs"></i> &nbsp; {{ 'General Settings' | translate}} </span>
+                    </a>
+                    <li class="nested" [ngClass]="{'expand' : showMenu === 'settings' }">
+                        <ul class="submenu" >
+                            <li>
+                                <a routerLink="/settingcustomer" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fa fa-th-large"></i> &nbsp;  {{ 'Retailer & Access' | translate}}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a routerLink="/settingusers" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-user"></i> &nbsp;  {{ 'Users & Profiles' | translate}}</span></a>
+                            </li>
+                            <li>
+                                <a routerLink="/settingwidget" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-chart-bar"></i> &nbsp;  {{ 'Widget Library' | translate}}</span></a>
+                            </li>
+                            <li>
+                                <a routerLink="/settingquery" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-share-square"></i> &nbsp;  {{ 'Query Library' | translate}}</span></a>
+                            </li>
+                            <li>
+                                <a routerLink="/settinglabel" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-flag"></i> &nbsp;  {{ 'Dictionary' | translate}}</span></a>
+                            </li>
+                        </ul>
+                    </li>
+            </div>
+            </ul>
+        </div>
+        <div class="toggle-button">
+            <div  [ngClass]="{collapsed: collapsed}" (click)="toggleCollapsed()">
+                <i class="fa fa-fw fa-angle-double-left"></i>&nbsp;
+                <span>{{ 'Collapse Sidebar' | translate }}</span>
+            </div>
+        </div>
+            <!-- div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('admin')">
+                    <span><i class="fa fa-users"></i> &nbsp; {{ 'MENU0000000002' | translate}}</span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'admin' }">
+                    <ul class="submenu">
+                        <li>
+                            <a href="#"><span>> {{ 'MENU0000000003' | translate}}</span></a>
+                        </li>
+                        <li>
+                            <a href="#"><span>> {{ 'MENU0000000004' | translate}}</span></a>
+                        </li>
+                        <li>
+                            <a href="#"><span>> {{ 'MENU0000000005' | translate}}</span></a>
+                        </li>
+                        <li>
+                            <a href="#"><span>> {{ 'MENU0000000006' | translate}} </span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div -->
+    </nav>

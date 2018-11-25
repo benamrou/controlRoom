@@ -1,8 +1,9 @@
 import { Response, Jsonp, Headers, RequestOptions } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { HttpHeaders, HttpParams } from '@angular/common/http'; 
+import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
-
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class LogginService{
@@ -22,14 +23,14 @@ export class LogginService{
      * @returns JSON User Environment information object
      */
     getEnvironment(username: string) {
+        console.log('***** getEnvironment ****');
         let headersUserInfo = new Headers({ 'Content-Type': 'application/json' });
         let content = {};
-        headersUserInfo.append('USER', username);
+        let options = new HttpParams();
+        options = options.set('USER', username);
         let request = this.baseEnvironmentUrl;
-        let options = new RequestOptions({ headers: headersUserInfo }); // Create a request option
 
-        return this._http.get(request, options)
-                .map((response: Response) => { response.json(); });
+        return this._http.get(request, options).pipe(map(response => { response = response; }));
     }
 
     /**
@@ -40,33 +41,34 @@ export class LogginService{
      * @returns JSON Authorization token containing: USERID, TOKEN
      */
     login(username: string, password: string): Observable<boolean> {
-        //console.log("LOGIN SERVICE: login function");
-        let headersLogin = new Headers({ 'Content-Type': 'application/json' });
-        headersLogin.append('USER', username);
-        headersLogin.append('PASSWORD', password);
+        console.log('***** Login ****');
+        let options = new HttpHeaders();
+        options = options.set('USER', username);
+        options = options.set('PASSWORD', password);
+        //console.log(JSON.stringify(options));
+
         let content = {};
         let request = this.baseAuthentificationUrl;
-        let options = new RequestOptions({ headers: headersLogin }); // Create a request option
-        return this._http.authentification(request, options)
-            .map((response: Response) => {
-                let data = response.json();
+        //console.log("LOGIN SERVICE: login function : " + JSON.stringify(options));
+        return this._http.authentification(request, options).pipe(map(response => {
+                //console.log ('Response login: ' + JSON.stringify(response));
+                let data = response as any;
                 // login successful if there's a jwt token in the response
-                let token = response.json() && response.json().TOKEN;
+                let token = (data && data.TOKEN) as string;
                 if (token) {
                     // store username and jwt token in local storage to keep user logged in between page refreshes
                     localStorage.setItem('ICRAuthToken', token);
                     localStorage.setItem('ICRUser', data.USERID);
                     // return true to indicate successful login
                     return true;
-                } else {
-                    // return false to indicate failed login
-                    return false;
-                }
-            });
+                } 
+            return false;
+         }));
     }
 
     logout(): void {
         // clear token remove user from local storage to log user out
+        console.log('***** Logout ****');
         this.token = null;
         localStorage.removeItem('ICRUser');
         localStorage.removeItem('ICRAuthToken');

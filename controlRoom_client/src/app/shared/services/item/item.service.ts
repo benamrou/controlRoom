@@ -3,6 +3,8 @@ import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angu
 import {Router} from '@angular/router';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
+import { map } from 'rxjs/operators';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 
 
 
@@ -200,8 +202,8 @@ export class ItemService {
   private baseInventoryUrl: string = '/api/iteminventory/';
   
   private request: string;
-  private params: URLSearchParams;
-  private paramsItem: URLSearchParams;
+  private params: HttpParams;
+  private paramsItem: HttpParams;
   private options: RequestOptions;
 
  // Pricing color for Calendar widget
@@ -218,16 +220,14 @@ export class ItemService {
      */
   getItemInfo (itemCode: string) {
         this.request = this.baseItemUrl;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', itemCode);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
-    
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
-                let data = response.json();
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.set('PARAM', itemCode);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+                let data = <any>response.json()._body;
                 let lv, sv, lu, lucode, svcode;
                 this.itemInfo = new Item();
                 //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
@@ -341,20 +341,19 @@ export class ItemService {
 
                 //console.log('Item => ' + JSON.stringify(this.itemInfo));
                 return this.itemInfo;
-            });
+            }));
   }
  getRetailItemInfo (itemCode: string) {
         this.request = this.baseRetailUrl;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', itemCode);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
-    
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
-                let data = response.json();
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.set('PARAM', itemCode);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+                let data = <any>response.json()._body;
                 let retail;
                 this.pricingInfo = new Pricing();
                 //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
@@ -387,7 +386,7 @@ export class ItemService {
                 }
                 //console.log('Item => ' + JSON.stringify(this.pricingInfo));
                 return this.pricingInfo;
-            });
+            }));
   }
 
  getRetailPermanentColor() {
@@ -398,16 +397,14 @@ export class ItemService {
  }
  getPurchaseItemInfo (itemCode: string) {
         this.request = this.basePurchaseUrl;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', itemCode);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
-    
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
-                let data = response.json();
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params =this.params.set('PARAM', itemCode);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+                let data = <any>response.json()._body;
                 let cost, discount;
                 this.purchasingInfo = new Purchasing();
                 //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
@@ -458,22 +455,20 @@ export class ItemService {
 
                 //console.log('Item => ' + JSON.stringify(this.purchasingInfo));
                 return this.purchasingInfo;
-            });
+            }));
   }
 
 
  getSubstitutionItemInfo (itemCode: string) {
         this.request = this.baseSubstitutionUrl;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', itemCode);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
-    
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
-                let data = response.json();
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params.set('PARAM', itemCode);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+                let data = <any>response.json()._body;
                 let sub;
                 this.substitutionInfo = new Substitution();
                 //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
@@ -503,21 +498,19 @@ export class ItemService {
 
                 //console.log('Item => ' + JSON.stringify(this.substitutionInfo));
                 return this.substitutionInfo;
-            });
+            }));
   }
 
  getInventoryItemInfo (itemCode: string) {
         this.request = this.baseInventoryUrl;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', itemCode);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
-    
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
-                let data = response.json();
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.set('PARAM', itemCode);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+                let data = <any>response.json()._body;
                 let inv;
                 this.inventoryInfo = new Inventory();
                 //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
@@ -543,7 +536,7 @@ export class ItemService {
 
                 //console.log('Item => ' + JSON.stringify(this.substitutionInfo));
                 return this.inventoryInfo;
-            });
+            }));
   }
 } 
 

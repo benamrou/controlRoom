@@ -3,6 +3,9 @@ import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angu
 import {Router} from '@angular/router';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
+import { map } from 'rxjs/operators';
+import { HttpParams, HttpHeaders } from '@angular/common/http';
+
 
 export class ProcessData {
   processes: Process [] = [];
@@ -24,9 +27,8 @@ export class ProcessService {
   private baseProcess: string = '/api/process/';
   
   private request: string;
-  private params: URLSearchParams;
-  private paramsItem: URLSearchParams;
-  private options: RequestOptions;
+  private params: HttpParams;
+  private options: HttpHeaders;
 
   constructor(private http : HttpService,private _userService: UserService){ }
 
@@ -39,21 +41,19 @@ export class ProcessService {
      */
   getBatchDuration(batchName: string, args: string, processDate: string) {
         this.request = this.baseProcess;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', processDate);
-        this.params.append('PARAM', batchName);
-        this.params.append('PARAM', args);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.set('PARAM', processDate);
+        this.params = this.params.set('PARAM', batchName);
+        this.params = this.params.set('PARAM', args);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
                 let processInformation = new ProcessData();
-                let data = response.json();
+                let data = <any>response.json()._body;
                 if (data.length > 0) { Object.assign(processInformation.processes , data); }
                 return processInformation;
-            });
+       }));
   }
 }

@@ -6,6 +6,8 @@ import {UserService} from '../user/user.service';
 import {DatePipe} from '@angular/common';
 
 import {Observable} from 'rxjs';
+import { map } from 'rxjs/operators';
+import { HttpParams, HttpHeaders } from '@angular/common/http';
 
 
 /**
@@ -164,9 +166,9 @@ export class SupplierScheduleService {
   private baseSupplierScheduleUrl: string = '/api/supplierschedule/';
   
   private request: string;
-  private params: URLSearchParams;
-  private paramsItem: URLSearchParams;
-  private options: RequestOptions;
+  private params: HttpParams;
+  private paramsItem: HttpParams;
+  private options: HttpHeaders;
 
   constructor(private http : HttpService,private _userService: UserService, private datePipe: DatePipe){ }
 
@@ -178,17 +180,15 @@ export class SupplierScheduleService {
      */
   getSupplierScheduleInfo (vendorCode: string) {
         this.request = this.baseSupplierScheduleUrl;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', vendorCode);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
-    
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.set('PARAM', vendorCode);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
         //return this.http.get(this.request, this.options)
-        return this.http.getMock('assets/schedule.json', this.options)
-            .map((response: Response) => {
-                let data = response.json();
+        return this.http.getMock('assets/schedule.json', this.params, this.options).pipe(map(response => {
+                let data = <any>response.json()._body;
                 let schedule, site;
                 this.suppliers = [];
                 console.log('Supplier schedule data: ' +  data);
@@ -328,7 +328,7 @@ export class SupplierScheduleService {
                     console.log('Supplier Schedule => ' + JSON.stringify(this.suppliers));
                 }
                 return this.suppliers;
-            });
+            }));
   }
 
   isNewSchedule(schedule : SupplierSchedule, data: any) {
