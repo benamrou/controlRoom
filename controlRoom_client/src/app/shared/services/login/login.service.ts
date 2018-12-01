@@ -59,6 +59,8 @@ export class LogginService{
                     // store username and jwt token in local storage to keep user logged in between page refreshes
                     localStorage.setItem('ICRAuthToken', token);
                     localStorage.setItem('ICRUser', data.USERID);
+                    localStorage.setItem('ICRSID', '');
+                    localStorage.setItem('ICRLanguage', '');
                     // return true to indicate successful login
                     return true;
                 } 
@@ -72,5 +74,7 @@ export class LogginService{
         this.token = null;
         localStorage.removeItem('ICRUser');
         localStorage.removeItem('ICRAuthToken');
+        localStorage.removeItem('ICRSID');
+        localStorage.removeItem('ICRLanguage');
     }
 }

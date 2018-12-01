@@ -43,7 +43,7 @@ export class HeaderComponent implements OnInit {
 												name: this._userService.userInfo.envCorporateAccess[i].shortDescription} });
 			}
 		}
-        console.log("Environments: " + this.environments.length);
+        console.log("HEADER - Environments: " + this.environments.length);
 		this.setTopBarDisplay();
 	}
 

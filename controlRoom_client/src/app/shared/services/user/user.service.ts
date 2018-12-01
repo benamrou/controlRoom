@@ -170,6 +170,8 @@ export class UserService {
                     }
 
                 }
+                localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
+                localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
                 console.log('Env: ' + JSON.stringify (this.userInfo));
         });
     }
@@ -202,6 +204,12 @@ export class UserService {
                 }
             }
         }
+        localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
+    }
+
+    setMainLanguage (newLanguage: string) {
+        this.userInfo.envDefaultLanguage =newLanguage;
+        localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
     }
 } 
 

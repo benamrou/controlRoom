@@ -69,7 +69,7 @@
                 </a -->
         </ul>
     <!-- Administration section -->
-        <div class="at-button">
+        <div class="toggle-button">
             <ul class="list-group">
             <div class="nested-menu" >
                     <a class="list-group-item" (click)="addExpandClass('settings')">
@@ -99,12 +99,12 @@
             </div>
             </ul>
         </div>
-        <div class="toggle-button">
+        <!--div class="toggle-button">
             <div  [ngClass]="{collapsed: collapsed}" (click)="toggleCollapsed()">
                 <i class="fa fa-fw fa-angle-double-left"></i>&nbsp;
                 <span>{{ 'Collapse Sidebar' | translate }}</span>
             </div>
-        </div>
+        </div-->
             <!-- div class="nested-menu">
                 <a class="list-group-item" (click)="addExpandClass('admin')">
                     <span><i class="fa fa-users"></i> &nbsp; {{ 'MENU0000000002' | translate}}</span>

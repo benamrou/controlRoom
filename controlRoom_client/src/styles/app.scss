@@ -17,6 +17,6 @@ $fa-font-path: "~font-awesome/fonts";
 @import "../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss";
 @import "../../node_modules/fullcalendar/dist/fullcalendar.min.css";
 
-//@import "component.theme/component.css";
-//@import "component.theme/component.min.css";
-//@import "component.theme/omega/theme.scss";
+@import "component.theme/component.css";
+@import "component.theme/component.min.css";
+@import "component.theme/omega/theme.scss";

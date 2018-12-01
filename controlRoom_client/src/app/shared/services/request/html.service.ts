@@ -78,6 +78,8 @@ export class HttpService  {
     headersOption = headersOption.set('Content-type', 'Application/json; charset=UTF-8');
     headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
     headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
+    headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
+    headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
 
     //console.log ('Request : ' + url);
     console.log('headers '  + JSON.stringify(headersOption));
@@ -109,6 +111,11 @@ export class HttpService  {
       headersOption = new HttpHeaders();
     }
     headersOption = headersOption.set('Content-Type', 'application/json');
+    headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
+    headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
+    headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
+    headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+
     return this.httpClient.post(url, {}, {  headers:headersOption,
                                             params: paramOtions, 
                                             responseType: 'json'
@@ -138,7 +145,7 @@ export class HttpService  {
 
   handleError(url: string, error: Response) : ObservableInput<Response> {
     console.error('Error error: ' + JSON.stringify(error));
-    //window.location.href = window.location.origin + '/not-accessible?message=' + url + '  :net::ERR_CONNECTION_REFUSED';
+    window.location.href = window.location.origin + '/not-accessible?message=' + url + '  :net::ERR_CONNECTION_REFUSED';
    return null;
   }
 }

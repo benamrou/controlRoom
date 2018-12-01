@@ -1,0 +1,20 @@
+12/1/2018 15:29:15 15: LIBQUERY with Callback: 
+12/1/2018 15:29:15 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CLI0000001','undefined','{undefined}', '{undefined}','{undefined}', :cursor); END;
+12/1/2018 15:29:15 15: 1 Object(s) returned... [FETCH]
+12/1/2018 15:29:15 15: [object Object]
+12/1/2018 15:29:15 15: {"metaData":[{"name":"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS'"}]}
+12/1/2018 15:34:23 17: LIBQUERY with Callback: 
+12/1/2018 15:34:23 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000001','undefined','{undefined}', '{undefined}','{undefined}', :cursor); END;
+12/1/2018 15:34:23 17: 1 Object(s) returned... [FETCH]
+12/1/2018 15:34:23 17: [object Object]
+12/1/2018 15:34:23 17: {"metaData":[{"name":"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS'"}]}
+12/1/2018 15:34:24 18: LIBQUERY with Callback: 
+12/1/2018 15:34:24 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CLI0000001','undefined','{undefined}', '{undefined}','{undefined}', :cursor); END;
+12/1/2018 15:34:25 18: 1 Object(s) returned... [FETCH]
+12/1/2018 15:34:25 18: [object Object]
+12/1/2018 15:34:25 18: {"metaData":[{"name":"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS'"}]}
+12/1/2018 15:34:27 19: LIBQUERY with Callback: 
+12/1/2018 15:34:27 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'CLI0000001','undefined','{undefined}', '{undefined}','{undefined}', :cursor); END;
+12/1/2018 15:34:27 19: 1 Object(s) returned... [FETCH]
+12/1/2018 15:34:27 19: [object Object]
+12/1/2018 15:34:27 19: {"metaData":[{"name":"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS'"}]}
