@@ -6,12 +6,13 @@ import { SupplierScheduleComponent } from './supplier.schedule.component';
 import { PanelModule, DataTableModule, MultiSelectModule,ButtonModule, 
          MessagesModule, GrowlModule, DataGridModule, ScheduleModule} from '../../shared/components/index';
 import { SupplierScheduleRoutingModule } from './supplier.schedule-routing.module';
+import { PageHeaderModule } from '../../shared';
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, SupplierScheduleRoutingModule,
                PanelModule, 
                DataTableModule,MultiSelectModule, ButtonModule, DataGridModule, ScheduleModule,
-               MessagesModule, GrowlModule ],
+               MessagesModule, GrowlModule, PageHeaderModule ],
     declarations: [SupplierScheduleComponent],
     exports: [SupplierScheduleComponent],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]

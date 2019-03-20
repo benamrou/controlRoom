@@ -4,7 +4,9 @@ import {Router} from '@angular/router';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import 'rxjs/add/operator/toPromise';
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
+import { map } from 'rxjs/operators';
+import { HttpParams, HttpHeaders } from '@angular/common/http';
 
 
 export class Labels {
@@ -29,9 +31,7 @@ export class LabelService {
   private language: string;
   
   private request: string;
-  private params: URLSearchParams;
-  private paramsEnvironment: URLSearchParams;
-  private options: RequestOptions;
+  private params: HttpParams;
 
   constructor(private http : HttpService,private _userService: UserService){ }
 
@@ -44,20 +44,18 @@ export class LabelService {
      */
   getAllLabels() {
         this.request = this.baseLabelsUrl;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
-    
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
                 this.labels = new Labels();
-                let data = response.json();
+                let data = <any>response.json()._body;
                 //console.log('Data labels : ' + JSON.stringify(data));
                 if (data.length > 0) { Object.assign(this.labels.label , data); }
                 //console.log ('Load finish labels - ' + JSON.stringify(this.labels));
                 return this.labels;
-            });
+        }));
   }
 
 

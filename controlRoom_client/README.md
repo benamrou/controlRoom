@@ -1,28 +1,39 @@
-# ICR rewritten in Angular4 and Bootstrap 4
+# ICR rewritten in Angular6 and Bootstrap 4
 
-ICR built using Angular 4 and Bootstrap 4 
+ICR Dashboard Admin App built using Angular 6 and Bootstrap 4
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0.
+This project is a port of the famous Free Admin Bootstrap Theme [SB Admin v6.0](http://startbootstrap.com/template-overviews/sb-admin-2/) to Angular5 Theme.
+
+Powered by [StartAngular](http://startangular.com/) & [StrapUI](http://strapui.com/)
+
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.0.
 
 ### Introduction
+
 Provides fast, reliable and extensible starter for the development of Angular projects.
 
 `ICR` provides the following features:
-- Developed using boostrap-v4.0.0-alpha.6
-- Following the best practices.
-- Ahead-of-Time compilation support.
-- Official Angular i18n support.
-- Production and development builds.
-- Ahead-of-Time compilation support.
-- Tree-Shaking production builds.
+
+*   Developed using boostrap-v4.0.0
+*   angular-v6.0.0
+*   angular/cli-v6.0.0
+*   [ng-bootstrap-v2.0.0](https://github.com/ng-bootstrap/)
+*   [ngx-translate-v10.0.0](https://github.com/ngx-translate)
+*   Following the best practices.
+*   Ahead-of-Time compilation support.
+*   Official Angular i18n support.
+*   Production and development builds.
+*   Tree-Shaking production builds.
 
 ### How to start
-**Note** that this seed project requires  **node >=v6.9.0 and npm >=3**.
+
+**Note** that this seed project requires **node >=v6.9.0 and npm >=3**.
 
 In order to start the project use:
+
 ```bash
-$ git clone git@github.com:start-angular/SB-Admin-BS4-Angular-4.git
-$ cd SB-Admin-BS4-Angular-4
+$ git clone https://github.com/benamrou/SICR
+$ cd controlRoom_client
 # install the project's dependencies
 $ npm install
 # watches your files and uses livereload by default run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.

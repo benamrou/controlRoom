@@ -1,5 +1,4 @@
-export * from './pipes/shared-pipes.module';
 export * from './modules';
-export * from './guard/auth.guard';
-export * from './components/index';
+export * from './pipes/shared-pipes.module';
+export * from './guard';
 export * from './cards/index';

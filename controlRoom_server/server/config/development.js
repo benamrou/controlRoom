@@ -9,16 +9,13 @@ module.exports = {
     connAttrs: {
           "user": "controlroom",
           "password": "controlroom",
-          //"connectString": "10.0.2.4/xe",
-          //"connectString": "10.0.2.15/xe",
-          //"connectString": "127.0.0.1/xe",
-          //"connectString": "169.254.234.153/xe",
-          //"connectString": "169.254.209.87/xe",
+          //"connectString": "10.200.14.230/test",
+          //"connectString": "vps145391.vps.ovh.ca/croom.vps.ovh.ca",
+          
           "connectString": "192.168.56.101/xe",
-          //"connectString": "164.208.144.227/xe",
           "poolMin": 1,
           "poolMax": 20,
-          "poolTimeout": 60,
+          "poolTimeout": 6000,
           "maxRows": 20000,
           "autocommit"  : true,   // default is false
           "_enableStats"  : true,   // default is false

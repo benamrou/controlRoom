@@ -7,12 +7,13 @@ import { PanelModule, DataTableModule, MultiSelectModule,ButtonModule, TabMenuMo
          MessagesModule, GrowlModule, DataGridModule, AccordionModule,  CalendarModule } from '../../shared/components/index';
 import { AlertModule } from 'ngx-bootstrap/';
 import { CountingRoutingModule } from './counting-routing.module';
+import { PageHeaderModule } from '../../shared';
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, PanelModule, AlertModule, TabMenuModule, TabViewModule,DialogModule,
                DataTableModule,MultiSelectModule, ButtonModule, DataGridModule, AccordionModule,CalendarModule,
                MessagesModule, GrowlModule,
-               CountingRoutingModule ],
+               CountingRoutingModule, PageHeaderModule ],
     declarations: [CountingComponent],
     exports: [CountingComponent],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]

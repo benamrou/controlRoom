@@ -1,0 +1,6 @@
+{
+   "hostURL"          : "http://www.bbsymphony-solutions.com",
+    "baseURL"         : "http://www.bbsymphony-solutions.com/icr/dev",
+    "serverURL"       : "http://www.bbsymphony-solutions.com:8090",
+    "server_batchURL" : "http://www.bbsymphony-solutions.com:8091"
+}

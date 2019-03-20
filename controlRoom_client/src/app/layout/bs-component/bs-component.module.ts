@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-// relative import
 import { BsComponentRoutingModule } from './bs-component-routing.module';
 import { BsComponentComponent } from './bs-component.component';
 import {
@@ -17,19 +16,20 @@ import {
     PopOverComponent,
     ProgressbarComponent,
     TabsComponent,
+    RatingComponent,
     TooltipComponent,
-    TimepickerComponent,
+    TimepickerComponent
 } from './components';
 import { PageHeaderModule } from '../../shared';
 
 @NgModule({
     imports: [
         CommonModule,
+        BsComponentRoutingModule,
         FormsModule,
         ReactiveFormsModule,
         NgbModule.forRoot(),
-        PageHeaderModule,
-        BsComponentRoutingModule,
+        PageHeaderModule
     ],
     declarations: [
         BsComponentComponent,
@@ -43,8 +43,9 @@ import { PageHeaderModule } from '../../shared';
         PopOverComponent,
         ProgressbarComponent,
         TabsComponent,
+        RatingComponent,
         TooltipComponent,
         TimepickerComponent
     ]
 })
-export class BsComponentModule { }
+export class BsComponentModule {}

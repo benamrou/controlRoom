@@ -1,0 +1,414 @@
+11/25/2018 9:50:31 1: LIBQUERY with Callback: 
+11/25/2018 9:50:31 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 9:50:32 1: 1 Object(s) returned... [FETCH]
+11/25/2018 9:50:32 1: [object Object]
+11/25/2018 9:50:32 1: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 9:50:32 2: LIBQUERY with Callback: 
+11/25/2018 9:50:32 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 9:50:32 3: LIBQUERY with Callback: 
+11/25/2018 9:50:32 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 9:50:33 3: 1 Object(s) returned... [FETCH]
+11/25/2018 9:50:33 3: [object Object]
+11/25/2018 9:50:33 3: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 9:50:33 3: 5 Object(s) returned... [FETCH]
+11/25/2018 9:50:33 3: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 9:50:33 3: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 9:54:38 4: LIBQUERY with Callback: 
+11/25/2018 9:54:38 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 9:54:39 4: 1 Object(s) returned... [FETCH]
+11/25/2018 9:54:39 4: [object Object]
+11/25/2018 9:54:39 4: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 9:54:39 5: LIBQUERY with Callback: 
+11/25/2018 9:54:39 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 9:54:39 6: LIBQUERY with Callback: 
+11/25/2018 9:54:39 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 9:54:39 6: 1 Object(s) returned... [FETCH]
+11/25/2018 9:54:39 6: [object Object]
+11/25/2018 9:54:39 6: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 9:54:39 6: 5 Object(s) returned... [FETCH]
+11/25/2018 9:54:39 6: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 9:54:39 6: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 9:55:58 7: LIBQUERY with Callback: 
+11/25/2018 9:55:58 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 9:55:58 7: 1 Object(s) returned... [FETCH]
+11/25/2018 9:55:58 7: [object Object]
+11/25/2018 9:55:58 7: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 9:55:58 8: LIBQUERY with Callback: 
+11/25/2018 9:55:58 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 9:55:58 9: LIBQUERY with Callback: 
+11/25/2018 9:55:58 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 9:55:59 9: 1 Object(s) returned... [FETCH]
+11/25/2018 9:55:59 9: [object Object]
+11/25/2018 9:55:59 9: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 9:55:59 9: 5 Object(s) returned... [FETCH]
+11/25/2018 9:55:59 9: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 9:55:59 9: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 9:56:37 10: LIBQUERY with Callback: 
+11/25/2018 9:56:37 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 9:56:37 10: 1 Object(s) returned... [FETCH]
+11/25/2018 9:56:37 10: [object Object]
+11/25/2018 9:56:37 10: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 9:56:37 11: LIBQUERY with Callback: 
+11/25/2018 9:56:37 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 9:56:37 12: LIBQUERY with Callback: 
+11/25/2018 9:56:37 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 9:56:37 12: 1 Object(s) returned... [FETCH]
+11/25/2018 9:56:37 12: [object Object]
+11/25/2018 9:56:37 12: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 9:56:38 12: 5 Object(s) returned... [FETCH]
+11/25/2018 9:56:38 12: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 9:56:38 12: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 9:58:6 13: LIBQUERY with Callback: 
+11/25/2018 9:58:6 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 9:58:6 13: 1 Object(s) returned... [FETCH]
+11/25/2018 9:58:6 13: [object Object]
+11/25/2018 9:58:6 13: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 9:58:6 14: LIBQUERY with Callback: 
+11/25/2018 9:58:6 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 9:58:6 15: LIBQUERY with Callback: 
+11/25/2018 9:58:6 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 9:58:6 15: 1 Object(s) returned... [FETCH]
+11/25/2018 9:58:6 15: [object Object]
+11/25/2018 9:58:6 15: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 9:58:6 15: 5 Object(s) returned... [FETCH]
+11/25/2018 9:58:6 15: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 9:58:6 15: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 10:6:25 16: LIBQUERY with Callback: 
+11/25/2018 10:6:25 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 10:6:25 16: 1 Object(s) returned... [FETCH]
+11/25/2018 10:6:25 16: [object Object]
+11/25/2018 10:6:25 16: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 10:6:26 17: LIBQUERY with Callback: 
+11/25/2018 10:6:26 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:6:26 18: LIBQUERY with Callback: 
+11/25/2018 10:6:26 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:6:26 18: 1 Object(s) returned... [FETCH]
+11/25/2018 10:6:26 18: [object Object]
+11/25/2018 10:6:26 18: 5 Object(s) returned... [FETCH]
+11/25/2018 10:6:26 18: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 10:6:26 18: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 10:6:26 18: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 10:10:25 19: LIBQUERY with Callback: 
+11/25/2018 10:10:25 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 10:10:26 19: 1 Object(s) returned... [FETCH]
+11/25/2018 10:10:26 19: [object Object]
+11/25/2018 10:10:26 19: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 10:10:26 20: LIBQUERY with Callback: 
+11/25/2018 10:10:26 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:10:26 21: LIBQUERY with Callback: 
+11/25/2018 10:10:26 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:10:26 21: 1 Object(s) returned... [FETCH]
+11/25/2018 10:10:26 21: [object Object]
+11/25/2018 10:10:26 21: 5 Object(s) returned... [FETCH]
+11/25/2018 10:10:26 21: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 10:10:26 21: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 10:10:26 21: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 10:11:10 22: LIBQUERY with Callback: 
+11/25/2018 10:11:10 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 10:11:10 22: 1 Object(s) returned... [FETCH]
+11/25/2018 10:11:10 22: [object Object]
+11/25/2018 10:11:10 22: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 10:11:10 23: LIBQUERY with Callback: 
+11/25/2018 10:11:10 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:11:10 24: LIBQUERY with Callback: 
+11/25/2018 10:11:10 24: BEGIN PKREQUESTMANAGER.CALLQUERY(24,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:11:10 24: 1 Object(s) returned... [FETCH]
+11/25/2018 10:11:10 24: [object Object]
+11/25/2018 10:11:11 24: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 10:11:11 24: 5 Object(s) returned... [FETCH]
+11/25/2018 10:11:11 24: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 10:11:11 24: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 10:12:6 25: LIBQUERY with Callback: 
+11/25/2018 10:12:6 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 10:12:6 25: 1 Object(s) returned... [FETCH]
+11/25/2018 10:12:6 25: [object Object]
+11/25/2018 10:12:6 25: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 10:12:6 26: LIBQUERY with Callback: 
+11/25/2018 10:12:6 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:12:6 27: LIBQUERY with Callback: 
+11/25/2018 10:12:6 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:12:6 27: 1 Object(s) returned... [FETCH]
+11/25/2018 10:12:6 27: [object Object]
+11/25/2018 10:12:7 27: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 10:12:7 27: 5 Object(s) returned... [FETCH]
+11/25/2018 10:12:7 27: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 10:12:7 27: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 10:22:56 28: LIBQUERY with Callback: 
+11/25/2018 10:22:56 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 10:22:57 28: 1 Object(s) returned... [FETCH]
+11/25/2018 10:22:57 28: [object Object]
+11/25/2018 10:22:57 28: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 10:22:57 29: LIBQUERY with Callback: 
+11/25/2018 10:22:57 29: BEGIN PKREQUESTMANAGER.CALLQUERY(29,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:22:57 30: LIBQUERY with Callback: 
+11/25/2018 10:22:57 30: BEGIN PKREQUESTMANAGER.CALLQUERY(30,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:22:57 30: 1 Object(s) returned... [FETCH]
+11/25/2018 10:22:57 30: [object Object]
+11/25/2018 10:22:57 30: 5 Object(s) returned... [FETCH]
+11/25/2018 10:22:57 30: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 10:22:57 30: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 10:22:57 30: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 10:32:19 31: LIBQUERY with Callback: 
+11/25/2018 10:32:19 31: BEGIN PKREQUESTMANAGER.CALLQUERY(31,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 10:32:20 31: 1 Object(s) returned... [FETCH]
+11/25/2018 10:32:20 31: [object Object]
+11/25/2018 10:32:20 31: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 10:32:20 32: LIBQUERY with Callback: 
+11/25/2018 10:32:20 32: BEGIN PKREQUESTMANAGER.CALLQUERY(32,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:32:21 32: 1 Object(s) returned... [FETCH]
+11/25/2018 10:32:21 32: [object Object]
+11/25/2018 10:32:21 32: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 10:34:20 33: LIBQUERY with Callback: 
+11/25/2018 10:34:20 33: BEGIN PKREQUESTMANAGER.CALLQUERY(33,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 10:34:21 33: 1 Object(s) returned... [FETCH]
+11/25/2018 10:34:21 33: [object Object]
+11/25/2018 10:34:21 33: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 10:34:21 34: LIBQUERY with Callback: 
+11/25/2018 10:34:21 34: BEGIN PKREQUESTMANAGER.CALLQUERY(34,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:34:21 34: 1 Object(s) returned... [FETCH]
+11/25/2018 10:34:21 34: [object Object]
+11/25/2018 10:34:21 34: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 10:36:50 35: LIBQUERY with Callback: 
+11/25/2018 10:36:50 35: BEGIN PKREQUESTMANAGER.CALLQUERY(35,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 10:36:50 35: 1 Object(s) returned... [FETCH]
+11/25/2018 10:36:50 35: [object Object]
+11/25/2018 10:36:50 35: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 10:36:50 36: LIBQUERY with Callback: 
+11/25/2018 10:36:50 36: BEGIN PKREQUESTMANAGER.CALLQUERY(36,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:36:50 36: 1 Object(s) returned... [FETCH]
+11/25/2018 10:36:50 36: [object Object]
+11/25/2018 10:36:50 36: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 10:36:50 37: LIBQUERY with Callback: 
+11/25/2018 10:36:50 37: BEGIN PKREQUESTMANAGER.CALLQUERY(37,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:36:50 37: 5 Object(s) returned... [FETCH]
+11/25/2018 10:36:50 37: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 10:36:50 37: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 10:38:16 38: LIBQUERY with Callback: 
+11/25/2018 10:38:16 38: BEGIN PKREQUESTMANAGER.CALLQUERY(38,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 10:38:16 38: 1 Object(s) returned... [FETCH]
+11/25/2018 10:38:16 38: [object Object]
+11/25/2018 10:38:16 38: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 10:38:16 39: LIBQUERY with Callback: 
+11/25/2018 10:38:16 39: BEGIN PKREQUESTMANAGER.CALLQUERY(39,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:38:16 40: LIBQUERY with Callback: 
+11/25/2018 10:38:16 40: BEGIN PKREQUESTMANAGER.CALLQUERY(40,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 10:38:16 40: 1 Object(s) returned... [FETCH]
+11/25/2018 10:38:16 40: [object Object]
+11/25/2018 10:38:16 40: 5 Object(s) returned... [FETCH]
+11/25/2018 10:38:16 40: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 10:38:16 40: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 10:38:16 40: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 11:4:27 41: LIBQUERY with Callback: 
+11/25/2018 11:4:27 41: BEGIN PKREQUESTMANAGER.CALLQUERY(41,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 11:4:30 41: 1 Object(s) returned... [FETCH]
+11/25/2018 11:4:30 41: [object Object]
+11/25/2018 11:4:30 41: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 11:4:30 42: LIBQUERY with Callback: 
+11/25/2018 11:4:30 42: BEGIN PKREQUESTMANAGER.CALLQUERY(42,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:4:30 43: LIBQUERY with Callback: 
+11/25/2018 11:4:30 43: BEGIN PKREQUESTMANAGER.CALLQUERY(43,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:4:30 43: 1 Object(s) returned... [FETCH]
+11/25/2018 11:4:30 43: [object Object]
+11/25/2018 11:4:30 43: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 11:4:31 43: 5 Object(s) returned... [FETCH]
+11/25/2018 11:4:31 43: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 11:4:31 43: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 11:13:29 44: LIBQUERY with Callback: 
+11/25/2018 11:13:29 44: BEGIN PKREQUESTMANAGER.CALLQUERY(44,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 11:13:33 44: 1 Object(s) returned... [FETCH]
+11/25/2018 11:13:33 44: [object Object]
+11/25/2018 11:13:33 44: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 11:13:33 45: LIBQUERY with Callback: 
+11/25/2018 11:13:33 45: BEGIN PKREQUESTMANAGER.CALLQUERY(45,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:13:33 46: LIBQUERY with Callback: 
+11/25/2018 11:13:33 46: BEGIN PKREQUESTMANAGER.CALLQUERY(46,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:13:34 46: 1 Object(s) returned... [FETCH]
+11/25/2018 11:13:34 46: [object Object]
+11/25/2018 11:13:34 46: 5 Object(s) returned... [FETCH]
+11/25/2018 11:13:34 46: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 11:13:34 46: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 11:13:34 46: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 11:14:32 47: LIBQUERY with Callback: 
+11/25/2018 11:14:32 47: BEGIN PKREQUESTMANAGER.CALLQUERY(47,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 11:14:33 47: 1 Object(s) returned... [FETCH]
+11/25/2018 11:14:33 47: [object Object]
+11/25/2018 11:14:33 47: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 11:14:34 48: LIBQUERY with Callback: 
+11/25/2018 11:14:34 48: BEGIN PKREQUESTMANAGER.CALLQUERY(48,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:14:34 49: LIBQUERY with Callback: 
+11/25/2018 11:14:34 49: BEGIN PKREQUESTMANAGER.CALLQUERY(49,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:14:34 49: 1 Object(s) returned... [FETCH]
+11/25/2018 11:14:34 49: [object Object]
+11/25/2018 11:14:34 49: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 11:14:34 49: 5 Object(s) returned... [FETCH]
+11/25/2018 11:14:34 49: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 11:14:34 49: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 11:16:43 50: LIBQUERY with Callback: 
+11/25/2018 11:16:43 50: BEGIN PKREQUESTMANAGER.CALLQUERY(50,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 11:16:44 50: 1 Object(s) returned... [FETCH]
+11/25/2018 11:16:44 50: [object Object]
+11/25/2018 11:16:44 50: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 11:16:44 51: LIBQUERY with Callback: 
+11/25/2018 11:16:44 51: BEGIN PKREQUESTMANAGER.CALLQUERY(51,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:16:44 52: LIBQUERY with Callback: 
+11/25/2018 11:16:44 52: BEGIN PKREQUESTMANAGER.CALLQUERY(52,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:16:44 52: 5 Object(s) returned... [FETCH]
+11/25/2018 11:16:44 52: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 11:16:44 52: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 11:16:44 52: 1 Object(s) returned... [FETCH]
+11/25/2018 11:16:44 52: [object Object]
+11/25/2018 11:16:44 52: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 11:32:43 53: LIBQUERY with Callback: 
+11/25/2018 11:32:43 53: BEGIN PKREQUESTMANAGER.CALLQUERY(53,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 11:32:45 53: 1 Object(s) returned... [FETCH]
+11/25/2018 11:32:45 53: [object Object]
+11/25/2018 11:32:45 53: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 11:32:45 54: LIBQUERY with Callback: 
+11/25/2018 11:32:45 54: BEGIN PKREQUESTMANAGER.CALLQUERY(54,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:32:45 55: LIBQUERY with Callback: 
+11/25/2018 11:32:45 55: BEGIN PKREQUESTMANAGER.CALLQUERY(55,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:32:45 55: 1 Object(s) returned... [FETCH]
+11/25/2018 11:32:45 55: [object Object]
+11/25/2018 11:32:45 55: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 11:32:45 55: 5 Object(s) returned... [FETCH]
+11/25/2018 11:32:45 55: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 11:32:45 55: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 11:37:32 56: LIBQUERY with Callback: 
+11/25/2018 11:37:32 56: BEGIN PKREQUESTMANAGER.CALLQUERY(56,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 11:37:33 56: 1 Object(s) returned... [FETCH]
+11/25/2018 11:37:33 56: [object Object]
+11/25/2018 11:37:33 56: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 11:37:33 57: LIBQUERY with Callback: 
+11/25/2018 11:37:33 57: BEGIN PKREQUESTMANAGER.CALLQUERY(57,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:37:33 58: LIBQUERY with Callback: 
+11/25/2018 11:37:33 58: BEGIN PKREQUESTMANAGER.CALLQUERY(58,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:37:33 58: 1 Object(s) returned... [FETCH]
+11/25/2018 11:37:33 58: [object Object]
+11/25/2018 11:37:33 58: 5 Object(s) returned... [FETCH]
+11/25/2018 11:37:33 58: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 11:37:33 58: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 11:37:33 58: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 11:39:26 59: LIBQUERY with Callback: 
+11/25/2018 11:39:26 59: BEGIN PKREQUESTMANAGER.CALLQUERY(59,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 11:39:27 59: 1 Object(s) returned... [FETCH]
+11/25/2018 11:39:27 59: [object Object]
+11/25/2018 11:39:27 59: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 11:39:27 60: LIBQUERY with Callback: 
+11/25/2018 11:39:27 60: BEGIN PKREQUESTMANAGER.CALLQUERY(60,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:39:27 61: LIBQUERY with Callback: 
+11/25/2018 11:39:27 61: BEGIN PKREQUESTMANAGER.CALLQUERY(61,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:39:27 61: 1 Object(s) returned... [FETCH]
+11/25/2018 11:39:27 61: [object Object]
+11/25/2018 11:39:27 61: 5 Object(s) returned... [FETCH]
+11/25/2018 11:39:27 61: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 11:39:27 61: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 11:39:27 61: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 11:41:53 62: LIBQUERY with Callback: 
+11/25/2018 11:41:53 62: BEGIN PKREQUESTMANAGER.CALLQUERY(62,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 11:41:54 62: 1 Object(s) returned... [FETCH]
+11/25/2018 11:41:54 62: [object Object]
+11/25/2018 11:41:54 62: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 11:41:54 63: LIBQUERY with Callback: 
+11/25/2018 11:41:54 63: BEGIN PKREQUESTMANAGER.CALLQUERY(63,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:41:54 64: LIBQUERY with Callback: 
+11/25/2018 11:41:54 64: BEGIN PKREQUESTMANAGER.CALLQUERY(64,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 11:41:54 64: 1 Object(s) returned... [FETCH]
+11/25/2018 11:41:54 64: [object Object]
+11/25/2018 11:41:54 64: 5 Object(s) returned... [FETCH]
+11/25/2018 11:41:54 64: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 11:41:54 64: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 11:41:54 64: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 12:5:38 1: LIBQUERY with Callback: 
+11/25/2018 12:5:38 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 12:5:38 2: LIBQUERY with Callback: 
+11/25/2018 12:5:38 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 12:5:38 3: LIBQUERY with Callback: 
+11/25/2018 12:5:38 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 12:5:39 3: 1 Object(s) returned... [FETCH]
+11/25/2018 12:5:39 3: [object Object]
+11/25/2018 12:5:39 3: 1 Object(s) returned... [FETCH]
+11/25/2018 12:5:39 3: [object Object]
+11/25/2018 12:5:39 3: 1 Object(s) returned... [FETCH]
+11/25/2018 12:5:39 3: [object Object]
+11/25/2018 12:5:39 3: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 12:5:39 3: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 12:5:39 3: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 12:5:39 4: LIBQUERY with Callback: 
+11/25/2018 12:5:39 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:5:39 5: LIBQUERY with Callback: 
+11/25/2018 12:5:39 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:5:39 5: 1 Object(s) returned... [FETCH]
+11/25/2018 12:5:39 5: [object Object]
+11/25/2018 12:5:39 5: 5 Object(s) returned... [FETCH]
+11/25/2018 12:5:39 5: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 12:5:39 5: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 12:5:39 5: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 12:5:39 6: LIBQUERY with Callback: 
+11/25/2018 12:5:39 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:5:39 7: LIBQUERY with Callback: 
+11/25/2018 12:5:39 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:5:39 7: 1 Object(s) returned... [FETCH]
+11/25/2018 12:5:39 7: [object Object]
+11/25/2018 12:5:39 7: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 12:5:39 8: LIBQUERY with Callback: 
+11/25/2018 12:5:39 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:5:39 7: 5 Object(s) returned... [FETCH]
+11/25/2018 12:5:39 7: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 12:5:39 7: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 12:5:39 9: LIBQUERY with Callback: 
+11/25/2018 12:5:39 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:5:39 9: 1 Object(s) returned... [FETCH]
+11/25/2018 12:5:40 9: [object Object]
+11/25/2018 12:5:40 9: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 12:5:40 9: 5 Object(s) returned... [FETCH]
+11/25/2018 12:5:40 9: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 12:5:40 9: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 12:6:57 10: LIBQUERY with Callback: 
+11/25/2018 12:6:57 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CNT0000002','abe','{HEINENS_CUSTOM_PROD}', '{11/25/2018}','{HN}', :cursor); END;
+11/25/2018 12:7:1 10: 0 Object(s) returned... [FETCH] :)
+11/25/2018 12:7:1 10: {"metaData":[{"name":"TOTAL"},{"name":"TRT"},{"name":"SITE"},{"name":"SOCLMAG"},{"name":"INVDATE"},{"name":"FILENAME"},{"name":"COMPANY"},{"name":"CREATEDAT"},{"name":"UPDATEDAT"}]}
+11/25/2018 12:12:28 11: LIBQUERY with Callback: 
+11/25/2018 12:12:28 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 12:12:29 11: 1 Object(s) returned... [FETCH]
+11/25/2018 12:12:29 11: [object Object]
+11/25/2018 12:12:29 11: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 12:12:29 12: LIBQUERY with Callback: 
+11/25/2018 12:12:29 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:12:29 13: LIBQUERY with Callback: 
+11/25/2018 12:12:29 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:12:29 13: 1 Object(s) returned... [FETCH]
+11/25/2018 12:12:29 13: [object Object]
+11/25/2018 12:12:29 13: 5 Object(s) returned... [FETCH]
+11/25/2018 12:12:29 13: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 12:12:29 13: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 12:12:29 13: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 12:14:32 14: LIBQUERY with Callback: 
+11/25/2018 12:14:32 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 12:14:33 14: 1 Object(s) returned... [FETCH]
+11/25/2018 12:14:33 14: [object Object]
+11/25/2018 12:14:33 14: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 12:14:33 15: LIBQUERY with Callback: 
+11/25/2018 12:14:33 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:14:33 16: LIBQUERY with Callback: 
+11/25/2018 12:14:33 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:14:33 15: 1 Object(s) returned... [FETCH]
+11/25/2018 12:14:33 15: [object Object]
+11/25/2018 12:14:33 16: 5 Object(s) returned... [FETCH]
+11/25/2018 12:14:33 16: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 12:14:33 15: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+11/25/2018 12:14:33 16: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 12:20:8 17: LIBQUERY with Callback: 
+11/25/2018 12:20:8 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
+11/25/2018 12:20:9 17: 1 Object(s) returned... [FETCH]
+11/25/2018 12:20:9 17: [object Object]
+11/25/2018 12:20:9 17: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+11/25/2018 12:20:10 18: LIBQUERY with Callback: 
+11/25/2018 12:20:10 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CLI0000002','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:20:10 19: LIBQUERY with Callback: 
+11/25/2018 12:20:10 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'CLI0000003','abe','{}', '{abe}','{}', :cursor); END;
+11/25/2018 12:20:16 19: 5 Object(s) returned... [FETCH]
+11/25/2018 12:20:16 19: [object Object],[object Object],[object Object],[object Object],[object Object]
+11/25/2018 12:20:16 19: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"CORPSDESC"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+11/25/2018 12:20:17 19: 1 Object(s) returned... [FETCH]
+11/25/2018 12:20:17 19: [object Object]
+11/25/2018 12:20:18 19: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}

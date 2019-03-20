@@ -28,6 +28,7 @@ export class HeaderComponent implements OnInit {
 
 	constructor( private _logginService: LogginService, private _userService: UserService, private _labelService: LabelService) { 
 		this.environments = [];
+        console.log("this._userService.userInfo: " + JSON.stringify(this._userService.userInfo));
 		if (this._userService.userInfo.envUserAccess.length > 0) {
 			for (let i = 0; i < this._userService.userInfo.envUserAccess.length; i ++) {
 				this.environments.push({label: this._userService.userInfo.envUserAccess[i].shortDescription,

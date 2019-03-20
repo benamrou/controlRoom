@@ -11,6 +11,7 @@ import { DataTableModule, MultiSelectModule, ButtonModule, ChipsModule,
 import { ItemModule } from '../../shared/index';
 import { SearchRoutingModule } from './search-routing.module';
 import { StatModule } from '../../shared';
+import { PageHeaderModule } from '../../shared';
 
 @NgModule({
     imports: [ RouterModule,HttpModule, CommonModule,FormsModule,
@@ -19,7 +20,8 @@ import { StatModule } from '../../shared';
                MessagesModule, GrowlModule,
                TooltipModule, ItemModule,
                StatModule,
-               SearchRoutingModule ],
+               SearchRoutingModule,
+                PageHeaderModule ],
     declarations: [SearchComponent],
     exports: [SearchComponent],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]

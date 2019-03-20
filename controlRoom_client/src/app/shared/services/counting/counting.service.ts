@@ -3,6 +3,8 @@ import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angu
 import {Router} from '@angular/router';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
+import { map } from 'rxjs/operators';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 
 export class CountResult {
     counts: Count [] = [];
@@ -89,9 +91,9 @@ export class CountingService {
   private url_Rejection: string = '/api/counting/6/';
   
   private request: string;
-  private params: URLSearchParams;
-  private paramsItem: URLSearchParams;
-  private options: RequestOptions;
+  private params: HttpParams;
+  private paramsItem: HttpParams;
+  private options: HttpHeaders;
 
   constructor(private http : HttpService,private _userService: UserService){ }
 
@@ -104,16 +106,14 @@ export class CountingService {
      */
   getCountingIntegrationInfo_STEP1 (countingDate: string) {
         this.request = this.url_STEP1_HeiCounting;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', countingDate);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
+        this.params= new HttpParams();
+        this.params = this.params.set('PARAM', countingDate);
+        this.options = new HttpHeaders();
+        this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
-                let data = response.json();
+        return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+                let data = <any>response.json()._body;
                 let stat;
                 this.countResult = new CountResult();
                 let count = new Count();
@@ -167,7 +167,7 @@ export class CountingService {
                 }
                 //console.log ('this.countResult : ' + JSON.stringify(this.countResult));
                 return this.countResult;
-            });
+            }));
   }
 
 
@@ -180,18 +180,16 @@ export class CountingService {
      */
   getCountingIntegrationInfo_STEP2 (countingDate: string, store: string, filename: string) {
         this.request = this.url_STEP2_HeiCounting;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', countingDate);
-        this.params.append('PARAM', store);
-        this.params.append('PARAM', filename);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
+        this.params= new HttpParams();
+        this.options = new HttpHeaders();
+        this.params = this.params.set('PARAM', countingDate);
+        this.params = this.params.set('PARAM', store);
+        this.params = this.params.set('PARAM', filename);
+        this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
-                let data = response.json();
+        return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+                let data = <any>response.json()._body;
                 let stat, count, totalCount;                  
                 count = new Count();
                 count.totalcount = 0; 
@@ -230,7 +228,7 @@ export class CountingService {
                 }
                 if (data.length > 0) { count.percentage = this.calculSuccess(count); }
                 return count;
-            });
+            }));
   }
 
 
@@ -243,18 +241,16 @@ export class CountingService {
      */
   getCountingIntegrationInfo_STEP3 (countingDate: string, store: string, filename: string) {
         this.request = this.url_STEP3_HeiCounting;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', countingDate);
-        this.params.append('PARAM', store);
-        this.params.append('PARAM', filename);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
+        this.params= new HttpParams();
+        this.options = new HttpHeaders();
+        this.params = this.params.set('PARAM', countingDate);
+        this.params = this.params.set('PARAM', store);
+        this.params = this.params.set('PARAM', filename);
+        this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
-                let data = response.json();
+        return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+                let data = <any>response.json()._body;
                 let stat, count, totalCount;                  
                 count = new CountStep();
                 for(let i = 0; i < data.length; i ++) {
@@ -284,7 +280,7 @@ export class CountingService {
                     }
                 }
                 return count;
-            });
+            }));
   }
 
   calculSuccess (count: Count)  {
@@ -301,22 +297,20 @@ export class CountingService {
      */
   getMovementsInBetween(countingDate: string, store: string, filename: string) {
         this.request = this.url_MovementCounting_InBetween;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', countingDate);
-        this.params.append('PARAM', store);
-        this.params.append('PARAM', filename);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
+        this.params= new HttpParams();
+        this.options = new HttpHeaders();
+        this.params = this.params.set('PARAM', countingDate);
+        this.params = this.params.set('PARAM', store);
+        this.params = this.params.set('PARAM', filename);
+        this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
+        return this.http.get(this.request, this.params, this.options).pipe(map(response => {
                 let movementInformation = new MovementData();
                 let data = response.json();
                 if (data.length > 0) { Object.assign(movementInformation.movements , data); }
                 return movementInformation;
-            });
+            }));
   }
 
      /**
@@ -328,18 +322,16 @@ export class CountingService {
      */
   getRejection(countingDate: string, store: string, filename: string) {
         this.request = this.url_Rejection;
-        let headersSearch = new Headers({ });
-        this.params= new URLSearchParams();
-        this.params.append('PARAM', countingDate);
-        this.params.append('PARAM', store);
-        this.params.append('PARAM', filename);
-        headersSearch.append('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch.append('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        this.options = new RequestOptions({ headers: headersSearch, search : this.params }); // Create a request option
+        this.params= new HttpParams();
+        this.options = new HttpHeaders();
+        this.params = this.params.set('PARAM', countingDate);
+        this.params = this.params.set('PARAM', store);
+        this.params = this.params.set('PARAM', filename);
+        this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         //console.log('Get Rejection');
-        return this.http.get(this.request, this.options)
-            .map((response: Response) => {
+        return this.http.get(this.request, this.params, this.options).pipe(map(response => {
                 //console.log('Get Rejection : ' + JSON.stringify(response));
                 let rejectionInformation = new RejectionData();
                 let data = response.json();
@@ -347,6 +339,6 @@ export class CountingService {
 
                 //console.log('rejectionInformation : ' + JSON.stringify(rejectionInformation));
                 return rejectionInformation;
-            });
+            }));
   }
 }

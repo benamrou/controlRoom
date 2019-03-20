@@ -1,30 +1,26 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { LayoutRoutingModule } from './layout-routing.module';
 import { LayoutComponent } from './layout.component';
-import { HeaderComponent, SidebarComponent } from '../shared';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { HeaderComponent } from './components/header/header.component';
 
-import { DialogModule, ButtonModule} from '../shared/components/index';
-import { SharedPipesModule} from '../shared/pipes/index';
 import { LabelsResolver} from '../shared/services/index';
 
 @NgModule({
     imports: [
         CommonModule,
-        NgbDropdownModule.forRoot(),
         LayoutRoutingModule,
-        DialogModule, ButtonModule, SharedPipesModule
+        TranslateModule,
+        NgbDropdownModule.forRoot()
     ],
-    declarations: [
-        LayoutComponent,
-        HeaderComponent,
-        SidebarComponent
-    ],
-      providers: [
+    declarations: [LayoutComponent, SidebarComponent, HeaderComponent],
+    providers: [
         LabelsResolver
       ],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class LayoutModule { }
+export class LayoutModule {}

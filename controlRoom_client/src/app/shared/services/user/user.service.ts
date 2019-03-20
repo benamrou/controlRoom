@@ -2,6 +2,8 @@ import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular
 import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
 import {Router} from '@angular/router';
 import {HttpService} from '../request/html.service';
+import { map } from 'rxjs/operators';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 
 
 export class User {
@@ -60,9 +62,8 @@ export class UserService {
   private baseUserProfileUrl: string = '/api/userprofile/';
   
   private request: string;
-  private params: URLSearchParams;
-  private paramsEnvironment: URLSearchParams;
-  private options: RequestOptions;
+  private params: HttpParams;
+  private options: HttpHeaders;
 
   constructor(private http:HttpService, router:Router) { }
 
@@ -74,20 +75,21 @@ export class UserService {
      * @returns JSON User information object
      */
   getInfo (username: string) {
+        console.log('***** getInfo - User -  ****');
         this.userInfo = new User();
         this.request = this.baseUserUrl;
-        this.params= new URLSearchParams();
-        this.params.append('USER_NAME', username);
-        this.options = new RequestOptions({ search : this.params }); // Create a request option
+        this.params= new HttpParams();
+        this.params =  this.params.set('USER_NAME', username);
+        //this.options = new HttpParams().set('search',this.params); // Create a request option
     
-        return this.http.get(this.request, this.options)
+        return this.http.get(this.request, this.params)
             .map((response: Response) => {
-                let data = response.json();
-                this.userInfo.username = data[0].USERID;
-                this.userInfo.corporate = data[0].USERCORP;
+                let data = response as any;
+                this.userInfo.username = data[0].USERID; // @ts-ignore
+                this.userInfo.corporate = data[0].USERCORP; // @ts-ignore
                 this.userInfo.password = data[0].USERPASS;
-                this.userInfo.authentificationMethod = data[0].USERAUTH;
-                this.userInfo.language = data[0].USERLANG;
+                this.userInfo.authentificationMethod = data[0].USERAUTH; // @ts-ignore
+                this.userInfo.language = data[0].USERLANG; 
                 this.userInfo.profile = data[0].USERPROF;
                 this.userInfo.application = data[0].USERAPPLI;
                 this.userInfo.firstname = data[0].USERFNAME;
@@ -114,19 +116,19 @@ export class UserService {
      * @returns JSON User Environment information object
      */
     getEnvironment(username: string) {
+        console.log('***** getEnvironment - User -  ****');
         // Reinitialize data
         this.userInfo.mainEnvironment =  [];
         this.userInfo.envUserAccess = [];
         this.userInfo.sid = [];
 
         this.request = this.baseEnvironmentUrl;
-        this.paramsEnvironment= new URLSearchParams();
-        this.paramsEnvironment.append('USER_NAME', username);
-        this.options = new RequestOptions({ search : this.paramsEnvironment }); // Create a request option
+        this.params= new HttpParams();
+        this.params =  this.params.set('USER_NAME', username);
+        //this.options = new RequestOptions({ search : this.paramsEnvironment }); // Create a request option
 
-       return this.http.get(this.request, this.options)
-            .map((response: Response) => {
-                let data = response.json();
+       return this.http.get(this.request, this.params).map((response: Response) => {
+                let data = response as any;
                 //console.log('Environment: ' + data.length + ' => ' + JSON.stringify(data));
                 this.userInfo.sid = [];
                 for(let i=0; i < data.length; i ++) {
@@ -168,7 +170,9 @@ export class UserService {
                     }
 
                 }
-                //console.log('Env: ' + JSON.stringify (this.userInfo));
+                localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
+                localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
+                console.log('Env: ' + JSON.stringify (this.userInfo));
         });
     }
 
@@ -200,6 +204,12 @@ export class UserService {
                 }
             }
         }
+        localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
+    }
+
+    setMainLanguage (newLanguage: string) {
+        this.userInfo.envDefaultLanguage =newLanguage;
+        localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
     }
 } 
 
