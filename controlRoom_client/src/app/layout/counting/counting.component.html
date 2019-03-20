@@ -1,8 +1,5 @@
+<app-page-header [heading]="'Third-Party counting integration follow-up'" [icon]="'fa-thumb-tack'"></app-page-header>
 
-<div class="container-fluid">
-    <h2 class="text-muted"><small>Third-Party counting integration follow-up</small></h2>
-</div>
-<br>
 <div class="content-section implementation" style="padding: 5px;">
     <p-growl [value]="msgs" sticky="sticky"></p-growl>
 </div>
@@ -15,7 +12,7 @@
         </div>
         <div style="overflow: hidden; padding-right: .5em; pull-right;">
             <!--p-calendar [(ngModel)]="countingDate" [showIcon]="true"></p-calendar--> 
-            <input type="date"  [(ngModel)]="countingDate" placeholder=today style="width: 60%;" />
+            <input type="date"  [(ngModel)]="countingDate" placeholder=today style="width:60%;" />
             <button type="submit" pButton (click)="search()" icon="fa-search" label="Search" [disabled]="countingDate === ''"></button>
         </div>
     </div>

@@ -1,7 +1,0 @@
-3/20/2017 12:2:18 29: Path requestuest:/api/authentification/
-3/20/2017 12:2:18 29: Path query:{}
-3/20/2017 12:2:18 29: BEGIN PKREQUESTMANAGER.CALLQUERY(29,'ADM0000001','','{}', '{,}','{}', :cursor); END;
-3/20/2017 12:2:18 29: 0 Object(s) returned... [FETCH]
-3/20/2017 18:26:8 17: Path requestuest:/api/authentification/
-3/20/2017 18:26:8 17: Path query:{}
-3/20/2017 18:26:8 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'ADM0000001','admin','{}', '{admin,admin}','{}', :cursor); END;,'ADM0000001','','{}', '{,}','{}', :cursor); END;

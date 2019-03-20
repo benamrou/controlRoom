@@ -77,6 +77,7 @@ module.post = function (request,response) {
         response.setHeader('Access-Control-Allow-Origin', '*');
         // requestuest methods you wish to allow
         response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        console.log(JSON.stringify(request.header));
         SQL.executeLibQueryCallback("ADM0000001", "'{" + 
                             request.header('USER') + "," +
                             request.header('PASSWORD') + "}'", 

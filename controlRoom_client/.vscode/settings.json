@@ -1,4 +1,12 @@
 {
-    "angulardoc.repoId": "d99f5c83-6377-4963-8dab-83766588402b",
-    "angulardoc.lastSync": 0
+    "editor.wordWrap": "off",
+    "files.exclude": {
+			"**/node_modules": {},
+			"typings": {},
+			"**/*.map": {},
+			"**/*.js": {
+				"when": "$(basename).ts"
+			}
+	},
+	"eslint.enable": false
 }

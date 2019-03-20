@@ -1,8 +1,0 @@
-3/10/2017 8:15:16 2: Path requestuest:/api/search/
-3/10/2017 8:15:16 2: Path query:{"ARG0":"ahmed"}
-3/10/2017 8:15:16 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'abe','CLI0000001', '{undefined,undefined}', :cursor); END;
-3/10/2017 9:59:33 3: Path requestuest:/api/authentification/
-3/10/2017 9:59:33 3: Path query:{"USER_NAME":"admin"}
-3/10/2017 9:59:33 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'abe','ADM0000001', '[admin,admin]', :cursor); END;
-3/10/2017 9:59:33 3: 1 Object(s) returned... [FETCH]
-3/10/2017 9:59:33 3: [object Object]

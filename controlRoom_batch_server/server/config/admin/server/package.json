@@ -1,0 +1,20 @@
+{
+  "name": "ControlRoomAdminServer",
+  "version": "1.0.0",
+  "description": "Control Room Admnistration solution",
+  "main": "server_admin.js",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "express": "^4.14.1",
+    "fs-extra": "^2.0.0",
+    "lodash": "^4.17.4",
+    "oracledb": "^1.12.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server_admin.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

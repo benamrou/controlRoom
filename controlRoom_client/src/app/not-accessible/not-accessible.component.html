@@ -1,12 +1,10 @@
 <div class="notaccessible-page">
-    <div class="row">
-        <div class="col-md-10 push-md-1">
-            <h1>403 - Server Not Accessible</h1>
-            <p class="lead">The server {{serverUrl}} is not accessible</p>
-            <p class="lead">Message : {{ message }}</p>
-            <p class="lead">
-                <a class="btn rounded-btn" [routerLink]="['/login']">Restart</a>
-            </p>
-        </div>
+    <div>
+        <h1>403 - Server Not Accessible</h1>
+        <p class="lead">The server {{serverUrl}} is not accessible</p>
+        <p class="lead">Message : {{ message }}</p>
+        <p class="lead">
+            <a class="btn rounded-btn" [routerLink]="['/login']">Restart</a>
+        </p>
     </div>
 </div>

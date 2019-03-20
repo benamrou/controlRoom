@@ -24,6 +24,7 @@
 
 module.exports = function (app, SQL) {
 var module = {};
+var logger = require("../utils/logger.js");
 var jwt = require('jwt-simple');        // Manage client request
 var config = require("../../config/" + (process.env.NODE_ENV || "development") + ".js");    // contain the secret token encoding
 /**
@@ -84,6 +85,7 @@ module.post = function (request,response) {
         response.setHeader('Access-Control-Allow-Origin', '*');
         // requestuest methods you wish to allow
         response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        console.log('Header - Post : ' + JSON.stringify(request.header));
         SQL.executeLibQueryCallback(SQL.getNextTicketID(), 
                             "ADM0000001", "'{" + 
                             request.header('USER') + "," +

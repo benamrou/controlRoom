@@ -1,5 +1,5 @@
-<app-header (languageSwitched)="refresh()"></app-header>
-<app-sidebar (languageSwitched)="refresh()"></app-sidebar>
-<section class="main-container">
+<app-header></app-header>
+<app-sidebar (collapsedEvent)="receiveCollapsed($event)"></app-sidebar>
+<section class="main-container" [ngClass]="{collapsed: collapedSideBar}">
     <router-outlet></router-outlet>
 </section>

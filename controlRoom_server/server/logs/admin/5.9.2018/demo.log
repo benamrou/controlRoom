@@ -1,0 +1,30 @@
+5/9/2018 0:47:22 16: LIBQUERY with Callback: 
+5/9/2018 0:47:22 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'ADM0000001','demo','{}', '{demo,demo}','{}', :cursor); END;
+5/9/2018 0:47:22 16: 1 Object(s) returned... [FETCH]
+5/9/2018 0:47:22 16: [object Object]
+5/9/2018 0:47:22 16: {"metaData":[{"name":"USERID"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"}]}
+5/9/2018 0:47:22 17: LIBQUERY with Callback: 
+5/9/2018 0:47:22 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000002','demo','{}', '{demo}','{}', :cursor); END;
+5/9/2018 0:47:22 17: 1 Object(s) returned... [FETCH]
+5/9/2018 0:47:22 17: [object Object]
+5/9/2018 0:47:22 17: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+5/9/2018 0:47:22 18: LIBQUERY with Callback: 
+5/9/2018 0:47:22 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CLI0000003','demo','{}', '{demo}','{}', :cursor); END;
+5/9/2018 0:47:22 18: 4 Object(s) returned... [FETCH]
+5/9/2018 0:47:22 18: [object Object],[object Object],[object Object],[object Object]
+5/9/2018 0:47:22 18: {"metaData":[{"name":"LEVEL"},{"name":"ENVID"},{"name":"ENVCORPID"},{"name":"ENVCODE"},{"name":"ENVTYPE"},{"name":"ENVACTIVE"},{"name":"ENVSDESC"},{"name":"ENVLDESC"},{"name":"ENVDBTYPE"},{"name":"ENVIP"},{"name":"ENVPORT"},{"name":"ENVUSER"},{"name":"ENVPASSWORD"},{"name":"ENVSOURCE"},{"name":"ENVDBLINK"},{"name":"ENVDEFAULT"},{"name":"ENVDCRE"},{"name":"ENVDMAJ"},{"name":"ENVUTIL"},{"name":"ENVVERSION"},{"name":"ENVDEFLANG"},{"name":"CORPPIC"},{"name":"ENVVARINITSH"}]}
+5/9/2018 0:47:46 19: LIBQUERY with Callback: 
+5/9/2018 0:47:46 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'SUP0000001','demo','{HEINENS_CEN_UAT}', '{Leo}','{HN}', :cursor); END;
+5/9/2018 0:47:46 19: 57 Object(s) returned... [FETCH]
+5/9/2018 0:47:46 19: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+5/9/2018 0:47:46 19: {"metaData":[{"name":"LISCFIN"},{"name":"FOUCNUF"},{"name":"FOULIBL"},{"name":"FCSNUM"},{"name":"LISCSIN"},{"name":"LISCCIN"},{"name":"FCCNUM"},{"name":"LISNFILF"},{"name":"SOCSITE"},{"name":"SOCLMAG"},{"name":"LISNFILC"},{"name":"LISTLIV"},{"name":"LISCOMC"},{"name":"LISCOMR"},{"name":"LISCOMF"},{"name":"LISVCOM"},{"name":"LISTSLI"},{"name":"LISTSQP"},{"name":"LISTOP"},{"name":"LISAVAL"},{"name":"LISMARQ"},{"name":"LISREAP"},{"name":"LISUREAP"},{"name":"LISUREAP_LIB"},{"name":"LISCOMM"},{"name":"LISCDLU"},{"name":"LISCDMA"},{"name":"LISCDME"},{"name":"LISCDJE"},{"name":"LISCDVE"},{"name":"LISCDSA"},{"name":"LISCDDI"},{"name":"LISLILU"},{"name":"LISLIMA"},{"name":"LISLIME"},{"name":"LISLIJE"},{"name":"LISLIVE"},{"name":"LISLISA"},{"name":"LISLIDI"},{"name":"LISHRLU"},{"name":"LISHRMA"},{"name":"LISHRME"},{"name":"LISHRJE"},{"name":"LISHRVE"},{"name":"LISHRSA"},{"name":"LISHRDI"},{"name":"LISHLLU"},{"name":"LISHLMA"},{"name":"LISHLME"},{"name":"LISHLJE"},{"name":"LISHLVE"},{"name":"LISHLSA"},{"name":"LISHLDI"},{"name":"LISHRLU2"},{"name":"LISHRMA2"},{"name":"LISHRME2"},{"name":"LISHRJE2"},{"name":"LISHRVE2"},{"name":"LISHRSA2"},{"name":"LISHRDI2"},{"name":"LISHLLU2"},{"name":"LISHLMA2"},{"name":"LISHLME2"},{"name":"LISHLJE2"},{"name":"LISHLVE2"},{"name":"LISHLSA2"},{"name":"LISHLDI2"},{"name":"LISHRLU3"},{"name":"LISHRMA3"},{"name":"LISHRME3"},{"name":"LISHRJE3"},{"name":"LISHRVE3"},{"name":"LISHRSA3"},{"name":"LISHRDI3"},{"name":"LISHLLU3"},{"name":"LISHLMA3"},{"name":"LISHLME3"},{"name":"LISHLJE3"},{"name":"LISHLVE3"},{"name":"LISHLSA3"},{"name":"LISHLDI3"},{"name":"LISDDEB"},{"name":"LISDFIN"}]}
+5/9/2018 0:48:21 20: LIBQUERY with Callback: 
+5/9/2018 0:48:21 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'SCH0000001','demo','{HEINENS_CEN_UAT}', '{AO0056272,AO00562C,0,AO00562S,05/06/2018,05/12/2018,demo,1,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,20,21,22,41,42,43,44}','{HN}', :cursor); END;
+5/9/2018 0:48:21 20: 1 Object(s) returned... [FETCH]
+5/9/2018 0:48:21 20: [object Object]
+5/9/2018 0:48:21 20: {"metaData":[{"name":"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS'"}]}
+5/9/2018 0:48:22 21: LIBQUERY with Callback: 
+5/9/2018 0:48:22 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'SCH0000002','demo','{HEINENS_CEN_UAT}', '{AO0056272,AO00562C,0,AO00562S,05/09/2018,1010,05/10/2018,0600,demo,1,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,20,21,22,41,42,43,44}','{HN}', :cursor); END;
+5/9/2018 0:48:22 21: 1 Object(s) returned... [FETCH]
+5/9/2018 0:48:22 21: [object Object]
+5/9/2018 0:48:22 21: {"metaData":[{"name":"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS'"}]}
