@@ -85,31 +85,7 @@ export class HeaderComponent implements OnInit {
 	setTopBarDisplay (){
 		console.log('envTypeInt : ' + this.envTypeConnected);
 		let envTypeInt = parseInt(this.envTypeConnected);
-		switch (envTypeInt) {
-		 case 5: // PRODUCTION
-			this.appEnvironment = 'Inventory Control Room';
-			this.appForegroundColorEnvironment = 'white';
-			break;
-		 case 4: // UAT
-			this.appEnvironment = 'Inventory Control Room (User Acceptance)';
-			this.appForegroundColorEnvironment = 'yellow';
-			break;
-		 case 3: // Unit Test
-			this.appEnvironment = 'Inventory Control Room (Unit Test)';
-			this.appForegroundColorEnvironment = 'darkgray';
-			break;
-		 case 2: // Unit Test
-			this.appEnvironment = 'Inventory Control Room (Development)';
-			this.appForegroundColorEnvironment = 'blue';
-			break;
-		 case 1: // Unit Test
-			this.appEnvironment = 'Inventory Control Room (Sandbox)';
-			this.appForegroundColorEnvironment = 'purple';
-			break;
-		 default:
-			this.appEnvironment = 'Inventory Control Room';
-			this.appForegroundColorEnvironment = 'white';
-			break;
-		} 
+		this.appForegroundColorEnvironment = this._userService.userInfo.mainEnvironment[0].titleColor;
+		this.appEnvironment = this._userService.userInfo.mainEnvironment[0].title;
 	}
 }

@@ -3,7 +3,7 @@ import { ViewEncapsulation, Input, OnChanges } from '@angular/core';
 import { SelectItem, Chips, Message, Schedule } from '../../components/index';
 import { ItemService, Item, Purchasing, Pricing, Retail, Substitution, Inventory } from '../../services/index';
 import {NgModule } from '@angular/core';
-import {fullcalendar} from 'fullcalendar';
+import {} from 'fullcalendar';
 
 
 @Component({
