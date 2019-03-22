@@ -50,6 +50,10 @@ export class Environment {
    public default: number;
    public defaultLanguage: string;
    public GOLDversion: string;
+   public initSH: string;
+   public titleColor: string;
+   public title: string;
+   public picture: string;
 }
 
 @Injectable()
@@ -153,6 +157,10 @@ export class UserService {
                     env.GOLDversion = data[i].ENVVERSION;
                     env.default = data[i].ENVDEFAULT;
                     env.defaultLanguage = data[i].ENVDEFLANG;
+                    env.initSH = data[i].ENVVARINITSH;
+                    env.titleColor = data[i].ENVTITLECOLOR;
+                    env.title = data[i].ENVTITLE;
+                    env.picture = data[i].CORPPIC;
 
                     this.userInfo.envDefaultLanguage = env.defaultLanguage;
                 

@@ -68,62 +68,38 @@
                     {{ 'moretheme' | translate }}
                 </a -->
         </ul>
+</nav>
+<nav class="sidebar_admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}">
     <!-- Administration section -->
-        <div class="toggle-button">
-            <ul class="list-group">
-            <div class="nested-menu" >
-                    <a class="list-group-item" (click)="addExpandClass('settings')">
-                        <span><i class="fa fa-cogs"></i> &nbsp; {{ 'General Settings' | translate}} </span>
-                    </a>
-                    <li class="nested" [ngClass]="{'expand' : showMenu === 'settings' }">
-                        <ul class="submenu" >
-                            <li>
-                                <a routerLink="/settingcustomer" [routerLinkActive]="['router-link-active']" >
-                                    <span><i class="fa fa-th-large"></i> &nbsp;  {{ 'Retailer & Access' | translate}}</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a routerLink="/settingusers" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-user"></i> &nbsp;  {{ 'Users & Profiles' | translate}}</span></a>
-                            </li>
-                            <li>
-                                <a routerLink="/settingwidget" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-chart-bar"></i> &nbsp;  {{ 'Widget Library' | translate}}</span></a>
-                            </li>
-                            <li>
-                                <a routerLink="/settingquery" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-share-square"></i> &nbsp;  {{ 'Query Library' | translate}}</span></a>
-                            </li>
-                            <li>
-                                <a routerLink="/settinglabel" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-flag"></i> &nbsp;  {{ 'Dictionary' | translate}}</span></a>
-                            </li>
-                        </ul>
-                    </li>
-            </div>
-            </ul>
-        </div>
-        <!--div class="toggle-button">
-            <div  [ngClass]="{collapsed: collapsed}" (click)="toggleCollapsed()">
-                <i class="fa fa-fw fa-angle-double-left"></i>&nbsp;
-                <span>{{ 'Collapse Sidebar' | translate }}</span>
-            </div>
-        </div-->
-            <!-- div class="nested-menu">
-                <a class="list-group-item" (click)="addExpandClass('admin')">
-                    <span><i class="fa fa-users"></i> &nbsp; {{ 'MENU0000000002' | translate}}</span>
+    <div class="list-group">
+        <div class="nested-menu" >
+                <a class="list-group-item" (click)="addExpandClass('settings')">
+                    <span><i class="fa fa-cogs"></i> &nbsp; {{ 'Administration' | translate}} </span>
                 </a>
-                <li class="nested" [ngClass]="{'expand' : showMenu === 'admin' }">
-                    <ul class="submenu">
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'settings' }">
+                    <ul class="submenu" >
                         <li>
-                            <a href="#"><span>> {{ 'MENU0000000003' | translate}}</span></a>
+                            <a routerLink="/settingcustomer" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fa fa-th-large"></i> &nbsp;  {{ 'Retailer & Access' | translate}}</span>
+                            </a>
                         </li>
                         <li>
-                            <a href="#"><span>> {{ 'MENU0000000004' | translate}}</span></a>
+                            <a routerLink="/settingusers" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-user"></i> &nbsp;  {{ 'Users & Profiles' | translate}}</span></a>
                         </li>
                         <li>
-                            <a href="#"><span>> {{ 'MENU0000000005' | translate}}</span></a>
+                            <a routerLink="/settingwidget" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-chart-bar"></i> &nbsp;  {{ 'Widget Library' | translate}}</span></a>
                         </li>
                         <li>
-                            <a href="#"><span>> {{ 'MENU0000000006' | translate}} </span></a>
+                            <a routerLink="/settingquery" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-share-square"></i> &nbsp;  {{ 'Query Library' | translate}}</span></a>
+                        </li>
+                        <li>
+                            <a routerLink="/settinglabel" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-flag"></i> &nbsp;  {{ 'Dictionary' | translate}}</span></a>
                         </li>
                     </ul>
                 </li>
-            </div -->
+        </div>
+    </div>
+    <div class="logo">
+        <img style="width: 50%" src="{{_userService.userInfo.mainEnvironment[0].picture}}" alt="Picture">
+    </div>
     </nav>
