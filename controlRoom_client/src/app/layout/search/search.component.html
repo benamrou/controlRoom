@@ -22,7 +22,7 @@
 <!-- Panel resul -->
 <!-- Result panel of the resarch --> 
 <!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
-<div  item-width="400px" table-layout="fixed" *ngIf="performedResearch">
+<div  item-width="400px" table-layout="fixed" *ngIf="performedResearch" >
 <p-dataTable #result [value]="searchResult" sortMode="multiple"
              [resizableColumns]="true" columnResizeMode="expand"
              [rows]="5"  [rowsPerPageOptions]="[5,10,50,100]"
@@ -33,13 +33,14 @@
              selectionMode="single" [(selection)]="selectedElement" tableStyleClass="table-layout: auto;">
 
     <p-header >
-        <div class="ui-widget-header pull-right ui-left-inner-addon">
-            <span class="fa fa-search"></span>
-            <input  type="text" #gb
-              placeholder="Type text to filter..." width="500px">
+        <div class="pull-right">
+            <input  type="text" #gb placeholder="Type text to filter..." 
+                    style="width:400px; border-radius: 10px">
         </div>
-        <div class="ui-helper-clearfix">
-            <button type="button" pButton icon="fa-file-o" iconPos="left" label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+        <div class="ui-helper-clearfix" >
+            <button type="button" pButton icon="fa-file" iconPos="left" 
+                    class="CSV_Button"
+                    label="CSV" (click)="result.exportCSV()" style="float:left"></button>
         </div>
         <!--div style="text-align:right">
             <p-multiSelect [options]="columnOptions" [(ngModel)]="columns"></p-multiSelect>
@@ -59,21 +60,21 @@
 </div>
 <div class="row" *ngIf="selectedElement.COL1==='ITEM'">
     <div class="col-xl-3 col-lg-6">
-        <app-stat [bgClass]="'card-primary'" [icon]="'fa-comments'" [label]="'Item Information'" (click)="clickItemDetail()"></app-stat>
+        <app-stat [bgClass]="'primary'" [icon]="'fa-comments'" [label]="'Item Information'" (click)="clickItemDetail()"></app-stat>
     </div>
 
     <div class="col-xl-3 col-lg-6">
-        <app-stat [bgClass]="'card-warning card-inverse'" [icon]="'fa-shopping-cart'" [label]="'Orders'" (click)="clickItemDetail()"></app-stat>
+        <app-stat [bgClass]="'warning inverse'" [icon]="'fa-shopping-cart'" [label]="'Orders'" (click)="clickItemDetail()"></app-stat>
     </div>
 
     <div class="col-xl-3 col-lg-6">
-        <app-stat [bgClass]="'card-success card-inverse'" [icon]="'fa-tasks'" [label]="'Receiving'" (click)="clickItemDetail()"></app-stat>
+        <app-stat [bgClass]="'success inverse'" [icon]="'fa-tasks'" [label]="'Receiving'" (click)="clickItemDetail()"></app-stat>
     </div>
 
     <div class="col-xl-3 col-lg-6">
-        <app-stat [bgClass]="'card-danger card-inverse'" [icon]="'fa-newspaper-o'" [label]="'Invoices'" (click)="clickItemDetail()"></app-stat>
+        <app-stat [bgClass]="'danger inverse'" [icon]="'fa-newspaper-o'" [label]="'Invoices'" (click)="clickItemDetail()"></app-stat>
     </div>
 </div>
 
 <br><br>
-<item-cmp *ngIf="itemDetail==true" [itemInternalCode]=selectedElement.COL2> </item-cmp>
+<item-cmp *ngIf="itemDetail" [itemInternalCode]=selectedElement.COL2> </item-cmp>

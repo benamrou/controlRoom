@@ -14,7 +14,9 @@ export class LayoutComponent implements OnInit {
     collapedSideBar: boolean;
 
     constructor(private router: Router, private _userService: UserService) {
-
+        if(!_userService)    {
+            window.location.href = window.location.origin;
+        }
     }
 
     ngOnInit() {

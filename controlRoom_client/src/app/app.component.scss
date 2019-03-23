@@ -1,0 +1,58 @@
+
+/*******************************************/
+/* Override Prime-ng DATATABLE CSS         */
+/*******************************************/
+:host ::ng-deep .ui-datatable .ui-datatable-header {
+    background-color: #fff;
+    font-weight: 100;
+    font-size: smaller;
+}
+
+
+:host ::ng-deep .header_filter input {
+    background-color: white;
+    padding: 1px;
+    border-width: 2px;
+    border-style: inset;
+    border-radius: 10px;
+    width: 400px;
+}
+
+:host ::ng-deep  .ui-datatable th.ui-state-active {
+    color: red;
+}
+
+p-dataTable.ui-widget-header::ng-deep {
+    background-color: #fff !important; 
+    font-weight: 100 !important;
+    font-size: smaller !important;
+    border: none;
+}
+
+:host ::ng-deep  .ui-datatable .ui-datatable-thead>tr>th {
+    background: white;
+    border: 0;
+    font-weight: 100;
+    font-size: 0.5em;
+}
+
+:host ::ng-deep .ui-datatable th.ui-state-active {
+    color:red;
+}
+
+:host ::ng-deep .CSV_Button {
+    color: white; 
+    background: #255; 
+    border-radius:20px;
+    border:0; 
+    font-size:1em;
+}
+
+:host ::ng-deep .CSV_Button:hover {
+    background: #2399e5; 
+}
+
+:host ::ng-deep .ui-datatable .ui-paginator {
+    background: white;
+    border: none;
+}
