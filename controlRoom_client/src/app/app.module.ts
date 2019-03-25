@@ -14,6 +14,7 @@ import { DatePipe } from '@angular/common';
 
 import { AuthentificationGuard, HttpService } from './shared/services/index';
 import { UserService, LogginService, LabelService } from './shared/services/index';
+import { GridsterModule } from './shared';
 import { SharedPipesModule } from './shared/pipes/'
 
 import { DialogModule } from './shared/components/index';
@@ -45,6 +46,7 @@ export const createTranslateLoader = (http: HttpClient) => {
         BrowserModule,
         BrowserAnimationsModule,
         HttpClientModule,
+        GridsterModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

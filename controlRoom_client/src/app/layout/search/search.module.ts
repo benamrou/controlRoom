@@ -21,7 +21,7 @@ import { PageHeaderModule } from '../../shared';
                TooltipModule, ItemModule,
                StatModule,
                SearchRoutingModule,
-                PageHeaderModule ],
+               PageHeaderModule ],
     declarations: [SearchComponent],
     exports: [SearchComponent],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]
