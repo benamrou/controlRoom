@@ -1,17 +1,15 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbCarouselModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { PageHeaderModule } from '../../shared';
+import { GridsterModule } from '../../shared';
+import { FormsModule } from '@angular/forms';
 
-import {
-    TimelineComponent,
-    NotificationComponent,
-    ChatComponent
-} from './components';
 import { StatModule } from '../../shared';
+import { ButtonModule, TooltipModule  } from '../../shared/components';
 
 @NgModule({
     imports: [
@@ -20,13 +18,13 @@ import { StatModule } from '../../shared';
         NgbAlertModule.forRoot(),
         DashboardRoutingModule,
         StatModule,
+        GridsterModule,
+        FormsModule,
+        ButtonModule,TooltipModule,
         PageHeaderModule
     ],
-    declarations: [
-        DashboardComponent,
-        TimelineComponent,
-        NotificationComponent,
-        ChatComponent
-    ]
+    declarations: [ DashboardComponent ],
+    exports: [ DashboardComponent ],
+    schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class DashboardModule {}

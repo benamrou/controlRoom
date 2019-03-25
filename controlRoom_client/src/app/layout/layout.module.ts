@@ -8,6 +8,8 @@ import { LayoutComponent } from './layout.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 
+import {GridsterModule} from '../shared/';
+
 import { LabelsResolver} from '../shared/services/index';
 
 @NgModule({
@@ -15,6 +17,7 @@ import { LabelsResolver} from '../shared/services/index';
         CommonModule,
         LayoutRoutingModule,
         TranslateModule,
+        GridsterModule,
         NgbDropdownModule.forRoot()
     ],
     declarations: [LayoutComponent, SidebarComponent, HeaderComponent],

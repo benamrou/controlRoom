@@ -1,4 +1,69 @@
 <div [@routerTransition]>
     <app-page-header [heading]="'Recent Activities Overview'" [icon]="'fa-thumb-tack'"></app-page-header>
+</div>
 
+<div class="omnibar">
+    <div style="width:100%; float: right" class="blur">
+        <button class="btn btn-secondary topmenubutton"  pTooltip="Add a widget" tooltipPosition="top" type="button" 
+                (click)="addWidgetWithoutData()">
+                <span class="fas fa-plus-circle"></span>
+        </button>
+        <button class="btn btn-secondary topmenubutton" pTooltip="Reorganize" tooltipPosition="top" type="button">
+                <span class="fas fa-window-maximize"></span>
+        </button>
+        <button class="btn btn-secondary topmenubutton" pTooltip="Save layout" tooltipPosition="top" type="button">
+                <span class="fas fa-save"></span>
+        </button>
+    </div>
+</div>
+<div class="main-content">
+    <gridster [options]="gridsterOptions" [draggableOptions]="gridsterDraggableOptions" (reflow)="onReflow($event)"
+              (optionsChange)="optionsChange($event)" #gridster1 class="dashboard">
+
+        <gridster-item *ngFor="let widget of widgets; let indx = index" #itemComp
+                       [options]="itemOptions"
+                       [dragAndDrop]="widget.dragAndDrop" [resizable]="widget.resizable"
+                       [(x)]="widget.x" [(y)]="widget.y"
+                       [(xSm)]="widget.xSm" [(ySm)]="widget.ySm"
+                       [(xMd)]="widget.xMd" [(yMd)]="widget.yMd"
+                       [(xLg)]="widget.xLg" [(yLg)]="widget.yLg"
+                       [(xXl)]="widget.xXl" [(yXl)]="widget.yXl"
+                       [(w)]="widget.w" [(h)]="widget.h"
+                       (change)="itemChange($event, gridster1)">
+
+            <div class="panel-heading widget-header">
+                <div style="float: right; margin: 2px; margin-block-start: -10px">
+                    <small >
+                        <button class="btn btn-light widget-button" pTooltip="Height -/+" 
+                                tooltipPosition="top" type="button"
+                                (click)="setHeight(widget, widget.h+1, $event, gridster1)"
+                                (contextmenu)="setHeight(widget, widget.h-1, $event, gridster1)">
+                                <span class="fas fa-arrows-alt-v fa-lg"></span>
+                        </button>
+                        <button class="btn btn-light widget-button" pTooltip="Width -/+" tooltipPosition="top" type="button"
+                                (click)="setWidth(widget, widget.w+1, $event, gridster1)"
+                                (contextmenu)="setWidth(widget, widget.w-1, $event, gridster1)">
+                                <span class="fas fa-arrows-alt-h "></span>
+                        </button>
+                        <button class="btn btn-light widget-button" pTooltip="Drop" 
+                                tooltipPosition="top" type="button"
+                                (click)="remove($event, indx,gridster1)">
+                                <span class="fas fa-times fa-lg"></span>
+                        </button>
+                        </small>
+                </div>
+                <h5 class="panel-title">
+                    <input class="widget-title" type="text" placeholder="{{ widget.title }}">
+                </h5>
+            </div>
+
+            <div class="panel-body">
+                <svg class="loading_spinner" viewBox="0 0 50 50">
+                    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                </svg>
+            </div>
+
+        </gridster-item>
+
+    </gridster>
 </div>
