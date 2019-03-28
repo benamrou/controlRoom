@@ -79,7 +79,7 @@ export class UserService {
      * @returns JSON User information object
      */
   getInfo (username: string) {
-        console.log('***** getInfo - User -  ****');
+        //console.log('***** getInfo - User -  ****');
         this.userInfo = new User();
         this.request = this.baseUserUrl;
         this.params= new HttpParams();
@@ -120,7 +120,7 @@ export class UserService {
      * @returns JSON User Environment information object
      */
     getEnvironment(username: string) {
-        console.log('***** getEnvironment - User -  ****');
+        //console.log('***** getEnvironment - User -  ****');
         // Reinitialize data
         this.userInfo.mainEnvironment =  [];
         this.userInfo.envUserAccess = [];
@@ -180,7 +180,7 @@ export class UserService {
                 }
                 localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
                 localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
-                console.log('Env: ' + JSON.stringify (this.userInfo));
+                //console.log('Env: ' + JSON.stringify (this.userInfo));
         });
     }
 

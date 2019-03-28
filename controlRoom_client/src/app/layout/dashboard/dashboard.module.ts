@@ -9,7 +9,7 @@ import { GridsterModule } from '../../shared';
 import { FormsModule } from '@angular/forms';
 
 import { StatModule } from '../../shared';
-import { ButtonModule, TooltipModule  } from '../../shared/components';
+import { DataTableModule, ButtonModule, TooltipModule  } from '../../shared/components';
 
 @NgModule({
     imports: [
@@ -20,6 +20,7 @@ import { ButtonModule, TooltipModule  } from '../../shared/components';
         StatModule,
         GridsterModule,
         FormsModule,
+        DataTableModule,
         ButtonModule,TooltipModule,
         PageHeaderModule
     ],
