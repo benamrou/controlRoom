@@ -9,7 +9,7 @@
     color: #2f4f4f;
     -webkit-text-fill-color: #2f4f4f;
     width: 60%;
-    font-weight: 300;
+    font-weight: 500;
 }
 
 .widget-button {
@@ -86,4 +86,8 @@
     -o-filter: all .1s ease;
     -ms-filter: all .1s ease;
     filter: blur(2px);
+}
+
+:host ::ng-deep .ui-datatable table {
+    table-layout: auto
 }

@@ -35,7 +35,7 @@ export class HttpService  {
   getMock(url: string, paramOtions?: HttpParams, headersOption?:HttpHeaders): Observable<Response> {
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
-    url = 'http://localhost:5555/' + url;
+    //url = 'http://localhost:5555/' + url;
     console.log ('Get MOCK data : ' + url);
     if (!headersOption) {
       // let's make option object
@@ -65,7 +65,7 @@ export class HttpService  {
 
 
   get(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders): Observable<Response> {
-    console.log('***** Get HTML ****');
+    //console.log('***** Get HTML ****');
 
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
@@ -81,9 +81,9 @@ export class HttpService  {
     headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
     headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
 
-    //console.log ('Request : ' + url);
-    console.log('headers '  + JSON.stringify(headersOption));
-    console.log('params '  + JSON.stringify(paramOptions));
+    console.log ('Request : ' + url + ' / ' + JSON.stringify(headersOption));
+    //console.log('headers '  + JSON.stringify(headersOption));
+    //console.log('params '  + JSON.stringify(paramOptions));
     return this.httpClient.get(url, { headers: headersOption,
                                       params: paramOptions,
                                       responseType: 'json'
@@ -131,7 +131,7 @@ export class HttpService  {
 
 
   authentification(url: string, headersOption?:HttpHeaders, paramOtions?: HttpParams): Observable<Response> {
-    console.log('***** authentification ****');
+    //console.log('***** authentification ****');
     //console.log('Authentification - base URL : ' + JSON.stringify(this.baseUrl));
     let content = { body: "" };
     url = this.baseUrl + url;
@@ -144,7 +144,7 @@ export class HttpService  {
   }
 
   handleError(url: string, error: Response) : ObservableInput<Response> {
-    console.error('Error error: ' + JSON.stringify(error));
+    //console.error('Error error: ' + JSON.stringify(error));
     window.location.href = window.location.origin + '/not-accessible?message=' + url + '  :net::ERR_CONNECTION_REFUSED';
    return null;
   }

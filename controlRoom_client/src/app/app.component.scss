@@ -55,4 +55,16 @@ p-dataTable.ui-widget-header::ng-deep {
 :host ::ng-deep .ui-datatable .ui-paginator {
     background: white;
     border: none;
+    font-size: smaller;
+}
+
+:host ::ng-deep .ui-datatable table {
+    table-layout: auto
+}
+
+:host ::ng-deep .ui-datatable tbody > tr.ui-widget-content {
+    font-size: smaller;
+    border: white;
+    border-bottom-color: lightgray;
+    border-top-color: lightgray;
 }

@@ -9,3 +9,4 @@ export * from './counting/counting.service';
 export * from './process/process.service';
 export * from './labels/labels.service';
 export * from './labels/labels.resolver.service';
+export * from './widget/widget.service';

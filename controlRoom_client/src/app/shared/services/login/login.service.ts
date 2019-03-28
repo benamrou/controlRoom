@@ -23,7 +23,7 @@ export class LogginService{
      * @returns JSON User Environment information object
      */
     getEnvironment(username: string) {
-        console.log('***** getEnvironment ****');
+        //console.log('***** getEnvironment ****');
         let headersUserInfo = new Headers({ 'Content-Type': 'application/json' });
         let content = {};
         let options = new HttpParams();
@@ -41,7 +41,7 @@ export class LogginService{
      * @returns JSON Authorization token containing: USERID, TOKEN
      */
     login(username: string, password: string): Observable<boolean> {
-        console.log('***** Login ****');
+        //console.log('***** Login ****');
         let options = new HttpHeaders();
         options = options.set('USER', username);
         options = options.set('PASSWORD', password);
@@ -70,7 +70,7 @@ export class LogginService{
 
     logout(): void {
         // clear token remove user from local storage to log user out
-        console.log('***** Logout ****');
+        //console.log('***** Logout ****');
         this.token = null;
         localStorage.removeItem('ICRUser');
         localStorage.removeItem('ICRAuthToken');
