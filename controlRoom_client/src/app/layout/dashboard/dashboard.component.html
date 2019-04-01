@@ -1,5 +1,5 @@
 <div [@routerTransition]>
-    <app-page-header [heading]="'Recent Activities Overview'" [icon]="'fa-thumb-tack'"></app-page-header>
+    <app-page-header [heading]="'Recent Activities Overview'" [icon]="'fas fa-thumbtack'"></app-page-header>
 </div>
 
 <div class="omnibar">
@@ -58,9 +58,11 @@
             </div>
 
             <div class="panel-body">
-                <svg class="loading_spinner" viewBox="0 0 50 50" *ngIf="!widget.dataReady" >
-                    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-                </svg>
+                <div *ngIf="!widget.dataReady">
+                    <svg class="loading_spinner" viewBox="0 0 50 50" >
+                        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                    </svg>
+                </div>
                 <div *ngIf="widget.dataReady" style="padding-top: 5px">
                     <!-- TABLE RESULT WIDGET -->
                     <div *ngIf="widget.widtable==1">
@@ -72,14 +74,13 @@
                         [reorderableColumns]="true" scrollHeight="400px"
                         [globalFilter]="gb" [autoLayout]="true"
                         selectionMode="single" [(selection)]="selectedElement" tableStyleClass="table-layout: auto;">
-           
                             <p-header >
                                 <div class="pull-right">
                                 <input  type="text" #gb placeholder="Type text to filter..." 
                                     style="width:400px; border-radius: 10px">
                                 </div>
                                 <div class="ui-helper-clearfix" >
-                                <button type="button" pButton icon="fa-file" iconPos="left" 
+                                <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                     class="CSV_Button"
                                     label="CSV" (click)="result.exportCSV()" style="float:left"></button>
                                 </div>

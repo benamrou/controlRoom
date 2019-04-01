@@ -7,8 +7,11 @@ export interface Confirmation {
     header?: string;
     accept?: Function;
     reject?: Function;
+    acceptLabel?: string;
+    rejectLabel?: string;
     acceptVisible?: boolean;
     rejectVisible?: boolean;
+    blockScroll?: boolean;
     acceptEvent?: EventEmitter<any>;
     rejectEvent?: EventEmitter<any>;
 }

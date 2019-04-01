@@ -10,3 +10,6 @@ export * from './process/process.service';
 export * from './labels/labels.service';
 export * from './labels/labels.resolver.service';
 export * from './widget/widget.service';
+
+/** Prime NG Servcie  **/
+export * from '../components/common/api';

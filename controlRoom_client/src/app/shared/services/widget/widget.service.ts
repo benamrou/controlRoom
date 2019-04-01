@@ -66,8 +66,8 @@ export class WidgetService {
 
     public widgetsInfo : Widgets = new Widgets();
 
-    private baseUserUrl: string = '/api/widget/1/';
-    private executeWidgetUrl: string = '/api/widget/2/';
+    private executeWidgetUrl: string = '/api/widget/0/';
+    private baseUserUrl     : string = '/api/widget/1/';
     
     private request: string;
     private params: HttpParams;
@@ -87,7 +87,8 @@ export class WidgetService {
 
     this.request = this.baseUserUrl;
     this.params= new HttpParams();
-    this.params =  this.params.set('PARAM', 'abe,-1');
+    this.params =  this.params.set('PARAM', localStorage.getItem('ICRUser'));
+    this.params =  this.params.append('PARAM', '-1');
     //this.options = new RequestOptions({ search : this.paramsEnvironment }); // Create a request option
 
    return this.http.get(this.request, this.params).map((response: Response) => {
@@ -167,27 +168,24 @@ export class WidgetService {
         if(widget.widsnapfile != null) {
             //console.log('WIDSNAPFILE => ' + widget.widsnapfile);
             //console.log('Router ' + this._router.url);
-            this.http.getMock(widget.widsnapfile)
-            .subscribe (data => {
+            return this.http.getMock(widget.widsnapfile)
+            .map (data => {
 
                 //console.log('Data size '  + util.inspect(data.arrayBuffer.length));
                 widget.result = data; //Object.assign([], data);;
-                widget.dataReady = true;
-                return  Observable.of(widget);
+                //return  Observable.of(widget);
             })
         }
         else {
             this.request = this.executeWidgetUrl;
             this.params= new HttpParams();
             this.params =  this.params.set('PARAM', widget.widid);
-            this.http.get(this.request, this.params)
-            .subscribe (data => {
-                widget.result = data as any;
-                widget.dataReady = true;
-                return  Observable.of(widget);
+            return this.http.get(this.request, this.params)
+            .map (data => {
+                widget.result = data;
             });
         }
-        return Observable.of(this.widgetsInfo.widgets);
+        //return Observable.of(this.widgetsInfo.widgets);
     }
 
 }

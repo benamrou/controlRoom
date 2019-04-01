@@ -2,7 +2,6 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { UserService, LogginService, LabelService } from '../../../shared/services/index';
 import { Router } from '@angular/router';
 import { Dialog, SelectItem, Button } from '../../../shared/components/index';
-import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
     selector: 'app-header',
