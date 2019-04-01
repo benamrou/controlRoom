@@ -87,7 +87,3 @@
     -ms-filter: all .1s ease;
     filter: blur(2px);
 }
-
-:host ::ng-deep .ui-datatable table {
-    table-layout: auto
-}

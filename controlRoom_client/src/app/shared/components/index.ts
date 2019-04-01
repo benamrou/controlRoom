@@ -65,13 +65,14 @@ export * from  './tieredmenu/tieredmenu';
 export * from  './togglebutton/togglebutton';
 export * from  './toolbar/toolbar';
 export * from  './tooltip/tooltip';
+export * from  './toast/toast';
 export * from  './tree/tree';
 export * from  './treetable/treetable';
 export * from  './tristatecheckbox/tristatecheckbox';
 export * from  './utils/objectutils';
 
 /* Dashoard SB 4*/
-export * from  './sidebar/sidebar.component';
+export * from  './sidebar/sidebar';
 export * from  './header/header.component';
 
 /* Extension Prime Widget */

@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { UserService, LogginService, LabelService } from '../../services/index';
 import { Dialog, SelectItem, Button } from '../../components/index';
-import { SidebarComponent } from '../../components/index';
 
 @Component({
     selector: 'app-header',

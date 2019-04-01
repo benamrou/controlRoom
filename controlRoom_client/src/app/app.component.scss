@@ -59,12 +59,26 @@ p-dataTable.ui-widget-header::ng-deep {
 }
 
 :host ::ng-deep .ui-datatable table {
-    table-layout: auto
+    table-layout: auto;
 }
+
+//:host ::ng-deep .ui-datatable-resizable {
+    //height: -webkit-fill-available;
+//}
+
 
 :host ::ng-deep .ui-datatable tbody > tr.ui-widget-content {
     font-size: smaller;
     border: white;
     border-bottom-color: lightgray;
     border-top-color: lightgray;
+}
+
+:host ::ng-deep .ui-button-text-icon-left .ui-button-text {
+    padding: .25em 1em .25em 0.5em;
+    display: initial;
+}
+
+:host ::ng-deep .ui-button-icon-left {
+    padding: 0.5em;
 }

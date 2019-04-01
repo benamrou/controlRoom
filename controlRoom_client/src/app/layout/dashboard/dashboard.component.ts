@@ -25,28 +25,42 @@ export class DashboardComponent implements OnInit {
     // Step 1 - Get list of widgets allowed for the user
     // Step 2 - Execute the authorized widgets
     constructor(private _widgetService: WidgetService) {
+        
         this.grid = new DashboardGridComponent ();
         // Step 1 - Get list of widgets allowed for the user
-        this._widgetService.getWidgets()
-        .subscribe( 
-            data => { 
-                // Step 2 - Execute the authorized widgets
-                for(let i =0; i < this._widgetService.widgetsInfo.widgets.length; i++) {
-                    this._widgetService.executeWidget( this._widgetService.widgetsInfo.widgets[i])
-                    .subscribe( 
-                        data => { }, // put the data returned from the server in our variable
-                    error => {
-                        console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                    },
-                    () => { this._widgetService.widgetsInfo.widgets[i].dataReady=true  }
-                    );
-                }
-            }, // put the data returned from the server in our variable
-            error => {
-                console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-            },
-            () => { }
-        )
+        try {
+            this._widgetService.getWidgets()
+            .subscribe( 
+                data => { 
+                    // Step 2 - Execute the authorized widgets
+    this.columns = [
+        { field: 'STOREID', header: 'Store Id' },
+        { field: 'STOREDESC', header: 'Desc.' },
+        { field: 'ORDERDAY', header: 'Order Day' },
+        { field: 'PBPCK7', header: 'N-7' },
+        { field: 'NBPCK14', header: 'M-14' },
+        { field: 'NBPCK21', header: 'N-21' }
+      ];
+
+                    for(let i =0; i < this._widgetService.widgetsInfo.widgets.length; i++) {
+                        this._widgetService.executeWidget( this._widgetService.widgetsInfo.widgets[i])
+                        .subscribe( 
+                        // put the data returned from the server 
+                        data  => {  }, 
+                        // in case of failure show this message
+                        error => { console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); }, 
+                        // Completion
+                        () => { this._widgetService.widgetsInfo.widgets[i].dataReady=true  }
+                        );
+                    }
+                }, // put the data returned from the server in our variable
+                error => {
+                    console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
+                },
+                () => { }
+            )
+        }
+        catch (error) { console.log('Widget loading error ' + error + JSON.stringify(error)); }
     }
 
     ngOnInit() {}
