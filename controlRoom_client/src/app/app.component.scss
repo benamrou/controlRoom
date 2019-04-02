@@ -66,7 +66,6 @@ p-dataTable.ui-widget-header::ng-deep {
     //height: -webkit-fill-available;
 //}
 
-
 :host ::ng-deep .ui-datatable tbody > tr.ui-widget-content {
     font-size: smaller;
     border: white;
@@ -75,10 +74,9 @@ p-dataTable.ui-widget-header::ng-deep {
 }
 
 :host ::ng-deep .ui-button-text-icon-left .ui-button-text {
-    padding: .25em 1em .25em 0.5em;
+    padding: .5em 1em .5em 1.5em;
     display: initial;
 }
 
-:host ::ng-deep .ui-button-icon-left {
-    padding: 0.5em;
-}
+
+
