@@ -7,7 +7,7 @@
 <br>
 
 <div id="wrapper" class="center" style="text-align: center">
-    <div style="width:70%; display: inline-block; text-align: left;" ui-grid-responsive ui-fluid ui-grid-pad>
+    <div style="width:70%; display: inline-block; text-align: left; box-shadow:1px 1px 1px darkgrey" ui-grid-responsive ui-fluid ui-grid-pad>
         <p-chips [(ngModel)]="values" pTooltip="Enter elements to look for, add the keywords @item, @ean, @supplier, @order, @invoice to precise your lookup" 
                  tooltipPosition="right"> </p-chips>
     </div>
@@ -38,7 +38,7 @@
                     style="width:400px; border-radius: 10px">
         </div>
         <div class="ui-helper-clearfix" >
-            <button type="button" pButton icon="fa-file" iconPos="left" 
+            <button type="button" pButton icon="fas fa-file" iconPos="left" 
                     class="CSV_Button"
                     label="CSV" (click)="result.exportCSV()" style="float:left"></button>
         </div>

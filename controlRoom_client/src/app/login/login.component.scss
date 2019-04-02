@@ -51,7 +51,9 @@ $topnav-background-color: #222;
     .rounded-btn:visited {
         color: rgba(255, 255, 255, 1);
         border: 2px solid rgba(255, 255, 255, 1);
+        background-color: darkcyan;
         outline: none;
+        font-weight: bolder;
     }
 
     h1 {

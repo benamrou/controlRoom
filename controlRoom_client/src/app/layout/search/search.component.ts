@@ -56,7 +56,7 @@ export class SearchComponent {
 
   search() {
     this.razSearch();
-    this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for the elements : ' + JSON.stringify(this.values)});
+    this._messageService.add({severity:'info', summary:'Info Message', sticky: true, closable: true, detail: 'Looking for the elements : ' + JSON.stringify(this.values)});
     this.searchButtonEnable = false; 
     this._searchService.getResult(this.values)
             .subscribe( 
