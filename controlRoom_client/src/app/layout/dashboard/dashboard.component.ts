@@ -32,15 +32,8 @@ export class DashboardComponent implements OnInit {
             this._widgetService.getWidgets()
             .subscribe( 
                 data => { 
+                    console.log('Widgets :' + JSON.stringify(data));
                     // Step 2 - Execute the authorized widgets
-    this.columns = [
-        { field: 'STOREID', header: 'Store Id' },
-        { field: 'STOREDESC', header: 'Desc.' },
-        { field: 'ORDERDAY', header: 'Order Day' },
-        { field: 'PBPCK7', header: 'N-7' },
-        { field: 'NBPCK14', header: 'M-14' },
-        { field: 'NBPCK21', header: 'N-21' }
-      ];
 
                     for(let i =0; i < this._widgetService.widgetsInfo.widgets.length; i++) {
                         this._widgetService.executeWidget( this._widgetService.widgetsInfo.widgets[i])

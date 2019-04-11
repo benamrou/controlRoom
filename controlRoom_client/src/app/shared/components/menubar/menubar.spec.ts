@@ -2,7 +2,7 @@ import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testin
 import { By } from '@angular/platform-browser';
 import { Menubar, MenubarSub } from './menubar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '../../../../node_modules/@angular/router/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('Menubar', () => {
   
@@ -65,10 +65,10 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                 },
                 {label: 'Open'},
                 {separator:true},
@@ -77,10 +77,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -105,10 +105,10 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                 },
                 {label: 'Open'},
                 {separator:true},
@@ -117,10 +117,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -144,10 +144,10 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                 },
                 {label: 'Open'},
                 {separator:true},
@@ -156,10 +156,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -186,10 +186,10 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                 },
                 {label: 'Open'},
                 {separator:true},
@@ -198,10 +198,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -231,10 +231,10 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                 },
                 {label: 'Open'},
                 {separator:true},
@@ -243,10 +243,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -268,10 +268,10 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                 },
                 {label: 'Open'},
                 {separator:true},
@@ -280,10 +280,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -309,10 +309,10 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                 },
                 {label: 'Open'},
                 {separator:true},
@@ -321,10 +321,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -355,10 +355,10 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     routerLink:'test'
                 },
                 {label: 'Open'},
@@ -368,10 +368,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -390,10 +390,10 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     routerLink:'test'
                 },
                 {label: 'Open'},
@@ -403,10 +403,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -430,12 +430,12 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             style: {'primeng':'rocks!'},
             styleClass: "Primeng ROCKS!",
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                 },
                 {label: 'Open'},
                 {separator:true},
@@ -444,10 +444,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -467,11 +467,11 @@ describe('Menubar', () => {
       menubar.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             disabled: true,
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                 },
                 {label: 'Open'},
                 {separator:true},
@@ -480,10 +480,10 @@ describe('Menubar', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];

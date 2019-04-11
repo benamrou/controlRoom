@@ -181,14 +181,15 @@ export class SupplierScheduleService {
   getSupplierScheduleInfo (vendorCode: string) {
         this.request = this.baseSupplierScheduleUrl;
         let headersSearch = new HttpHeaders();
+        let options = new HttpHeaders();
         this.params= new HttpParams();
         this.params = this.params.set('PARAM', vendorCode);
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-        //return this.http.get(this.request, this.options)
-        return this.http.getMock('assets/schedule.json', this.params, this.options).pipe(map(response => {
-                let data = <any>response.json()._body;
+        //return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+        return this.http.getMock('assets/data/schedule.json', this.params, this.options).pipe(map(response => {
+                let data = <any> response;
                 let schedule, site;
                 this.suppliers = [];
                 console.log('Supplier schedule data: ' +  data);

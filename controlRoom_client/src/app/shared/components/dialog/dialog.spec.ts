@@ -9,11 +9,11 @@ import { Footer } from '../common/shared';
     template: `
     <p-dialog [(visible)]="display">
     <p-footer>
-            <button type="button" pButton icon="pi pi-check" (click)="display=false" label="Yes"></button>
-            <button type="button" pButton icon="pi pi-close" (click)="display=false" label="No" class="ui-button-secondary"></button>
+            <button type="button" pButton icon="fa fa-check" (click)="display=false" label="Yes"></button>
+            <button type="button" pButton icon="fa fa-close" (click)="display=false" label="No" class="ui-button-secondary"></button>
     </p-footer>
     </p-dialog>
-    <button type="button" (click)="showDialog()" pButton icon="pi pi-info-circle" label="Show"></button>
+    <button type="button" (click)="showDialog()" pButton icon="fa fa-info-circle" label="Show"></button>
     `
   })
   class TestDialogComponent {

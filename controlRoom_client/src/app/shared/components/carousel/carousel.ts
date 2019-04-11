@@ -9,9 +9,9 @@ import {CommonModule} from '@angular/common';
         <div #container [ngClass]="{'ui-carousel ui-widget ui-widget-content ui-corner-all':true}" [ngStyle]="style" [class]="styleClass">
             <div class="ui-carousel-header ui-widget-header ui-corner-all">
                 <span class="ui-carousel-header-title">{{headerText}}</span>
-                <span class="ui-carousel-button ui-carousel-next-button pi pi-arrow-circle-right" (click)="onNextNav()" 
+                <span class="ui-carousel-button ui-carousel-next-button fa fa-arrow-circle-right" (click)="onNextNav()" 
                         [ngClass]="{'ui-state-disabled':(page === (totalPages-1)) && !circular}" *ngIf="value&&value.length"></span>
-                <span class="ui-carousel-button ui-carousel-prev-button pi pi-arrow-circle-left" (click)="onPrevNav()" 
+                <span class="ui-carousel-button ui-carousel-prev-button fa fa-arrow-circle-left" (click)="onPrevNav()" 
                         [ngClass]="{'ui-state-disabled':(page === 0 && !circular)}" *ngIf="value&&value.length"></span>
                 <div *ngIf="displayPageLinks" class="ui-carousel-page-links">
                     <a tabindex="0" (click)="setPageWithLink($event,i)" class="ui-carousel-page-link pi" *ngFor="let links of anchorPageLinks;let i=index" [ngClass]="{'pi-circle-on': page===i, 'pi-circle-off': page !== i}"></a>

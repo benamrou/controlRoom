@@ -24,45 +24,46 @@
             </form>
 
 &nbsp;
-        
-		<p-dialog showHeader="false" [ngStyle]="{'visibility' : visibilityCheck}"
-					modal="modal" width="600" responsive="true" [ngStyle]="{'text-align': 'left'}">
+<br>
+<br>
+<br>
+		<div *ngIf="canConnect" style="text-align: left; width: 500px; font-size: smaller; line-height: 1">
 				<div class="ui-grid-row">
-					<div class="col-md-8" style="font-weight: bolder" >User authentification validation</div>
+					<div class="col-md-12" style="font-weight: bolder" >User authentification validation</div>
 					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="userInfoGathered"></i>
 					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!userInfoGathered"></i>
 				</div>
 				<div class="ui-grid-row">
-					<div class="col-md-8" style="font-weight: bolder" >Gathering user information and authorization profiles</div>
+					<div class="col-md-12" style="font-weight: bolder" >Gathering user information and authorization profiles</div>
 					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="userInfoGathered"></i>
 					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!userInfoGathered"></i>
 				</div>
 				<div class="ui-grid-row">
-					<div class="col-md-8" style="font-weight: bolder" >Gathering user Menu access </div>
+					<div class="col-md-12" style="font-weight: bolder" >Gathering user Menu access </div>
 					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="userInfoGathered"></i>
 					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!userInfoGathered"></i>
 				</div>
 				<div class="ui-grid-row">
-					<div class="col-md-8" style="font-weight: bolder" >Gathering user Environment access </div>
+					<div class="col-md-12" style="font-weight: bolder" >Gathering user Environment access </div>
 					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="environmentGathered"></i>
 					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!environmentGathered"></i>
 				</div>
 				<div class="ui-grid-row">
-					<div class="col-md-8" style="font-weight: bolder" >Gathering parameter list  </div>
+					<div class="col-md-12" style="font-weight: bolder" >Gathering parameter list  </div>
 					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="parameterGathered"></i>
 					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!parameterGathered"></i>
 				</div>
 				<div class="ui-grid-row">
-					<div class="col-md-8" style="font-weight: bolder" >Gathering labels in your language </div>
+					<div class="col-md-12" style="font-weight: bolder" >Gathering labels in your language </div>
 					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="labelsGathered"></i>
 					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!labelsGathered"></i>
 				</div>
 				<div class="ui-grid-row">
-					<div class="col-md-8" style="font-weight: bolder" >Refreshing your workspace with your preference </div>
+					<div class="col-md-12" style="font-weight: bolder" >Refreshing your workspace with your preference </div>
 					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="labelsGathered"></i>
 					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!labelsGathered"></i>
 				</div>
-		</p-dialog>
+			</div>
         </div>
     </div>
 </div>

@@ -24,7 +24,7 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
             <div class="ui-chkbox ui-widget">
                 <div class="ui-chkbox-box ui-widget ui-corner-all ui-state-default"
                     [ngClass]="{'ui-state-active': selected}">
-                    <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'pi pi-check': selected}"></span>
+                    <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'fa fa-check': selected}"></span>
                 </div>
             </div>
             <span *ngIf="!template">{{option.label}}</span>
@@ -93,15 +93,15 @@ export class MultiSelectItem {
                             <input type="checkbox" readonly="readonly" [checked]="isAllChecked()" (focus)="onHeaderCheckboxFocus()" (blur)="onHeaderCheckboxBlur()" (keydown.space)="toggleAll($event)">
                         </div>
                         <div class="ui-chkbox-box ui-widget ui-corner-all ui-state-default" [ngClass]="{'ui-state-active':isAllChecked(), 'ui-state-focus': headerCheckboxFocus}" (click)="toggleAll($event)">
-                            <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'pi pi-check':isAllChecked()}"></span>
+                            <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'fa fa-check':isAllChecked()}"></span>
                         </div>
                     </div>
                     <div class="ui-multiselect-filter-container" *ngIf="filter">
                         <input #filterInput type="text" role="textbox" [value]="filterValue||''" (input)="onFilter()" class="ui-inputtext ui-widget ui-state-default ui-corner-all" [attr.placeholder]="filterPlaceHolder" [attr.aria-label]="ariaFilterLabel">
-                        <span class="ui-multiselect-filter-icon pi pi-search"></span>
+                        <span class="ui-multiselect-filter-icon fa fa-search"></span>
                     </div>
                     <a class="ui-multiselect-close ui-corner-all" tabindex="0" (click)="close($event)" (keydown.enter)="close($event)">
-                        <span class="pi pi-times"></span>
+                        <span class="fa fa-times"></span>
                     </a>
                     <ng-content select="p-header"></ng-content>
                 </div>
@@ -204,7 +204,7 @@ export class MultiSelect implements OnInit,AfterViewInit,AfterContentInit,AfterV
     
     @Input() resetFilterOnHide: boolean = false;
     
-    @Input() dropdownIcon: string = 'pi pi-chevron-down';
+    @Input() dropdownIcon: string = 'fa fa-chevron-down';
     
     @Input() optionLabel: string;
 

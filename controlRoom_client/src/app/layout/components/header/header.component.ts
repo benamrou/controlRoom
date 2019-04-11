@@ -40,14 +40,14 @@ export class HeaderComponent implements OnInit {
 		if (this._userService.userInfo.envUserAccess.length > 0) {
 			for (let i = 0; i < this._userService.userInfo.envUserAccess.length; i ++) {
 				this.environments.push({label: this._userService.userInfo.envUserAccess[i].shortDescription,
-										value: {id: this._userService.userInfo.envUserAccess[i].type, 
+										value: {id: this._userService.userInfo.envUserAccess[i].id, 
 												name: this._userService.userInfo.envUserAccess[i].shortDescription} });
 				this.envTypeConnected = this._userService.userInfo.envUserAccess[i].type;
 			}
 		} else {
 			for (let i = 0; i < this._userService.userInfo.envCorporateAccess.length; i ++) {
 				this.environments.push({label: this._userService.userInfo.envCorporateAccess[i].shortDescription,
-										value: {id: this._userService.userInfo.envCorporateAccess[i].type, 
+										value: {id: this._userService.userInfo.envCorporateAccess[i].id, 
 												name: this._userService.userInfo.envCorporateAccess[i].shortDescription} });
 			}
 		}

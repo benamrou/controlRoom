@@ -8,7 +8,7 @@ import { Button } from '../button/button';
 
 @Component({
   template: `<p-menu #menu></p-menu>
-  <button type="button" pButton icon="pi pi-bars" label="Show" (click)="menu.toggle($event)"></button>
+  <button type="button" pButton icon="fa fa-bars" label="Show" (click)="menu.toggle($event)"></button>
   `
 })
 class TestMenuComponent {
@@ -80,8 +80,8 @@ describe('Menu', () => {
       menu.model  = [{
         label: 'File',
         items: [
-          {label: 'New', icon: 'pi pi-fw pi-plus'},
-          {label: 'Download', icon: 'pi pi-fw pi-download'}
+          {label: 'New', icon: 'fa fa-fw pi-plus'},
+          {label: 'Download', icon: 'fa fa-fw pi-download'}
         ]
       }]; 
       fixture.detectChanges();
@@ -94,8 +94,8 @@ describe('Menu', () => {
       menu.model  = [{
         label: 'File',
         items: [
-          {label: 'New', icon: 'pi pi-fw pi-plus'},
-          {label: 'Download', icon: 'pi pi-fw pi-download'}
+          {label: 'New', icon: 'fa fa-fw pi-plus'},
+          {label: 'Download', icon: 'fa fa-fw pi-download'}
         ]
       }]; 
       fixture.detectChanges();
@@ -108,8 +108,8 @@ describe('Menu', () => {
       menu.model  = [{
         label: 'File',
         items: [
-          {label: 'New', icon: 'pi pi-fw pi-plus'},
-          {label: 'Download', icon: 'pi pi-fw pi-download'}
+          {label: 'New', icon: 'fa fa-fw pi-plus'},
+          {label: 'Download', icon: 'fa fa-fw pi-download'}
         ],
         visible:false
       }]; 
@@ -125,8 +125,8 @@ describe('Menu', () => {
       menu.model  = [{
         label: 'File',
         items: [
-          {label: 'New', icon: 'pi pi-fw pi-plus',visible:false},
-          {label: 'Download', icon: 'pi pi-fw pi-download',visible:false}
+          {label: 'New', icon: 'fa fa-fw pi-plus',visible:false},
+          {label: 'Download', icon: 'fa fa-fw pi-download',visible:false}
         ]
       }]; 
       fixture.detectChanges();
@@ -141,8 +141,8 @@ describe('Menu', () => {
       menu.model  = [{
         label: 'File',
         items: [
-          {label: 'New', icon: 'pi pi-fw pi-plus',style:{'primeng':'rocks!'},styleClass:"Primeng ROCKS!"},
-          {label: 'Download', icon: 'pi pi-fw pi-download',style:{'primeng':'rocks!'},styleClass:"Primeng ROCKS!"}
+          {label: 'New', icon: 'fa fa-fw pi-plus',style:{'primeng':'rocks!'},styleClass:"Primeng ROCKS!"},
+          {label: 'Download', icon: 'fa fa-fw pi-download',style:{'primeng':'rocks!'},styleClass:"Primeng ROCKS!"}
         ]
       }]; 
       fixture.detectChanges();
@@ -159,9 +159,9 @@ describe('Menu', () => {
       menu.model  = [{
         label: 'File',
         items: [
-          {label: 'New', icon: 'pi pi-fw pi-plus'},
+          {label: 'New', icon: 'fa fa-fw pi-plus'},
           {separator:true},
-          {label: 'Download', icon: 'pi pi-fw pi-download'}
+          {label: 'Download', icon: 'fa fa-fw pi-download'}
         ]
       }]; 
       fixture.detectChanges();
@@ -193,7 +193,7 @@ describe('Menu', () => {
       menu.model  = [{
         label: 'File',
         items: [
-          {label: 'New', icon: 'pi pi-fw pi-plus',disabled:true},
+          {label: 'New', icon: 'fa fa-fw pi-plus',disabled:true},
         ]
       }]; 
       fixture.detectChanges();
@@ -206,7 +206,7 @@ describe('Menu', () => {
       menu.model  = [{
         label: 'File',
         items: [
-          {label: 'New', icon: 'pi pi-fw pi-plus'},
+          {label: 'New', icon: 'fa fa-fw pi-plus'},
         ]
       }]; 
       const itemClickSpy = spyOn(menu, 'itemClick').and.callThrough();
@@ -222,7 +222,7 @@ describe('Menu', () => {
       menu.model  = [{
         label: 'File',
         items: [
-          {label: 'New', icon: 'pi pi-fw pi-plus'},
+          {label: 'New', icon: 'fa fa-fw pi-plus'},
         ]
       }]; 
       fixture.detectChanges();
@@ -248,7 +248,7 @@ describe('Menu', () => {
       menu.model  = [{
         label: 'File',
         items: [
-          {label: 'New', icon: 'pi pi-fw pi-plus'},
+          {label: 'New', icon: 'fa fa-fw pi-plus'},
         ]
       }]; 
       fixture.detectChanges();

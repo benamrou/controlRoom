@@ -102,11 +102,11 @@ export class Dialog implements OnDestroy {
 
     @Input() transitionOptions: string = '400ms cubic-bezier(0.25, 0.8, 0.25, 1)';
 
-    @Input() closeIcon: string = 'pi pi-times';
+    @Input() closeIcon: string = 'fa fa-times';
 
-    @Input() minimizeIcon: string = 'pi pi-window-minimize';
+    @Input() minimizeIcon: string = 'fa fa-window-minimize';
 
-    @Input() maximizeIcon: string = 'pi pi-window-maximize';
+    @Input() maximizeIcon: string = 'fa fa-window-maximize';
     
     @ContentChildren(Header, {descendants: false}) headerFacet: QueryList<Header>;
     

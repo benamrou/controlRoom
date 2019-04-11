@@ -23,11 +23,12 @@ export class LoginComponent implements OnInit {
 	parameterGathered: boolean = false;
 	labelsGathered: boolean = false;
 
-    visibilityCheck: string = 'visible';
+    canConnect: boolean = false;
 	connectionMessage: Message [];
 
     constructor(public router: Router, private _logginService: LogginService, private _userService: UserService,
                 private _labelService: LabelService) { 
+        this.canConnect = false;
     
     }
 
@@ -39,10 +40,8 @@ export class LoginComponent implements OnInit {
    		this._logginService.login(this.authentification.username, this.authentification.password) 
             .subscribe( result => {
                  // console.log('Result : ' + JSON.stringify(result));
-				 let canConnect : boolean;
-                 canConnect = result;
-				 if (canConnect) {
-                    this.visibilityCheck = 'visible';
+                 this.canConnect = result;
+				 if (this.canConnect) {
                     this.fetchUserConfiguration();
 				}
 				else {
@@ -64,8 +63,12 @@ export class LoginComponent implements OnInit {
 		 */
 
         console.log('LOGIN : Fectching user configuration');
-        this.visibilityCheck = 'visible';
-        this._userService.getInfo(localStorage.getItem('ICRUser')).subscribe( result => { this.userInfoGathered = true; });        this._userService.getEnvironment(localStorage.getItem('ICRUser'))
+
+        this.parameterGathered = true;
+        this.labelsGathered = true;
+        this._userService.getInfo(localStorage.getItem('ICRUser'))
+            .subscribe( result => { this.userInfoGathered = true; });        
+
         this._userService.getEnvironment(localStorage.getItem('ICRUser'))       
             .subscribe( result => { 
                 this.environmentGathered = true;

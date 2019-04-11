@@ -74,9 +74,12 @@ p-dataTable.ui-widget-header::ng-deep {
 }
 
 :host ::ng-deep .ui-button-text-icon-left .ui-button-text {
-    padding: .5em 1em .5em 1.5em;
+    padding: .5em 1em .5em 2em;
     display: initial;
 }
 
+:host ::ng-deep .ui-dropdown-trigger ui-state-default ui-corner-right {
+    font-size:0.9em;
+}
 
-
+:host ::ng-deep .ui-lightbox-content.ui-lightbox-loading + a { display:none; } 

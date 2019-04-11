@@ -17,7 +17,7 @@ import { DynamicDialogRef } from './dynamicdialog-ref';
             <div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix ui-corner-top" *ngIf="config.showHeader === false ? false: true">
                 <span class="ui-dialog-title">{{config.header}}</span>
                 <a [ngClass]="'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all'" tabindex="0" role="button" (click)="close()" (keydown.enter)="close()" *ngIf="config.closable === false ? false : true">
-                    <span class="pi pi-times"></span>
+                    <span class="fa fa-times"></span>
                 </a>
             </div>
             <div class="ui-dialog-content ui-widget-content" [ngStyle]="config.contentStyle">

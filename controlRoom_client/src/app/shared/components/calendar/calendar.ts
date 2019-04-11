@@ -36,9 +36,11 @@ export interface LocaleSettings {
                     ><button type="button" [icon]="icon" pButton *ngIf="showIcon" (click)="onButtonClick($event,inputfield)" class="ui-datepicker-trigger ui-calendar-button"
                     [ngClass]="{'ui-state-disabled':disabled}" [disabled]="disabled" tabindex="-1"></button>
             </ng-template>
-            <div [class]="panelStyleClass" [ngStyle]="panelStyle" [ngClass]="{'ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all': true, 'ui-datepicker-inline':inline,'ui-shadow':!inline,
+            <div [class]="panelStyleClass" [ngStyle]="{'display': 'inline'}" 
+                [ngClass]="{'ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all': true, 'ui-datepicker-inline':inline,'ui-shadow':!inline,
                 'ui-state-disabled':disabled,'ui-datepicker-timeonly':timeOnly,'ui-datepicker-multiple-month': this.numberOfMonths > 1, 'ui-datepicker-monthpicker': (view === 'month'), 'ui-datepicker-touch-ui': touchUI}"
-                (click)="onDatePickerClick($event)" [@overlayAnimation]="touchUI ? {value: 'visibleTouchUI', params: {showTransitionParams: showTransitionOptions, hideTransitionParams: hideTransitionOptions}}: 
+                (click)="onDatePickerClick($event)" 
+                [@overlayAnimation]="touchUI ? {value: 'visibleTouchUI', params: {showTransitionParams: showTransitionOptions, hideTransitionParams: hideTransitionOptions}}: 
                                             {value: 'visible', params: {showTransitionParams: showTransitionOptions, hideTransitionParams: hideTransitionOptions}}" 
                                             [@.disabled]="inline === true" (@overlayAnimation.start)="onOverlayAnimationStart($event)" *ngIf="inline || overlayVisible">
                 <ng-container *ngIf="!timeOnly">
@@ -46,10 +48,10 @@ export interface LocaleSettings {
                         <div class="ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all">
                             <ng-content select="p-header"></ng-content>
                             <a class="ui-datepicker-prev ui-corner-all" tabindex="0" (click)="navBackward($event)" *ngIf="i === 0">
-                                <span class="pi pi-chevron-left"></span>
+                                <span class="fa fa-chevron-left"></span>
                             </a>
                             <a class="ui-datepicker-next ui-corner-all" tabindex="0" (click)="navForward($event)" *ngIf="numberOfMonths === 1 ? true : (i === numberOfMonths -1)">
-                                <span class="pi pi-chevron-right"></span>
+                                <span class="fa fa-chevron-right"></span>
                             </a>
                             <div class="ui-datepicker-title">
                                 <span class="ui-datepicker-month" *ngIf="!monthNavigator && (view !== 'month')">{{locale.monthNames[month.month]}}</span>
@@ -100,56 +102,56 @@ export interface LocaleSettings {
                 <div class="ui-timepicker ui-widget-header ui-corner-all" *ngIf="showTime||timeOnly">
                     <div class="ui-hour-picker">
                         <a tabindex="0" (mousedown)="onTimePickerElementMouseDown($event, 0, 1)" (mouseup)="onTimePickerElementMouseUp($event)">
-                            <span class="pi pi-chevron-up"></span>
+                            <span class="fa fa-chevron-up"></span>
                         </a>
                         <span [ngStyle]="{'display': currentHour < 10 ? 'inline': 'none'}">0</span><span>{{currentHour}}</span>
                         <a tabindex="0" (mousedown)="onTimePickerElementMouseDown($event, 0, -1)" (mouseup)="onTimePickerElementMouseUp($event)">
-                            <span class="pi pi-chevron-down"></span>
+                            <span class="fa fa-chevron-down"></span>
                         </a>
                     </div>
                     <div class="ui-separator">
                         <a tabindex="0">
-                            <span class="pi pi-chevron-up"></span>
+                            <span class="fa fa-chevron-up"></span>
                         </a>
                         <span>{{timeSeparator}}</span>
                         <a tabindex="0">
-                            <span class="pi pi-chevron-down"></span>
+                            <span class="fa fa-chevron-down"></span>
                         </a>
                     </div>
                     <div class="ui-minute-picker">
                         <a tabindex="0" (mousedown)="onTimePickerElementMouseDown($event, 1, 1)" (mouseup)="onTimePickerElementMouseUp($event)">
-                            <span class="pi pi-chevron-up"></span>
+                            <span class="fa fa-chevron-up"></span>
                         </a>
                         <span [ngStyle]="{'display': currentMinute < 10 ? 'inline': 'none'}">0</span><span>{{currentMinute}}</span>
                         <a tabindex="0" (mousedown)="onTimePickerElementMouseDown($event, 1, -1)" (mouseup)="onTimePickerElementMouseUp($event)">
-                            <span class="pi pi-chevron-down"></span>
+                            <span class="fa fa-chevron-down"></span>
                         </a>
                     </div>
                     <div class="ui-separator" *ngIf="showSeconds">
                         <a tabindex="0">
-                            <span class="pi pi-chevron-up"></span>
+                            <span class="fa fa-chevron-up"></span>
                         </a>
                         <span>{{timeSeparator}}</span>
                         <a tabindex="0">
-                            <span class="pi pi-chevron-down"></span>
+                            <span class="fa fa-chevron-down"></span>
                         </a>
                     </div>
                     <div class="ui-second-picker" *ngIf="showSeconds">
                         <a tabindex="0" (mousedown)="onTimePickerElementMouseDown($event, 2, 1)" (mouseup)="onTimePickerElementMouseUp($event)">
-                            <span class="pi pi-chevron-up"></span>
+                            <span class="fa fa-chevron-up"></span>
                         </a>
                         <span [ngStyle]="{'display': currentSecond < 10 ? 'inline': 'none'}">0</span><span>{{currentSecond}}</span>
                         <a tabindex="0" (mousedown)="onTimePickerElementMouseDown($event, 2, -1)" (mouseup)="onTimePickerElementMouseUp($event)">
-                            <span class="pi pi-chevron-down"></span>
+                            <span class="fa fa-chevron-down"></span>
                         </a>
                     </div>
                     <div class="ui-ampm-picker" *ngIf="hourFormat=='12'">
                         <a tabindex="0" (click)="toggleAMPM($event)">
-                            <span class="pi pi-chevron-up"></span>
+                            <span class="fa fa-chevron-up"></span>
                         </a>
                         <span>{{pm ? 'PM' : 'AM'}}</span>
                         <a tabindex="0" (click)="toggleAMPM($event)">
-                            <span class="pi pi-chevron-down"></span>
+                            <span class="fa fa-chevron-down"></span>
                         </a>
                     </div>
                 </div>
@@ -237,7 +239,7 @@ export class Calendar implements OnInit,OnDestroy,ControlValueAccessor {
     
     @Input() showIcon: boolean;
     
-    @Input() icon: string = 'pi pi-calendar';
+    @Input() icon: string = 'fa fa-calendar';
     
     @Input() appendTo: any;
     

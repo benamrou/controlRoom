@@ -7,14 +7,14 @@ import { Component } from '@angular/core';
 @Component({
   template: `<p-toolbar>
   <div class="ui-toolbar-group-left">
-      <button  type="button" label="New" icon="pi pi-plus"></button>
-      <button  type="button" label="Upload" icon="pi pi-upload" class="ui-button-success"></button>
+      <button  type="button" label="New" icon="fa fa-plus"></button>
+      <button  type="button" label="Upload" icon="fa fa-upload" class="ui-button-success"></button>
   </div>
   
   <div class="ui-toolbar-group-right">
-      <button  type="button" icon="pi pi-search"></button>
-      <button  type="button" icon="pi pi-calendar" class="ui-button-success"></button>
-      <button  type="button" icon="pi pi-times" class="ui-button-danger"></button>
+      <button  type="button" icon="fa fa-search"></button>
+      <button  type="button" icon="fa fa-calendar" class="ui-button-success"></button>
+      <button  type="button" icon="fa fa-times" class="ui-button-danger"></button>
   </div>
 </p-toolbar>`
 })

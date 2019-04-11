@@ -40,7 +40,7 @@ describe('Button', () => {
 
       it('should display the icon and icon to be on the left by default ', () => {
         button.label = 'PrimeNG';
-        button.icon = 'pi pi-times';
+        button.icon = 'fa fa-times';
         fixture.detectChanges();
         const buttonEl = fixture.debugElement.query(By.css('.ui-button'));
         expect(buttonEl.nativeElement.className).toContain('ui-button-text-icon-left');
@@ -48,7 +48,7 @@ describe('Button', () => {
       });
 
       it('should display the icon', () => {
-        button.icon = 'pi pi-times';
+        button.icon = 'fa fa-times';
         fixture.detectChanges();
         const buttonEl = fixture.debugElement.query(By.css('.ui-button'));
         expect(buttonEl.nativeElement.className).toContain('ui-button-icon-only');
@@ -56,7 +56,7 @@ describe('Button', () => {
 
       it('should display the icon on the right and have a label', () => {
         button.label = 'PrimeNG';
-        button.icon = 'pi pi-times';
+        button.icon = 'fa fa-times';
         button.iconPos = 'right';
         fixture.detectChanges();
         const buttonEl = fixture.debugElement.query(By.css('.ui-button'));
@@ -65,7 +65,7 @@ describe('Button', () => {
         expect(buttonEl.nativeElement.children[1].textContent).toContain('PrimeNG');
       });
       it('should display the icon on the right', () => {
-        button.icon = 'pi pi-times';
+        button.icon = 'fa fa-times';
         button.iconPos = 'right';
         fixture.detectChanges();
         const buttonEl = fixture.debugElement.query(By.css('.ui-button'));

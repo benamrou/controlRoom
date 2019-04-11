@@ -106,7 +106,7 @@ describe('RadioButton', () => {
         expect(value).toEqual(5);
         expect(radiobutton.focused).toEqual(true);
         expect(radiobuttonEl.nativeElement.className).toContain("ui-state-focus");
-        expect(iconEl.nativeElement.className).toContain("pi pi-circle-on");
+        expect(iconEl.nativeElement.className).toContain("fa fa-circle-on");
     });
 
     it('should click label', () => {

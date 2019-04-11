@@ -35,15 +35,15 @@ export class Rating implements ControlValueAccessor {
 
     @Input() cancel: boolean = true;
 
-    @Input() iconOnClass: string = 'pi pi-star';
+    @Input() iconOnClass: string = 'fa fa-star';
 
     @Input() iconOnStyle: any;
 
-    @Input() iconOffClass: string = 'pi pi-star-o';
+    @Input() iconOffClass: string = 'fa fa-star-o';
 
     @Input() iconOffStyle: any;
 
-    @Input() iconCancelClass: string = 'pi pi-ban';
+    @Input() iconCancelClass: string = 'fa fa-ban';
 
     @Input() iconCancelStyle: any;
 
