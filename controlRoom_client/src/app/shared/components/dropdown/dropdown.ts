@@ -75,7 +75,7 @@ export class DropdownItem {
             <label [ngClass]="{'ui-dropdown-label ui-inputtext ui-corner-all ui-placeholder':true,'ui-dropdown-label-empty': (placeholder == null || placeholder.length === 0)}" *ngIf="!editable && (label == null)">{{placeholder||'empty'}}</label>
             <input #editableInput type="text" [attr.aria-label]="selectedOption ? selectedOption.label : ' '" class="ui-dropdown-label ui-inputtext ui-corner-all" *ngIf="editable" [disabled]="disabled" [attr.placeholder]="placeholder"
                         (click)="onEditableInputClick($event)" (input)="onEditableInputChange($event)" (focus)="onEditableInputFocus($event)" (blur)="onInputBlur($event)">
-            <i class="ui-dropdown-clear-icon pi pi-times" (click)="clear($event)" *ngIf="value != null && showClear && !disabled"></i>
+            <i class="ui-dropdown-clear-icon fa fa-times" (click)="clear($event)" *ngIf="value != null && showClear && !disabled"></i>
             <div class="ui-dropdown-trigger ui-state-default ui-corner-right">
                 <span class="ui-dropdown-trigger-icon ui-clickable" [ngClass]="dropdownIcon"></span>
             </div>
@@ -83,7 +83,7 @@ export class DropdownItem {
                 <div *ngIf="filter" class="ui-dropdown-filter-container" (click)="$event.stopPropagation()">
                     <input #filter type="text" autocomplete="off" [value]="filterValue||''" class="ui-dropdown-filter ui-inputtext ui-widget ui-state-default ui-corner-all" [attr.placeholder]="filterPlaceholder"
                     (keydown.enter)="$event.preventDefault()" (keydown)="onKeydown($event, false)" (input)="onFilter($event)" [attr.aria-label]="ariaFilterLabel">
-                    <span class="ui-dropdown-filter-icon pi pi-search"></span>
+                    <span class="ui-dropdown-filter-icon fa fa-search"></span>
                 </div>
                 <div class="ui-dropdown-items-wrapper" [style.max-height]="virtualScroll ? 'auto' : (scrollHeight||'auto')">
                     <ul class="ui-dropdown-items ui-dropdown-list ui-widget-content ui-widget ui-corner-all ui-helper-reset" role="listbox">
@@ -188,7 +188,7 @@ export class Dropdown implements OnInit,AfterViewInit,AfterContentInit,AfterView
     
     @Input() resetFilterOnHide: boolean = false;
     
-    @Input() dropdownIcon: string = 'pi pi-chevron-down';
+    @Input() dropdownIcon: string = 'fa fa-caret-down';
     
     @Input() optionLabel: string;
 

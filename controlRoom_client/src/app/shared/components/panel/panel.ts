@@ -58,9 +58,9 @@ export class Panel implements BlockableUI {
     
     @Input() styleClass: string;
     
-    @Input() expandIcon: string = 'pi pi-plus';
+    @Input() expandIcon: string = 'fa fa-plus';
     
-    @Input() collapseIcon: string = 'pi pi-minus';
+    @Input() collapseIcon: string = 'fa fa-minus';
   
     @Input() showHeader: boolean = true;
 

@@ -188,9 +188,9 @@ export class UserService {
     /**
      * This function is switching the User Main environment based on the environment type
      * @method setMainEnvironmentUsingType
-     * @param envType envrionment type  
+     * @param envID envrionment type  
      */
-    setMainEnvironment(envType: string) {
+    setMainEnvironment(envID: string) {
         this.userInfo.mainEnvironment = [];
         this.userInfo.sid = [];
 
@@ -199,14 +199,14 @@ export class UserService {
         // INFO 2 - Redefine the SIDs environment using the type
         if (this.userInfo.envUserAccess.length > 0) {
             for (let i = 0; i < this.userInfo.envUserAccess.length; i ++) {
-                if (this.userInfo.envUserAccess[i].type === envType) {
+                if (this.userInfo.envUserAccess[i].id === envID) {
                     this.userInfo.mainEnvironment.push(this.userInfo.envUserAccess[i]);
                     this.userInfo.sid.push(this.userInfo.envUserAccess[i].dbLink);
                 }
             }
         } else {
             for (let i = 0; i < this.userInfo.envCorporateAccess.length; i ++) {
-                if (this.userInfo.envUserAccess[i].type === envType) {
+                if (this.userInfo.envUserAccess[i].id === envID) {
                     this.userInfo.mainEnvironment.push(this.userInfo.envCorporateAccess[i]);
                     this.userInfo.sid.push(this.userInfo.envUserAccess[i].dbLink);
                 }

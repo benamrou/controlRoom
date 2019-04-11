@@ -22,7 +22,7 @@ import { ObjectUtils } from '../utils/objectutils';
                     [draggable]="tree.draggableNodes" (dragstart)="onDragStart($event)" (dragend)="onDragStop($event)" tabIndex="0"
                     [ngClass]="{'ui-treenode-selectable':tree.selectionMode && node.selectable !== false,'ui-treenode-dragover':draghoverNode, 'ui-treenode-content-selected':isSelected()}" 
                     (keydown)="onKeyDown($event)" [attr.aria-posinset]="this.index + 1" [attr.aria-expanded]="this.node.expanded" [attr.aria-selected]="isSelected()">
-                    <span class="ui-tree-toggler pi pi-fw ui-unselectable-text" [ngClass]="{'pi-caret-right':!node.expanded,'pi-caret-down':node.expanded}"
+                    <span class="ui-tree-toggler fa fa-fw ui-unselectable-text" [ngClass]="{'pi-caret-right':!node.expanded,'pi-caret-down':node.expanded}"
                             (click)="toggle($event)"></span
                     ><div class="ui-chkbox" *ngIf="tree.selectionMode == 'checkbox'"><div class="ui-chkbox-box ui-widget ui-corner-all ui-state-default" [ngClass]="{'ui-state-disabled': node.selectable === false}">
                         <span class="ui-chkbox-icon ui-clickable pi"
@@ -62,7 +62,7 @@ import { ObjectUtils } from '../utils/objectutils';
                             <div class="ui-treenode-content ui-state-default ui-corner-all"
                                 [ngClass]="{'ui-treenode-selectable':tree.selectionMode,'ui-state-highlight':isSelected()}" (click)="onNodeClick($event)" (contextmenu)="onNodeRightClick($event)"
                                 (touchend)="onNodeTouchEnd()">
-                                <span class="ui-tree-toggler pi pi-fw ui-unselectable-text" [ngClass]="{'pi-plus':!node.expanded,'pi-minus':node.expanded}" *ngIf="!isLeaf()"
+                                <span class="ui-tree-toggler fa fa-fw ui-unselectable-text" [ngClass]="{'pi-plus':!node.expanded,'pi-minus':node.expanded}" *ngIf="!isLeaf()"
                                         (click)="toggle($event)"></span
                                 ><span [class]="getIcon()" *ngIf="node.icon||node.expandedIcon||node.collapsedIcon"></span
                                 ><span class="ui-treenode-label ui-corner-all">
@@ -459,7 +459,7 @@ export class UITreeNode implements OnInit {
             <div *ngIf="filter" class="ui-tree-filter-container">
                 <input #filter type="text" autocomplete="off" class="ui-tree-filter ui-inputtext ui-widget ui-state-default ui-corner-all" [attr.placeholder]="filterPlaceholder"
                     (keydown.enter)="$event.preventDefault()" (input)="onFilter($event)">
-                    <span class="ui-tree-filter-icon pi pi-search"></span>
+                    <span class="ui-tree-filter-icon fa fa-search"></span>
             </div>
             <ul class="ui-tree-container" *ngIf="getRootNode()" role="tree" [attr.aria-label]="ariaLabel" [attr.aria-labelledby]="ariaLabelledBy">
                 <p-treeNode *ngFor="let node of getRootNode(); let firstChild=first;let lastChild=last; let index=index; trackBy: nodeTrackBy" [node]="node"
@@ -525,7 +525,7 @@ export class Tree implements OnInit,AfterContentInit,OnDestroy,BlockableUI {
 
     @Input() loading: boolean;
 
-    @Input() loadingIcon: string = 'pi pi-spinner';
+    @Input() loadingIcon: string = 'fa fa-spinner';
 
     @Input() emptyMessage: string = 'No records found';
 

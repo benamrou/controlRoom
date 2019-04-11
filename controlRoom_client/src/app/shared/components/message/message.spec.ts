@@ -32,7 +32,7 @@ describe('UIMessage', () => {
         const textEl = fixture.debugElement.query(By.css('.ui-message-text'));
         expect(messageEl.nativeElement).toBeTruthy();
         expect(messageEl.nativeElement.className).toContain("ui-message-success");
-        expect(iconEl.nativeElement.className).toContain("pi pi-check");
+        expect(iconEl.nativeElement.className).toContain("fa fa-check");
         expect(textEl.nativeElement.textContent).toContain("Primeng Rocks!");
     });
 
@@ -44,7 +44,7 @@ describe('UIMessage', () => {
         const iconEl = fixture.debugElement.query(By.css('.ui-message-icon'));
         expect(messageEl.nativeElement).toBeTruthy();
         expect(messageEl.nativeElement.className).toContain("ui-message-info");
-        expect(iconEl.nativeElement.className).toContain("pi pi-info-circle");
+        expect(iconEl.nativeElement.className).toContain("fa fa-info-circle");
     });
 
     it('should change severity to error', () => {
@@ -55,7 +55,7 @@ describe('UIMessage', () => {
         const iconEl = fixture.debugElement.query(By.css('.ui-message-icon'));
         expect(messageEl.nativeElement).toBeTruthy();
         expect(messageEl.nativeElement.className).toContain("ui-message-error");
-        expect(iconEl.nativeElement.className).toContain("pi pi-times");
+        expect(iconEl.nativeElement.className).toContain("fa fa-times");
     });
 
     it('should change severity to warning', () => {
@@ -66,7 +66,7 @@ describe('UIMessage', () => {
         const iconEl = fixture.debugElement.query(By.css('.ui-message-icon'));
         expect(messageEl.nativeElement).toBeTruthy();
         expect(messageEl.nativeElement.className).toContain("ui-message-warn");
-        expect(iconEl.nativeElement.className).toContain("pi pi-exclamation-triangle");
+        expect(iconEl.nativeElement.className).toContain("fa fa-exclamation-triangle");
     });
     it('should change severity to default', () => {
         message.severity = " ";
@@ -75,7 +75,7 @@ describe('UIMessage', () => {
         const messageEl = fixture.debugElement.query(By.css('div'));
         const iconEl = fixture.debugElement.query(By.css('.ui-message-icon'));
         expect(messageEl.nativeElement).toBeTruthy();
-        expect(iconEl.nativeElement.className).toContain("pi pi-info-circle");
+        expect(iconEl.nativeElement.className).toContain("fa fa-info-circle");
     });
 
 });

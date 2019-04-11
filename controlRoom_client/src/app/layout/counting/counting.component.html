@@ -1,21 +1,18 @@
-<app-page-header [heading]="'Third-Party counting integration follow-up'" [icon]="'fa-thumb-tack'"></app-page-header>
+<app-page-header [heading]="'Third-Party counting integration follow-up'" [icon]="'fa-university'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
     <p-growl [value]="msgs" sticky="sticky"></p-growl>
 </div>
 <br>
 
-<div id="wrapper" style="clear: both" >
-    <div class="row pull-right"  >
-        <div class="col-xs-4">
-            Counting date : 
-        </div>
-        <div style="overflow: hidden; padding-right: .5em; pull-right;">
-            <!--p-calendar [(ngModel)]="countingDate" [showIcon]="true"></p-calendar--> 
-            <input type="date"  [(ngModel)]="countingDate" placeholder=today style="width:60%;" />
-            <button type="submit" pButton (click)="search()" icon="fa-search" label="Search" [disabled]="countingDate === ''"></button>
-        </div>
-    </div>
+<div class="row pull-right"  >
+    <span style="margin-right:20px">Counting date : </span>
+    <span style="margin-right:50px">
+        <p-calendar [(ngModel)]="countingDate"  name="countingDate" [showIcon]="true" [inputStyle]="{display: inline}"
+                    [showOnFocus]="true" [showOtherMonths]="false"></p-calendar>
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="Search" [disabled]="countingDate === ''" 
+                style="margin-left: 45px"></button>
+    </span>
 </div>
 <p></p>
 

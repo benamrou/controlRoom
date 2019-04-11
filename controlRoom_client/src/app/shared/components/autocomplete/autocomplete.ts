@@ -24,7 +24,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
             [attr.placeholder]="placeholder" [attr.size]="size" [attr.maxlength]="maxlength" [attr.tabindex]="tabindex" [readonly]="readonly" [disabled]="disabled" [attr.aria-label]="ariaLabel" [attr.aria-labelledby]="ariaLabelledBy" [attr.aria-required]="required"
             ><ul *ngIf="multiple" #multiContainer class="ui-autocomplete-multiple-container ui-widget ui-inputtext ui-state-default ui-corner-all" [ngClass]="{'ui-state-disabled':disabled,'ui-state-focus':focus}" (click)="multiIn.focus()">
                 <li #token *ngFor="let val of value" class="ui-autocomplete-token ui-state-highlight ui-corner-all">
-                    <span class="ui-autocomplete-token-icon pi pi-fw pi-times" (click)="removeItem(token)" *ngIf="!disabled"></span>
+                    <span class="ui-autocomplete-token-icon fa fa-fw pi-times" (click)="removeItem(token)" *ngIf="!disabled"></span>
                     <span *ngIf="!selectedItemTemplate" class="ui-autocomplete-token-label">{{resolveFieldData(val)}}</span>
                     <ng-container *ngTemplateOutlet="selectedItemTemplate; context: {$implicit: val}"></ng-container>
                 </li>
@@ -34,7 +34,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
                             [ngStyle]="inputStyle" [class]="inputStyleClass" [attr.aria-label]="ariaLabel" [attr.aria-labelledby]="ariaLabelledBy" [attr.aria-required]="required">
                 </li>
             </ul
-            ><i *ngIf="loading" class="ui-autocomplete-loader pi pi-spinner pi-spin"></i><button #ddBtn type="button" pButton [icon]="dropdownIcon" class="ui-autocomplete-dropdown" [disabled]="disabled"
+            ><i *ngIf="loading" class="ui-autocomplete-loader fa fa-spinner pi-spin"></i><button #ddBtn type="button" pButton [icon]="dropdownIcon" class="ui-autocomplete-dropdown" [disabled]="disabled"
                 (click)="handleDropdownClick($event)" *ngIf="dropdown"></button>
             <div #panel *ngIf="overlayVisible" class="ui-autocomplete-panel ui-widget ui-widget-content ui-corner-all ui-shadow" [style.max-height]="scrollHeight"
                 [@overlayAnimation]="{value: 'visible', params: {showTransitionParams: showTransitionOptions, hideTransitionParams: hideTransitionOptions}}" (@overlayAnimation.start)="onOverlayAnimationStart($event)" (@overlayAnimation.done)="onOverlayAnimationDone($event)">
@@ -113,7 +113,7 @@ export class AutoComplete implements AfterViewChecked,AfterContentInit,DoCheck,C
 
     @Input() ariaLabelledBy: string;
 
-    @Input() dropdownIcon: string = "pi pi-caret-down";
+    @Input() dropdownIcon: string = "fa fa-caret-down";
 
     @Output() completeMethod: EventEmitter<any> = new EventEmitter();
 

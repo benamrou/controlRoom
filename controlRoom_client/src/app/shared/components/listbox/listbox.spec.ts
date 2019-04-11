@@ -58,7 +58,7 @@ describe('Listbox', () => {
         const checkboxEl = fixture.debugElement.queryAll(By.css('li'))[1].query(By.css('.ui-chkbox-icon')).nativeElement;
         expect(listboxEl.className).toContain("ui-state-disabled");
         expect(filterInputEl.disabled).toEqual(true);
-        expect(checkboxEl.className).not.toContain("pi pi-check");
+        expect(checkboxEl.className).not.toContain("fa fa-check");
         expect(clickSingleSpy).not.toHaveBeenCalled();
     });
 

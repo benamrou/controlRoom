@@ -84,8 +84,8 @@ export class TreeTableService {
 
             <div #resizeHelper class="ui-column-resizer-helper ui-state-highlight" style="display:none" *ngIf="resizableColumns"></div>
 
-            <span #reorderIndicatorUp class="pi pi-arrow-down ui-table-reorder-indicator-up" *ngIf="reorderableColumns"></span>
-            <span #reorderIndicatorDown class="pi pi-arrow-up ui-table-reorder-indicator-down" *ngIf="reorderableColumns"></span>
+            <span #reorderIndicatorUp class="fa fa-arrow-down ui-table-reorder-indicator-up" *ngIf="reorderableColumns"></span>
+            <span #reorderIndicatorDown class="fa fa-arrow-up ui-table-reorder-indicator-down" *ngIf="reorderableColumns"></span>
         </div>
     `,
     providers: [TreeTableService]
@@ -148,7 +148,7 @@ export class TreeTable implements AfterContentInit, OnInit, OnDestroy, Blockable
 
     @Input() loading: boolean;
 
-    @Input() loadingIcon: string = 'pi pi-spinner';
+    @Input() loadingIcon: string = 'fa fa-spinner';
 
     @Input() scrollable: boolean;
 
@@ -1961,7 +1961,7 @@ export class TTSortableColumn implements OnInit, OnDestroy {
 @Component({
     selector: 'p-treeTableSortIcon',
     template: `
-        <i class="ui-sortable-column-icon pi pi-fw" [ngClass]="{'pi-sort-up': sortOrder === 1, 'pi-sort-down': sortOrder === -1, 'pi-sort': sortOrder === 0}"></i>
+        <i class="ui-sortable-column-icon fa fa-fw" [ngClass]="{'pi-sort-up': sortOrder === 1, 'pi-sort-down': sortOrder === -1, 'pi-sort': sortOrder === 0}"></i>
     `
 })
 export class TTSortIcon implements OnInit, OnDestroy {
@@ -2433,7 +2433,7 @@ export class TTCheckbox  {
             </div>
             <div #box [ngClass]="{'ui-chkbox-box ui-widget ui-state-default':true,
                 'ui-state-active':checked, 'ui-state-disabled': (!tt.value || tt.value.length === 0)}">
-                <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'pi pi-check':checked}"></span>
+                <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'fa fa-check':checked}"></span>
             </div>
         </div>
     `
@@ -2819,7 +2819,7 @@ export class TTRow {
     template: `
         <a class="ui-treetable-toggler ui-unselectable-text" *ngIf="rowNode.node.leaf === false || rowNode.level !== 0 || rowNode.node.children && rowNode.node.children.length" (click)="onClick($event)"
             [style.visibility]="rowNode.node.leaf === false || (rowNode.node.children && rowNode.node.children.length) ? 'visible' : 'hidden'" [style.marginLeft]="rowNode.level * 16 + 'px'">
-            <i [ngClass]="rowNode.node.expanded ? 'pi pi-fw pi-chevron-down' : 'pi pi-fw pi-chevron-right'"></i>
+            <i [ngClass]="rowNode.node.expanded ? 'fa fa-fw pi-chevron-down' : 'fa fa-fw pi-chevron-right'"></i>
         </a>
     `
 })

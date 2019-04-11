@@ -13,8 +13,8 @@ import { Footer, Header } from '../common/shared';
   <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt
       quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!</div>
   <p-footer>
-      <button  type="button" label="Save" icon="pi pi-check" style="margin-right: .25em"></button>
-      <button  type="button" label="Cancel" icon="pi pi-times" class="ui-button-secondary"></button>
+      <button  type="button" label="Save" icon="fa fa-check" style="margin-right: .25em"></button>
+      <button  type="button" label="Cancel" icon="fa fa-times" class="ui-button-secondary"></button>
   </p-footer>
 </p-card>`
 })

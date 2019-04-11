@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { Accordion } from './accordion';
 import { AccordionTab } from './accordion'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { Component, DebugElement, NO_ERRORS_SCHEMA } from '../../../../node_modules/@angular/core';
+import { Component, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 
 @Component({
   template: `<p-accordion>
@@ -99,16 +99,16 @@ describe('Accordion', () => {
     });
 
     it('should change expandIcon and collapseIcon', () => {
-      accordion.collapseIcon = "pi pi-fw pi-caret-left";
-      accordion.expandIcon = "pi pi-fw pi-caret-up";
+      accordion.collapseIcon = "fa fa-fw pi-caret-left";
+      accordion.expandIcon = "fa fa-fw pi-caret-up";
       fixture.detectChanges();
 
       const firstAccordionTabOpenEl = fixture.debugElement.children[0].children[0].children[0].query(By.css('.ui-accordion-toggle-icon')).nativeElement;
-      expect(firstAccordionTabOpenEl.className).toContain('pi pi-fw pi-caret-up');
+      expect(firstAccordionTabOpenEl.className).toContain('fa fa-fw pi-caret-up');
       firstAccordionTab.selected = true;
       fixture.detectChanges();
 
-      expect(firstAccordionTabOpenEl.className).toContain('pi pi-fw pi-caret-left');
+      expect(firstAccordionTabOpenEl.className).toContain('fa fa-fw pi-caret-left');
     });
 
     it('should get styleClass', () => {

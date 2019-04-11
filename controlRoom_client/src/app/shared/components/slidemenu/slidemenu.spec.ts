@@ -2,13 +2,13 @@ import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testin
 import { By } from '@angular/platform-browser';
 import { SlideMenu, SlideMenuSub } from './slidemenu';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '../../../../node_modules/@angular/router/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { MenuItem } from '../common/api';
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 
 @Component({
   template: `<p-slideMenu #menu></p-slideMenu>
-  <button #btn type="button" pButton icon="pi pi-bars" label="Show" (click)="menu.toggle($event)"></button>
+  <button #btn type="button" pButton icon="fa fa-bars" label="Show" (click)="menu.toggle($event)"></button>
   `
 })
 class SlideMenuTestComponent {
@@ -39,10 +39,10 @@ describe('SlideMenu', () => {
       slidemenu.model = [
         {
             label: 'File',
-            icon: 'pi pi-fw pi-file',
+            icon: 'fa fa-fw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     command: () => {}
                   },
                 {label: 'Open'},
@@ -52,7 +52,7 @@ describe('SlideMenu', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             disabled:true
         }];
       fixture.detectChanges();

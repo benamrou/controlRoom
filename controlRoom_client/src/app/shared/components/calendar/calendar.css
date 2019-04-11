@@ -54,6 +54,7 @@
     border-right-width: 0;
     border-top-width: 0;
     border-bottom-width: 0;
+    position: fixed;
 }
 
 /* Header */
@@ -160,6 +161,7 @@
     -webkit-border-bottom-right-radius: 0px;
     -khtml-border-bottom-right-radius: 0px;
     border-bottom-right-radius: 0px;
+    text-align: center;
 }
 
 /* Month Picker */

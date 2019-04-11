@@ -57,6 +57,7 @@ export class Widget {
 }
 
 export class WidgetColumn {
+    public id?;
     public field: string;
     public header: string;
 }
@@ -102,7 +103,7 @@ export class WidgetService {
                 }
                 if ( i  > 0 && (widget.widid !== data[i].WIDID)) {
                     widget.columnResult.push(column);
-                    widget.columns = JSON.stringify(widget.columnResult);
+                    widget.columns = JSON.parse(JSON.stringify(widget.columnResult));
                     this.widgetsInfo.widgets.push(widget);
                     widget = new Widget();
                     column = new WidgetColumn();
@@ -142,6 +143,7 @@ export class WidgetService {
                 widget.dragAndDrop = true;
                 widget.resizable = true;
 
+                column.id = data[i].WIDID + '_' + data[i].WRSFIELD;
                 column.field = data[i].WRSFIELD;
                 column.header = data[i].WRSHEADER;
                 //column.wrsposition = data[i].WRSPOSITION;

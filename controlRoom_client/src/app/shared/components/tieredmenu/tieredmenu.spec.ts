@@ -2,7 +2,7 @@ import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testin
 import { By } from '@angular/platform-browser';
 import { TieredMenu, TieredMenuSub } from './tieredmenu';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '../../../../node_modules/@angular/router/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('TieredMenu', () => {
   
@@ -58,7 +58,7 @@ describe('TieredMenu', () => {
             label: 'File',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
                         {label: 'Project'},
                         {label: 'Other'},
@@ -70,10 +70,10 @@ describe('TieredMenu', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -90,7 +90,7 @@ describe('TieredMenu', () => {
             label: 'File',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
                         {label: 'Project'},
                         {label: 'Other'},
@@ -102,10 +102,10 @@ describe('TieredMenu', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -122,7 +122,7 @@ describe('TieredMenu', () => {
             label: 'File',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
                         {label: 'Project'},
                         {label: 'Other'},
@@ -134,10 +134,10 @@ describe('TieredMenu', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -154,7 +154,7 @@ describe('TieredMenu', () => {
             label: 'File',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
                         {label: 'Project'},
                         {label: 'Other'},
@@ -166,10 +166,10 @@ describe('TieredMenu', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -184,7 +184,7 @@ describe('TieredMenu', () => {
             label: 'File',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
                         {label: 'Project'},
                         {label: 'Other'},
@@ -197,10 +197,10 @@ describe('TieredMenu', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ],
             disabled:true
         }
@@ -231,7 +231,7 @@ describe('TieredMenu', () => {
                 label: 'File',
                 items: [{
                         label: 'New', 
-                        icon: 'pi pi-fw pi-plus',
+                        icon: 'fa fa-fw pi-plus',
                         items: [
                             {label: 'Project'},
                             {label: 'Other'},
@@ -243,7 +243,7 @@ describe('TieredMenu', () => {
             },
             {
                 label: 'Edit',
-                icon: 'pi pi-fw pi-pencil',
+                icon: 'fa fa-fw pi-pencil',
             }
           ];
         tieredmenu.popup = true;
@@ -276,7 +276,7 @@ describe('TieredMenu', () => {
                 label: 'File',
                 items: [{
                         label: 'New', 
-                        icon: 'pi pi-fw pi-plus',
+                        icon: 'fa fa-fw pi-plus',
                         items: [
                             {label: 'Project'},
                             {label: 'Other'},
@@ -288,7 +288,7 @@ describe('TieredMenu', () => {
             },
             {
                 label: 'Edit',
-                icon: 'pi pi-fw pi-pencil',
+                icon: 'fa fa-fw pi-pencil',
             }
           ];
         tieredmenu.popup = true;
@@ -322,7 +322,7 @@ describe('TieredMenu', () => {
             label: 'File',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
                         {label: 'Project'},
                         {label: 'Other'},
@@ -334,10 +334,10 @@ describe('TieredMenu', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -365,7 +365,7 @@ describe('TieredMenu', () => {
             label: 'File',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
                         {label: 'Project'},
                         {label: 'Other'},
@@ -378,10 +378,10 @@ describe('TieredMenu', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ]
         }
       ];
@@ -406,7 +406,7 @@ describe('TieredMenu', () => {
             label: 'File',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
                         {label: 'Project'},
                         {label: 'Other'},
@@ -418,10 +418,10 @@ describe('TieredMenu', () => {
         },
         {
             label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
+            icon: 'fa fa-fw pi-pencil',
             items: [
-                {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-                {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+                {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+                {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
             ],
             disabled:true
         }

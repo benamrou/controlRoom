@@ -2,7 +2,7 @@ import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testin
 import { By } from '@angular/platform-browser';
 import { PanelMenu, PanelMenuSub } from './panelmenu';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '../../../../node_modules/@angular/router/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('PanelMenu', () => {
   
@@ -46,18 +46,18 @@ describe('PanelMenu', () => {
       panelmenu.model = [
         {
             label: 'File',
-            icon: 'pi pi-pw pi-file',
+            icon: 'fa fa-pw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
-                        {label: 'User', icon: 'pi pi-fw pi-user-plus'},
-                        {label: 'Filter', icon: 'pi pi-fw pi-filter'}
+                        {label: 'User', icon: 'fa fa-fw pi-user-plus'},
+                        {label: 'Filter', icon: 'fa fa-fw pi-filter'}
                     ]
                 },
-                {label: 'Open', icon: 'pi pi-fw pi-external-link'},
+                {label: 'Open', icon: 'fa fa-fw pi-external-link'},
                 {separator: true},
-                {label: 'Quit', icon: 'pi pi-fw pi-times'}
+                {label: 'Quit', icon: 'fa fa-fw pi-times'}
             ],
           visible:false
         }
@@ -72,18 +72,18 @@ describe('PanelMenu', () => {
       panelmenu.model = [
         {
             label: 'File',
-            icon: 'pi pi-pw pi-file',
+            icon: 'fa fa-pw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
-                        {label: 'User', icon: 'pi pi-fw pi-user-plus'},
-                        {label: 'Filter', icon: 'pi pi-fw pi-filter'}
+                        {label: 'User', icon: 'fa fa-fw pi-user-plus'},
+                        {label: 'Filter', icon: 'fa fa-fw pi-filter'}
                     ]
                 },
-                {label: 'Open', icon: 'pi pi-fw pi-external-link'},
+                {label: 'Open', icon: 'fa fa-fw pi-external-link'},
                 {separator: true},
-                {label: 'Quit', icon: 'pi pi-fw pi-times'}
+                {label: 'Quit', icon: 'fa fa-fw pi-times'}
             ],
           style:{'primeng':'rocks!'},
           styleClass:"Primeng ROCKS!",
@@ -105,15 +105,15 @@ describe('PanelMenu', () => {
             icon: 'Primeng ROCKS!',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     items: [
-                        {label: 'User', icon: 'pi pi-fw pi-user-plus'},
-                        {label: 'Filter', icon: 'pi pi-fw pi-filter'}
+                        {label: 'User', icon: 'fa fa-fw pi-user-plus'},
+                        {label: 'Filter', icon: 'fa fa-fw pi-filter'}
                     ]
                 },
-                {label: 'Open', icon: 'pi pi-fw pi-external-link'},
+                {label: 'Open', icon: 'fa fa-fw pi-external-link'},
                 {separator: true},
-                {label: 'Quit', icon: 'pi pi-fw pi-times'}
+                {label: 'Quit', icon: 'fa fa-fw pi-times'}
             ],
             title:"primeng",
             target:"primeng",
@@ -133,15 +133,15 @@ describe('PanelMenu', () => {
       panelmenu.model = [
         {
             label: 'File',
-            icon: 'pi pi-pw pi-file',
+            icon: 'fa fa-pw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     visible:false
                 },
-                {label: 'Open', icon: 'pi pi-fw pi-external-link',visible:false},
+                {label: 'Open', icon: 'fa fa-fw pi-external-link',visible:false},
                 {separator: true,visible:false},
-                {label: 'Quit', icon: 'pi pi-fw pi-times',visible:false}
+                {label: 'Quit', icon: 'fa fa-fw pi-times',visible:false}
             ],
         }
       ];
@@ -156,16 +156,16 @@ describe('PanelMenu', () => {
       panelmenu.model = [
         {
             label: 'File',
-            icon: 'pi pi-pw pi-file',
+            icon: 'fa fa-pw pi-file',
             items: [{
                     label: 'New', 
-                    icon: 'pi pi-fw pi-plus',
+                    icon: 'fa fa-fw pi-plus',
                     style:{'primeng':'rocks!'},
                     styleClass:"Primeng ROCKS!",
                 },
-                {label: 'Open', icon: 'pi pi-fw pi-external-link',style:{'primeng':'rocks!'},styleClass:"Primeng ROCKS!"},
+                {label: 'Open', icon: 'fa fa-fw pi-external-link',style:{'primeng':'rocks!'},styleClass:"Primeng ROCKS!"},
                 {separator: true},
-                {label: 'Quit', icon: 'pi pi-fw pi-times',style:{'primeng':'rocks!'},styleClass:"Primeng ROCKS!"}
+                {label: 'Quit', icon: 'fa fa-fw pi-times',style:{'primeng':'rocks!'},styleClass:"Primeng ROCKS!"}
             ],
         }
       ];
@@ -223,19 +223,19 @@ describe('PanelMenu', () => {
       panelmenu.model = [
         {
             label: 'File',
-            icon: 'pi pi-pw pi-file',
+            icon: 'fa fa-pw pi-file',
             items: [ 
-              {label: 'Open', icon: 'pi pi-fw pi-external-link'},
+              {label: 'Open', icon: 'fa fa-fw pi-external-link'},
               {separator: true},
-              {label: 'Quit', icon: 'pi pi-fw pi-times'}
+              {label: 'Quit', icon: 'fa fa-fw pi-times'}
             ],
         },
         {
           label: 'Edit',
-          icon: 'pi pi-pw pi-pencil',
+          icon: 'fa fa-pw pi-pencil',
           items: [ 
-            {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-            {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+            {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+            {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
           ],
       }
       ];
@@ -260,19 +260,19 @@ describe('PanelMenu', () => {
       panelmenu.model = [
         {
             label: 'File',
-            icon: 'pi pi-pw pi-file',
+            icon: 'fa fa-pw pi-file',
             items: [ 
-              {label: 'Open', icon: 'pi pi-fw pi-external-link'},
+              {label: 'Open', icon: 'fa fa-fw pi-external-link'},
               {separator: true},
-              {label: 'Quit', icon: 'pi pi-fw pi-times'}
+              {label: 'Quit', icon: 'fa fa-fw pi-times'}
             ],
         },
         {
           label: 'Edit',
-          icon: 'pi pi-pw pi-pencil',
+          icon: 'fa fa-pw pi-pencil',
           items: [ 
-            {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-            {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+            {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+            {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
           ],
       }
       ];
@@ -304,19 +304,19 @@ describe('PanelMenu', () => {
       panelmenu.model = [
         {
             label: 'File',
-            icon: 'pi pi-pw pi-file',
+            icon: 'fa fa-pw pi-file',
             items: [ 
-              {label: 'Open', icon: 'pi pi-fw pi-external-link'},
+              {label: 'Open', icon: 'fa fa-fw pi-external-link'},
               {separator: true},
-              {label: 'Quit', icon: 'pi pi-fw pi-times'}
+              {label: 'Quit', icon: 'fa fa-fw pi-times'}
             ],
         },
         {
           label: 'Edit',
-          icon: 'pi pi-pw pi-pencil',
+          icon: 'fa fa-pw pi-pencil',
           items: [ 
-            {label: 'Delete', icon: 'pi pi-fw pi-trash'},
-            {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+            {label: 'Delete', icon: 'fa fa-fw pi-trash'},
+            {label: 'Refresh', icon: 'fa fa-fw pi-refresh'}
           ],
       }
       ];

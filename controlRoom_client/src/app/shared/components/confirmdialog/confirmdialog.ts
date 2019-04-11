@@ -16,7 +16,7 @@ import {Subscription}   from 'rxjs';
             <div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix ui-corner-top">
                 <span class="ui-dialog-title" *ngIf="header">{{header}}</span>
                 <a *ngIf="closable" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" tabindex="0" role="button" (click)="close($event)" (keydown.enter)="close($event)">
-                    <span class="pi pi-fw pi-times"></span>
+                    <span class="fa fa-fw pi-times"></span>
                 </a>
             </div>
             <div #content class="ui-dialog-content ui-widget-content">
@@ -60,13 +60,13 @@ export class ConfirmDialog implements OnDestroy {
     
     @Input() styleClass: string;
     
-    @Input() acceptIcon: string = 'pi pi-check';
+    @Input() acceptIcon: string = 'fa fa-check';
     
     @Input() acceptLabel: string = 'Yes';
     
     @Input() acceptVisible: boolean = true;
 
-    @Input() rejectIcon: string = 'pi pi-times';
+    @Input() rejectIcon: string = 'fa fa-times';
     
     @Input() rejectLabel: string = 'No';
     

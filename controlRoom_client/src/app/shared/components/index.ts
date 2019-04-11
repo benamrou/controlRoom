@@ -70,6 +70,7 @@ export * from  './tree/tree';
 export * from  './treetable/treetable';
 export * from  './tristatecheckbox/tristatecheckbox';
 export * from  './utils/objectutils';
+export * from  './fullcalendar/fullcalendar';
 
 /* Dashoard SB 4*/
 export * from  './sidebar/sidebar';

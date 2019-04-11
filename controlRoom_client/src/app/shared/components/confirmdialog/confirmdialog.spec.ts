@@ -8,7 +8,7 @@ import { ConfirmationService} from '../common/api';
 @Component({
   template: `<p-confirmDialog></p-confirmDialog>
 
-  <button type="button" (click)="confirm1()" pButton icon="pi pi-check" label="Confirm"></button>`
+  <button type="button" (click)="confirm1()" pButton icon="fa fa-check" label="Confirm"></button>`
 })
 class TestConfirmDialogComponent {
 
@@ -20,7 +20,7 @@ class TestConfirmDialogComponent {
 	this.confirmationService.confirm({
 	message: 'Are you sure that you want to proceed?',
 	header: 'Confirmation',
-	icon: 'pi pi-exclamation-triangle',
+	icon: 'fa fa-exclamation-triangle',
 	accept: () => {
 		this.header = "accept";
 		},

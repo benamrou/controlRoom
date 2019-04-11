@@ -2,7 +2,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Breadcrumb } from './breadcrumb';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '../../../../node_modules/@angular/router/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('Breadcrumb', () => {
   
@@ -44,7 +44,7 @@ describe('Breadcrumb', () => {
     });
 
     it('should display the home', () => {
-      breadcrumb.home = {icon: 'pi pi-home'};
+      breadcrumb.home = {icon: 'fa fa-home'};
       fixture.detectChanges();
       
       const homeEl = fixture.debugElement.query(By.css('.ui-breadcrumb-home'));
@@ -60,10 +60,10 @@ describe('Breadcrumb', () => {
     });
 
     it('should display items', () => {
-      breadcrumb.home = {icon: 'pi pi-home'};
+      breadcrumb.home = {icon: 'fa fa-home'};
       breadcrumb.model = [
         {label:'Squad'},
-        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'pi pi-external-link'}
+        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'fa fa-external-link'}
     ];
       fixture.detectChanges();
       
@@ -74,10 +74,10 @@ describe('Breadcrumb', () => {
     });
 
     it('should call itemClick when click home ', () => {
-      breadcrumb.home = {icon: 'pi pi-home'};
+      breadcrumb.home = {icon: 'fa fa-home'};
       breadcrumb.model = [
         {label:'Squad'},
-        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'pi pi-external-link'}
+        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'fa fa-external-link'}
     ];
       fixture.detectChanges();
       const itemClickSpy = spyOn(breadcrumb, 'itemClick').and.callThrough()
@@ -89,10 +89,10 @@ describe('Breadcrumb', () => {
     });
 
     it('should call itemClick when click item ', () => {
-      breadcrumb.home = {icon: 'pi pi-home'};
+      breadcrumb.home = {icon: 'fa fa-home'};
       breadcrumb.model = [
         {label:'Squad'},
-        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'pi pi-external-link'}
+        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'fa fa-external-link'}
     ];
       fixture.detectChanges();
       const itemClickSpy = spyOn(breadcrumb, 'itemClick').and.callThrough()
@@ -104,10 +104,10 @@ describe('Breadcrumb', () => {
     });
 
     it('should call itemClick(routerLink) when click item ', () => {
-      breadcrumb.home = {icon: 'pi pi-home'};
+      breadcrumb.home = {icon: 'fa fa-home'};
       breadcrumb.model = [
         {label:'Squad'},
-        {label:'Lionel Messi', routerLink: 'test', icon: 'pi pi-external-link'}
+        {label:'Lionel Messi', routerLink: 'test', icon: 'fa fa-external-link'}
     ];
       fixture.detectChanges();
       const itemClickSpy = spyOn(breadcrumb, 'itemClick').and.callThrough()
@@ -119,10 +119,10 @@ describe('Breadcrumb', () => {
     });
 
     it('should call itemClick and do nothing (item disabled) ', () => {
-      breadcrumb.home = {icon: 'pi pi-home'};
+      breadcrumb.home = {icon: 'fa fa-home'};
       breadcrumb.model = [
         {label:'Squad', disabled: true},
-        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'pi pi-external-link'}
+        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'fa fa-external-link'}
     ];
       fixture.detectChanges();
       const itemClickSpy = spyOn(breadcrumb, 'itemClick').and.callThrough()
@@ -134,10 +134,10 @@ describe('Breadcrumb', () => {
     });
 
     it('should run command', () => {
-      breadcrumb.home = {icon: 'pi pi-home'};
+      breadcrumb.home = {icon: 'fa fa-home'};
       breadcrumb.model = [
         {label:'Squad', command: ()=>{breadcrumb.styleClass = "primengRocks!"}},
-        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'pi pi-external-link'}
+        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'fa fa-external-link'}
     ];
       fixture.detectChanges();
       const itemClickSpy = spyOn(breadcrumb, 'itemClick').and.callThrough()
@@ -150,10 +150,10 @@ describe('Breadcrumb', () => {
     });
 
     it('should call itemClick with home item', () => {
-      breadcrumb.home = {icon: 'pi pi-home'};
+      breadcrumb.home = {icon: 'fa fa-home'};
       breadcrumb.model = [
         {label:'Squad', command: ()=>{breadcrumb.styleClass = "primengRocks!"}},
-        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'pi pi-external-link'}
+        {label:'Lionel Messi', url: 'https://en.wikipedia.org/wiki/Lionel_Messi', icon: 'fa fa-external-link'}
     ];
       fixture.detectChanges();
       const itemClickSpy = spyOn(breadcrumb, 'itemClick').and.callThrough()

@@ -14,10 +14,10 @@ import {Subscription}   from 'rxjs';
                     'ui-growl-message-error':msg.severity == 'error','ui-growl-message-success':msg.severity == 'success'}"
                     (click)="onMessageClick(i)" (mouseenter)="onMessageHover(i)">
                 <div class="ui-growl-item">
-                     <div class="ui-growl-icon-close pi pi-times" (click)="remove(i,msgel)"></div>
-                     <span class="ui-growl-image pi"
-                        [ngClass]="{'pi-info-circle':msg.severity == 'info','pi-exclamation-triangle':msg.severity == 'warn',
-                                'pi-times':msg.severity == 'error','pi-check':msg.severity == 'success'}"></span>
+                     <div class="ui-growl-icon-close fa fa-times" (click)="remove(i,msgel)"></div>
+                     <span class="ui-growl-image fas"
+                        [ngClass]="{'fa-info-circle':msg.severity == 'info','fa-exclamation-triangle':msg.severity == 'warn',
+                                'fa-times':msg.severity == 'error','fa-check':msg.severity == 'success'}"></span>
                      <div class="ui-growl-message">
                         <span class="ui-growl-title">{{msg.summary}}</span>
                         <p [innerHTML]="msg.detail||''"></p>
