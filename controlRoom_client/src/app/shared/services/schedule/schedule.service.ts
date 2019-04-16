@@ -34,6 +34,9 @@ export class SupplierSchedule {
    public uniqueid: string;
    public internalcode: string;
    public externalcode: string;
+   public suppliercode: string;
+   public commercialcode: string;
+   public addresschaincode: string;
    public sites: Site [] = [];
    public frequency: string;
    public frequencyUnit: string;
@@ -101,7 +104,7 @@ export class SupplierSchedule {
 
 export class SupplierPlanning {
    public uniqueid: string;
-   public externalcode: string;
+   public suppliercode: string;
    public description: string;
    public commercialcontract: string;
    public servicecontract: string;
@@ -164,6 +167,8 @@ export class SupplierScheduleService {
   public supplierSchedule : SupplierSchedule;
 
   private baseSupplierScheduleUrl: string = '/api/supplierschedule/';
+  private deleteSupplierScheduleURL: string = '/api/supplierschedule/1/';
+  private createSupplierScheduleURL: string = '/api/supplierschedule/2/';
   
   private request: string;
   private params: HttpParams;
@@ -187,8 +192,8 @@ export class SupplierScheduleService {
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-        //return this.http.get(this.request, this.params, this.options).pipe(map(response => {
-        return this.http.getMock('assets/data/schedule.json', this.params, this.options).pipe(map(response => {
+        return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+        //return this.http.getMock('assets/data/schedule.json', this.params, this.options).pipe(map(response => {
                 let data = <any> response;
                 let schedule, site;
                 this.suppliers = [];
@@ -248,6 +253,9 @@ export class SupplierScheduleService {
     
                         schedule.internalcode = data[i].LISCSIN;
                         schedule.externalcode = data[i].FCSNUM;
+                        schedule.suppliercode = data[i].FOUCNUF;
+                        schedule.commercialcode = data[i].FCCNUM;
+                        schedule.addresschaincode = data[i].LISNFILF;
                         schedule.frequency = data[i].LISREAP;
                         schedule.frequencyUnit = data[i].LISUREAP;
                         schedule.frequencyUnitLabel = data[i].LISUREAP_LIB;
@@ -394,5 +402,35 @@ export class SupplierScheduleService {
         return true; 
     }
     return false;
+  }
+
+  updateSchedule(schedule : SupplierPlanning) {
+    /** 3 steps process */   
+    /* 1. Insert into FOUPLAN - deletion schedule for the data during the period */
+    /* 2. Insert into FOUPLAN - Creation schedule for the data during the period */
+    /* 3. Execute the batch schedule integration */
+
+    // {00109,00109CC,0,00109SC,05/06/2018,05/12/2018,abe,90061}
+    this.request = this.deleteSupplierScheduleURL;
+    let headersSearch = new HttpHeaders();
+    let options = new HttpHeaders();
+    this.params= new HttpParams();
+    this.params = this.params.set('PARAM', schedule.suppliercode);
+    this.params = this.params.append('PARAM', schedule.commercialcontract);
+    this.params = this.params.append('PARAM',schedule.addresschain);
+    this.params = this.params.append('PARAM', schedule.servicecontract);
+    this.params = this.params.append('PARAM', schedule.start);
+    this.params = this.params.append('PARAM', schedule.end);
+    this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+    for (let i =0; i < schedule.sites.length; i++) {
+        this.params = this.params.append('PARAM', schedule.sites[i].code);
+    }
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+    //console.log('Parameters delete: ' + JSON.stringify(this.params));
+    return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+            let data = <any> response;
+        }));
   }
 }

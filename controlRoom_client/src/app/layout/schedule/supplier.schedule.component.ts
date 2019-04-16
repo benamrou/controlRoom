@@ -56,6 +56,7 @@ export class SupplierScheduleComponent {
    // originmal selection is in selectedElement variable
    temporarySchedule: TemporarySchedule [] = [];
    simulateSchedule: SimulateSchedule [] = [];
+   validateSchedule: SupplierPlanning [] = [];
 
    // Calculation Schedule
    colorTemporaryOrder : any = ['#FF8C00','#FF4500','#FF6347','#FF7F50','#FFA500','#DB7093','#FF69B4'];
@@ -161,13 +162,13 @@ export class SupplierScheduleComponent {
 
   simulationSchedule() {
     this.simulateSchedule = [];    
-    //this.simulationPermanentScheduleBefore();
+    this.validateSchedule = [];    
+    this.simulationPermanentScheduleBefore();
     this.simulationTemporarySchedule();
-    //this.simulationPermanentScheduleAfter();
+    this.simulationPermanentScheduleAfter();
 
-    console.log('Simulate:' + JSON.stringify(this.simulateSchedule));
-
-    //this.createPlanning();
+    //console.log('Simulate:' + JSON.stringify(this.simulateSchedule));
+    console.log('Validate:' + JSON.stringify(this.validateSchedule));
   }
 
   simulationPermanentScheduleBefore() {
@@ -316,139 +317,198 @@ export class SupplierScheduleComponent {
   }
 
   simulationTemporarySchedule () {
+    let supplierPlanning  : SupplierPlanning;
     let oneDay = 1000 * 60 * 60 * 24 ;
     for (let i=0; i < this.temporarySchedule.length; i ++) {
       if (this.temporarySchedule[i].temporary) {
         console.log('simulationTemporarySchedule : ' + JSON.stringify(this.temporarySchedule[i]));
+        let startDate = new Date(this.temporarySchedule[i].start);
+        let endDate = new Date(this.temporarySchedule[i].end);
+        /**  Supplier Planning is the FOUPLAN */ 
+        
         for (let k=0; k < this.temporarySchedule[i].numberWeekDays; k ++) {
           if (this.temporarySchedule[i].temporary && this.temporarySchedule[i].start >  this.dateNow) {
-          let weekday;
-          let startDate = new Date(this.temporarySchedule[i].start);
-          let endDate = new Date(this.temporarySchedule[i].end);
-          switch (this.datePipe.transform(startDate,'EEE')) {
-            case this.day[0]: // Monday
-              weekday = 0;
-              break;
-            case this.day[1]: // Tuesday
-              weekday = 1;
-              break;
-            case this.day[2]: // Wednesday
-              weekday = 2;
-              break;
-            case this.day[3]: // Thursday
-              weekday = 3;
-              break;
-            case this.day[4]: // Friday
-              weekday = 4;
-              break;
-            case this.day[5]: // Saturdayr
-              weekday = 5;
-              break;
-            case this.day[6]: // Sunday
-              weekday = 6;
-              break;
-            default:
-              weekday = 0;
-          }
-          //console.log('Weekday : ' + weekday);
-          let j =0;
-          let timeline = new Date(startDate);
-          console.log('Timeline : ' + timeline);
-          console.log('k : ' + k);
-          console.log('weekday : ' + weekday);
-          while (  j < 6 && (endDate.getTime() >= timeline.getTime())) {
-            timeline.setTime(timeline.getTime() +  oneDay);
-            startDate = new Date(this.temporarySchedule[i].start);
-            switch ((weekday + j)%7) {
-            case 0:
-              if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderMonday) {       
-                //console.log ( "Monday !");
-                this.simulateSchedule = [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                      j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                        parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeMonday)+j, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode,
-                        this.colorTemporaryDelivery[i]))];
-              }
-              break;
-            case 1:
-              if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderTuesday) {   
-                //console.log ( "Tuesday !");
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                      j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                        parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeTuesday)+j, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode,
-                        this.colorTemporaryDelivery[i]))];
-              }
-              break;
-            case 2:
-              if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderWednesday) {       
-                //console.log ( "Wednesday ! Schedule # " + i);
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                      j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                        parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeWednesday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode,
-                        this.colorTemporaryDelivery[i]))];
-              }
-              break;
-            case 3:
-              if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderThursday) {       
-                //console.log ( "Thursday !");
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                      j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                        parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeThursday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode,
-                        this.colorTemporaryDelivery[i]))];
-              }
-              break;
-            case 4:
-              if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderFriday) {       
-                //console.log ( "Friday !");
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                      j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                        parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeFriday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode, 
-                        this.colorTemporaryDelivery[i]))];
-              }
-              break;
-            case 5:
-              if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderSaturday) {    
-                //console.log ( "Saturday !");
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                      j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                        parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeSaturday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode, 
-                        this.colorTemporaryDelivery[i]))];
-              }
-              break;
-            case 6:
-              if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderSunday) {       
-                //console.log ( "Sunday !");
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                      j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
-                this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
-                    this.transformSimulateScheduleDate(i, startDate, 
-                        parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeSunday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode, 
-                        this.colorTemporaryDelivery[i]))];
-              }
-              break;
-            default:
-              weekday = 0;
-              }
-              j++;
+            let weekday;
+            if (k > 0 ) {
+            this.validateSchedule = [...this.validateSchedule,Object.assign({}, supplierPlanning)];
             }
+            supplierPlanning = new SupplierPlanning();
+            supplierPlanning.start = this.datePipe.transform(this.temporarySchedule[i].start, 'MM/dd/yyyy');
+            supplierPlanning.end = this.datePipe.transform(this.temporarySchedule[i].end, 'MM/dd/yyyy');
+            supplierPlanning.suppliercode = this.temporarySchedule[i].weeklySchedule[0].schedule.suppliercode;
+            supplierPlanning.commercialcontract = this.temporarySchedule[i].weeklySchedule[0].schedule.commercialcode;
+            supplierPlanning.servicecontract = this.temporarySchedule[i].weeklySchedule[0].schedule.externalcode;
+            supplierPlanning.addresschain = this.temporarySchedule[i].weeklySchedule[0].schedule.addresschaincode;
+            supplierPlanning.sites = Object.assign([], this.temporarySchedule[i].weeklySchedule[0].schedule.sites);
+
+            switch (this.datePipe.transform(startDate,'EEE')) {
+              case this.day[0]: // Monday
+                weekday = 0;
+                break;
+              case this.day[1]: // Tuesday
+                weekday = 1;
+                break;
+              case this.day[2]: // Wednesday
+                weekday = 2;
+                break;
+              case this.day[3]: // Thursday
+                weekday = 3;
+                break;
+              case this.day[4]: // Friday
+                weekday = 4;
+                break;
+              case this.day[5]: // Saturdayr
+                weekday = 5;
+                break;
+              case this.day[6]: // Sunday
+                weekday = 6;
+                break;
+              default:
+                weekday = 0;
+              }
+            //console.log('Weekday : ' + weekday);
+            let j =0;
+            let timeline = new Date(startDate);
+            //console.log('Timeline : ' + timeline);
+            //console.log('k : ' + k);
+            //console.log('weekday : ' + weekday);
+            while (  j < 6 && (endDate.getTime() >= timeline.getTime())) {
+              timeline.setTime(timeline.getTime() +  oneDay);
+              startDate = new Date(this.temporarySchedule[i].start);
+              switch ((weekday + j)%7) {
+              case 0:
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderMonday) {       
+                  //console.log ( "Monday !");
+                  this.simulateSchedule = [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                        j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                          parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeMonday)+j+ 7*k, 
+                            'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode,
+                          this.colorTemporaryDelivery[i]))];
+
+                  this.validateSchedule = [...this.validateSchedule,Object.assign({}, 
+                    this.transformPlanningScheduleDate (supplierPlanning, startDate, j + 7*k, 
+                              (parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeMonday)),
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.collectionTimeMonday1,
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.deliveryTimeMonday1))];
+                }
+                break;
+              case 1:
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderTuesday) {   
+                  //console.log ( "Tuesday !");
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                        j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                          parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeTuesday)+j+ 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode,
+                          this.colorTemporaryDelivery[i]))];
+                   
+                  this.validateSchedule = [...this.validateSchedule,Object.assign({}, 
+                    this.transformPlanningScheduleDate (supplierPlanning, startDate, j + 7*k, 
+                              (parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeTuesday)),
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.collectionTimeTuesday1,
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.deliveryTimeTuesday1))];       
+                }
+                break;
+              case 2:
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderWednesday) {       
+                  //console.log ( "Wednesday ! Schedule # " + i);
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                        j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                          parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeWednesday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode,
+                          this.colorTemporaryDelivery[i]))];
+                   
+                  this.validateSchedule = [...this.validateSchedule,Object.assign({}, 
+                    this.transformPlanningScheduleDate (supplierPlanning, startDate, j + 7*k, 
+                              (parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeWednesday)),
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.collectionTimeWednesday1,
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.deliveryTimeWednesday1))];      
+                }
+                break;
+              case 3:
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderThursday) {       
+                  //console.log ( "Thursday !");
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                        j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                          parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeThursday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode,
+                          this.colorTemporaryDelivery[i]))];
+                   
+                  this.validateSchedule = [...this.validateSchedule,Object.assign({}, 
+                    this.transformPlanningScheduleDate (supplierPlanning, startDate, j + 7*k, 
+                              (parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeThursday)),
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.collectionTimeThursday1,
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.deliveryTimeThursday1))];     
+                }
+                break;
+              case 4:
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderFriday) {       
+                  //console.log ( "Friday !");
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                        j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                          parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeFriday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode, 
+                          this.colorTemporaryDelivery[i]))];
+                   
+                  this.validateSchedule = [...this.validateSchedule,Object.assign({}, 
+                    this.transformPlanningScheduleDate (supplierPlanning, startDate, j + 7*k, 
+                              (parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeFriday)),
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.collectionTimeFriday1,
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.deliveryTimeFriday1))];     
+                }
+                break;
+              case 5:
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderSaturday) {    
+                  //console.log ( "Saturday !");
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                        j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                          parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeSaturday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode, 
+                          this.colorTemporaryDelivery[i]))];
+                   
+                  this.validateSchedule = [...this.validateSchedule,Object.assign({}, 
+                    this.transformPlanningScheduleDate (supplierPlanning, startDate, j + 7*k, 
+                              (parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeSaturday)),
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.collectionTimeSaturday1,
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.deliveryTimeSaturday1))];    
+                }
+                break;
+              case 6:
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderSunday) {       
+                  //console.log ( "Sunday !");
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                        j + 7*k, 'Schedule #' + i + ' / ORDER ' + this.selectedElement.externalcode, this.colorTemporaryOrder[i]))];
+                  this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
+                      this.transformSimulateScheduleDate(i, startDate, 
+                          parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeSunday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode, 
+                          this.colorTemporaryDelivery[i]))];
+                   
+                  this.validateSchedule = [...this.validateSchedule,Object.assign({}, 
+                    this.transformPlanningScheduleDate (supplierPlanning, startDate, j + 7*k, 
+                              (parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeSunday)),
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.collectionTimeSunday1,
+                              this.temporarySchedule[i].weeklySchedule[k].schedule.deliveryTimeSunday1))];    
+                }
+                break;
+              default:
+                weekday = 0;
+                }
+
+                j++;
+              }
           }
         }
       }
@@ -460,9 +520,9 @@ export class SupplierScheduleComponent {
     let oneDay = 1000 * 60 * 60 * 24 ;
     for (let i=0; i < this.selectedElement.schedules.length; i ++) {
         let weekday;
-        let startDate = new Date(this.temporarySchedule[i].weeklySchedule[this.temporarySchedule[i].numberWeekDaysArray.length-1].schedule.end);
+        let startDate = new Date(this.temporarySchedule[i].end);
         startDate.setDate(startDate.getDate());
-        let endDate = new Date();
+        let endDate = new Date(startDate);
         endDate.setDate(endDate.getDate()+60);
         //console.log('End date : ' + endDate);
         switch (this.datePipe.transform(startDate,'EEE')) {
@@ -648,7 +708,27 @@ export class SupplierScheduleComponent {
     createSimulateSchedule.start = this.datePipe.transform(createSimulateSchedule.start,"yyyy-MM-dd")
     createSimulateSchedule.end.setDate(createSimulateSchedule.end.getDate() + days);
     createSimulateSchedule.end = this.datePipe.transform(createSimulateSchedule.end,"yyyy-MM-dd")
+
     return createSimulateSchedule;
+  }
+
+  /**
+   * function transformSimulateScheduleDate 
+   * @param scheduleDate 
+   */
+  transformPlanningScheduleDate (supplierPlanning: SupplierPlanning, orderDate: Date, days: number, leadTime: number, orderTime: string, deliveryTime) : SupplierPlanning{
+    let orderDatacalculation =  new Date(orderDate);
+    let endDatacalculation =  new Date(orderDate);
+    orderDatacalculation.setDate(orderDatacalculation.getDate() + days);
+    endDatacalculation.setDate(endDatacalculation.getDate() + days + leadTime);
+
+    supplierPlanning.orderDate = this.datePipe.transform(orderDatacalculation,"MM/dd/yyyy");
+    supplierPlanning.deliveryDate = this.datePipe.transform(endDatacalculation,"MM/dd/yyyy");
+
+    supplierPlanning.orderTime = orderTime
+    supplierPlanning.deliveryTime = deliveryTime
+
+    return supplierPlanning;
   }
 
   /**
@@ -745,12 +825,29 @@ export class SupplierScheduleComponent {
   }
 
   /**
-   * function createPlanning 
+   * function ValidationSchedule  
    * @param  
    */
-  createPlanning() {
-  }
+  validationSchedule() {
+    this.msgs.push({severity:'info', summary:'Info Message', detail: 'Supplier schedule is being updated'});
+    for (let i =0; i < this.validateSchedule.length; i++) {
+      console.log(' i : ' + i + ' - ' + JSON.stringify(this.validateSchedule[i]));
+        this._scheduleService.updateSchedule(this.validateSchedule[i])
+        .subscribe( 
+            data => {  
+              // put the data returned from the server in our variable
+              //console.log(JSON.stringify(this.searchResult));  
+          },
+            error => {
+                  // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
+                  this.msgs.push({severity:'error', summary:'ERROR Message', detail: error });
+            },
+            () => { }
+        );
+      }
+    }
 
+    
   /**
    * ActivateDay copy from previous/after day information to the new day
    * @param schedule schedule
@@ -929,8 +1026,6 @@ export class SimulateSchedule {
   public title?;
   public start?;
   public end?;
-  //public start: Date = new Date();
-  //public end: Date = new Date();
   public color?;
   public allDay?: boolean = true;
 }

@@ -1,12 +1,13 @@
 <nav class="navbar navbar-expand-lg fixed-top">
-    <p-dialog header="Notification" [(visible)]="this.displaySwitch" modal="modal" width="500" responsive="true">
-            <h6>{{msgDisplayed}}</h6>
-                <p-footer>
-                    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-                        <button type="button" pButton icon="fa-check" (click)="displaySwitch==false" label="Ok"></button>
-                    </div>
-                </p-footer>
-        </p-dialog>
+    <p-dialog header="Notification" [(visible)]="displaySwitch" modal="modal" width="500" responsive="true" [maximizable]="false">
+        <span>{{msgDisplayed}}</span>
+            <p-footer>
+                <button style="float: right; margin-bottom:0.5em" 
+                        type="button" pButton icon="fas fa-check" iconPos="right" (click)="displaySwitch=false" 
+                        label="Ok">
+                </button>
+            </p-footer>
+    </p-dialog>
         <div class="pos-f-t fixed-top header">
             <nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md">
                 <button class="navbar-toggler navbar-toggler-right" (click)="toggleSidebar()">
