@@ -26,10 +26,11 @@
              [rows]="5"  [rowsPerPageOptions]="[5,10,15]"
              [paginator]="true" [pageLinks]="3" 
              [responsive]="true" [totalRecords]="totalRecords"
-             [reorderableColumns]="true" scrollHeight="400px"
+             [reorderableColumns]="true" 
              [globalFilter]="gb"
+             [paginatorDropdownAppendTo]="body"
              (onRowSelect)="onRowSelect($event)"
-             selectionMode="single" [(selection)]="selectedElement" tableStyleClass="table-layout: auto;">
+             selectionMode="single" [(selection)]="selectedElement" >
     <p-header >
         <div class="pull-right">
         <input  type="text" #gb placeholder="Type text to filter..." 
@@ -98,7 +99,6 @@
                                                 <th> </th>
                                                 <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray">
                                                     <th style="text-align:center; background-color:lightgray" >{{temporarySchedule[indice].columnName[0+i*7]}}</th>
-                                                    <th style="text-align:center; background-color:lightgray" >{{temporarySchedule[indice].columnName[0+i*7]}}</th>
                                                     <th style="text-align:center;background-color:lightgray" >{{temporarySchedule[indice].columnName[1+i*7]}}</th>
                                                     <th style="text-align:center;background-color:lightgray" >{{temporarySchedule[indice].columnName[2+i*7]}}</th>
                                                     <th style="text-align:center;background-color:lightgray" >{{temporarySchedule[indice].columnName[3+i*7]}}</th>
@@ -112,7 +112,7 @@
                                                 <p-calendar *ngIf="isScheduleToChange(temporarySchedule[indice])" 
                                                 [(ngModel)]="temporarySchedule[indice].start"  
                                                 [readonlyInput]="true"
-                                                dateFormat="mm-dd-yy"
+                                                dateFormat="mm/dd/yy"
                                                 name="scheduleStart{{indice}}" [showIcon]="true" 
                                                 [showOnFocus]="true" [showOtherMonths]="true"
                                                 (onSelect)="refreshTimeline(temporarySchedule[indice])" ></p-calendar>
@@ -126,7 +126,7 @@
                                                 <p-calendar *ngIf="isScheduleToChange(temporarySchedule[indice])" 
                                                 [(ngModel)]="temporarySchedule[indice].end"  
                                                 [readonlyInput]="true"
-                                                dateFormat="mm-dd-yy"
+                                                dateFormat="mm/dd/yy"
                                                 name="scheduleEnd{{indice}}" [showIcon]="true" 
                                                 [showOnFocus]="true" [showOtherMonths]="true"
                                                 (onSelect)="refreshTimeline(temporarySchedule[indice])" ></p-calendar>
@@ -511,6 +511,6 @@
 <!-- Validation -->
 <br>
 <div *ngIf="processReviewSchedule&&temporarySchedule&&simulateReviewSchedule" style="text-align:center">
-    <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" (click)="simulationSchedule()"></button>
+    <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" (click)="validationSchedule()"></button>
 </div>
 <br>

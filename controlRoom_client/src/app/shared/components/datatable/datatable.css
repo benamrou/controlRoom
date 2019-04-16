@@ -81,7 +81,7 @@
 
 .ui-datatable-scrollable-header,
 .ui-datatable-scrollable-footer {
-    overflow: hidden;
+   overflow: hidden;
 }
 
 .ui-datatable-scrollable .ui-datatable-scrollable-header,

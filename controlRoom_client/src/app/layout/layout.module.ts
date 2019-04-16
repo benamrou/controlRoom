@@ -9,6 +9,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 
 import {GridsterModule} from '../shared/';
+import {DialogModule, ButtonModule} from '../shared/components';
 
 import { LabelsResolver} from '../shared/services/index';
 
@@ -18,6 +19,7 @@ import { LabelsResolver} from '../shared/services/index';
         LayoutRoutingModule,
         TranslateModule,
         GridsterModule,
+        DialogModule,ButtonModule, 
         NgbDropdownModule.forRoot()
     ],
     declarations: [LayoutComponent, SidebarComponent, HeaderComponent],

@@ -2,12 +2,22 @@
 /*******************************************/
 /* Override Prime-ng DATATABLE CSS         */
 /*******************************************/
-:host ::ng-deep .ui-datatable .ui-datatable-header {
-    background-color: #fff;
-    font-weight: 100;
-    font-size: smaller;
+
+:host ::ng-deep .CSV_Button {
+    color: white; 
+    background: #255; 
+    border-radius:20px;
+    border:0; 
+    font-size:1em;
 }
 
+:host ::ng-deep .CSV_Button:hover {
+    background: #2399e5; 
+}
+
+:host ::ng-deep  .ui-datatable th.ui-state-active {
+    color: red;
+}
 
 :host ::ng-deep .header_filter input {
     background-color: white;
@@ -18,9 +28,23 @@
     width: 400px;
 }
 
-:host ::ng-deep  .ui-datatable th.ui-state-active {
-    color: red;
+
+:host ::ng-deep .ui-datatable th.ui-state-active {
+    color:red;
 }
+
+
+:host ::ng-deep .ui-datatable table {
+    table-layout: auto;
+}
+
+
+:host ::ng-deep .ui-datatable .ui-datatable-header {
+    background-color: #fff;
+    font-weight: 100;
+    font-size: smaller;
+}
+
 
 p-dataTable.ui-widget-header::ng-deep {
     background-color: #fff !important; 
@@ -36,21 +60,6 @@ p-dataTable.ui-widget-header::ng-deep {
     font-size: 0.5em;
 }
 
-:host ::ng-deep .ui-datatable th.ui-state-active {
-    color:red;
-}
-
-:host ::ng-deep .CSV_Button {
-    color: white; 
-    background: #255; 
-    border-radius:20px;
-    border:0; 
-    font-size:1em;
-}
-
-:host ::ng-deep .CSV_Button:hover {
-    background: #2399e5; 
-}
 
 :host ::ng-deep .ui-datatable .ui-paginator {
     background: white;
@@ -58,9 +67,6 @@ p-dataTable.ui-widget-header::ng-deep {
     font-size: smaller;
 }
 
-:host ::ng-deep .ui-datatable table {
-    table-layout: auto;
-}
 
 //:host ::ng-deep .ui-datatable-resizable {
     //height: -webkit-fill-available;
@@ -83,3 +89,26 @@ p-dataTable.ui-widget-header::ng-deep {
 }
 
 :host ::ng-deep .ui-lightbox-content.ui-lightbox-loading + a { display:none; } 
+
+// Notification - Dialog
+:host ::ng-deep .ui-dialog.ui-widget .ui-dialog-titlebar {
+    padding: 0.2em 1.5em;
+}
+:host ::ng-deep .ui-dialog.ui-widget .ui-dialog-content {
+    padding: 1em 0.5em 1em 2em;
+    font-size: larger;
+}
+
+:host ::ng-deep .ui-dialog.ui-widget .ui-dialog-titlebar .ui-dialog-title {
+    font-size: 1em;
+}
+
+:host ::ng-deep .ui-widget-content {
+    border: none;
+    border-top: 1px solid #D5D5D5;
+}
+
+// Input no outline
+:host ::ng-deep input, input:valid {
+    outline: none;
+}
