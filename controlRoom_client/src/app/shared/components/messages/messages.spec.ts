@@ -4,7 +4,7 @@ import { Messages } from './messages';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { Button } from '../button/button';
-import { FormsModule } from '../../../../node_modules/@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { MessageService } from '../common/messageservice';
 import { Message } from '../common/api';
 

@@ -100,7 +100,7 @@ describe('InputSwitch', () => {
 
       const onFocusSpy = spyOn(inputswitch,"onFocus").and.callThrough();
       const onBlurSpy = spyOn(inputswitch,"onBlur").and.callThrough();
-      const onModelTouchedSpy = spyOn(inputswitch,"onModelTouched").and.callThrough();
+      const onModelTouchedSpy= spyOn(inputswitch, "onInputChange").and.callThrough(); // = spyOn(inputswitch,"onModelTouched").and.callThrough();
       const inputEl = fixture.debugElement.query(By.css('input')).nativeElement;
       const inputSwitchEl = fixture.debugElement.query(By.css('div')).nativeElement;
       inputEl.dispatchEvent(new Event('focus'));

@@ -16,7 +16,7 @@ export class SidebarComponent {
 
     @Output() collapsedEvent = new EventEmitter<boolean>();
     
-    constructor(private translate: TranslateService, public router: Router, private _userService: UserService, private _labelService: LabelService) {
+    constructor(private translate: TranslateService, public router: Router, public _userService: UserService, private _labelService: LabelService) {
         this.translate.addLangs(['en', 'fr', 'ur', 'es', 'it', 'fa', 'de']);
         this.translate.setDefaultLang('en');
         const browserLang = this.translate.getBrowserLang();

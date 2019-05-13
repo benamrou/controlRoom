@@ -1,7 +1,10 @@
 import {Component, ViewEncapsulation, ViewChild} from '@angular/core';
-import { SupplierScheduleService, Supplier, SupplierSchedule, SupplierPlanning } from '../../shared/services/index';
-import { SelectItem, Chips, Message, DataGrid, Schedule, FullCalendar } from '../../shared/components/index';
+import { SupplierScheduleService, Supplier, SupplierSchedule, SupplierPlanning } from '../../shared/services/';
+import { Dialog, SelectItem, Chips, Message, DataGrid, Schedule, FullCalendar } from '../../shared/components/';
+import { MessageService } from '../../shared/components/';
 import {DatePipe} from '@angular/common';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/toPromise';
 
 /**
  * In GOLD 5.10, there is no automation to generate the supplier planning automatically using the
@@ -23,7 +26,7 @@ import {DatePipe} from '@angular/common';
 	moduleId: module.id,
     selector: 'schedule',
     templateUrl: './supplier.schedule.component.html',
-    providers: [SupplierScheduleService],
+    providers: [SupplierScheduleService, MessageService],
     styleUrls: ['./supplier.schedule.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
@@ -64,11 +67,16 @@ export class SupplierScheduleComponent {
    colorPermanentOrder : any = ['#FFFACD', '#FFD700', '#F0E68C', '#FFDAB9', '#F0E68C', '#FFDAB9', '#FFFFE0'];
    colorPermanentDelivery : any = ['#00FF00', '#00FF00', '#00FF00', '#00FF00', '#00FF00', '#00FF00', '#00FF00'];
 
+   // Completion handler
+   displayUpdateCompleted: boolean;
+   msgDisplayed: string;
+
   // Calendar
   dateNow: Date;
   day: any = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  constructor(private _scheduleService: SupplierScheduleService, private datePipe: DatePipe) {
+  constructor(private _scheduleService: SupplierScheduleService, private datePipe: DatePipe,
+              private _messageService: MessageService) {
     datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
 
@@ -88,13 +96,14 @@ export class SupplierScheduleComponent {
 			right: '' 
     };
 
+    this.displayUpdateCompleted = false;
 
   }
 
   search() {
     //this.searchCode = searchCode;
     this.razSearch();
-    this.msgs.push({severity:'info', summary:'Info Message', detail: 'Looking for the supplier schedule : ' + JSON.stringify(this.searchCode)});
+    this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for the supplier schedule : ' + JSON.stringify(this.searchCode)});
     this._scheduleService.getSupplierScheduleInfo(this.searchCode)
             .subscribe( 
                 data => { this.searchResult = data; // put the data returned from the server in our variable
@@ -102,9 +111,9 @@ export class SupplierScheduleComponent {
               },
                 error => {
                       // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                      this.msgs.push({severity:'error', summary:'ERROR Message', detail: error });
+                      this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                 },
-                () => {this.msgs.push({severity:'warn', summary:'Info Message', detail: 'Retrieved ' + 
+                () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Retrieved ' + 
                                      this.searchResult.length + ' reference(s).'});
                 }
             );
@@ -151,7 +160,7 @@ export class SupplierScheduleComponent {
       // Need to refresh timline before pushing - Calculate the column day number.
       this.refreshTimeline(copyRegularSchedule);
       this.temporarySchedule.push(Object.assign({}, copyRegularSchedule));
-      console.log("TemporarySchedule " + i + '  => ' + JSON.stringify(this.temporarySchedule));
+      //console.log("TemporarySchedule " + i + '  => ' + JSON.stringify(this.temporarySchedule));
      }
     //this.processReviewSchedule = true;
   }
@@ -168,14 +177,14 @@ export class SupplierScheduleComponent {
     this.simulationPermanentScheduleAfter();
 
     //console.log('Simulate:' + JSON.stringify(this.simulateSchedule));
-    console.log('Validate:' + JSON.stringify(this.validateSchedule));
+    //console.log('Validate:' + JSON.stringify(this.validateSchedule));
   }
 
   simulationPermanentScheduleBefore() {
     let oneDay = 1000 * 60 * 60 * 24 ;
     let backDay = 20;
     let day;
-    console.log('simulationPermanentScheduleBefore : ' +JSON.stringify(this.selectedElement.schedules));
+    //console.log('simulationPermanentScheduleBefore : ' +JSON.stringify(this.selectedElement.schedules));
     for (let i=0; i < this.selectedElement.schedules.length; i ++) {
         let weekday;
         let startDate = new Date(Date.now());
@@ -321,7 +330,7 @@ export class SupplierScheduleComponent {
     let oneDay = 1000 * 60 * 60 * 24 ;
     for (let i=0; i < this.temporarySchedule.length; i ++) {
       if (this.temporarySchedule[i].temporary) {
-        console.log('simulationTemporarySchedule : ' + JSON.stringify(this.temporarySchedule[i]));
+        //console.log('simulationTemporarySchedule : ' + JSON.stringify(this.temporarySchedule[i]));
         let startDate = new Date(this.temporarySchedule[i].start);
         let endDate = new Date(this.temporarySchedule[i].end);
         /**  Supplier Planning is the FOUPLAN */ 
@@ -336,6 +345,7 @@ export class SupplierScheduleComponent {
             supplierPlanning.start = this.datePipe.transform(this.temporarySchedule[i].start, 'MM/dd/yyyy');
             supplierPlanning.end = this.datePipe.transform(this.temporarySchedule[i].end, 'MM/dd/yyyy');
             supplierPlanning.suppliercode = this.temporarySchedule[i].weeklySchedule[0].schedule.suppliercode;
+            supplierPlanning.description = this.temporarySchedule[i].weeklySchedule[0].schedule.description;
             supplierPlanning.commercialcontract = this.temporarySchedule[i].weeklySchedule[0].schedule.commercialcode;
             supplierPlanning.servicecontract = this.temporarySchedule[i].weeklySchedule[0].schedule.externalcode;
             supplierPlanning.addresschain = this.temporarySchedule[i].weeklySchedule[0].schedule.addresschaincode;
@@ -357,7 +367,7 @@ export class SupplierScheduleComponent {
               case this.day[4]: // Friday
                 weekday = 4;
                 break;
-              case this.day[5]: // Saturdayr
+              case this.day[5]: // Saturday
                 weekday = 5;
                 break;
               case this.day[6]: // Sunday
@@ -369,15 +379,18 @@ export class SupplierScheduleComponent {
             //console.log('Weekday : ' + weekday);
             let j =0;
             let timeline = new Date(startDate);
+            //console.log('endDate : ' + endDate);
             //console.log('Timeline : ' + timeline);
             //console.log('k : ' + k);
             //console.log('weekday : ' + weekday);
-            while (  j < 6 && (endDate.getTime() >= timeline.getTime())) {
+            while (  j < 7 && (endDate.getTime() >= timeline.getTime())) {
               timeline.setTime(timeline.getTime() +  oneDay);
               startDate = new Date(this.temporarySchedule[i].start);
+              console.log('Adding simulation tempororarySchedule day : ' + (weekday + j)%7);
               switch ((weekday + j)%7) {
               case 0:
-                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderMonday) {       
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderMonday || 
+                   this.temporarySchedule[i].weeklySchedule[k].schedule.orderMonday == '1') {       
                   //console.log ( "Monday !");
                   this.simulateSchedule = [...this.simulateSchedule,Object.assign({}, 
                       this.transformSimulateScheduleDate(i, startDate, 
@@ -396,7 +409,8 @@ export class SupplierScheduleComponent {
                 }
                 break;
               case 1:
-                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderTuesday) {   
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderTuesday ||
+                    this.temporarySchedule[i].weeklySchedule[k].schedule.orderTuesday == '1') {   
                   //console.log ( "Tuesday !");
                   this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
                       this.transformSimulateScheduleDate(i, startDate, 
@@ -414,7 +428,8 @@ export class SupplierScheduleComponent {
                 }
                 break;
               case 2:
-                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderWednesday) {       
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderWednesday ||
+                  this.temporarySchedule[i].weeklySchedule[k].schedule.orderWednesday == '1') {    
                   //console.log ( "Wednesday ! Schedule # " + i);
                   this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
                       this.transformSimulateScheduleDate(i, startDate, 
@@ -432,7 +447,8 @@ export class SupplierScheduleComponent {
                 }
                 break;
               case 3:
-                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderThursday) {       
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderThursday ||
+                    this.temporarySchedule[i].weeklySchedule[k].schedule.orderThursday == '1') {    
                   //console.log ( "Thursday !");
                   this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
                       this.transformSimulateScheduleDate(i, startDate, 
@@ -450,7 +466,8 @@ export class SupplierScheduleComponent {
                 }
                 break;
               case 4:
-                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderFriday) {       
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderFriday ||
+                    this.temporarySchedule[i].weeklySchedule[k].schedule.orderFriday == '1') {       
                   //console.log ( "Friday !");
                   this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
                       this.transformSimulateScheduleDate(i, startDate, 
@@ -468,7 +485,8 @@ export class SupplierScheduleComponent {
                 }
                 break;
               case 5:
-                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderSaturday) {    
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderSaturday ||
+                      this.temporarySchedule[i].weeklySchedule[k].schedule.orderSaturday == '1') {    
                   //console.log ( "Saturday !");
                   this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
                       this.transformSimulateScheduleDate(i, startDate, 
@@ -486,7 +504,8 @@ export class SupplierScheduleComponent {
                 }
                 break;
               case 6:
-                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderSunday) {       
+                if (this.temporarySchedule[i].weeklySchedule[k].schedule.orderSunday ||
+                    this.temporarySchedule[i].weeklySchedule[k].schedule.orderSunday == '1') {        
                   //console.log ( "Sunday !");
                   this.simulateSchedule= [...this.simulateSchedule,Object.assign({}, 
                       this.transformSimulateScheduleDate(i, startDate, 
@@ -513,6 +532,8 @@ export class SupplierScheduleComponent {
         }
       }
     }
+    console.log('simulateSchedule : ' + JSON.stringify(this.simulateSchedule));
+    console.log('validateSchedule : ' + JSON.stringify(this.validateSchedule));
     this.simulateReviewSchedule = true;
   }
 
@@ -552,7 +573,7 @@ export class SupplierScheduleComponent {
         }
         let j =0;
         let timeline = new Date(startDate);
-        while ( j<40 && (endDate > timeline) && this.temporarySchedule[i].temporary) {
+        while ( j<40 && (endDate > timeline)) {
         timeline.setTime(timeline.getTime()+ oneDay);
         //console.log('Min Temporary : ' + this.getMinDateTemporarySchedule(endDate));
         //console.log('Timeline / j : ' + timeline + ' / ' + j);
@@ -739,11 +760,12 @@ export class SupplierScheduleComponent {
     let startDate, endDate, weekSchedule, currentWeekDay, lessDays;
     let oneDay = 1000 * 60 * 60 * 24 ;
     let oneWeek = 1000 * 60 * 60 * 24 * 7;
-    console.log('Refresh : ' + JSON.stringify(schedule));
-    console.log('Refresh schedule.start : ' + schedule.start);
+    //console.log('Refresh : ' + JSON.stringify(schedule));
+    //console.log('Refresh schedule.start : ' + schedule.start);
     if (schedule.start !== null) {
       try {
-        startDate = new Date(schedule.start); 
+        startDate = new Date(schedule.start.getTime() - schedule.start.getTimezoneOffset()*60*1000)
+        //startDate = new Date(schedule.start); 
         endDate = new Date(schedule.end); 
         //Timezone issue
         startDate.setMinutes( startDate.getMinutes() + startDate.getTimezoneOffset() );
@@ -753,7 +775,7 @@ export class SupplierScheduleComponent {
         if (schedule.numberWeekDays < 2) { schedule.numberWeekDays = 1; schedule.widthTable = 1100; }
         if (schedule.numberWeekDays >=  2) { schedule.widthTable = 1100 + 700 * (<number>schedule.numberWeekDays-1) } // Restrict to two weeks
         
-        console.log('schedule.numberWeekDays : ' + schedule.numberWeekDays);
+        //console.log('schedule.numberWeekDays : ' + schedule.numberWeekDays);
         
         schedule.numberWeekDaysArray= this.numberDaysWeekToArray(schedule);
         
@@ -762,27 +784,27 @@ export class SupplierScheduleComponent {
         lessDays = currentWeekDay == 6 ? 0 : currentWeekDay ;
         let dateFirst = new Date(new Date(first).setDate(first.getDate() - lessDays));
 
-        /*console.log('startDate : ' + startDate);
+        console.log('startDate : ' + startDate);
         console.log('endDate : ' + endDate);
         console.log('currentWeekDay : ' + currentWeekDay);
         console.log('lessDays : ' + lessDays);
         console.log('first : ' + first);
-        console.log('dateFirst : ' + dateFirst);*/
+        console.log('dateFirst : ' + dateFirst);
         let sdate = new Date(dateFirst);
         schedule.columnSchedule = [];
         schedule.weeklySchedule = schedule.weeklySchedule.slice(0,1);
-        console.log('schedule : ' + JSON.stringify(schedule));
+        //console.log('schedule : ' + JSON.stringify(schedule));
 
 
         for (let i = 0; i < schedule.numberWeekDays; i++) {
           if (schedule.weeklySchedule.length-1 < i) {
               // Create additional temporarySchedule
-              console.log('Create additional temporary : ' +i);
+              //console.log('Create additional temporary : ' +i);
               weekSchedule = new TemporaryScheduleWeek();
               weekSchedule.schedule = (Object.assign({}, schedule.weeklySchedule[i-1].schedule));
               schedule.weeklySchedule.push(weekSchedule);
           }
-          console.log('Column set up : '+ i);
+          console.log('Column set up : '+ i + ' - ' + dateFirst.getTime());
           sdate.setTime(dateFirst.getTime() + (0 + 7*i) * oneDay);
           schedule.columnSchedule.push(this.datePipe.transform(sdate, 'MM/dd'));
           schedule.columnName.push(this.datePipe.transform(sdate, 'EEE'));
@@ -829,25 +851,80 @@ export class SupplierScheduleComponent {
    * @param  
    */
   validationSchedule() {
-    this.msgs.push({severity:'info', summary:'Info Message', detail: 'Supplier schedule is being updated'});
-    for (let i =0; i < this.validateSchedule.length; i++) {
-      console.log(' i : ' + i + ' - ' + JSON.stringify(this.validateSchedule[i]));
-        this._scheduleService.updateSchedule(this.validateSchedule[i])
+    this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Supplier schedule is being updated'});
+    //const t = await this.deleteSchedule().toPromise();
+    this.deleteSchedule().subscribe (
+        data => {},
+        err => {},
+        () => { //console.log('Ok deletion conpleted');
+              this.createSchedule().subscribe (
+                data => {},
+                err => {},
+                () => { //console.log('Ok creation conpleted');
+                  // Step 3 - execute job
+                  console.log('run job ');
+                  this.updateSchedule().subscribe (
+                    data => {},
+                    err => {},
+                    () => { //console.log('Ok update conpleted');
+                    // Step 3 - execute job
+                    this._messageService.add({severity:'success', summary:'Info Message', detail: 'Supplier schedule has been updated'});
+                    
+                    this.msgDisplayed = 'Vendor schedule ' + this.validateSchedule[0].suppliercode + ' - ' + 
+                                        this.validateSchedule[0].description + ' has been successfully updated.';
+                    this.displayUpdateCompleted = true;
+                  });
+              });
+          });
+   }
+
+  deleteSchedule(): Observable<boolean> {
+    return new Observable( observer => {  
+      //console.log(' i : ' + i + ' - ' + JSON.stringify(this.validateSchedule[i]));
+        this._scheduleService.deleteSchedule(this.validateSchedule[0])
         .subscribe( 
-            data => {  
-              // put the data returned from the server in our variable
-              //console.log(JSON.stringify(this.searchResult));  
-          },
-            error => {
-                  // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                  this.msgs.push({severity:'error', summary:'ERROR Message', detail: error });
-            },
-            () => { }
-        );
-      }
+            data => { },
+            error => { this._messageService.add({severity:'error', summary:'ERROR Message', detail: error }); },
+            () => { console.log('Deletion request Ok: ');
+                    console.log('Observer deletion completed');
+                    observer.complete();
+                }
+            );
+          }
+      );
     }
 
-    
+  createSchedule(): Observable<boolean> {
+    let count = 1;
+    return new Observable( observer => {  
+        for (let i =0; i < this.validateSchedule.length; i++) {
+          console.log(' i : ' + i + ' - ' + JSON.stringify(this.validateSchedule[i]));
+            this._scheduleService.createSchedule(this.validateSchedule[i])
+            .subscribe( 
+                data => { console.log('data ' +i ); },
+                error => { this._messageService.add({severity:'error', summary:'ERROR Message', detail: error }); },
+                () => { console.log('Creation request Ok: ' +i )
+                      count = count +1;
+                      console.log('count: ' + count + ' / ' +  'this.validateSchedule.length: ' + this.validateSchedule.length);
+                      if (count == this.validateSchedule.length) {
+                        observer.complete();
+                      }
+                    }
+                );
+            }
+          }
+      );
+    }
+
+  updateSchedule(): Observable<boolean> {
+    return new Observable( observer => {  
+            this._scheduleService.updateSchedule()
+            .subscribe( 
+                data => { },
+                error => { this._messageService.add({severity:'error', summary:'ERROR Message', detail: error }); },
+                () => { observer.complete();});
+        });
+    }
   /**
    * ActivateDay copy from previous/after day information to the new day
    * @param schedule schedule
@@ -869,9 +946,9 @@ export class SupplierScheduleComponent {
           break;
           case 1:
             console.log('Ticked Monday');
-            if (schedule.schedule.leadTimeMonday === null) {  
+            if (schedule.schedule.leadTimeMonday === null || schedule.schedule.leadTimeMonday === '0') {  
               console.log('Monday is null');
-            if (schedule.schedule.leadTimeSunday !== null) {  
+            if (schedule.schedule.leadTimeSunday !== '0') {  
                 schedule.schedule.collectionTimeMonday1 = schedule.schedule.collectionTimeSunday1;
                 schedule.schedule.collectionTimeMonday2 = schedule.schedule.collectionTimeSunday2;
                 schedule.schedule.collectionTimeMonday3 = schedule.schedule.collectionTimeSunday3;
@@ -893,8 +970,11 @@ export class SupplierScheduleComponent {
             }
           break;
           case 2:
-            if (schedule.schedule.leadTimeTuesday === null) {  
-            if (schedule.schedule.leadTimeMonday !== null) {  
+          console.log('Copy from Tuesday : schedule.schedule.leadTimeTuesday : ' + schedule.schedule.leadTimeTuesday);
+          console.log('Copy from Tuesday : schedule.schedule.leadTimeMonday : ' + schedule.schedule.leadTimeMonday);
+            if (schedule.schedule.leadTimeTuesday === null || schedule.schedule.leadTimeTuesday == '0') {  
+            if (schedule.schedule.leadTimeMonday != '0') {  
+                console.log('Copying from Monday to Tuesday');
                 schedule.schedule.collectionTimeTuesday1 = schedule.schedule.collectionTimeMonday1;
                 schedule.schedule.collectionTimeTuesday2 = schedule.schedule.collectionTimeMonday2;
                 schedule.schedule.collectionTimeTuesday3 = schedule.schedule.collectionTimeMonday3;
@@ -915,8 +995,8 @@ export class SupplierScheduleComponent {
             }
           break;
           case 3:
-            if (schedule.schedule.leadTimeWednesday === null) {  
-            if (schedule.schedule.leadTimeTuesday !== null) {  
+            if (schedule.schedule.leadTimeWednesday === null || schedule.schedule.leadTimeWednesday == '0') {  
+            if (schedule.schedule.leadTimeTuesday != '0') {  
                 schedule.schedule.collectionTimeWednesday1 = schedule.schedule.collectionTimeTuesday1;
                 schedule.schedule.collectionTimeWednesday2 = schedule.schedule.collectionTimeTuesday2;
                 schedule.schedule.collectionTimeWednesday3 = schedule.schedule.collectionTimeTuesday3;
@@ -937,8 +1017,8 @@ export class SupplierScheduleComponent {
             }
           break;
           case 4:
-            if (schedule.schedule.leadTimeThursday === null) {  
-            if (schedule.schedule.leadTimeWednesday !== null) {  
+            if (schedule.schedule.leadTimeThursday === null || schedule.schedule.leadTimeThursday == '0') {  
+            if (schedule.schedule.leadTimeWednesday != '0') {  
                 schedule.schedule.collectionTimeThursday1 = schedule.schedule.collectionTimeWednesday1;
                 schedule.schedule.collectionTimeThursday2 = schedule.schedule.collectionTimeWednesday2;
                 schedule.schedule.collectionTimeThursday3 = schedule.schedule.collectionTimeWednesday3;
@@ -959,8 +1039,8 @@ export class SupplierScheduleComponent {
             }
           break;
           case 5:
-            if (schedule.schedule.leadTimeFriday === null) {  
-            if (schedule.schedule.leadTimeThursday !== null) {  
+            if (schedule.schedule.leadTimeFriday === null || schedule.schedule.leadTimeFriday == '0') {  
+            if (schedule.schedule.leadTimeThursday != '0') {  
                 schedule.schedule.collectionTimeFriday1 = schedule.schedule.collectionTimeThursday1;
                 schedule.schedule.collectionTimeFriday2 = schedule.schedule.collectionTimeThursday2;
                 schedule.schedule.collectionTimeFriday3 = schedule.schedule.collectionTimeThursday3;
@@ -981,8 +1061,8 @@ export class SupplierScheduleComponent {
             }
           break;
           case 6:
-            if (schedule.schedule.leadTimeSaturday === null) {  
-            if (schedule.schedule.leadTimeFriday !== null) {  
+            if (schedule.schedule.leadTimeSaturday === null || schedule.schedule.leadTimeSaturday == '0') {  
+            if (schedule.schedule.leadTimeFriday != '0') {  
                 schedule.schedule.collectionTimeSaturday1 = schedule.schedule.collectionTimeFriday1;
                 schedule.schedule.collectionTimeSaturday2 = schedule.schedule.collectionTimeFriday2;
                 schedule.schedule.collectionTimeSaturday3 = schedule.schedule.collectionTimeFriday3;

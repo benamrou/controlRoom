@@ -4,10 +4,10 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false,
+  production: true,
   serverURL: 'http://localhost:8090',
   serverBatchURL: 'http://localhost:8091'
   // @HOME
   //serverURL: 'http://192.168.1.101:8090'
-  // EYC Office
+  // HEINENS Office
 };

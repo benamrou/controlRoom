@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit {
 	displaySwitch: boolean;
 	style: any;
 
-	constructor( private _logginService: LogginService, private _userService: UserService, 
+	constructor( private _logginService: LogginService, public _userService: UserService, 
 				 private _labelService: LabelService, private router: Router) { 
 		this.environments = [];
         if (!localStorage.getItem('isLoggedin')) {
@@ -96,5 +96,6 @@ export class HeaderComponent implements OnInit {
 		let envTypeInt = parseInt(this.envTypeConnected);
 		this.appForegroundColorEnvironment = this._userService.userInfo.mainEnvironment[0].titleColor;
 		this.appEnvironment = this._userService.userInfo.mainEnvironment[0].title;
+		console.log('Aoo environment : ' + this.appEnvironment );
 	}
 }

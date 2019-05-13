@@ -41,7 +41,7 @@ export class Environment {
    public dbType: string;
    public shortDescription: string;
    public longDescription: string;
-   public ipaAdress: string;
+   public ipAddress: string;
    public portNumber: string;
    public connectionID: string;
    public connectionPassword: string;
@@ -148,7 +148,7 @@ export class UserService {
                     env.shortDescription = data[i].ENVSDESC;
                     env.longDescription = data[i].ENVLDESC;
                     env.dbType = data[i].ENVDBTYPE;
-                    env.ipaAdress = data[i].ENVIP;
+                    env.ipAddress = data[i].ENVIP;
                     env.portNumber = data[i].ENVPORT;
                     env.connectionID = data[i].ENVUSER;
                     env.connectionPassword = data[i].ENVPASSWORD;
@@ -171,6 +171,10 @@ export class UserService {
                         if ((env.level === 'USER') || 
                             (env.level === 'CORPORATE' && this.userInfo.mainEnvironment.length === 0)) {
                            //console.log('MAIN ' + JSON.stringify(env));
+
+                            localStorage.setItem('ENV_IP',env.ipAddress);
+                            localStorage.setItem('ENV_ID',env.connectionID);
+                            localStorage.setItem('ENV_PASS',env.connectionPassword);
                             this.userInfo.mainEnvironment.push(env);
                             this.userInfo.envDefaultLanguage = env.defaultLanguage;
                             this.userInfo.sid.push(env.dbLink);
@@ -180,6 +184,7 @@ export class UserService {
                 }
                 localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
                 localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
+                
                 //console.log('Env: ' + JSON.stringify (this.userInfo));
         });
     }
@@ -202,6 +207,10 @@ export class UserService {
                 if (this.userInfo.envUserAccess[i].id === envID) {
                     this.userInfo.mainEnvironment.push(this.userInfo.envUserAccess[i]);
                     this.userInfo.sid.push(this.userInfo.envUserAccess[i].dbLink);
+
+                    localStorage.setItem('ENV_IP',this.userInfo.envUserAccess[i].ipAddress);
+                    localStorage.setItem('ENV_ID',this.userInfo.envUserAccess[i].connectionID);
+                    localStorage.setItem('ENV_PASS',this.userInfo.envUserAccess[i].connectionPassword);
                 }
             }
         } else {
@@ -209,6 +218,10 @@ export class UserService {
                 if (this.userInfo.envUserAccess[i].id === envID) {
                     this.userInfo.mainEnvironment.push(this.userInfo.envCorporateAccess[i]);
                     this.userInfo.sid.push(this.userInfo.envUserAccess[i].dbLink);
+
+                    localStorage.setItem('ENV_IP',this.userInfo.envUserAccess[i].ipAddress);
+                    localStorage.setItem('ENV_ID',this.userInfo.envUserAccess[i].connectionID);
+                    localStorage.setItem('ENV_PASS',this.userInfo.envUserAccess[i].connectionPassword);
                 }
             }
         }

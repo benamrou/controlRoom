@@ -35,6 +35,7 @@ export class SupplierSchedule {
    public internalcode: string;
    public externalcode: string;
    public suppliercode: string;
+   public description: string;
    public commercialcode: string;
    public addresschaincode: string;
    public sites: Site [] = [];
@@ -169,6 +170,7 @@ export class SupplierScheduleService {
   private baseSupplierScheduleUrl: string = '/api/supplierschedule/';
   private deleteSupplierScheduleURL: string = '/api/supplierschedule/1/';
   private createSupplierScheduleURL: string = '/api/supplierschedule/2/';
+  private executeSupplierScheduleURL: string = '/api/execute/1/';
   
   private request: string;
   private params: HttpParams;
@@ -255,6 +257,7 @@ export class SupplierScheduleService {
                         schedule.externalcode = data[i].FCSNUM;
                         schedule.suppliercode = data[i].FOUCNUF;
                         schedule.commercialcode = data[i].FCCNUM;
+                        schedule.description = data[i].FOULIBL;
                         schedule.addresschaincode = data[i].LISNFILF;
                         schedule.frequency = data[i].LISREAP;
                         schedule.frequencyUnit = data[i].LISUREAP;
@@ -404,13 +407,38 @@ export class SupplierScheduleService {
     return false;
   }
 
-  updateSchedule(schedule : SupplierPlanning) {
+  updateSchedule() {
     /** 3 steps process */   
     /* 1. Insert into FOUPLAN - deletion schedule for the data during the period */
     /* 2. Insert into FOUPLAN - Creation schedule for the data during the period */
     /* 3. Execute the batch schedule integration */
+    console.log ('Update request');
+    this.request = this.executeSupplierScheduleURL;
+    let headersSearch = new HttpHeaders();
+    this.params= new HttpParams();
+    let dateNow = new Date();
+    
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    headersSearch = headersSearch.set('ENV_COMMAND', //'ls -lrt');
+        // Initialization
+        this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
+        'export GOLD_DEBUG=1; ' +
+        // Batch to execute
+        'psifa60p psifa60p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ' +
+        this._userService.userInfo.envDefaultLanguage + ' 1;');
 
-    // {00109,00109CC,0,00109SC,05/06/2018,05/12/2018,abe,90061}
+    console.log('headersSearch update: ' + JSON.stringify(headersSearch));
+    return this.http.execute(this.request, this.params, headersSearch).pipe(map(response => {
+            let data = <any> response;
+    }));
+    
+  }
+   
+  deleteSchedule (schedule: SupplierPlanning) {
+    /* 1. Insert into FOUPLAN - deletion schedule for the data during the period */
+    // {00109,00109CC,0,00109SC,05/06/2018,05/12/2018,abe,90061}\
+    console.log ('Delete request');
     this.request = this.deleteSupplierScheduleURL;
     let headersSearch = new HttpHeaders();
     let options = new HttpHeaders();
@@ -429,8 +457,39 @@ export class SupplierScheduleService {
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
     //console.log('Parameters delete: ' + JSON.stringify(this.params));
-    return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
-        }));
+    }));
   }
+
+  createSchedule (schedule: SupplierPlanning) {
+    /* 2. Insert into FOUPLAN - Creation schedule for the data during the period */
+    // {AO1468572,AO14685C,0,AO14685S,05/22/2018,1010,06/01/2018,0600,lnevels,1,4,5,6,7,8}
+    console.log ('Create request');
+    this.request = this.createSupplierScheduleURL;
+    let headersSearch = new HttpHeaders();
+    let options = new HttpHeaders();
+    this.params= new HttpParams();
+    this.params = this.params.set('PARAM', schedule.suppliercode);
+    this.params = this.params.append('PARAM', schedule.commercialcontract);
+    this.params = this.params.append('PARAM',schedule.addresschain);
+    this.params = this.params.append('PARAM', schedule.servicecontract);
+    this.params = this.params.append('PARAM', schedule.orderDate);
+    this.params = this.params.append('PARAM', schedule.orderTime);
+    this.params = this.params.append('PARAM', schedule.deliveryDate);
+    this.params = this.params.append('PARAM', schedule.deliveryTime);
+    this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+    for (let i =0; i < schedule.sites.length; i++) {
+        this.params = this.params.append('PARAM', schedule.sites[i].code);
+    }
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+    //console.log('Parameters delete: ' + JSON.stringify(this.params));
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+            let data = <any> response;
+    }));
+  }
+
+
 }

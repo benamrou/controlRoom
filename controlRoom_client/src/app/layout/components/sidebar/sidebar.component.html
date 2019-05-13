@@ -68,7 +68,7 @@
 </nav>
 <nav class="sidebar_admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" >
     <!-- Administration section -->
-    <div class="list-group" *ngIf="this._userService.userInfo.type==1">
+    <div class="list-group" *ngIf="this._userService.userInfo.type=='1'">
         <div class="nested-menu" >
                 <a class="list-group-item" (click)="addExpandClass('settings')" [ngClass]="{'isDisabled':this._userService.userInfo.type==1}">
                     <span><i class="fa fa-cogs"></i> &nbsp; {{ 'General Settings' | translate}} </span>
