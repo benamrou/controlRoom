@@ -8,7 +8,7 @@
 <div class="row pull-right"  >
     <span style="margin-right:20px">Counting date : </span>
     <span style="margin-right:50px">
-        <p-calendar [(ngModel)]="countingDate"  name="countingDate" [showIcon]="true" [inputStyle]="{display: inline}"
+        <p-calendar [(ngModel)]="countingDate"  name="countingDate" [showIcon]="true" [inputStyle]=""
                     [showOnFocus]="true" [showOtherMonths]="false"></p-calendar>
         <button type="submit" pButton (click)="search()" icon="fas fa-search" label="Search" [disabled]="countingDate === ''" 
                 style="margin-left: 45px"></button>

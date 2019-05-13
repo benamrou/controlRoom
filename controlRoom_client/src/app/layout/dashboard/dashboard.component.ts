@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit {
 
     // Step 1 - Get list of widgets allowed for the user
     // Step 2 - Execute the authorized widgets
-    constructor(private _widgetService: WidgetService) {
+    constructor(public _widgetService: WidgetService) {
         
         this.grid = new DashboardGridComponent ();
         // Step 1 - Get list of widgets allowed for the user

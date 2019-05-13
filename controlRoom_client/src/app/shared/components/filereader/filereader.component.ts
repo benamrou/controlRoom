@@ -13,7 +13,7 @@ import {PrimeTemplate,SharedModule} from '../common/shared';
 
 @Component({
     styleUrls: ['./filereader.component.scss'],
-    template: `
+    /*template: `
         <div [ngClass]="'ui-filereader ui-widget'" [ngStyle]="style" [class]="styleClass">
             <div class="ui-filereader-buttonbar ui-widget-header ui-corner-top">
              <div class="row">
@@ -57,7 +57,8 @@ import {PrimeTemplate,SharedModule} from '../common/shared';
                 <p-templateLoader [template]="contentTemplate"></p-templateLoader>
             </div>
         </div>
-    `
+    `*/
+    template: '<div></div>'
 })
 export class FileReaderComponent implements OnInit,AfterContentInit {
     

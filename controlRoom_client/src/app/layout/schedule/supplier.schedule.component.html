@@ -2,7 +2,7 @@
 
 <br>
 <div class="content-section implementation">
-    <p-growl [value]="msgs" sticky="sticky"></p-growl>
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
 <br>
 
@@ -16,6 +16,15 @@
     </div>
 </div>
 <p></p>
+<p-dialog header="Update completed" [(visible)]="displayUpdateCompleted" modal="modal" width="500" responsive="true" [maximizable]="false">
+    <span>{{msgDisplayed}}</span>
+        <p-footer>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
+                    label="Ok">
+            </button>
+        </p-footer>
+</p-dialog>
 
 <!-- Panel resul -->
 <!-- Result panel of the resarch --> 
@@ -25,10 +34,9 @@
              [resizableColumns]="true" columnResizeMode="expand"
              [rows]="5"  [rowsPerPageOptions]="[5,10,15]"
              [paginator]="true" [pageLinks]="3" 
-             [responsive]="true" [totalRecords]="totalRecords"
+             [responsive]="true" 
              [reorderableColumns]="true" 
              [globalFilter]="gb"
-             [paginatorDropdownAppendTo]="body"
              (onRowSelect)="onRowSelect($event)"
              selectionMode="single" [(selection)]="selectedElement" >
     <p-header >
@@ -482,7 +490,7 @@
             <table cellspacing="5" style="border-collapse:separate">
                 <tbody>
                     <tr>
-                        <td style="background:#FF8C00; border: 2px darkslategray; width: 50px; border-style:dotted;"></td>
+                        <td style="background:#FF4500; border: 2px darkslategray; width: 50px; border-style:dotted;"></td>
                         <td style="padding-left: 20px; font-size: smaller;">Temporary Order day schedule</td>
                     </tr>
                     <tr>
@@ -509,7 +517,8 @@
 </div>
 
 <!-- Validation -->
-<br>
+<p></p>
+<p style='border-style: solid; border: black'></p>
 <div *ngIf="processReviewSchedule&&temporarySchedule&&simulateReviewSchedule" style="text-align:center">
     <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" (click)="validationSchedule()"></button>
 </div>

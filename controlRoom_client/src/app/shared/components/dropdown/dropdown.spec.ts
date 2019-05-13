@@ -3,7 +3,7 @@ import { TestBed, ComponentFixture, tick, fakeAsync, async } from '@angular/core
 import { By } from '@angular/platform-browser';
 import {Dropdown, DropdownItem} from './dropdown';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '../../../../node_modules/@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
 
 @Component({

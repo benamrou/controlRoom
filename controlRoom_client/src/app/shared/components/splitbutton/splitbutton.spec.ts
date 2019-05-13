@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { SplitButton } from './splitbutton';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ButtonModule } from '../button/button';
-import { RouterTestingModule } from '../../../../node_modules/@angular/router/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('SplitButton', () => {
   

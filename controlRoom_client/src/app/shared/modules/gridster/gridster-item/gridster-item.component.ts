@@ -301,17 +301,22 @@ export class GridsterItemComponent implements OnInit, OnChanges, AfterViewInit, 
     }
 
     ngOnDestroy() {
-        this.gridster.removeItem(this.item);
-        this.gridster.gridList.pullItemsToLeft();
-        this.gridster.render();
+        try {
+            this.gridster.removeItem(this.item);
+            this.gridster.gridList.pullItemsToLeft();
+            this.gridster.render();
 
-        this.gridster.updateCachedItems();
+            this.gridster.updateCachedItems();
 
-        this.subscriptions.forEach((sub: Subscription) => {
-            sub.unsubscribe();
-        });
-        this.disableDraggable();
-        this.disableResizable();
+            this.subscriptions.forEach((sub: Subscription) => {
+                sub.unsubscribe();
+            });
+            this.disableDraggable();
+            this.disableResizable();
+        } catch (err) {
+            console.log('Destroy Gridster error - ' + JSON.stringify(err));
+
+        }
     }
 
     updateElemenetPosition() {

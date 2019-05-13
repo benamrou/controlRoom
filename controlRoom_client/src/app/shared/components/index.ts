@@ -73,8 +73,9 @@ export * from  './utils/objectutils';
 export * from  './fullcalendar/fullcalendar';
 
 /* Dashoard SB 4*/
-export * from  './sidebar/sidebar';
-export * from  './header/header.component';
+//export * from  './sidebar/sidebar';
+//export * from  './header/header.component';
+//export * from  './header/header.module';
 
 /* Extension Prime Widget */
 export * from  './filereader/filereader.component';

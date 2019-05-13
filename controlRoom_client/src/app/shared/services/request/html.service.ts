@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import {Http, XHRBackend, RequestOptions, Request, BrowserXhr,BaseRequestOptions,
-        RequestOptionsArgs, Response, Headers, ResponseOptionsArgs} from '@angular/http';
+        RequestOptionsArgs, Response, Headers, ResponseOptionsArgs, ResponseType} from '@angular/http';
 import { MockBackend, MockConnection } from '@angular/http/testing';
 import {Observable, ObservableInput} from 'rxjs';
 import {catchError } from 'rxjs/operators';
 import {environment} from '../../../../environments/environment';
+import { map } from 'rxjs/operators';
 import {NotAccessibleComponent} from '../../../not-accessible/not-accessible.component';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -13,11 +14,13 @@ import 'rxjs/add/operator/catch';
 @Injectable()
 export class HttpService  {
 
+  environment_mode: string;
   baseUrl: string = environment.serverURL;
   baseBatchUrl: string = environment.serverBatchURL;
 
   constructor(private httpClient: HttpClient) {
     // super(backend,option);
+
     console.log('BASEURL : ' + this.baseUrl);
     console.log('BASE_BATCH_URL : ' + this.baseBatchUrl);
   }
@@ -145,6 +148,10 @@ export class HttpService  {
     headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
     headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
     headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+    headersOption = headersOption.set('ENV_IP', localStorage.getItem('ENV_IP'));
+    headersOption = headersOption.set('ENV_ID', localStorage.getItem('ENV_ID'));
+    headersOption = headersOption.set('ENV_PASS', localStorage.getItem('ENV_PASS'));
+
 
     console.log ('Request : ' + url + ' / ' + JSON.stringify(headersOption));
     //console.log('headers '  + JSON.stringify(headersOption));
