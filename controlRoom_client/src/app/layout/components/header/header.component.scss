@@ -44,3 +44,12 @@ $topnav-background-color: #222;
     opacity: 0.5;
     text-decoration: none;
   }
+
+:host ::ng-deep .dropdown-item {
+      padding: 0.15rem 0.5rem;
+      font-size: smaller;
+  } 
+
+:host ::ng-deep  .dropdown-item:focus, .dropdown-item:hover {
+      background-color: darkgrey;
+}
