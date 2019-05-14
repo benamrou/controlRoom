@@ -13,6 +13,7 @@ export class AuthentificationGuard implements CanActivate {
             return true;
         }
 
+        
         // not logged in so redirect to login page
         this.router.navigate(['/login']);
         return false;

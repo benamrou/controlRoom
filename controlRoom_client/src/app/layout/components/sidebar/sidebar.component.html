@@ -70,10 +70,10 @@
     <!-- Administration section -->
     <div class="list-group" *ngIf="this._userService.userInfo.type=='1'">
         <div class="nested-menu" >
-                <a class="list-group-item" (click)="addExpandClass('settings')" [ngClass]="{'isDisabled':this._userService.userInfo.type==1}">
+                <a class="list-group-item" (click)="addExpandClass('settings')" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}">
                     <span><i class="fa fa-cogs"></i> &nbsp; {{ 'General Settings' | translate}} </span>
                 </a>
-                <div *ngIf="this._userService.userInfo.type==2">
+                <div>
                 <li class="nested" [ngClass]="{'expand' : showMenu === 'settings' }">
                     <ul class="submenu" >
                         <li>

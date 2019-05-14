@@ -10,10 +10,10 @@ const routes: Routes = [
     { path: 'error', loadChildren: './server-error/server-error.module#ServerErrorModule' },
     { path: 'not-accessible', loadChildren: './not-accessible/not-accessible.module#NotAccessibleModule' },
     { path: 'access-denied', loadChildren: './access-denied/access-denied.module#AccessDeniedModule' },
-    { path: '404', redirectTo: './layout/layout.module#LayoutModule' },
+    { path: '404', redirectTo: './layout/layout.module#LayoutModule', canActivate: [AuthentificationGuard] },
     { path: '403', loadChildren: './not-accessible/not-accessible.module#NotAccessibleModule' },
-    { path: 'not-found', redirectTo: './layout/layout.module#LayoutModule' },
-    { path: '**', redirectTo: './layout/layout.module#LayoutModule' }
+    { path: 'not-found', redirectTo: './layout/layout.module#LayoutModule', canActivate: [AuthentificationGuard] },
+    { path: '**', redirectTo: './layout/layout.module#LayoutModule', canActivate: [AuthentificationGuard] }
 ];
 
 @NgModule({

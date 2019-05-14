@@ -38,11 +38,11 @@
         <!-- Panel Email -->    
                         <li class="nav-item dropdown" ngbDropdown >
                             <!-- <div class="dropdown"> -->
-                            <a class="nav-link" href="javascript:void(0)" ngbDropdownToggle [ngClass]="{'isDisabled':_userService.userInfo.type=='1'}">
+                            <a class="nav-link" href="javascript:void(0)" ngbDropdownToggle [ngClass]="{'isDisabled':_userService.userInfo.type=='2'}">
                                     <i class="fa fa-envelope"></i> <b class="caret"></b><span class="sr-only">(current)</span>
                             </a>
                             <div *ngIf="this._userService.userInfo.type=='2'">
-                                <ul class="dropdown-menu dropdown-menu-right messages" ngbDropdownMenu [ngClass]="{'isDisabled':_userService.userInfo.type=='1'}">
+                                <ul class="dropdown-menu dropdown-menu-right messages" ngbDropdownMenu>
                                     <li class="media">
                                         <img class="d-flex align-self-center mr-3" src="http://i.huffpost.com/gadgets/slideshows/461162/slide_461162_6224974_sq50.jpg" alt="Generic placeholder image">
                                         <div class="media-body">
@@ -73,11 +73,11 @@
         
         <!-- Panel Alert -->    
                         <li class="nav-item dropdown" ngbDropdown >
-                            <a href="javascript:void(0)" class="nav-link" ngbDropdownToggle [ngClass]="{'isDisabled':this._userService.userInfo.type=='1'}">
+                            <a href="javascript:void(0)" class="nav-link" ngbDropdownToggle [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}">
                                 <i class="fa fa-bell"></i> <b class="caret"></b><span class="sr-only">(current)</span>
                             </a>
                             <div *ngIf="this._userService.userInfo.type=='2'">
-                                <ul class="dropdown-menu dropdown-menu-right" ngbDropdownMenu [ngClass]="{'isDisabled':this._userService.userInfo.type=='1'}">
+                                <ul class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
                                     <a href="javascript:void(0)" class="dropdown-item">Pending Task <span class="badge badge-info">6</span></a>
                                     <a href="javascript:void(0)" class="dropdown-item">In queue <span class="badge badge-info"> 13</span></a>
                                     <a href="javascript:void(0)" class="dropdown-item">Mail <span class="badge badge-info"> 45</span></a>
@@ -89,7 +89,7 @@
         
         <!-- Panel Language -->    
                         <li class="nav-item dropdown" ngbDropdown>
-                            <a href="javascript:void(0)" class="nav-link" ngbDropdownToggle>
+                            <a href="javascript:void(0)" class="nav-link" ngbDropdownToggle [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}">
                                 <i class="fa fa-language"></i>  <b class="caret"></b>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
@@ -105,9 +105,9 @@
                                 <i class="fa fa-user"></i> {{_userService.userInfo.userNameDisplay}} <b class="caret"></b>
                             </a>
                             <div class="dropdown-menu-right" ngbDropdownMenu>
-                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='1'}"><i class="fa fa-fw fa-user"></i> Profile</a>
-                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='1'}"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
-                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='1'}"><i class="fa fa-fw fa-gear"></i> Settings</a>
+                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-user"></i> Profile</a>
+                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
+                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-gear"></i> Settings</a>
                                 <a class="dropdown-item" href="jvascript:void(0)" (click)="rltAndLtr()"><i class="fa fa-fw fa-bars"></i> Switch Menu</a>
                                 <a class="dropdown-item" [routerLink]="['/login']" (click)="onLoggedout()"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                             </div>
