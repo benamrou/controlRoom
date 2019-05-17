@@ -104,23 +104,22 @@ function executeLibQueryCallback(ticketId, queryNum, params, user, database_sid,
             if (result) {
                 fetchRowsFromRSCallback(id, dbConnect.getConnection(), result.outBinds.cursor, 
                         numRows, request, response, user, 0, callback);
-                //resultSet.close();
-                //dbConnect.releaseConnection();
+                //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
             }
+            //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
         }) .catch (function(err) {
-            //resultSet.close();
-            //dbConnect.releaseConnection();
+            //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
             console.log('SQLQuery - executeLibQueryCallback : ' + err); 
             //app.next(err);
         });
+        
     };
 
 module.exports.executeLibQueryCallback = executeLibQueryCallback; 
     function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, clear, callback)
     {
      if (resultSet == null) {
-            logger.log(ticketId, " Resulset empty...", user);
-            doClose(resultSet);         // close the result set and release the connection
+            logger.log(ticketId, " Resulset empty...", user);    // close the result set and release the connection
             callback(null,[]);
      }
      else {
@@ -132,60 +131,46 @@ module.exports.executeLibQueryCallback = executeLibQueryCallback;
             callback(null,err); 
             logger.log(ticketId, " Error... : " + JSON.stringify(err),user);
             //logger.log (ticketId, "********* Resulset 1111 *********** : " + JSON.stringify(resultSet));
-            //resultSet.close();
+            //dbConnect.releaseConnections(resultSet, connection)
             return; 
           } 
 
           else if (rows.length == 0) {  // no rows, or no more rows
-            //doClose(connection, resultSet);         // close the result set and release the connection
             if (clear != 1) {
                 callback(null,rows);  
                 logger.log(ticketId, rows.length + " Object(s) returned... [FETCH] :)", user);
             }
             logger.log (ticketId, JSON.stringify(resultSet), user);
-            //resultSet.close();
+            //dbConnect.releaseConnections(resultSet, connection) // close the result set and release the connection
             return;
           } else if (rows.length > 0) {
             if (clear == 1) {
                 fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, 1, callback);  // get next set of rows
-                
-                //doClose(connection, resultSet);
-                //doClose(resultSet);         // close the result set and release the connection
+                //dbConnect.releaseConnections(resultSet, connection) // close the result set and release the connection
             }
             else {
                 logger.log(ticketId, rows.length + " Object(s) returned... [FETCH]", user);
                 logger.log(ticketId, rows, user);
-                //doClose(resultSet);         // close the result set and release the connection
                 callback(null,rows);
                 clear = 1;
                 // If more than max Rows Fetch again
                 fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, 1, callback);  // get next set of rows
+                //dbConnect.releaseConnections(resultSet, connection) // close the result set and release the connection
            
              }
           }
         });
+
+        //dbConnect.releaseConnections(resultSet, connection)
       //resultSet.next
      }
-     //doClose(resultSet);
+
+     //dbConnect.releaseConnections(resultSet, connection)
     }
 
-    function doRelease(connection)
+    function doClose(results, connection)
     {
-        connection.doRelease(
-            function(err)
-            {
-            if (err) { console.error(err.message); }
-            });
-    }
-
-    function doClose(connection, resultSet)
-    {
-    resultSet.close(
-        function(err)
-        {
-        if (err) { console.error(err.message); }
-        doRelease(connection);
-        });
+        dbConnect.releaseConnections(results, connection)
     }
     //return module;
 
