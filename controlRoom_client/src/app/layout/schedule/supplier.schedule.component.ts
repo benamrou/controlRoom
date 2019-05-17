@@ -895,7 +895,7 @@ export class SupplierScheduleComponent {
     }
 
   createSchedule(): Observable<boolean> {
-    let count = 1;
+    let count = 0;
     return new Observable( observer => {  
         for (let i =0; i < this.validateSchedule.length; i++) {
           console.log(' i : ' + i + ' - ' + JSON.stringify(this.validateSchedule[i]));
@@ -906,7 +906,7 @@ export class SupplierScheduleComponent {
                 () => { console.log('Creation request Ok: ' +i )
                       count = count +1;
                       console.log('count: ' + count + ' / ' +  'this.validateSchedule.length: ' + this.validateSchedule.length);
-                      if (count == this.validateSchedule.length) {
+                      if (count >= this.validateSchedule.length) {
                         observer.complete();
                       }
                     }
