@@ -32,9 +32,7 @@ function createPool(config) {
                     console.log('ERROR - Creating connection pool ' + err);
                     return reject(err);
                 }
-
                 pool = p;
-
                 resolve(pool);
             }
         );
@@ -107,6 +105,7 @@ function getConnection() {
                     connection.execute(statement.sql, statement.binds, statement.options, function(err) {
                         callback(err);
                     });
+                    connection.close({drop: true});
                 },null
                 /*function (err) {
                     if (err) {
@@ -145,7 +144,7 @@ function execute(sql, bindParams, options, connection) {
 
 module.exports.execute = execute;
 
-function releaseConnection(connection) {
+/*function releaseConnection_ORIGINAL(connection) {
     console.log('005 - Release connection');
     pool._logStats();
     async.eachSeries(
@@ -167,9 +166,23 @@ function releaseConnection(connection) {
             });
         }
     );
+}*/
+
+function releaseConnections(results, connection) {
+    process.nextTick(() => {
+
+        try { results.resultset.close(); } catch (error ) {};
+        try { results.resultSet.close(); } catch (error ) {};
+        try { results.close(); } catch (error ) {};
+        try { connection.release() } catch (error ) {};
+        try { connection.close() } catch (error ) {};
+        try { pool.close(2) } catch (error ) {};
+        try { terminatePool() } catch (error ) {};
+    })
 }
 
-module.exports.releaseConnection = releaseConnection;
+//module.exports.releaseConnection = releaseConnection;
+module.exports.releaseConnections = releaseConnections;
 
 function executeQuery(sql, bindParams, options) {
     options.isAutoCommit = true;
@@ -180,14 +193,14 @@ function executeQuery(sql, bindParams, options) {
                     .then(function(results) {
                         resolve(results);
                         process.nextTick(function() {
-                            releaseConnection(connection);
+                            releaseConnections(results, connection);
                         });
                     })
                     .catch(function(err) {
                     console.log('008 - Executing query' + err);
                         reject(err);
                         process.nextTick(function() {
-                            releaseConnection(connection);
+                            releaseConnections(results, connection);
                         });
                     });
             })
@@ -210,58 +223,32 @@ function executeCursor(sql, bindParams, options) {
                     .then(function(results) {
                         resolve(results)
                          .then(function (r) {
-                            results.close();
+                            try {results.resultSet.close(); } catch (error) {}
+                            releaseConnections(results, connection);
                         });
 
+                        try {results.resultSet.close(); } catch (error) {}
+                        releaseConnections(results, connection);
                         process.nextTick(function() {
-                            releaseConnection(connection);
+                            try {results.resultSet.close(); } catch (error) {}
+                            releaseConnections(results, connection);
                         });
                     })
                     .catch(function(err) {
                         reject(err);
-                        results.close();
+                        try {results.resultSet.close(); } catch (error) {}
+                        releaseConnections(results, connection);
                         process.nextTick(function() {
-                            releaseConnection(connection);
+                            try {results.resultSet.close(); } catch (error) {}
+                            releaseConnections(results, connection);
                         });
                     });
             })
             .catch(function(err) {
+                try {results.resultSet.close(); } catch (error) {}
                 reject(err);
             });
     });
-    /*
-    return new Promise(function(resolve, reject) {
-        // create new connection everytime (faster)
-        
-        oracledb.getConnection(config.db.connAttrs)
-            .then(function(connection){
-                execute(sql, bindParams, options, connection)
-                    .then(function(results) {
-                        resolve(results);
-                        process.nextTick(function() {
-                        releaseConnection(connection);
-                        });
-
-                    })
-                    .catch(function(err) {
-                        console.log ('010 - Error while executeCursor() ' + err);
-                        reject(err);
-                        process.nextTick(function() {
-                            releaseConnection(connection);
-                        });
-                    });
-            })
-            .catch(function(err) {
-                console.log ('011 - Error2 while executeCursor() ' + err );
-                releaseConnection(connection);
-                reject(err);
-            });
-    })
-    .catch(function(err) {
-        console.log ('012 - Error3 while executeCursor() ' + err);
-        //releaseConnection(connection);
-        //return reject(err);
-    });*/
 }
 
 module.exports.executeCursor = executeCursor;

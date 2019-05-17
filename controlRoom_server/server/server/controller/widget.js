@@ -56,7 +56,8 @@ module.get = function (request,response) {
                             request, response);
         });
 
-        app.get('/api/widget/3/', function (request, response) {
+        // AAP.GET to RETRIEVE WIDGET information
+        app.get('/api/widget/1/', function (request, response) {
         "use strict";
         response.setHeader('Access-Control-Allow-Origin', '*');
         // requestuest methods you wish to allow
@@ -69,7 +70,26 @@ module.get = function (request,response) {
                             "'{" + request.header('DATABASE_SID') + "}'", 
                             "'{" +request.header('LANGUAGE') + "}'", 
                             request, response);
+                            
         });
+
+        // AAP.GET to EXECUTE WIDGET information
+        app.get('/api/widget/0/', function (request, response) {
+        "use strict";
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        // requestuest methods you wish to allow
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+        SQL.executeLibQuery(SQL.getNextTicketID(),
+                           "WDG1000000", 
+                            "'{" + request.query.PARAM + "}'",
+                            request.header('USER'),
+                            "'{" + request.header('DATABASE_SID') + "}'", 
+                            "'{" +request.header('LANGUAGE') + "}'", 
+                            request, response);
+                            
+        });
+
     };
 
    return module;
