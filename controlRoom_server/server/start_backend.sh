@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # DEBUG=express* nodemon server_admin.js package.json
 echo -e "[${GREEN}PRE${NC}]\t Deactivating existing SERVER NODE..... \t[${GREEN}DONE${NC}]"
-kill -9 `ps aux | grep server_admin | awk '{print $2}'` >> /dev/null
+kill -9 `ps aux | grep server_admin | awk '{print $2}'` 2> /dev/null
 echo -e "[${GREEN}START${NC}]\t Starting SERVER NODE connecting to DB..... \t[${GREEN}DONE${NC}]"
 echo -e "[${GREEN}LAST${NC}]\t Daemonizing SERVER NODE..... \t\t\t[${GREEN}DONE${NC}]"
 # nohup /usr/bin/nodemon server_admin.js package.json &
