@@ -31,7 +31,7 @@ let idx: number = 0;
                         <ng-container *ngTemplateOutlet="tab.headerTemplate"></ng-container>
                     </ng-container>
                 </a>
-                <span *ngIf="tab.closable" class="ui-tabview-close fa fa-times" (click)="clickClose($event,tab)"></span>
+                <span *ngIf="tab.closable" class="ui-tabview-close fas fa-times" (click)="clickClose($event,tab)"></span>
             </li>
         </ng-template>
     `,

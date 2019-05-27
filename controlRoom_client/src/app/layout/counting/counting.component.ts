@@ -105,7 +105,7 @@ export class CountingComponent {
             .subscribe( 
                 data => { if (data.counts.length > 0) {
                     this.searchResult = data; // put the data returned from the server in our variable
-                    //console.log('data: ' + JSON.stringify(data));
+                    console.log('data: ' + JSON.stringify(data));
                 }
                 //console.log(JSON.stringify(this.searchResult));  
                 this.performedResearch = true;

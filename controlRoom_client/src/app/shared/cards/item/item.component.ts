@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ViewEncapsulation, Input, OnChanges } from '@angular/core';
-import { SelectItem, Chips, Message, Schedule } from '../../components/index';
+import { SelectItem, Chips, Message, Schedule, FullCalendar } from '../../../shared/components/';
+
 import { ItemService, Item, Purchasing, Pricing, Retail, Substitution, Inventory } from '../../services/index';
 import {NgModule } from '@angular/core';
-import {} from 'fullcalendar';
 
 
 @Component({
@@ -15,6 +15,8 @@ import {} from 'fullcalendar';
     encapsulation: ViewEncapsulation.None
 })
 export class ItemComponent implements OnChanges {
+
+    @ViewChild('fc') fc: FullCalendar;
 
     //itemInternalCode\
     @Input() itemInternalCode: string;

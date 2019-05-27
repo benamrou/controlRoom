@@ -113,7 +113,7 @@ export class CountingService {
         this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
-                let data = <any>response.json()._body;
+                let data = <any> response;
                 let stat;
                 this.countResult = new CountResult();
                 let count = new Count();
@@ -183,13 +183,13 @@ export class CountingService {
         this.params= new HttpParams();
         this.options = new HttpHeaders();
         this.params = this.params.set('PARAM', countingDate);
-        this.params = this.params.set('PARAM', store);
-        this.params = this.params.set('PARAM', filename);
+        this.params = this.params.append('PARAM', store);
+        this.params = this.params.append('PARAM', filename);
         this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
-                let data = <any>response.json()._body;
+                let data = <any> response;
                 let stat, count, totalCount;                  
                 count = new Count();
                 count.totalcount = 0; 
@@ -244,13 +244,13 @@ export class CountingService {
         this.params= new HttpParams();
         this.options = new HttpHeaders();
         this.params = this.params.set('PARAM', countingDate);
-        this.params = this.params.set('PARAM', store);
-        this.params = this.params.set('PARAM', filename);
+        this.params = this.params.append('PARAM', store);
+        this.params = this.params.append('PARAM', filename);
         this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
-                let data = <any>response.json()._body;
+                let data = <any> response;
                 let stat, count, totalCount;                  
                 count = new CountStep();
                 for(let i = 0; i < data.length; i ++) {
@@ -300,14 +300,14 @@ export class CountingService {
         this.params= new HttpParams();
         this.options = new HttpHeaders();
         this.params = this.params.set('PARAM', countingDate);
-        this.params = this.params.set('PARAM', store);
-        this.params = this.params.set('PARAM', filename);
+        this.params = this.params.append('PARAM', store);
+        this.params = this.params.append('PARAM', filename);
         this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+                let data = <any> response;
                 let movementInformation = new MovementData();
-                let data = response.json();
                 if (data.length > 0) { Object.assign(movementInformation.movements , data); }
                 return movementInformation;
             }));
@@ -325,16 +325,16 @@ export class CountingService {
         this.params= new HttpParams();
         this.options = new HttpHeaders();
         this.params = this.params.set('PARAM', countingDate);
-        this.params = this.params.set('PARAM', store);
-        this.params = this.params.set('PARAM', filename);
+        this.params = this.params.append('PARAM', store);
+        this.params = this.params.append('PARAM', filename);
         this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         //console.log('Get Rejection');
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
                 //console.log('Get Rejection : ' + JSON.stringify(response));
+                let data = <any> response;
                 let rejectionInformation = new RejectionData();
-                let data = response.json();
                 if (data.length > 0) { Object.assign(rejectionInformation.rejections , data); }
 
                 //console.log('rejectionInformation : ' + JSON.stringify(rejectionInformation));

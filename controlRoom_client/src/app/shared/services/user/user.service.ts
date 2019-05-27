@@ -107,6 +107,8 @@ export class UserService {
                 this.userInfo.lastUserUpdate = data[0].USERUTIL;
                 this.userInfo.type = data[0].USERTYPE;
 
+                console.log ('data[0] : ' + JSON.stringify(data[0]));
+                console.log ('USERLNAME : ' + data[0].USERLNAME);
                 this.userInfo.userNameDisplay = this.userInfo.firstname + ' ' + this.userInfo.lastname.substring(0,1) + '.';
                 return this.userInfo;
             });

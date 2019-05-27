@@ -50,7 +50,7 @@ export class LabelService {
 
         return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
                 this.labels = new Labels();
-                let data = <any>response.json()._body;
+                let data = <any> response;
                 //console.log('Data labels : ' + JSON.stringify(data));
                 if (data.length > 0) { Object.assign(this.labels.label , data); }
                 //console.log ('Load finish labels - ' + JSON.stringify(this.labels));
