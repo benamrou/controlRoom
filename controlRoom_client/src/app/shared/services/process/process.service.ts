@@ -44,14 +44,14 @@ export class ProcessService {
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
         this.params = this.params.set('PARAM', processDate);
-        this.params = this.params.set('PARAM', batchName);
-        this.params = this.params.set('PARAM', args);
+        this.params = this.params.append('PARAM', batchName);
+        this.params = this.params.append('PARAM', args);
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
                 let processInformation = new ProcessData();
-                let data = <any>response.json()._body;
+                let data = <any> response;
                 if (data.length > 0) { Object.assign(processInformation.processes , data); }
                 return processInformation;
        }));

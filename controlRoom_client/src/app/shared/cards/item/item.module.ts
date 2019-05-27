@@ -4,9 +4,9 @@ import { FormsModule }  from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ItemComponent } from './item.component';
-import 'fullcalendar'; // needed for Scheduler
+
 import { DataTableModule, MultiSelectModule, ButtonModule, ChipsModule,
-         MessagesModule, GrowlModule, InputTextModule,
+         MessagesModule, GrowlModule, InputTextModule,FullCalendarModule,
         TooltipModule, PanelModule, DataListModule, ScheduleModule, CalendarModule, TabViewModule, DialogModule } from '../../components/index';
 
 @NgModule({
@@ -14,7 +14,7 @@ import { DataTableModule, MultiSelectModule, ButtonModule, ChipsModule,
                DataTableModule,MultiSelectModule,
                ButtonModule, ChipsModule, 
                MessagesModule, GrowlModule, InputTextModule,
-               TabViewModule, DialogModule,
+               TabViewModule, DialogModule, FullCalendarModule,
                TooltipModule, PanelModule, DataListModule, ScheduleModule, CalendarModule ],
     declarations: [ItemComponent],
     exports: [ItemComponent],

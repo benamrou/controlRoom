@@ -8,8 +8,10 @@
 <div class="row pull-right"  >
     <span style="margin-right:20px">Counting date : </span>
     <span style="margin-right:50px">
-        <p-calendar [(ngModel)]="countingDate"  name="countingDate" [showIcon]="true" [inputStyle]=""
-                    [showOnFocus]="true" [showOtherMonths]="false"></p-calendar>
+        <p-calendar [(ngModel)]="countingDate"  name="countingDate" 
+                    dateFormat="mm/dd/yy" [showIcon]="true" 
+                    [showOnFocus]="true" [showOtherMonths]="true">
+        </p-calendar>
         <button type="submit" pButton (click)="search()" icon="fas fa-search" label="Search" [disabled]="countingDate === ''" 
                 style="margin-left: 45px"></button>
     </span>
@@ -40,13 +42,14 @@
              (onRowSelect)="handleRowSelect($event)">
 
     <p-header >
-        <div class="ui-widget-header pull-right ui-left-inner-addon">
-            <span class="fa fa-search"></span>
-            <input  type="text" #gb
-              placeholder="Type text to filter..." width="500px">
+        <div class="pull-right">
+        <input  type="text" #gb placeholder="Type text to filter..." 
+            style="border-radius: 10px">
         </div>
-        <div class="ui-helper-clearfix">
-            <button type="button" pButton icon="fa-file-o" iconPos="left" label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+        <div class="ui-helper-clearfix" >
+        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+            class="CSV_Button"
+            label="CSV" (click)="result.exportCSV()" style="float:left"></button>
         </div>
         <!--div style="text-align:right">
             <p-multiSelect [options]="columnOptions" [(ngModel)]="columns"></p-multiSelect>
@@ -203,7 +206,7 @@
             {{ alert?.msg }}
             <i *ngIf="alert.type === 'danger'" class="fa fa-exclamation-triangle pull-right" aria-hidden="true"></i>
             <i *ngIf="alert.type === 'warning'" class="fa fa-exclamation-triangle pull-right" aria-hidden="true"></i>
-            <i *ngIf="alert.type === 'success'" class="fa fa-thumbs-o-up pull-right" aria-hidden="true"></i>
+            <i *ngIf="alert.type === 'success'" class="fa fa-thumbs-up pull-right" aria-hidden="true"></i>
             <i *ngIf="alert.type === 'info'" class="fa fa-info-circle pull-right" aria-hidden="true"></i>
         </alert>
     </div>
@@ -212,7 +215,7 @@
 
 <!-- Panel for rejection and In-between Operations -->
 <p-tabView *ngIf="selectedElement">
-    <p-tabPanel header="Rejection" leftIcon="fa-times">
+    <p-tabPanel header="Rejection" leftIcon="fas fa-eject"  >
         <div  item-width="400px" table-layout="fixed" *ngIf="rejectionData">
             <p-dataTable #resultRejection [value]="rejectionData.rejections" sortMode="multiple"
                         [resizableColumns]="true" columnResizeMode="expand"
@@ -223,13 +226,14 @@
                         [globalFilter]="gb"
                         selectionMode="single" tableStyleClass="table-layout: auto;">
                 <p-header >
-                    <div class="ui-widget-header pull-right ui-left-inner-addon">
-                        <span class="fa fa-search"></span>
-                        <input  type="text" #gb
-                        placeholder="Type text to filter..." width="500px">
+                    <div class="pull-right">
+                    <input  type="text" #gb placeholder="Type text to filter..." 
+                        style="border-radius: 10px">
                     </div>
-                    <div class="ui-helper-clearfix">
-                        <button type="button" pButton icon="fa-file-o" iconPos="left" label="CSV" (click)="resultRejection.exportCSV()" style="float:left"></button>
+                    <div class="ui-helper-clearfix" >
+                    <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                        class="CSV_Button"
+                        label="CSV" (click)="result.exportCSV()" style="float:left"></button>
                     </div>
                     <!--div style="text-align:right">
                         <p-multiSelect [options]="columnOptions" [(ngModel)]="columns"></p-multiSelect>
@@ -239,7 +243,7 @@
             </p-dataTable>
         </div>   
     </p-tabPanel>
-    <p-tabPanel header="In-Between Operation" leftIcon="fa-cogs" >
+    <p-tabPanel header="In-Between Operation" leftIcon="fas fa-cogs" >
         <div  item-width="400px" table-layout="fixed" *ngIf="movementData">
             <p-dataTable #resultMVT [value]="movementData.movements" sortMode="multiple"
                         [resizableColumns]="true" columnResizeMode="expand"
@@ -250,13 +254,14 @@
                         [globalFilter]="gb"
                         selectionMode="single" tableStyleClass="table-layout: auto;">
                 <p-header >
-                    <div class="ui-widget-header pull-right ui-left-inner-addon">
-                        <span class="fa fa-search"></span>
-                        <input  type="text" #gb
-                        placeholder="Type text to filter..." width="500px">
+                    <div class="pull-right">
+                    <input  type="text" #gb placeholder="Type text to filter..." 
+                        style="border-radius: 10px">
                     </div>
-                    <div class="ui-helper-clearfix">
-                        <button type="button" pButton icon="fa-file-o" iconPos="left" label="CSV" (click)="resultMVT.exportCSV()" style="float:left"></button>
+                    <div class="ui-helper-clearfix" >
+                    <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                        class="CSV_Button"
+                        label="CSV" (click)="result.exportCSV()" style="float:left"></button>
                     </div>
                     <!--div style="text-align:right">
                         <p-multiSelect [options]="columnOptions" [(ngModel)]="columns"></p-multiSelect>

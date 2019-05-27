@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
-import { SelectItem, Chips, Message, } from '../../shared/components/index';
+import { SelectItem, Chips, Message, FullCalendar } from '../../shared/components/index';
 import { SearchService, MessageService } from '../../shared/services/index';
 import { ItemComponent } from '../../shared/cards/';
 
@@ -23,7 +23,8 @@ export class SearchResultFormat {
 })
 
 export class SearchComponent {
-
+  
+  @ViewChild('fc') fc: FullCalendar;
   // Search action
    values: string [] = [];
    //msgs: Message[] = [];

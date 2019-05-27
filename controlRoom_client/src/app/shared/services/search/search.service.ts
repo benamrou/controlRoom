@@ -29,10 +29,12 @@ export class SearchService {
         // http://localhost:3300/api/search/?PARAM=10001,10002
         // http://localhost:3300/api/search/?PARAM=,962693
         for (let i =0; i < searchElement.length; i++) {
-            if (i != 0) {
-                this.params = this.params.set('PARAM', this.params.get('PARAM') || ',');
+            if (i == 0) {
+                this.params = this.params.set('PARAM', searchElement[i]);
             }
-            this.params = this.params.set('PARAM', this.params.get('PARAM') || searchElement[i]);
+            else {
+                this.params = this.params.append('PARAM', searchElement[i]);
+            }
         }
         //console.log('searchElement: ' + JSON.stringify(searchElement));
         //console.log('Params search: ' + JSON.stringify(this.params));

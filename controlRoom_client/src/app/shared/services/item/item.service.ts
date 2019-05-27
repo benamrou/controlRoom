@@ -227,7 +227,7 @@ export class ItemService {
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
-                let data = <any>response.json()._body;
+                let data = <any> response;
                 let lv, sv, lu, lucode, svcode;
                 this.itemInfo = new Item();
                 //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
@@ -353,7 +353,7 @@ export class ItemService {
 
 
         return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
-                let data = <any>response.json()._body;
+                let data = <any> response;
                 let retail;
                 this.pricingInfo = new Pricing();
                 //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
@@ -404,7 +404,7 @@ export class ItemService {
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
-                let data = <any>response.json()._body;
+                let data = <any> response;
                 let cost, discount;
                 this.purchasingInfo = new Purchasing();
                 //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
@@ -463,12 +463,12 @@ export class ItemService {
         this.request = this.baseSubstitutionUrl;
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
-        this.params.set('PARAM', itemCode);
+        this.params =this.params.set('PARAM', itemCode);
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
-                let data = <any>response.json()._body;
+                let data = <any> response;
                 let sub;
                 this.substitutionInfo = new Substitution();
                 //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
@@ -510,7 +510,7 @@ export class ItemService {
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
-                let data = <any>response.json()._body;
+                let data = <any> response;
                 let inv;
                 this.inventoryInfo = new Inventory();
                 //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));

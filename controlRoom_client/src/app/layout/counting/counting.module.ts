@@ -5,12 +5,12 @@ import { FormsModule }  from '@angular/forms';
 import { CountingComponent } from './counting.component';
 import { PanelModule, DataTableModule, MultiSelectModule,ButtonModule, TabMenuModule,TabViewModule, DialogModule,
          MessagesModule, GrowlModule, DataGridModule, AccordionModule,  CalendarModule } from '../../shared/components/index';
-import { AlertModule } from 'ngx-bootstrap/';
+import { AlertModule } from 'ngx-bootstrap/alert';
 import { CountingRoutingModule } from './counting-routing.module';
 import { PageHeaderModule } from '../../shared';
 
 @NgModule({
-    imports: [ RouterModule,CommonModule,FormsModule, PanelModule, AlertModule, TabMenuModule, TabViewModule,DialogModule,
+    imports: [ RouterModule,CommonModule,FormsModule, PanelModule, AlertModule.forRoot(), TabMenuModule, TabViewModule,DialogModule,
                DataTableModule,MultiSelectModule, ButtonModule, DataGridModule, AccordionModule,CalendarModule,
                MessagesModule, GrowlModule,
                CountingRoutingModule, PageHeaderModule ],

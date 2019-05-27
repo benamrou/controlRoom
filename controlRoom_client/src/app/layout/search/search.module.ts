@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SearchComponent } from './search.component';
 import { DataTableModule, MultiSelectModule, ButtonModule, ChipsModule,
-         MessagesModule, GrowlModule, ToastModule,
+         MessagesModule, GrowlModule, ToastModule, FullCalendarModule,
         TooltipModule } from '../../shared/components/index';
 
 import { ItemModule } from '../../shared/index';
@@ -20,7 +20,7 @@ import { PageHeaderModule } from '../../shared';
                MessagesModule, GrowlModule,
                TooltipModule, ItemModule,
                ToastModule,
-               StatModule,
+               StatModule,FullCalendarModule,
                SearchRoutingModule,
                PageHeaderModule ],
     declarations: [SearchComponent],

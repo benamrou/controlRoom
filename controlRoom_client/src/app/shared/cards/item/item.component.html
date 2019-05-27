@@ -127,9 +127,10 @@
                         <p-header>
                             Retail view
                         </p-header>
-                        <p-schedule [events]="itemRetailInfos.retails" [header]="headersRetail" [eventLimit]="4" [editable]="true"
+
+                        <p-fullCalendar #fc [events]="itemRetailInfos.retails" [header]="headersRetail" [eventLimit]="4" [editable]="true"
                             (onEventClick)="handleRetailClick($event)" >
-                        </p-schedule>
+                        </p-fullCalendar>
                         <p-dialog header="Retail Details" [(visible)]="dialogRetailVisible" [responsive]="true" showEffect="fade" [modal]="false" [contentStyle]="{'overflow':'visible'}"
                                 [style]="{'overflow':'visible'}" [resizable]="true" [width]="500">
                                 <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="retailSelected">
@@ -188,12 +189,12 @@
     &nbsp;
 </div>
 
-    <div class="row">
+    <div class="col-md-12">
         <div class="col-md-12">
             <div class="primary card-inverse">
                 <div class="card-header py-0 px-2">
-                    <div class="row">
-                        <div class="centered">
+                    <div class="col-md-12">
+                        <div class="col-md-12">
                             <p-panel [toggleable]="true">
                                 <p-header>
                                     <b>Substitution/Replacement</b>
@@ -218,12 +219,12 @@
 
     <!-- Inventory cross all locations in CEMTRAL and STOCK, on-going operations -->
 <br>
-    <div class="row">
+    <div class="col-md-12">
         <div class="col-md-12">
             <div class="primary card-inverse">
                 <div class="card-header py-0 px-2">
-                    <div class="row">
-                        <div class="centered">
+                    <div class="col-md-12">
+                        <div class="col-md-12">
                             <p-panel [toggleable]="true">
                                 <p-header>
                                     <b>Inventory</b>
