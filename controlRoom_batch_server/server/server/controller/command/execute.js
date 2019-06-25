@@ -113,9 +113,9 @@ module.get = function (request,response) {
                 
                 
                 //this.emit("error", this.sshObj.server.host + ": " + sessionText, null, true);
-                 //this.emit("exit");
+                this.emit("exit");
                 //sshObj._stream
-                //console.log(this.sshObj.server.host + ": host.onEnd event")
+                console.log(this.sshObj.server.host + ": host.onEnd event")
                 
                 // if callback is provided, errors will be passed into it
                 // else errors will be thrown
