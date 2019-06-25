@@ -34,6 +34,9 @@ export class Widget {
     public widutil: string;
     public widsnap: string;
     public widsnapfile: string;
+    public widchartx: string;
+    public widchartdata: string;
+    public widchartlegend: string;
     // Linked widget
     public lwqmwidid: string; 
     public lwqcwidid: string; 
@@ -54,6 +57,12 @@ export class Widget {
 
     public dataReady: boolean= false;
     public result: any = [];
+    public resultChartData: any = [];
+    public resultChartLegend: any = [];
+
+    public chartx: any = [];
+    public chartdata: any = [];
+    public chartlegend: any = [];
 }
 
 export class WidgetColumn {
@@ -131,6 +140,9 @@ export class WidgetService {
                 widget.widutil = data[i].WIDUTIL;
                 widget.widsnap = data[i].WIDSNAP;
                 widget.widsnapfile = data[i].WIDSNAPFILE;
+                widget.widchartx = data[i].WIDCHARTX;
+                widget.widchartdata = data[i].WIDCHARTDATA;
+                widget.widchartlegend = data[i].WIDCHARTLEGEND;
                 widget.lwqmwidid = data[i].LWQMWIDID;
                 widget.lwqmwidid = data[i].LWQMWIDID;
                 widget.lwqcwidid = data[i].LWQCWIDID;
@@ -166,17 +178,32 @@ export class WidgetService {
      */
     executeWidget (widget: Widget) {
         // Widget with snapfile, are capturing and sharing the flat file.
-        console.log('Start executeWidget - ' + widget.widid);
+        // console.log('Start executeWidget - ' + widget.widid);
+
+        // SNAPFILE
         if(widget.widsnapfile != null) {
             //console.log('WIDSNAPFILE => ' + widget.widsnapfile);
             //console.log('Router ' + this._router.url);
             return this.http.getMock(widget.widsnapfile)
             .map (data => {
-
                 //console.log('Data size '  + util.inspect(data.arrayBuffer.length));
                 widget.result = data; //Object.assign([], data);;
                 //return  Observable.of(widget);
             })
+        }
+        if (widget.widchart === '1') {
+            this.request = this.executeWidgetUrl;
+            this.params= new HttpParams();
+            this.params =  this.params.set('PARAM', widget.widid);
+            return this.http.get(this.request, this.params)
+            .map (data => {
+                    widget.result = data;
+                    widget.resultChartData = [ {
+                        data: widget.result[widget.chartdata],
+                        label: widget.result[widget.chartlegend] } 
+                    ];
+                    widget.resultChartLegend = widget.result[widget.chartx];
+            });
         }
         else {
             this.request = this.executeWidgetUrl;
@@ -184,7 +211,7 @@ export class WidgetService {
             this.params =  this.params.set('PARAM', widget.widid);
             return this.http.get(this.request, this.params)
             .map (data => {
-                widget.result = data;
+                    widget.result = data;
             });
         }
         //return Observable.of(this.widgetsInfo.widgets);

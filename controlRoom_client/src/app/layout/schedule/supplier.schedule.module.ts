@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule }  from '@angular/forms';
 import { SupplierScheduleComponent } from './supplier.schedule.component';
-import { PanelModule, DataTableModule, MultiSelectModule,ButtonModule, FullCalendarModule, DialogModule,
+import { PanelModule, TableModule, MultiSelectModule,ButtonModule, FullCalendarModule, DialogModule,
          MessagesModule, GrowlModule, DataGridModule, ScheduleModule, CalendarModule, ToastModule} from '../../shared/components/index';
 import { SupplierScheduleRoutingModule } from './supplier.schedule-routing.module';
 import { PageHeaderModule } from '../../shared';
@@ -11,7 +11,7 @@ import { PageHeaderModule } from '../../shared';
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, SupplierScheduleRoutingModule,
                PanelModule, 
-               DataTableModule,DialogModule, MultiSelectModule, ButtonModule, DataGridModule, ScheduleModule, FullCalendarModule,
+               TableModule,DialogModule, MultiSelectModule, ButtonModule, DataGridModule, ScheduleModule, FullCalendarModule,
                MessagesModule, GrowlModule, PageHeaderModule, CalendarModule, ToastModule ],
     declarations: [SupplierScheduleComponent],
     exports: [SupplierScheduleComponent],

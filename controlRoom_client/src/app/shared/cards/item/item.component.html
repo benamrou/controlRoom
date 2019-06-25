@@ -189,60 +189,85 @@
     &nbsp;
 </div>
 
-    <div class="col-md-12">
-        <div class="col-md-12">
-            <div class="primary card-inverse">
-                <div class="card-header py-0 px-2">
-                    <div class="col-md-12">
-                        <div class="col-md-12">
-                            <p-panel [toggleable]="true">
-                                <p-header>
-                                    <b>Substitution/Replacement</b>
-                                </p-header>
-                                    <p-dataTable #result [value]="itemSubstitutionInfos.details" sortMode="multiple"
-                                                [resizableColumns]="true" columnResizeMode="expand"
-                                                [rows]="2"  [rowsPerPageOptions]="[5,10,15]"
-                                                [paginator]="true" [pageLinks]="3" 
-                                                [responsive]="true" [totalRecords]="totalRecords"
-                                                [reorderableColumns]="true"
-                                                selectionMode="single" [(selection)]="selectedElement">
-                                        <p-column *ngFor="let col of columnsSubstitution" [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
-                                    </p-dataTable>
-                                    <i class="pull-right">{{itemSubstitutionInfos.details.length}} Substitutions/Replacements</i>
-                            </p-panel>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="primary card-inverse" style="width: 100%">
+    <div class="card-header py-0 px-2">
+        <p-panel [toggleable]="true">
+            <p-header>
+                <b>Substitution/Replacement</b>
+            </p-header>
+
+                <p-table #result [value]="itemSubstitutionInfos.details" sortMode="multiple" 
+                [rows]="5"  [rowsPerPageOptions]="[5,10,50,100]"
+                [paginator]="true" [pageLinks]="3" 
+                [columns]="columnsSubstitution"
+                selectionMode="single" [(selection)]="selectedElement" 
+                [resizableColumns]="true" columnResizeMode="expand"
+                [responsive]="true" [totalRecords]="itemSubstitutionInfos.details.length"
+                [reorderableColumns]="true" scrollHeight="400px"
+                [globalFilter]="gb" [autoLayout]="true"tableStyleClass="table-layout: auto;">
+            
+            <!-- HEADER -->
+                <ng-template pTemplate="header">            
+                    <tr>
+                        <th *ngFor="let col of columnsSubstitution" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+            <!-- BODY -->
+                <ng-template pTemplate="body" let-rowData let-columns="columnsSubstitution">
+                    <tr [pSelectableRow]="rowData">
+                        <td *ngFor="let col of columnsSubstitution" class="ui-resizable-column">
+                                {{rowData[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <i class="pull-right" style="font-size:smaller;" >{{itemSubstitutionInfos.details.length}} Substitions</i>
+        </p-panel>
     </div>
+</div>
 
     <!-- Inventory cross all locations in CEMTRAL and STOCK, on-going operations -->
 <br>
-    <div class="col-md-12">
-        <div class="col-md-12">
+    <div style="width: 100%">
             <div class="primary card-inverse">
                 <div class="card-header py-0 px-2">
-                    <div class="col-md-12">
-                        <div class="col-md-12">
-                            <p-panel [toggleable]="true">
-                                <p-header>
-                                    <b>Inventory</b>
-                                </p-header>
-                                    <p-dataTable #result [value]="itemInventoryInfos.details" sortMode="multiple"
-                                                [resizableColumns]="true" columnResizeMode="expand"
-                                                [rows]="50"  [rowsPerPageOptions]="[50,100,500]"
-                                                [paginator]="true" [pageLinks]="3" 
-                                                [responsive]="true" [totalRecords]="totalRecords"
-                                                [reorderableColumns]="true"
-                                                selectionMode="single" [(selection)]="selectedElement">
-                                        <p-column *ngFor="let col of columnsInventory" [field]="col.field" [header]="col.header" [sortable]="true" [style]="{'text-align':'right'}"></p-column>
-                                    </p-dataTable>
-                                    <i class="pull-right">{{itemInventoryInfos.details.length}} Inventory lines</i>
-                            </p-panel>
-                        </div>
-                    </div>
-                </div>
+                <p-panel [toggleable]="true">
+                    <p-header>
+                        <b>Inventory</b>
+                    </p-header>
+                    <p-table #result [value]="itemInventoryInfos.details" sortMode="multiple" 
+                    [rows]="5"  [rowsPerPageOptions]="[5,10,50,100]"
+                    [paginator]="true" [pageLinks]="3" 
+                    [columns]="columnsInventory"
+                    selectionMode="single" [(selection)]="selectedElement" 
+                    [resizableColumns]="true" columnResizeMode="expand"
+                    [responsive]="true" [totalRecords]="itemInventoryInfos.details.length"
+                    [reorderableColumns]="true" scrollHeight="400px"
+                    [globalFilter]="gb" [autoLayout]="true"tableStyleClass="table-layout: auto;">
+                    
+                    <!-- HEADER -->
+                        <ng-template pTemplate="header">            
+                            <tr>
+                                <th *ngFor="let col of columnsInventory" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                                    {{col.header}}
+                                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                    <!-- BODY -->
+                        <ng-template pTemplate="body" let-rowData let-columns="columnsInventory">
+                            <tr [pSelectableRow]="rowData">
+                                <td *ngFor="let col of columnsInventory" class="ui-resizable-column">
+                                        {{rowData[col.field]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <i class="pull-right" style="font-size:smaller;" >{{itemInventoryInfos.details.length}} Inventory lines</i>
+                </p-panel>
             </div>
         </div>
     </div>

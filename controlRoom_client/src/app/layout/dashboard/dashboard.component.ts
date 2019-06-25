@@ -3,7 +3,7 @@ import { ViewEncapsulation } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { DashboardGridComponent } from './components/grid/dashboard.grid.component';
 
-import { WidgetService } from '../../shared/services/index';
+import { WidgetService, Widget } from '../../shared/services/index';
 import * as util from 'util' // has no default export
 import { inspect } from 'util' // or directly
 
@@ -41,7 +41,9 @@ export class DashboardComponent implements OnInit {
                         // put the data returned from the server 
                         data  => {  }, 
                         // in case of failure show this message
-                        error => { console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); }, 
+                        error => { 
+                            console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); 
+                        }, 
                         // Completion
                         () => { this._widgetService.widgetsInfo.widgets[i].dataReady=true  }
                         );
@@ -58,4 +60,14 @@ export class DashboardComponent implements OnInit {
 
     ngOnInit() {}
 
+    addWidget() {
+        let additional = new Widget();
+        additional.title = 'New Widget #' +  this._widgetService.widgetsInfo.widgets.length;
+        this._widgetService.widgetsInfo.widgets.push(additional);
+    }
+
+    removeWidget($event, index, gridster) {
+        this._widgetService.widgetsInfo.widgets.splice(index,1);
+        this.grid.remove($event, index,gridster);
+    }
 }

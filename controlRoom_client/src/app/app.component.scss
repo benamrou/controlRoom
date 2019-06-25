@@ -8,85 +8,16 @@
     background: #255; 
     border-radius:20px;
     border:0; 
-    font-size:1em;
+    font-size:xx-small;
 }
 
 :host ::ng-deep .CSV_Button:hover {
     background: #2399e5; 
 }
 
-:host ::ng-deep  .ui-datatable th.ui-state-active {
-    color: red;
-}
-
-:host ::ng-deep .header_filter input {
-    background-color: white;
-    padding: 1px;
-    border-width: 2px;
-    border-style: inset;
-    border-radius: 10px;
-    width: 400px;
-}
-
-
-:host ::ng-deep .ui-datatable th.ui-state-active {
-    color:red;
-}
-
-
-:host ::ng-deep .ui-datatable table {
-    table-layout: auto;
-}
-
-
-:host ::ng-deep .ui-datatable .ui-datatable-header {
-    background-color: #fff;
-    font-weight: 100;
-    font-size: smaller;
-}
-
-
-p-dataTable.ui-widget-header::ng-deep {
-    background-color: #fff !important; 
-    font-weight: 100 !important;
-    font-size: smaller !important;
-    border: none;
-}
-
-:host ::ng-deep  .ui-datatable .ui-datatable-thead>tr>th {
-    background: white;
-    border: 0;
-    font-weight: 100;
-    font-size: 0.5em;
-}
-
-
-:host ::ng-deep .ui-datatable .ui-paginator {
-    background: white;
-    border: none;
-    font-size: smaller;
-}
-
-
 //:host ::ng-deep .ui-datatable-resizable {
     //height: -webkit-fill-available;
 //}
-
-:host ::ng-deep .ui-datatable tbody > tr.ui-widget-content {
-    font-size: smaller;
-    border: white;
-    border-bottom-color: lightgray;
-    border-top-color: lightgray;
-}
-
-:host ::ng-deep .ui-button-text-icon-left .ui-button-text {
-    padding: .5em 1em .5em 2em;
-    display: initial;
-}
-
-:host ::ng-deep .ui-dropdown-trigger ui-state-default ui-corner-right {
-    font-size:0.9em;
-}
 
 :host ::ng-deep .ui-lightbox-content.ui-lightbox-loading + a { display:none; } 
 
@@ -111,4 +42,72 @@ p-dataTable.ui-widget-header::ng-deep {
 // Input no outline
 :host ::ng-deep input, input:valid {
     outline: none;
+}
+
+// New TABLE PRIME NG 05/2019
+
+:host ::ng-deep  p-table > .ui-table table {
+    font-weight: 100;
+    font-size: x-small;
+}
+
+:host ::ng-deep  p-table > div > .ui-widget-header {
+    background: white;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid lightgray;
+}
+
+
+:host ::ng-deep th.ui-state-highlight {
+    color: red;
+    background: white;
+    outline-color: white;
+}
+
+:host ::ng-deep  p-table > .ui-table tbody > tr.ui-state-highlight {
+    color: red;
+    background: white;
+    outline-color: white;
+}
+
+
+:host ::ng-deep  p-table > .ui-table tbody > tr {
+    border: 1px solid lightgray;
+    border-right-color: white;
+    border-left-color: white;
+    outline-color: white;
+}
+
+:host ::ng-deep p-table > .ui-table .ui-paginator-bottom {
+    background: white;
+    border: none;
+}
+
+:host ::ng-deep .ui-dropdown .ui-dropdown-trigger .fa {
+    margin-top:-0.4em;
+    margin-left: -0.25em;
+}
+
+:host ::ng-deep .ui-button {
+    background: white;
+    color: #2399e5;
+    border: 1px solid #2399e5;
+}
+
+:host ::ng-deep .ui-toast {
+    width: 40em;
+}
+
+/* BB SYMPHONY CLASS */
+.bbs_search_panel {
+    background: #F5F5F5;
+    width: 100%;
+    height: 65px;
+    line-height: 60px;
+}
+
+.bbs_link_menu {
+    border-radius: 1.1em 0 0 1.1em !important
 }

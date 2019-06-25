@@ -9,7 +9,9 @@ const routes: Routes = [
         children: [
             { path: '', redirectTo: 'dashboard', pathMatch: 'prefix' },
             { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule' },
-            { path: 'counting', loadChildren: './counting/counting.module#CountingModule' },
+            { path: 'counting', loadChildren: './inventory/counting/counting.module#CountingModule' },
+            { path: 'inventory', loadChildren: './inventory/stock/stock.module#StockModule' },
+            { path: 'caoconfig', loadChildren: './cao/configuration/caoconfig.module#CaoConfigModule' },
             { path: 'category', loadChildren: './interfacing/category/category.module#CategoryModule' },
             { path: 'schedule', loadChildren: './schedule/supplier.schedule.module#SupplierScheduleModule' },
             { path: 'search', loadChildren: './search/search.module#SearchModule' },

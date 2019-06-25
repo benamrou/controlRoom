@@ -1,6 +1,7 @@
 {
-  "compileOnSave": false,
+  "compileOnSave": true,
   "compilerOptions": {
+    "baseUrl": "src/../",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
@@ -15,6 +16,13 @@
     "lib": [
       "es2017",
       "dom"
-    ]
-  }
+    ],
+    "paths": {
+      "core-js/es7/reflect": [ "node_modules/core-js/proposals/reflect-metadata"]
+    }
+  },
+  "typeRoots": [
+    "node_modules/@types",
+    "src/typings.d.ts"
+  ],
 }
