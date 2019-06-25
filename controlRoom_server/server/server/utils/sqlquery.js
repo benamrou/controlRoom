@@ -21,9 +21,11 @@ var config = require("../../config/" + (process.env.NODE_ENV || "development") +
 var logger = require("./logger.js");
 var dbConnect = require ("./dbconnect.js");
 let oracledb = require('oracledb');      // Oracle DB connection
+var fs = require('fs-extra'); // File management
 
 var numRows = config.db.maxRows; // max number of rows by packets
-
+let cursor;
+let rowsToReturn;
 
 /**
 * Method executeLibQuery is executing a query stored in the LIBQUERY structure through their reference number. 
@@ -67,6 +69,47 @@ module.exports.executeLibQuery = executeLibQuery;
 function callbackSendData(response, data) {
     response.send(data);
 }
+
+
+/**
+* Method executeLibQuery is executing a query stored in the LIBQUERY structure through their reference number. 
+* The LIBQUERY structure stores referenced queries.
+*
+*
+* @method executeLibQuery
+* @param {String} querynum represents the query ID in the LIBQUERY
+* @param {String} params are the bind variables value. The params object must respect the param varibale in their orders.
+* @param {String} user is the user requesting this transaction
+* @param {String} mode is mode to retrieve data
+*               Mode 0: Use data alreaddy downloaded
+*               Mode 1: Refresh data with executed query
+* @param {Object} request HTTP request. The request must contain :
+* @param {Object} response is the query server response (contains the results of the query)
+*
+* Sub-Method calls PKREQUESTMANAGER.CALLQUERY in the Oracle Database
+*
+*/
+function executeSmartLoadedQuery (ticketId, queryNum, params, user, database_sid, language, mode, 
+                            filename, request, response) {
+    // Use stamped file if mode =0
+    if (mode === '0' ) {
+        // File xists
+        if (fs.existsSync(filename)) {
+            let data = require(__dirname + '/../../' + filename);
+            logger.log(ticketId, filename + " File(s) returned... [FETCH]", user);
+            callbackSendData(response,data);
+            return;
+        }
+    }
+    executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, 
+                            function (err,data) {
+                                callbackSendData(response,data);
+                                fs.writeJson(filename, data);
+    });
+}
+
+module.exports.executeSmartLoadedQuery = executeSmartLoadedQuery; 
+
 /**
 * Method executeLibQuery is executing a query stored in the LIBQUERY structure through their reference number. 
 * The LIBQUERY structure stores referenced queries.
@@ -89,89 +132,29 @@ function executeLibQueryCallback(ticketId, queryNum, params, user, database_sid,
 
     SQLquery = "BEGIN PKREQUESTMANAGER.CALLQUERY(" + ticketId;
 
-    logger.log(ticketId, "LIBQUERY with Callback: ", user);
+    //logger.log(ticketId, "LIBQUERY with Callback: ", user);
     SQLquery = SQLquery + ",'" + queryNum + "','" + user + "'," + database_sid + ", " + params  + "," +
                             language + ", :cursor); END;";
     logger.log(ticketId, SQLquery, user);
-        
+
     dbConnect.executeCursor(
         SQLquery, 
         // Bind cursor for the resulset
         { cursor:  { type: oracledb.CURSOR, dir : oracledb.BIND_OUT }},
-        { autoCommit: true, outFormat: oracledb.OBJECT } // Return the result as OBJECT
-        ).then (function(result)  {
-            clear = 0;
-            if (result) {
-                fetchRowsFromRSCallback(id, dbConnect.getConnection(), result.outBinds.cursor, 
-                        numRows, request, response, user, 0, callback);
-                //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
-            }
-            //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
-        }) .catch (function(err) {
+        { autoCommit: true, outFormat: oracledb.OBJECT }, // Return the result as OBJECT
+        ticketId,
+        request,
+        response,
+        user,
+        callback
+        ).catch (function(err) {
             //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
             console.log('SQLQuery - executeLibQueryCallback : ' + err); 
             //app.next(err);
         });
         
     };
+  
 
 module.exports.executeLibQueryCallback = executeLibQueryCallback; 
-    function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, clear, callback)
-    {
-     if (resultSet == null) {
-            logger.log(ticketId, " Resulset empty...", user);    // close the result set and release the connection
-            callback(null,[]);
-     }
-     else {
-        resultSet.getRows( // get numRows rows
-          numRows,
-        function (err, rows)
-        {
-          if (err) { 
-            callback(null,err); 
-            logger.log(ticketId, " Error... : " + JSON.stringify(err),user);
-            //logger.log (ticketId, "********* Resulset 1111 *********** : " + JSON.stringify(resultSet));
-            //dbConnect.releaseConnections(resultSet, connection)
-            return; 
-          } 
 
-          else if (rows.length == 0) {  // no rows, or no more rows
-            if (clear != 1) {
-                callback(null,rows);  
-                logger.log(ticketId, rows.length + " Object(s) returned... [FETCH] :)", user);
-            }
-            logger.log (ticketId, JSON.stringify(resultSet), user);
-            //dbConnect.releaseConnections(resultSet, connection) // close the result set and release the connection
-            return;
-          } else if (rows.length > 0) {
-            if (clear == 1) {
-                fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, 1, callback);  // get next set of rows
-                //dbConnect.releaseConnections(resultSet, connection) // close the result set and release the connection
-            }
-            else {
-                logger.log(ticketId, rows.length + " Object(s) returned... [FETCH]", user);
-                logger.log(ticketId, rows, user);
-                callback(null,rows);
-                clear = 1;
-                // If more than max Rows Fetch again
-                fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, 1, callback);  // get next set of rows
-                //dbConnect.releaseConnections(resultSet, connection) // close the result set and release the connection
-           
-             }
-          }
-        });
-
-        //dbConnect.releaseConnections(resultSet, connection)
-      //resultSet.next
-     }
-
-     //dbConnect.releaseConnections(resultSet, connection)
-    }
-
-    function doClose(results, connection)
-    {
-        dbConnect.releaseConnections(results, connection)
-    }
-    //return module;
-
-//};

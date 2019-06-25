@@ -30,6 +30,7 @@ function folderDateLog() {
     return (date.getMonth() + 1) + '.' + date.getDate() + '.' +  
                     date.getFullYear();;
 }
+
 function buildLogStructure () {
     var timestamp = folderDateLog();
     fs.existsSync("logs/") || fs.mkdirSync("logs");

@@ -12,6 +12,7 @@
 * Date: March 2017
 */
 
+var logger = require("./logger.js");
 let config = new require("../../config/" + (process.env.NODE_ENV || "development") + ".js");
 var oracledb = require('oracledb');
 var Promise = require('es6-promise').Promise;
@@ -19,6 +20,10 @@ var async = require('async');
 var pool;
 var buildupScripts = [];
 var teardownScripts = [];
+
+
+var numRows = config.db.maxRows; // max number of rows by packets
+let rowsToReturn;
 
 module.exports.OBJECT = oracledb.OBJECT;
 
@@ -49,7 +54,6 @@ function terminatePool() {
                     console.log ('001 - Error while terminatePool() ' + JSON.stringify(err));
                     return reject(err);
                 }
-
                 resolve();
             });
         } else {
@@ -132,7 +136,6 @@ function execute(sql, bindParams, options, connection) {
             if (err) {
                 reject(err);
             }
-
             resolve(results);
         });
     })
@@ -213,42 +216,92 @@ function executeQuery(sql, bindParams, options) {
 
 module.exports.executeQuery = executeQuery;
 
-function executeCursor(sql, bindParams, options) {
+
+function executeCursor(sql, bindParams, options, ticketId, request, response, user, callback) {
     options.isAutoCommit = true;
 
     return new Promise(function(resolve, reject) {
         oracledb.getConnection(config.db.connAttrs)
             .then(function(connection){
+                //console.log ('execute');
                 execute(sql, bindParams, options, connection)
-                    .then(function(results) {
-                        resolve(results)
-                         .then(function (r) {
-                            try {results.resultSet.close(); } catch (error) {}
-                            releaseConnections(results, connection);
-                        });
-
-                        try {results.resultSet.close(); } catch (error) {}
-                        releaseConnections(results, connection);
+                    .then(function(result) {
+                        fetchRowsFromRSCallback(ticketId, connection, result.outBinds.cursor, numRows, request, response, user, 0, callback);
                         process.nextTick(function() {
-                            try {results.resultSet.close(); } catch (error) {}
-                            releaseConnections(results, connection);
+                            //console.log('process next Ticket');
                         });
                     })
                     .catch(function(err) {
                         reject(err);
-                        try {results.resultSet.close(); } catch (error) {}
-                        releaseConnections(results, connection);
                         process.nextTick(function() {
-                            try {results.resultSet.close(); } catch (error) {}
-                            releaseConnections(results, connection);
                         });
                     });
             })
             .catch(function(err) {
-                try {results.resultSet.close(); } catch (error) {}
                 reject(err);
             });
     });
 }
 
+
 module.exports.executeCursor = executeCursor;
+
+function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, clear, callback)
+{
+ if (resultSet == null) {
+        logger.log(ticketId, " Resulset empty...", user);    // close the result set and release the connection
+        callback(null,[]);
+ }
+ else {
+    resultSet.getRows( // get numRows rows
+      numRows,
+    function (err, rows)
+    {
+      if (err) { 
+        callback(null,err); 
+        logger.log(ticketId, " Error... : " + JSON.stringify(err),user);
+        doClose(connection, resultSet);   // always close the ResultSet
+        return; 
+      } 
+      else if (rows.length == 0) {  // no rows, or no more rows
+        if (clear == 0) {
+            rowsToReturn = rows;
+            if (rows.length < 20 ) {
+                logger.log(ticketId, JSON.stringify(rows), user);
+            }
+            logger.log(ticketId, rows.length + " Object(s) returned... [FETCH]", user);
+        }
+        callback(null,rowsToReturn);  
+        doClose(connection, resultSet);   // always close the ResultSet
+        return;
+      } else if (rows.length > 0) {
+            rowsToReturn = rows;
+            if (rows.length < 20 ) {
+                logger.log(ticketId, JSON.stringify(rows), user);
+            }
+            logger.log(ticketId, rows.length + " Object(s) returned... [FETCH]", user);
+            // If more than max Rows Fetch again
+            fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, 1, callback);  // get next set of rows
+        }
+        else {
+            doClose(connection, resultSet);   // always close the ResultSet
+        }
+    });
+ }
+}
+
+function doRelease(connection) {
+    connection.close(
+      function(err) {
+        if (err) { console.error(err.message); }
+      });
+  }
+  
+  function doClose(connection, resultSet) {
+    resultSet.close(
+      function(err) {
+        if (err) { console.error(err.message); }
+        doRelease(connection);
+        
+      });
+  }
