@@ -34,7 +34,7 @@ module.exports = _.merge({}, defaults, config);
 
 let app = express();
 
-process.env.UV_THREADPOOL_SIZE=64;
+process.env.UV_THREADPOOL_SIZE=264;
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -78,6 +78,7 @@ let itemCost = require('./server/controller/itemcost.js')(app, SQL);
 let itemRetail = require('./server/controller/itemretail.js')(app, SQL);
 let itemSubstitution = require('./server/controller/itemsubstitution')(app, SQL);
 let itemInventory = require('./server/controller/iteminventory')(app, SQL);
+let itemCAO = require('./server/controller/itemcao')(app, SQL);
 let supplierSchedule = require('./server/controller/supplierschedule')(app, SQL);
 let counting = require('./server/controller/counting')(app, SQL);
 let batchprocess = require('./server/controller/process')(app, SQL);
@@ -104,6 +105,7 @@ itemCost.get(app,oracledb);
 itemRetail.get(app,oracledb);
 itemSubstitution.get(app,oracledb);
 itemInventory.get(app,oracledb);
+itemCAO.get(app,oracledb);
 supplierSchedule.get(app,oracledb);
 counting.get(app,oracledb);
 batchprocess.get(app,oracledb);
@@ -125,6 +127,7 @@ let timestamp = (date.getFullYear() + "." + (date.getMonth() + 1) + '.' + date.g
 
 
 httpServer = http.Server(app);
+httpServer.timeout = config.server.timeout;
 httpServer.on('connection', function(conn) {
         var key = conn.remoteAddress + ':' + (conn.remotePort || '');
 
@@ -136,10 +139,14 @@ httpServer.on('connection', function(conn) {
         });
 
         conn.on('close', function() {
-            dbConnection.getPool().close();
-            delete openHttpConnections[key];
+            try { dbConnection.getPool().close(); } catch (error ) {};
+            try { delete openHttpConnections[key]; } catch (error ) {};
+            
         });
     });
+
+// process.on('unhandledRejection', up => { throw up });
+
 // Connection to the database and listenning the server
 dbConnection.addBuildupSql({
 	sql: "BEGIN EXECUTE IMMEDIATE q'[alter session set NLS_DATE_FORMAT='DD-MM-YYYY']'; END;"
