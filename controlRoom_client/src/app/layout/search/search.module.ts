@@ -4,7 +4,7 @@ import { FormsModule }  from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SearchComponent } from './search.component';
-import { DataTableModule, MultiSelectModule, ButtonModule, ChipsModule,
+import { TableModule, MultiSelectModule, ButtonModule, ChipsModule,
          MessagesModule, GrowlModule, ToastModule, FullCalendarModule,
         TooltipModule } from '../../shared/components/index';
 
@@ -15,7 +15,7 @@ import { PageHeaderModule } from '../../shared';
 
 @NgModule({
     imports: [ RouterModule,HttpModule, CommonModule,FormsModule,
-               DataTableModule,MultiSelectModule,
+               TableModule,MultiSelectModule,
                ButtonModule, ChipsModule, 
                MessagesModule, GrowlModule,
                TooltipModule, ItemModule,

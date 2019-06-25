@@ -108,7 +108,7 @@ export class DashboardGridComponent implements OnInit {
 
 
   public onReflow(event) {
-    console.log('onReflow', event);
+    //console.log('onReflow', event);
   }
 
   public removeLine(gridster: GridsterComponent) {
@@ -153,7 +153,7 @@ export class DashboardGridComponent implements OnInit {
 
   public optionsChange(options: IGridsterOptions) {
       this.gridsterOptions = options;
-      console.log('options change:', options);
+      //console.log('options change:', options);
   }
 
   public swap() {
@@ -195,14 +195,10 @@ export class DashboardGridComponent implements OnInit {
 
   public addWidgetWithoutData() {
       this.widgets.push({
-          title: 'Basic form inputs X',
+          title: 'New Widget',
           dragAndDrop: true,
           resizable: true,
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et ' +
-          'dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea ' +
-          'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla ' +
-          'pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est ' +
-          'laborum.'
+          content: ''
       });
   }
 
@@ -218,13 +214,13 @@ export class DashboardGridComponent implements OnInit {
           'pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est ' +
           'laborum.'
       });
-      console.log('widget push', this.widgets[this.widgets.length - 1]);
+      //console.log('widget push', this.widgets[this.widgets.length - 1]);
   }
 
   public remove($event, index: number, gridster: GridsterComponent) {
       $event.preventDefault();
       this.widgets.splice(index, 1);
-      console.log('widget remove', index);
+      //console.log('widget remove', index);
   }
 
   public removeAllWidgets() {
@@ -232,6 +228,6 @@ export class DashboardGridComponent implements OnInit {
   }
 
   public itemChange($event: any, gridster) {
-      console.log('item change', $event);
+      //console.log('item change', $event);
   }
 }

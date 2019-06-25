@@ -5,13 +5,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { OrderComponent } from './order.component';
 import 'fullcalendar'; // needed for Scheduler
-import { DataTableModule, MultiSelectModule, ButtonModule, ChipsModule,
+import { TableModule, MultiSelectModule, ButtonModule, ChipsModule,
          MessagesModule, GrowlModule, InputTextModule,
         TooltipModule, PanelModule, DataListModule, ScheduleModule, CalendarModule, TabViewModule, DialogModule } from '../../components/index';
 
 @NgModule({
     imports: [ RouterModule,HttpModule, CommonModule,FormsModule,
-               DataTableModule,MultiSelectModule,
+               TableModule,MultiSelectModule,
                ButtonModule, ChipsModule, 
                MessagesModule, GrowlModule, InputTextModule,
                TabViewModule, DialogModule,

@@ -3,9 +3,38 @@
             <a routerLink="/dashboard" [routerLinkActive]="['router-link-active']" class="list-group-item">
                 <i class="fas fa-tachometer-alt"></i>&nbsp; {{ 'Dashboard' | translate}}
             </a>
-            <a routerLink="/counting" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                <i class="fa fa-fw fa-university"></i>&nbsp; {{ 'Counting' | translate}}
-            </a>
+
+            <div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('inventory')">
+                    <span><i class="fas fa-cubes"></i> &nbsp; {{ 'Inventory' | translate}} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'inventory' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/inventory" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-fw fa-university"></i> {{ 'Inventory follow-up' | translate}}</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'inventory' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/counting" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-fw fa-university"></i> {{ 'Third-Party counting' | translate}}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('caoconfig')">
+                    <span><i class="fas fa-robot"></i> &nbsp; {{ 'Computer Ordering' | translate}} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'caoconfig' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/caoconfig" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-check-double"></i> {{ 'CGO setting' | translate}}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
             <div class="nested-menu">
                 <a class="list-group-item" (click)="addExpandClass('supplierschedule')">
                     <span><i class="fa fa-calendar"></i> &nbsp; {{ 'Supplier schedule' | translate}} </span>
@@ -13,7 +42,7 @@
                 <li class="nested" [ngClass]="{'expand' : showMenu === 'supplierschedule' }">
                     <ul class="submenu" >
                         <li>
-                            <a routerLink="/schedule" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-calendar"></i> {{ 'Mgt by contract' | translate}}</span></a>
+                            <a class="bbs_link_menu" routerLink="/schedule" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-calendar"></i> {{ 'Mgt by contract' | translate}}</span></a>
                         </li>
                     </ul>
                 </li>
@@ -29,32 +58,32 @@
                 <li class="nested" [ngClass]="{'expand' : showMenu === 'toolbox' }">
                     <ul class="submenu" >
                         <li>
-                            <a [routerLink]="['/charts']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                            <a class="bbs_link_menu"  [routerLink]="['/charts']" [routerLinkActive]="['router-link-active']" class="list-group-item">
                                 <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;{{ 'charts' | translate }}
                             </a>
                         </li>
                         <li>
-                            <a [routerLink]="['/tables']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                            <a class="bbs_link_menu" [routerLink]="['/tables']" [routerLinkActive]="['router-link-active']" class="list-group-item">
                                 <i class="fa fa-fw fa-table"></i>&nbsp;{{ 'tables' | translate }}
                             </a>
                         </li>
                         <li>
-                            <a [routerLink]="['/forms']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                            <a class="bbs_link_menu" [routerLink]="['/forms']" [routerLinkActive]="['router-link-active']" class="list-group-item">
                                 <i class="fa fa-fw fa-edit"></i>&nbsp;{{ 'forms' | translate }}
                             </a>
                         </li>
                         <li>
-                            <a [routerLink]="['/bs-element']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                            <a class="bbs_link_menu" [routerLink]="['/bs-element']" [routerLinkActive]="['router-link-active']" class="list-group-item">
                                 <i class="fa fa-fw fa-desktop"></i>&nbsp;{{ 'boostrapElement' | translate }}
                             </a>
                         </li>
                         <li>
-                            <a [routerLink]="['/grid']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                            <a class="bbs_link_menu" [routerLink]="['/grid']" [routerLinkActive]="['router-link-active']" class="list-group-item">
                                 <i class="fa fa-fw fa-wrench"></i>&nbsp;{{ 'boostrapGrid' | translate }}
                             </a>
                         </li>
                         <li>
-                            <a [routerLink]="['/components']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                            <a class="bbs_link_menu" [routerLink]="['/components']" [routerLinkActive]="['router-link-active']" class="list-group-item">
                                 <i class="fa fa-th-list"></i>&nbsp;{{ 'component' | translate }}
                             </a>
                         </li>

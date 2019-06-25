@@ -6,6 +6,8 @@ export * from './search/search.service';
 export * from './item/item.service';
 export * from './schedule/schedule.service';
 export * from './counting/counting.service';
+export * from './inventory/inventory.service';
+export * from './cao/cao.service';
 export * from './process/process.service';
 export * from './labels/labels.service';
 export * from './labels/labels.resolver.service';

@@ -5,7 +5,7 @@
 <div class="omnibar">
     <div style="width:100%; float: right" class="blur">
         <button class="btn btn-secondary topmenubutton"  pTooltip="Add a widget" tooltipPosition="top" type="button" 
-                (click)="grid.addWidgetWithoutData()">
+                (click)="addWidget()">
                 <span class="fas fa-plus-circle"></span>
         </button>
         <button class="btn btn-secondary topmenubutton" pTooltip="Reorganize" tooltipPosition="top" type="button">
@@ -47,7 +47,7 @@
                         </button>
                         <button class="btn btn-light widget-button" pTooltip="Drop" 
                                 tooltipPosition="top" type="button"
-                                (click)="grid.remove($event, indx,gridster1)">
+                                (click)="removeWidget($event, indx,gridster1)">
                                 <span class="fas fa-times fa-lg"></span>
                         </button>
                         </small>
@@ -66,29 +66,55 @@
                 <div *ngIf="widget.dataReady" style="padding-top: 5px">
                     <!-- TABLE RESULT WIDGET -->
                     <div *ngIf="widget.widtable==1">
-                        <p-dataTable [attr.id]="widget.widid" #result [value]="widget.result"sortMode="multiple"
-                        [resizableColumns]="true" columnResizeMode="expand"
+                        <p-table [attr.id]="widget.widid" #result [value]="widget.result" sortMode="multiple" 
                         [rows]="widget.widrows"  [rowsPerPageOptions]="[5,10,50,100]"
                         [paginator]="true" [pageLinks]="3" 
-                        [responsive]="true" [totalRecords]="totalRecords"
+                        [columns]="widget.columns"
+                        selectionMode="single" [(selection)]="selectedElement" 
+                        [resizableColumns]="true" columnResizeMode="expand"
+                        [responsive]="true" [totalRecords]="widget.result.length"
                         [reorderableColumns]="true" scrollHeight="400px"
-                        [globalFilter]="gb" [autoLayout]="true"
-                        selectionMode="single" [(selection)]="selectedElement" tableStyleClass="table-layout: auto;">
-                            <p-header >
+                        [globalFilter]="gb" [autoLayout]="true"tableStyleClass="table-layout: auto;">
+                          
+                        <!-- FILTER -->
+                        <ng-template pTemplate="caption">
                                 <div class="pull-right">
-                                <input  type="text" #gb placeholder="Type text to filter..." 
-                                    [style.width.px]="40*widget.width"
-                                    style="border-radius: 10px">
-                                </div>
-                                <div class="ui-helper-clearfix" >
-                                <button type="button" pButton icon="fas fa-file" iconPos="left" 
-                                    class="CSV_Button"
-                                    label="CSV" (click)="result.exportCSV()" style="float:left"></button>
-                                </div>
-                            </p-header>
-                            <p-column [attr.id]="col.id" *ngFor="let col of widget.columns" [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
-                        </p-dataTable>
+                                        <input  type="text" #gb placeholder="Type text to filter..." 
+                                            (input)="result.filterGlobal($event.target.value, 'contains')" 
+                                            [style.width]="40*widget.width +'px'">
+                                        </div>
+                                        <div class="ui-helper-clearfix" >
+                                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                            class="CSV_Button"
+                                            label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+                                        </div>
+                        </ng-template>
+                        <!-- HEADER -->
+                            <ng-template pTemplate="header">            
+                                <tr>
+                                    <th *ngFor="let col of widget.columns" [pSortableColumn]="col.field" 
+                                        pReorderableColumn pResizableColumn>
+                                        {{col.header}}
+                                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                        <!-- BODY -->
+                            <ng-template pTemplate="body" let-rowData let-columns="widget.columns">
+                                <tr [pSelectableRow]="rowData">
+                                    <td *ngFor="let col of widget.columns" class="ui-resizable-column">
+                                            {{rowData[col.field]}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
                         <i class="pull-right" style="font-size:smaller;" *ngIf="widget.dataReady">{{widget.result.length}} references</i>
+                    </div>
+
+                    <!-- CHART RESULT WIDGET-->
+                    <div *ngIf="widget.widchart==1">
+                        <canvas baseChart height="130" >
+                        </canvas>
                     </div>
                 </div>
             </div>

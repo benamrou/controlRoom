@@ -27,7 +27,7 @@ import 'rxjs/add/operator/toPromise';
     selector: 'schedule',
     templateUrl: './supplier.schedule.component.html',
     providers: [SupplierScheduleService, MessageService],
-    styleUrls: ['./supplier.schedule.component.scss'],
+    styleUrls: ['./supplier.schedule.component.scss', '../../app.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
 
@@ -73,12 +73,14 @@ export class SupplierScheduleComponent {
 
   // Calendar
   dateNow: Date;
+  dateTomorrow : Date;
   day: any = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   constructor(private _scheduleService: SupplierScheduleService, private datePipe: DatePipe,
               private _messageService: MessageService) {
     datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
+    this.dateTomorrow =  new Date(this.dateNow.setDate(this.dateNow.getDate() + 1));
 
     this.columnsResult = [
       { field: 'externalcode', header: 'Supplier code' },
@@ -120,7 +122,7 @@ export class SupplierScheduleComponent {
   }
 
   razSearch () {
-    this.searchResult = null;
+    this.searchResult = [];
     this.selectedElement = null;
     this.processReviewSchedule = false;
     this.simulateReviewSchedule = false;
@@ -151,7 +153,7 @@ export class SupplierScheduleComponent {
       startDateWeek = new Date(new Date(nowDate).setDate(nowDate.getDate() - lessDays));
       endDateWeek = new Date(new Date(startDateWeek).setDate(startDateWeek.getDate() + 6));
       
-      copyRegularSchedule.start = startDateWeek; //this.datePipe.transform(startDateWeek, 'yyyy-MM-dd');
+      copyRegularSchedule.start = this.dateTomorrow; //this.datePipe.transform(startDateWeek, 'yyyy-MM-dd');
       copyRegularSchedule.end = endDateWeek; //this.datePipe.transform(endDateWeek, 'yyyy-MM-dd');
       copyRegularSchedule.temporary = false;
       weekSchedule.schedule.start = startDateWeek; //this.datePipe.transform(startDateWeek, 'yyyy-MM-dd');
@@ -220,8 +222,8 @@ export class SupplierScheduleComponent {
         let timeline = new Date(startDate);
         let minSchedule = new Date('12/31/2049');
         minSchedule = this.getMinDateTemporarySchedule(minSchedule);
-        console.log('minSchedule : ' + minSchedule);
-        console.log('Temporary : ' + JSON.stringify(this.temporarySchedule));
+        console.log('simulationPermanentScheduleBefore / minSchedule : ' + minSchedule);
+        console.log('simulationPermanentScheduleBefore / Temporary : ' + JSON.stringify(this.temporarySchedule));
         //console.log('endDate : ' + endDate);
         //console.log('Min Temporary : ' + this.getMinDateTemporarySchedule(endDate));
         //console.log('Timeline / j : ' + timeline + ' / ' + j);
@@ -330,7 +332,7 @@ export class SupplierScheduleComponent {
     let oneDay = 1000 * 60 * 60 * 24 ;
     for (let i=0; i < this.temporarySchedule.length; i ++) {
       if (this.temporarySchedule[i].temporary) {
-        //console.log('simulationTemporarySchedule : ' + JSON.stringify(this.temporarySchedule[i]));
+        console.log('simulationTemporarySchedule : ' + JSON.stringify(this.temporarySchedule[i]));
         let startDate = new Date(this.temporarySchedule[i].start);
         let endDate = new Date(this.temporarySchedule[i].end);
         /**  Supplier Planning is the FOUPLAN */ 
@@ -457,7 +459,16 @@ export class SupplierScheduleComponent {
                       this.transformSimulateScheduleDate(i, startDate, 
                           parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeThursday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode,
                           this.colorTemporaryDelivery[i]))];
-                   
+
+                  console.log ('Thursday - transformPlanningScheduleDate: ' + this.transformPlanningScheduleDate(supplierPlanning, startDate, j + 7*k, 
+                    (parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeThursday)),
+                    this.temporarySchedule[i].weeklySchedule[k].schedule.collectionTimeThursday1,
+                    this.temporarySchedule[i].weeklySchedule[k].schedule.deliveryTimeThursday1));
+
+                    console.log(' parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeThursday): ' + parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeThursday));
+                    console.log(' this.temporarySchedule[i].weeklySchedule[k].schedule.collectionTimeThursday1: ' + this.temporarySchedule[i].weeklySchedule[k].schedule.collectionTimeThursday1);
+                    console.log(' this.temporarySchedule[i].weeklySchedule[k].schedule.deliveryTimeThursday1): ' + this.temporarySchedule[i].weeklySchedule[k].schedule.deliveryTimeThursday1);
+                  
                   this.validateSchedule = [...this.validateSchedule,Object.assign({}, 
                     this.transformPlanningScheduleDate (supplierPlanning, startDate, j + 7*k, 
                               (parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeThursday)),
@@ -477,6 +488,8 @@ export class SupplierScheduleComponent {
                           parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeFriday)+j + 7*k, 'Schedule #' + i + ' / DELIVERY ' + this.selectedElement.externalcode, 
                           this.colorTemporaryDelivery[i]))];
                    
+               
+
                   this.validateSchedule = [...this.validateSchedule,Object.assign({}, 
                     this.transformPlanningScheduleDate (supplierPlanning, startDate, j + 7*k, 
                               (parseInt(this.temporarySchedule[i].weeklySchedule[k].schedule.leadTimeFriday)),
@@ -532,8 +545,8 @@ export class SupplierScheduleComponent {
         }
       }
     }
-    console.log('simulateSchedule : ' + JSON.stringify(this.simulateSchedule));
-    console.log('validateSchedule : ' + JSON.stringify(this.validateSchedule));
+    console.log('simulationTemporarySchedule / simulateSchedule : ' + JSON.stringify(this.simulateSchedule));
+    console.log('simulationTemporarySchedule / validateSchedule : ' + JSON.stringify(this.validateSchedule));
     this.simulateReviewSchedule = true;
   }
 
@@ -669,6 +682,9 @@ export class SupplierScheduleComponent {
           j++;
       }
     }
+    console.log('simulationPermanentScheduleAfter / simulateSchedule : ' + JSON.stringify(this.simulateSchedule));
+    console.log('simulationPermanentScheduleAfter / validateSchedule : ' + JSON.stringify(this.validateSchedule));
+
     this.simulateReviewSchedule = true;
   }
 

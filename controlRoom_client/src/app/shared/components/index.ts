@@ -1,4 +1,4 @@
-export *  from './datatable/datatable';
+//export *  from './datatable/datatable';
 export * from  './accordion/accordion';
 export * from  './autocomplete/autocomplete';
 export * from  './blockui/blockui';
@@ -71,6 +71,7 @@ export * from  './treetable/treetable';
 export * from  './tristatecheckbox/tristatecheckbox';
 export * from  './utils/objectutils';
 export * from  './fullcalendar/fullcalendar';
+export * from  './table/table';
 
 /* Dashoard SB 4*/
 //export * from  './sidebar/sidebar';
