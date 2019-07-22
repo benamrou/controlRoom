@@ -89,6 +89,7 @@ let ls = require('./server/controller/patcher/ls')(app, SQL);
 let command = require('./server/controller/command/execute')(app, SQL);
 let logger = require('./server/utils/logger.js');     // Log manager
 let widget = require('./server/controller/widget')(app, SQL);
+let notification = require('./server/controller/notification')(app, SQL);
 
 //dbConnection.createPool('dd');
 userprofile.get(app,oracledb);
@@ -115,6 +116,7 @@ upload.post(app,oracledb);
 ls.get(app,oracledb);
 command.get(app,oracledb);
 widget.get(app, oracledb);
+notification.get(app, oracledb);
 
 
 // Prepare logs folder/files
