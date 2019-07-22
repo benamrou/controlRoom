@@ -58,16 +58,35 @@ module.exports.getNextTicketID = getNextTicketID;
 *
 */
 function executeLibQuery (ticketId, queryNum, params, user, database_sid, language, request, response) {
-        executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, 
-                                function (err,data) {
-                                    callbackSendData(response,data);
-                                });
+    executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, 
+    function (err,data) {
+        callbackSendData(response,data).then(console.log('Done execution'))
+    });
 }
-
 module.exports.executeLibQuery = executeLibQuery; 
 
-function callbackSendData(response, data) {
-    response.send(data);
+function executeLibQueryUsingMyCallback (ticketId, queryNum, params, user, database_sid, language, request, response, mycallback) {
+    executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, mycallback);
+}
+module.exports.executeLibQueryUsingMyCallback = executeLibQueryUsingMyCallback; 
+
+function executeQuery (ticketId, query, params, user, database_sid, language, request, response) {
+    executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, 
+    function (err,data) {
+        callbackSendData(response,data).then(console.log('Done execution'))
+    });
+}
+module.exports.executeQuery = executeQuery; 
+
+function executeQueryUsingMyCallBack (ticketId, query, params, user, database_sid, language, request, response, mycallback) {
+    executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, mycallback);
+}
+module.exports.executeQueryUsingMyCallBack = executeQueryUsingMyCallBack; 
+
+async function callbackSendData(response, data) {
+    try {
+        response.send(data);
+    } catch (error ) {};
 }
 
 
@@ -101,7 +120,7 @@ function executeSmartLoadedQuery (ticketId, queryNum, params, user, database_sid
             return;
         }
     }
-    executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, 
+     executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, 
                             function (err,data) {
                                 callbackSendData(response,data);
                                 fs.writeJson(filename, data);
@@ -128,16 +147,67 @@ module.exports.executeSmartLoadedQuery = executeSmartLoadedQuery;
 * Sub-Method calls PKREQUESTMANAGER.CALLQUERY in the Oracle Database
 *
 */
-function executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, callback) {
+async function executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, callback) {
+   
+    try {
+        SQLquery = "BEGIN PKREQUESTMANAGER.CALLQUERY(" + ticketId;
 
-    SQLquery = "BEGIN PKREQUESTMANAGER.CALLQUERY(" + ticketId;
+        //logger.log(ticketId, "LIBQUERY with Callback: ", user);
+        SQLquery = SQLquery + ",'" + queryNum + "','" + user + "'," + database_sid + ", " + params  + "," +
+                                language + ", :cursor); END;";
+        logger.log(ticketId, SQLquery, user);
+
+        let promiseExecution = await dbConnect.executeCursor(
+            SQLquery, 
+            // Bind cursor for the resulset
+            { cursor:  { type: oracledb.CURSOR, dir : oracledb.BIND_OUT }},
+            { autoCommit: true, outFormat: oracledb.OBJECT }, // Return the result as OBJECT
+            ticketId,
+            request,
+            response,
+            user,
+            callback
+            )
+            .catch (function(err) {
+                //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
+                console.log('SQLQuery - executeLibQueryCallback : ' + err); 
+                //app.next(err);
+            });
+            //return promiseExecution;
+        } catch (error) {};
+            
+    };
+  
+module.exports.executeLibQueryCallback = executeLibQueryCallback; 
+
+
+/**
+* Method executeLibQuery is executing a query in parameter structure through their reference number. 
+*
+*
+* @method executeQueryCallback
+* @param {String} query represents the query SELECT/UPDATE/INSERT statement
+* @param {String} params are the bind variables value. The params object must respect the param varibale in their orders.
+* @param {String} user is the user requesting this transaction
+* @param {Object} request HTTP request. The request must contain :
+* @param {Object} response is the query server response (contains the results of the query)
+* @param {Object} callback is the callback function containing the err and data
+*        callback.err the message error
+*        callback.data the data
+*
+* Sub-Method calls PKREQUESTMANAGER.CALLQUERY in the Oracle Database
+*
+*/
+async function executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, callback) {
+
+    SQLquery = "BEGIN PKREQUESTMANAGER.EXECUTEQUERY(" + ticketId;
 
     //logger.log(ticketId, "LIBQUERY with Callback: ", user);
-    SQLquery = SQLquery + ",'" + queryNum + "','" + user + "'," + database_sid + ", " + params  + "," +
+    SQLquery = SQLquery + ",'" + query + "','" + user + "'," + database_sid + ", " + params  + "," +
                             language + ", :cursor); END;";
     logger.log(ticketId, SQLquery, user);
 
-    dbConnect.executeCursor(
+    let promiseExecution = await dbConnect.executeCursor(
         SQLquery, 
         // Bind cursor for the resulset
         { cursor:  { type: oracledb.CURSOR, dir : oracledb.BIND_OUT }},
@@ -147,14 +217,16 @@ function executeLibQueryCallback(ticketId, queryNum, params, user, database_sid,
         response,
         user,
         callback
-        ).catch (function(err) {
+        )
+        .catch (function(err) {
             //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
-            console.log('SQLQuery - executeLibQueryCallback : ' + err); 
+            console.log('SQLQuery - executeQueryCallback : ' + err); 
             //app.next(err);
         });
+        //return promiseExecution;
         
     };
   
 
-module.exports.executeLibQueryCallback = executeLibQueryCallback; 
+module.exports.executeQueryCallback = executeQueryCallback; 
 
