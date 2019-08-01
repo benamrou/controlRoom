@@ -1,1 +1,0 @@
-{"version":3,"file":"admin.alert.component.js","sourceRoot":"","sources":["admin.alert.component.ts"],"names":[],"mappings":";;;;;;;;;;AAAA,qBAA0B,eAAe,CAAC,CAAA;AAO1C;IAAA;IAEA,CAAC;IAPD;QAAC,gBAAS,CAAC;YACV,QAAQ,EAAE,MAAM,CAAC,EAAE;YACjB,QAAQ,EAAE,YAAY;YACtB,WAAW,EAAE,4BAA4B;SAC3C,CAAC;;2BAAA;IAGF,0BAAC;AAAD,CAAC,AAFD,IAEC;AAFY,2BAAmB,sBAE/B,CAAA"}
