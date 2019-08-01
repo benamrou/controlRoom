@@ -1,5 +1,0 @@
-
-
-Run this command line in the ORACLE environment (should work with WINDOWS/LINUX/UNIX).
-
-exp system/manager owner=controlroom file=controlroom_db.dmp
