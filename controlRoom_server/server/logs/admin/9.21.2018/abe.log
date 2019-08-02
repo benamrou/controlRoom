@@ -1,0 +1,265 @@
+9/21/2018 22:48:52 1: LIBQUERY with Callback: 
+9/21/2018 22:48:53 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CNT0000001','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{04/12/2017}','{HN}', :cursor); END;
+9/21/2018 22:49:15 1: 1 Object(s) returned... [FETCH]
+9/21/2018 22:49:15 1: [object Object]
+9/21/2018 22:49:15 1: {"metaData":[{"name":"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS'"}]}
+9/21/2018 22:50:6 2: LIBQUERY with Callback: 
+9/21/2018 22:50:6 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:6 2: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:6 2: [object Object]
+9/21/2018 22:50:6 2: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:10 3: LIBQUERY with Callback: 
+9/21/2018 22:50:10 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:10 3: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:10 3: [object Object]
+9/21/2018 22:50:10 3: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:11 4: LIBQUERY with Callback: 
+9/21/2018 22:50:11 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:11 4: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:11 4: [object Object]
+9/21/2018 22:50:11 4: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:11 5: LIBQUERY with Callback: 
+9/21/2018 22:50:11 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:11 5: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:11 5: [object Object]
+9/21/2018 22:50:11 5: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:12 6: LIBQUERY with Callback: 
+9/21/2018 22:50:12 6: BEGIN PKREQUESTMANAGER.CALLQUERY(6,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:12 6: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:12 6: [object Object]
+9/21/2018 22:50:12 6: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:12 7: LIBQUERY with Callback: 
+9/21/2018 22:50:12 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:12 7: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:12 7: [object Object]
+9/21/2018 22:50:12 7: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:13 8: LIBQUERY with Callback: 
+9/21/2018 22:50:13 8: BEGIN PKREQUESTMANAGER.CALLQUERY(8,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:13 8: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:13 8: [object Object]
+9/21/2018 22:50:13 8: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:13 9: LIBQUERY with Callback: 
+9/21/2018 22:50:13 9: BEGIN PKREQUESTMANAGER.CALLQUERY(9,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:13 9: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:13 9: [object Object]
+9/21/2018 22:50:13 9: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:14 10: LIBQUERY with Callback: 
+9/21/2018 22:50:14 10: BEGIN PKREQUESTMANAGER.CALLQUERY(10,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:14 10: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:14 10: [object Object]
+9/21/2018 22:50:14 10: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:18 11: LIBQUERY with Callback: 
+9/21/2018 22:50:18 11: BEGIN PKREQUESTMANAGER.CALLQUERY(11,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:18 11: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:18 11: [object Object]
+9/21/2018 22:50:18 11: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:19 12: LIBQUERY with Callback: 
+9/21/2018 22:50:19 12: BEGIN PKREQUESTMANAGER.CALLQUERY(12,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:19 12: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:19 12: [object Object]
+9/21/2018 22:50:19 12: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:19 13: LIBQUERY with Callback: 
+9/21/2018 22:50:19 13: BEGIN PKREQUESTMANAGER.CALLQUERY(13,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:19 13: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:19 13: [object Object]
+9/21/2018 22:50:19 13: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:20 14: LIBQUERY with Callback: 
+9/21/2018 22:50:20 14: BEGIN PKREQUESTMANAGER.CALLQUERY(14,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:20 14: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:20 14: [object Object]
+9/21/2018 22:50:20 14: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:20 15: LIBQUERY with Callback: 
+9/21/2018 22:50:20 15: BEGIN PKREQUESTMANAGER.CALLQUERY(15,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:20 15: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:20 15: [object Object]
+9/21/2018 22:50:20 15: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:20 16: LIBQUERY with Callback: 
+9/21/2018 22:50:20 16: BEGIN PKREQUESTMANAGER.CALLQUERY(16,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:20 16: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:20 16: [object Object]
+9/21/2018 22:50:20 16: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:21 17: LIBQUERY with Callback: 
+9/21/2018 22:50:21 17: BEGIN PKREQUESTMANAGER.CALLQUERY(17,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:21 17: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:21 17: [object Object]
+9/21/2018 22:50:21 17: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:21 18: LIBQUERY with Callback: 
+9/21/2018 22:50:21 18: BEGIN PKREQUESTMANAGER.CALLQUERY(18,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:21 18: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:21 18: [object Object]
+9/21/2018 22:50:21 18: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:21 19: LIBQUERY with Callback: 
+9/21/2018 22:50:21 19: BEGIN PKREQUESTMANAGER.CALLQUERY(19,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:22 19: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:22 19: [object Object]
+9/21/2018 22:50:22 19: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:22 20: LIBQUERY with Callback: 
+9/21/2018 22:50:22 20: BEGIN PKREQUESTMANAGER.CALLQUERY(20,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:22 20: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:22 20: [object Object]
+9/21/2018 22:50:22 20: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:22 21: LIBQUERY with Callback: 
+9/21/2018 22:50:22 21: BEGIN PKREQUESTMANAGER.CALLQUERY(21,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:22 21: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:22 21: [object Object]
+9/21/2018 22:50:22 21: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:23 22: LIBQUERY with Callback: 
+9/21/2018 22:50:23 22: BEGIN PKREQUESTMANAGER.CALLQUERY(22,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:23 22: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:23 22: [object Object]
+9/21/2018 22:50:23 22: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:23 23: LIBQUERY with Callback: 
+9/21/2018 22:50:23 23: BEGIN PKREQUESTMANAGER.CALLQUERY(23,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:23 23: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:23 23: [object Object]
+9/21/2018 22:50:23 23: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:24 24: LIBQUERY with Callback: 
+9/21/2018 22:50:24 24: BEGIN PKREQUESTMANAGER.CALLQUERY(24,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:24 24: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:24 24: [object Object]
+9/21/2018 22:50:24 24: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:24 25: LIBQUERY with Callback: 
+9/21/2018 22:50:24 25: BEGIN PKREQUESTMANAGER.CALLQUERY(25,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:24 25: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:24 25: [object Object]
+9/21/2018 22:50:24 25: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:24 26: LIBQUERY with Callback: 
+9/21/2018 22:50:24 26: BEGIN PKREQUESTMANAGER.CALLQUERY(26,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:24 26: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:24 26: [object Object]
+9/21/2018 22:50:24 26: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:25 27: LIBQUERY with Callback: 
+9/21/2018 22:50:25 27: BEGIN PKREQUESTMANAGER.CALLQUERY(27,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:25 27: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:25 27: [object Object]
+9/21/2018 22:50:25 27: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:28 28: LIBQUERY with Callback: 
+9/21/2018 22:50:28 28: BEGIN PKREQUESTMANAGER.CALLQUERY(28,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:28 28: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:28 28: [object Object]
+9/21/2018 22:50:28 28: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:28 29: LIBQUERY with Callback: 
+9/21/2018 22:50:28 29: BEGIN PKREQUESTMANAGER.CALLQUERY(29,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:28 29: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:28 29: [object Object]
+9/21/2018 22:50:28 29: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:29 30: LIBQUERY with Callback: 
+9/21/2018 22:50:29 30: BEGIN PKREQUESTMANAGER.CALLQUERY(30,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:29 30: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:29 30: [object Object]
+9/21/2018 22:50:29 30: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:29 31: LIBQUERY with Callback: 
+9/21/2018 22:50:29 31: BEGIN PKREQUESTMANAGER.CALLQUERY(31,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:29 31: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:29 31: [object Object]
+9/21/2018 22:50:29 31: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:29 32: LIBQUERY with Callback: 
+9/21/2018 22:50:29 32: BEGIN PKREQUESTMANAGER.CALLQUERY(32,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:30 32: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:30 32: [object Object]
+9/21/2018 22:50:30 32: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:30 33: LIBQUERY with Callback: 
+9/21/2018 22:50:30 33: BEGIN PKREQUESTMANAGER.CALLQUERY(33,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:30 33: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:30 33: [object Object]
+9/21/2018 22:50:30 33: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:31 34: LIBQUERY with Callback: 
+9/21/2018 22:50:31 34: BEGIN PKREQUESTMANAGER.CALLQUERY(34,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:31 34: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:31 34: [object Object]
+9/21/2018 22:50:31 34: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:34 35: LIBQUERY with Callback: 
+9/21/2018 22:50:34 35: BEGIN PKREQUESTMANAGER.CALLQUERY(35,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:34 35: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:34 35: [object Object]
+9/21/2018 22:50:34 35: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:35 36: LIBQUERY with Callback: 
+9/21/2018 22:50:35 36: BEGIN PKREQUESTMANAGER.CALLQUERY(36,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:35 36: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:35 36: [object Object]
+9/21/2018 22:50:35 36: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:35 37: LIBQUERY with Callback: 
+9/21/2018 22:50:35 37: BEGIN PKREQUESTMANAGER.CALLQUERY(37,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:35 37: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:35 37: [object Object]
+9/21/2018 22:50:35 37: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:36 38: LIBQUERY with Callback: 
+9/21/2018 22:50:36 38: BEGIN PKREQUESTMANAGER.CALLQUERY(38,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:36 38: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:36 38: [object Object]
+9/21/2018 22:50:36 38: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:36 39: LIBQUERY with Callback: 
+9/21/2018 22:50:36 39: BEGIN PKREQUESTMANAGER.CALLQUERY(39,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:36 39: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:36 39: [object Object]
+9/21/2018 22:50:36 39: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:36 40: LIBQUERY with Callback: 
+9/21/2018 22:50:36 40: BEGIN PKREQUESTMANAGER.CALLQUERY(40,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:36 40: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:36 40: [object Object]
+9/21/2018 22:50:36 40: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:37 41: LIBQUERY with Callback: 
+9/21/2018 22:50:37 41: BEGIN PKREQUESTMANAGER.CALLQUERY(41,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:37 41: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:37 41: [object Object]
+9/21/2018 22:50:37 41: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:37 42: LIBQUERY with Callback: 
+9/21/2018 22:50:37 42: BEGIN PKREQUESTMANAGER.CALLQUERY(42,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:37 42: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:37 42: [object Object]
+9/21/2018 22:50:37 42: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:37 43: LIBQUERY with Callback: 
+9/21/2018 22:50:37 43: BEGIN PKREQUESTMANAGER.CALLQUERY(43,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:38 43: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:38 43: [object Object]
+9/21/2018 22:50:38 43: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:38 44: LIBQUERY with Callback: 
+9/21/2018 22:50:38 44: BEGIN PKREQUESTMANAGER.CALLQUERY(44,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:38 44: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:38 44: [object Object]
+9/21/2018 22:50:38 44: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:38 45: LIBQUERY with Callback: 
+9/21/2018 22:50:38 45: BEGIN PKREQUESTMANAGER.CALLQUERY(45,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:38 45: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:38 45: [object Object]
+9/21/2018 22:50:38 45: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:39 46: LIBQUERY with Callback: 
+9/21/2018 22:50:39 46: BEGIN PKREQUESTMANAGER.CALLQUERY(46,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:39 46: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:39 46: [object Object]
+9/21/2018 22:50:39 46: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:39 47: LIBQUERY with Callback: 
+9/21/2018 22:50:39 47: BEGIN PKREQUESTMANAGER.CALLQUERY(47,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:39 47: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:39 47: [object Object]
+9/21/2018 22:50:39 47: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:39 48: LIBQUERY with Callback: 
+9/21/2018 22:50:39 48: BEGIN PKREQUESTMANAGER.CALLQUERY(48,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:39 48: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:39 48: [object Object]
+9/21/2018 22:50:39 48: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:40 49: LIBQUERY with Callback: 
+9/21/2018 22:50:40 49: BEGIN PKREQUESTMANAGER.CALLQUERY(49,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:40 49: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:40 49: [object Object]
+9/21/2018 22:50:40 49: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:40 50: LIBQUERY with Callback: 
+9/21/2018 22:50:40 50: BEGIN PKREQUESTMANAGER.CALLQUERY(50,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:40 50: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:40 50: [object Object]
+9/21/2018 22:50:40 50: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:40 51: LIBQUERY with Callback: 
+9/21/2018 22:50:40 51: BEGIN PKREQUESTMANAGER.CALLQUERY(51,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:40 51: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:40 51: [object Object]
+9/21/2018 22:50:40 51: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:41 52: LIBQUERY with Callback: 
+9/21/2018 22:50:41 52: BEGIN PKREQUESTMANAGER.CALLQUERY(52,'CLI0000002','abe','{}', '{admin}','{}', :cursor); END;
+9/21/2018 22:50:41 52: 1 Object(s) returned... [FETCH]
+9/21/2018 22:50:41 52: [object Object]
+9/21/2018 22:50:41 52: {"metaData":[{"name":"USERID"},{"name":"USERCORPID"},{"name":"USERPASS"},{"name":"USERAUTH"},{"name":"USERLANG"},{"name":"USERPROF"},{"name":"USERAPPLI"},{"name":"USERFNAME"},{"name":"USERLNAME"},{"name":"USEREMAIL"},{"name":"USERMOBILE"},{"name":"USERTEAM"},{"name":"USERACTIVE"},{"name":"USERDCRE"},{"name":"USERDMAJ"},{"name":"USERUTIL"},{"name":"USERTYPE"}]}
+9/21/2018 22:50:55 53: LIBQUERY with Callback: 
+9/21/2018 22:50:55 53: BEGIN PKREQUESTMANAGER.CALLQUERY(53,'CLI0000001','abe','{HEINENS_CEN_UAT}', '{111770,@item}','{HN}', :cursor); END;
+9/21/2018 22:51:16 53: 1 Object(s) returned... [FETCH]
+9/21/2018 22:51:16 53: [object Object]
+9/21/2018 22:51:16 53: {"metaData":[{"name":"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS'"}]}

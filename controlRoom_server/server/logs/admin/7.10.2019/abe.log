@@ -1,0 +1,102 @@
+7/10/2019 8:28:9 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{18841}','{HN}', :cursor); END;
+7/10/2019 8:29:33 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'NOT0000001','abe','{HEINENS_CEN_UAT, HEINENS_STK_UAT}', '{18841}','{HN}', :cursor); END;
+7/10/2019 8:29:57 3: BEGIN PKREQUESTMANAGER.CALLQUERY(3,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+7/10/2019 8:34:39 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{18841}','{HN}', :cursor); END;
+7/10/2019 8:34:41 4: []
+7/10/2019 8:34:41 4: 0 Object(s) returned... [FETCH]
+7/10/2019 8:35:21 5: BEGIN PKREQUESTMANAGER.CALLQUERY(5,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 8:35:23 5: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 8:35:23 5: 1 Object(s) returned... [FETCH]
+7/10/2019 8:36:26 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 8:36:27 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 8:36:27 1: 1 Object(s) returned... [FETCH]
+7/10/2019 8:38:19 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 8:38:21 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 8:38:21 1: 1 Object(s) returned... [FETCH]
+7/10/2019 8:42:11 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 8:42:13 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 8:42:13 1: 1 Object(s) returned... [FETCH]
+7/10/2019 8:43:10 2: BEGIN PKREQUESTMANAGER.CALLQUERY(2,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 8:43:12 2: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 8:43:12 2: 1 Object(s) returned... [FETCH]
+7/10/2019 8:44:20 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 8:44:21 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 8:44:21 1: 1 Object(s) returned... [FETCH]
+7/10/2019 8:59:35 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 8:59:38 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 8:59:38 1: 1 Object(s) returned... [FETCH]
+7/10/2019 12:5:48 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 12:5:51 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 12:5:51 1: 1 Object(s) returned... [FETCH]
+7/10/2019 12:8:7 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 12:8:10 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 12:8:10 1: 1 Object(s) returned... [FETCH]
+7/10/2019 12:9:3 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 12:9:5 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 12:9:5 1: 1 Object(s) returned... [FETCH]
+7/10/2019 12:9:31 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 12:9:35 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 12:9:35 1: 1 Object(s) returned... [FETCH]
+7/10/2019 12:10:27 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 12:10:30 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 12:10:30 1: 1 Object(s) returned... [FETCH]
+7/10/2019 12:11:34 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 12:11:36 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 12:11:36 1: 1 Object(s) returned... [FETCH]
+7/10/2019 12:25:30 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 12:25:32 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 12:25:32 1: 1 Object(s) returned... [FETCH]
+7/10/2019 12:29:45 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 12:29:47 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 12:29:47 1: 1 Object(s) returned... [FETCH]
+7/10/2019 13:47:31 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 13:47:33 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 13:47:33 1: 1 Object(s) returned... [FETCH]
+7/10/2019 13:49:3 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 13:49:4 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 13:49:4 1: 1 Object(s) returned... [FETCH]
+7/10/2019 13:49:57 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 13:49:58 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 13:49:58 1: 1 Object(s) returned... [FETCH]
+7/10/2019 13:53:20 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 13:53:22 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 13:53:22 1: 1 Object(s) returned... [FETCH]
+7/10/2019 13:54:15 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 13:54:16 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 13:54:16 1: 1 Object(s) returned... [FETCH]
+7/10/2019 13:55:55 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 13:55:57 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 13:55:57 1: 1 Object(s) returned... [FETCH]
+7/10/2019 13:56:22 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 13:56:23 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 13:56:23 1: 1 Object(s) returned... [FETCH]
+7/10/2019 14:0:13 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 14:0:14 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 14:0:14 1: 1 Object(s) returned... [FETCH]
+7/10/2019 14:2:1 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 14:2:3 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 14:2:3 1: 1 Object(s) returned... [FETCH]
+7/10/2019 14:2:52 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 14:2:53 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 14:2:53 1: 1 Object(s) returned... [FETCH]
+7/10/2019 15:34:51 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 15:34:53 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 15:34:53 1: 1 Object(s) returned... [FETCH]
+7/10/2019 15:35:28 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 15:35:30 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 15:35:30 1: 1 Object(s) returned... [FETCH]
+7/10/2019 15:35:55 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 15:35:56 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 15:35:56 1: 1 Object(s) returned... [FETCH]
+7/10/2019 15:36:15 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 15:36:16 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 15:36:16 1: 1 Object(s) returned... [FETCH]
+7/10/2019 15:41:42 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 15:41:44 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 15:41:44 1: 1 Object(s) returned... [FETCH]
+7/10/2019 15:47:9 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 15:47:10 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 15:47:10 1: 1 Object(s) returned... [FETCH]
+7/10/2019 15:47:23 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/10/2019 15:47:25 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTSUBJECT":"[ASN0000000001] Alert report","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmeidt refrain the stores to process the whole batch id associated.","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com","ALTMOBILE":"(678)9863021"}]
+7/10/2019 15:47:25 1: 1 Object(s) returned... [FETCH]
