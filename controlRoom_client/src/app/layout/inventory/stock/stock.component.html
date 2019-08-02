@@ -1,0 +1,87 @@
+<app-page-header [heading]="'Inventory follow-up'" [icon]="'fas fa-warehouse'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-growl [value]="msgs" sticky="sticky"></p-growl>
+</div>
+
+<div class="bbs_search_panel"  >
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Location : </span>
+    <span style="margin-right:50px; line-height: 25px">
+        <input type="number"  [(ngModel)]="locationCode" placeholder="" maxlength="5"
+               style="width: 10%;margin-left: 10px; text-align: center"/>
+    </span>
+    <span class="pull-right" style="padding-right: 20px">
+        <button type="submit" pButton (click)="search(0)" icon="fas fa-search" label="SEARCH"
+                style="margin-right: 15px"></button>
+        <button type="submit" pButton (click)="search(1)" icon="fas fa-sync-alt"></button>
+    </span>
+</div>
+<p></p>
+
+
+<!-- Panel resul -->
+<!-- Result panel of the resarch --> 
+<!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
+
+<!-- Step 1 - File upload -->
+<!-- Step 2 - File to GOLD connector -->
+<!-- Step 3 - GOLD Batch integration -->
+<!-- Step 4 - Inventory closure -->
+<!-- Step 5 - Review rejection & Analysis -->
+
+<div  *ngIf="dataReady" item-width="400px" table-layout="fixed" >
+        <p-table #result [value]="searchResult" sortMode="multiple" 
+        [rows]="100"  [rowsPerPageOptions]="[100,500, 2000]"
+        [paginator]="true" [pageLinks]="10" 
+        [columns]="columnsResult"
+        selectionMode="single" [(selection)]="selectedElement" 
+        [resizableColumns]="true" columnResizeMode="expand"
+        [responsive]="true" [totalRecords]="searchResult.length"
+        [reorderableColumns]="true" scrollHeight="1000px"
+        (onRowSelect)="handleRowSelect($event)"
+        [autoLayout]="true"tableStyleClass="table-layout: auto;">
+        
+        <!-- FILTER -->
+        <ng-template pTemplate="caption">
+            <div class="pull-right" >
+                <input  type="text" #ge placeholder="Type text to filter..." 
+                    (input)="result.filterGlobal($event.target.value, 'contains')" >
+            </div>
+            <div class="ui-helper-clearfix" >
+                <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                    class="CSV_Button"
+                    label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+            </div>
+        </ng-template>
+        <!-- HEADER -->
+        <ng-template pTemplate="header">             
+            <tr style="background: darkslategrey; color: white">
+                <th *ngFor="let col of columsCollapse;  let indice=index" [attr.colspan]="col.colspan">
+                    {{col.header}}
+                    <span *ngIf="col.expand === 1" class="fas fa-plus-square pull-right" (click)='expandColumn(indice)'> </span>
+                    <span *ngIf="col.expand === -1" class="far fa-minus-square pull-right" (click)='expandColumn(indice)'></span>
+                </th>
+            </tr>
+            <tr style="background: lightyellow;">
+                <ng-container *ngFor="let col of columnsResult">
+                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                            {{col.header}}
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+        <!-- BODY -->
+            <ng-template pTemplate="body" let-rowData let-columns="columnsResult">
+                <tr [pSelectableRow]="rowData">
+                    <ng-container *ngFor="let col of columnsResult" class="ui-resizable-column">
+                        <td *ngIf="col.display">
+                                {{rowData[col.field]}}
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-template>
+        </p-table>
+        <i class="pull-right" style="font-size:smaller;" >{{searchResult.length}} Object</i>
+</div>
+<p></p>
