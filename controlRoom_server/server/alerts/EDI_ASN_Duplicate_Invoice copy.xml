@@ -1,0 +1,53 @@
+<ROOT>
+    <QUERY> WITH DUP_INVOICE AS (
+            SELECT "ImportBatchID",
+                    "InvoiceDate",
+                    "VendorDunsNumber",
+                    "ShiptoDuns",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName",
+                    COUNT(1)
+                FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
+            WHERE "VendorDunsNumber" != ''
+                AND "InvoiceNumber" != ''
+                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
+                AND NOT EXISTS (SELECT 1 FROM alertlog, alerts 
+                                where LALTID=ALTID AND ALTREALTIME=1 
+                                AND LALTMESS LIKE ''%'' || "InvoiceNumber" || ''%'')
+            GROUP BY "InvoiceDate",
+                        "VendorDunsNumber",
+                        "InvoiceNumber",
+                        "TotalInvoiceAmount",
+                        "ImportBatchID",
+                        "UnitsShipped",
+                        "FileName",
+                        "ShiptoDuns"
+            HAVING COUNT(1) > 1)
+            SELECT DISTINCT "ImportBatchID",
+                    to_char("InvoiceDate", ''RRRRMMDD'') InvoiceDate,
+                    "VendorDunsNumber",
+                    foucnuf "SupplierCode",
+                    foulibl "SupplierDesc",
+                    socsite "StoreNumber",
+                    soclmag "StoreDesc",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName"
+                FROM DUP_INVOICE,
+                    foudgene@Heinens_Custom_Prod, 
+                    fouadres@Heinens_Custom_Prod,
+                    sitdgene@Heinens_Custom_Prod
+            WHERE to_char(fadacci)=to_char("VendorDunsNumber")
+                AND fadcfin=foucfin
+                AND to_number(substr("ShiptoDuns",
+                                LENGTH("ShiptoDuns") - 1,
+                                length("ShiptoDuns"))) = socsite
+            ORDER BY InvoiceDate DESC
+  </QUERY>
+  <HEADERIFEMPTY>No EDI ASN with duplicate invoices this week.</HEADERIFEMPTY>
+  <HEADER>EDI ASN with duplicate invoices this week.</HEADER>
+  <PARAMS></PARAMS>
+</ROOT>

@@ -1,0 +1,478 @@
+7/28/2019 13:8:49 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/28/2019 13:8:51 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTFILE":"/opt/apps/controlRoom/controlRoom_server/server/alerts/EDI_ASN_Duplicate_Invoice_Weekly.xml","ALTSUBJECT":"Weekly Duplicate Invoice from Kleinschmidt","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmidt refrain the stores to process the whole batch id associated.","ALTSMSCONTENT":"Check your email for detail, can't import EDI Invoices (# total) : ","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com; ebalodis@heinens.com; ftilling@authentech.com; jkane@heinens.com; rfink@heinens.com;","ALTMOBILE":"6789863021@tmomail.net"}]
+7/28/2019 13:8:51 1: 1 Object(s) returned... [FETCH]
+7/28/2019 13:11:2 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/28/2019 13:11:4 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTFILE":"/opt/apps/controlRoom/controlRoom_server/server/alerts/EDI_ASN_Duplicate_Invoice_Weekly.xml","ALTSUBJECT":"Weekly Duplicate Invoice from Kleinschmidt","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmidt refrain the stores to process the whole batch id associated.","ALTSMSCONTENT":"Check your email for detail, can't import EDI Invoices (# total) : ","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com; ebalodis@heinens.com; ftilling@authentech.com; jkane@heinens.com; rfink@heinens.com;","ALTMOBILE":"6789863021@tmomail.net"}]
+7/28/2019 13:11:4 1: 1 Object(s) returned... [FETCH]
+7/28/2019 13:11:5 2: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(2,' WITH DUP_INVOICE AS (
+            SELECT "ImportBatchID",
+                    "InvoiceDate",
+                    "VendorDunsNumber",
+                    "ShiptoDuns",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName",
+                    COUNT(1)
+                FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
+            WHERE "VendorDunsNumber" != ''
+                AND "InvoiceNumber" != ''
+                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
+            GROUP BY "InvoiceDate",
+                        "VendorDunsNumber",
+                        "InvoiceNumber",
+                        "TotalInvoiceAmount",
+                        "ImportBatchID",
+                        "UnitsShipped",
+                        "FileName",
+                        "ShiptoDuns"
+            HAVING COUNT(1) > 1)
+            SELECT DISTINCT "ImportBatchID",
+                    to_char("InvoiceDate", ''RRRRMMDD'') InvoiceDate,
+                    "VendorDunsNumber",
+                    foucnuf "SupplierCode",
+                    foulibl "SupplierDesc",
+                    socsite "StoreNumber",
+                    soclmag "StoreDesc",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName"
+                FROM DUP_INVOICE,
+                    foudgene@Heinens_Custom_Prod, 
+                    fouadres@Heinens_Custom_Prod,
+                    sitdgene@Heinens_Custom_Prod
+            WHERE to_char(fadacci)=to_char("VendorDunsNumber")
+                AND fadcfin=foucfin
+                AND to_number(substr("ShiptoDuns",
+                                LENGTH("ShiptoDuns") - 1,
+                                length("ShiptoDuns"))) = socsite
+            ORDER BY InvoiceDate DESC
+  ','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:11:51 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/28/2019 13:11:53 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTFILE":"/opt/apps/controlRoom/controlRoom_server/server/alerts/EDI_ASN_Duplicate_Invoice_Weekly.xml","ALTSUBJECT":"Weekly Duplicate Invoice from Kleinschmidt","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmidt refrain the stores to process the whole batch id associated.","ALTSMSCONTENT":"Check your email for detail, can't import EDI Invoices (# total) : ","ALTEMAIL":"ahmed.benamrouche@bbsymphony.com; ebalodis@heinens.com; ftilling@authentech.com; jkane@heinens.com; rfink@heinens.com;","ALTMOBILE":"6789863021@tmomail.net"}]
+7/28/2019 13:11:53 1: 1 Object(s) returned... [FETCH]
+7/28/2019 13:11:53 2: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(2,' WITH DUP_INVOICE AS (
+            SELECT "ImportBatchID",
+                    "InvoiceDate",
+                    "VendorDunsNumber",
+                    "ShiptoDuns",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName",
+                    COUNT(1)
+                FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
+            WHERE "VendorDunsNumber" != ''
+                AND "InvoiceNumber" != ''
+                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
+            GROUP BY "InvoiceDate",
+                        "VendorDunsNumber",
+                        "InvoiceNumber",
+                        "TotalInvoiceAmount",
+                        "ImportBatchID",
+                        "UnitsShipped",
+                        "FileName",
+                        "ShiptoDuns"
+            HAVING COUNT(1) > 1)
+            SELECT DISTINCT "ImportBatchID",
+                    to_char("InvoiceDate", ''RRRRMMDD'') InvoiceDate,
+                    "VendorDunsNumber",
+                    foucnuf "SupplierCode",
+                    foulibl "SupplierDesc",
+                    socsite "StoreNumber",
+                    soclmag "StoreDesc",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName"
+                FROM DUP_INVOICE,
+                    foudgene@Heinens_Custom_Prod, 
+                    fouadres@Heinens_Custom_Prod,
+                    sitdgene@Heinens_Custom_Prod
+            WHERE to_char(fadacci)=to_char("VendorDunsNumber")
+                AND fadcfin=foucfin
+                AND to_number(substr("ShiptoDuns",
+                                LENGTH("ShiptoDuns") - 1,
+                                length("ShiptoDuns"))) = socsite
+            ORDER BY InvoiceDate DESC
+  ','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:12:37 2: 76 Object(s) returned... [FETCH]
+7/28/2019 13:12:37 3: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(3,'INSERT INTO ALERTLOG  SELECT ''ASN0000000001'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":11,"StoreDesc":"MIDDLEBURG HEIGHTS","InvoiceNumber":"2606079","TotalInvoiceAmount":"194.61","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1258135727_20190708022315.txt"},{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":15,"StoreDesc":"CHARDON","InvoiceNumber":"2604862","TotalInvoiceAmount":"389.22","UnitsShipped":"2","FileName":"G:\\InvoiceMatch894\\EDI_1258135735_20190708022416.txt"},{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":18,"StoreDesc":"AVON","InvoiceNumber":"2606082","TotalInvoiceAmount":"389.22","UnitsShipped":"2","FileName":"G:\\InvoiceMatch894\\EDI_1258135738_20190708022416.txt"},{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":19,"StoreDesc":"HUDSON","InvoiceNumber":"2606093","TotalInvoiceAmount":"194.61","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1258135736_20190708022417.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":5,"StoreDesc":"PEPPER PIKE","InvoiceNumber":"2499471","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863444_20190617022333.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":8,"StoreDesc":"AURORA","InvoiceNumber":"2499495","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863457_20190617022337.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":10,"StoreDesc":"MAYFIELD VILLAGE","InvoiceNumber":"2499475","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863442_20190617022334.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":15,"StoreDesc":"CHARDON","InvoiceNumber":"2499487","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863440_20190617022335.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":16,"StoreDesc":"TWINSBURG","InvoiceNumber":"2499499","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863454_20190617022335.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDun'',1,2000)), sysdate, sysdate, ''notification.js'', ''76'' from dual','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:12:39 3: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-1001-ORA-01001:INVALIDCURSOR'":"Executing issue, check DBMS_SQL.EXECUTE rights. -1001-ORA-01001: invalid cursor"}]
+7/28/2019 13:12:39 3: 1 Object(s) returned... [FETCH]
+7/28/2019 13:22:36 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/28/2019 13:22:39 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTFILE":"/opt/apps/controlRoom/controlRoom_server/server/alerts/EDI_ASN_Duplicate_Invoice_Weekly.xml","ALTSUBJECT":"Weekly Duplicate Invoice from Kleinschmidt","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmidt refrain the stores to process the whole batch id associated.","ALTSMSCONTENT":"Check your email for detail, can't import EDI Invoices (# total) : ","ALTREALTIME":0,"ALTEMAIL":"ahmed.benamrouche@bbsymphony.com; ebalodis@heinens.com; ftilling@authentech.com; jkane@heinens.com; rfink@heinens.com;","ALTMOBILE":"6789863021@tmomail.net"}]
+7/28/2019 13:22:39 1: 1 Object(s) returned... [FETCH]
+7/28/2019 13:22:39 2: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(2,' WITH DUP_INVOICE AS (
+            SELECT "ImportBatchID",
+                    "InvoiceDate",
+                    "VendorDunsNumber",
+                    "ShiptoDuns",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName",
+                    COUNT(1)
+                FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
+            WHERE "VendorDunsNumber" != ''
+                AND "InvoiceNumber" != ''
+                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
+            GROUP BY "InvoiceDate",
+                        "VendorDunsNumber",
+                        "InvoiceNumber",
+                        "TotalInvoiceAmount",
+                        "ImportBatchID",
+                        "UnitsShipped",
+                        "FileName",
+                        "ShiptoDuns"
+            HAVING COUNT(1) > 1)
+            SELECT DISTINCT "ImportBatchID",
+                    to_char("InvoiceDate", ''RRRRMMDD'') InvoiceDate,
+                    "VendorDunsNumber",
+                    foucnuf "SupplierCode",
+                    foulibl "SupplierDesc",
+                    socsite "StoreNumber",
+                    soclmag "StoreDesc",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName"
+                FROM DUP_INVOICE,
+                    foudgene@Heinens_Custom_Prod, 
+                    fouadres@Heinens_Custom_Prod,
+                    sitdgene@Heinens_Custom_Prod
+            WHERE to_char(fadacci)=to_char("VendorDunsNumber")
+                AND fadcfin=foucfin
+                AND to_number(substr("ShiptoDuns",
+                                LENGTH("ShiptoDuns") - 1,
+                                length("ShiptoDuns"))) = socsite
+            ORDER BY InvoiceDate DESC
+  ','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:23:22 2: 76 Object(s) returned... [FETCH]
+7/28/2019 13:23:22 3: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(3,'INSERT INTO ALERTLOG  SELECT ''ASN0000000001'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":11,"StoreDesc":"MIDDLEBURG HEIGHTS","InvoiceNumber":"2606079","TotalInvoiceAmount":"194.61","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1258135727_20190708022315.txt"},{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":15,"StoreDesc":"CHARDON","InvoiceNumber":"2604862","TotalInvoiceAmount":"389.22","UnitsShipped":"2","FileName":"G:\\InvoiceMatch894\\EDI_1258135735_20190708022416.txt"},{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":18,"StoreDesc":"AVON","InvoiceNumber":"2606082","TotalInvoiceAmount":"389.22","UnitsShipped":"2","FileName":"G:\\InvoiceMatch894\\EDI_1258135738_20190708022416.txt"},{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":19,"StoreDesc":"HUDSON","InvoiceNumber":"2606093","TotalInvoiceAmount":"194.61","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1258135736_20190708022417.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":5,"StoreDesc":"PEPPER PIKE","InvoiceNumber":"2499471","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863444_20190617022333.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":8,"StoreDesc":"AURORA","InvoiceNumber":"2499495","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863457_20190617022337.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":10,"StoreDesc":"MAYFIELD VILLAGE","InvoiceNumber":"2499475","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863442_20190617022334.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":15,"StoreDesc":"CHARDON","InvoiceNumber":"2499487","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863440_20190617022335.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":16,"StoreDesc":"TWINSBURG","InvoiceNumber":"2499499","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863454_20190617022335.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDun'',1,2000)), sysdate, sysdate, ''notification.js'', ''76'' from dual','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:23:24 3: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-1001-ORA-01001:INVALIDCURSOR'":"Executing issue, check DBMS_SQL.EXECUTE rights. -1001-ORA-01001: invalid cursor"}]
+7/28/2019 13:23:24 3: 1 Object(s) returned... [FETCH]
+7/28/2019 13:24:26 4: BEGIN PKREQUESTMANAGER.CALLQUERY(4,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/28/2019 13:24:28 4: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTFILE":"/opt/apps/controlRoom/controlRoom_server/server/alerts/EDI_ASN_Duplicate_Invoice_Weekly.xml","ALTSUBJECT":"Weekly Duplicate Invoice from Kleinschmidt","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmidt refrain the stores to process the whole batch id associated.","ALTSMSCONTENT":"Check your email for detail, can't import EDI Invoices (# total) : ","ALTREALTIME":0,"ALTEMAIL":"ahmed.benamrouche@bbsymphony.com; ebalodis@heinens.com; ftilling@authentech.com; jkane@heinens.com; rfink@heinens.com;","ALTMOBILE":"6789863021@tmomail.net"}]
+7/28/2019 13:24:28 4: 1 Object(s) returned... [FETCH]
+7/28/2019 13:24:28 5: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(5,' WITH DUP_INVOICE AS (
+            SELECT "ImportBatchID",
+                    "InvoiceDate",
+                    "VendorDunsNumber",
+                    "ShiptoDuns",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName",
+                    COUNT(1)
+                FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
+            WHERE "VendorDunsNumber" != ''
+                AND "InvoiceNumber" != ''
+                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
+		and trunc(sysdate-7) > trunc("InvoiceDate")
+            GROUP BY "InvoiceDate",
+                        "VendorDunsNumber",
+                        "InvoiceNumber",
+                        "TotalInvoiceAmount",
+                        "ImportBatchID",
+                        "UnitsShipped",
+                        "FileName",
+                        "ShiptoDuns"
+            HAVING COUNT(1) > 1)
+            SELECT DISTINCT "ImportBatchID",
+                    to_char("InvoiceDate", ''RRRRMMDD'') InvoiceDate,
+                    "VendorDunsNumber",
+                    foucnuf "SupplierCode",
+                    foulibl "SupplierDesc",
+                    socsite "StoreNumber",
+                    soclmag "StoreDesc",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName"
+                FROM DUP_INVOICE,
+                    foudgene@Heinens_Custom_Prod, 
+                    fouadres@Heinens_Custom_Prod,
+                    sitdgene@Heinens_Custom_Prod
+            WHERE to_char(fadacci)=to_char("VendorDunsNumber")
+                AND fadcfin=foucfin
+                AND to_number(substr("ShiptoDuns",
+                                LENGTH("ShiptoDuns") - 1,
+                                length("ShiptoDuns"))) = socsite
+            ORDER BY InvoiceDate DESC
+  ','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:25:12 5: 76 Object(s) returned... [FETCH]
+7/28/2019 13:25:12 6: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(6,'INSERT INTO ALERTLOG  SELECT ''ASN0000000001'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":11,"StoreDesc":"MIDDLEBURG HEIGHTS","InvoiceNumber":"2606079","TotalInvoiceAmount":"194.61","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1258135727_20190708022315.txt"},{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":15,"StoreDesc":"CHARDON","InvoiceNumber":"2604862","TotalInvoiceAmount":"389.22","UnitsShipped":"2","FileName":"G:\\InvoiceMatch894\\EDI_1258135735_20190708022416.txt"},{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":18,"StoreDesc":"AVON","InvoiceNumber":"2606082","TotalInvoiceAmount":"389.22","UnitsShipped":"2","FileName":"G:\\InvoiceMatch894\\EDI_1258135738_20190708022416.txt"},{"ImportBatchID":2874668,"INVOICEDATE":"20190708","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":19,"StoreDesc":"HUDSON","InvoiceNumber":"2606093","TotalInvoiceAmount":"194.61","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1258135736_20190708022417.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":5,"StoreDesc":"PEPPER PIKE","InvoiceNumber":"2499471","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863444_20190617022333.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":8,"StoreDesc":"AURORA","InvoiceNumber":"2499495","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863457_20190617022337.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":10,"StoreDesc":"MAYFIELD VILLAGE","InvoiceNumber":"2499475","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863442_20190617022334.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":15,"StoreDesc":"CHARDON","InvoiceNumber":"2499487","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863440_20190617022335.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDunsNumber":"0064028200000","SupplierCode":"06966","SupplierDesc":"LIPARI FOOD INC.","StoreNumber":16,"StoreDesc":"TWINSBURG","InvoiceNumber":"2499499","TotalInvoiceAmount":"60.72","UnitsShipped":"1","FileName":"G:\\InvoiceMatch894\\EDI_1253863454_20190617022335.txt"},{"ImportBatchID":2852751,"INVOICEDATE":"20190617","VendorDun'',1,2000)), sysdate, sysdate, ''notification.js'', ''76'' from dual','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:25:15 6: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-1001-ORA-01001:INVALIDCURSOR'":"Executing issue, check DBMS_SQL.EXECUTE rights. -1001-ORA-01001: invalid cursor"}]
+7/28/2019 13:25:15 6: 1 Object(s) returned... [FETCH]
+7/28/2019 13:26:7 7: BEGIN PKREQUESTMANAGER.CALLQUERY(7,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/28/2019 13:26:9 7: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTFILE":"/opt/apps/controlRoom/controlRoom_server/server/alerts/EDI_ASN_Duplicate_Invoice_Weekly.xml","ALTSUBJECT":"Weekly Duplicate Invoice from Kleinschmidt","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmidt refrain the stores to process the whole batch id associated.","ALTSMSCONTENT":"Check your email for detail, can't import EDI Invoices (# total) : ","ALTREALTIME":0,"ALTEMAIL":"ahmed.benamrouche@bbsymphony.com; ebalodis@heinens.com; ftilling@authentech.com; jkane@heinens.com; rfink@heinens.com;","ALTMOBILE":"6789863021@tmomail.net"}]
+7/28/2019 13:26:9 7: 1 Object(s) returned... [FETCH]
+7/28/2019 13:26:9 8: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(8,' WITH DUP_INVOICE AS (
+            SELECT "ImportBatchID",
+                    "InvoiceDate",
+                    "VendorDunsNumber",
+                    "ShiptoDuns",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName",
+                    COUNT(1)
+                FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
+            WHERE "VendorDunsNumber" != ''
+                AND "InvoiceNumber" != ''
+                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
+		and trunc("InvoiceDate") > trunc(sysdate-7) 
+            GROUP BY "InvoiceDate",
+                        "VendorDunsNumber",
+                        "InvoiceNumber",
+                        "TotalInvoiceAmount",
+                        "ImportBatchID",
+                        "UnitsShipped",
+                        "FileName",
+                        "ShiptoDuns"
+            HAVING COUNT(1) > 1)
+            SELECT DISTINCT "ImportBatchID",
+                    to_char("InvoiceDate", ''RRRRMMDD'') InvoiceDate,
+                    "VendorDunsNumber",
+                    foucnuf "SupplierCode",
+                    foulibl "SupplierDesc",
+                    socsite "StoreNumber",
+                    soclmag "StoreDesc",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName"
+                FROM DUP_INVOICE,
+                    foudgene@Heinens_Custom_Prod, 
+                    fouadres@Heinens_Custom_Prod,
+                    sitdgene@Heinens_Custom_Prod
+            WHERE to_char(fadacci)=to_char("VendorDunsNumber")
+                AND fadcfin=foucfin
+                AND to_number(substr("ShiptoDuns",
+                                LENGTH("ShiptoDuns") - 1,
+                                length("ShiptoDuns"))) = socsite
+            ORDER BY InvoiceDate DESC
+  ','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:26:50 8: []
+7/28/2019 13:26:50 8: 0 Object(s) returned... [FETCH]
+7/28/2019 13:26:50 9: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(9,'INSERT INTO ALERTLOG  SELECT ''ASN0000000001'', SYSDATE, utl_raw.cast_to_raw(SUBSTR('']'',1,2000)), sysdate, sysdate, ''notification.js'', ''0'' from dual','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:26:52 9: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-1001-ORA-01001:INVALIDCURSOR'":"Executing issue, check DBMS_SQL.EXECUTE rights. -1001-ORA-01001: invalid cursor"}]
+7/28/2019 13:26:52 9: 1 Object(s) returned... [FETCH]
+7/28/2019 13:28:53 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/28/2019 13:28:55 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTFILE":"/opt/apps/controlRoom/controlRoom_server/server/alerts/EDI_ASN_Duplicate_Invoice_Weekly.xml","ALTSUBJECT":"Weekly Duplicate Invoice from Kleinschmidt","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmidt refrain the stores to process the whole batch id associated.","ALTSMSCONTENT":"Check your email for detail, can't import EDI Invoices (# total) : ","ALTREALTIME":0,"ALTEMAIL":"ahmed.benamrouche@bbsymphony.com; ebalodis@heinens.com; ftilling@authentech.com; jkane@heinens.com; rfink@heinens.com;","ALTMOBILE":"6789863021@tmomail.net"}]
+7/28/2019 13:28:55 1: 1 Object(s) returned... [FETCH]
+7/28/2019 13:28:55 2: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(2,' WITH DUP_INVOICE AS (
+            SELECT "ImportBatchID",
+                    "InvoiceDate",
+                    "VendorDunsNumber",
+                    "ShiptoDuns",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName",
+                    COUNT(1)
+                FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
+            WHERE "VendorDunsNumber" != ''
+                AND "InvoiceNumber" != ''
+                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
+		and trunc("InvoiceDate") > trunc(sysdate-7) 
+            GROUP BY "InvoiceDate",
+                        "VendorDunsNumber",
+                        "InvoiceNumber",
+                        "TotalInvoiceAmount",
+                        "ImportBatchID",
+                        "UnitsShipped",
+                        "FileName",
+                        "ShiptoDuns"
+            HAVING COUNT(1) > 1)
+            SELECT DISTINCT "ImportBatchID",
+                    to_char("InvoiceDate", ''RRRRMMDD'') InvoiceDate,
+                    "VendorDunsNumber",
+                    foucnuf "SupplierCode",
+                    foulibl "SupplierDesc",
+                    socsite "StoreNumber",
+                    soclmag "StoreDesc",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName"
+                FROM DUP_INVOICE,
+                    foudgene@Heinens_Custom_Prod, 
+                    fouadres@Heinens_Custom_Prod,
+                    sitdgene@Heinens_Custom_Prod
+            WHERE to_char(fadacci)=to_char("VendorDunsNumber")
+                AND fadcfin=foucfin
+                AND to_number(substr("ShiptoDuns",
+                                LENGTH("ShiptoDuns") - 1,
+                                length("ShiptoDuns"))) = socsite
+            ORDER BY InvoiceDate DESC
+  ','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:29:36 2: []
+7/28/2019 13:29:36 2: 0 Object(s) returned... [FETCH]
+7/28/2019 13:29:36 3: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(3,'INSERT INTO ALERTLOG  SELECT ''ASN0000000001'', SYSDATE, utl_raw.cast_to_raw(SUBSTR('']'',1,2000)), sysdate, sysdate, ''notification.js'', ''0'' from dual','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:29:38 3: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-1001-ORA-01001:INVALIDCURSOR'":"Executing issue, check DBMS_SQL.EXECUTE rights. -1001-ORA-01001: invalid cursor"}]
+7/28/2019 13:29:38 3: 1 Object(s) returned... [FETCH]
+7/28/2019 13:35:12 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/28/2019 13:35:14 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTFILE":"/opt/apps/controlRoom/controlRoom_server/server/alerts/EDI_ASN_Duplicate_Invoice_Weekly.xml","ALTSUBJECT":"Weekly Duplicate Invoice from Kleinschmidt","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmidt refrain the stores to process the whole batch id associated.","ALTSMSCONTENT":"Check your email for detail, can't import EDI Invoices (# total) : ","ALTREALTIME":0,"ALTEMAIL":"ahmed.benamrouche@bbsymphony.com; ebalodis@heinens.com; ftilling@authentech.com; jkane@heinens.com; rfink@heinens.com;","ALTMOBILE":"6789863021@tmomail.net"}]
+7/28/2019 13:35:14 1: 1 Object(s) returned... [FETCH]
+7/28/2019 13:35:14 2: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(2,' WITH DUP_INVOICE AS (
+            SELECT "ImportBatchID",
+                    "InvoiceDate",
+                    "VendorDunsNumber",
+                    "ShiptoDuns",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName",
+                    COUNT(1)
+                FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
+            WHERE "VendorDunsNumber" != ''
+                AND "InvoiceNumber" != ''
+                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
+		and trunc("InvoiceDate") > trunc(sysdate-7) 
+            GROUP BY "InvoiceDate",
+                        "VendorDunsNumber",
+                        "InvoiceNumber",
+                        "TotalInvoiceAmount",
+                        "ImportBatchID",
+                        "UnitsShipped",
+                        "FileName",
+                        "ShiptoDuns"
+            HAVING COUNT(1) > 1)
+            SELECT DISTINCT "ImportBatchID",
+                    to_char("InvoiceDate", ''RRRRMMDD'') InvoiceDate,
+                    "VendorDunsNumber",
+                    foucnuf "SupplierCode",
+                    foulibl "SupplierDesc",
+                    socsite "StoreNumber",
+                    soclmag "StoreDesc",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName"
+                FROM DUP_INVOICE,
+                    foudgene@Heinens_Custom_Prod, 
+                    fouadres@Heinens_Custom_Prod,
+                    sitdgene@Heinens_Custom_Prod
+            WHERE to_char(fadacci)=to_char("VendorDunsNumber")
+                AND fadcfin=foucfin
+                AND to_number(substr("ShiptoDuns",
+                                LENGTH("ShiptoDuns") - 1,
+                                length("ShiptoDuns"))) = socsite
+            ORDER BY InvoiceDate DESC
+  ','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:36:0 2: []
+7/28/2019 13:36:0 2: 0 Object(s) returned... [FETCH]
+7/28/2019 13:36:0 3: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(3,'INSERT INTO ALERTLOG  SELECT ''ASN0000000001'', SYSDATE, utl_raw.cast_to_raw(SUBSTR('']'',1,2000)), sysdate, sysdate, ''notification.js'', ''0'' from dual','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:36:2 3: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-1001-ORA-01001:INVALIDCURSOR'":"Executing issue, check DBMS_SQL.EXECUTE rights. -1001-ORA-01001: invalid cursor"}]
+7/28/2019 13:36:2 3: 1 Object(s) returned... [FETCH]
+7/28/2019 13:37:8 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/28/2019 13:37:12 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTFILE":"/opt/apps/controlRoom/controlRoom_server/server/alerts/EDI_ASN_Duplicate_Invoice_Weekly.xml","ALTSUBJECT":"Weekly Duplicate Invoice from Kleinschmidt","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmidt refrain the stores to process the whole batch id associated.","ALTSMSCONTENT":"Check your email for detail, can't import EDI Invoices (# total) : ","ALTREALTIME":0,"ALTEMAIL":"ahmed.benamrouche@bbsymphony.com; ebalodis@heinens.com; ftilling@authentech.com; jkane@heinens.com; rfink@heinens.com;","ALTMOBILE":"6789863021@tmomail.net"}]
+7/28/2019 13:37:12 1: 1 Object(s) returned... [FETCH]
+7/28/2019 13:37:12 2: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(2,' WITH DUP_INVOICE AS (
+            SELECT "ImportBatchID",
+                    "InvoiceDate",
+                    "VendorDunsNumber",
+                    "ShiptoDuns",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName",
+                    COUNT(1)
+                FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
+            WHERE "VendorDunsNumber" != ''
+                AND "InvoiceNumber" != ''
+                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
+		and trunc("InvoiceDate") > trunc(sysdate-7) 
+            GROUP BY "InvoiceDate",
+                        "VendorDunsNumber",
+                        "InvoiceNumber",
+                        "TotalInvoiceAmount",
+                        "ImportBatchID",
+                        "UnitsShipped",
+                        "FileName",
+                        "ShiptoDuns"
+            HAVING COUNT(1) > 1)
+            SELECT DISTINCT "ImportBatchID",
+                    to_char("InvoiceDate", ''RRRRMMDD'') InvoiceDate,
+                    "VendorDunsNumber",
+                    foucnuf "SupplierCode",
+                    foulibl "SupplierDesc",
+                    socsite "StoreNumber",
+                    soclmag "StoreDesc",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName"
+                FROM DUP_INVOICE,
+                    foudgene@Heinens_Custom_Prod, 
+                    fouadres@Heinens_Custom_Prod,
+                    sitdgene@Heinens_Custom_Prod
+            WHERE to_char(fadacci)=to_char("VendorDunsNumber")
+                AND fadcfin=foucfin
+                AND to_number(substr("ShiptoDuns",
+                                LENGTH("ShiptoDuns") - 1,
+                                length("ShiptoDuns"))) = socsite
+            ORDER BY InvoiceDate DESC
+  ','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:37:53 2: []
+7/28/2019 13:37:53 2: 0 Object(s) returned... [FETCH]
+7/28/2019 13:37:53 3: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(3,'INSERT INTO ALERTLOG  SELECT ''ASN0000000001'', SYSDATE, utl_raw.cast_to_raw(SUBSTR('']'',1,2000)), sysdate, sysdate, ''notification.js'', ''0'' from dual','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:37:55 3: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-1001-ORA-01001:INVALIDCURSOR'":"Executing issue, check DBMS_SQL.EXECUTE rights. -1001-ORA-01001: invalid cursor"}]
+7/28/2019 13:37:55 3: 1 Object(s) returned... [FETCH]
+7/28/2019 13:39:15 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'NOT0000001','abe','{HEINENS_CEN_UAT}', '{ASN0000000001}','{HN}', :cursor); END;
+7/28/2019 13:39:17 1: [{"ALTID":"ASN0000000001","ALTQUERY":"ASN0000000001","ALTFILE":"/opt/apps/controlRoom/controlRoom_server/server/alerts/EDI_ASN_Duplicate_Invoice_Weekly.xml","ALTSUBJECT":"Weekly Duplicate Invoice from Kleinschmidt","ALTCONTENT":"Duplicate ASN/EDI invoice received by Kleinschmidt refrain the stores to process the whole batch id associated.","ALTSMSCONTENT":"Check your email for detail, can't import EDI Invoices (# total) : ","ALTREALTIME":0,"ALTEMAIL":"ahmed.benamrouche@bbsymphony.com; ebalodis@heinens.com; ftilling@authentech.com; jkane@heinens.com; rfink@heinens.com;","ALTMOBILE":"6789863021@tmomail.net"}]
+7/28/2019 13:39:17 1: 1 Object(s) returned... [FETCH]
+7/28/2019 13:39:17 2: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(2,' WITH DUP_INVOICE AS (
+            SELECT "ImportBatchID",
+                    "InvoiceDate",
+                    "VendorDunsNumber",
+                    "ShiptoDuns",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName",
+                    COUNT(1)
+                FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
+            WHERE "VendorDunsNumber" != ''
+                AND "InvoiceNumber" != ''
+                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
+		and trunc("InvoiceDate") > trunc(sysdate-7) 
+            GROUP BY "InvoiceDate",
+                        "VendorDunsNumber",
+                        "InvoiceNumber",
+                        "TotalInvoiceAmount",
+                        "ImportBatchID",
+                        "UnitsShipped",
+                        "FileName",
+                        "ShiptoDuns"
+            HAVING COUNT(1) > 1)
+            SELECT DISTINCT "ImportBatchID",
+                    to_char("InvoiceDate", ''RRRRMMDD'') InvoiceDate,
+                    "VendorDunsNumber",
+                    foucnuf "SupplierCode",
+                    foulibl "SupplierDesc",
+                    socsite "StoreNumber",
+                    soclmag "StoreDesc",
+                    "InvoiceNumber",
+                    "TotalInvoiceAmount",
+                    "UnitsShipped",
+                    "FileName"
+                FROM DUP_INVOICE,
+                    foudgene@Heinens_Custom_Prod, 
+                    fouadres@Heinens_Custom_Prod,
+                    sitdgene@Heinens_Custom_Prod
+            WHERE to_char(fadacci)=to_char("VendorDunsNumber")
+                AND fadcfin=foucfin
+                AND to_number(substr("ShiptoDuns",
+                                LENGTH("ShiptoDuns") - 1,
+                                length("ShiptoDuns"))) = socsite
+            ORDER BY InvoiceDate DESC
+  ','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:39:57 2: []
+7/28/2019 13:39:57 2: 0 Object(s) returned... [FETCH]
+7/28/2019 13:39:57 3: BEGIN PKREQUESTMANAGER.EXECUTEQUERY(3,'INSERT INTO ALERTLOG  SELECT ''ASN0000000001'', SYSDATE, utl_raw.cast_to_raw(SUBSTR('']'',1,2000)), sysdate, sysdate, ''notification.js'', ''0'' from dual','abe','{HEINENS_CEN_UAT}', 'undefined','{HN}', :cursor); END;
+7/28/2019 13:39:59 3: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-1001-ORA-01001:INVALIDCURSOR'":"Executing issue, check DBMS_SQL.EXECUTE rights. -1001-ORA-01001: invalid cursor"}]
+7/28/2019 13:39:59 3: 1 Object(s) returned... [FETCH]
