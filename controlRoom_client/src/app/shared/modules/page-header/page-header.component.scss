@@ -1,0 +1,12 @@
+.h3, h3 {
+    font-size: 1.75rem;
+}
+.h2, h2 {
+    font-size: 1.75rem;
+}
+
+:host ::ng-deep .breadcrumb {
+    text-shadow: 0.5px 0.5px 0px darkgrey;
+    box-shadow: inset 0px 1px 0px darkgrey, 0px 1px 0px 0px darkgrey, 0px 2px 1px #999;
+
+}
