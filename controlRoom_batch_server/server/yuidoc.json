@@ -1,0 +1,9 @@
+{
+  "name": "Control Room API",
+  "description": "Control Room API documentation tool",
+  "version": "0.0.01",
+  "logo": "../vendor/images/logo/logo.png",
+  "options": {
+  	"outdir": "./documentation/"
+  }
+}
