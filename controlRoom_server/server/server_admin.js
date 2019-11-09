@@ -49,14 +49,15 @@ app.use(function(req, res, next) {
 	      // IE8 does not allow domains to be specified, just the *
 	      headers["Access-Control-Max-Age"] = '86400'; // 24 hours
 	      headers["Access-Control-Allow-Origin"] = "*";
-    	  headers["Access-Control-Allow-Credentials"] = false;
-    	  headers["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, POST, PUT";
+    	  headers["Access-Control-Allow-Credentials"] = true;
+    	  headers["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, POST, PUT, DELETE, PATCH";
     	  headers["Access-Control-Allow-Headers"] = "Access-Control-Allow-Headers, Origin,Accept, " +
                                                     "Cache-Control, Pragma, Origin, Authorization, " +
                                                     "X-Requested-With, Content-Type, Access-Control-Request-Method, " +
                                                     " Access-Control-Request-Headers, " +
                                                     "USER, PASSWORD, " +
-                                                    "DATABASE_SID, LANGUAGE";
+                                                    "DATABASE_SID, LANGUAGE, " +
+                                                    "ENV_ID, ENV_PASS, ENV_IP, ENV_COMMAND";
 	      res.writeHead(200, headers);
 	      res.end();
 	}
@@ -90,6 +91,7 @@ let command = require('./server/controller/command/execute')(app, SQL);
 let logger = require('./server/utils/logger.js');     // Log manager
 let widget = require('./server/controller/widget')(app, SQL);
 let notification = require('./server/controller/notification')(app, SQL);
+
 
 //dbConnection.createPool('dd');
 userprofile.get(app,oracledb);
@@ -125,6 +127,14 @@ notification.get(app, oracledb);
 let date = new Date();
 let timestamp = (date.getFullYear() + "." + (date.getMonth() + 1) + '.' + date.getDate());
 
+let argv = process.argv.slice(2);
+
+if (argv.length < 2) {
+    console.log('\x1b[41m%s\x1b[0m', 'Listening port number is required');
+    console.log('\x1b[41m%s\x1b[0m', 'Example: nodemon server_admin.js package.json 8090 ');
+    process.exit();
+}
+
 // Logs file structure is ready
 
 
@@ -141,8 +151,10 @@ httpServer.on('connection', function(conn) {
         });
 
         conn.on('close', function() {
-            try { dbConnection.getPool().close(); } catch (error ) {};
-            try { delete openHttpConnections[key]; } catch (error ) {};
+            try { 
+                delete openHttpConnections[key]; 
+            } 
+            catch (error ) {};
             
         });
     });
@@ -160,7 +172,7 @@ dbConnection.addTeardownSql({
 
 dbConnection.createPool(config.db.connAttrs)
 	.then(function() {
-		let server = httpServer.listen(8090, function () {
+		let server = httpServer.listen(argv[1], function () {
 		let host = server.address().address,
 			port = server.address().port;
 

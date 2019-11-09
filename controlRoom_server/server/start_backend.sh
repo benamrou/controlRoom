@@ -18,4 +18,10 @@ kill -9 `ps aux | grep server_admin | awk '{print $2}'` 2> /dev/null
 echo -e "[${GREEN}START${NC}]\t Starting SERVER NODE connecting to DB..... \t[${GREEN}DONE${NC}]"
 echo -e "[${GREEN}LAST${NC}]\t Daemonizing SERVER NODE..... \t\t\t[${GREEN}DONE${NC}]"
 # nohup /usr/bin/nodemon server_admin.js package.json &
-nodemon server_admin.js package.json --ignore ./repository/ 
+
+echo -e "[${GREEN}LAST${NC}]\t - BATCH EXECUTION SERVER NODE: 8091..... \t[${GREEN}DONE${NC}]"
+nohup nodemon server_admin.js package.json 8091 --ignore ./repository/ > log_node_batch_8091.txt &
+echo -e "[${GREEN}LAST${NC}]\t - ALERTS EXECUTION SERVER NODE: 8092..... \t[${GREEN}DONE${NC}]"
+nohup nodemon server_admin.js package.json 8092 --ignore ./repository/ > log_node_alerts_8092.txt &
+echo -e "[${GREEN}LAST${NC}]\t - SERVER NODE: 8090..... \t\t\t[${GREEN}DONE${NC}]"
+nodemon server_admin.js package.json 8090 --ignore ./repository/ > log_node_server_8090

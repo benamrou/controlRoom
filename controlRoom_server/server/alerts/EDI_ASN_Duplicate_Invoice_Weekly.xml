@@ -12,8 +12,8 @@
                 FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
             WHERE "VendorDunsNumber" != ''
                 AND "InvoiceNumber" != ''
-                AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
-		and trunc("InvoiceDate") > trunc(sysdate-7) 
+                AND trunc("InvoiceDate") > TRUNC(SYSDATE-7)
+		AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
             GROUP BY "InvoiceDate",
                         "VendorDunsNumber",
                         "InvoiceNumber",
