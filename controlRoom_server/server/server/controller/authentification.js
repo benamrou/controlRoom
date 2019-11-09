@@ -94,9 +94,9 @@ module.post = function (request,response) {
                             "'{}'", "'{}'",
                             request, response, function (err, data) {
             if (data[0]) {
-                console.log('data :' + JSON.stringify(data));
-                console.log('data[0] :' + JSON.stringify(data[0]));
-                console.log('data[0].USERID :' + data[0].USERID);
+                //console.log('data :' + JSON.stringify(data));
+                //console.log('data[0] :' + JSON.stringify(data[0]));
+                //console.log('data[0].USERID :' + data[0].USERID);
                response.json({
                     TYPE: true,
                     USERID: data[0].USERID,

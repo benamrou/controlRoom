@@ -28,6 +28,9 @@ function buildHtmlTable(arr, document) {
         document+='<tr>';
         for (var j=0, maxj=columnSet.length; j < maxj ; ++j) {
             document+='<td style="border-bottom: 1px solid orange">';
+            if (arr[i][columnSet[j]] === null) {
+                arr[i][columnSet[j]]= '';
+            }
             cellValue = arr[i][columnSet[j]];
             
             //console.log('cellValue= arr[i][columns[j] :  ' + cellValue);

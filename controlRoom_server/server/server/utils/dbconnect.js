@@ -179,7 +179,7 @@ function releaseConnections(results, connection) {
         try { results.close(); } catch (error ) {};
         try { connection.release() } catch (error ) {};
         try { connection.close() } catch (error ) {};
-        try { pool.close(2) } catch (error ) {};
+        try { pool.close() } catch (error ) {};
         try { terminatePool() } catch (error ) {};
     })
 }
