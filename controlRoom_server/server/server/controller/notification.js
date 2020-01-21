@@ -21,6 +21,7 @@
 * Date: July 2019
 */
 
+var logger = require("../utils/logger.js");
 const nodemailer = require('nodemailer');
 const csvjson = require('csvjson');
 const excel = require('exceljs');
@@ -61,7 +62,6 @@ function sendSMS(to, subject, message) {
     // Preview only available when sending through an Ethereal account
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(infoMessage));
 }
-
 
 function sendEmail(to, subject, message) {
     let mailOptions = {
@@ -152,6 +152,51 @@ function autofitColumns(ws){ // no good way to get text widths
 
 /*************************************************(**********************************(***********************************/
 
+/*************************************************(**********************************(***********************************/
+// Function setPrintArea
+function setPrintArea(ws, alert) {
+    // Set Print Area for a sheet
+
+/*
+    let nbRowPerPage = 40;
+    let printArea = 'A1:' + columnLetter[ws.columnCount] + nbRowPerPage;
+    for (let i = nbRowPerPage + 1; i <= ws.rowCount ; i + nbRowPerPage) {
+        if (i+nbRowPerPage <= ws.rowCount) {
+            printArea += '&&' + 'A' + i + columnLetter[ws.columnCount] + ws.rowCount;
+        }
+        else {
+            printArea += '&&' + 'A' + i + columnLetter[ws.columnCount] + i;
+        }
+    }
+*/
+    if (alert.ALTORIENTATION) {
+        ws.pageSetup.orientation = alert.ALTORIENTATION;
+    }
+    if (alert.ALTFITPAGE) {
+        ws.pageSetup.fitToPage = alert.ALTFITPAGE === 1;
+        if (alert.altfitpage === 1) {
+            ws.pageSetup.fitToHeight = alert.ALTFITHEIGHT;
+            ws.pageSetup.fitToWidth = alert.ALTFITWIDTH;
+        }
+    }
+    if (alert.ALTTITLEREPEAT) {
+        ws.pageSetup.printTitlesRow = alert.ALTTITLEREPEAT;
+    }
+    if (alert.ALTFOOTER) {
+        ws.headerFooter.oddFooter = alert.ALTFOOTER;
+    }
+
+    // Set multiple Print Areas by separating print areas with '&&'
+    //ws.pageSetup.printArea = printArea;
+
+    // Repeat specific rows on every printed page
+    // Five first row are reprinted on the next page
+
+    //console.log('setPrintArea : ', ws);                   
+}
+/*************************************************(**********************************(***********************************/
+
+
 module.exports.sendSMS = sendSMS;
 module.exports.sendEmailCSV = sendEmailCSV;
 module.exports.sendEmail = sendEmail;
@@ -191,15 +236,15 @@ module.get = async function (request,response) {
                         request.header('USER'),
                         "'{" + request.header('DATABASE_SID') + "}'", 
                         "'{" +request.header('LANGUAGE') + "}'", 
-                        request, response, 
-        function (err,dataHeader) { 
+                        request.req_dataAlert, request.response_dataAlert, 
+        function (err, dataAlert) { 
+            let alertData = dataAlert; 
             if (err) {
                 console.log('Error gathering XML query : ' + JSON.stringify(err));
             }
             else {
-                if (dataHeader.length >= 1) {
-
-                    fs.readFile(dataHeader[0].ALTFILE, 'utf8', function (err, data) {
+                if (alertData.length >= 1) {
+                    fs.readFile(alertData[0].ALTFILE, 'utf8', function (err, data) {
                         if (err) throw err; // we'll not consider error handling for now
                         //console.log(JSON.stringify(data));
                         parseXML2JS(data, function (err, result) {
@@ -210,180 +255,221 @@ module.get = async function (request,response) {
                             if ( typeof request.header('SUBJECT_EXT') !== 'undefined' )  {
                                 SUBJECT_EXT = request.header('SUBJECT_EXT');
                             }
+                            //console.log('FILE : ' + JSON.stringify(result));
 
                             SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                                result.ROOT.QUERY, 
+                                result.ROOT.BANNER, 
                                 "'{" + request.query.PARAM + "}'",
                                 request.header('USER'),
                                 "'{" + request.header('DATABASE_SID') + "}'", 
                                 "'{" +request.header('LANGUAGE') + "}'", 
-                                request, response, 
-                                function (err,dataDetail) {
-                                    if (dataDetail.length > 0 || dataHeader[0].ALTREALTIME == '0') {
-                                        let html= '<strong>' + dataHeader[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + dataDetail.length + ' Object(s)] </strong>';
-                                        let workbook, worksheet;
-                                        html+= '<br>';
-                                        html+= '<br>';
-                                        html+= dataHeader[0].ALTCONTENT;
-                                        html+= '<br>';
-                                        html+= '<br>';
-                                        html+= '<br>';
-                                        if (dataDetail.length == 0) {
-                                            html += 'No reported elements.';
-                                            sendEmail(dataHeader[0].ALTEMAIL, dataHeader[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + dataDetail.length + ' Object(s)] ', html);
-                                        }
-                                        else {
-                                            if (dataDetail.length > 500) {
-                                                html += 'Number of objects > 500 - Look at the attachment for details.';
-                                            }
-                                            else {
-                                                html = json2html.json2table(dataDetail, html);
-                                            }
-                                            /**
-                                             * Excel file
-                                             *      4 first rows are the header reports
-                                             *  Starting line 5 the table is deployed
-                                             * 
-                                             */
-                                            let tableRow = 5;
-                                            workbook = new excel.Workbook();
-                                            worksheet = workbook.addWorksheet('RESULT', {properties:{tabColor:{argb:'FFC0000'}}});
-                                            // Add header
-                                            console.log('dataDetail :' + JSON.stringify(dataDetail)); 
-                                            console.log('dataDetail[0] :' + dataDetail[0]); 
-                                            console.log('request.query.PARAM : ' + request.query.PARAM);
-                                            let valueColumns = Object.keys(dataDetail[0]);
-                                            let dataColumns = [];
-                                            for(let i =0;i < valueColumns.length ; i ++) {
-                                                dataColumns.push (
-                                                    {name: valueColumns[i], filterButton: true}
-                                                )
-                                            }
-                                            // Add rows detail
-                                            let dataRows = [];
-                                            for (let i = 0; i < dataDetail.length; i++) {
-                                                dataRows.push (Object.values(dataDetail[i]));
-                                            }
-                                            worksheet.getCell('B2').value = 'Report Title';
-                                            worksheet.getCell('C2').value = dataHeader[0].ALTSUBJECT + ' ' + SUBJECT_EXT;
-                                            worksheet.getCell('C3').value = dataHeader[0].ALTCONTENT;
-                                            worksheet.mergeCells('C2','G2');
-                                            worksheet.mergeCells('C3','G3');
+                                request.req_dataBanner, request.response_dataBanner, 
+                                function (err,dataBanner) {
+                                    let bannerData = dataBanner;
+                                    console.log('BANNER : ' + JSON.stringify(bannerData));
+
+                                    SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
+                                        result.ROOT.QUERY, 
+                                        "'{" + request.query.PARAM + "}'",
+                                        request.header('USER'),
+                                        "'{" + request.header('DATABASE_SID') + "}'", 
+                                        "'{" +request.header('LANGUAGE') + "}'", 
+                                        request.req_datadetail, request.response_dataDetail, 
+                                        function (err,dataDetail) {
+                                            let detailData =dataDetail;
+                                            if (detailData.length > 0 || alertData[0].ALTREALTIME == '0') {
+                                                let html = '';
+                                                let workbook, worksheet;
+                                                if (bannerData.length >= 1) {
+                                                    if (bannerData[0].MESSAGE) {
+                                                    //console.log('BANNER2 : ' + JSON.stringify(bannerData));
+                                                    //console.log('bannerData[0].MESSAGE : ' + bannerData[0].MESSAGE);
+                                                    if (bannerData[0].CRITICALITY === 'WARNING') {
+                                                        html += '<div style="position: absolute; top: 0; left: 0;  width: 100%; text-align: center;background-color: #bb3434; ">';
+                                                        html += '<span style="font-weight: bolder;color:#FFFFFF">'
+                                                    }
+                                                    else {
+                                                        html += '<div style="position: absolute; top: 0; left: 0;  width: 100%; text-align: center;background-color: #32CD32;">'
+                                                        html += '<span style="font-weight: bolder;color:#000000">'
+                                                    }
+                                                    html += bannerData[0].MESSAGE;
+                                                    html += '</span>';
+                                                    html += '</div>';
+                                                    html += '<br>';
+                                                    html += '<br>';
+                                                    
+                                                    }
+                                                }
+                                                html += '<strong>' + alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] </strong>';
+                                                html += '<br>';
+                                                html += '<br>';
+                                                html += alertData[0].ALTCONTENT;
+                                                html += '<br>';
+                                                html += '<br>';
+                                                html += '<br>';
+                                                if (detailData.length == 0) {
+                                                    html += 'No reported elements.';
+                                                    sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html);
+                                                }
+                                                else {
+                                                    if (detailData.length > 500) {
+                                                        html += 'Number of objects > 500 - Look at the attachment for details.';
+                                                    }
+                                                    else {
+                                                        html = json2html.json2table(detailData, html, alertData[0].ALTFORMAT);
+                                                    }
+                                                    console.log('HTML : ' + html);
+                                                    /**
+                                                     * Excel file
+                                                     *      4 first rows are the header reports
+                                                     *  Starting line 5 the table is deployed
+                                                     * 
+                                                     */
+                                                    let tableRow = 5;
+                                                    workbook = new excel.Workbook();
+                                                    worksheet = workbook.addWorksheet('RESULT', {properties:{tabColor:{argb:'FFC0000'}}});
+                                                    // Add header
+                                                    //console.log('detailData :' + JSON.stringify(detailData)); 
+                                                    //console.log('detailData[0] :' + detailData[0]); 
+                                                    //console.log('request.query.PARAM : ' + request.query.PARAM);
+                                                    let valueColumns = Object.keys(detailData[0]);
+                                                    let dataColumns = [];
+                                                    for(let i =0;i < valueColumns.length ; i ++) {
+                                                        dataColumns.push (
+                                                            {name: valueColumns[i], filterButton: true}
+                                                        )
+                                                    }
+                                                    // Add rows detail
+                                                    let dataRows = [];
+                                                    for (let i = 0; i < detailData.length; i++) {
+                                                        dataRows.push (Object.values(detailData[i]));
+                                                    }
+                                                    worksheet.getCell('B2').value = 'Report Title';
+                                                    worksheet.getCell('C2').value = alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT;
+                                                    worksheet.getCell('C3').value = alertData[0].ALTCONTENT;
+                                                    worksheet.mergeCells('C2','G2');
+                                                    worksheet.mergeCells('C3','G3');
 
 
-                                            worksheet.getCell('H2').value = 'Report ID';
-                                            worksheet.getCell('I2').value = dataHeader[0].ALTID;
-                                            worksheet.getCell('H3').value = 'Report date';
-                                            worksheet.getCell('I3').value = new Date(); 
-                                            
-                                            for (let i = 0; i< tableRow; i ++) {
-                                                worksheet.getRow(i).fill = {
-                                                    type: 'pattern',
-                                                    pattern:'lightTrellis',
-                                                    fgColor:{argb:'FFFFFFFF'},
-                                                    bgColor:{argb:'04225E80'}
-                                                };
-                                            }
-                                            // Styling the header
-                                            worksheet.getCell('B2').font = {
-                                                name: 'Arial',
-                                                family: 4,
-                                                color: { argb: 'FFFFFFFF' },
-                                                size: 11,
-                                                underline: false,
-                                                bold: true
-                                            };
-                                            worksheet.getCell('H2').font = worksheet.getCell('B2').font;
-                                            worksheet.getCell('H3').font = worksheet.getCell('B2').font
+                                                    worksheet.getCell('H2').value = 'Report ID';
+                                                    worksheet.getCell('I2').value = alertData[0].ALTID;
+                                                    worksheet.getCell('H3').value = 'Report date';
+                                                    worksheet.getCell('I3').value = new Date(); 
+                                                    
+                                                    for (let i = 0; i< tableRow; i ++) {
+                                                        worksheet.getRow(i).fill = {
+                                                            type: 'pattern',
+                                                            pattern:'lightTrellis',
+                                                            fgColor:{argb:'FFFFFFFF'},
+                                                            bgColor:{argb:'04225E80'}
+                                                        };
+                                                    }
+                                                    // Styling the header
+                                                    worksheet.getCell('B2').font = {
+                                                        name: 'Arial',
+                                                        family: 4,
+                                                        color: { argb: 'FFFFFFFF' },
+                                                        size: 11,
+                                                        underline: false,
+                                                        bold: true
+                                                    };
+                                                    worksheet.getCell('H2').font = worksheet.getCell('B2').font;
+                                                    worksheet.getCell('H3').font = worksheet.getCell('B2').font
 
-                                            worksheet.getCell('C2').font = {
-                                                name: 'Arial',
-                                                family: 4,
-                                                color: { argb: 'FFFFFFFF' },
-                                                size: 14,
-                                                underline: false,
-                                                bold: true
-                                            };
+                                                    worksheet.getCell('C2').font = {
+                                                        name: 'Arial',
+                                                        family: 4,
+                                                        color: { argb: 'FFFFFFFF' },
+                                                        size: 14,
+                                                        underline: false,
+                                                        bold: true
+                                                    };
 
-                                            worksheet.getCell('C3').font = {
-                                                name: 'Arial',
-                                                family: 4,
-                                                color: { argb: '000000' },
-                                                size: 14,
-                                                underline: false,
-                                                bold: false
-                                            };
+                                                    worksheet.getCell('C3').font = {
+                                                        name: 'Arial',
+                                                        family: 4,
+                                                        color: { argb: '000000' },
+                                                        size: 14,
+                                                        underline: false,
+                                                        bold: false
+                                                    };
 
-                                            worksheet.getCell('I2').font = worksheet.getCell('C2').font
-                                            worksheet.getCell('I3').font = worksheet.getCell('C2').font
-                                            /**************************************************************************/  
-                                            // Crating the table detail EXCEL (real table)
-                                            worksheet.addTable({
-                                                name: 'Result',
-                                                ref: 'A5',
-                                                headerRow: true,
-                                                totalsRow: true,
-                                                style: {
-                                                theme: 'TableStyleLight1',
-                                                showRowStripes: true,
-                                                },
-                                                columns: dataColumns,
-                                                rows: dataRows,
-                                            });
+                                                    worksheet.getCell('I2').font = worksheet.getCell('C2').font
+                                                    worksheet.getCell('I3').font = worksheet.getCell('C2').font
+                                                    /**************************************************************************/  
+                                                    // Creating the table detail EXCEL (real table)
+                                                    worksheet.addTable({
+                                                        name: 'Result',
+                                                        ref: 'A5',
+                                                        headerRow: true,
+                                                        totalsRow: true,
+                                                        style: {
+                                                        theme: 'TableStyleLight1',
+                                                        showRowStripes: true,
+                                                        },
+                                                        columns: dataColumns,
+                                                        rows: dataRows,
+                                                    });
 
-                                            autofitColumns(worksheet);
+                                                    autofitColumns(worksheet);
+                                                    setPrintArea(worksheet, alertData[0]);
 
-                                            workbook.creator = 'B&B SYMPHONY LLC';
-                                            workbook.lastModifiedBy = 'B&B SYMPHONY LLC';
-                                            workbook.created = new Date();
-                                            workbook.modified = new Date();
-                                            workbook.lastPrinted = new Date();
-                                            /*workbook.Props = {
-                                                Title: "BB SYMPHONY Alert result " + result.ROOT.QUERY,
-                                                Subject: "Alert",
-                                                Author: "BB SYMPHONY",
-                                                Manager: "ControlRoom",
-                                                Company: "BB SYMPHONY",
-                                                Category: "Experimentation",
-                                                Keywords: "Alert",
-                                                Comments: "Automatic alert generation",
-                                                LastAuthor: "BB SYMPHONY"
-                                            };*/
-                                            //worksheet = formatWorkSheet(worksheet, dataDetail);
-                                            
-                                            if (html.indexOf('ERRORDIAGNOSED') < 1) {
-                                                workbook.xlsx.writeBuffer()
-                                                .then(function(buffer) {
-                                                    sendEmailCSV(dataHeader[0].ALTEMAIL, dataHeader[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + dataDetail.length + ' Object(s)] ', html, buffer);
-                                                });
-                                            }
-                                        }
+                                                    workbook.creator = 'B&B SYMPHONY LLC';
+                                                    workbook.lastModifiedBy = 'B&B SYMPHONY LLC';
+                                                    workbook.created = new Date();
+                                                    workbook.modified = new Date();
+                                                    workbook.lastPrinted = new Date();
+                                                    /*workbook.Props = {
+                                                        Title: "BB SYMPHONY Alert result " + result.ROOT.QUERY,
+                                                        Subject: "Alert",
+                                                        Author: "BB SYMPHONY",
+                                                        Manager: "ControlRoom",
+                                                        Company: "BB SYMPHONY",
+                                                        Category: "Experimentation",
+                                                        Keywords: "Alert",
+                                                        Comments: "Automatic alert generation",
+                                                        LastAuthor: "BB SYMPHONY"
+                                                    };*/
+                                                    //worksheet = formatWorkSheet(worksheet, detailData);
+                                                    
 
-                                        if (dataHeader[0].ALTSMSCONTENT != '' && html.indexOf('ERRORDIAGNOSED') < 1) {
-                                            sendSMS(dataHeader[0].ALTMOBILE,   /* To */
-                                                    dataHeader[0].ALTSUBJECT + ' ' + SUBJECT_EXT,  /* Subject */
-                                                    dataHeader[0].ALTSMSCONTENT + ' : ' + dataDetail.length +'\n') ;  /* Content */
-                                        }
-                                    }   
-                                    console.log ('dataDetail.length : ' + dataDetail.length);
-                                    SQL.executeQuery(SQL.getNextTicketID(),
-                                    "INSERT INTO ALERTLOG  SELECT ''" + dataHeader[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
-                                    JSON.stringify(dataDetail).substring(1,3000) + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + dataDetail.length + "'' from dual", 
-                                    "'" + result.ROOT.PARAM + "'",
-                                    request.header('USER'),
-                                    "'{" + request.header('DATABASE_SID') + "}'", 
-                                    "'{" +request.header('LANGUAGE') + "}'", 
-                                    request, response);
 
-                                    //sendEmail(dataHeader[0].ALTEMAIL, dataHeader[0].ALTSUBJECT, 'body')  
-                                    //response.send(dataDetail);
-                                    //return;
+                                                    if (html.indexOf('ERRORDIAGNOSED') < 1) {
+                                                        workbook.xlsx.writeBuffer()
+                                                        .then(function(buffer) {
+                                                            sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer);
+                                                        });
+                                                    }
+                                                }
+
+                                                if (alertData[0].ALTSMSCONTENT != '' && html.indexOf('ERRORDIAGNOSED') < 1) {
+                                                    let newLineSMS = '<br>'
+                                                    sendSMS(alertData[0].ALTMOBILE,   /* To */
+                                                            alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT,  /* Subject */
+                                                            alertData[0].ALTSMSCONTENT + ' : ' + detailData.length + newLineSMS +
+                                                                    '<b>Distribution list : </b> ' + alertData[0].ALTEMAIL) ;  /* Content */
+                                                }
+                                            }   
+                                            console.log ('detailData.length : ' + detailData.length);
+                                            SQL.executeQuery(SQL.getNextTicketID(),
+                                            "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
+                                            JSON.stringify(detailData).substring(1,3000) + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from dual", 
+                                            "'" + result.ROOT.PARAM + "'",
+                                            request.header('USER'),
+                                            "'{" + request.header('DATABASE_SID') + "}'", 
+                                            "'{" +request.header('LANGUAGE') + "}'", 
+                                            request, response);
+
+                                            //sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT, 'body')  
+                                            //response.send(detailData);
+                                            //return;
+                                        });
+                                    });
                                 });
                             });
-                        });
+                        }
                     }
-                }
-            //response.send(dataHeader)
+            //response.send(alertData)
         });
     })};
     return module;

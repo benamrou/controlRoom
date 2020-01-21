@@ -23,7 +23,6 @@ var teardownScripts = [];
 
 
 var numRows = config.db.maxRows; // max number of rows by packets
-let rowsToReturn;
 
 module.exports.OBJECT = oracledb.OBJECT;
 
@@ -226,7 +225,8 @@ function executeCursor(sql, bindParams, options, ticketId, request, response, us
                 //console.log ('execute');
                 execute(sql, bindParams, options, connection)
                     .then(function(result) {
-                        fetchRowsFromRSCallback(ticketId, connection, result.outBinds.cursor, numRows, request, response, user, 0, callback);
+                        let rowsToReturn;
+                        fetchRowsFromRSCallback(ticketId, connection, result.outBinds.cursor, numRows, request, response, user, 0, callback, rowsToReturn);
                         process.nextTick(function() {
                             //console.log('process next Ticket');
                         });
@@ -246,7 +246,7 @@ function executeCursor(sql, bindParams, options, ticketId, request, response, us
 
 module.exports.executeCursor = executeCursor;
 
-function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, clear, callback)
+function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, clear, callback, rowsToReturn)
 {
  if (resultSet == null) {
         logger.log(ticketId, " Resulset empty...", user);    // close the result set and release the connection
@@ -265,6 +265,7 @@ function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, reque
       } 
       else if (rows.length == 0) {  // no rows, or no more rows
         if (clear == 0) {
+            console.log (" Clear 0 rows :" + JSON.stringify(rows));
             rowsToReturn = rows;
             if (rows.length < 20 ) {
                 logger.log(ticketId, JSON.stringify(rows), user);
@@ -281,7 +282,7 @@ function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, reque
             }
             logger.log(ticketId, rows.length + " Object(s) returned... [FETCH]", user);
             // If more than max Rows Fetch again
-            fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, 1, callback);  // get next set of rows
+            fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, 1, callback, rowsToReturn);  // get next set of rows
         }
         else {
             doClose(connection, resultSet);   // always close the ResultSet

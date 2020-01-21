@@ -72,11 +72,30 @@ function logFile(uniqueId, message, username) {
 * A log is generated in the server log file and logs folder
 *
 */
-function log (uniqueId, message, username) {
+function log (uniqueId, message, username, level) {
     var timestamp = timestampLog();
-    console.log(timestamp + " [" + username + "] " + uniqueId  + ": " + JSON.stringify(message));
+    var printMessage = timestamp + " [" + username + "] " + uniqueId  + ": " + JSON.stringify(message);
+    if (level) {
+        if (level === 0 ) {
+            console.log(printMessage);
+        }
+        if (level === 1) {
+            console.log(printMessage);
+        }
+        if (level === 2) {
+            // yellow character
+            console.log('\x1b[33m%s\x1b[0m',printMessage);
+        }
+        if (level === 3) {
+            // Red and white character
+            console.log('\x1b[41m%s\x1b[0m', printMessage);
+        }
+    }
+    else {
+        console.log(printMessage);
+    }
 
-    logFile(uniqueId, timestamp + " " + uniqueId  + ": " + message + "\r\n", username);
+    logFile(printMessage);
 };
 
 module.exports.log = log; 

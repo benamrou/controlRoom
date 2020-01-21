@@ -25,7 +25,6 @@ var fs = require('fs-extra'); // File management
 
 var numRows = config.db.maxRows; // max number of rows by packets
 let cursor;
-let rowsToReturn;
 
 /**
 * Method executeLibQuery is executing a query stored in the LIBQUERY structure through their reference number. 
@@ -150,7 +149,7 @@ module.exports.executeSmartLoadedQuery = executeSmartLoadedQuery;
 async function executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, callback) {
    
     try {
-        SQLquery = "BEGIN PKREQUESTMANAGER.CALLQUERY(" + ticketId;
+        let SQLquery = "BEGIN PKREQUESTMANAGER.CALLQUERY(" + ticketId;
 
         //logger.log(ticketId, "LIBQUERY with Callback: ", user);
         SQLquery = SQLquery + ",'" + queryNum + "','" + user + "'," + database_sid + ", " + params  + "," +
@@ -200,7 +199,7 @@ module.exports.executeLibQueryCallback = executeLibQueryCallback;
 */
 async function executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, callback) {
 
-    SQLquery = "BEGIN PKREQUESTMANAGER.EXECUTEQUERY(" + ticketId;
+    let SQLquery = "BEGIN PKREQUESTMANAGER.EXECUTEQUERY(" + ticketId;
 
     //logger.log(ticketId, "LIBQUERY with Callback: ", user);
     SQLquery = SQLquery + ",'" + query + "','" + user + "'," + database_sid + ", " + params  + "," +

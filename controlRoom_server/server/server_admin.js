@@ -91,6 +91,8 @@ let command = require('./server/controller/command/execute')(app, SQL);
 let logger = require('./server/utils/logger.js');     // Log manager
 let widget = require('./server/controller/widget')(app, SQL);
 let notification = require('./server/controller/notification')(app, SQL);
+let warehouse = require('./server/controller/warehouse/itemdata')(app, SQL);
+let crontab = require('./server/controller/crontab')(app, SQL);
 
 
 //dbConnection.createPool('dd');
@@ -119,6 +121,7 @@ ls.get(app,oracledb);
 command.get(app,oracledb);
 widget.get(app, oracledb);
 notification.get(app, oracledb);
+warehouse.get(app, oracledb);
 
 
 // Prepare logs folder/files
@@ -133,6 +136,10 @@ if (argv.length < 2) {
     console.log('\x1b[41m%s\x1b[0m', 'Listening port number is required');
     console.log('\x1b[41m%s\x1b[0m', 'Example: nodemon server_admin.js package.json 8090 ');
     process.exit();
+}
+
+if (argv[2] === 'CRONTAB') {
+    crontab.process(app, oracledb);
 }
 
 // Logs file structure is ready
