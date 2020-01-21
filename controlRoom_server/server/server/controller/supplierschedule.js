@@ -40,6 +40,8 @@ var module = {};
 * sub-module calls LIBQUERY entry SUP0000001
 */
 module.get = function (request,response) {
+
+        // Look for Supplier Planning using Service contract
         app.get('/api/supplierschedule/', function (request, response) {
         "use strict";
         response.setHeader('Access-Control-Allow-Origin', '*');
@@ -55,6 +57,7 @@ module.get = function (request,response) {
                             request, response);
         });
 
+        // Deelte Supplier Planning by interface
         app.get('/api/supplierschedule/1/', function (request, response) {
             "use strict";
             response.setHeader('Access-Control-Allow-Origin', '*');
@@ -70,7 +73,7 @@ module.get = function (request,response) {
                                 request, response);
             });
 
-
+        // Create Supplier Planning by interface
         app.get('/api/supplierschedule/2/', function (request, response) {
                 "use strict";
                 response.setHeader('Access-Control-Allow-Origin', '*');
@@ -85,6 +88,23 @@ module.get = function (request,response) {
                                     "'{" +request.header('LANGUAGE') + "}'", 
                                     request, response);
                 });
+    
+        // Look for Supplier Planning using Supplier schedule
+        app.get('/api/supplierschedule/3/', function (request, response) {
+            "use strict";
+            response.setHeader('Access-Control-Allow-Origin', '*');
+            // requestuest methods you wish to allow
+            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+            SQL.executeLibQuery(SQL.getNextTicketID(),
+                               "SUP0000002", 
+                                "'{" + request.query.PARAM + "}'",
+                                request.header('USER'),
+                                "'{" + request.header('DATABASE_SID') + "}'", 
+                                "'{" +request.header('LANGUAGE') + "}'", 
+                                request, response);
+            });
+
     };
 
    return module;
