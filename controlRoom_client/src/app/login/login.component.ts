@@ -29,6 +29,8 @@ export class LoginComponent implements OnInit {
     constructor(public router: Router, private _logginService: LogginService, private _userService: UserService,
                 private _labelService: LabelService) { 
         this.canConnect = false;
+        this.authentification.username = '';
+
     
     }
 

@@ -1,8 +1,8 @@
 import {NgModule,Component,ElementRef,AfterViewInit,AfterContentInit,DoCheck,OnDestroy,Input,Output,SimpleChange,EventEmitter,ContentChild,ContentChildren,QueryList,TemplateRef,IterableDiffers} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Header,Footer,PrimeTemplate,SharedModule} from '../common/shared';
+import {Header,Footer,PrimeTemplate,SharedModule} from '../api/shared';
 import {PaginatorModule} from '../paginator/paginator';
-import {BlockableUI} from '../common/blockableui';
+import {BlockableUI} from '../api/blockableui';
 
 @Component({
     selector: 'p-dataGrid',

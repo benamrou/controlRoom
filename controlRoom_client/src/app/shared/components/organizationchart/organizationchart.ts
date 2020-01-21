@@ -3,9 +3,9 @@ import {NgModule,Component,ElementRef,Input,Output,OnInit,AfterContentInit,OnDes
 import {trigger,state,style,transition,animate} from '@angular/animations';
 import {CommonModule} from '@angular/common';
 import {DomHandler} from '../dom/domhandler';
-import {SharedModule} from '../common/shared';
-import {TreeNode} from '../common/treenode';
-import {PrimeTemplate} from '../common/shared';
+import {SharedModule} from '../api/shared';
+import {TreeNode} from '../api/treenode';
+import {PrimeTemplate} from '../api/shared';
 
 @Component({
     selector: '[pOrganizationChartNode]',

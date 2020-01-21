@@ -15,6 +15,44 @@
     background: #2399e5; 
 }
 
+:host ::ng-deep .TABLE_TOP_Button {
+    color: white; 
+    background: #255; 
+    border-radius:20px;
+    border:0; 
+    font-size:xx-small;
+}
+
+:host ::ng-deep .TABLE_TOP_Button:hover {
+    background: #2399e5; 
+}
+
+
+:host ::ng-deep .COMPLETED_Button {
+    color: darkslategrey; 
+    background: greenyellow; 
+    border-radius:20px;
+    border:0; 
+    font-size:xx-small;
+}
+
+:host ::ng-deep .COMPLETED_Button:hover {
+    background: rgb(79, 129, 4); 
+}
+
+
+:host ::ng-deep .INPROGRESS_Button {
+    color: darkslategrey; 
+    background: orange; 
+    border-radius:20px;
+    border:0; 
+    font-size:xx-small;
+}
+
+:host ::ng-deep .INPROGRESS_Button:hover {
+    background: orange; 
+}
+
 //:host ::ng-deep .ui-datatable-resizable {
     //height: -webkit-fill-available;
 //}
@@ -107,7 +145,17 @@
     height: 65px;
     line-height: 60px;
 }
+.bbs_search_sub_panel {
+    background: #F5F5F5;
+    width: 100%;
+    height: 45px;
+    line-height: 10px;
+}
 
 .bbs_link_menu {
     border-radius: 1.1em 0 0 1.1em !important
+}
+
+.bbs-3d {
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24);
 }

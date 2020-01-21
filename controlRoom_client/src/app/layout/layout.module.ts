@@ -20,7 +20,7 @@ import { LabelsResolver} from '../shared/services/index';
         LayoutRoutingModule,
         TranslateModule,
         GridsterModule,
-        DialogModule,ButtonModule,
+        DialogModule,ButtonModule ,
         NgbDropdownModule.forRoot()
     ],
     declarations: [LayoutComponent, SidebarComponent, HeaderComponent],

@@ -1,9 +1,10 @@
-import {NgModule,Component,ElementRef,OnInit,AfterContentInit,DoCheck,OnDestroy,Input,Output,SimpleChange,EventEmitter,ContentChild,ContentChildren,QueryList,TemplateRef} from '@angular/core';
+import {NgModule,Component,ElementRef,OnInit,AfterContentInit,Input,Output,EventEmitter,ContentChild,ContentChildren,QueryList,TemplateRef, OnChanges, SimpleChanges} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ObjectUtils} from '../utils/objectutils';
-import {Header,Footer,PrimeTemplate,SharedModule} from '../common/shared';
+import {Header,Footer,PrimeTemplate,SharedModule} from '../index';
 import {PaginatorModule} from '../paginator/paginator';
-import {BlockableUI} from '../common/blockableui';
+import {BlockableUI} from '../api/blockableui';
+import {FilterUtils} from '../utils/filterutils';
 
 @Component({
     selector: 'p-dataView',
@@ -18,7 +19,8 @@ import {BlockableUI} from '../common/blockableui';
             </div>
             <p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks" [alwaysShow]="alwaysShowPaginator"
                 (onPageChange)="paginate($event)" styleClass="ui-paginator-top" [rowsPerPageOptions]="rowsPerPageOptions" *ngIf="paginator && (paginatorPosition === 'top' || paginatorPosition =='both')"
-                [dropdownAppendTo]="paginatorDropdownAppendTo" [templateLeft]="paginatorLeftTemplate" [templateRight]="paginatorRightTemplate"></p-paginator>
+                [dropdownAppendTo]="paginatorDropdownAppendTo" [dropdownScrollHeight]="paginatorDropdownScrollHeight" [templateLeft]="paginatorLeftTemplate" [templateRight]="paginatorRightTemplate"
+                [currentPageReportTemplate]="currentPageReportTemplate" [showCurrentPageReport]="showCurrentPageReport"></p-paginator>
             <div class="ui-dataview-content ui-widget-content">
                 <div class="ui-g">
                     <ng-template ngFor let-rowData let-rowIndex="index" [ngForOf]="paginator ? ((filteredValue||value) | slice:(lazy ? 0 : first):((lazy ? 0 : first) + rows)) : (filteredValue||value)" [ngForTrackBy]="trackBy">
@@ -29,14 +31,15 @@ import {BlockableUI} from '../common/blockableui';
             </div>
             <p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks" [alwaysShow]="alwaysShowPaginator"
                 (onPageChange)="paginate($event)" styleClass="ui-paginator-bottom" [rowsPerPageOptions]="rowsPerPageOptions" *ngIf="paginator && (paginatorPosition === 'bottom' || paginatorPosition =='both')"
-                [dropdownAppendTo]="paginatorDropdownAppendTo" [templateLeft]="paginatorLeftTemplate" [templateRight]="paginatorRightTemplate"></p-paginator>
+                [dropdownAppendTo]="paginatorDropdownAppendTo" [dropdownScrollHeight]="paginatorDropdownScrollHeight" [templateLeft]="paginatorLeftTemplate" [templateRight]="paginatorRightTemplate"
+                [currentPageReportTemplate]="currentPageReportTemplate" [showCurrentPageReport]="showCurrentPageReport"></p-paginator>
             <div class="ui-dataview-footer ui-widget-header ui-corner-bottom" *ngIf="footer">
                 <ng-content select="p-footer"></ng-content>
             </div>
         </div>
     `
 })
-export class DataView implements OnInit,AfterContentInit,BlockableUI {
+export class DataView implements OnInit,AfterContentInit,BlockableUI,OnChanges {
 
     @Input() layout: string = 'list';
 
@@ -48,13 +51,19 @@ export class DataView implements OnInit,AfterContentInit,BlockableUI {
 
     @Input() pageLinks: number = 5;
     
-    @Input() rowsPerPageOptions: number[];
+    @Input() rowsPerPageOptions: any[];
 
     @Input() paginatorPosition: string = 'bottom';
     
     @Input() alwaysShowPaginator: boolean = true;
 
     @Input() paginatorDropdownAppendTo: any;
+
+    @Input() paginatorDropdownScrollHeight: string = '200px';
+
+    @Input() currentPageReportTemplate: string = '{currentPage} of {totalPages}';
+
+    @Input() showCurrentPageReport: boolean;
 
     @Input() lazy: boolean;
 
@@ -72,9 +81,15 @@ export class DataView implements OnInit,AfterContentInit,BlockableUI {
     
     @Input() loading: boolean;
 
-    @Input() loadingIcon: string = 'fa fa-spinner';
+    @Input() loadingIcon: string = 'pi pi-spinner';
 
     @Input() first: number = 0;
+
+    @Input() sortField: string;
+
+    @Input() sortOrder: number;
+
+    @Input() value: any[];
 
     @Output() onPage: EventEmitter<any> = new EventEmitter();
 
@@ -102,10 +117,6 @@ export class DataView implements OnInit,AfterContentInit,BlockableUI {
 
     filterValue: string;
 
-    _sortField: string;
-
-    _sortOrder: number = 1;
-
     initialized: boolean;
     
     constructor(public el: ElementRef) {}
@@ -117,28 +128,21 @@ export class DataView implements OnInit,AfterContentInit,BlockableUI {
         this.initialized = true;
     }
 
-    @Input() get sortField(): string {
-        return this._sortField;
-    }
-
-    set sortField(val: string) {
-        this._sortField = val;
-
-        //avoid triggering lazy load prior to lazy initialization at onInit
-        if ( !this.lazy || this.initialized ) {
-            this.sort();
+    ngOnChanges(simpleChanges: SimpleChanges) {
+        if (simpleChanges.value) {
+            this._value = simpleChanges.value.currentValue;
+            this.updateTotalRecords();
+            
+            if (!this.lazy && this.hasFilter()) {
+                this.filter(this.filterValue);
+            }
         }
-    }
 
-    @Input() get sortOrder(): number {
-        return this._sortOrder;
-    }
-    set sortOrder(val: number) {
-        this._sortOrder = val;
-
-         //avoid triggering lazy load prior to lazy initialization at onInit
-        if ( !this.lazy || this.initialized ) {
-            this.sort();
+        if (simpleChanges.sortField || simpleChanges.sortOrder) {
+            //avoid triggering lazy load prior to lazy initialization at onInit
+            if (!this.lazy || this.initialized) {
+                this.sort();
+            }
         }
     }
     
@@ -178,18 +182,6 @@ export class DataView implements OnInit,AfterContentInit,BlockableUI {
         }
     }
     
-    @Input() get value(): any[] {
-        return this._value;
-    }
-
-    set value(val:any[]) {
-        this._value = val;
-        this.updateTotalRecords();
-        if (!this.lazy && this.hasFilter()) {
-            this.filter(this.filterValue);
-        }
-    }
-
     changeLayout(layout: string) {
         this.layout = layout;
         this.updateItemTemplate();
@@ -258,7 +250,9 @@ export class DataView implements OnInit,AfterContentInit,BlockableUI {
     createLazyLoadMetadata(): any {
         return {
             first: this.first,
-            rows: this.rows
+            rows: this.rows,
+            sortField: this.sortField,
+            sortOrder: this.sortOrder
         };
     }
     
@@ -266,12 +260,12 @@ export class DataView implements OnInit,AfterContentInit,BlockableUI {
         return this.el.nativeElement.children[0];
     }
 
-    filter(filter: string) {
+    filter(filter: string, filterMatchMode:string ="contains") {
         this.filterValue = filter;
 
         if (this.value && this.value.length) {
             let searchFields = this.filterBy.split(',');
-            this.filteredValue = ObjectUtils.filter(this.value, searchFields, filter);
+            this.filteredValue = FilterUtils.filter(this.value, searchFields, filter, filterMatchMode);
     
             if (this.filteredValue.length === this.value.length ) {
                 this.filteredValue = null;
@@ -295,11 +289,11 @@ export class DataView implements OnInit,AfterContentInit,BlockableUI {
         <div [ngClass]="'ui-dataview-layout-options ui-selectbutton ui-buttonset'" [ngStyle]="style" [class]="styleClass">
             <a tabindex="0" class="ui-button ui-button-icon-only ui-state-default" (click)="changeLayout($event, 'list')" (keydown.enter)="changeLayout($event, 'list')"
                 [ngClass]="{'ui-state-active': dv.layout === 'list'}">
-                <i class="fa fa-bars ui-button-icon-left"></i>
+                <i class="pi pi-bars ui-button-icon-left"></i>
                 <span class="ui-button-text ui-clickable">ui-btn</span>
             </a><a tabindex="0" class="ui-button ui-button-icon-only ui-state-default" (click)="changeLayout($event, 'grid')" (keydown.enter)="changeLayout($event, 'grid')"
                 [ngClass]="{'ui-state-active': dv.layout === 'grid'}">
-                <i class="fa fa-th-large ui-button-icon-left"></i>
+                <i class="pi pi-th-large ui-button-icon-left"></i>
                 <span class="ui-button-text ui-clickable">ui-btn</span>
             </a>
         </div>

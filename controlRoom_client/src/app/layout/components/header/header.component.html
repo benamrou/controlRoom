@@ -8,8 +8,15 @@
                 </button>
             </p-footer>
     </p-dialog>
-        <div class="pos-f-t fixed-top header">
+		<!-- Snow effect START -->
+        <div *ngFor="let i of ' '.repeat(100).split('')" class="snowflake">*</div>
+        <!-- Snow effect END -->
+        
+        <div class="pos-f-t fixed-top header" >
             <nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md">
+
+                <!-- Chistmas gif style="background-image: url('./assets/pictures/decoration/christmas/banner_christmas1.jpg'); background-size: contain;" -->
+			
                 <button class="navbar-toggler navbar-toggler-right" (click)="toggleSidebar()">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -114,6 +121,7 @@
                         </li>
                     </ul>
                 </div>
+
             </nav>
         </div>
 </nav>

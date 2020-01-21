@@ -1,5 +1,8 @@
 <div class="login-page" [@routerTransition]>
     <div class="row justify-content-md-center">
+		<!-- Snow effect -->
+		<div *ngFor="let dummy of ' '.repeat(100).split('')" class="snowflake">*</div>
+
         <div class="col-md-4">
             <img src="./assets/images/logo.png" width="150px" class="user-avatar" />
             <h1>Inventory Control Room</h1>
@@ -20,7 +23,7 @@
 							   style="border-radius: 10px">
                     </div>
                 </div>
-                <button class="btn rounded-btn" type="submit"> Log in </button>
+                <button class="btn rounded-btn" type="submit" [disabled]="authentification.username.length === 0" > Log in </button>
             </form>
 
 &nbsp;
@@ -65,5 +68,75 @@
 				</div>
 			</div>
         </div>
-    </div>
+	</div>
 </div>
+<!-- NFL -->
+<!--div>
+	<div class="container_nfl pressie"> 
+		<figure style="display: flex">
+			<img alt="Tennessee Titans" style="margin-right: 10px"
+				  src="https://static.nfl.com/static/content/public/static/wildcat/assets/img/logos/teams/TEN.svg" width="100%">
+			<img alt="Kansas City Chiefs" style="margin-right: 10px"
+				  src="https://static.nfl.com/static/content/public/static/wildcat/assets/img/logos/teams/KC.svg" width="100%">
+			<img alt="Green Bay Packers"  style="margin-right: 10px"
+				 src="https://static.nfl.com/static/content/public/static/wildcat/assets/img/logos/teams/GB.svg" width="100%">
+			<img alt="San Francisco 49ers" style="margin-right: 10px"b
+				 src="https://static.nfl.com/static/content/public/static/wildcat/assets/img/logos/teams/SF.svg" width="100%">
+		</figure>
+	</div>
+	<div id="football">
+		<span class="endzone"></span>
+		<span class="yard" data-yard="10"></span>
+		<span class="yard" data-yard="20"></span>
+		<span class="yard" data-yard="30"></span>
+		<span class="yard" data-yard="40"></span>
+		<span class="yard" data-yard="50"></span>
+		<span class="yard" data-yard="40"></span>
+		<span class="yard" data-yard="30"></span>
+		<span class="yard" data-yard="20"></span>
+		<span class="yard" data-yard="10"></span>
+		<span class="yard"></span>
+		<span class="endzone"></span>
+	  </div>
+	
+</div-->
+<!-- Chrismas TREE BEGIN -->
+<!--div>
+	<div class="container_christmas"> 
+			<div class="star"></div>
+			<div class="pressie">
+				<div class="cover"></div>
+				<div class="wrap"> </div>
+				<div class="ribbon"></div>
+			</div>
+			<div class="tree">
+				<div class="base"> </div>
+				<div class="layer">
+				<div class="line"> </div>
+				<div class="bauble one"></div></div>
+				
+				<div class="layer two">
+				<div class="line two"> </div>
+				<div class="bauble two"></div>
+				<div class="socks"> 
+					<div class="top"> </div>
+					<div class="foot"></div></div>
+				</div>
+				
+				<div class="layer three">
+				<div class="line three"> </div>
+				<div class="bauble three"></div>
+				<div class="socks two"> 
+					<div class="top"> </div>
+					<div class="foot two"></div></div>
+				</div>
+					</div>
+				
+				<div class="layer four">
+				<div class="bauble four"></div>
+				<div class="star two"></div>
+				<div class="line four"> </div> 
+			</div>
+	</div>
+</div -->
+<!-- Chrismas TREE END -->

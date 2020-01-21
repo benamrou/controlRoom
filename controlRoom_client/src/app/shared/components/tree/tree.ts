@@ -2,12 +2,12 @@ import {NgModule,Component,Input,AfterContentInit,OnDestroy,Output,EventEmitter,
     ContentChildren,QueryList,TemplateRef,Inject,ElementRef,forwardRef,Host} from '@angular/core';
 import {Optional} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {TreeNode} from '../common/treenode';
-import {SharedModule} from '../common/shared';
-import {PrimeTemplate} from '../common/shared';
-import {TreeDragDropService} from '../common/treedragdropservice';
+import {TreeNode} from '../api/treenode';
+import {SharedModule} from '../api/shared';
+import {PrimeTemplate} from '../api/shared';
+import {TreeDragDropService} from '../api/treedragdropservice';
 import {Subscription}   from 'rxjs';
-import {BlockableUI} from '../common/blockableui';
+import {BlockableUI} from '../api/blockableui';
 import { ObjectUtils } from '../utils/objectutils';
 
 @Component({

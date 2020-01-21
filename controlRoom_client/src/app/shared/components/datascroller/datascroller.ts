@@ -1,6 +1,6 @@
 import {NgModule,Component,ElementRef,OnInit,AfterViewInit,AfterContentInit,DoCheck,OnDestroy,Input,Output,Renderer2,NgZone,ViewChild,EventEmitter,ContentChild,ContentChildren,QueryList,TemplateRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Header,Footer,PrimeTemplate,SharedModule} from '../common/shared';
+import {Header,Footer,PrimeTemplate,SharedModule} from '../api/shared';
 import {DomHandler} from '../dom/domhandler';
 
 @Component({

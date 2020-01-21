@@ -1,7 +1,7 @@
 import {NgModule,Component,Input,ContentChildren,QueryList,AfterContentInit,TemplateRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {MenuItem} from '../common/menuitem';
-import {PrimeTemplate} from '../common/shared';
+import {MenuItem} from '../api/menuitem';
+import {PrimeTemplate} from '../api/shared';
 import {RouterModule} from '@angular/router';
 
 @Component({

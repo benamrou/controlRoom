@@ -4,7 +4,11 @@ export * from './user/user.service';
 export * from './login/login.service';
 export * from './search/search.service';
 export * from './item/item.service';
+export * from './schedule/servicecontract.service';
 export * from './schedule/schedule.service';
+export * from './reporting/reporting.service';
+export * from './warehouse/warehouse.service';
+export * from './warehouse/warehouse.item.service';
 export * from './counting/counting.service';
 export * from './inventory/inventory.service';
 export * from './cao/cao.service';
@@ -14,4 +18,4 @@ export * from './labels/labels.resolver.service';
 export * from './widget/widget.service';
 
 /** Prime NG Servcie  **/
-export * from '../components/common/api';
+export * from '../components/index';

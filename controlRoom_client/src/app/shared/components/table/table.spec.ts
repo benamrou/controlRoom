@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 import { Paginator } from '../paginator/paginator';
 import {Dropdown, DropdownItem} from '../dropdown/dropdown';
 import { FormsModule } from '@angular/forms';
-import { SharedModule } from '../common/shared';
+import { SharedModule } from '../api/shared';
 
 @Component({
     template: `

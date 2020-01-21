@@ -1,7 +1,7 @@
 import {NgModule,Component,Input,Output,EventEmitter,ElementRef,ContentChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {SharedModule,Footer} from '../common/shared';
-import {BlockableUI} from '../common/blockableui';
+import {SharedModule,Footer} from '../api/shared';
+import {BlockableUI} from '../api/blockableui';
 import {trigger,state,style,transition,animate} from '@angular/animations';
 
 let idx: number = 0;

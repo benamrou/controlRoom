@@ -15,9 +15,6 @@ import { DatePipe } from '@angular/common';
 import { AuthentificationGuard, HttpService } from './shared/services/index';
 import { UserService, LogginService, LabelService } from './shared/services/index';
 import { GridsterModule } from './shared';
-import { SharedPipesModule } from './shared/pipes/'
-
-import { DialogModule } from './shared/components/index';
 //import { HttpModule, Http, ResponseOptions, RequestOptions, BaseRequestOptions, XHRBackend, BrowserXhr } from '@angular/http';
 import { MockBackend, MockConnection } from '@angular/http/testing';
 

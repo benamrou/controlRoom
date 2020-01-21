@@ -3,7 +3,7 @@ import {NgModule,Component,ElementRef,OnDestroy,Input,Output,EventEmitter,Render
 import {trigger,state,style,transition,animate,AnimationEvent} from '@angular/animations';
 import {CommonModule} from '@angular/common';
 import {DomHandler} from '../dom/domhandler';
-import {Header,Footer,SharedModule} from '../common/shared';
+import {Header,Footer,SharedModule} from '../api/shared';
 
 let idx: number = 0;
 

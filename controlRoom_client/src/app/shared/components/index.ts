@@ -11,8 +11,9 @@ export * from  './chart/chart';
 export * from  './checkbox/checkbox';
 export * from  './chips/chips';
 export * from  './codehighlighter/codehighlighter';
-export * from  './common/api';
-export * from  './common/shared';
+export * from  './api/public_api';
+//export * from  ../api/api';
+//export * from  './api/shared';
 export * from  './confirmdialog/confirmdialog';
 export * from  './contextmenu/contextmenu';
 export * from  './datagrid/datagrid';
@@ -70,6 +71,7 @@ export * from  './tree/tree';
 export * from  './treetable/treetable';
 export * from  './tristatecheckbox/tristatecheckbox';
 export * from  './utils/objectutils';
+export * from  './utils/filterutils';
 export * from  './fullcalendar/fullcalendar';
 export * from  './table/table';
 
@@ -80,3 +82,4 @@ export * from  './table/table';
 
 /* Extension Prime Widget */
 export * from  './filereader/filereader.component';
+export * from './card/card';

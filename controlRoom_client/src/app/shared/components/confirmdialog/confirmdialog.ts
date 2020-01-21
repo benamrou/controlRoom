@@ -2,10 +2,10 @@ import {NgModule,Component,ElementRef,OnDestroy,Input,EventEmitter,Renderer2,Con
 import {trigger,state,style,transition,animate,AnimationEvent} from '@angular/animations';
 import {CommonModule} from '@angular/common';
 import {DomHandler} from '../dom/domhandler';
-import {Footer,SharedModule} from '../common/shared';
+import {Footer,SharedModule} from '../api/shared';
 import {ButtonModule} from '../button/button';
-import {Confirmation} from '../common/confirmation';
-import {ConfirmationService} from '../common/confirmationservice';
+import {Confirmation} from '../api/confirmation';
+import {ConfirmationService} from '../api/confirmationservice';
 import {Subscription}   from 'rxjs';
 
 @Component({

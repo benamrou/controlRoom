@@ -2,8 +2,8 @@ import {NgModule,Component,ElementRef,OnDestroy,Input,Output,EventEmitter,AfterC
         ContentChildren,QueryList,TemplateRef,EmbeddedViewRef,ViewContainerRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TooltipModule} from '../tooltip/tooltip';
-import {SharedModule,PrimeTemplate} from '../common/shared';
-import {BlockableUI} from '../common/blockableui';
+import {SharedModule,PrimeTemplate} from '../api/shared';
+import {BlockableUI} from '../api/blockableui';
 
 let idx: number = 0;
 
