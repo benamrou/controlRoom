@@ -1,8 +1,8 @@
 import {NgModule,Component,ElementRef,AfterViewInit,AfterContentInit,DoCheck,OnDestroy,Input,Output,SimpleChange,EventEmitter,ContentChild,ContentChildren,TemplateRef,QueryList,IterableDiffers} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {SharedModule,Header,Footer,PrimeTemplate} from '../common/shared';
+import {SharedModule,Header,Footer,PrimeTemplate} from '../api/shared';
 import {PaginatorModule} from '../paginator/paginator';
-import {BlockableUI} from '../common/blockableui';
+import {BlockableUI} from '../api/blockableui';
 
 @Component({
     selector: 'p-dataList',

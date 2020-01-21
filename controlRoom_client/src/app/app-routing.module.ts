@@ -5,7 +5,6 @@ import { AuthentificationGuard } from './shared/services';
 
 const routes: Routes = [
     
-    { path: '', loadChildren: './layout/layout.module#LayoutModule', canActivate: [AuthentificationGuard] },
     { path: 'login', loadChildren: './login/login.module#LoginModule' },
     { path: 'error', loadChildren: './server-error/server-error.module#ServerErrorModule' },
     { path: 'not-accessible', loadChildren: './not-accessible/not-accessible.module#NotAccessibleModule' },
@@ -13,6 +12,7 @@ const routes: Routes = [
     { path: '404', redirectTo: './layout/layout.module#LayoutModule', canActivate: [AuthentificationGuard] },
     { path: '403', loadChildren: './not-accessible/not-accessible.module#NotAccessibleModule' },
     { path: 'not-found', redirectTo: './layout/layout.module#LayoutModule', canActivate: [AuthentificationGuard] },
+    { path: '', loadChildren: './layout/layout.module#LayoutModule', canActivate: [AuthentificationGuard] },
     { path: '**', redirectTo: './layout/layout.module#LayoutModule', canActivate: [AuthentificationGuard] }
 ];
 

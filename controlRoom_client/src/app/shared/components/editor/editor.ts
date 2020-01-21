@@ -1,6 +1,6 @@
 import {NgModule,Component,ElementRef,AfterViewInit,Input,Output,EventEmitter,ContentChild,OnChanges,forwardRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {SharedModule,Header} from '../common/shared'
+import {SharedModule,Header} from '../api/shared'
 import {DomHandler} from '../dom/domhandler';
 import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
 

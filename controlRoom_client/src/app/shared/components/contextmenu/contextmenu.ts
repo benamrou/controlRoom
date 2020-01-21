@@ -1,7 +1,7 @@
 import { NgModule, Component, ElementRef, AfterViewInit, OnDestroy, Input, Output, Renderer2, Inject, forwardRef, ViewChild, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomHandler } from '../dom/domhandler';
-import { MenuItem } from '../common/menuitem';
+import { MenuItem } from '../api/menuitem';
 import { RouterModule } from '@angular/router';
 
 @Component({

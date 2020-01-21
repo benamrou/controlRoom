@@ -1,8 +1,8 @@
 import {NgModule,Component,ElementRef,AfterViewInit,DoCheck,OnDestroy,Input,Output,ViewChild,EventEmitter,IterableDiffers,Optional,NgZone} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Message} from '../common/message';
+import {Message} from '../api/message';
 import {DomHandler} from '../dom/domhandler';
-import {MessageService} from '../common/messageservice';
+import {MessageService} from '../api/messageservice';
 import {Subscription}   from 'rxjs';
 
 @Component({

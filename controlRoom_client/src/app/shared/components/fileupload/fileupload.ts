@@ -6,9 +6,9 @@ import {ButtonModule} from '../button/button';
 import {MessagesModule} from '../messages/messages';
 import {ProgressBarModule} from '../progressbar/progressbar';
 import {DomHandler} from '../dom/domhandler';
-import {Message} from '../common/message';
-import {PrimeTemplate,SharedModule} from '../common/shared';
-import {BlockableUI} from '../common/blockableui';
+import {Message} from '../api/message';
+import {PrimeTemplate,SharedModule} from '../api/shared';
+import {BlockableUI} from '../api/blockableui';
 import {HttpClient, HttpEvent, HttpEventType} from "@angular/common/http";
 
 @Component({

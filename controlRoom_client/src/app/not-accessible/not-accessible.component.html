@@ -1,8 +1,12 @@
 <div class="notaccessible-page">
     <div>
-        <h1>403 - Server Not Accessible</h1>
+        <h1>403 - Server request not accessible</h1>
         <p class="lead">The server {{serverUrl}} is not accessible</p>
-        <p class="lead">Message : {{ message }}</p>
+        <p style="text-align: left; 
+                  border-width: 1px 0px 1px 0px; 
+                  border-style: solid;
+                  padding: 5px 5px 5px 5px">Message</p>
+        <p style="padding: 50px 0px 50px 0px">{{ message }}</p>
         <p class="lead">
             <a class="btn rounded-btn" [routerLink]="['/login']">Restart</a>
         </p>

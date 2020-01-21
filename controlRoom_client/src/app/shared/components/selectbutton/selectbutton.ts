@@ -1,6 +1,6 @@
 import {NgModule,Component,Input,Output,EventEmitter,forwardRef,ChangeDetectorRef,ContentChild,TemplateRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {SelectItem} from '../common/selectitem';
+import {SelectItem} from '../api/selectitem';
 import {ObjectUtils} from '../utils/objectutils';
 import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
 

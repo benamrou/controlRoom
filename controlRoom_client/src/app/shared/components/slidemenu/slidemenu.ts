@@ -2,7 +2,7 @@ import {NgModule,Component,ElementRef,AfterViewChecked,OnDestroy,Input,Renderer2
 import {trigger,state,style,transition,animate,AnimationEvent} from '@angular/animations';
 import {CommonModule} from '@angular/common';
 import {DomHandler} from '../dom/domhandler';
-import {MenuItem} from '../common/menuitem';
+import {MenuItem} from '../api/menuitem';
 import {RouterModule} from '@angular/router';
 
 @Component({

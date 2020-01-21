@@ -1,15 +1,15 @@
 import { NgModule, Component, HostListener, OnInit, AfterViewInit, AfterViewChecked, Directive, Optional, AfterContentInit, Input, Output, EventEmitter, ElementRef, ContentChildren, TemplateRef, QueryList, ViewChild, NgZone, EmbeddedViewRef, ViewContainerRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Column, PrimeTemplate, SharedModule } from '../common/shared';
+import { Column, PrimeTemplate, SharedModule } from '../api/shared';
 import { PaginatorModule } from '../paginator/paginator';
 import { DomHandler } from '../dom/domhandler';
 import { ObjectUtils } from '../utils/objectutils';
-import { SortMeta } from '../common/sortmeta';
-import { TableState } from '../common/tablestate';
-import { FilterMetadata } from '../common/filtermetadata';
+import { SortMeta } from '../api/sortmeta';
+import { TableState } from '../api/tablestate';
+import { FilterMetadata } from '../api/filtermetadata';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { Injectable } from '@angular/core';
-import { BlockableUI } from '../common/blockableui';
+import { BlockableUI } from '../api/blockableui';
 import { Subject, Subscription } from 'rxjs';
 
 @Injectable()
@@ -774,7 +774,9 @@ export class Table implements OnInit, AfterViewInit, AfterContentInit, Blockable
     handleRowClick(event) {
         let target = (<HTMLElement> event.originalEvent.target);
         let targetNode = target.nodeName;
-        let parentNode = target.parentElement.nodeName;
+        let parentNode;
+        // let parentNode = target.parentElement.nodeName;
+
         if (targetNode == 'INPUT' || targetNode == 'BUTTON' || targetNode == 'A' || 
             parentNode == 'INPUT' || parentNode == 'BUTTON' || parentNode == 'A' ||
             (DomHandler.hasClass(event.originalEvent.target, 'ui-clickable'))) {

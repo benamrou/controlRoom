@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {trigger,state,style,transition,animate,AnimationEvent} from '@angular/animations';
 import {InputTextModule} from '../inputtext/inputtext';
 import {ButtonModule} from '../button/button';
-import {SharedModule,PrimeTemplate} from '../common/shared';
+import {SharedModule,PrimeTemplate} from '../api/shared';
 import {DomHandler} from '../dom/domhandler';
 import {ObjectUtils} from '../utils/objectutils';
 import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';

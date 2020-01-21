@@ -5,16 +5,15 @@ import {NgModule, Component, ElementRef, AfterContentInit, AfterViewInit, AfterV
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms'
-import {SharedModule} from '../common/shared';
 import {PaginatorModule} from '../paginator/paginator';
-import {Column,Header,Footer,HeaderColumnGroup,FooterColumnGroup,PrimeTemplate} from '../common/shared';
-import {LazyLoadEvent} from '../common/lazyloadevent';
-import {FilterMetadata} from '../common/filtermetadata';
-import {SortMeta} from '../common/sortmeta';
+import {SharedModule, Column,Header,Footer,HeaderColumnGroup,FooterColumnGroup,PrimeTemplate} from '../api/public_api';
+import {LazyLoadEvent} from '../api/lazyloadevent';
+import {FilterMetadata} from '../api/filtermetadata';
+import {SortMeta} from '../api/sortmeta';
 import {DomHandler} from '../dom/domhandler';
 import {ObjectUtils} from '../utils/objectutils';
 import {Subscription} from 'rxjs';
-import {BlockableUI} from '../common/blockableui';
+import {BlockableUI} from '../api/blockableui';
 
 @Component({
     selector: 'p-dtRadioButton',

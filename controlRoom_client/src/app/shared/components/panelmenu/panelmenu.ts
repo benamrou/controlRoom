@@ -1,7 +1,7 @@
 import {NgModule,Component,ElementRef,OnDestroy,Input} from '@angular/core';
 import {trigger,state,style,transition,animate} from '@angular/animations';
 import {CommonModule} from '@angular/common';
-import {MenuItem} from '../common/menuitem';
+import {MenuItem} from '../api/menuitem';
 import {RouterModule} from '@angular/router';
 
 export class BasePanelMenuItem {

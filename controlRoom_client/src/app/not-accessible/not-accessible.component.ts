@@ -9,7 +9,7 @@ import {environment} from '../../environments/environment';
 })
 export class NotAccessibleComponent implements OnInit {
 
-  message;
+  message: string = '';
   serverUrl: string = environment.serverURL;
   
   constructor(private route: ActivatedRoute) {}

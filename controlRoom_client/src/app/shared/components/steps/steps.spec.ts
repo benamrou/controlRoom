@@ -5,7 +5,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Component, NO_ERRORS_SCHEMA, ViewEncapsulation } from '@angular/core';
 import { Toast } from '../toast/toast';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MenuItem } from '../common/api';
+import { MenuItem } from '../api/menuitem';
 
 @Component({
   template: `<p-steps [model]="items"></p-steps>

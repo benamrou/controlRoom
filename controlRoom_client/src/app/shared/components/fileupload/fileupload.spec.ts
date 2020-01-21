@@ -4,7 +4,7 @@ import { FileUpload } from './fileupload';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ProgressBarModule} from '../progressbar/progressbar';
 import { ButtonModule } from '../button/button';
-import { PrimeTemplate} from '../common/shared';
+import { PrimeTemplate} from '../api/shared';
 import { MessagesModule } from '../messages/messages';
 import { HttpClientModule } from '@angular/common/http';
 

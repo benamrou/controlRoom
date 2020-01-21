@@ -4,7 +4,7 @@ import { TabView, TabPanel, TabViewNav } from './tabview';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Component } from '@angular/core';
 import { Tooltip } from '../tooltip/tooltip';
-import { PrimeTemplate } from '../common/shared';
+import { PrimeTemplate } from '../api/shared';
 
 @Component({
     template: `<p-tabView>

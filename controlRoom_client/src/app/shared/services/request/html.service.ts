@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { Router } from "@angular/router";
 import {Http, XHRBackend, RequestOptions, Request, BrowserXhr,BaseRequestOptions,
         RequestOptionsArgs, Response, Headers, ResponseOptionsArgs, ResponseType} from '@angular/http';
 import { MockBackend, MockConnection } from '@angular/http/testing';
-import {Observable, ObservableInput} from 'rxjs';
+import {Observable, ObservableInput, throwError} from 'rxjs';
 import {catchError } from 'rxjs/operators';
 import {environment} from '../../../../environments/environment';
 import { map } from 'rxjs/operators';
@@ -18,7 +19,7 @@ export class HttpService  {
   baseUrl: string = environment.serverURL;
   baseBatchUrl: string = environment.serverBatchURL;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private _router: Router) {
     // super(backend,option);
 
     console.log('BASEURL : ' + this.baseUrl);
@@ -185,8 +186,13 @@ export class HttpService  {
   }
 
   handleError(url: string, error: Response) : ObservableInput<Response> {
-    //console.error('Error error: ' + JSON.stringify(error));
-    window.location.href = window.location.origin + '/not-accessible?message=' + url + '  :net::ERR_CONNECTION_REFUSED';
-   return null;
+    console.error('Error error: ' + JSON.stringify(error));
+    console.error('Aie Aie aie');
+    this._router.navigate(['not-accessible'], {
+            queryParams: {
+              message : JSON.stringify(error)
+            }
+          });
+    return throwError(error);;
   }
 }

@@ -5,8 +5,8 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {ButtonModule} from '../button/button';
 import {MessagesModule} from '../messages/messages';
 import {ProgressBarModule} from '../progressbar/progressbar';
-import {Message} from '../common/api';
-import {PrimeTemplate,SharedModule} from '../common/shared';
+import {Message} from '../api/message';
+import {PrimeTemplate,SharedModule} from '../api/shared';
 //import { Papa } from 'papaparse';
 //import { Papa } from 'angular-papaparse/dist/js/angular-PapaParse';
 
