@@ -168,6 +168,7 @@ export class ProcessService {
             let level2, level3, level4, level5;
             //console.log("Data for joblist : " + JSON.stringify(data));
             for (let i=0; i<data.length; i++) {
+              //console.log('Parsing i: ' + i + ' / ' + data.length  + ' / ' + JSON.stringify(data[i]));
               level2 = -1; 
               level3 = -1;
               level4 = -1; 
@@ -183,7 +184,6 @@ export class ProcessService {
                   if (myJobList.tree.children[j].data.BATCHID === data[i].JOBLVLDESC2) {
                     level2 = j;
                     //console.log(' found level 2 : '  + data[i].JOBLVLDESC2 + ' / data #' + j);
-                    break;
                   }
                 }
               }
@@ -194,50 +194,47 @@ export class ProcessService {
                 //console.log(' Adding level 2 : '  + data[i].JOBLVLDESC2 + ' / data[i] ' + JSON.stringify(data[i]));
                 //console.log(' level 2 : '  + level2);
               }
-              if (level2 >= 0) {
+              if (level2 >= 0 && data[i].JOBLVLDESC3) {
                 if (Object.prototype.hasOwnProperty.call(myJobList.tree.children[level2], 'children')) {
                   for (let k=0; k<myJobList.tree.children[level2].children.length; k++) {
                     if (myJobList.tree.children[level2].children[k].data.BATCHID === data[i].JOBLVLDESC3) {
                       level3 = k;
-                      break;  
                     }
                   }
                 }
               }
               if (level3 < 0 && data[i].JOBLVLDESC3) { 
-                this.addLevelToTree(myJobList.tree.children[level2].children, data[i],3); 
+                this.addLevelToTree(myJobList.tree.children[level2], data[i],3); 
                 level3 = myJobList.tree.children[level2].children.length-1;
                 //console.log(' Adding level 3 : '  + data[i].JOBLVLDESC3 + ' / data[i] ' + JSON.stringify(data[i]));
               }
               //console.log(' level 3 : '  + level3 + ' ');
-              if (level3 > 0) {
+              if (level3 >= 0 && data[i].JOBLVLDESC4) {
                 if (Object.prototype.hasOwnProperty.call(myJobList.tree.children[level2].children[level3], 'children')) {
                   for (let l=0; l<myJobList.tree.children[level2].children[level3].children.length; l++) {
                     if (myJobList.tree.children[level2].children[level3].children[l].data.BATCHID === data[i].JOBLVLDESC4) {
                       level4 = l;
-                      break;  
                     }
                   }
                 }
               }
               if (level4 < 0 && data[i].JOBLVLDESC4) { 
-                this.addLevelToTree(myJobList.tree.children[level2].children[level3].children, data[i],4); 
+                this.addLevelToTree(myJobList.tree.children[level2].children[level3], data[i],4); 
                 level4 = myJobList.tree.children[level2].children[level3].children.length-1;
                 //console.log(' Adding level 4 : '  + data[i].JOBLVLDESC4 + ' / data[i] ' + JSON.stringify(data[i]));
               }
               //console.log(' level 4 : '  + level4 + ' ');
-              if (level4 > 0) {
+              if (level4 > 0 && data[i].JOBLVLDESC5) {
                 if (Object.prototype.hasOwnProperty.call(myJobList.tree.children[level2].children[level3].children[level4], 'children')) {
                   for (let m=0; m<myJobList.tree.children[level2].children[level3].children[level4].children.length; m++) {
                     if (myJobList.tree.children[level2].children[level3].children[level4].children[m].data.BATCHID === data[i].JOBLVLDESC5) {
                       level5 = m;
-                      break;  
                     }
                   } 
                 }
               }
               if (level5 < 0 && data[i].JOBLVLDESC5) { 
-                this.addLevelToTree(myJobList.tree.children[level2].children[level3].children[level4].children, data[i],5); 
+                this.addLevelToTree(myJobList.tree.children[level2].children[level3].children[level4], data[i],5); 
                 level5 = myJobList.tree.children[level2].children[level3].children[level4].children.length -1;
                 //console.log(' Adding level 5 : '  + data[i].JOBLVLDESC5 + ' / data[i] ' + JSON.stringify(data[i]));
               }
@@ -246,10 +243,10 @@ export class ProcessService {
               this.addLeafToTree(myJobList.tree.children[level2].children[level3].children[level4].children[level5].children, data[i]);
             }
             else if (level4 > -1) {
-              this.addLeafToTree(myJobList.tree.children[level2].children[level3].children[level4].children, data[i]);
+              this.addLeafToTree(myJobList.tree.children[level2].children[level3].children[level4], data[i]);
             }
             else if (level3 > -1) {
-              this.addLeafToTree(myJobList.tree.children[level2].children[level3].children, data[i]);
+              this.addLeafToTree(myJobList.tree.children[level2].children[level3], data[i]);
             }
             else if (level2 > -1) {
               //console.log(' Leaf to be added level 2 : '  + level2 );
@@ -266,7 +263,7 @@ export class ProcessService {
   }
   
   addLevelToTree(tree: any, obj: any, level: number) {
-    console.log('Adding level ' + JSON.stringify(tree) + ' => children: ' + JSON.stringify(obj));
+    //console.log('Adding level ' + JSON.stringify(tree) + ' => children: ' + JSON.stringify(obj));
     let batchID, batchDesc, batchEnv, Batchseq, parameter;
     if (!Object.prototype.hasOwnProperty.call(tree, 'children')) {tree.children = [];}
     switch (level) {
@@ -302,7 +299,7 @@ export class ProcessService {
         "MYLIST": false,
         "STATUS": 'EXECUTED'
       }});
-      console.log('DONE adding ' + JSON.stringify(tree));
+      //console.log('DONE adding ' + JSON.stringify(tree));
     }
 
 }
