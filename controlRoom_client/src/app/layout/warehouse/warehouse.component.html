@@ -1,0 +1,52 @@
+<app-page-header [heading]="'Warehouse Tool Box'" [icon]="'fa-tools'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+<div class="bbs_search_panel"  >
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Toolkit : </span>
+    <span style="overflow: hidden; padding-right: .5em; width: 90%; line-height: 25px">
+        <p-autoComplete [(ngModel)]="selectedToolKit" [suggestions]="filteredToolKits" 
+                        (completeMethod)="filterToolKits($event)" [size]="30"
+                        [style]="{'width':'50%','min-width':'70%'}" [inputStyle]="{'width':'70%','min-width':'70%'}"
+                        [minLength]="1"  [dropdown]="true">
+            <ng-template let-toolKit pTemplate="item">
+                <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                    {{toolKit}}
+                </div>
+            </ng-template>
+        </p-autoComplete>
+    </span>
+
+    <span class="pull-right" style="padding-right: 20px">
+        <button type="submit" pButton (click)="openToolKit()" icon="fas fa-search" label="OPEN" [disabled]="searchCode === ''" style="margin-right: 15px"></button>
+        <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true"></button>
+    </span>
+</div>
+<p></p>
+
+<div *ngIf="indexToolkit === 0 " style="padding-top: 20px;">  
+    <fix-picking-unit></fix-picking-unit>
+</div>
+
+<!-- Panel result style="width: 50%;" -->
+
+<div>
+    <!-- Display report result-->
+    <div>
+
+    </div>
+    <div>
+        <!-- Select type of layout-->
+        <div>
+
+        </div>
+        <!-- Select field  -->
+        <div>
+
+        </div>
+    </div>
+</div>
+
+<br>

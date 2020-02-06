@@ -1,0 +1,29 @@
+.ui-accordion-content-wrapper-overflown {
+  overflow: hidden;
+}
+
+.ui-panel-titlebar {
+  font-size: larger;
+  background: white;
+}
+
+.ui-tabview .ui-tabview-nav>li.ui-state-active {
+  background: white;
+  color: white;
+}
+
+.resizable {
+  resize: both;
+  overflow: auto;
+  margin: 0px;
+  padding: 0px;
+  border-width: 1px 0px 0px 0px;
+  font-size: smaller;
+  display:block;
+}
+
+.scrollable {
+  width: 100%;
+  max-height: 200px ;
+  overflow-y: auto;
+}
