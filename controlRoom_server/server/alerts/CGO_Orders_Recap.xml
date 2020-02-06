@@ -1,0 +1,66 @@
+<ROOT>
+    <QUERY> 
+	
+WITH CAO_ORDER AS (
+SELECT ecdsite STORE_NUM, foucnuf VENDOR_NUM,  foulibl VENDOR_DESC, to_char(trunc(ecddcom), ''IWRRRR'') WK, 
+       TRUNC(ecddcom) CAO_DATE,
+       SUM(dcdcoli) NB_CASE
+FROM cdeentcde@Heinens_Custom_Prod, cdedetcde@Heinens_Custom_Prod, foudgene@Heinens_Custom_Prod
+WHERE ecdcincde=dcdcincde
+AND ecdcfin=foucfin
+AND ecdtype=1 -- CAO
+AND trunc(ecddcom) >= TRUNC(SYSDATE-7*8)
+GROUP BY ecdsite, foucnuf, foulibl, ecddcom),
+CAO_DISTINCT AS (
+SELECT DISTINCT store_num, vendor_num, vendor_desc, wk FROM CAO_ORDER)
+SELECT store_num, vendor_num, vendor_desc, wk,
+      (SELECT week.nb_case
+        FROM CAO_ORDER week
+        WHERE week.store_num=mn.store_num
+        AND week.vendor_num=mn.vendor_num
+        AND week.wk=mn.wk
+        AND to_char(week.cao_date,''D'')=''2'') MONDAY,
+       (SELECT week.nb_case
+        FROM CAO_ORDER week
+        WHERE week.store_num=mn.store_num
+        AND week.vendor_num=mn.vendor_num
+        AND week.wk=mn.wk
+        AND to_char(week.cao_date,''D'')=''3'') TUESDAY,
+       (SELECT week.nb_case
+        FROM CAO_ORDER week
+        WHERE week.store_num=mn.store_num
+        AND week.vendor_num=mn.vendor_num
+        AND week.wk=mn.wk
+        AND to_char(week.cao_date,''D'')=''4'') WEDNESDAY,
+       (SELECT week.nb_case
+        FROM CAO_ORDER week
+        WHERE week.store_num=mn.store_num
+        AND week.vendor_num=mn.vendor_num
+        AND week.wk=mn.wk
+        AND to_char(week.cao_date,''D'')=''5'') THURSDAY,
+       (SELECT week.nb_case
+        FROM CAO_ORDER week
+        WHERE week.store_num=mn.store_num
+        AND week.vendor_num=mn.vendor_num
+        AND week.wk=mn.wk
+        AND to_char(week.cao_date,''D'')=''6'') FRIDAY,
+       (SELECT week.nb_case
+        FROM CAO_ORDER week
+        WHERE week.store_num=mn.store_num
+        AND week.vendor_num=mn.vendor_num
+        AND week.wk=mn.wk
+        AND to_char(week.cao_date,''D'')=''7'') SATURDAY,
+       (SELECT week.nb_case
+        FROM CAO_ORDER week
+        WHERE week.store_num=mn.store_num
+        AND week.vendor_num=mn.vendor_num
+        AND week.wk=mn.wk
+        AND to_char(week.cao_date,''D'')=''1'') SUNDAY
+FROM CAO_DISTINCT mn
+ORDER BY STORE_NUM asc, VENDOR_NUM ASC, wk ASC
+    </QUERY>
+  <HEADERIFEMPTY>No CGO Orders to recap</HEADERIFEMPTY>
+  <HEADER>CGO Order Recap (Last 7 weeks)</HEADER>
+  
+</ROOT>
+

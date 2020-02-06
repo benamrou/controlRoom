@@ -14,7 +14,7 @@ function buildHtmlTable(arr, document, cellRule) {
         cellRuleJSON=JSON.parse(cellRule);
     }
     catch (err) {
-        console.log ('Error in cell rule : ', err, cellRule  );
+        logger.log('alert', 'Error gathering HTML formating cell rules : ' + JSON.stringify(err) + JSON.stringify(cellRule), 'alert', 3);
     }
     for (var i=0, l=arr.length; i < l; i++) {
         for (var key in arr[i]) {
@@ -48,23 +48,60 @@ function buildHtmlTable(arr, document, cellRule) {
                     //console.log ("cellRule not null : " + JSON.stringify(cellRuleJSON));
                     //console.log ("cellRuleJSON.criteria.length : " + JSON.stringify(cellRuleJSON.criteria.length));
                     for (let k =0; k < cellRuleJSON.criteria.length; k++) {
-                        //console.log ("Compare :" + j + ' and ' + JSON.stringify(cellRuleJSON.criteria[k].column));
+                        //console.log ("cellRuleJSON.criteria[k].columns / cellRuleJSON.criteria[k].rows :" + cellRuleJSON.criteria[k].columns + ' / ' + cellRuleJSON.criteria[k].rows);
+                        if (typeof cellRuleJSON.criteria[k].columns !== "undefined" && 
+                            typeof cellRuleJSON.criteria[k].rows !== "undefined") {
+                            if(cellRuleJSON.criteria[k].columns.indexOf(j) >= 0 && 
+                               cellRuleJSON.criteria[k].rows.indexOf(i) >= 0) {
 
-                        if(+cellRuleJSON.criteria[k].column === j) {
-
-                            //console.log ("match column : " + cellRuleJSON.criteria[k].column + ' / ' + j);
-                            for (let l=0; l < cellRuleJSON.criteria[k].condition.length; l++) {
-                                //console.log( 'Eval : ' + cellValue + cellRuleJSON.criteria[k].condition[l])
-                                if(eval("'" + cellValue  + "'" + cellRuleJSON.criteria[k].condition[l])) {
-                                    cellValue = cellRuleJSON.criteria[k].format[l] + cellValue + cellRuleJSON.criteria[k].endFormat[l];
-                                    //console.log( 'Adjusting cellValue : ' + cellValue);
+                                //console.log ("match columns : " + cellRuleJSON.criteria[k].columns + ' / ' + j);
+                                for (let l=0; l < cellRuleJSON.criteria[k].condition.length; l++) {
+                                    //console.log( 'Eval : ' + cellValue + cellRuleJSON.criteria[k].condition[l])
+                                    if(eval("'" + parseFloat(cellValue)  + "'" + cellRuleJSON.criteria[k].condition[l])) {
+                                        cellValue = cellRuleJSON.criteria[k].format[l] + cellValue + cellRuleJSON.criteria[k].endFormat[l];
+                                        break;
+                                        //console.log( 'Adjusting cellValue : ' + cellValue);
+                                    }
                                 }
                             }
+                        }
+                        else {
+                        //console.log ("cellRuleJSON.criteria[k].columns :" + cellRuleJSON.criteria[k].columns);
+                            if (typeof cellRuleJSON.criteria[k].columns !== "undefined") {
+                                //console.log (" Ok columns :");
+                                if(cellRuleJSON.criteria[k].columns.indexOf(j) >= 0 ) {
+                                    //console.log ("match columns : " + cellRuleJSON.criteria[k].columns + ' / ' + j);
+                                    for (let l=0; l < cellRuleJSON.criteria[k].condition.length; l++) {
+                                        //console.log( 'Eval : ' + cellValue + cellRuleJSON.criteria[k].condition[l])
+                                        if(eval("'" + parseFloat(cellValue)  + "'" + cellRuleJSON.criteria[k].condition[l])) {
+                                            cellValue = cellRuleJSON.criteria[k].format[l] + cellValue + cellRuleJSON.criteria[k].endFormat[l];
+                                            break;
+                                            //console.log( 'Adjusting cellValue : ' + cellValue);
+                                        }
+                                    }
+                                }
+                            }
+                            else {
+                                //console.log ("cellRuleJSON.criteria[k].rows :"  + cellRuleJSON.criteria[k].rows);
+                                if (typeof cellRuleJSON.criteria[k].rows !== "undefined") {
+                                    //console.log (" Ok rows :");
+                                    //console.log ("cellRuleJSON.criteria[k].rows.indexOf(i) : " + cellRuleJSON.criteria[k].rows.indexOf(i));
+                                    if(cellRuleJSON.criteria[k].rows.indexOf(i) >= 0 ) {
+                                        //console.log ("match columns : " + cellRuleJSON.criteria[k].columns + ' / ' + j);
+                                        for (let l=0; l < cellRuleJSON.criteria[k].condition.length; l++) {
+                                            //console.log( 'Eval : ' + cellValue + cellRuleJSON.criteria[k].condition[l])
+                                            if(eval("'" + parseFloat(cellValue)  + "'" + cellRuleJSON.criteria[k].condition[l])) {
+                                                cellValue = cellRuleJSON.criteria[k].format[l] + cellValue + cellRuleJSON.criteria[k].endFormat[l];
+                                                break;
+                                                //console.log( 'Adjusting cellValue : ' + cellValue);
+                                            }
+                                    }}
+                                }}
                         }
                     }
                 }
             } catch (err) {
-                console.log ('Error in cell rule : ', err, cellRuleJSON  );
+                logger.log('alert', 'Error gathering HTML formating data query : ' + JSON.stringify(err) + JSON.stringify(cellRuleJSON), 'alert', 3);
             }
             
             //console.log('cellValue= arr[i][columns[j] :  ' + cellValue);
