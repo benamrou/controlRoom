@@ -59,7 +59,8 @@ module.exports.getNextTicketID = getNextTicketID;
 function executeLibQuery (ticketId, queryNum, params, user, database_sid, language, request, response) {
     executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, 
     function (err,data) {
-        callbackSendData(response,data).then(console.log('Done execution'))
+        //callbackSendData(response,data).then(console.log('Done execution'))
+        callbackSendData(response,data);
     });
 }
 module.exports.executeLibQuery = executeLibQuery; 
@@ -72,7 +73,8 @@ module.exports.executeLibQueryUsingMyCallback = executeLibQueryUsingMyCallback;
 function executeQuery (ticketId, query, params, user, database_sid, language, request, response) {
     executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, 
     function (err,data) {
-        callbackSendData(response,data).then(console.log('Done execution'))
+        //callbackSendData(response,data).then(console.log('Done execution'))
+        callbackSendData(response,data);
     });
 }
 module.exports.executeQuery = executeQuery; 

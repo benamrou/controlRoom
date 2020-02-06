@@ -36,11 +36,13 @@ module.exports = {
  },
  notification: {
   email_service:  'bbsymphony.com',
-  email_host:  'secure43.webhostinghub.com',
+  email_host:  'ehub43.webhostinghub.com',
   email_port:  587,
   email_secure:  false,
   email_user: 'heinens@bbsymphony.com',
-  email_password: 'bbsymphony1'
+  email_password: 'bbsymphony1',
+  email_private_key: '/opt/apps/controlRoom/controlRoom_server/server/config/private_key.pem',
+  email_cache_dir: '/opt/apps/controlRoom/controlRoom_server/server/cache'
  },
  secret: 'bbsymphonysecret',
 };

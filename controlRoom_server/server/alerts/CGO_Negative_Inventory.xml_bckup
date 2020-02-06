@@ -1,0 +1,117 @@
+<ROOT>
+    <QUERY> 
+select  stosite STORE_NUM,
+        foucnuf supplier_code,
+        foulibl supplier_desc,
+        pkstrucobj.get_cext@Heinens_Custom_Prod(1, dep.strpere) DEPT_CODE,
+        pkstrucobj.get_desc@Heinens_Custom_Prod(1, dep.strpere, ''HN'') DEPT_DESC,
+        pkstrucobj.get_cext@Heinens_Custom_Prod(1, sdep.strpere) SUB_DEPT_CODE,
+        pkstrucobj.get_desc@Heinens_Custom_Prod(1, sdep.strpere, ''HN'') SUB_DEPT_DESC,
+        pkstrucobj.get_cext@Heinens_Custom_Prod(1, cat.strpere) CAT_CODE,
+        pkstrucobj.get_desc@Heinens_Custom_Prod(1, cat.strpere, ''HN'') CAT_DESC,
+        NVL(artuv.arvcexr, pkartrac.Get_Artcexr@Heinens_Custom_Prod(1, stocinr)) ITEM_CODE,
+        arvcexv SV,
+        barcode UPC,
+        pkartuv.get_libelle_long@Heinens_Custom_Prod(1,arvcinv, ''HN'') SV_DESC,
+        qte QTY,
+        NVL(( SELECT ''Yes'' FROM artreap@Heinens_Custom_Prod WHERE arecinr = stocinr AND aresite = stosite AND TRUNC(SYSDATE) BETWEEN areddeb AND aredfin AND arecomm != 1 and rownum=1),''No'') CGO,
+        NVL((SELECT sum(dcdcoli) from CDEDETCDE@Heinens_Custom_Prod, CDEENTCDE@Heinens_Custom_Prod where ecdcincde=dcdcincde and ecdetat=5 and dcdetat=5 and dcdcinr=stocinr and ecdsite=stosite), 0) QTY_ON_ORDER,
+        (SELECT to_char(max(ecddliv),''MM/DD/RRRR'') from CDEDETCDE@Heinens_Custom_Prod, CDEENTCDE@Heinens_Custom_Prod where ecdcincde=dcdcincde and ecdetat=5 and dcdetat=5 and dcdcinr=stocinr and ecdsite=stosite)  NEXT_DELIVERY
+FROM    (
+        SELECT stosite, qte,
+        decode(qte, 0, 1, 0) zero_stock,
+        decode(qte, 0, 0, 1) neg_stock,
+        NVL((select 1 from dual where exists (select 1 from stodetre@Heinens_Custom_Prod
+        where sdrsite = stosite
+        and sdrcinr = stocinr
+        and pkartstock.RecupCinlUVCparCINRetSEQVL@Heinens_Custom_Prod(1, stocinr,sdrseqvl) =stocinl
+        and sdrdcre > sysdate - 365)),0) rec_365,
+        NVL( (select 1 from dual where exists (select 1 from stomvt@Heinens_Custom_Prod
+        where stmsite = stosite
+                and stmcinl = stocinl
+        and stmdmvt > sysdate - 90
+        and stmtmvt between 150 and 174)), 0) sold_31,
+        stocinl,
+        stocinr,
+        artetat,
+        foucfin,
+        foucnuf,
+        foulibl,
+        (SELECT arccode FROM artcoca@Heinens_Custom_Prod
+        WHERE ROWID = (SELECT max(ROWID) FROM artcoca@Heinens_Custom_Prod
+        WHERE stocinl=arccinv AND TRUNC(SYSDATE) BETWEEN arcddeb AND arcdfin)) barcode
+        FROM (
+        SELECT SUM(NVL(storeai, 0) + NVL(storeal, 0) - NVL(storeav, 0) +
+                NVL(storeae, 0) + NVL(storeac, 0) - NVL(storear, 0)) qte,
+                stocinl,
+                stocinr,
+                artetat,
+                stosite,
+                foucfin,
+                foulibl,
+                foucnuf
+                FROM stocouch@Heinens_Custom_Prod  ,  artrac@Heinens_Custom_Prod,
+                     tbl_REF_HEINENS_SiteAttribute@Heinens_Custom_Prod,
+                     (SELECT aracinr ,foucfin, foulibl, foucnuf ,COUNT(arasite)
+                     FROM artuc@Heinens_Custom_Prod , 
+			tbl_REF_HEINENS_SiteAttribute@Heinens_Custom_Prod,
+			(SELECT foucfin, foulibl, foucnuf FROM foudgene@Heinens_Custom_Prod WHERE ( foucnuf = ''-1'' OR ''-1'' = ''-1'' )),
+                         (SELECT objcint
+                         FROM strucrel@Heinens_Custom_Prod
+                         WHERE TRUNC(SYSDATE) BETWEEN objddeb AND objdfin
+                         CONNECT BY PRIOR objcint = objpere
+                         START WITH objpere IN (SELECT sobcint FROM strucobj@Heinens_Custom_Prod WHERE sobcextin = DECODE(''-1'',''-1'',''1000000000000'',''-1'' ))
+                         UNION
+                         SELECT sobcint objcint FROM strucobj@Heinens_Custom_Prod WHERE sobcextin = DECODE(''-1'',''-1'',''1000000000000'',''-1'' ))
+                     WHERE aracinr = objcint
+                     AND "SiteType" = 10 AND "TopaseGoLiveDate" BETWEEN ''1-JAN-18'' AND trunc(sysdate)
+		     AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin
+                                         AND aratfou = 1
+                     AND EXISTS ( SELECT 1 FROM reseau@Heinens_Custom_Prod WHERE arasite = respere  AND ressite="SiteCode" and TRUNC(SYSDATE) BETWEEN resddeb AND resdfin )
+                     AND ( 1 = -1 OR EXISTS ( SELECT 1 FROM artreap@Heinens_Custom_Prod WHERE arecinr = aracinr AND aresite="SiteCode" AND TRUNC(SYSDATE) BETWEEN areddeb AND aredfin AND arecomm != 1))
+                     AND foucfin = aracfin
+                     GROUP BY aracinr ,foucfin, foulibl, foucnuf)
+                WHERE stotpos = 0
+                 AND "SiteType" = 10 AND "TopaseGoLiveDate" BETWEEN ''1-JAN-18'' AND trunc(sysdate)
+                AND "SiteCode"= stosite
+		AND stosite = :param2
+		AND :param1=:param1
+                and aracinr = stocinr
+                AND aracinr = artcinr
+                GROUP BY stocinl,
+                        stocinr,
+                        artetat,
+                        stosite,
+                        foucfin,
+                        foulibl,
+                        foucnuf )
+         WHERE 0 >= qte ),
+        artuv@Heinens_Custom_Prod,
+        strucrel@Heinens_Custom_Prod,
+        STRUCTURE@Heinens_Custom_Prod cat,
+        STRUCTURE@Heinens_Custom_Prod sdep,
+        STRUCTURE@Heinens_Custom_Prod dep
+        where arvcinv(+) = stocinl
+        and objcint = stocinr
+        and trunc(sysdate) between strucrel.objddeb and strucrel.objdfin
+        and cat.strcint = objpere
+        and cat.strprof = 4
+        and cat.stridstr = ''1''
+        and sdep.strcint = objpere
+        and sdep.strprof = 3
+        and sdep.stridstr = ''1''
+        and dep.strcint = objpere
+        and dep.strprof = 2
+        and dep.stridstr = ''1''
+        and rec_365 = 1
+        and sold_31 = 1
+        AND trunc(sysdate) between cat.strddeb and cat.strdfin
+        AND trunc(sysdate) between sdep.strddeb and sdep.strdfin
+        AND trunc(sysdate) between dep.strddeb and dep.strdfin
+        ORDER BY stosite,qty ASC
+  </QUERY>
+  <HEADERIFEMPTY>No CGO negative inventory</HEADERIFEMPTY>
+  <HEADER>CGO items with negative inventory</HEADER>
+  
+</ROOT>
+

@@ -1,0 +1,113 @@
+<ROOT>
+    <QUERY> 
+ WITH DAILY_SALES AS
+ (SELECT SOCSITE STORE_NUM,
+         SOCLMAG STORE_DESC,
+         dep.strpere DEPT_CODE,
+         sdep.strpere SDEPT_CODE,
+         cat.strpere CAT_CODE,
+         TO_CHAR(TRUNC(STMDMVT), ''IWRRRR'') WEEK,
+         TRUNC(STMDMVT) SALE_DAY,
+         SUM(STMVPV) * -1 AMOUNT
+    FROM STOMVT@HEINENS_CUSTOM_PROD T, SITDGENE@HEINENS_CUSTOM_PROD, 
+         artul@HEINENS_CUSTOM_PROD,
+         artrac@HEINENS_CUSTOM_PROD,
+        strucrel@Heinens_Custom_Prod, STRUCTURE@Heinens_Custom_Prod cat,
+        STRUCTURE@Heinens_Custom_Prod sdep,
+        STRUCTURE@Heinens_Custom_Prod dep
+   WHERE STMTMVT = 150
+     AND SOCSITE = STMSITE
+     AND SOCCMAG = 10
+     --AND artcexr=''115024''
+     AND TO_CHAR(TRUNC(STMDMVT), ''RRRRIW'') >=
+         TO_CHAR(TRUNC(SYSDATE - 7 * 8), ''RRRRIW'')
+         AND arucinl=stmcinl
+         AND arucinr=artcinr
+        and objcint = arucinr
+        and trunc(sysdate) between strucrel.objddeb and strucrel.objdfin
+        and cat.strcint = objpere
+        and cat.strprof = 4
+        and cat.stridstr = ''1''
+        and sdep.strcint = objpere
+        and sdep.strprof = 3
+        and sdep.stridstr = ''1''
+        and dep.strcint = objpere
+        and dep.strprof = 2
+        and dep.stridstr = ''1''
+   GROUP BY SOCSITE, SOCLMAG, STMDMVT, dep.strpere, sdep.strpere, cat.strpere),
+SALES_DISTINCT AS
+ (SELECT DISTINCT STORE_NUM, STORE_DESC, WEEK, DEPT_CODE, SDEPT_CODE, CAT_CODE FROM DAILY_SALES)
+SELECT STORE_NUM,
+       STORE_DESC,
+       WEEK,
+      pkstrucobj.get_cext@Heinens_Custom_Prod(1, DEPT_CODE) DEPT_CODE,
+      pkstrucobj.get_desc@Heinens_Custom_Prod(1, DEPT_CODE, ''HN'') DEPT_DESC,
+      pkstrucobj.get_cext@Heinens_Custom_Prod(1, SDEPT_CODE) SUB_DEPT_CODE,
+      pkstrucobj.get_desc@Heinens_Custom_Prod(1, SDEPT_CODE, ''HN'') SUB_DEPT_DESC,
+      pkstrucobj.get_cext@Heinens_Custom_Prod(1, CAT_CODE) CAT_CODES,
+      pkstrucobj.get_desc@Heinens_Custom_Prod(1, CAT_CODE, ''HN'') CAT_DESC,
+       (SELECT WEEKLY.AMOUNT
+          FROM DAILY_SALES WEEKLY
+         WHERE WEEKLY.STORE_NUM = MN.STORE_NUM
+           AND WEEKLY.WEEK = MN.WEEK
+           AND WEEKLY.DEPT_CODE = MN.DEPT_CODE
+           AND WEEKLY.SDEPT_CODE = MN.SDEPT_CODE
+           AND WEEKLY.CAT_CODE = MN.CAT_CODE
+           AND TO_CHAR(WEEKLY.SALE_DAY, ''D'') = ''2'') MONDAY,
+       (SELECT WEEKLY.AMOUNT
+          FROM DAILY_SALES WEEKLY
+         WHERE WEEKLY.STORE_NUM = MN.STORE_NUM
+           AND WEEKLY.WEEK = MN.WEEK
+           AND WEEKLY.DEPT_CODE = MN.DEPT_CODE
+           AND WEEKLY.SDEPT_CODE = MN.SDEPT_CODE
+           AND WEEKLY.CAT_CODE = MN.CAT_CODE
+           AND TO_CHAR(WEEKLY.SALE_DAY, ''D'') = ''3'') TUESDAY,
+       (SELECT WEEKLY.AMOUNT
+          FROM DAILY_SALES WEEKLY
+         WHERE WEEKLY.STORE_NUM = MN.STORE_NUM
+           AND WEEKLY.WEEK = MN.WEEK
+           AND WEEKLY.DEPT_CODE = MN.DEPT_CODE
+           AND WEEKLY.SDEPT_CODE = MN.SDEPT_CODE
+           AND WEEKLY.CAT_CODE = MN.CAT_CODE
+           AND TO_CHAR(WEEKLY.SALE_DAY, ''D'') = ''4'') WEDNESDAY,
+       (SELECT WEEKLY.AMOUNT
+          FROM DAILY_SALES WEEKLY
+         WHERE WEEKLY.STORE_NUM = MN.STORE_NUM
+           AND WEEKLY.WEEK = MN.WEEK
+           AND WEEKLY.DEPT_CODE = MN.DEPT_CODE
+           AND WEEKLY.SDEPT_CODE = MN.SDEPT_CODE
+           AND WEEKLY.CAT_CODE = MN.CAT_CODE
+           AND TO_CHAR(WEEKLY.SALE_DAY, ''D'') = ''5'') THURSDAY,
+       (SELECT WEEKLY.AMOUNT
+          FROM DAILY_SALES WEEKLY
+         WHERE WEEKLY.STORE_NUM = MN.STORE_NUM
+           AND WEEKLY.WEEK = MN.WEEK
+           AND WEEKLY.DEPT_CODE = MN.DEPT_CODE
+           AND WEEKLY.SDEPT_CODE = MN.SDEPT_CODE
+           AND WEEKLY.CAT_CODE = MN.CAT_CODE
+           AND TO_CHAR(WEEKLY.SALE_DAY, ''D'') = ''6'') FRIDAY,
+       (SELECT WEEKLY.AMOUNT
+          FROM DAILY_SALES WEEKLY
+         WHERE WEEKLY.STORE_NUM = MN.STORE_NUM
+           AND WEEKLY.WEEK = MN.WEEK
+           AND WEEKLY.DEPT_CODE = MN.DEPT_CODE
+           AND WEEKLY.SDEPT_CODE = MN.SDEPT_CODE
+           AND WEEKLY.CAT_CODE = MN.CAT_CODE
+           AND TO_CHAR(WEEKLY.SALE_DAY, ''D'') = ''7'') SATURDAY,
+       (SELECT WEEKLY.AMOUNT
+          FROM DAILY_SALES WEEKLY
+         WHERE WEEKLY.STORE_NUM = MN.STORE_NUM
+           AND WEEKLY.WEEK = MN.WEEK
+           AND WEEKLY.DEPT_CODE = MN.DEPT_CODE
+           AND WEEKLY.SDEPT_CODE = MN.SDEPT_CODE
+           AND WEEKLY.CAT_CODE = MN.CAT_CODE
+           AND TO_CHAR(WEEKLY.SALE_DAY, ''D'') = ''1'') SUNDAY
+  FROM SALES_DISTINCT MN, STRUCREL@HEINENS_CUSTOM_PROD
+  WHERE trunc(sysdate) between strucrel.objddeb and strucrel.objdfin
+ ORDER BY STORE_NUM ASC, WEEK ASC 
+</QUERY>
+  <HEADERIFEMPTY>No Daily sales by category report</HEADERIFEMPTY>
+  <HEADER>FLASH REPORT - Daily Sales Report by category</HEADER>
+  
+</ROOT>
+
