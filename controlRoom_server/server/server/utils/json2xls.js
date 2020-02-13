@@ -244,7 +244,6 @@ function setXLSHeader(worksheet, alertData, extensionHeader) {
  * Function setXLSProperties define the EXCEL file property
  * @param {*} workbook 
  */
-
 function setXLSProperties(workbook) {
     workbook.creator = 'B&B SYMPHONY LLC';
     workbook.lastModifiedBy = 'B&B SYMPHONY LLC';
