@@ -188,7 +188,8 @@ export class BatchScheduleComponent {
     this._processService.executeJob(jobId, params)
     .subscribe( 
         data => { },
-        error => { this._messageService.add({severity:'error', summary:'ERROR Message', detail: error }); },
+        error => { this.searchResult[index].STATUS='COMPLETED';
+                   this._messageService.add({severity:'error', summary:'ERROR Message', detail: error }); },
         () => { 
           this.msgDisplayed = 'Job ' +jobId + ' running with parameter ' + params + ' has completed.';
           //this.displayUpdateCompleted = true;

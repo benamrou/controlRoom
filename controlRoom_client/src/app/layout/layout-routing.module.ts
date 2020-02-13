@@ -12,6 +12,7 @@ const routes: Routes = [
             { path: 'counting', loadChildren: './inventory/counting/counting.module#CountingModule' },
             { path: 'inventory', loadChildren: './inventory/stock/stock.module#StockModule' },
             { path: 'caoconfig', loadChildren: './cao/configuration/caoconfig.module#CaoConfigModule' },
+            { path: 'caomissing', loadChildren: './cao/missing/missingcao.module#MissingCAOModule' },
             { path: 'category', loadChildren: './interfacing/category/category.module#CategoryModule' },
             { path: 'schedule', loadChildren: './schedule/supplier.schedule/supplier.schedule.module#SupplierScheduleModule' },
             { path: 'service', loadChildren: './schedule/service.contract/service.contract.module#SupplierScheduleServiceContractModule' },

@@ -30,7 +30,10 @@
                 <li class="nested" [ngClass]="{'expand' : showMenu === 'caoconfig' }">
                     <ul class="submenu" >
                         <li>
-                            <a class="bbs_link_menu" routerLink="/caoconfig" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-check-double"></i> {{ 'CGO setting' | translate}}</span></a>
+                            <a class="bbs_link_menu" routerLink="/caoconfig" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-check-double"></i> {{ 'CAO setting' | translate}}</span></a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/caomissing" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-frog"></i> {{ 'CAO missing' | translate}}</span></a>
                         </li>
                     </ul>
                 </li>
