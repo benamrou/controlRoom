@@ -47,7 +47,7 @@ let transporter = nodemailer.createTransport({
         cacheDir: config.notification.email_cache_dir,
         cacheTreshold: 100 * 1024
       },
-      debug: true, // show debug output
+      //debug: true, // show debug output
       logger: true // log information in console
 });
 
@@ -122,7 +122,7 @@ function sendEmailCSV(to, subject, message, stream, preHtml, forceExit) {
                 message = preHtml;
                 message += 'Refer to the attachment for details. Content can not be displayed in the email body.';
                 logger.log('alert', 'Resending email with lower content: ' + JSON.stringify(message) , 'alert', 3);
-                sendEmailCSV(to, subject, message, buffer, preHtml, true);
+                sendEmailCSV(to, subject, message, stream, preHtml, true);
             }
         }
         else {

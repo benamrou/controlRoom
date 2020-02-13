@@ -95,7 +95,7 @@ function log (uniqueId, message, username, level) {
         console.log(printMessage);
     }
 
-    logFile(printMessage);
+    logFile(uniqueId, message, username);
 };
 
 module.exports.log = log; 

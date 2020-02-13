@@ -117,7 +117,98 @@ app.get('/api/itemcao/3/', function (request, response) {
                         "./repository/downloads/inventory/CAO0000003_" + request.header('DATABASE_SID') + "_" +  request.query.STORE + ".json",
                         request, response);
         });
-    };
 
+
+/**
+ * 
+ * @method get CAO0000004
+ * @param {Object} request HTTP request. The request must contain :
+ * @param {Object} response is the server response 
+ * @return {Boolean} Update the CAO parameter for an item/LV 
+ *
+ */
+app.get('/api/itemcao/4/', function (request, response) {
+    "use strict";
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    // requestuest methods you wish to allow
+    response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');     
+    //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+
+    SQL.executeLibQuery(SQL.getNextTicketID(),
+                        "CAO0000004", 
+                        "'{" + request.query.PARAM + "}'",
+                        request.header('USER'),
+                        "'{" + request.header('DATABASE_SID') + "}'", 
+                        "'{" +request.header('LANGUAGE') + "}'", 
+                        request, response);
+        });
+
+/**
+ * 
+ * @method get CAOHEI0001
+ * @param {Object} request HTTP request. The request must contain :
+ *       - USER in the header (for log)
+ *       - VENDOR_CODE for cao parameter ARTREAP
+ *       - STORE STORE_ID for cao parameter ARTREAP
+ *       - LAST X DAYS SALES for store last sales
+ * @param {Object} response is the server response 
+ * @return {Boolean} Returns the cao ARTREAP information
+ *
+ */
+app.get('/api/itemheicao/1/', function (request, response) {
+    "use strict";
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    // requestuest methods you wish to allow
+    response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');     
+    //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+
+    SQL.executeLibQuery(SQL.getNextTicketID(),
+                        "CAOHEI0001", 
+                        "'{" + request.query.PARAM + "}'",
+                        request.header('USER'),
+                        "'{" + request.header('DATABASE_SID') + "}'", 
+                        "'{" +request.header('LANGUAGE') + "}'", 
+                        request, response);
+    });
+
+/**
+ * Heinens preset configuration by Category/Store Class
+ */
+app.get('/api/itemheicao/2/', function (request, response) {
+    "use strict";
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    // requestuest methods you wish to allow
+    response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');     
+    //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+
+    SQL.executeLibQuery(SQL.getNextTicketID(),
+                        "CAOHEI0002", 
+                        "'{" + request.query.PARAM + "}'",
+                        request.header('USER'),
+                        "'{" + request.header('DATABASE_SID') + "}'", 
+                        "'{" +request.header('LANGUAGE') + "}'", 
+                        request, response);
+    });
+
+
+    /**
+     * Heinens preset configuration for Store Class
+     */
+    app.get('/api/itemheicao/3/', function (request, response) {
+        "use strict";
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        // requestuest methods you wish to allow
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');     
+        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+    
+        SQL.executeLibQuery(SQL.getNextTicketID(),
+                            "CAOHEI0003", 
+                            "'{" + request.query.PARAM + "}'",
+                            request.header('USER'),
+                            "'{" + request.header('DATABASE_SID') + "}'", 
+                            "'{" +request.header('LANGUAGE') + "}'", 
+                            request, response);
+            });
+        };
    return module;
 }
