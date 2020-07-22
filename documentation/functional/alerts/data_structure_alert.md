@@ -1,0 +1,12 @@
+Alerts are stored in the database table <mark>ALERTS</mark> which contains all the data elements associated to the alert:
+- Alert id
+- General alert description
+- Notification Subject
+- Notification detail message
+- Text message content
+- Query filename including the folder path (e.g. `/opt/apps/controlRoom/controlRoom_server/server/alerts/CGO_Negative_Inventory.xml). Filename is a XML file. Refer to the section XML alert section.
+- Realtime set ON/OFF
+- EXCEL Report printing configuration
+    - Page Orientation, print area, margin, fit page, fit height, fit width, title repeat, footer, break page, scale
+- HTML and EXCEL content formating rules
+- Extended HTML detail message (in HTML but not spread to the EXCEL report)
