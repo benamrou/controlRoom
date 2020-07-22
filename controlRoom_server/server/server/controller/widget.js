@@ -80,13 +80,23 @@ module.get = function (request,response) {
         // requestuest methods you wish to allow
         response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
-        SQL.executeLibQuery(SQL.getNextTicketID(),
-                           "WDG1000000", 
-                            "'{" + request.query.PARAM + "}'",
-                            request.header('USER'),
-                            "'{" + request.header('DATABASE_SID') + "}'", 
-                            "'{" +request.header('LANGUAGE') + "}'", 
-                            request, response);
+
+        var mode =1 ; /* MODE 1 - Refresh with new data */
+
+        if (Boolean(request.query.FILENAME) && request.query.FILENAME !== null && 
+                    request.query.FILENAME !== ''  && request.query.FILENAME !== undefined &&
+                    request.query.FILENAME !== 'null') { 
+            mode =  0;
+        }
+        SQL.executeSmartLoadedQuery(SQL.getNextTicketID(),
+                                    "WDG1000000",
+                                    "'{" + request.query.PARAM + "}'",
+                                    request.header('USER'),
+                                    "'{" + request.header('DATABASE_SID') + "}'", 
+                                    "'{" +request.header('LANGUAGE') + "}'", 
+                                    mode, /* MODE 1 - Refresh with new data */
+                                    request.query.FILENAME,
+                                    request, response);
                             
         });
 

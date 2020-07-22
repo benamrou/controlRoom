@@ -1,0 +1,26 @@
+[[0;43mSTART[0m]	 Starting process for view creation..... Sat Mar 21 18:46:53 EDT 2020 	[[0;43mIN PROGRESS[0m]
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sat Mar 21 18:46:53 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Mar 21 2020 18:42:31 -04:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+Materialized view dropped.
+
+AND TRUNC(stmdmvt) >= TRUNC(SYSDATE-7*5*8)  -- Last three months
+                            *
+ERROR at line 40:
+ORA-04020: deadlock detected while trying to lock object
+HNCUSTOM.PKARTUV@HEINENS_CUSTOM_PROD
+
+
+SQL> Error 45 initializing SQL*Plus
+Internal error
+[[0;32mEND[0m]\ View dashboard sale and margin deployed DSHSAL000001..... Sat Mar 21 19:54:41 EDT 2020 	[[0;32mIN PROGRESS[0m]
+./create_view.sh: line 19: unexpected EOF while looking for matching `"'
+./create_view.sh: line 20: syntax error: unexpected end of file

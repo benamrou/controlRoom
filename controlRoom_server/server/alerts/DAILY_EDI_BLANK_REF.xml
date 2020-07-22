@@ -1,0 +1,24 @@
+<ROOT>
+    <QUERY> 
+SELECT cfbsite STORE_NUM, foucnuf VENDOR_CODE, foulibl VENDOR_DESC, 
+       head.invoicenumber, to_char(head.invoicedate,''MM/DD/RRRR'') INVOICE_DATE, productid, itemdescription, qtyinvoiced, unitprice, 
+       to_char(head.created_date,''MM/DD/RRRR'') CREATED_DATE, to_char(head.modified_date, ''MM/DD/RRRR'') MODIFIED_DATE
+FROM im_edi_invoice_header@Heinens_Custom_Prod head, im_edi_invoice_detail@Heinens_Custom_Prod det, intcfinv@Heinens_Custom_Prod, intcfbl@Heinens_Custom_Prod, fouadres@Heinens_Custom_Prod, foudgene@Heinens_Custom_Prod
+WHERE cfiinvid = trim(leading 0 from head.invoicenumber)
+AND cfiinvid = cfbinvid
+AND cficfex = cfbcfex
+AND cficfex = foucnuf
+AND fadcfin = foucfin
+AND fadacci = head.vendordunsnumber
+AND head.vendordunsnumber=det.vendordunsnumber
+AND head.invoicenumber=det.invoicenumber
+AND det.status_no = 2
+AND TRUNC(det.created_date)=TRUNC(SYSDATE)
+AND productid IS NULL 
+ORDER BY invoice_date DESC, invoicenumber ASC  
+</QUERY>
+  <HEADERIFEMPTY>No daily EDI ASN/Invoice with empty UPC/Reference</HEADERIFEMPTY>
+  <HEADER>Daily EDI ASN/Invoice with empty UPC/Reference</HEADER>
+  
+</ROOT>
+

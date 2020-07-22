@@ -36,11 +36,13 @@ let app = express();
 
 process.env.UV_THREADPOOL_SIZE=264;
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-
 // parse application/json
-app.use(bodyParser.json());
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+// parse application/x-www-form-urlencoded
+app.use( bodyParser.urlencoded({
+         extended: true
+    }) 
+);
 
 app.use(function(req, res, next) {
 	if (req.method === 'OPTIONS') {
@@ -53,15 +55,19 @@ app.use(function(req, res, next) {
     	  headers["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, POST, PUT, DELETE, PATCH";
     	  headers["Access-Control-Allow-Headers"] = "Access-Control-Allow-Headers, Origin,Accept, " +
                                                     "Cache-Control, Pragma, Origin, Authorization, " +
-                                                    "X-Requested-With, Content-Type, Access-Control-Request-Method, " +
-                                                    " Access-Control-Request-Headers, " +
+                                                    "X-Requested-With, Content-Type, " +
+                                                    "Access-Control-Request-Method, " +
+                                                    "Access-Control-Request-Headers, " +
                                                     "USER, PASSWORD, " +
                                                     "DATABASE_SID, LANGUAGE, " +
+                                                    "DSH_ID, QUERY_ID," +  
+                                                    "MODE, FILENAME," +
                                                     "ENV_ID, ENV_PASS, ENV_IP, ENV_COMMAND";
 	      res.writeHead(200, headers);
 	      res.end();
 	}
 	else {
+        //console.log('request : ' +JSON.stringify(req));
 		next();
 	}
 });
@@ -93,6 +99,10 @@ let widget = require('./server/controller/widget')(app, SQL);
 let notification = require('./server/controller/notification')(app, SQL);
 let warehouse = require('./server/controller/warehouse/itemdata')(app, SQL);
 let crontab = require('./server/controller/crontab')(app, SQL);
+let finance = require('./server/controller/finance')(app, SQL);
+let scorecard = require('./server/controller/scorecard')(app, SQL);
+let dashboard = require('./server/controller/dashboard')(app, SQL);
+let query = require('./server/controller/query')(app, SQL);
 
 
 //dbConnection.createPool('dd');
@@ -116,12 +126,17 @@ counting.get(app,oracledb);
 batchprocess.get(app,oracledb);
 order.get(app,oracledb);
 labels.get(app,oracledb);
+//upload.get(app,oracledb);
 upload.post(app,oracledb);
 ls.get(app,oracledb);
 command.get(app,oracledb);
 widget.get(app, oracledb);
 notification.get(app, oracledb);
 warehouse.get(app, oracledb);
+scorecard.get(app, oracledb);
+dashboard.get(app, oracledb);
+query.get(app, oracledb);
+//finance.get(aoo,oracledb);
 
 
 // Prepare logs folder/files

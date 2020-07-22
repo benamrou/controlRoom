@@ -92,7 +92,7 @@ module.post = function (request,response) {
                             request.header('PASSWORD') + "}'", 
                             request.header('USER'), 
                             "'{}'", "'{}'",
-                            request, response, function (err, data) {
+                            request, response, 0, function (err, data) {
             if (data[0]) {
                 //console.log('data :' + JSON.stringify(data));
                 //console.log('data[0] :' + JSON.stringify(data[0]));

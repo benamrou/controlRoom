@@ -64,11 +64,12 @@ function sendSMS(to, subject, message) {
             //console.log(error);
         }
     });
-    console.log("Message sent: %s", message);
+    logger.log('alert', 'Text-message sent to:' + to + ' subject: ' + subject, 'alert', 1);
+    //console.log("Message sent: %s", message);
     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
   
     // Preview only available when sending through an Ethereal account
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(infoMessage));
+    //console.log("Preview URL: %s", nodemailer.getTestMessageUrl(infoMessage));
 }
 
 function sendEmail(to, subject, message) {
@@ -93,11 +94,12 @@ function sendEmail(to, subject, message) {
             sendSMS('6789863021@tmomail.net','SPAM alert ' + subject, JSON.stringify(error));
         }
     });
-    console.log("Message sent: %s", message);
+    logger.log('alert', 'Email sent to:' + to + ' subject: ' + subject, 'alert', 1);
+    //console.log("Message sent: %s", message);
     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
   
     // Preview only available when sending through an Ethereal account
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(infoMessage));
+    //console.log("Preview URL: %s", nodemailer.getTestMessageUrl(infoMessage));
 }
 
 function sendEmailCSV(to, subject, message, stream, preHtml, forceExit) {
@@ -126,11 +128,12 @@ function sendEmailCSV(to, subject, message, stream, preHtml, forceExit) {
             }
         }
         else {
-            console.log("Message sent: %s", message);
+            logger.log('alert', 'Message sent to: ' + to + ' subject: ' + subject, 'alert', 1);
+            //console.log("Message sent: %s", message);
             // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
           
             // Preview only available when sending through an Ethereal account
-            console.log("Preview URL: %s", nodemailer.getTestMessageUrl(infoMessage));
+            //console.log("Preview URL: %s", nodemailer.getTestMessageUrl(infoMessage));
         }
     });
 }
@@ -203,9 +206,15 @@ module.get = async function (request,response) {
                                 SUBJECT_EXT = request.header('SUBJECT_EXT');
                             }
                             //console.log('FILE : ' + JSON.stringify(result));
+                            let bannerAdjusted, queryAdjusted;
+                            try {
+                                bannerAdjusted = '' + result.ROOT.BANNER;
+                                queryAdjusted = '' + result.ROOT.QUERY;
+                            } catch (err) {
+                                logger.log('alert', 'Error formatting XML - Query/Banner not found ROOT :' + JSON.stringify(err.message), 'alert', 3);
+                                return;
+                            }
 
-                            let bannerAdjusted = '' + result.ROOT.BANNER;
-                            let queryAdjusted = '' + result.ROOT.QUERY;
                             bannerAdjusted = bannerAdjusted.replace(/'/g,"''")
                             queryAdjusted = queryAdjusted.replace(/'/g,"''")
                             
@@ -218,7 +227,7 @@ module.get = async function (request,response) {
                                 request.req_dataBanner, request.response_dataBanner, 
                                 function (err,dataBanner) {
                                     let bannerData = dataBanner;
-                                    console.log('BANNER : ' + JSON.stringify(bannerData));
+                                    //console.log('BANNER : ' + JSON.stringify(bannerData));
 
                                     SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
                                         result.ROOT.QUERY, 
@@ -276,12 +285,16 @@ module.get = async function (request,response) {
                                                         html = preHtml;
                                                         html = json2html.json2table(detailData, html, alertData[0].ALTFORMAT);
                                                     }
-                                                    console.log('HTML : ' + html);
+                                                    //console.log('HTML : ' + html);
                                                     
                                                     let workbook = new excel.Workbook();
                                                     let worksheet = workbook.addWorksheet('RESULT', {properties:{tabColor:{argb:'FFC0000'}}});
 
-                                                    json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT);
+                                                    try {
+                                                        json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT);
+                                                    } catch (err) {
+                                                        logger.log('alert', 'Error json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
+                                                    }
                                                     
 
                                                     if (html.indexOf('ERRORDIAGNOSED') < 1) {
@@ -303,7 +316,7 @@ module.get = async function (request,response) {
                                             //console.log ('detailData.length : ' + detailData.length);
                                             SQL.executeQuery(SQL.getNextTicketID(),
                                             "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
-                                            JSON.stringify(detailData).substring(1,3000) + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from dual", 
+                                            JSON.stringify(detailData).substring(1,3000) + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from ALERTLOG WHERE rownum=1", 
                                             "'" + result.ROOT.PARAM + "'",
                                             request.header('USER'),
                                             "'{" + request.header('DATABASE_SID') + "}'", 
