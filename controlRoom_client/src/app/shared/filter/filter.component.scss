@@ -1,0 +1,18 @@
+
+
+.card-header {
+    padding: 0 rem 0.5 rem;
+}
+
+/** Overwriting P-PANEL title display **/
+.ui-panel .ui-panel-titlebar {
+  background: darkseagreen !important;
+}
+
+.ui-panel.ui-widget {
+  border-radius: 10px !important;
+}
+.ui-panel.ui-widget .ui-panel-titlebar.ui-corner-all {
+  color: white !important;
+}
+

@@ -13,7 +13,7 @@ import { AppComponent } from './app.component';
 import { DatePipe } from '@angular/common';
 
 import { AuthentificationGuard, HttpService } from './shared/services/index';
-import { UserService, LogginService, LabelService } from './shared/services/index';
+import { UserService, LogginService, LabelService, QueryService, StructureService } from './shared/services/index';
 import { GridsterModule } from './shared';
 //import { HttpModule, Http, ResponseOptions, RequestOptions, BaseRequestOptions, XHRBackend, BrowserXhr } from '@angular/http';
 import { MockBackend, MockConnection } from '@angular/http/testing';
@@ -65,7 +65,7 @@ export const createTranslateLoader = (http: HttpClient) => {
         //BaseRequestOptions,
         AuthentificationGuard, 
         //XHRBackend, BrowserXhr,ResponseOptions,
-        UserService, LogginService, LabelService, 
+        UserService, LogginService, LabelService, QueryService,StructureService,
         DatePipe],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]

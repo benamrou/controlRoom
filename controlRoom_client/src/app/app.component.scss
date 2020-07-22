@@ -80,6 +80,7 @@
 // Input no outline
 :host ::ng-deep input, input:valid {
     outline: none;
+    border-radius: 10px;
 }
 
 // New TABLE PRIME NG 05/2019
@@ -158,4 +159,15 @@
 
 .bbs-3d {
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24);
+}
+
+
+.bbs-keywords {
+    font-weight: bold;
+    color: cadetblue;
+}
+
+.bbs-keywords-scenario {
+    font-weight: bold;
+    color: orangered;
 }

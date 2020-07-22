@@ -173,6 +173,7 @@ export class GridsterItemComponent implements OnInit, OnChanges, AfterViewInit, 
     @Input() resizable = true;
 
     @Input() options: any = {};
+    @Input() id;
 
     autoSize: boolean;
 
@@ -606,6 +607,7 @@ export class GridsterItemComponent implements OnInit, OnChanges, AfterViewInit, 
         const height = config.startData.height + config.startEvent.clientY -
             config.moveEvent.clientY - config.scrollDiffY;
 
+        this.h = Math.floor(height / this.gridster.cellHeight);
         if (height < (config.startData.minH * this.gridster.cellHeight)) {
             this.setMinHeight('n', config);
         } else if (height > (config.startData.maxH * this.gridster.cellHeight)) {
@@ -620,6 +622,7 @@ export class GridsterItemComponent implements OnInit, OnChanges, AfterViewInit, 
         const width = config.startData.width + config.startEvent.clientX -
             config.moveEvent.clientX - config.scrollDiffX;
 
+        this.w = Math.floor(width / this.gridster.cellWidth);
         if (width < (config.startData.minW * this.gridster.cellWidth)) {
             this.setMinWidth('w', config);
         } else if (width > (config.startData.maxW * this.gridster.cellWidth)) {
@@ -635,6 +638,7 @@ export class GridsterItemComponent implements OnInit, OnChanges, AfterViewInit, 
         const width = config.startData.width + config.moveEvent.clientX -
             config.startEvent.clientX + config.scrollDiffX;
 
+        this.w = Math.floor(width / this.gridster.cellWidth);
         if (width > (config.startData.maxW * this.gridster.cellWidth)) {
             this.setMaxWidth('e', config);
         } else if (width < (config.startData.minW * this.gridster.cellWidth)) {
@@ -648,6 +652,7 @@ export class GridsterItemComponent implements OnInit, OnChanges, AfterViewInit, 
         const height = config.startData.height + config.moveEvent.clientY -
             config.startEvent.clientY + config.scrollDiffY;
 
+        this.h = Math.floor(height / this.gridster.cellHeight);
         if (height > config.startData.maxH * this.gridster.cellHeight) {
             this.setMaxHeight('s', config);
         } else if (height < config.startData.minH * this.gridster.cellHeight) {
@@ -661,8 +666,10 @@ export class GridsterItemComponent implements OnInit, OnChanges, AfterViewInit, 
         if (direction === 'n') {
             this.$element.style.height = (config.startData.minH * this.gridster.cellHeight) + 'px';
             this.positionY = config.startData.maxY * this.gridster.cellHeight;
+            this.h = config.startData.minH;
         } else {
             this.$element.style.height = (config.startData.minH * this.gridster.cellHeight) + 'px';
+            this.h = config.startData.minH;
         }
     }
 
@@ -670,9 +677,11 @@ export class GridsterItemComponent implements OnInit, OnChanges, AfterViewInit, 
         if (direction === 'w') {
             this.$element.style.width = (config.startData.minW * this.gridster.cellWidth) + 'px';
             this.positionX = config.startData.maxX * this.gridster.cellWidth;
+            this.w = config.startData.minW;
             this.updateElemenetPosition();
         } else {
             this.$element.style.width = (config.startData.minW * this.gridster.cellWidth) + 'px';
+            this.w = config.startData.minW;
         }
     }
 
@@ -681,8 +690,10 @@ export class GridsterItemComponent implements OnInit, OnChanges, AfterViewInit, 
         if (direction === 'n') {
             this.$element.style.height = (config.startData.maxH * this.gridster.cellHeight) + 'px';
             this.positionY = config.startData.minY * this.gridster.cellHeight;
+            this.h = config.startData.maxH;
         } else {
             this.$element.style.height = (config.startData.maxH * this.gridster.cellHeight) + 'px';
+            this.h = config.startData.maxH;
         }
     }
 
@@ -691,9 +702,11 @@ export class GridsterItemComponent implements OnInit, OnChanges, AfterViewInit, 
         if (direction === 'w') {
             this.$element.style.width = (config.startData.maxW * this.gridster.cellWidth) + 'px';
             this.positionX = config.startData.minX * this.gridster.cellWidth;
+            this.w = config.startData.maxW;
             this.updateElemenetPosition();
         } else {
             this.$element.style.width = (config.startData.maxW * this.gridster.cellWidth) + 'px';
+            this.w = config.startData.maxW;
         }
     }
 }

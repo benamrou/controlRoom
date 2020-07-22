@@ -67,8 +67,10 @@ export class MissingCAOComponent {
    msgDisplayed: String;
  
   msgs: Message[] = [];
+  screenID
 
   constructor( private _messageService: MessageService, private _processService: ProcessService, private _caoService: CaoService) {
+    this.screenID =  'SCR0000000005';
     this.datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
     this.dateTomorrow =  new Date(this.dateNow.setDate(this.dateNow.getDate() + 1));

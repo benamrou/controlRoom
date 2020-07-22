@@ -1,0 +1,18 @@
+
+
+<div>
+
+    <button type="submit"  style="float: right; font-size: x-small;"
+            pButton (click)="downloadCSV()" icon="fas fa-file-excel"
+            pTooltip="Download" tooltipPosition="top"></button>
+
+    <button *ngIf='showCharts' type="submit"  style="float: right; font-size: x-small;"
+            pButton (click)="showHide()" icon="fas fa-eye"
+            pTooltip="Hide all" tooltipPosition="top"></button>
+
+    <button *ngIf='!showCharts' type="submit"  style="float: right; font-size: x-small;"
+            pButton (click)="showHide()" icon="fas fa-eye-slash"
+            pTooltip="Show all" tooltipPosition="top"></button>
+    
+    <canvas [id]='chart_id' height="100"> </canvas>
+</div>

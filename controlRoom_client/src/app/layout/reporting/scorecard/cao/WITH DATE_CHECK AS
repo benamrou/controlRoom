@@ -1,0 +1,79 @@
+WITH DATE_CHECK AS
+ (SELECT TRUNC(SYSDATE) + 2 CDATE FROM DUAL),
+LASTXWEEKS AS
+ (SELECT TRUNC(TRUNC(CDATE) - LEVEL - 1) AS DT,
+         TO_CHAR(TRUNC(TRUNC(CDATE) - LEVEL - 1), 'MM/DD') DT_DATE,
+         TO_CHAR(TRUNC(TRUNC(CDATE) - LEVEL - 1), 'D') DT_DAY,
+         TO_CHAR(TRUNC(TRUNC(CDATE) - LEVEL - 1), 'IWRRRR') WK
+    FROM DUAL, DATE_CHECK
+   WHERE TO_CHAR(TRUNC(TRUNC(TRUNC(CDATE) - LEVEL - 1), 'iw'), 'RRRR') =
+         TO_CHAR(TRUNC(CDATE), 'RRRR')
+  CONNECT BY LEVEL <
+             TRUNC(CDATE) -
+             TRUNC(NEXT_DAY(CDATE - 28 - TO_NUMBER(TO_CHAR(CDATE - 1, 'D')),
+                            'MON'))),
+INVDETINV_SMALL AS
+ (SELECT *
+    FROM INVDETINV@HEINENS_CUSTOM_PROD, (SELECT MIN(DT) mindt FROM LASTXWEEKS)
+   WHERE TRUNC(DINDINV) > mindt),
+ OTHERS_COUNTED AS (
+ SELECT /*+ PARALLEL(8) NOLOGGING */
+        TO_CHAR(TRUNC(DINDINV), 'MM/DD') COUNTING_DATE,
+         TO_CHAR(TRUNC(DINDINV), 'IWRRRR') WK,
+         TO_CHAR(TRUNC(DINDINV), 'D') COUNTING_DAY,
+         DINSITE STORE_NUM,
+         pkstrucobj.get_cext@HEINENS_CUSTOM_PROD(1,dep.strcint)DEPT_CODE,
+         pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1,dep.strcint, 'HN') DEPT_DESC,
+         pkstrucobj.get_cext@HEINENS_CUSTOM_PROD(1,sdep.strcint)SUB_DEPT_CODE,
+         pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1,sdep.strcint, 'HN') SUB_DEPT_DESC,
+         pkstrucobj.get_cext@HEINENS_CUSTOM_PROD(1,cat.strcint)CAT_CODE,
+         pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1,cat.strcint, 'HN') CAT_DESC,
+         scat.sobcext SCAT_CODE,
+         pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1,scat.sobcint, 'HN') SCAT_DESC,
+         --foucnuf SUPPLIER_CODE,
+         --foulibl SUPPLIER_DESC,
+         0 NEG_MORNING,
+         0 ZERO_MORNING,
+         0 REVIEWED_NEG,
+         dinqtin COUNTED_QTY,
+        arvcexr ITEM_CODE,
+        arvcexv SV,
+        pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1,arvcinr, 'HN') SV_DESC,
+        pkartcoca.get_code_caisse@HEINENS_CUSTOM_PROD(1,arvcinv, trunc(dindinv))  UPC,
+        DINSINF QTY,
+        foutype FLOW,
+        NVL((SELECT 1
+                     FROM HEINENS_NEG_INVENTORY@HEINENS_CUSTOM_PROD NEG_INV
+                     WHERE neg_inv.item_code=art.arvcexr AND store_num=dinsite AND extract_date=dindinv),0) REPORTED
+    FROM    INVDETINV_SMALL,
+         ARTUV@HEINENS_CUSTOM_PROD art,
+         --foudgene@HEINENS_CUSTOM_PROD,
+         STRUCTURE@HEINENS_CUSTOM_PROD cat,
+         STRUCTURE@HEINENS_CUSTOM_PROD sdep,
+         STRUCTURE@HEINENS_CUSTOM_PROD dep,
+         strucobj@HEINENS_CUSTOM_PROD scat
+     WHERE dincinl=art.arvcinv
+     AND dinstrcint=scat.sobcint
+     -- SCAT, SDEP, DEP
+     AND cat.strcint = dinstrcint
+     AND cat.strprof = 4
+     AND cat.stridstr = '1'
+     AND sdep.strcint = dinstrcint
+     AND sdep.strprof = 3
+     AND sdep.stridstr = '1'
+     AND dep.strcint = dinstrcint
+     AND dep.strprof = 2
+     AND dep.stridstr = '1'
+     AND trunc(sysdate+1) between cat.strddeb and cat.strdfin
+     AND trunc(sysdate+1) between sdep.strddeb and sdep.strdfin
+     AND trunc(sysdate+1) between dep.strddeb and dep.strdfin)
+     -- Vendor - Last PO
+     /*AND foucfin= (SELECT  aracfin
+                   FROM artuc@HEINENS_CUSTOM_PROD, reseau@HEINENS_CUSTOM_PROD
+                   WHERE aracinr=arvcinr AND TRUNC(dindinv) BETWEEN araddeb AND aradfin
+                   AND arasite=respere
+                   AND ressite=dinsite
+                   AND aracfin=foucfin
+                   AND TRUNC(sysdate+1) BETWEEN resddeb AND resdfin
+                   AND rownum=1))*/
+SELECT * FROM OTHERS_COUNTED;

@@ -16,6 +16,13 @@ export * from './process/process.service';
 export * from './labels/labels.service';
 export * from './labels/labels.resolver.service';
 export * from './widget/widget.service';
+export * from './finance/finance.service';
+export * from './scorecard/cao/scorecard.cao.service';
+export * from './query/query.service';
+export * from './structure/structure.service';
+export * from './screen/screen.service';
+export * from './inout/export.service';
+export * from './inout/import.service';
 
-/** Prime NG Servcie  **/
+/** Prime NG Service  **/
 export * from '../components/index';

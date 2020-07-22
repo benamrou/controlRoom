@@ -7,17 +7,6 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 
 /**
- * In GOLD 5.10, there is no automation to generate the supplier planning automatically using the
- * service contract link. Users have to go in the screen and readjust the supplier planning
- * 
- * Symphony EYC has the license for GOLD source code and API. This solution is a workaround to generate
- * the service contract link and supplier planning within one operation.
- * 
- * Overall technical solution:
- *   1. Gather the actual service contract link information
- *   2. Send by interface (service contract link and Supplier schedule) the updated link
- *   3. Execute the integration batches.
- * 
  * @author Ahmed Benamrouche
  * 
  */

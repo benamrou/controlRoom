@@ -38,6 +38,7 @@ export class SupplierScheduleComponent {
    columnOptions: SelectItem[];
    trackIndex: number = 0;
 
+   screenID;
 
   // Search result 
    searchResult : any [] = [];
@@ -84,6 +85,7 @@ export class SupplierScheduleComponent {
 
   constructor(private _scheduleService: SupplierScheduleService, private datePipe: DatePipe,
               private _messageService: MessageService) {
+    this.screenID =  'SCR0000000003';
     datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
     this.dateTomorrow =  new Date(this.dateNow.setDate(this.dateNow.getDate() + 1));
@@ -99,7 +101,6 @@ export class SupplierScheduleComponent {
 
 
     this.displayUpdateCompleted = false;
-
   }
 
   search() {
@@ -219,12 +220,14 @@ export class SupplierScheduleComponent {
     console.log('Refresh schedule.end : ' + schedule.end);
     if (schedule.start !== null) {
       try {
-        startDate = new Date(schedule.start.getTime() - schedule.start.getTimezoneOffset()*60*1000)
+        //startDate = new Date(schedule.start.getTime() - schedule.start.getTimezoneOffset()*60*1000)
+        startDate = new Date(schedule.start);
         //startDate = new Date(schedule.start); 
-        endDate = new Date(schedule.end.getTime() - schedule.end.getTimezoneOffset()*60*1000)
+        //endDate = new Date(schedule.end.getTime() - schedule.end.getTimezoneOffset()*60*1000)
+        endDate = new Date(schedule.end);
         //Timezone issue
-        startDate.setMinutes( startDate.getMinutes() + startDate.getTimezoneOffset() );
-        endDate.setMinutes( endDate.getMinutes() + endDate.getTimezoneOffset() );
+        //startDate.setMinutes( startDate.getMinutes() + startDate.getTimezoneOffset() );
+        //endDate.setMinutes( endDate.getMinutes() + endDate.getTimezoneOffset() );
 
         let first = startDate; //schedule.start.getDate(); //startDate.getDate() - startDate.getDay(); // First day is the day of the month - the day of the week
         currentWeekDay = first.getDay();
@@ -259,7 +262,8 @@ export class SupplierScheduleComponent {
         for (let i = 0; i < schedule.numberWeekDays; i++) {
           //console.log('Column set up : '+ i + ' - ' + dateFirst.getTime());
           for (let j=0; j < 7; j++) {
-            sdate.setTime(dateFirst.getTime() + (j + 7*i) * this.oneDay - dateFirst.getTimezoneOffset()*60*1000);
+            //sdate.setTime(dateFirst.getTime() + (j + 7*i) * this.oneDay - dateFirst.getTimezoneOffset()*60*1000);
+            sdate.setTime(dateFirst.getTime() + (j + 7*i) * this.oneDay); // - dateFirst.getTimezoneOffset()*60*1000);
             schedule.columnSchedule.push(this.datePipe.transform(sdate, 'MM/dd'));
             schedule.columnName.push(this.datePipe.transform(sdate, 'EEE'));
             schedule.columnDateMMDDYYYY.push(this.datePipe.transform(sdate, 'MM/dd/yyyy'));
@@ -304,7 +308,7 @@ export class SupplierScheduleComponent {
         console.log ('Error on date - End date : ' + endDate); 
       }
     }
-    console.log('Refresh timeline schedule: ' + JSON.stringify(schedule));
+    //console.log('Refresh timeline schedule: ' + JSON.stringify(schedule));
     return schedule.numberWeekDays;
   }
 
@@ -398,10 +402,10 @@ export class SupplierScheduleComponent {
   deleteSchedule(): Observable<boolean> {
     return new Observable( observer => {  
         let deleteSchedule  : SupplierPlanning;
-        console.log('Delete schedule - temporarySchedule ' +  JSON.stringify(this.temporarySchedule));
+        //console.log('Delete schedule - temporarySchedule ' +  JSON.stringify(this.temporarySchedule));
         for (let i=0; i < this.temporarySchedule.length; i ++) {
           if (this.temporarySchedule[i].temporary) {
-            console.log('Delete schedule - i ' + i + '-' + JSON.stringify(this.temporarySchedule[i]));
+            // console.log('Delete schedule - i ' + i + '-' + JSON.stringify(this.temporarySchedule[i]));
             this._scheduleService.deleteSchedule(this.temporarySchedule[i].schedule.suppliercode, this.temporarySchedule[i].schedule.commercialcontract,
                                                  this.temporarySchedule[i].schedule.addresschain,  this.temporarySchedule[i].schedule.servicecontract,
                                                  this.temporarySchedule[i].schedule.sites,  
@@ -429,7 +433,7 @@ export class SupplierScheduleComponent {
         }
         else {
           for (let i =0; i < this.validateSchedule.length; i++) {
-            console.log(' i : ' + i + ' - ' + JSON.stringify(this.validateSchedule[i]));
+            //console.log(' i : ' + i + ' - ' + JSON.stringify(this.validateSchedule[i]));
               this._scheduleService.createSchedule(this.validateSchedule[i])
               .subscribe( 
                   data => { console.log('data ' +i ); },
@@ -460,7 +464,7 @@ export class SupplierScheduleComponent {
    */
   activateDay(indice: number, index: number) {
     this.temporarySchedule[indice].temporary = true;
-    console.log('ActivateDay - this.temporarySchedule[indice] BEFORE :' + JSON.stringify(this.temporarySchedule[indice]));
+    //console.log('ActivateDay - this.temporarySchedule[indice] BEFORE :' + JSON.stringify(this.temporarySchedule[indice]));
     //this.temporarySchedule[indice].orderActive[index] = ! this.temporarySchedule[indice].orderActive[index];
     //console.log('ActivateDay - this.temporarySchedule[indice] AFTER :' + JSON.stringify(this.temporarySchedule[indice]));
     //console.log('ActivateDay : ' + JSON.stringify(schedule));

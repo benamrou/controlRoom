@@ -7,22 +7,27 @@ import { DashboardComponent } from './dashboard.component';
 import { PageHeaderModule } from '../../shared';
 import { GridsterModule } from '../../shared';
 import { FormsModule } from '@angular/forms';
+import { ChartModule } from '../../shared/graph';
 
 import { StatModule } from '../../shared';
-import { TableModule, ButtonModule, TooltipModule, DialogModule  } from '../../shared/components';
+import { AlertModule } from 'ngx-bootstrap/alert';
+import { TableModule, ButtonModule, TooltipModule, DialogModule , PaginatorModule, MessagesModule, ToastModule } from '../../shared/components';
 
 @NgModule({
     imports: [
         CommonModule,
         NgbCarouselModule.forRoot(),
         NgbAlertModule.forRoot(),
+        AlertModule.forRoot(),
         DashboardRoutingModule,
         StatModule,
         GridsterModule,
+        MessagesModule,ToastModule,
         FormsModule,
-        TableModule,
+        TableModule,PaginatorModule,
         ButtonModule,TooltipModule,DialogModule,
-        PageHeaderModule
+        PageHeaderModule,
+        ChartModule
     ],
     declarations: [ DashboardComponent ],
     exports: [ DashboardComponent ],

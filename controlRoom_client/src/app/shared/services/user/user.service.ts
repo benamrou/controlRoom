@@ -2,8 +2,11 @@ import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular
 import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
 import {Router} from '@angular/router';
 import {HttpService} from '../request/html.service';
+import {QueryService} from '../query/query.service';
 import { map } from 'rxjs/operators';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { StructureService } from '../structure/structure.service'
 
 
 export class User {
@@ -31,6 +34,11 @@ export class User {
    public mainEnvironment: Environment[] = []; // Can be multiple such as GOLD CEMTRAL and GOLD STOCK , main is by env type
    public sid: String [] = [];
    public envDefaultLanguage: string;
+
+   /********************************************************/
+   /* Data Storage to refrain regular search - Static Info */
+   /********************************************************/
+   public screenInfo;
 }
 export class Environment {
    public level: string; 
@@ -61,6 +69,12 @@ export class UserService {
 
   public userInfo : User;
 
+  /** Gathered data @login */
+  public network; // Whole network location
+  public networkTree; // Whole network location as TreeData
+  public structure; // Whole merchandise structure
+  public structureTree; // Whole merchandise structure as TreeData
+
   private baseUserUrl: string = '/api/user/';
   private baseEnvironmentUrl: string = '/api/environment/';
   private baseUserProfileUrl: string = '/api/userprofile/';
@@ -69,8 +83,8 @@ export class UserService {
   private params: HttpParams;
   private options: HttpHeaders;
 
-  constructor(private http:HttpService, router:Router) { }
-
+  constructor(private http:HttpService, private router:Router) { 
+  }
 
     /**
      * This function retrieves the User information.
@@ -107,8 +121,8 @@ export class UserService {
                 this.userInfo.lastUserUpdate = data[0].USERUTIL;
                 this.userInfo.type = data[0].USERTYPE;
 
-                console.log ('data[0] : ' + JSON.stringify(data[0]));
-                console.log ('USERLNAME : ' + data[0].USERLNAME);
+                //console.log ('data[0] : ' + JSON.stringify(data[0]));
+                //console.log ('USERLNAME : ' + data[0].USERLNAME);
                 this.userInfo.userNameDisplay = this.userInfo.firstname + ' ' + this.userInfo.lastname.substring(0,1) + '.';
                 return this.userInfo;
             });
@@ -234,5 +248,15 @@ export class UserService {
         this.userInfo.envDefaultLanguage =newLanguage;
         localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
     }
+  
+    setNetwork(in_network, in_networkTree) {
+        this.network= in_network;
+        this.networkTree = in_networkTree;
+    }
+    setStructure(in_structure, in_structureTree) {
+        this.structure= in_structure;
+        this.structureTree = in_structureTree;
+    }
+
 } 
 

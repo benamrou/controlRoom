@@ -7,7 +7,7 @@ export * from  './button/button';
 export * from  './calendar/calendar';
 export * from  './captcha/captcha';
 export * from  './carousel/carousel';
-export * from  './chart/chart';
+//export * from  './chart/chart';
 export * from  './checkbox/checkbox';
 export * from  './chips/chips';
 export * from  './codehighlighter/codehighlighter';

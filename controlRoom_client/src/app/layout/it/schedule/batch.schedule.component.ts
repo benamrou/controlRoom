@@ -63,7 +63,10 @@ export class BatchScheduleComponent {
  
   msgs: Message[] = [];
 
+  screenID;
+
   constructor( private _messageService: MessageService, private _processService: ProcessService) {
+    this.screenID =  'SCR0000000006';
     this.datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
     this.dateTomorrow =  new Date(this.dateNow.setDate(this.dateNow.getDate() + 1));

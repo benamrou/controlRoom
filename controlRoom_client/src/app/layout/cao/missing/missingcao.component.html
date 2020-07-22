@@ -1,4 +1,5 @@
-<app-page-header [heading]="'CAO missing'" [icon]="'fas fa-frog'"></app-page-header>
+<app-page-header [heading]="'CAO missing'" [icon]="'fas fa-frog'"
+                 [(screenID)]="screenID"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
@@ -80,12 +81,12 @@
                             <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                 class="CSV_Button"
                                 label="CSV" (click)="result.exportCSV()" style="float:left"></button>
-                            <button type="button" pButton icon="fas fa-wrench" iconPos="left" 
+                            <!--button type="button" pButton icon="fas fa-wrench" iconPos="left" 
                                 class="TABLE_TOP_Button"
                                 label="PROCESS ALL" style="float:left"
                                 [disabled]="addAllButtonStatus === 'DISABLED'"
                                 (click)="addAlltoBatchList()">
-                            </button>
+                            </button-->
                             </div>
             </ng-template>
             <!-- HEADER -->

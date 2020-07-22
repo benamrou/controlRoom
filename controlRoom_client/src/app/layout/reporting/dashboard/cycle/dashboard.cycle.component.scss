@@ -1,0 +1,68 @@
+.ui-tree {
+  //border-top: 0px solid !important;
+  width: 100% !important;
+}
+:host ::ng-deep  p-panel > div  {
+  border: 1px solid #D5D5D5 !important;
+}
+
+.ui-panel.ui-widget .ui-panel-titlebar.ui-corner-all {
+  //border: 1px solid darkgray;
+}
+
+.rowcolorgray {
+  background-color: #F3F2F2;
+}
+
+.alternateColor div:nth-child(even){
+background-color: lightgoldenrodyellow;
+}
+.alternateColor div:nth-child(odd){
+background-color: white;
+}
+
+.createTemporarySchedule {
+color: darkorange;
+text-align: center;
+
+}
+input:invalid {
+  border-color: red;
+}
+
+
+#tableContainer {
+width: 1100px;
+overflow-x: scroll;
+//position: relative;
+text-align:center;
+//display: inline-block;
+}
+#tableContaine.th {
+width: 100px;
+}
+.white-background {
+background-color: white;
+}
+.gray-background {
+background-color: gray;
+}
+
+.all-table {
+//width: 1100px;
+margin-top: 0;
+table-layout: fixed;
+border-spacing: 0;
+font-size: smaller; 
+text-align:center;
+}
+
+::-webkit-scrollbar {
+-webkit-appearance: none;
+width: 3px;
+}
+::-webkit-scrollbar-thumb {
+border-radius: 3px;
+background-color: rgba(0, 0, 0, .5);
+-webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}

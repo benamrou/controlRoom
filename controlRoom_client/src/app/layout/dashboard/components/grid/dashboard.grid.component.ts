@@ -12,7 +12,7 @@ export class DashboardGridComponent implements OnInit {
 
   @ViewChild(GridsterComponent) gridster: GridsterComponent;
   itemOptions = {
-      maxWidth: 10,
+      maxWidth: 20,
       maxHeight: 10
   };
   
@@ -56,17 +56,17 @@ export class DashboardGridComponent implements OnInit {
         {
             breakpoint: 'md',
             minWidth: 768,
-            lanes: 10
+            lanes: 20
         },
         {
             breakpoint: 'lg',
             minWidth: 1250,
-            lanes: 10
+            lanes: 20
         },
         {
             breakpoint: 'xl',
             minWidth: 1800,
-            lanes: 10
+            lanes: 20
         }
     ]
 };
@@ -75,11 +75,12 @@ export class DashboardGridComponent implements OnInit {
       handlerClass: 'panel-heading'
   };
 
-  //title = 'Angular2Gridster';
   public widgets: Array<any> = [
       {
           x: 0, y: 0,
+          widx: 0, widy: 0,
           w: 10, h: 2,
+          widwidth: 10, widheight: 2,
           dragAndDrop: true,
           resizable: true,
           title: 'Basic form inputs 1'
@@ -132,10 +133,9 @@ export class DashboardGridComponent implements OnInit {
           size = 1;
       }
       widget.w = size;
+      widget.widwidth = size;
 
       gridster.reload();
-
-      return false;
   }
 
   public setHeight(widget: any, size: number, e: MouseEvent, gridster) {
@@ -144,11 +144,13 @@ export class DashboardGridComponent implements OnInit {
       if (size < 1) {
           size = 1;
       }
+      if (size != 1) {
+        widget.collapse_h = size
+      }
       widget.h = size;
+      widget.widheight = size;
 
       gridster.reload();
-
-      return false;
   }
 
   public optionsChange(options: IGridsterOptions) {
@@ -156,23 +158,31 @@ export class DashboardGridComponent implements OnInit {
       //console.log('options change:', options);
   }
 
+  public setDragOption (gridster: GridsterComponent) {
+    gridster.setOption('dragAndDrop', true);
+  }
+
+  public setDragOptions() {
+  }
+
   public swap() {
-      this.widgets[0].x = 3;
-      this.widgets[3].x = 0;
+      this.widgets[0].widx = 3;
+      this.widgets[3].widx = 0;
   }
 
   public addWidgetFromDrag(gridster: GridsterComponent, event: any) {
       const item = event.item;
       const breakpoint = gridster.options.breakpoint;
       const widget = {
+          widwidth: item.widwidth, widheight: item.widheight,
           w: item.w, h: item.h,
           dragAndDrop: true,
           resizable: true,
           title: 'New widget'
       };
 
-      widget[DashboardGridComponent.X_PROPERTY_MAP[breakpoint]] = item.x;
-      widget[DashboardGridComponent.Y_PROPERTY_MAP[breakpoint]] = item.y;
+      widget[DashboardGridComponent.X_PROPERTY_MAP[breakpoint]] = item.widx;
+      widget[DashboardGridComponent.Y_PROPERTY_MAP[breakpoint]] = item.widy;
 
       this.widgets.push(widget);
 
@@ -180,6 +190,7 @@ export class DashboardGridComponent implements OnInit {
   }
 
   public over(event) {
+      console.log('Over');
       const size = event.item.calculateSize(event.gridster);
 
       event.item.itemPrototype.$element.querySelector('.gridster-item-inner').style.width = size.width + 'px';
@@ -188,6 +199,8 @@ export class DashboardGridComponent implements OnInit {
   }
 
   public out(event) {
+
+    console.log('Out');
       event.item.itemPrototype.$element.querySelector('.gridster-item-inner').style.width = '';
       event.item.itemPrototype.$element.querySelector('.gridster-item-inner').style.height = '';
       event.item.itemPrototype.$element.classList.remove('is-over');
@@ -205,6 +218,7 @@ export class DashboardGridComponent implements OnInit {
   public addWidget(gridster: GridsterComponent) {
       this.widgets.push({
           x: 4, y: 0, w: 1, h: 1,
+          widx: 4, widy: 0, widwith: 1, widheight: 1,
           dragAndDrop: true,
           resizable: true,
           title: 'Basic form inputs 5',
@@ -227,7 +241,17 @@ export class DashboardGridComponent implements OnInit {
       this.widgets = [];
   }
 
-  public itemChange($event: any, gridster) {
-      //console.log('item change', $event);
+  public itemChange($event: any, gridster, widget) {
+    for(let i =0; i < gridster.gridster.items.length; i++) {
+        //console.log('itemChange : ', widget, gridster.gridster.items[i], $event);
+        if(widget.widid === gridster.gridster.items[i].itemComponent.id) {
+            widget.widx = gridster.gridster.items[i].x;
+            widget.widy = gridster.gridster.items[i].y;
+        }
+    }
+  }
+
+  public reload() {
+      this.gridster.reload();
   }
 }

@@ -38,6 +38,30 @@
                     </ul>
                 </li>
             </div>
+            <!--div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('billing')">
+                    <span><i class="fas fa-donate"></i> &nbsp; {{ 'Billing & Invoice' | translate}} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'billing' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/ediinvoice" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-check-double"></i> {{ 'EDI Invoices' | translate}}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div-->
+            <!--div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('pricing')">
+                    <span><i class="fas fa-robot"></i> &nbsp; {{ 'Pricing' | translate}} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'pricing' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/mdmbrand" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-check-double"></i> {{ 'Brand management' | translate}}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div-->
             <div class="nested-menu">
                 <a class="list-group-item" (click)="addExpandClass('supplierschedule')">
                     <span><i class="fa fa-calendar"></i> &nbsp; {{ 'Supplier schedule' | translate}} </span>
@@ -58,9 +82,6 @@
             <a routerLink="/search" [routerLinkActive]="['router-link-active']" class="list-group-item">
                 <i class="fa fa-fw fa-search"></i> &nbsp; {{ 'Search' | translate}}
             </a>
-            <!--a routerLink="/reporting" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                <i class="fas fa-book-reader"></i> &nbsp; {{ 'Reporting box' | translate}}
-            </a-->
 
             <div class="nested-menu">
                 <a class="list-group-item" (click)="addExpandClass('warehouse')" >
@@ -91,6 +112,52 @@
                 </li>
             </div>
             
+            <div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('massupdate')" >
+                    <span><i class="fas fa-chalkboard-teacher"></i> &nbsp; {{ 'Mass-change box' | translate}} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'massupdate' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/itemhierarchy" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-tools"></i> {{ 'Item Hierarchy' | translate}}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('reporting')" >
+                    <span><i class="fas fa-bar-chart"></i> &nbsp; {{ 'Reporting box' | translate}} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('reporting') !== -1  }">
+                    <ul class="submenu" style="padding-left: 1.1em;">
+                        <a class="list-group-item" (click)="addExpandClass('reporting;scorecard')" >
+                            <span><i class="fas fa-caret-square-o-up"></i> &nbsp; {{ 'Scorecard' | translate}} </span>
+                        </a>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('scorecard') !== -1  }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'scorecard' }">
+                                <a class="bbs_link_menu" routerLink="/scorecardcao" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-shopping-cart"></i> &nbsp; {{ 'Automatic Order' | translate}} </span>
+                                </a>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="submenu" style="padding-left: 1.1em;">
+                        <a class="list-group-item" (click)="addExpandClass('reporting;dashboard')" >
+                            <span><i class="fas fa-tachometer-alt"></i> &nbsp; {{ 'Dashboard' | translate}} </span>
+                        </a>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('dashboard') !== -1 }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'dashboard' }"> 
+                                <a class="bbs_link_menu" routerLink="/dashboardcycle" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-shopping-cart"></i> &nbsp; {{ 'PI adjustment' | translate}} </span>
+                                </a>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+
             <div class="nested-menu">
                 <a class="list-group-item" (click)="addExpandClass('toolbox')">
                     <span><i class="fa fa-plus"></i> &nbsp; {{ 'Toolbox' | translate}} </span>

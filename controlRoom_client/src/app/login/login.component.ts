@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { routerTransition } from '../router.animations';
-import { Message } from '../shared/components/index';
-import { LogginService, UserService, LabelService } from '../shared/services/index';
+import { Message, MessageService } from '../shared/components/index';
+import { LogginService, UserService, LabelService, StructureService, ScreenService } from '../shared/services/index';
 import { mergeMap } from 'rxjs/operators';
-import { Promise } from 'q';
 
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
-    animations: [routerTransition()]
+    animations: [routerTransition()],
+    providers: [MessageService, StructureService, ScreenService]
 })
 export class LoginComponent implements OnInit {
 
@@ -24,24 +24,26 @@ export class LoginComponent implements OnInit {
 	labelsGathered: boolean = false;
 
     canConnect: boolean = false;
-	connectionMessage: Message [];
+	connectionMessage: Message [] = [];
 
-    constructor(public router: Router, private _logginService: LogginService, private _userService: UserService,
-                private _labelService: LabelService) { 
+    constructor(public router: Router, private _logginService: LogginService, 
+                private _userService: UserService,
+                private _labelService: LabelService, 
+                private _messageService: MessageService,
+                private _screenService: ScreenService,
+                private _structureService: StructureService) { 
         this.canConnect = false;
         this.authentification.username = '';
-
+        this._messageService.add({severity:'success', summary: 'Success Message', detail:'Order submitted'});
     
     }
 
     ngOnInit() {}
 
     onLoggedin() {
-        console.log('Tentative de login');
         //localStorage.setItem('isLoggedin', 'true');
    		this._logginService.login(this.authentification.username, this.authentification.password) 
             .subscribe( result => {
-                 // console.log('Result : ' + JSON.stringify(result));
                  this.canConnect = result;
 				 if (this.canConnect) {
                     this.fetchUserConfiguration();
@@ -57,7 +59,7 @@ export class LoginComponent implements OnInit {
         this.connectionMessage.push({severity:'error', summary:'Invalid credentials', detail:'Use your GOLD user/password'});
 	}
 
-    fetchUserConfiguration() {
+    async fetchUserConfiguration() {
         /**
 		 * 1. Load User information to enable menu access and functionnality
 		 * 2. Get the corporate environments user can have access
@@ -68,15 +70,20 @@ export class LoginComponent implements OnInit {
 
         this.parameterGathered = true;
         this.labelsGathered = true;
-        this._userService.getInfo(localStorage.getItem('ICRUser'))
+        await this._userService.getInfo(localStorage.getItem('ICRUser'))
             .subscribe( result => { this.userInfoGathered = true; });        
 
-        this._userService.getEnvironment(localStorage.getItem('ICRUser'))       
+        await this._userService.getEnvironment(localStorage.getItem('ICRUser'))       
             .subscribe( result => { 
+                console.log('Environment data gathered');
                 this.environmentGathered = true;
                 localStorage.setItem('isLoggedin', 'true');
                 this.router.navigate(['/dashboard']);
-            })
+                this._structureService.getStructure();
+                this._structureService.getNetwork();
+            });
+        
+
 	      /*    this._userService.getEnvironment(localStorage.getItem('ICRUser')).pipe(
                 mergeMap( result => { this.environmentGathered = true; return [true];}));*/
 		//this._labelService.getAllLabels().subscribe( result => { this.labelsGathered = true; });

@@ -66,11 +66,11 @@ export class InventoryService {
       this.params = this.params.set('MODE', mode);
       this.params = this.params.set('STORE', storeId);
       
-      return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+      return this.http.get(this.request, this.params, this.options).map(response => {
               let data = <any> response;
               console.log ('Data received');
               return <StoreInventory>data;
-          }));
+          });
 }
 
 }

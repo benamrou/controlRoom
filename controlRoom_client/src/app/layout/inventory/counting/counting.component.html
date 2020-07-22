@@ -1,7 +1,8 @@
-<app-page-header [heading]="'Third-Party counting integration follow-up'" [icon]="'fa-university'"></app-page-header>
+<app-page-header [heading]="'Third-Party counting integration follow-up'" [icon]="'fa-university'"
+                 [(screenID)]="screenID"></app-page-header>
 
-<div class="content-section implementation" style="padding: 5px;">
-    <p-growl [value]="msgs" sticky="sticky"></p-growl>
+<div class="content-section implementation" style="padding: 5px">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
 
 <div class="bbs_search_panel"  >
@@ -166,13 +167,19 @@
                     <div class="ui-grid ui-grid-responsive ui-fluid ">
                         <div class="ui-grid-row">
                             <div class="col-md-8">Initialisation</div>
-                            <i class="fa fa-check col-md-4 pull-right" style="color: green" aria-hidden="true" *ngIf="search_STEP3_Result.initialisation >= 1"></i>
-                            <i class="fa fa-times col-md-4 pull-right" style="color: red"  aria-hidden="true" *ngIf="search_STEP3_Result.initialisation===0"></i>
+                            <i class="fa fa-check col-md-4 pull-right" style="color: green" aria-hidden="true" *ngIf="search_STEP3_Result.initialisation >= 1 && search_STEP3_Result.progressInitialisation >= 1"></i>
+                            <i class="fa fa-times col-md-4 pull-right" style="color: red"  aria-hidden="true" *ngIf="search_STEP3_Result.initialisation===0 && search_STEP3_Result.progressInitialisation===-1"></i>
+                            <i style="color: green; padding-left:15px" aria-hidden="true" *ngIf="search_STEP3_Result.initialisation === 0 && search_STEP3_Result.progressInitialisation >= 0">
+                                {{search_STEP3_Result.progressInitialisation | percent}}
+                            </i>
                         </div>
                         <div class="ui-grid-row" style="color: gray">
                             <div class="col-md-8">Stock Copy (Optional):</div>
-                            <i class="fa fa-check col-md-4 pull-right" aria-hidden="true" *ngIf="search_STEP3_Result.stkcopy >=1"></i>
-                            <i class="fa fa-times col-md-4 pull-right" aria-hidden="true" *ngIf="search_STEP3_Result.stkcopy===0"></i>
+                            <i class="fa fa-check col-md-4 pull-right" aria-hidden="true" *ngIf="search_STEP3_Result.stkcopy >=1 && search_STEP3_Result.progressStockCopy >= 1"></i>
+                            <i class="fa fa-times col-md-4 pull-right" aria-hidden="true" *ngIf="search_STEP3_Result.stkcopy===0 && search_STEP3_Result.progressStockCopy===-1"></i>
+                            <i style="color: green; padding-left:15px" aria-hidden="true" *ngIf="search_STEP3_Result.stkcopy === 0 && search_STEP3_Result.progressStockCopy >= 0">
+                                {{search_STEP3_Result.progressStockCopy | percent}}
+                            </i>
                         </div>
                         <div class="ui-grid-row">
                             <div class="col-md-8">Qty Input:</div>
@@ -191,8 +198,11 @@
                         </div>
                         <div class="ui-grid-row">
                             <div class="col-md-8">Stock update:</div>
-                            <i class="fa fa-check col-md-4 pull-right" style="color: green" aria-hidden="true" *ngIf="search_STEP3_Result.stkupdate >=1"></i>
-                            <i class="fa fa-times col-md-4 pull-right" style="color: red" aria-hidden="true" *ngIf="search_STEP3_Result.stkupdate===0"></i>
+                            <i class="fa fa-check col-md-4 pull-right" style="color: green" aria-hidden="true" *ngIf="search_STEP3_Result.stkupdate >=1 && search_STEP3_Result.progressStockUpdate >= 1"></i>
+                            <i class="fa fa-times col-md-4 pull-right" style="color: red" aria-hidden="true" *ngIf="search_STEP3_Result.stkupdate===0  && 0>=search_STEP3_Result.progressStockUpdate"></i>
+                            <i style="color: green; padding-left:15px" aria-hidden="true" *ngIf="search_STEP3_Result.stkupdate ===0 && search_STEP3_Result.progressStockUpdate > 0">
+                                {{search_STEP3_Result.progressStockUpdate | percent}}
+                            </i>
                         </div>
                     </div>
                 </div>    
@@ -241,7 +251,7 @@
                 [rows]="20"  [rowsPerPageOptions]="[20,100,500]"
                 [paginator]="true" [pageLinks]="3" 
                 [columns]="columnsResultRejection"
-                selectionMode="single" [(selection)]="selectedElement" 
+                selectionMode="single"
                 [resizableColumns]="true" columnResizeMode="expand"
                 [responsive]="true" [totalRecords]="rejectionData.rejections.length"
                 [reorderableColumns]="true" scrollHeight="400px"
@@ -286,7 +296,7 @@
                 [rows]="20"  [rowsPerPageOptions]="[20,100,500]"
                 [paginator]="true" [pageLinks]="3" 
                 [columns]="columnsResultMVT"
-                selectionMode="single" [(selection)]="selectedElement" 
+                selectionMode="single" 
                 [resizableColumns]="true" columnResizeMode="expand"
                 [responsive]="true" [totalRecords]="movementData.movements.length"
                 [reorderableColumns]="true" scrollHeight="400px"
