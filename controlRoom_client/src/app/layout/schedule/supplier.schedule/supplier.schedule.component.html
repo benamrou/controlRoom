@@ -1,5 +1,6 @@
-<app-page-header [heading]="'Supplier schedule by calendar schedule'" [icon]="'fa-calendar'"></app-page-header>
-
+<app-page-header [heading]="'Supplier schedule by calendar schedule'" [icon]="'fa-calendar'"
+                 [(screenID)]="screenID"></app-page-header>
+                 
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
@@ -63,7 +64,7 @@
         [responsive]="true" [totalRecords]="searchResult.length"
         [reorderableColumns]="true" scrollHeight="400px"
         (onRowSelect)="onRowSelect($event)"
-        [globalFilter]="gb" [autoLayout]="true"tableStyleClass="table-layout: auto;">
+        [globalFilter]="gb" [autoLayout]="true" tableStyleClass="table-layout: auto;">
         
         <!-- FILTER -->
         <ng-template pTemplate="caption">
@@ -123,7 +124,10 @@
                                 <p-header>Schedule applied on {{schedule.sites.length}} sites </p-header>
                                 <div class="alternateColor">
                                     <ng-container *ngFor="let site of schedule.sites">
-                                        <div> {{ site.code }}  {{site.description}} </div>
+                                        <div>
+                                            <input type="checkbox" [(ngModel)]="site.applyChanges" [ngModelOptions]="{standalone: true}"/>
+                                            {{ site.code }}  {{site.description}} 
+                                        </div>
                                     </ng-container>
                                 </div>
                             </p-panel>

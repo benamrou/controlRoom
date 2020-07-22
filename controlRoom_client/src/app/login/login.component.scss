@@ -432,201 +432,360 @@ body{
    }
 // *********************** CHRISTMAS TREE END ********************************
 
-// *********************** CONTAINER NFL BEGIN ********************************
- .container_nfl {
-   position: relative;
-   left: 70%;
-   top: 28em;
- }
+// *********************** SUMMER  START ********************************
 
-
- #football {
-  //width: 900px;
-  //height: 420px;
-  width: 450px;
-  height: 210px;
-  border: 3px solid #FFF;
-  position: relative;
-  box-shadow: 0 0 55px #000;
-  left: 65%;
-  top: 450px;
+@mixin gradient-topdown($fist,$second,$thid){
+  background-image: -webkit-linear-gradient(top, $fist, $second, $thid);
+  background-image: -o-linear-gradient(top, $fist, $second, $thid);
+  background-image: linear-gradient(to bottom, $fist, $second, $thid);
+  background-repeat: repeat-x;
+}
+@mixin gradient-radial($fist,$second,$thid){
+  background-image: -webkit-radial-gradient(circle, $fist,$second,$thid);
+  background-image: radial-gradient(circle, $fist,$second,$thid);
+  background-repeat: no-repeat;
 }
 
-#football span {
-  border-right: 2px solid #FFF;
-  width: 8.33%;
+html,
+body {
   height: 100%;
-  display: inline-block;
-  float: left;
-  position: relative;
+  width: 100%;  
+  @include gradient-topdown(#4096ee 2%, #4096ee 2%, #d8ebff 50%);
+  position: ralative;
+  overflow: hidden;
 }
 
-#football .endzone {
-  background: #01A54F;
-  width: 8.352%;
-}
-/* Pylons */
-/*#football .endzone::before,
-#football .endzone::after {
-	content: '';
-	display: block;
-	width: 5px;
-	height: 5px;
-	border-radius: 50%;
-	position: absolute;
-	top: -2px;
-	right: -2px;
-	background: #E87600;
-}
-
-#football .endzone::after,
-#football .endzone:last-of-type::after {
-	top: auto;
-	bottom: -2px;
-}
-
-#football .endzone:last-of-type::before,
-#football .endzone:last-of-type::after {
-	right: auto;
-	left: -2px;
-}*/
-
-#football .endzone:last-of-type {
-  background: #01652F;
-  border-right: none;
-}
-/* Uprights */
-
-#football::before,
-#football::after {
-  content: '';
+ul,
+ol,
+li {
+  list-style-type: none;
+  width: 100%;
   display: block;
-  width: 3px;
-  height: 18.7%;
-  background: yellow;
+}
+.sun {
   position: absolute;
-  left: 1px;
-  top: 41%;
-  z-index: 100;
+  z-index:1;
+  top:10%;
+  left:80%;
+  height:200px;
+  width:200px;
+  background:#ff6600; 
+  -webkit-border-radius:50%;
+  border-radius:50%;
+  @include gradient-radial (rgba(255,225,5,1) 1%, rgba(255,124,0,1) 51%, rgba(219,0,0,1) 100%);
 }
-
-#football::after {
-  left: auto;
-  right: 1px;
-}
-
-#football .endzone::before,
-#football .endzone::after {
-  content: '';
-  display: block;
-  width: 23px;
-  height: 3px;
-  background: yellow;
+.shiny {
+    position: absolute;
+    z-index:21;
+    top:40%;
+    left:26%;
+    height:1px;
+    width:1px;
+    -webkit-box-shadow: 0 20px 55px 55px rgba(200, 225, 255, 0.3);
+    box-shadow: 0 20px 55px 55px rgba(200, 225, 255, 0.3);
+  }
+.sea {
+  height: 20%;
   position: absolute;
-  top: 40%;
-  left: -25%;
-  /*border: 1px solid #000;*/
-  
-  border-radius: 2px;
-  -webkit-transform: rotate(20deg);
+  z-index: 20;
+  bottom: 0;
+  @include gradient-topdown (rgba(0, 149, 191, 1) 6%, rgba(30, 87, 153, 1) 60%, rgba(221, 153, 0, 1) 65%);
+  -webit-perspective-origin: 40% 90%;
+  perspective-origin: 40% 90%;
+  -webkit-perspective: 400px;
+  perspective: 400px;
 }
 
-#football .endzone::after {
-  top: 60%;
-  -webkit-transform: rotate(-20deg);
-}
-
-#football .endzone:last-of-type::before,
-#football .endzone:last-of-type::after {
-  left: auto;
-  right: -25%;
-  -webkit-transform: rotate(-20deg);
-}
-
-#football .endzone:last-of-type::after {
-  -webkit-transform: rotate(20deg);
-}
-
-#football .yard {
-  background: -webkit-linear-gradient(left, transparent 0, transparent 48.5%, #FFF 48.5001%, #FFF 51.5%, transparent 51.5001%), -webkit-linear-gradient(left, #01652F 0, #01652F 7%, transparent 7.1%, transparent 9.5%, #01652F 9.6%, #01652F 17.6%, transparent 17.7%, transparent 19.2%, #01652F 19.3%, #01652F 27.3%, transparent 27.4%, transparent 29.9%, #01652F 30%, #01652F 38%, transparent 38.1%, transparent 40.6%, #01652F 40.7%, #01652F 50%, #01A54F 50.001%, #01A54F 59.6%, transparent 59.7%, transparent 62.3%, #01A54F 62.4%, #01A54F 70.4%, transparent 70.5%, transparent 73%, #01A54F 73.1%, #01A54F 81.1%, transparent 81.2%, transparent 83.7%, #01A54F 83.8%, #01A54F 91.8%, transparent 91.9%, transparent 94.4%, #01A54F 94.5%), -webkit-linear-gradient(top, #01A54F 0, #01A54F 1.25%, #FFF 1.2501%, #FFF 4.76%, #01A54F 4.7601%, #01A54F 35%, #FFF 35.0001%, #FFF 38.51%, #01A54F 38.52%, #01A54F 65%, #FFF 65.01%, #FFF 68.51%, #01A54F 68.52%, #01A54F 95.23%, #FFF 95.24%, #FFF 98.74%, #01A54F 98.75%) no-repeat 37px 0, -webkit-linear-gradient(top, #01652F 0, #01652F 1.25%, #FFF 1.2501%, #FFF 4.76%, #01652F 4.7601%, #01652F 35%, #FFF 35.0001%, #FFF 38.51%, #01652F 38.52%, #01652F 65%, #FFF 65.01%, #FFF 68.51%, #01652F 68.52%, #01652F 95.23%, #FFF 95.24%, #FFF 98.74%, #01652F 98.75%);
-}
-
-#football .yard::before,
-#football .yard::after {
-  content: attr(data-yard)'\25C2';
-  /*width: 20px;*/
-  /*height: 20px;*/
-  
+li {
   position: absolute;
-  top: 55px;
-  right: -24.5%;
-  display: block;
-  color: #FFF;
-  font-size: x-small;
-  line-height: 1;
-  z-index: 100;
-  -webkit-transform: rotate(180deg);
+  width: 120%;
+  left: -10%;
 }
 
-#football .yard::after {
-  top: auto;
-  bottom: 55px;
-  -webkit-transform: rotate(0deg);
-}
-
-#football .yard:nth-of-type(6)::before,
-#football .yard:nth-of-type(6)::after {
-  content: attr(data-yard);
-}
-
-#football .yard:nth-of-type(1)::after,
-#football .yard:nth-of-type(2)::after,
-#football .yard:nth-of-type(3)::after,
-#football .yard:nth-of-type(4)::after,
-#football .yard:nth-of-type(5)::after,
-#football .yard:nth-of-type(7)::before,
-#football .yard:nth-of-type(8)::before,
-#football .yard:nth-of-type(9)::before,
-#football .yard:nth-of-type(10)::before {
-  content: '\25C2'attr(data-yard);
-}
-
-#football .yard:nth-of-type(1)::before,
-#football .yard:nth-of-type(2)::before,
-#football .yard:nth-of-type(3)::before,
-#football .yard:nth-of-type(4)::before,
-#football .yard:nth-of-type(5)::before,
-#football .yard:nth-of-type(7)::after,
-#football .yard:nth-of-type(8)::after,
-#football .yard:nth-of-type(9)::after,
-#football .yard:nth-of-type(10)::after {
-  content: attr(data-yard)'\25B8';
-}
-
-#football .yard:nth-of-type(7)::before,
-#football .yard:nth-of-type(7)::after,
-#football .yard:nth-of-type(9)::before,
-#football .yard:nth-of-type(9)::after,
-#football .yard:nth-of-type(8)::before,
-#football .yard:nth-of-type(8)::after,
-#football .yard:nth-of-type(10)::before,
-#football .yard:nth-of-type(10)::after {
-  right: -46.5%;
-}
-
-#football .yard:nth-of-type(11)::before,
-#football .yard:nth-of-type(11)::after {
-  content: '';
-  width: 743px;
-  height: 2px;
-  top: 64%;
+.wave {
+  z-index: 30;
+  height: 7%;
+  bottom: 50%;
+  -webkit-animation: waves 5s alternate infinite ease-in-out;
+  animation: waves 5s alternate infinite ease-in-out;
+  -webkit-box-shadow: 0 -3px 3px 3px rgba(200, 225, 255, 0.2);
+  box-shadow: 0 -3px 1px 1px rgba(200, 225, 255, 0.2);
+  background: rgba(125, 185, 232, 1);
+  //@include gradient-topdown(rgba(229, 229, 229, 1) 4%, rgba(125, 185, 232, 1) 10%, rgba(30, 87, 153, 1) 97%);
   
-  //background: -webkit-linear-gradient(left, transparent 0, transparent 31px, #FFF 32px, #FFF 42px, transparent 43px, transparent 69px, #FFF 70px, #FFF 80px, transparent 81px, transparent 106px, #FFF 107px, #FFF 117px, transparent 117px, transparent 143px, #FFF 144px, #FFF 154px, transparent 155px, transparent 179px, #FFF 180px, #FFF 190px, transparent 191px, transparent 217px, #FFF 218px, #FFF 228px, transparent 229px, transparent 255px, #FFF 256px, #FFF 266px, transparent 267px, transparent 292px, #FFF 293px, #FFF 303px, transparent 305px, transparent 329px, #FFF 330px, #FFF 340px, transparent 341px, transparent 367px, #FFF 368px, #FFF 378px, transparent 379px, transparent 404px, #FFF 405px, #FFF 415px, transparent 416px, transparent 442px, #FFF 443px, #FFF 453px, transparent 454px, transparent 478px, #FFF 479px, #FFF 489px, transparent 490px, transparent 515px, #FFF 516px, #FFF 526px, transparent 527px, transparent 552px, #FFF 553px, #FFF 563px, transparent 564px, transparent 591px, #FFF 592px, #FFF 602px, transparent 603px, transparent 627px, #FFF 628px, #FFF 638px, transparent 639px, transparent 664px, #FFF 665px, #FFF 675px, transparent 676px, transparent 700px, #FFF 701px, #FFF 711px, transparent 712px);
-  right: 0;
+  &:nth-of-type(1) {
+    -webkit-transform: translateZ(10);
+    transform: translateZ(10);
+    z-index: 36;
+    -webkit-animation-delay: 5.1s;
+    animation-delay: 5.1s;
+  }
+  &:nth-of-type(2) {
+    -webkit-transform: translateZ(20px);
+    transform: translateZ(20px);
+    z-index: 35;
+    -webkit-animation-delay: 4.2s;
+    animation-delay: 4.2s;
+  }
+  &:nth-of-type(3) {
+    -webkit-transform: translateZ(30px);
+    transform: translateZ(30px);
+    z-index: 34;
+    -webkit-animation-delay: 3.3s;
+    animation-delay: 3.3s;
+  }
+  &:nth-of-type(4) {
+    -webkit-transform: translateZ(40px);
+    transform: translateZ(40px);
+    z-index: 33;
+    -webkit-animation-delay: 2.4s;
+    animation-delay: 2.4s;
+  }
+  &:nth-of-type(5) {
+    -webkit-transform: translateZ(50px);
+    transform: translateZ(50px);
+    z-index: 32;
+    -webkit-animation-delay: 1.5s;
+    animation-delay: 1.5s;
+  }
+  &:nth-of-type(6) {
+    -webkit-transform: translateZ(60px);
+    transform: translateZ(60px);
+    z-index: 31;
+    -webkit-animation-delay: 0.6s;
+    animation-delay: 0.6s;
+  }
+    
+
 }
 
-#football .yard:nth-of-type(11)::before {
-  right: 1px;
-  top: 38%;
+.lastwave {
+  z-index: 24;
+  height: 120%;
+  width: 120%;
+  border-radius: 50%;
+  -webkit-transform: rotateX(70deg);
+  transform: rotateX(70deg);
+  bottom: -10%;
+  -webkit-animation: lastwave 5s alternate infinite ease-in-out;
+  animation: lastwave 5s alternate infinite ease-in-out;
+  -webkit-animation-delay: 0.8s;
+  animation-delay: 0.0s;
+  box-shadow: 0 2px 2px 2px rgba(50, 113, 172, 0.5);
+  //@include  gradient-radial( rgba(50, 113, 172, 1) 43%, rgba(50, 113, 172, 1) 54%, rgba(135, 224, 253, 0.5) 99%);
+  background: rgba(30, 87, 153, 1);
 }
-// *********************** CONTAINER NFL END ********************************
+
+@-webkit-keyframes waves {
+  to {
+    height: 30%;
+    background: rgba(30, 87, 153, 1);
+    webkit-box-shadow: 0 -3px 2px 2px rgba(200, 225, 255, 0.8);
+    box-shadow: 0 -3px 2px 2px rgba(200, 225, 255, 0.8);
+  }
+}
+
+@keyframes waves {
+  to {
+    height: 30%;
+     background: rgba(30, 87, 153, 1);
+     box-shadow: 0 -3px 2px 2px rgba(200, 225, 255, 0.8);
+  }
+}
+
+@-webkit-keyframes lastwave {
+  to {
+    -webkit-transform: rotateX(60deg);
+    transform: rotateX(60deg);
+    bottom: -15%;
+    box-shadow: 0 16px 16px 16px rgba(135, 224, 253, 0.8);
+    background: rgba(125, 185, 232, 1);
+  }
+}
+
+@keyframes lastwave {
+  to {
+    transform: rotateX(60deg);
+    bottom: -15%;
+    box-shadow: 0 16px 16px 16px rgba(135, 224, 253, 0.8);
+    background: rgba(125, 185, 232, 1);
+  }
+}
+
+.ship{
+  position: absolute;
+  z-index:5;
+  bottom:20%;
+  left:40%;
+  height:100px;
+  width:150px;
+  -webkit-animation: ship 320s infinite;
+  animation: ship 320s infinite;
+  div{
+    position: absolute;
+    width:100%;
+    height:20%;
+    bottom:0;
+    background-color:#000;
+    &:nth-of-type(1){
+      -webkit-transform: skewX(10deg);
+      transform: skewX(10deg);
+      left:-10%;
+    }
+    &:nth-of-type(2){
+      -webkit-transform: skewX(-30deg);
+      transform: skewX(-30deg);
+    }
+  }
+  
+  ol{
+    width: 100%;
+    li{
+      position: absolute;
+      background-color:#999;
+      
+      &:nth-of-type(1){
+        bottom:20%;
+        left:90%;
+        width: 15%;
+        height:5%;
+        -webkit-transform: skewX(-30deg);
+        transform: skewX(-30deg);
+      }
+      &:nth-of-type(2){
+        bottom:20%;
+        left:0%;
+        width: 80%;
+        height:5%;
+      } 
+      &:nth-of-type(3){
+        bottom:25%;
+        left:10%;
+        width: 69%;
+        height:5%;
+      } 
+      &:nth-of-type(4){
+        bottom:30%;
+        left:24%;
+        width: 55%;
+        height:5%;
+      }
+      &:nth-of-type(4),
+      &:nth-of-type(5),
+      &:nth-of-type(6){
+        bottom:26%;
+        left:30%;
+        width: 5%;
+        height:15%;
+        -webkit-transform: rotate(-8deg);
+        transform: rotate(-8deg);
+      } 
+      &:nth-of-type(5){
+        left:45%;
+      }
+      &:nth-of-type(6){
+        left:60%;
+      }
+    }
+  }
+  ul{
+    width: 100%;
+    li{
+      position: absolute;
+      background-color:transparent;
+      //background-color:#555;
+      width: 0;
+      height: 0;
+      bottom:44%;
+      -webkit-animation: smog 24s infinite ease-out;
+      animation: smog 24s infinite ease-out;
+      border-radius: 50%;
+      &:nth-of-type(1){
+        left:32%;
+        animation-delay:0;
+      }
+      &:nth-of-type(2){
+        left:50%;
+        animation-delay:8s;
+      }
+      &:nth-of-type(3){
+        left:62%;
+        animation-delay:16s;
+      }
+    } 
+  }
+}
+@-webkit-keyframes smog {
+  0%{
+    -webkit-transform: translate(0,0);
+    transform: translate(0,0);
+    -webkit-box-shadow: 0 0 1px 1px rgba(90,90,90,0);
+    box-shadow: 0 0 1px 1px rgba(90,90,90,0);
+  }
+   10%{
+    -webkit-transform: translate(-15px,-10px);
+    transform: translate(-15px,-10px);
+    -webkit-box-shadow: 0 0 8px 8px rgba(90,90,90,30);
+    box-shadow: 0 0 8px 8px rgba(90,90,90,30);
+  }
+    100%{
+    -webkit-transform: translate(-150px,-25px);
+    transform: translate(-150px,-25px);
+    -webkit-box-shadow: 0 0 1px 1px rgba(90,90,90,0);
+    box-shadow: 0 0 1px 1px rgba(90,90,90,0);
+  }
+}
+@keyframes smog {
+  0%{
+    transform: translate(0,0);
+    box-shadow: 0 0 1px 1px rgba(90,90,90,0);
+  }
+   10%{
+    transform: translate(-15px,-10px);
+    box-shadow: 0 0 8px 8px rgba(90,90,90,30);
+  }
+    100%{
+    transform: translate(-150px,-25px);
+    box-shadow: 0 0 1px 1px rgba(90,90,90,0);
+  }
+}
+@-webkit-keyframes ship{
+  0%{left:40%;}
+  59%{left:115%;opacity:1;}
+  60%{left:115%;opacity:0;}
+  61%{left:-15%;opacity:0;}
+  62%{left:-15%;opacity:1;}
+  100%{left:40%;}
+}
+@keyframes ship{
+  0%{left:40%;}
+  59%{left:115%;opacity:1;}
+  60%{left:115%;opacity:0;}
+  61%{left:-15%;opacity:0;}
+  62%{left:-15%;opacity:1;}
+  100%{left:40%;}
+}
+.overlay{
+  position: absolute;
+  z-index:-1;
+  bottom:0;
+  left:0;
+  height:100%;
+  width:100%;
+  //background-color: rgba(0,0,33,0.7);
+}
+
+body { width: 100%; height: 100vh; margin: 0; padding: 0; background-size: cover; background-position: center center; background-image: url('http://www.drodd.com/images10/beach-wallpaper26.jpg'); background-repeat: no-repeat; }
+.animation { float: left; width: auto; transform: rotate(21deg); }
+.palm, .palm-body { animation: animateOne 10s .5s ease infinite; }
+.palm { fill: #b4c06a; }
+.palm-body { fill: #a39274; }
+
+@keyframes animateOne {
+	0% { transform: translateZ(0px) translateY(0) translateX(0) skewY(0deg); }
+	25% { transform: translateZ(5px) translateY(5px) translateX(5px) skewY(5deg); }
+	50% { transform: translateZ(-5px) translateY(-5px) translateX(-5px) skewY(5deg); }
+	75% { transform: translateZ(5px) translateY(5px) translateX(5px) skewY(5deg); }
+	100% { transform: translateZ(0px) translateY(0px) translateX(0px) skewY(0deg); }
+} 
+// *********************** SUMMER END ********************************

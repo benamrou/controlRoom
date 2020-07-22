@@ -132,6 +132,28 @@ $topnav-background-color: #222;
                 }
             }
         }
+        ul.subsubmenu {
+            display: none;
+            list-style-type: none;
+            height: auto;
+            li {
+                display: block;
+                a {
+                    color: #999;
+                    padding: 10px;
+                    display: block;
+                }
+                a.router-link-active {
+                    background:  #fff ; //darken($topnav-background-color, 5%);
+                    color:  black;
+                }
+            }
+        }
+        & .expand {
+            ul.subsubmenu {
+                display: block;
+            }
+        }
     }
 }
 @media screen and (max-width: 992px) {

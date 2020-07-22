@@ -156,6 +156,7 @@ export class GridList {
                 position = [x, fixedRow];
 
                 if (this.itemFitsAtPosition(item, position)) {
+                    //console.log('findPositionForItem', GridListItem, position);
                     return position;
                 }
             } else {
@@ -163,6 +164,7 @@ export class GridList {
                     position = [x, y];
 
                     if (this.itemFitsAtPosition(item, position)) {
+                        //console.log('findPositionForItem', GridListItem, position);
                         return position;
                     }
                 }
@@ -178,6 +180,7 @@ export class GridList {
             newRow = fixedRow;
         }
 
+        //console.log('findPositionForItem', item, start, newCol, newRow);
         return [newCol, newRow];
     }
 
@@ -405,6 +408,7 @@ export class GridList {
             })[0];
 
             itm.setValueX(cachedItem.x, options.breakpoint);
+            //console.log('fixItemsPositions', cachedItem, options.breakpoint)
             itm.setValueY(cachedItem.y, options.breakpoint);
             itm.w = cachedItem.w;
             itm.h = cachedItem.h;
@@ -641,12 +645,13 @@ export class GridList {
 
         // Ensure that the grid has enough columns to accomodate the current item.
         this.ensureColumns(position.x + position.w);
-
-        for (x = position.x; x < position.x + position.w; x++) {
-            for (y = position.y; y < position.y + position.h; y++) {
-                this.grid[x][y] = item;
-            }
-        }
+        try {
+                for (x = position.x; x < position.x + position.w; x++) {
+                    for (y = position.y; y < position.y + position.h; y++) {
+                        this.grid[x][y] = item;
+                    }
+                }
+            } catch (e) {}
     }
 
     /**

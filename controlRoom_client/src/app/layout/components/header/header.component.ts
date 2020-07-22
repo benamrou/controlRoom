@@ -96,6 +96,6 @@ export class HeaderComponent implements OnInit {
 		let envTypeInt = parseInt(this.envTypeConnected);
 		this.appForegroundColorEnvironment = this._userService.userInfo.mainEnvironment[0].titleColor;
 		this.appEnvironment = this._userService.userInfo.mainEnvironment[0].title;
-		console.log('Aoo environment : ' + this.appEnvironment );
+		//console.log('Aoo environment : ' + this.appEnvironment );
 	}
 }

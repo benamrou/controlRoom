@@ -42,6 +42,9 @@ export class CountStep {
     qtyadjustment: number = 0;
     stkupdate: number = 0;
     stkupdatedate: string;
+    progressInitialisation: number = 0;
+    progressStockUpdate: number = 0;
+    progressStockCopy : number = 0;
 }
 export class MovementData {
   movements: Movement [] = [];
@@ -258,9 +261,11 @@ export class CountingService {
                         case 1:
                             count.initialisation = data[i].STATUS;
                             count.initialisationdate = data[i].UPDATE;
+                            count.progressInitialisation = data[i].PROGRESS_INIT;
                             break;
                         case 2:
                             count.stkcopy = data[i].STATUS;
+                            count.progressStockCopy = data[i].PROGRESS_STK_COPY;
                             break;
                         case 3:
                             count.qty = data[i].STATUS;
@@ -274,6 +279,7 @@ export class CountingService {
                         case 6:
                             count.stkupdate = data[i].STATUS;
                             count.stkupdatedate = data[i].UPDATE;
+                            count.progressStockUpdate = data[i].PROGRESS_STK;
                             break;
                         default:
                             break;

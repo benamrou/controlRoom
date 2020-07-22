@@ -6,19 +6,23 @@ import { ProcessService, ProcessData } from '../../../shared/services/index';
 import { MovementData, Movement } from '../../../shared/services/index';
 import { RejectionData, Rejection } from '../../../shared/services/index';
 import { SelectItem, Chips, Message, DataGrid } from '../../../shared/components/index';
+import { MessageService } from '../../../shared/components/';
+import { interval } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 
 
 @Component({
 	moduleId: module.id,
     selector: 'counting-cmp',
     templateUrl: './counting.component.html',
-    providers: [CountingService, ProcessService],
+    providers: [CountingService, ProcessService, MessageService],
     styleUrls: ['./counting.component.scss', '../../../app.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
 
 export class CountingComponent {
    
+   screenID;
    columnOptions: SelectItem[];
 
   // Search result 
@@ -36,7 +40,6 @@ export class CountingComponent {
 
   // Search action
    searchCode: string = '';
-   msgs: Message[] = [];
    // Selected element
    selectedElement: Count;
 
@@ -44,6 +47,11 @@ export class CountingComponent {
   movementData: MovementData;
   //rejectionData
   rejectionData: RejectionData;
+
+  subscription: any[] = [];
+  runEvery;
+  runEverySubscription;
+  isCompleted : boolean = false;
 
   // Progress gathering data
   isCountingDetailInqueryPerformed: boolean = false;
@@ -59,7 +67,12 @@ export class CountingComponent {
     [{type: 'info', msg: 'CONTROL - Check in-between operations prior to the counting integration. '}],
   ];
 
-  constructor(private _countingService: CountingService, private _processService: ProcessService) {
+  constructor(private _countingService: CountingService, private _processService: ProcessService, 
+              private _messageService: MessageService) {
+
+    // The screen ID 
+    this.screenID =  'SCR0000000007';
+    
     this.columnsResult = [
       { field: 'company', header: 'Third-Party' },
       { field: 'inventorydate', header: 'Counting date' },
@@ -97,11 +110,12 @@ export class CountingComponent {
     let datePipe = new DatePipe('en-US');
     this.razSearch();
     if (this.countingDate) {
-      this.msgs.push({severity:'info', summary:'Info Message', detail: 'Looking for counting on : ' + JSON.stringify(this.countingDate)});
+      this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for counting on : ' + 
+                      JSON.stringify(datePipe.transform(this.countingDate,"MM/dd/yyyy")) });
     } else {
-      this.msgs.push({severity:'info', summary:'Info Message', detail: 'Looking for all the countings.'});    
+      this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for all the countings.'});    
     }
-    this._countingService.getCountingIntegrationInfo_STEP1(datePipe.transform(this.countingDate, 'MM/dd/yyyy'))
+    this.subscription.push(this._countingService.getCountingIntegrationInfo_STEP1(datePipe.transform(this.countingDate, 'MM/dd/yyyy'))
             .subscribe( 
                 data => { if (data.counts.length > 0) {
                     this.searchResult = data; // put the data returned from the server in our variable
@@ -112,12 +126,12 @@ export class CountingComponent {
               },
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                      this.msgs.push({severity:'error', summary:'ERROR Message', detail: error });
+                      this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                 },
-                () => {this.msgs.push({severity:'warn', summary:'Info Message', detail: 'Retrieved ' + 
+                () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Retrieved ' + 
                                      this.searchResult.counts.length + ' reference(s).'});
                 }
-            );
+            ));
   }
 
   razSearch () {
@@ -131,21 +145,29 @@ export class CountingComponent {
     this.alerts = [[],[],[],[],[],[]];
     this.rejectionData = null;
     this.movementData = null;
+    this.isCompleted = false;
+    this.ngOnDestroy();
+    
     this.isCountingDetailInqueryPerformed = true;
-    this.msgs.push({severity:'info', summary:'Info Message', detail: 'Gathering information for counting on store ' + event.data.site});
+    this._messageService.add({severity:'info', summary:'Info Message', detail: 'Gathering information for counting on store ' + event.data.site});
     this.getGOLDIntegration(datePipe.transform(event.data.inventorydate, 'MM/dd/yyyy'), event.data.site, event.data.filename);
-    this.getGOLDStep(datePipe.transform(event.data.inventorydate, 'MM/dd/yyyy'), event.data.site, event.data.filename);
+    
+    //this.runEvery = interval(10000);
+
+    this.runEverySubscription = interval(10000).pipe(takeWhile(() => !this.isCompleted)).subscribe(val => {this.getGOLDStep(datePipe.transform(event.data.inventorydate, 'MM/dd/yyyy'), 
+                                                                      event.data.site, event.data.filename);
+                            });
     
     this.checkStep1_PICSLoadProcess(this.selectedElement);
     
     //this.checkAlert(this.selectedElement, this.search_STEP2_Result, this.search_STEP3_Result, 
     //                datePipe.transform(event.data.inventorydate, 'MM/dd/yyyy'), event.data.site);
-    this.msgs.push({severity:'warn', summary:'Info Message', detail: 'Counting data retrieved'});
+    this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Counting data retrieved'});
   }
 
   getGOLDIntegration(countingDate: string, site: string, filename: string) {
     let datePipe = new DatePipe('en-US');
-    this._countingService.getCountingIntegrationInfo_STEP2(countingDate, site, filename)
+    this.subscription.push(this._countingService.getCountingIntegrationInfo_STEP2(countingDate, site, filename)
             .subscribe( 
                 data => { this.search_STEP2_Result = data; 
                 this.overallPercentage = 1 - (this.search_STEP2_Result.failure.total+this.selectedElement.failure.total + this.selectedElement.unknown.total)
@@ -156,15 +178,15 @@ export class CountingComponent {
                 }, // put the data returned from the server in our variable
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                      this.msgs.push({severity:'error', summary:'ERROR Message', detail: error });
+                      this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                 },
                 () => {}
-            );
+            ));
   }
 
   getGOLDStep(countingDate: string, site: string, filename: string) {
     let datePipe = new DatePipe('en-US');
-    this._countingService.getCountingIntegrationInfo_STEP3(countingDate, site, filename)
+   let stepSubscribe = this._countingService.getCountingIntegrationInfo_STEP3(countingDate, site, filename)
             .subscribe( 
                 data => { this.search_STEP3_Result = data; 
                           this.checkStep2_GOLDProcess(this.search_STEP3_Result);
@@ -172,9 +194,17 @@ export class CountingComponent {
               }, // put the data returned from the server in our variable
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                      this.msgs.push({severity:'error', summary:'ERROR Message', detail: error });
+                      this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                 },
-                () => {}
+                () => { 
+                  console.log('this.search_STEP3_Result :', this.search_STEP3_Result );
+                  if (this.search_STEP3_Result.progressStockUpdate >= 1) {
+                    stepSubscribe.unsubscribe();
+                    this.runEverySubscription.unsubscribe();
+                    this.isCompleted = true;
+                 }
+                 else {  this.subscription.push(stepSubscribe);}
+                }
             );
   }
 
@@ -186,11 +216,12 @@ export class CountingComponent {
  */
  checkStep0_SaleUpload (countingDate: string, site: string) {
   let processData: ProcessData;
-  this._processService.getBatchDuration('pssti12p','10 ' + site, countingDate)
+  this.alerts[0] = [];
+  this.subscription.push(this._processService.getBatchDuration('pssti12p',' 10 ' + site + ' ', countingDate)
             .subscribe( 
                 data => { processData = data; 
+                this.alerts[0] = [];
                 if (processData.processes.length > 0) {
-                  this.alerts[0] = [];
                   for (let i=0; i < processData.processes.length; i++) {
                     
                     this.alerts[0].push({ type: 'success', msg: 'STEP 0 - Sale upload PSSTI12P program ran for store ' + 
@@ -204,10 +235,10 @@ export class CountingComponent {
                 }}, // put the data returned from the server in our variable
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                      this.msgs.push({severity:'error', summary:'ERROR Message', detail: error });
+                      this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                 },
                 () => {}
-            );
+            ));
  }
 
 /**
@@ -215,6 +246,8 @@ export class CountingComponent {
  * @param counting 
  */
  checkStep1_PICSLoadProcess (counting: any) {
+   this.alerts[1] = [];
+   this.alerts[2] = [];
    // Check if file has been uploaded
    //console.log(' Counting PICSLoadProcess : ' + JSON.stringify(counting));
     if (counting.totalcount === 0) {
@@ -239,6 +272,7 @@ export class CountingComponent {
  * @param counting 
  */
  checkStep2_GOLDProcess (countingStepGOLD: any) {
+  this.alerts[3] = [];
    // Check if file has been uploaded
     if (countingStepGOLD.initialisation === 0) {
       this.alerts[3].push({ type: 'info', msg: 'STEP 3 - Counting has not been integrated...'});
@@ -255,6 +289,7 @@ export class CountingComponent {
  checkStep3_GOLDProcess (countingStepGOLD: any) {
    // Check if file has been uploade
    //console.log('countingStepGOLD: '  + JSON.stringify(countingStepGOLD));
+   this.alerts[4] = [];
     if (countingStepGOLD.stkupdate === 0) {
       this.alerts[4].push({ type: 'info', msg: 'STEP 4 - Counting has NOT been validated...'});
     } else {
@@ -269,7 +304,7 @@ export class CountingComponent {
  * @param site 
  */
  check_MovementInBetween (countingDate: string, site: string, filename: string) {
-  this._countingService.getMovementsInBetween(countingDate, site, filename)
+  this.subscription.push(this._countingService.getMovementsInBetween(countingDate, site, filename)
             .subscribe( 
                 data => { this.movementData = data; 
                   this.alerts[5] = [];
@@ -284,10 +319,10 @@ export class CountingComponent {
                 }}, // put the data returned from the server in our variable
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                      this.msgs.push({severity:'error', summary:'ERROR Message', detail: error });
+                      this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                 },
                 () => {}
-            );
+            ));
  }
 
 
@@ -297,15 +332,21 @@ export class CountingComponent {
  * @param site 
  */
  getRejection (countingDate: string, site: string, filename: string) {
-  this._countingService.getRejection(countingDate, site, filename)
+  this.subscription.push(this._countingService.getRejection(countingDate, site, filename)
             .subscribe( 
                 data => { this.rejectionData = data; }, // put the data returned from the server in our variable
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                      this.msgs.push({severity:'error', summary:'ERROR Message', detail: error });
+                      this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                 },
                 () => {}
-            );
+            ));
  }
+
+  ngOnDestroy() {
+    for(let i=0; i< this.subscription.length; i++) {
+      this.subscription[i].unsubscribe();
+    }
+  }
 }
 

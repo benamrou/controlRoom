@@ -1,0 +1,121 @@
+<app-page-header [heading]="'Cycle Count Dashboard'" [icon]="'fa-calendar'"
+                 [(screenID)]="screenID"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+<p></p>
+
+
+  <!-- Spiral when loading " -->
+<div *ngIf="((!reportCycleCountActivity) || refreshingData)">
+  <svg class="loading_spinner" viewBox="0 0 50 50" style="position: fixed; margin-top: 2em; margin-left: 2em; ">
+      <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+  </svg>
+</div>
+
+  <!-- Filter criteria " -->
+<filter-cmp #ICRfilter *ngIf="filterReady" [(selectedNetwork)]="selectedNetwork"  
+                  [(selectedStructure)]="selectedStructure" [(selectedFlow)]="selectedFlow" 
+                  (clickRefresh)="refreshClicked()"
+                  (initCompleted)="getDashboardData()"
+                  [disabledButton]="!(reportCycleCountActivity  && (searchResultCycleCount.length === 0))">
+</filter-cmp>
+
+<br>
+<!-- Panel result style="width: 50%;" -->
+<div class=" content"  *ngIf="reportCycleCountActivity  && (searchResultCycleCount.length === 0)" style="margin-top: 7em;">
+  <h6 style="text-align: center;margin-top: 5em;font-weight: bolder;border-bottom: 0.1em black dotted;color: black;border-top: 0.1em black dotted;">
+      No data available
+  </h6>
+</div>
+
+<div class=" col-12" style="margin-top: 7em;" [ngStyle]="{'visibility': reportCycleCountActivity  && (searchResultCycleCount.length > 0) ? 'visible':'hidden'}" >
+  <div class=" card card-chart">
+    <div class=" card-header">
+      <div class=" row">
+        <div class=" col-sm-6 text-left">
+          <h6 class=" card-category">Inventory Adjustments</h6>
+          <h4 class=" card-title">Volume Neg./zero</h4>
+        </div>
+        <div class=" col-sm-6">
+          <div class=" btn-group btn-group-toggle float-right" data-toggle="buttons">
+            <label class=" btn btn-sm btn-danger btn-simple"  [ngClass]="{'active':buttonEffect.NEG_DISPLAY}"
+                  (click)="clickedData('NEG_DISPLAY')" >
+              <input checked="checked" name="options" type="radio" />
+
+              <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block">Negative</span>
+              <span class=" d-block d-sm-none">
+                <i class=" tim-icons icon-single-02"> </i>
+              </span>
+            </label>
+            <label class=" btn btn-sm btn-danger btn-simple" [ngClass]="{'active':buttonEffect.ZERO_DISPLAY}"
+                  (click)="clickedData('ZERO_DISPLAY')">
+              <input  class=" d-none d-sm-none" name="options" type="radio" />
+              <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block" > Zero </span>
+              <span class=" d-block d-sm-none"> <i class=" tim-icons icon-gift-2"> </i> </span>
+            </label>
+            <label class=" btn btn-sm btn-danger btn-simple"  [ngClass]="{'active':buttonEffect.OTHERS_DISPLAY}"
+                  (click)="clickedData('OTHERS_DISPLAY')">
+              <input  class=" d-none d-sm-none" name="options" type="radio" />
+              <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block" > Others </span>
+              <span class=" d-block d-sm-none"> <i class=" tim-icons icon-gift-2"> </i> </span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class=" card-body">
+      <div class=" chart-area">
+        <chart-cmp 
+            [(chart_id)]='chartConfigActivity.id' [(chart_type)]='chartConfigActivity.type'
+            [axis_labels]='chartConfigActivity.axis_labels' [label_graph]='chartConfigActivity.label_graph'
+            [data]='chartConfigActivity.data' [nbSetOfData]='chartConfigActivity.nbSetOfData'
+            [borderColor]='chartConfigActivity.borderColor'
+            [stacked]= "false"
+            [height]="'400px'"
+            [width]="'100%'"
+            [chart_unit]="' item(s)'"
+            [raw_data]="searchResultCycleCount"
+            [report_id]="screenID"
+            [report_title]="reportTitleNeg"
+            [report_content]="reportContentNeg"
+            [(refreshChart)]='chartConfigActivity.refreshChart'>
+          </chart-cmp>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+<div class=" col-12" [ngStyle]="{'visibility': reportCycleCountActivity  && (searchResultCycleCount.length > 0) ? 'visible':'hidden'}" >
+  <div class=" card card-chart">
+    <div class=" card-header">
+      <div class=" row">
+        <div class=" col-sm-6 text-left">
+          <h6 class=" card-category">Inventory Adjustments</h6>
+          <h4 class=" card-title">Performance - % Negative coverage</h4>
+        </div>
+      </div>
+    </div>
+    <div class=" card-body" >
+      <div class=" chart-area">
+        <chart-cmp 
+            [(chart_id)]='chartConfigActivity_Performance.id' [(chart_type)]='chartConfigActivity_Performance.type'
+            [axis_labels]='chartConfigActivity_Performance.axis_labels' [label_graph]='chartConfigActivity_Performance.label_graph'
+            [data]='chartConfigActivity_Performance.data' [nbSetOfData]='chartConfigActivity_Performance.nbSetOfData'
+            [borderColor]='chartConfigActivity_Performance.borderColor'
+            [stacked]= "false"
+            [height]="'400px'"
+            [width]="'100%'"
+            [chart_unit]="'%'"
+            [raw_data]="searchResultCycleCount"
+            [report_id]="screenID"
+            [report_title]="reportTitlePerf"
+            [report_content]="reportContentPerf"
+            [refreshChart]='chartConfigActivity_Performance.refreshChart'>
+          </chart-cmp>
+      </div>
+    </div>
+  </div>
+  </div>

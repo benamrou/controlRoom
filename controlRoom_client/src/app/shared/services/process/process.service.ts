@@ -143,7 +143,7 @@ export class ProcessService {
         // Batch to execute
         batchid + ' ' + batchid + '.icr' + ' $USERID ' + parameter);
 
-    //console.log('Executing job : ' + JSON.stringify(headersSearch));
+    console.log('Executing job : ' ,headersSearch);
     return this.http.execute(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
     }));

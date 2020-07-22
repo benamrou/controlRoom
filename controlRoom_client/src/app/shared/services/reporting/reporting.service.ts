@@ -25,6 +25,10 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
 export class ReportingService {
 
   private baseReportingScheduleUrl: string = '/api/reporting/1/';
+
+
+  private baseDashboardUrl: string = '/api/dashboard/';
+  private baseDashboardSmartUrl: string = '/api/dashboard/1/';
   
   private reportingList: any[] ;
   private request: string;
@@ -53,30 +57,52 @@ export class ReportingService {
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-        return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+        return this.http.get(this.request, this.params, this.options).map(response => {
                 let data = <any> response;
-                let schedule, site, newSupplierPlannings;
-                //console.log('Supplier schedule JSON: ' +  data.length + ' => ' + JSON.stringify(data));
-                if (data.length > 0 ) {
-                    for(let i = 0; i < data.length; i ++) {
-                        //console.log ('i: ' + i + ' itemInfo: ' + JSON.stringify(this.itemInfo));
-                        //console.log ('i: ' + i + ' data: ' + JSON.stringify(data[i]));
-                        //console.log ('BEFORE i: ' + i + ' this.supplierSchedule ===> ' + JSON.stringify(this.supplierSchedule));
-                        //console.log ('BEFORE i: ' + i + ' data[i] ===> ' + JSON.stringify(data[i]));
-                        //
-
-                        //console.log ('AFTER i: ' + i + ' this.supplierSchedule ===> ' + JSON.stringify(this.supplierSchedule));
-                    }  
-                    //console.log('this.fillWorkingSchedule COMPLETED => ' + JSON.stringify(this.supplierSchedule));
-                    //this.regroupSchedule(this.supplierSchedule);
-                        //schedule.start = this.datePipe.transform(data[i].LISDDEB, 'yyyy-MM-dd');
-                        //schedule.end = this.datePipe.transform(data[i].LISDFIN, 'yyyy-MM-dd');
-    
-                }
-                //console.log('Supplier Schedule COMPLETED => ' + JSON.stringify(this.supplierSchedule));
                 return this.reportingList;
-            }));
+            });
   }
 
 
+  /**
+   * Get Dashboard data using the dashboard Id
+   * @param dashboardId 
+   */
+  getDashboard(dashboardId: string) {
+    this.request = this.baseDashboardUrl;
+    let headersSearch = new HttpHeaders();
+    let options = new HttpHeaders();
+    this.params= new HttpParams();
+    this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+
+    headersSearch = headersSearch.set('DSH_ID', dashboardId);
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    return this.http.get(this.request, this.params, headersSearch).map(response => {
+      console.log('Data Dashboard received');
+            let data = <any> response;
+            return data;
+    });
+  }
+
+
+  /**
+   * Get Dashboard data using Smart data extract with the dashboard Id
+   * @param dashboardId 
+   */
+  getDashboardSmart(dashboardId: string) {
+    this.request = this.baseDashboardSmartUrl;
+    let headersSearch = new HttpHeaders();
+    let options = new HttpHeaders();
+    this.params= new HttpParams();
+    this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+
+    headersSearch = headersSearch.set('DSH_ID', dashboardId);
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    return this.http.get(this.request, this.params, headersSearch).map(response => {
+            let data = <any> response;
+            return data;
+    });
+  }
 }

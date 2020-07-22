@@ -1,0 +1,45 @@
+<div class="row" style="position: absolute; z-index: 1" *ngIf="networkDataReady && structureDataReady && flowDataReady">
+    <div class=" col-lg-4" style="width : 500px" *ngIf="networkDataReady">
+      <p-panel header="LOCATIONS/NETWORK" [toggleable]="true" [style]="{'border': '1px solid #D5D5D5'}">
+            <p-tree [value]="network.data" selectionMode="checkbox" [(selection)]="selectedNetwork" 
+                    (onNodeSelect)="nodeSelect(flatSelectedNetworkID,$event)"
+                    (onNodeUnselect)= "nodeUnSelect(flatSelectedNetworkID,$event)">
+              <ng-template let-node  pTemplate="default">
+                {{node.NODE_ID}} - {{node.LABEL}}
+            </ng-template>
+            </p-tree>
+      </p-panel>
+    </div>
+    <div class=" col-lg-4" style="width : 700px" *ngIf="structureDataReady">
+      <p-panel header="MERCHANDISE" [toggleable]="true"  [style]="{'border': '1px solid #D5D5D5'}">
+            <p-tree [value]="structure.data" selectionMode="checkbox" [(selection)]="selectedStructure"
+                    (onNodeSelect)="nodeSelect(flatSelectedStructureID,$event)"
+                    (onNodeUnselect)= "nodeUnSelect(flatSelectedStructureID,$event)">
+              <ng-template let-node  pTemplate="default">
+                {{node.NODE_ID}} - {{node.LABEL}}
+            </ng-template>
+          </p-tree>
+      </p-panel>
+    </div>
+    <div class=" col-lg-4" style="width : 400px" *ngIf="flowDataReady">
+      <div class="row">
+        <div class="col-lg-7">
+            <p-panel header="FLOW" [toggleable]="true"  [style]="{'border': '1px solid #D5D5D5'}">
+                    <p-tree [value]="flow" selectionMode="checkbox" [(selection)]="selectedFlow"
+                            (onNodeSelect)="nodeSelect(flatSelectedFlowID,$event)"
+                            (onNodeUnselect)= "nodeUnSelect(flatSelectedFlowID,$event)">
+                            <ng-template let-node  pTemplate="default">
+                              {{node.NODE_ID}} - {{node.LABEL}}
+                          </ng-template>
+                    </p-tree>
+            </p-panel>
+        </div>
+        <div class="col-lg-5" style="display: flex;">
+          <button type="submit" pButton  (click)="clickRefresh.emit()" 
+                  label="REFRESH" style="margin-right: 15px; align-self: center;"
+                  [disabled]="disabledButton">
+            </button>
+        </div>
+      </div>
+    </div>
+</div>
