@@ -74,7 +74,8 @@ function logFile(uniqueId, message, username) {
 */
 function log (uniqueId, message, username, level) {
     var timestamp = timestampLog();
-    var printMessage = timestamp + " [" + username + "] " + uniqueId  + ": " + JSON.stringify(message);
+    var printMessage = timestamp + " [" + username + "] " + uniqueId  + ": " + JSON.stringify(message) + '\n';
+
     if (level) {
         if (level === 0 ) {
             console.log(printMessage);
@@ -95,7 +96,7 @@ function log (uniqueId, message, username, level) {
         console.log(printMessage);
     }
 
-    logFile(uniqueId, message, username);
+    logFile(uniqueId, printMessage, username);
 };
 
 module.exports.log = log; 

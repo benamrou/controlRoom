@@ -57,21 +57,31 @@ module.exports.getNextTicketID = getNextTicketID;
 *
 */
 function executeLibQuery (ticketId, queryNum, params, user, database_sid, language, request, response) {
-    executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, 
+    let volume = 0; // No need for big result query
+    executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, volume, 
     function (err,data) {
         //callbackSendData(response,data).then(console.log('Done execution'))
+        if(err) {
+            logger.log(ticketId, 'Error executeLibQuery ' + JSON.stringify(err), 3);
+        }
         callbackSendData(response,data);
     });
 }
 module.exports.executeLibQuery = executeLibQuery; 
 
 function executeLibQueryUsingMyCallback (ticketId, queryNum, params, user, database_sid, language, request, response, mycallback) {
-    executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, mycallback);
+    let volume = 0; // No need for big result query
+    try {
+        executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, volume, mycallback);
+    } catch(err) {
+        logger.log(user, 'Execution SQL error : ' + JSON.stringify(err), user, 3);
+    }
 }
 module.exports.executeLibQueryUsingMyCallback = executeLibQueryUsingMyCallback; 
 
 function executeQuery (ticketId, query, params, user, database_sid, language, request, response) {
-    executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, 
+    let volume = 0; // No need for big result query
+    executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, volume, 
     function (err,data) {
         //callbackSendData(response,data).then(console.log('Done execution'))
         callbackSendData(response,data);
@@ -80,7 +90,8 @@ function executeQuery (ticketId, query, params, user, database_sid, language, re
 module.exports.executeQuery = executeQuery; 
 
 function executeQueryUsingMyCallBack (ticketId, query, params, user, database_sid, language, request, response, mycallback) {
-    executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, mycallback);
+    let volume = 0; // No need for big result query
+    executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, volume, mycallback);
 }
 module.exports.executeQueryUsingMyCallBack = executeQueryUsingMyCallBack; 
 
@@ -111,20 +122,22 @@ async function callbackSendData(response, data) {
 */
 function executeSmartLoadedQuery (ticketId, queryNum, params, user, database_sid, language, mode, 
                             filename, request, response) {
+     let volume = 1; // Use for big result query
     // Use stamped file if mode =0
-    if (mode === '0' ) {
+    if (mode === 0 ) {
         // File xists
-        if (fs.existsSync(filename)) {
+        if (fs.existsSync(__dirname + '/../../' + filename)) {
             let data = require(__dirname + '/../../' + filename);
+            //let data = require(filename);
             logger.log(ticketId, filename + " File(s) returned... [FETCH]", user);
             callbackSendData(response,data);
             return;
         }
     }
-     executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, 
-                            function (err,data) {
-                                callbackSendData(response,data);
-                                fs.writeJson(filename, data);
+        executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, volume,
+                                function (err,data) {
+                                    callbackSendData(response,data);
+                                    if (filename) { fs.writeJson(filename, data)};
     });
 }
 
@@ -141,6 +154,7 @@ module.exports.executeSmartLoadedQuery = executeSmartLoadedQuery;
 * @param {String} user is the user requesting this transaction
 * @param {Object} request HTTP request. The request must contain :
 * @param {Object} response is the query server response (contains the results of the query)
+* @param {Object} volume is 1 will use unlimited rows connector if 0 will use 70K rows connectors (check config file).
 * @param {Object} callback is the callback function containing the err and data
 *        callback.err the message error
 *        callback.data the data
@@ -148,7 +162,7 @@ module.exports.executeSmartLoadedQuery = executeSmartLoadedQuery;
 * Sub-Method calls PKREQUESTMANAGER.CALLQUERY in the Oracle Database
 *
 */
-async function executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, callback) {
+async function executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, volume, callback) {
    
     try {
         let SQLquery = "BEGIN PKREQUESTMANAGER.CALLQUERY(" + ticketId;
@@ -167,6 +181,7 @@ async function executeLibQueryCallback(ticketId, queryNum, params, user, databas
             request,
             response,
             user,
+            volume,
             callback
             )
             .catch (function(err) {
@@ -192,6 +207,7 @@ module.exports.executeLibQueryCallback = executeLibQueryCallback;
 * @param {String} user is the user requesting this transaction
 * @param {Object} request HTTP request. The request must contain :
 * @param {Object} response is the query server response (contains the results of the query)
+* @param {Object} volume is 1 will use unlimited rows connector if 0 will use 70K rows connectors (check config file).
 * @param {Object} callback is the callback function containing the err and data
 *        callback.err the message error
 *        callback.data the data
@@ -199,7 +215,7 @@ module.exports.executeLibQueryCallback = executeLibQueryCallback;
 * Sub-Method calls PKREQUESTMANAGER.CALLQUERY in the Oracle Database
 *
 */
-async function executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, callback) {
+async function executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, volume, callback) {
 
     let SQLquery = "BEGIN PKREQUESTMANAGER.EXECUTEQUERY(" + ticketId;
 
@@ -217,6 +233,7 @@ async function executeQueryCallback(ticketId, query, params, user, database_sid,
         request,
         response,
         user,
+        volume,
         callback
         )
         .catch (function(err) {
@@ -230,4 +247,42 @@ async function executeQueryCallback(ticketId, query, params, user, database_sid,
   
 
 module.exports.executeQueryCallback = executeQueryCallback; 
+
+
+/**
+* Method executeLibQuery is executing a query in parameter structure through their reference number. 
+*
+*
+* @method executeSQL
+* @param {String} sql represents the query SELECT/UPDATE/INSERT statement
+* @param {String} bindParams are the bind variables value. The params object must respect the param varibale in their orders.
+* @param {String} options is the user requesting this transaction
+*
+* Sub-Method calls PKREQUESTMANAGER.CALLQUERY in the Oracle Database
+*
+*/
+async function executeSQL(ticketId, sql, bindParams, user, request, response, callback)  {
+
+    //logger.log(ticketId, "LIBQUERY with Callback: ", user);
+    logger.log(ticketId, sql + '\n' + JSON.stringify(bindParams), user);
+
+    let promiseExecution = await dbConnect.executeQuery(sql, bindParams,
+                            { autoCommit: true}, 
+                            ticketId,
+                            request,
+                            response,
+                            user,
+                            0,
+                            callback)
+        .catch (function(err) {
+            //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
+            console.log('SQLQuery - executeSQL : ' + err); 
+            //app.next(err);
+        });
+        //return promiseExecution;
+        
+    };
+  
+
+module.exports.executeSQL = executeSQL; 
 

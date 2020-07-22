@@ -24,6 +24,8 @@
 var path = require('path');
 var formidable = require('formidable');
 var fs = require('fs');
+let oracledb = require('oracledb');      // Oracle DB connection
+var logger = require("../utils/logger.js");
 module.exports = function (app, SQL) {
 
 var module = {};
@@ -43,36 +45,7 @@ var module = {};
 *
 */
 module.get = function (request,response) {
-        app.get('/api/counting/', function (request, response) {
-        "use strict";
-        response.setHeader('Access-Control-Allow-Origin', '*');
-        // requestuest methods you wish to allow
-        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
-        SQL.executeLibQuery(SQL.getNextTicketID(),
-                           "ORD0000001", 
-                            "'{" + request.query.PARAM + "}'",
-                            request.header('USER'),
-                            "'{" + request.header('DATABASE_SID') + "}'", 
-                            "'{" +request.header('LANGUAGE') + "}'", 
-                            request, response);
-        });
-
-        app.get('/api/order/1/', function (request, response) {
-        "use strict";
-        response.setHeader('Access-Control-Allow-Origin', '*');
-        // requestuest methods you wish to allow
-        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
-        SQL.executeLibQuery(SQL.getNextTicketID(),
-                           "CNT0000002", 
-                            "'{" + request.query.PARAM + "}'",
-                            request.header('USER'),
-                            "'{" + request.header('DATABASE_SID') + "}'", 
-                            "'{" +request.header('LANGUAGE') + "}'", 
-                            request, response);
-        });
-    };
+}
 
 
 /**
@@ -92,13 +65,30 @@ module.get = function (request,response) {
 module.post = function (request,response) {
     app.post('/api/upload/', function (request, response) {
         // create an incoming form object
-        var form = new formidable.IncomingForm();
+        logger.log('[UPLOAD]', 'request : ' + request, 'upload', 2);
+        console.log(request);
+        var incoming = new formidable.IncomingForm();
 
         //Formidable uploads to operating systems tmp dir by default
-        form.uploadDir = "./uploads";       //set upload directory
-        form.keepExtensions = true;     //keep file extension
+        incoming.uploadDir = "../../uploads";       //set upload directory
+        incoming.keepExtensions = true;     //keep file extension
 
-        form.parse(request, function(err, fields, files) {
+        //logger.log('[UPLOAD]', request), user, 2);
+        /* @fileBegin : Begains to upload files */
+        incoming.on('fileBegin', (name, file) => {
+            logger.log('[UPLOAD]', 'fileBegin : ' + name, 'upload', 2);
+        });
+
+        /* @error : On error We can send resposnse as failed with err message */
+        incoming.on('error', err => logger.log('[UPLOAD]', 'files : ' + JSON.stringify(err), 'upload', 2));
+
+        /* @end: When all the files are uploaded send response as success with success message */
+        incoming.on('end', () => {
+            logger.log('[UPLOAD]', 'Uploaded Successfully : ' + JSON.stringify(err), 'upload', 2);
+        });
+
+        incoming.parse(request, function(err, fields, files) {
+            logger.log('[UPLOAD]', 'files : ' + JSON.stringify(files), 'upload', 2);
             response.setHeader('Access-Control-Allow-Origin', '*');
             // requestuest methods you wish to allow
             response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -112,7 +102,7 @@ module.post = function (request,response) {
             console.log("file type: "+JSON.stringify(files.fileUploaded.type));
             console.log("astModifiedDate: "+JSON.stringify(files.fileUploaded.lastModifiedDate));
 
-            //Formidable changes the name of the uploaded file
+            //Formidable changes the name of the uploaded file 
             //Rename the file to its original name
             fs.rename(files.fileUploaded.path, './uploads/'+files.fileUploaded.name, function(err) {
             if (err) {
@@ -126,6 +116,45 @@ module.post = function (request,response) {
             response.end();
             });
         });
-    };
+
+    app.post('/api/upload/1/', function (request, response) {
+            "use strict";
+            response.setHeader('Access-Control-Allow-Origin', '*');
+            // requestuest methods you wish to allow
+            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+
+            //console.log('/api/upload/1/ :', request);
+            SQL.executeSQL(SQL.getNextTicketID(),
+                            "INSERT INTO JSON_INBOUND (jsonuserid, jsonfile, jsoncontent, jsonparam, jsonsid, jsonlang) " +
+                            " values (:jsonuserid, :jsonfile, :jsoncontent, :jsonparam, :jsonsid, :jsonlang) returning jsonid into :cursor",
+                            {jsonuserid: request.header('USER'),
+                             jsonfile: request.header('FILENAME'), 
+                             jsoncontent: JSON.stringify(request.body), 
+                             jsonparam: "{" + request.query.PARAM + "}",
+                             jsonsid: request.header('DATABASE_SID'), 
+                             jsonlang: request.header('LANGUAGE'),
+                             cursor: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT } },
+                             request.header('USER'),
+                             request,
+                             response,
+                             function (err, data) {
+                                 console.log('Upload :' + JSON.stringify(data));
+                                 if (err) {
+                                    response.json({
+                                        RESULT: -1,
+                                        MESSAGE: JSON.stringify(err)
+                                    });  
+                                 }
+                                 else {
+                                    response.json({
+                                        RESULT: data,
+                                        MESSAGE: ''
+                                    });    
+                                }
+                });
+            });
+        };
+
    return module;
 }

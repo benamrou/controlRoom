@@ -1,0 +1,41 @@
+<ROOT>
+    <QUERY> 
+WITH PO_PARTIALLY AS (SELECT foucnuf, foulibl, arlcexr, arlcexvl LV, pkstrucobj.get_desc@Heinens_Custom_Prod(1,cclcinrc, ''HN'') ITEM_DESC, cclcexcde, 
+       ccldcde, ccldlivd, NVL(cclqtep, cclqtec)/ccluvup NB_CASE_TO_BE_DELIVERED, 
+       cclcinlc, cclcinrc, cclseqvlc, ecdetat
+FROM ccldetccl@Heinens_Custom_Prod, foudgene@Heinens_Custom_Prod, artvl@Heinens_Custom_Prod, cdeentcde@Heinens_Custom_Prod
+WHERE cclcfint=foucfin AND foutype=3 AND foucnuf LIKE ''H%''
+AND cclstatus IN (3, 5,7) 
+AND arlseqvl=cclseqvlc
+AND cclcexcde=ecdcexcde
+AND NVL(cclqtep, cclqtec) >0
+ORDER BY ccldcde ASC),
+DETAIL AS (
+SELECT a.cclcexcde PO_NUM, to_char(TRUNC(a.ccldcde),''MM/DD/RR'') ORDER_DATE, foucnuf VENDOR_CODE, foulibl VENDOR_DESC, 
+       arlcexr ITEM_CODE, ITEM_DESC, LV, SUM(a.cclqtec/a.ccluvup) NB_CASE_ORDERED, SUM(a.cclqtep/a.ccluvup) NB_CASE_PREP, a.cclcinrc, a.cclsite ,
+       a.ccluvup NB_SKU_CASE,
+       LISTAGG(p.cclcexcde || '' [STATUS:'' || ecdetat || '', DLIV:'' || to_char(p.ccldlivd,''MM/DD/RR'') || '']'' , '' - '') WITHIN GROUP ( ORDER BY p.cclcexcde DESC) PO_OPEN,
+       SUM(NB_CASE_TO_BE_DELIVERED) as NB_CASE
+FROM CCLDETCCL@Heinens_Custom_Prod a, PO_PARTIALLY p
+WHERE a.cclcinrc=p.cclcinrc
+AND a.cclstatus > 2
+AND a.cclseqvlc=p.cclseqvlc
+AND a.cclqtec > 0 
+AND a.cclcexcde != p.cclcexcde
+AND TRUNC(a.ccldlivd) > TRUNC(p.ccldlivd)
+GROUP BY a.cclcexcde, foucnuf, foulibl, a.cclcexcde, arlcexr, ITEM_DESC, LV, a.ccldcde, a.cclcinrc, a.cclsite, a.ccluvup)
+SELECT PO_NUM, ORDER_DATE, VENDOR_CODE, VENDOR_DESC,
+	ITEM_CODE, ITEM_DESC, LV, NB_CASE_ORDERED, NB_CASE_PREP, PO_OPEN,
+	NB_CASE as NB_CASE_TO_BE_DELIVERED,
+       ( SELECT SUM(NVL(storeai, 0) + NVL(storeal, 0) - NVL(storeav, 0) +
+                NVL(storeae, 0) + NVL(storeac, 0) - NVL(storear, 0)) qte
+        FROM stocouch@Heinens_Custom_Prod WHERE stocinr=cclcinrc AND stosite=cclsite AND stotpos=0)/ NB_SKU_CASE Inventory
+FROM DETAIL t
+WHERE NB_CASE_ORDERED > NB_CASE_PREP 
+
+  </QUERY>
+  <HEADERIFEMPTY>No Store PO shorted by Open PO</HEADERIFEMPTY>
+  <HEADER>Store PO shorted due to Open PO </HEADER>
+  
+</ROOT>
+

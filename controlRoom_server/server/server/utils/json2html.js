@@ -1,9 +1,12 @@
 
 
+
+var logger = require("../utils/logger.js");
+
 // Builds the HTML Table out of myList json data from Ivy restful service.
 function buildHtmlTable(arr, document, cellRule) {
     let columnSet = [];
-    document+='<table style="border-collapse: collapse; padding-top: 10px">';
+    document+='<table style="border-collapse: collapse; padding-top: 10px; width: 100%">';
 
     /*********************************************/
     /** Table Header */
@@ -33,9 +36,9 @@ function buildHtmlTable(arr, document, cellRule) {
 
     /** Table body */
     for (var i=0, maxi=arr.length; i < maxi; ++i) {
-        document+='<tr>';
+        document+='<tr style="height: 1px;">';
         for (var j=0, maxj=columnSet.length; j < maxj ; ++j) {
-            document+='<td style="border-bottom: 1px solid orange">';
+            document+='<td style="border-bottom: 1px solid orange; border-left: 0px solid; border-right: 0px solid; ">';
             if (arr[i][columnSet[j]] === null) {
                 arr[i][columnSet[j]]= '';
             }
@@ -54,23 +57,8 @@ function buildHtmlTable(arr, document, cellRule) {
                             if(cellRuleJSON.criteria[k].columns.indexOf(j) >= 0 && 
                                cellRuleJSON.criteria[k].rows.indexOf(i) >= 0) {
 
-                                //console.log ("match columns : " + cellRuleJSON.criteria[k].columns + ' / ' + j);
-                                for (let l=0; l < cellRuleJSON.criteria[k].condition.length; l++) {
-                                    //console.log( 'Eval : ' + cellValue + cellRuleJSON.criteria[k].condition[l])
-                                    if(eval("'" + parseFloat(cellValue)  + "'" + cellRuleJSON.criteria[k].condition[l])) {
-                                        cellValue = cellRuleJSON.criteria[k].format[l] + cellValue + cellRuleJSON.criteria[k].endFormat[l];
-                                        break;
-                                        //console.log( 'Adjusting cellValue : ' + cellValue);
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                        //console.log ("cellRuleJSON.criteria[k].columns :" + cellRuleJSON.criteria[k].columns);
-                            if (typeof cellRuleJSON.criteria[k].columns !== "undefined") {
-                                //console.log (" Ok columns :");
-                                if(cellRuleJSON.criteria[k].columns.indexOf(j) >= 0 ) {
-                                    //console.log ("match columns : " + cellRuleJSON.criteria[k].columns + ' / ' + j);
+                                /** If condition criteria exists, ensure cell value respect condition else apply format */
+                                if (cellRuleJSON.criteria[k].hasOwnProperty('condition')) {
                                     for (let l=0; l < cellRuleJSON.criteria[k].condition.length; l++) {
                                         //console.log( 'Eval : ' + cellValue + cellRuleJSON.criteria[k].condition[l])
                                         if(eval("'" + parseFloat(cellValue)  + "'" + cellRuleJSON.criteria[k].condition[l])) {
@@ -80,6 +68,38 @@ function buildHtmlTable(arr, document, cellRule) {
                                         }
                                     }
                                 }
+                                else {
+                                    cellValue = cellRuleJSON.criteria[k].format[0] + cellValue + cellRuleJSON.criteria[k].endFormat[0];
+                                }
+                            }
+                        }
+                        else {
+                        //console.log ("cellRuleJSON.criteria[k].columns :" + cellRuleJSON.criteria[k].columns);
+                            if (typeof cellRuleJSON.criteria[k].columns !== "undefined") {
+                                if(cellRuleJSON.criteria[k].columns.indexOf(j) >= 0 ) {
+
+                                /** If condition criteria exists, ensure cell value respect condition else apply format */
+                                if (cellRuleJSON.criteria[k].hasOwnProperty('condition')) {
+                                    for (let l=0; l < cellRuleJSON.criteria[k].condition.length; l++) {
+                                        //console.log( 'Eval : ' + cellValue + cellRuleJSON.criteria[k].condition[l])
+                                        if(eval("'" + parseFloat(cellValue)  + "'" + cellRuleJSON.criteria[k].condition[l])) {
+                                            if (cellRuleJSON.criteria[k].hasOwnProperty('exceptRows')) {
+                                                if (cellRuleJSON.criteria[k].exceptRows.indexOf(i) === -1) {
+                                                    cellValue = cellRuleJSON.criteria[k].format[l] + cellValue + cellRuleJSON.criteria[k].endFormat[l];
+                                                } 
+                                            }
+                                            else  {
+                                                cellValue = cellRuleJSON.criteria[k].format[l] + cellValue + cellRuleJSON.criteria[k].endFormat[l];
+                                            }
+                                            break;
+                                            //console.log( 'Adjusting cellValue : ' + cellValue);
+                                        }
+                                    }
+                                }
+                                else {
+                                    cellValue = cellRuleJSON.criteria[k].format[0] + cellValue + cellRuleJSON.criteria[k].endFormat[0];
+                                }
+                                }
                             }
                             else {
                                 //console.log ("cellRuleJSON.criteria[k].rows :"  + cellRuleJSON.criteria[k].rows);
@@ -87,15 +107,20 @@ function buildHtmlTable(arr, document, cellRule) {
                                     //console.log (" Ok rows :");
                                     //console.log ("cellRuleJSON.criteria[k].rows.indexOf(i) : " + cellRuleJSON.criteria[k].rows.indexOf(i));
                                     if(cellRuleJSON.criteria[k].rows.indexOf(i) >= 0 ) {
-                                        //console.log ("match columns : " + cellRuleJSON.criteria[k].columns + ' / ' + j);
-                                        for (let l=0; l < cellRuleJSON.criteria[k].condition.length; l++) {
-                                            //console.log( 'Eval : ' + cellValue + cellRuleJSON.criteria[k].condition[l])
-                                            if(eval("'" + parseFloat(cellValue)  + "'" + cellRuleJSON.criteria[k].condition[l])) {
-                                                cellValue = cellRuleJSON.criteria[k].format[l] + cellValue + cellRuleJSON.criteria[k].endFormat[l];
-                                                break;
-                                                //console.log( 'Adjusting cellValue : ' + cellValue);
-                                            }
-                                    }}
+                                    /** If condition criteria exists, ensure cell value respect condition else apply format */
+                                        if (cellRuleJSON.criteria[k].hasOwnProperty('condition')) {
+                                                for (let l=0; l < cellRuleJSON.criteria[k].condition.length; l++) {
+                                                    //console.log( 'Eval : ' + cellValue + cellRuleJSON.criteria[k].condition[l])
+                                                    if(eval("'" + parseFloat(cellValue)  + "'" + cellRuleJSON.criteria[k].condition[l])) {
+                                                        cellValue = cellRuleJSON.criteria[k].format[l] + cellValue + cellRuleJSON.criteria[k].endFormat[l];
+                                                        break;
+                                                        //console.log( 'Adjusting cellValue : ' + cellValue);
+                                                    }
+                                            }}
+                                        }
+                                        else {
+                                            cellValue = cellRuleJSON.criteria[k].format[0] + cellValue + cellRuleJSON.criteria[k].endFormat[0];
+                                        }
                                 }}
                         }
                     }

@@ -1,0 +1,90 @@
+<ROOT>
+    <QUERY> 
+  WITH UBD AS (
+  SELECT  ul_donord, 
+                LISTAGG(''['' || UE_USSCC || '','' || UE_ADRUMS || '']'' , '' / '') 
+                   WITHIN GROUP (ORDER BY UE_USSCC) SSCC_ADDRESS ,
+                  ul_cproin, ul_ilogis, ul_arprom, 
+                  UT_VALIND, SUM(ul_nqtuvc) INV_SKU, SUM(ul_nqteup) INV_PU
+  FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD, TB_TRAUMS@HEINENS_STK_PROD
+  WHERE UT_VALIND IS NOT NULL
+  AND UL_USSCC  = UE_USSCC
+  AND UE_INDFIC = ''1''
+  AND UL_USSCC  = UT_USSCC 
+  AND UL_CSSCC  = UT_CSSCC
+--  AND ul_cproin=''148636''
+  AND UL_NUMLIG = UT_NUMLIG
+  GROUP BY ul_donord, UT_VALIND, ul_cproin, ul_ilogis, ul_arprom),
+UBD_LIST AS (
+  SELECT ul_donord WHS_CODE, 
+         dept_code, dept_desc, 
+         sub_dept_code, sub_dept_desc, 
+         cat_code, cat_desc, 
+         scat_code, scat_desc, 
+         ul_cproin ITEM_CODE, ul_ilogis LV,  
+         ar_libpro ITEM_DESC,
+          ar_fourn VENDOR_CODE, ar_nrsfou VENDOR_DESC,
+         UT_VALIND UBD,
+         DECODE(INV_SKU,0,0,to_date(UT_VALIND, ''RRRRMMDD'') - TRUNC(SYSDATE)) DAYS_LEFT,
+	 AR_DLCJTC CONSUMER_DAYS,
+         NVL((SELECT FLOOR(SUM(smssaiu)/8)
+          FROM stomvsemaine@heinens_custom_prod, artuv@heinens_custom_prod
+          WHERE Arvcinv=smscinl AND arvcexr=ar_cproin AND smssite=ul_donord
+          AND to_number(to_CHAR(TRUNC(SYSDATE), ''RRRRWW'')) - 8 >= smssemaine),0) AVG_WK_SHIP,
+         
+         (SELECT COUNT(1) FROM avetar@heinens_custom_prod WHERE avestat =2 AND avedfin >= TRUNC(SYSDATE) 
+          AND  EXISTS (SELECT 1 FROM aveprix@heinens_custom_prod, artuv@heinens_custom_prod WHERE avintar=aventar
+          AND avidfin >= TRUNC(SYSDATE) AND avicinv=arvcinv AND arvcexr= ar_cproin)) NB_PROM_COMING,
+         (SELECT LISTAGG(''['' || to_char(aveddeb, ''MM/DD/RR'') || '','' || to_char(avedfin, ''MM/DD/RR'') || '']'' , '' / '') 
+                WITHIN GROUP (ORDER BY aventar) 
+          FROM avetar@heinens_custom_prod WHERE avestat =2 AND avedfin >= TRUNC(SYSDATE) AND  EXISTS (SELECT 1 FROM aveprix@heinens_custom_prod, artuv@heinens_custom_prod WHERE avintar=aventar
+          AND avidfin >= TRUNC(SYSDATE) AND avicinv=arvcinv AND arvcexr= ar_cproin)) PROMOTION,
+         INV_SKU,
+         INV_PU,
+	 SSCC_ADDRESS
+  FROM UBD, tb_art@HEINENS_STK_PROD, mv_merchstr
+  WHERE ar_cproin=ul_cproin
+  AND ar_ilogis=ul_ilogis
+  AND ar_arprom=ul_arprom
+  AND inv_sku > 0
+  AND scat_code = ar_niv4)
+SELECT WHS_CODE,
+       DEPT_CODE,
+       DEPT_DESC,
+       SUB_DEPT_CODE,
+       SUB_DEPT_DESC,
+       CAT_CODE,
+       CAT_DESC,
+       SCAT_CODE,
+       SCAT_DESC,
+       CASE WHEN ((DAYS_LEFT-CONSUMER_DAYS) BETWEEN 31 AND 90)  AND
+                 ((INV_SKU - (AVG_WK_SHIP/7)*(DAYS_LEFT-7)) > 0) 
+             THEN ''Caution''
+            WHEN ((DAYS_LEFT-CONSUMER_DAYS) BETWEEN 15 AND 30) AND
+                 ((INV_SKU - (AVG_WK_SHIP/7)*(DAYS_LEFT-7)) > 0) THEN ''Medium''
+            WHEN 7 > (DAYS_LEFT-CONSUMER_DAYS)  AND
+                 ((INV_SKU - (AVG_WK_SHIP/7)*(DAYS_LEFT-7)) > 0) THEN ''High''
+        ELSE ''''
+       END STATUS,
+       VENDOR_CODE,
+       VENDOR_DESC,
+       ITEM_CODE,
+       LV,
+       ITEM_DESC,
+       UBD,
+       DAYS_LEFT,
+       CONSUMER_DAYS,
+       INV_SKU,
+       INV_PU,
+       AVG_WK_SHIP,
+       NB_PROM_COMING,
+       PROMOTION,
+       SSCC_ADDRESS
+FROM UBD_LIST
+ORDER BY WHS_CODE ASC, ITEM_CODE, LV ASC, UBD ASC
+  </QUERY>
+  <HEADERIFEMPTY>No Warehouse items inventory with UBD </HEADERIFEMPTY>
+  <HEADER>Warehouse Warehouse Items inventory with UBD </HEADER>
+  
+</ROOT>
+
