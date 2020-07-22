@@ -15,7 +15,7 @@
     "fs-extra": "^2.1.2",
     "js-yaml": "^3.10.0",
     "jwt-simple": "^0.5.1",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.19",
     "nodemon": "^1.18.4",
     "oracledb": "^2.3.0",
     "ssh2shell": "^1.9.0",
