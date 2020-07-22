@@ -1,0 +1,16 @@
+- [Release notes and notices](./release/release)
+- [Getting started](./start/starting)
+- [Installing](./installation/install)
+- [Configuring after installation](./configuration/config)
+- [Upgrading](./upgrade/upgrade)
+- [Integrating](./integration/integration)
+- [Using](./functional/using)
+- [Administering the users](./admin/admin)
+- [Troubleshooting](./support/troubleshooting)
+- **Being the scene**
+- [DB](./technical/data_structure)
+- **Manual**
+- [Markdown](markdown)
+- **Links**
+- [Access](http://10.200.14.232:9086/icr/)
+- [Source](https://github.com/benamrou/controlRoom)
