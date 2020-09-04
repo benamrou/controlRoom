@@ -219,6 +219,7 @@
                                                       [disabled]="!temporarySchedule[indice].orderActive[ind]" 
                                                       type="text" style="text-align: center; width: 50%" 
                                                       [(ngModel)]="temporarySchedule[indice].leadTime[ind]"
+                                                      (change)="changeMade(indice,ind)"
                                                        name="leadTime_{{indice}}_{{ind}}" pattern="[0-9]{0,3}" 
                                                       title="Lead time is max on 3 decimals."/>
                                             </td>
@@ -243,6 +244,7 @@
                                                 [disabled]="!temporarySchedule[indice].orderActive[ind]" type="text" 
                                                 style="text-align: center; width: 50%" 
                                                 [(ngModel)]="temporarySchedule[indice].collectionTime[ind]"
+                                                (change)="changeMade(indice,ind)"
                                                 name="collectionTime_{{indice}}_{{ind}}" pattern="[0-9]{4}" max="2359" 
                                                 title="Collection time respect format HHMM (24 hours)." />
                                             </td>
@@ -267,6 +269,7 @@
                                                 [disabled]="!temporarySchedule[indice].orderActive[ind]" type="text" 
                                                  style="text-align: center; width: 50%" 
                                                  [(ngModel)]="temporarySchedule[indice].deliveryTime[ind]"
+                                                 (change)="changeMade(indice,ind)"
                                                  name="deliveryTime_{{indice}}_{{ind}}"  pattern="[0-9]{4}" max="2359" 
                                                 title="Delivery time respect format HHMM (24 hours)."/>
                                             </td>

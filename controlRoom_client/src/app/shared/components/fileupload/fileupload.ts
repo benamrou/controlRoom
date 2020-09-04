@@ -5,7 +5,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {ButtonModule} from '../button/button';
 import {MessagesModule} from '../messages/messages';
 import {ProgressBarModule} from '../progressbar/progressbar';
-import {DomHandler} from '../index';
+import {DomHandler} from '../dom/domhandler';
 import {Message} from '../api/message';
 import {PrimeTemplate,SharedModule} from '../api/public_api';
 import {BlockableUI} from '../api/blockableui';
@@ -231,7 +231,6 @@ if (!this.multiple) {
     this.files = [];
 }
 
-console.log('')
 let files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
 for(let i = 0; i < files.length; i++) {
     let file = files[i];

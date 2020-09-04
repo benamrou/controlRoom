@@ -26,6 +26,8 @@ var formidable = require('formidable');
 var fs = require('fs');
 let oracledb = require('oracledb');      // Oracle DB connection
 var logger = require("../utils/logger.js");
+let excel = require('exceljs');
+
 module.exports = function (app, SQL) {
 
 var module = {};
@@ -53,6 +55,8 @@ module.get = function (request,response) {
 * Http Method: POST
 * URL        : /api/upload/
 *
+* URL        : /api/upload/1/ is the check content process request
+* URL        : /api/upload/2/ is the validate and execute process
 *
 * @method post
 * @param {Object} request HTTP request. The request must contain :
@@ -117,7 +121,100 @@ module.post = function (request,response) {
             });
         });
 
+
+
+
+    app.get('/api/upload/0/', function (request, response) {
+            "use strict";
+            response.setHeader('Access-Control-Allow-Origin', '*');
+            // requestuest methods you wish to allow
+            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+            let templateFile;
+
+            console.log('Getting request ' + JSON.stringify(request.query.PARAM))
+            /**
+             * 1 - Item Merhandise Hierarhy template
+             * 2 - UPC change template
+             */
+            if (request.query.PARAM === 'ICR_TEMPLATE001') {
+                templateFile= __dirname + '/../../templates/ICR_CATEGORY_CHANGE_TEMPLATE.xlsx'
+            }
+
+            // Check if file specified by the filePath exists 
+            fs.exists( templateFile, function(exists){
+                if (exists) {
+                    // Content-type is very interesting part that guarantee that
+                    // Web browser will handle response in an appropriate manner.
+                    response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                    response.setHeader("Content-Disposition", "attachment; filename=" + 'ICR_CATEGORY_CHANGE_TEMPLATE.xlsx');
+
+                    let workbook = new excel.Workbook();
+                    workbook.xlsx.readFile(templateFile)
+                        .then(function() {
+                            return workbook.xlsx.write(response)
+                                .then(function() {
+                                    response.status(200).end();
+                                });
+                        });
+                    //response.download(templateFile);
+                    //fs.createReadStream(templateFile).pipe(response);
+                    //response.end();
+
+                } else {
+                    console.log('file doesnt exist '  + templateFile);
+                    response.write("ERROR Template does not exist");
+                    response.status(200).end();
+                }
+            });
+    });
+        
+
     app.post('/api/upload/1/', function (request, response) {
+        "use strict";
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        // requestuest methods you wish to allow
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+
+        //console.log('/api/upload/1/ :', request);
+        SQL.executeSQL(SQL.getNextTicketID(),
+                        "INSERT INTO JSON_CHECK (jsonuserid, jsonfile, jsoncontent, jsonparam, jsonsid, jsonlang) " +
+                        " values (:jsonuserid, :jsonfile, :jsoncontent, :jsonparam, :jsonsid, :jsonlang) returning jsonid into :cursor",
+                        {jsonuserid: request.header('USER'),
+                         jsonfile: request.header('FILENAME'), 
+                         jsoncontent: JSON.stringify(request.body), 
+                         jsonparam: "{" + request.query.PARAM + "}",
+                         jsonsid: request.header('DATABASE_SID'), 
+                         jsonlang: request.header('LANGUAGE'),
+                         cursor: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT } },
+                         request.header('USER'),
+                         request,
+                         response,
+                         function (err, data) {
+                             console.log('Upload :' + JSON.stringify(data));
+                             if (err) {
+                                response.json({
+                                    RESULT: -1,
+                                    MESSAGE: JSON.stringify(err)
+                                });  
+                             }
+                             else {
+
+                                SQL.executeLibQuery(SQL.getNextTicketID(),
+                                                    "MAS0000001", 
+                                                    "'{" + data + ',' + request.query.PARAM + "}'",
+                                                    request.header('USER'),
+                                                    "'{" + request.header('DATABASE_SID') + "}'", 
+                                                    "'{" +request.header('LANGUAGE') + "}'", 
+                                                    request, response);
+
+                            }
+            });
+        });
+
+        /** EXECUTION */
+        app.post('/api/upload/2/', function (request, response) {
             "use strict";
             response.setHeader('Access-Control-Allow-Origin', '*');
             // requestuest methods you wish to allow
@@ -147,6 +244,7 @@ module.post = function (request,response) {
                                     });  
                                  }
                                  else {
+                                     /** Return the JSON INBOUND id */
                                     response.json({
                                         RESULT: data,
                                         MESSAGE: ''
@@ -154,7 +252,23 @@ module.post = function (request,response) {
                                 }
                 });
             });
-        };
+    };
+
+
+    app.get('/api/upload/3/', function (request, response) {
+        "use strict";
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        // requestuest methods you wish to allow
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+        SQL.executeLibQuery(SQL.getNextTicketID(),
+                           "MAS0000002", 
+                            "'{" + request.query.PARAM + "}'",
+                            request.header('USER'),
+                            "'{" + request.header('DATABASE_SID') + "}'", 
+                            "'{" +request.header('LANGUAGE') + "}'", 
+                            request, response);
+    });
 
    return module;
 }

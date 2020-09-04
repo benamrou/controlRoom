@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
 import {Http, XHRBackend, RequestOptions, Request, BrowserXhr,BaseRequestOptions,
-        RequestOptionsArgs, Response, Headers, ResponseOptionsArgs, ResponseType} from '@angular/http';
+        RequestOptionsArgs, Response, Headers, ResponseOptionsArgs, ResponseType, ResponseContentType} from '@angular/http';
 import { MockBackend, MockConnection } from '@angular/http/testing';
 import {Observable, ObservableInput, throwError} from 'rxjs';
 import {catchError } from 'rxjs/operators';
@@ -112,6 +112,43 @@ export class HttpService  {
     return this.httpClient.get(url, { headers: headersOption,
                                       params: paramOptions,
                                       responseType: 'json'
+                                    }
+        ).pipe(catchError((error: Response, caught) => {
+            console.log('Error : ' + JSON.stringify(error));
+            if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
+                console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
+                window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+            }
+            
+            return this.handleError(url,error);
+        }) as any);
+  }
+  
+
+  getFile(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders): Observable<Response> {
+    //console.log('***** Get HTML ****');
+
+    let token = localStorage.getItem('ICRAuthToken');
+    let user = localStorage.getItem('ICRUser');
+    url = this.baseUrl + url;
+    if (!headersOption) {
+      // let's make option object
+      headersOption = new HttpHeaders();
+    }
+    headersOption = headersOption.set('Content-Type', 'application/json');
+    headersOption = headersOption.set('Content-type', 'Application/json; charset=UTF-8');
+    headersOption = headersOption.set('Accept', 'application/octet-stream');
+    headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
+    headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
+    headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
+    headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+
+    console.log ('Request : ' + url + ' / ' + JSON.stringify(headersOption));
+    //console.log('headers '  + JSON.stringify(headersOption));
+    //console.log('params '  + JSON.stringify(paramOptions));
+    return this.httpClient.get(url, { headers: headersOption,
+                                      params: paramOptions,
+                                      responseType: 'blob' as 'blob'
                                     }
         ).pipe(catchError((error: Response, caught) => {
             console.log('Error : ' + JSON.stringify(error));

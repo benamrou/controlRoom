@@ -470,6 +470,10 @@ export class SupplierScheduleComponent {
     //console.log('ActivateDay : ' + JSON.stringify(schedule));
   }
 
+  changeMade(indice: number, index: number) {
+    this.temporarySchedule[indice].temporary = true;
+  }
+  
   changeCollectionTime(indice: number, index: number, value: any) {
     this.temporarySchedule[indice].temporary = true;
     this.temporarySchedule[indice].collectionTime[index] = value;

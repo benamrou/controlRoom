@@ -1,6 +1,6 @@
 import {Component, ViewEncapsulation, OnInit, ViewChild} from '@angular/core';
 import { WarehouseService, WidgetService, ExportService, ImportService } from '../../../shared/services';
-import { MenuItem, Dialog, SelectItem, Chips, Message, DataGrid, FullCalendar } from '../../../shared/components';
+import { MenuItem, Dialog, SelectItem, Chips, Message, DataGrid, FullCalendar, Messages } from '../../../shared/components';
 import { MessageService } from '../../../shared/components';
 import {DatePipe} from '@angular/common';
 
@@ -45,6 +45,8 @@ export class ItemHierarchyComponent implements OnInit{
    menuItems: MenuItem[] = [];
    uploadedFiles: any[] = [];
 
+   templateID = 'ICR_TEMPLATE001';
+
    indicatorXLSfileLoaded: boolean = false;
 
    workbook;
@@ -59,6 +61,9 @@ export class ItemHierarchyComponent implements OnInit{
    defaultStartDate;
    itemTrace;
    scheduleFlag: boolean = false;
+   /** Validation Message */
+   displayUpdateCompleted: boolean = false;
+   msgFinalDisplayed;
 
    missingData;
 
@@ -69,7 +74,10 @@ export class ItemHierarchyComponent implements OnInit{
  
   searchCode: any;
   search: any;
-  msgs: Message[] = [];
+
+  globalError: any[] = [];
+  globalValid: any[] = [];
+  displayConfirm: boolean;
 
   constructor(private _widgetService: WidgetService, private _messageService: MessageService,
               private _exportService: ExportService, private _importService: ImportService,
@@ -84,18 +92,22 @@ export class ItemHierarchyComponent implements OnInit{
     this.itemTrace = true;
     this.scheduleFlag = false;
     this.screenID = 'SCR0000000008';
-
+    this.activeIndex = 0;
+    this.displayConfirm = false;
+    this.globalError = [];
+    this.globalValid = [];
+    this.displayUpdateCompleted = false;
   }
 
 
   ngOnInit() {
       this.menuItems = [{
               id: 'step0',
-              label: 'Data change selection',
+              label: 'Data selection',
               title: 'Pick your item hierarchy file',
               command: (event: any) => {
                   this.activeIndex = 0;
-                  this._messageService.add({severity:'info', summary:'Pick your data file item-hierarchy', detail: event.item.label});
+                  this._messageService.add({key:'top', severity:'info', summary:'Pick your data file item-hierarchy', detail: event.item.label});
               }
           },
           {
@@ -103,8 +115,8 @@ export class ItemHierarchyComponent implements OnInit{
               label: 'Configuration',
               title: 'Define changes parameter',
               command: (event: any) => {
-                  this.activeIndex = 1;
-                  this._messageService.add({severity:'info', summary:'Specify change configuration', detail: event.item.label});
+                this.activeIndex = 1;
+                  this._messageService.add({key:'top', severity:'info', summary:'Specify change configuration', detail: event.item.label});
               }
           },
           {
@@ -113,16 +125,16 @@ export class ItemHierarchyComponent implements OnInit{
               title: 'Execute now or schedule the change',
               command: (event: any) => {
                   this.activeIndex = 2;
-                  this._messageService.add({severity:'info', summary:'Execute or Schedule change', detail: event.item.label});
+                  this._messageService.add({key:'top', severity:'info', summary:'Execute or Schedule change', detail: event.item.label});
               }
           },
           {
               id: 'step3',
               label: 'Confirmation',
-              title: "Confirmation for execution/planification'",
+              title: 'Confirmation for execution/planification',
               command: (event: any) => {
                   this.activeIndex = 3;
-                  this._messageService.add({severity:'info', summary:'Wrap up', detail: event.item.label});
+                  this._messageService.add({key:'top', severity:'info', summary:'Wrap up', detail: event.item.label});
               }
           }
       ];
@@ -139,12 +151,13 @@ export class ItemHierarchyComponent implements OnInit{
         this._messageService.add({severity: 'info', summary: 'File Uploaded', detail: file});
     }
 
-    this.fileUpload.clear();
+    //this.fileUpload.clear();
   }
 
     onSelect(event) {
         this.activeIndex = 0; // Go next step;
         this.uploadedFiles = [];
+        this.displayConfirm = false;
         let formData: FormData = new FormData();
         this.indicatorXLSfileLoaded = false;
         try {   
@@ -159,60 +172,156 @@ export class ItemHierarchyComponent implements OnInit{
             this._importService.getExcelFile(this.uploadedFiles[0])
                     .subscribe (data => {  
                                 },
-                                error => { this._messageService.add({severity:'error', summary:'Invalid file during loading', detail: error }); },
+                                error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during loading', detail: error }); },
                                 () => { 
                                         this.indicatorXLSfileLoaded = true;
-                                        this._messageService.add({severity:'success', summary:'Data file loaded', detail:  
+                                        this._messageService.add({key:'top', severity:'success', summary:'Data file loaded', detail:  
                                                                   this.uploadedFiles[0].name + ' worksheet loaded.' }); 
-                                        this.activeIndex = this.activeIndex + 1; // Enable Configuration
-                                        this.activeIndex = this.activeIndex + 1; // Enable schedule
-                                        this.activeIndex = this.activeIndex + 1; // Enable Recap
                                         //console.log('sheets :', this._importService.wb.sheets);
+
+                                        this.displayConfirm = this.checkGlobal();
+
                                 }
                             );
 
         } catch (error) {
-            this._messageService.add({severity:'error', summary:'ERROR file loading message', detail: error }); 
+            this._messageService.add({key:'top', severity:'error', summary:'ERROR file loading message', detail: error }); 
         }
     }
 
-  getTemplate() {
-    // To be implemented
+    getTemplate() {
+    let existTemplate;
+    this._importService.getTemplate(this.templateID)
+    .subscribe (data => {  
+                existTemplate = data !== -1;
+                console.log('data getTemplate :', data);
+                },
+                error => { this._messageService.add({key:'top', severity:'error', summary:'Template error', detail: error }); },
+                () => { 
+                        if (existTemplate) {
+                            this._messageService.add({key:'top', severity:'success', summary:'Template file', detail:  
+                                                    'File Item Merchandise Hierrarchy downloaded.' }); 
+                        } else {
+                            this._messageService.add({key:'top', severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
+                        }
+                }
+            );
+
   }
 
   validationChanges() {
     // To be implemented
     console.log('validationChanges', this._importService.wb.sheets[0]);
-    if (this.checkBeforeValidation()) {
-        this._importService.postFile(this.uploadedFiles[0].name, 
-                                     this.datePipe.transform(this.startDate,'MM/dd/yyyy'), 
-                                     this.itemTrace,this.scheduleFlag,
-                                     this.datePipe.transform(this.scheduleDate,'MM/dd/yyyy'), 
-                                     this.datePipe.transform(this.scheduleDate,'HH:mm'), 
-                                     JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
-                .subscribe (data => {  
+
+    let executionId;
+    let userID;
+    this.displayUpdateCompleted = false;
+    if (this.checkGlobal()) {
+        this._importService.postExecution(this.uploadedFiles[0].name, 
+                            this.datePipe.transform(this.startDate,'MM/dd/yy'), 
+                            this.itemTrace,this.scheduleFlag,
+                            this.datePipe.transform(this.scheduleDate,'MM/dd/yy hh:mm aaa'), 
+                            JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
+                            .subscribe (data => {  
+                            executionId = data;
+                            console.log('executionId : ', executionId);
                         },
-                        error => { this._messageService.add({severity:'error', summary:'Invalid file during validation', detail: error }); },
+                        error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                         () => { 
-                                this._messageService.add({severity:'success', summary:'Data file execution plan loaded', detail:  
-                                                            this.uploadedFiles[0].name + ' worksheet execution plan loaded.' }); 
-                                //console.log('sheets :', this._importService.wb.sheets);
+                    if (this.scheduleFlag) {
+                        this._messageService.add({key:'top', severity:'success', summary:'Data file execution plan', detail:  
+                                                    this.uploadedFiles[0].name + ' worksheet loaded for execution.' }); 
+                    }
+                    else {
+                        // Execute the file
+                        if(executionId.RESULT[0] < 0 ) {
+                            this._messageService.add({key:'top', severity:'error', summary:'Execution failure', detail: executionId.MESSAGE[0] }); 
+                            return;
                         }
-                    );
+                        /** Run the job integration */
+                        this._importService.execute(executionId.RESULT[0]).subscribe 
+                                (data => {  
+                                    console.log('data userID : ', data);
+                                    userID = data[0].RESULT;
+                                },
+                                error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                                () => { 
+                                    this._importService.executeItem(userID).subscribe(
+                                        data => {  },
+                                    error => { this._messageService.add({key:'top', severity:'error', summary:'Execution issue', detail: error }); },
+                                    () => {  
+                                        this.msgFinalDisplayed = 'Item - Merchandise  ' + this.uploadedFiles[0].name + ' - ' + 
+                                                                 ' has been successfully processed.';
+                                        this.displayUpdateCompleted = true;
+
+                                });
+                            });
+                        }
+                }
+            );
     }
     else {
-            this._messageService.add({severity:'error', summary:'Required data missing', detail: this.missingData }); 
+            this._messageService.add({key:'top', severity:'error', summary:'Required data missing', detail: this.missingData }); 
     }
   }
+
+  /**
+   * 
+   */
+  confirmFile() {
+        // To be implemented
+        console.log('confirmFile', this._importService.wb.sheets[0]);
+        if (this.checkGlobal()) {
+            this._importService.checkFile(this.uploadedFiles[0].name, 
+                                        JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
+                    .subscribe (data => {  
+                            console.log('data: ', data, this._importService.wb.sheets[0].worksheet.rows);
+                                this._importService.wb.sheets[0].worksheet.rows = data;
+                            },
+                            error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during check', detail: error }); },
+                            () => { 
+
+                                    this._messageService.add({key:'top', severity:'success', summary:'Content verification', detail:  
+                                                                this.uploadedFiles[0].name + ' data file content check completed.' }); 
+                                    //console.log('sheets :', this._importService.wb.sheets);
+                                    let rowsWithError = this._importService.wb.sheets[0].worksheet.rows.filter(item => item.COMMENTS !== '' && item.COMMENTS !== null);
+                                    console.log('rowsWithError: ', rowsWithError);
+                                    if (rowsWithError.length === 0) {
+                                        this.globalValid.push('<i class="fas fa-thumbs-up" style="padding-right: 1em;"></i> Data file verification SUCCESSFUL ' +
+                                                              ' <ul style="margin-bottom: 0px;"> ' +
+                                                              ' <li>Columns naming is respected</li>' +
+                                                              ' <li>Item codes are all recognized</li>' +
+                                                              ' <li>Merchandise hierarchy codes are all recognized</li></ul>'); 
+                                        this.activeIndex = this.activeIndex + 1; // Enable Configuration
+                                        this.activeIndex = this.activeIndex + 1; // Enable schedule
+                                        this.activeIndex = this.activeIndex + 1; // Enable Recap
+                                    }
+                            }
+                        );
+        }
+        else {
+                this._messageService.add({key:'top', severity:'error', summary:'Required data missing', detail: this.missingData }); 
+        }
+    }
 
   /**
    * Function to check that required data are fulfilled. If not return false.
    * @returns True if required data, else false
    */
-  checkBeforeValidation(): boolean {
-
-    return true;
+  checkGlobal(): boolean {
+    this.globalError=[];
+    let result = true;
+    if (this._importService.wb.sheets[0].worksheet.columns[0].field.toUpperCase() !== 'ITEM_CODE') {
+      this.globalError.push('The column A header must be named ITEM_CODE'); 
+      result = false;
+    }
+    if (this._importService.wb.sheets[0].worksheet.columns[1].field.toUpperCase() !== 'NEW_HIERARCHY') {
+        this.globalError.push('The column B header must be named NEW_HIERARCHY'); 
+      result = false;
+    }
+    return result;
   }
+
 
  
 }

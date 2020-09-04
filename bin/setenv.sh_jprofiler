@@ -1,0 +1,16 @@
+
+export GOLD_SPRINGFILES_LOCATION=/home/hnpgwr/SpringConfig 
+
+export JAVA_OPTS="$JAVA_OPTS -DGOLD_SPRINGFILES_LOCATION=/home/hnpgwr/SpringConfig"
+export JAVA_OPTS="$JAVA_OPTS -DGOLD_LOGFILES_LOCATION=/home/hnpgwr/logs/"
+
+export CATALINA_OPTS="$CATALINA_OPTS -Xmx512m"
+
+export CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9099 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
+
+# JProfiler agent needs to be placed as close as java (aka first parameters).
+# current agent installed : version 9.1.1 (not the latest but working so far). Need same client version !
+# The user hnpgwr should have access to this folder... (user hnpcen)
+export CATALINA_OPTS="-agentpath:/home/hnpcen/seyc/JProfilerAgent/911/bin/linux-x64/libjprofilerti.so=port=19099,nowait $CATALINA_OPTS "
+
+
