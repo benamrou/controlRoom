@@ -1,8 +1,8 @@
-# ICR rewritten in Angular6 and Bootstrap 4
+# ICR - Inventory Control Room
 
-ICR Dashboard Admin App built using Angular 6 and Bootstrap 4
+ICR Dashboard Admin App built using Angular 8 and Bootstrap 4
 
-This project is a port of the famous Free Admin Bootstrap Theme [SB Admin v6.0](http://startbootstrap.com/template-overviews/sb-admin-2/) to Angular5 Theme.
+This project is a port of the free Admin Bootstrap Theme [SB Admin v6.0](http://startbootstrap.com/template-overviews/sb-admin-2/) to Angular5 Theme.
 
 Powered by [StartAngular](http://startangular.com/) & [StrapUI](http://strapui.com/)
 
@@ -32,7 +32,7 @@ Provides fast, reliable and extensible starter for the development of Angular pr
 In order to start the project use:
 
 ```bash
-$ git clone https://github.com/benamrou/SICR
+$ git clone https://github.com/benamrou/controlRoom
 $ cd controlRoom_client
 # install the project's dependencies
 $ npm install
