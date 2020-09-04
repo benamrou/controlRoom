@@ -16,7 +16,7 @@
     "inherits": "^2.0.3",
     "js-yaml": "^3.11.0",
     "jwt-simple": "^0.5.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.19",
     "node-ssh": "^5.1.1",
     "nodemon": "^1.17.3",
     "oracledb": "https://github.com/oracle/node-oracledb/releases/download/v2.2.0/oracledb-src-2.2.0.tgz",
