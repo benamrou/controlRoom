@@ -1,0 +1,10 @@
+# ICR Environment
+# ================
+
+export ICR_SERVER=/opt/apps/controlRoom/controlRoom_server/server;
+export ICR_CLIENT=/home/hntgwr/apache-tomee-webprofile-1.7.3/webapps/icr;
+export ICR_LOG=$ICR_SERVER/logs;
+export ICRUSERID=controlroom/controlroom;
+
+# DATE MGT
+export TODAY=`date +%d/%m/%y`;

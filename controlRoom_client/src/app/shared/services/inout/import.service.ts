@@ -30,7 +30,11 @@ export class WorkSheetJSON {
 export class ImportService{
 
     private baseUploadUrl: string = '/api/upload/';
-    private baseUploadJSONUrl: string = '/api/upload/1/';
+    private getTemplateJSONUrl: string = '/api/upload/0/'; // Get Template
+    private checkUploadJSONUrl: string = '/api/upload/1/'; // Load and check process
+    private validateUploadJSONUrl: string = '/api/upload/2/'; // Validated 
+    private executeUploadJSONUrl: string = '/api/upload/3/'; // Execute
+    private executeJobURL: string = '/api/execute/1/';
     
     private request: string;
     private params: HttpParams;
@@ -113,9 +117,10 @@ export class ImportService{
     }
 
 
-    postFile (filename, startdate, trace, now, schedule_date, schedule_time, json) {
-        console.log('postFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
-        this.request = this.baseUploadJSONUrl;
+
+    postExecution (filename, startdate, trace, now, schedule_date,  json) {
+        //console.log('postFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
+        this.request = this.validateUploadJSONUrl;
         let headersSearch = new HttpHeaders();
         let options = new HttpHeaders();
         this.params= new HttpParams();
@@ -124,7 +129,6 @@ export class ImportService{
         this.params = this.params.append('PARAM',trace);
         this.params = this.params.append('PARAM',now);
         this.params = this.params.append('PARAM',schedule_date);
-        this.params = this.params.append('PARAM',schedule_time);
         this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
 
         headersSearch = headersSearch.set('QUERY_ID', this.request );
@@ -136,8 +140,133 @@ export class ImportService{
                 return data;
         });
 
-  }
-      
+   }
 
+   postFile (filename, startdate, trace, now, schedule_date,  json) {
+    //console.log('postFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
+    this.request = this.validateUploadJSONUrl;
+    let headersSearch = new HttpHeaders();
+    let options = new HttpHeaders();
+    this.params= new HttpParams();
+    this.params = this.params.append('PARAM',filename);
+    this.params = this.params.append('PARAM',startdate);
+    this.params = this.params.append('PARAM',trace);
+    this.params = this.params.append('PARAM',now);
+    this.params = this.params.append('PARAM',schedule_date);
+    this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+
+    headersSearch = headersSearch.set('QUERY_ID', this.request );
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('FILENAME', filename);
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    return this._http.post(this.request, this.params, headersSearch, json).map(response => {
+            let data = <any> response;
+            return data;
+    });
+
+   }
+
+   execute (executionId) {
+    //console.log('postFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
+    this.request = this.executeUploadJSONUrl;
+    let headersSearch = new HttpHeaders();
+    let options = new HttpHeaders();
+    this.params= new HttpParams();
+    this.params = this.params.append('PARAM',executionId);
+    this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    return this._http.get(this.request, this.params, this.options).map(response => {
+            let data = <any> response;
+            return data;
+    });
+
+    }
+
+
+    executeItem (userID) {
+        /* Execute the batch  integration */
+        //console.log ('Update request');
+        this.request = this.executeJobURL;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        let dateNow = new Date();
+        let command = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
+                    'export GOLD_DEBUG=1; ' +
+                    // Batch to execute
+                    'psifa05p psifa05p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+        
+        if(userID) {
+            command = command + '-u' + userID;
+
+        }
+        
+        command = command + ' ' + this._userService.userInfo.envDefaultLanguage + ' 1;'
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+        headersSearch = headersSearch.set('ENV_COMMAND', command);
+
+        return this._http.execute(this.request, this.params, headersSearch).pipe(map(response => {
+                let data = <any> response;
+        }));
+    
+    }
+
+
+    checkFile (filename, json) {
+        //console.log('checkFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
+        this.request = this.checkUploadJSONUrl;
+        let headersSearch = new HttpHeaders();
+        let options = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.append('PARAM',filename);
+        this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+
+        headersSearch = headersSearch.set('QUERY_ID', this.request );
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('FILENAME', filename);
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+        return this._http.post(this.request, this.params, headersSearch, json).map(response => {
+                let data = <any> response;
+                return data;
+        });
+
+    }
+
+    getTemplate (templateID) {
+        //console.log('checkFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
+        this.request = this.getTemplateJSONUrl;
+        let headersSearch = new HttpHeaders();
+        let options = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.append('PARAM',templateID);
+
+        headersSearch = headersSearch.set('QUERY_ID', this.request );
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+        return  this._http.getFile(this.request, this.params, headersSearch).map(response => {
+                console.log('response getfile:', response);
+                let data = <any> response;
+                if (data.size < 100 ) {
+                    return -1
+                }
+
+                let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const fileName = templateID + `.xlsx`;
+                let file = new File([blob], fileName);
+                let fileUrl = URL.createObjectURL(file);
+                
+                let link = document.createElement('a');
+                link.target = '_blank';
+                link.href = window.URL.createObjectURL(blob);
+                link.setAttribute("download", fileName);
+                link.click();
+
+                return 'Ok';
+        });
+
+    }
 
 }

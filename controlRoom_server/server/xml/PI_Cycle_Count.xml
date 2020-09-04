@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+
+<ROOT>
+    <TXT>
+    WITH ZERO_REVIEWED_PI AS (
+                SELECT dinsite, dincinl, dinseqvl, arvcexr, arvcexv, MAX(TRUNC(dinqtin)) qty
+                FROM hncustom.heinens_neg_inventory, artuv, invdetinv
+                WHERE TRUNC(dindcre)=TRUNC(SYSDATE)
+                AND TRUNC(extract_date)= TRUNC(dindcre)
+                AND store_num=:STORE_NUM:
+                AND item_code=arvcexr
+                AND sv=arvcexv
+                AND dinsite=store_num
+                AND dincinl=arvcinv
+                AND dincinr=arvcinr
+                AND dinqtin=0
+        GROUP BY dinsite, dincinl, dinseqvl, arvcexr, arvcexv ),
+ REVIEWED_PI AS (
+                SELECT  dinsite, dincinl, dinseqvl, arvcinr, arvcexr, arvcexv, MAX(TRUNC(dinqtin)) qty, 
+                        (SELECT 1 FROM ZERO_REVIEWED_PI z 
+                         WHERE z.dinsite=t.dinsite 
+                         AND t.dincinl=z.dincinl
+                         AND z.dinseqvl=t.dinseqvl) zero
+                FROM hncustom.heinens_neg_inventory, artuv, invdetinv t
+                WHERE TRUNC(dindcre)=TRUNC(SYSDATE)
+                AND TRUNC(extract_date)= TRUNC(dindcre)
+                AND store_num=:STORE_NUM:
+                AND item_code=arvcexr
+                AND sv=arvcexv
+                AND dinsite=store_num
+                AND dincinl=arvcinv
+                AND dincinr=arvcinr
+        GROUP BY dinsite, dincinl, dinseqvl, arvcinr, arvcexr, arvcexv )
+        SELECT extract_date Counting_date,
+                DECODE(reviewed.qty, NULL,
+                CASE
+                        WHEN neg_inv.qty = 0 THEN 'Zero to be confirmed'
+                        ELSE 'Need Cycle'
+                END, 
+                CASE 
+                  WHEN neg_inv.qty = 0 AND zero = 1 THEN 'Confirmed zero'
+                  ELSE 'Adjusted perpetual'
+                END) status,
+                store_num,
+                item_code,
+                sv, upc,
+                sv_desc,
+                DECODE(reviewed.qty, NULL,neg_inv.qty,reviewed.qty) qty,
+                dept_code, dept_desc,
+                sub_dept_code, sub_dept_desc,
+                cat_code, cat_desc, 
+                pkstrucobj.get_cext(1, objpere) SCAT_CODE,
+                pkstrucobj.get_desc(1, objpere, 'HN') SCAT_DESC
+        FROM hncustom.heinens_neg_inventory neg_inv, REVIEWED_PI reviewed, strucrel
+        WHERE TRUNC(extract_date)=TRUNC(SYSDATE)
+                AND neg_inv.item_code=reviewed.arvcexr(+)
+                AND neg_inv.sv=reviewed.arvcexv(+)
+                AND store_num=dinsite (+)
+                AND store_num=:STORE_NUM:
+                AND arvcinr= objcint
+                and TRUNC(SYSDATE) between objddeb and objdfin
+        UNION
+        SELECT TRUNC(dindcre),
+		NVL ((SELECT 
+                        CASE
+                                WHEN dinqtin = dinsinf THEN 'Confirmed perpetual'
+                                WHEN dinqtin=0 AND  dinsinf != dinqtin THEN 'Adjusted to zero'
+                                WHEN dinsinf > 0 AND dinqtin!=0 AND  dinsinf != dinqtin THEN 'Adjusted perpetual'
+                        END
+                     FROM ARTREAP 
+                     WHERE dinsite=aresite and dincinl=arecinl and trunc(sysdate) between areddeb and aredfin AND ROWNUM=1),
+                        CASE
+                                WHEN dinqtin = dinsinf THEN 'Not in CAO.- Confirmed perpetual'
+                                WHEN dinqtin != dinsinf THEN 'Not in CAO.- Adjusted perpetual'
+                        END) Status,
+                dinsite store_num,
+                arvcexr ITEM_CODE,
+                arvcexv  SV,
+                pkartcoca.get_code_caisse(1, arvcinv, TRUNC(SYSDATE)) UPC,
+                pkartuv.get_libelle_long(1,dincinl, 'HN') SV_DESC,
+                (SELECT SUM(NVL(storeai, 0) + NVL(storeal, 0) - NVL(storeav, 0) +
+                        NVL(storeae, 0) + NVL(storeac, 0) - NVL(storear, 0))
+                        FROM stocouch WHERE stocinl=dincinl AND stosite=dinsite AND stotpos=0) QTY,
+                pkstrucobj.get_cext(1, dep.strpere) DEPT_CODE,
+                pkstrucobj.get_desc(1, dep.strpere, 'HN') DEPT_DESC,
+                pkstrucobj.get_cext(1, sdep.strpere) SUB_DEPT_CODE,
+                pkstrucobj.get_desc(1, sdep.strpere, 'HN') SUB_DEPT_DESC,
+                pkstrucobj.get_cext(1, cat.strpere) CAT_CODE,
+                pkstrucobj.get_desc(1, cat.strpere, 'HN') CAT_DESC,
+                pkstrucobj.get_cext(1, cat.strcint) SCAT_CODE,
+                pkstrucobj.get_desc(1, cat.strcint, 'HN') SCAT_DESC
+        FROM invdetinv t, artuv uv,
+                STRUCREL,
+                STRUCTURE cat,
+                STRUCTURE sdep,
+                STRUCTURE dep
+        WHERE TRUNC(dindcre)=TRUNC(SYSDATE)
+        AND dincinl=arvcinv
+        and dincinr=arvcinr
+        AND dinsite=:STORE_NUM:
+        AND objcint = arvcinr
+        AND trunc(sysdate) between strucrel.objddeb and strucrel.objdfin
+        and cat.strcint = objpere
+        and cat.strprof = 4
+        and cat.stridstr = '1'
+        and sdep.strcint = objpere
+        and sdep.strprof = 3
+        and sdep.stridstr = cat.stridstr
+        and dep.strcint = objpere
+        and dep.strprof = 2
+        and dep.stridstr = cat.stridstr
+        AND trunc(sysdate+1) between cat.strddeb and cat.strdfin
+        AND trunc(sysdate+1) between sdep.strddeb and sdep.strdfin
+        AND trunc(sysdate+1) between dep.strddeb and dep.strdfin
+        AND NOT EXISTS (SELECT 1 FROM REVIEWED_PI p WHERE uv.arvcexr=p.arvcexr AND uv.arvcexv=p.arvcexv AND t.dinsite=p.dinsite)
+        ORDER BY Status ASC
+
+
+    </TXT>
+    <COL>Negative Date</COL>
+    <COL>Status</COL>
+    <COL>Store num.</COL>
+    <COL>Item code</COL>
+    <COL>SV</COL>
+    <COL>UPC</COL>
+    <COL>Desc.</COL> 
+    <COL>Inventory</COL>
+
+    <COL>Department</COL>
+    <COL>Dept. desc.</COL> 
+    <COL>Sub-Department</COL>
+    <COL>Sub-Dept. desc.</COL>
+    <COL>Category</COL>
+    <COL>Cat. desc.</COL>
+    <VAR>
+        <NAME>:STORE_NUM:</NAME>
+        <DEFAULT></DEFAULT>
+        <PROMPT>Store Number</PROMPT>
+    </VAR>
+</ROOT>

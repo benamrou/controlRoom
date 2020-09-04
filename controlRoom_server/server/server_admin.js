@@ -126,7 +126,7 @@ counting.get(app,oracledb);
 batchprocess.get(app,oracledb);
 order.get(app,oracledb);
 labels.get(app,oracledb);
-//upload.get(app,oracledb);
+upload.get(app,oracledb);
 upload.post(app,oracledb);
 ls.get(app,oracledb);
 command.get(app,oracledb);

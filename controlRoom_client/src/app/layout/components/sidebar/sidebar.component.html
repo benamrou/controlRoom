@@ -119,6 +119,9 @@
                 <li class="nested" [ngClass]="{'expand' : showMenu === 'massupdate' }">
                     <ul class="submenu" >
                         <li>
+                            <a class="bbs_link_menu" routerLink="/massjournal" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-clipboard-check"></i> {{ 'Journal' | translate}}</span></a>
+                        </li>
+                        <li>
                             <a class="bbs_link_menu" routerLink="/itemhierarchy" [routerLinkActive]="['router-link-active']" >
                                 <span><i class="fas fa-tools"></i> {{ 'Item Hierarchy' | translate}}</span>
                             </a>

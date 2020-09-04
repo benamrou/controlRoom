@@ -1,0 +1,31 @@
+1/12/2020 10:56:1 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON0000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 10:57:41 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 10:57:43 1: [{"SALTID":"CGO_ALERT","SALTCRON":"* * * * *","SALTTYPE":2,"SALTQUERYNUM":null,"SALTQUERYPARAM":null,"SALTJOB":"/opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_TEST.sh","ACTIVE":1,"SALTACTIVE":"2020-01-11T23:00:00.000Z"}]
+1/12/2020 10:57:43 1: 1 Object(s) returned... [FETCH]
+1/12/2020 10:58:17 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 10:58:19 1: [{"SALTID":"CGO_ALERT","SALTCRON":"* * * * *","SALTTYPE":2,"SALTQUERYNUM":null,"SALTQUERYPARAM":null,"SALTJOB":"/opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_TEST.sh","ACTIVE":1,"SALTACTIVE":"2020-01-11T23:00:00.000Z"}]
+1/12/2020 10:58:19 1: 1 Object(s) returned... [FETCH]
+1/12/2020 11:1:39 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 11:1:41 1: [{"SALTID":"CGO_ALERT","SALTCRON":"* * * * *","SALTTYPE":2,"SALTQUERYNUM":null,"SALTQUERYPARAM":null,"SALTJOB":"/opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_TEST.sh","ACTIVE":1,"SALTACTIVE":"2020-01-11T23:00:00.000Z"}]
+1/12/2020 11:1:41 1: 1 Object(s) returned... [FETCH]
+1/12/2020 11:4:32 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 11:4:34 1: [{"SALTID":"CGO_ALERT","SALTCRON":"* * * * *","SALTTYPE":2,"SALTQUERYNUM":null,"SALTQUERYPARAM":null,"SALTJOB":"/opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_TEST.sh","ACTIVE":1,"SALTACTIVE":"2020-01-11T23:00:00.000Z"}]
+1/12/2020 11:4:34 1: 1 Object(s) returned... [FETCH]
+1/12/2020 11:5:58 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 11:6:0 1: [{"SALTID":"CGO_ALERT","SALTCRON":"* * * * *","SALTTYPE":2,"SALTQUERYNUM":null,"SALTQUERYPARAM":null,"SALTJOB":"/opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_TEST.sh","ACTIVE":0,"SALTACTIVE":"2021-01-11T23:00:00.000Z"}]
+1/12/2020 11:6:0 1: 1 Object(s) returned... [FETCH]
+1/12/2020 11:6:15 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 11:6:18 1: [{"SALTID":"CGO_ALERT","SALTCRON":"* * * * *","SALTTYPE":2,"SALTQUERYNUM":null,"SALTQUERYPARAM":null,"SALTJOB":"/opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_TEST.sh","ACTIVE":0,"SALTACTIVE":"2021-01-11T23:00:00.000Z"}]
+1/12/2020 11:6:18 1: 1 Object(s) returned... [FETCH]
+1/12/2020 11:6:27 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 11:6:29 1: [{"SALTID":"CGO_ALERT","SALTCRON":"* * * * *","SALTTYPE":2,"SALTQUERYNUM":null,"SALTQUERYPARAM":null,"SALTJOB":"/opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_TEST.sh","ACTIVE":0,"SALTACTIVE":"2021-01-11T23:00:00.000Z"}]
+1/12/2020 11:6:29 1: 1 Object(s) returned... [FETCH]
+1/12/2020 11:7:7 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 11:7:9 1: [{"SALTID":"CGO_ALERT","SALTCRON":"* * * * *","SALTTYPE":2,"SALTQUERYNUM":null,"SALTQUERYPARAM":null,"SALTJOB":"/opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_TEST.sh","ACTIVE":0,"SALTACTIVE":"2021-01-11T23:00:00.000Z"}]
+1/12/2020 11:7:9 1: 1 Object(s) returned... [FETCH]
+1/12/2020 11:7:22 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 11:7:24 1: [{"SALTID":"CGO_ALERT","SALTCRON":"* * * * *","SALTTYPE":2,"SALTQUERYNUM":null,"SALTQUERYPARAM":null,"SALTJOB":"/opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_TEST.sh","ACTIVE":0,"SALTACTIVE":"2021-01-11T23:00:00.000Z"}]
+1/12/2020 11:7:24 1: 1 Object(s) returned... [FETCH]
+1/12/2020 11:8:43 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;
+1/12/2020 11:8:45 1: [{"SALTID":"CGO_ALERT","SALTCRON":"* * * * *","SALTTYPE":2,"SALTQUERYNUM":null,"SALTQUERYPARAM":null,"SALTJOB":"/opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_TEST.sh","ACTIVE":0,"SALTACTIVE":"2021-01-11T23:00:00.000Z"}]
+1/12/2020 11:8:45 1: 1 Object(s) returned... [FETCH]

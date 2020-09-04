@@ -32,6 +32,7 @@ const routes: Routes = [
             /* IT */
             { path: 'batchschedule', loadChildren: './it/schedule/batch.schedule.module#BatchScheduleModule' },
             /* Mass-change */
+            { path: 'massjournal', loadChildren: './mass.update/journal/massjournal.module#MassJournalModule' },
             { path: 'itemhierarchy', loadChildren: './mass.update/item.hierarchy/item.hierarchy.module#ItemHierarchyModule' },
             /* Reporting */
             { path: 'scorecardcao', loadChildren: './reporting/scorecard/cao/scorecard.cao.module#ScorecardCAOModule' },
