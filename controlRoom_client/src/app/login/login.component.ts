@@ -8,7 +8,7 @@ import { mergeMap } from 'rxjs/operators';
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
+    styleUrls: ['./login.component.scss', './SeasonalThemes/halloween.scss', './SeasonalThemes/christmas.scss', './SeasonalThemes/summer.scss'],
     animations: [routerTransition()],
     providers: [MessageService, StructureService, ScreenService]
 })
