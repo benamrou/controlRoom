@@ -38,6 +38,7 @@ const routes: Routes = [
             { path: 'scorecardcao', loadChildren: './reporting/scorecard/cao/scorecard.cao.module#ScorecardCAOModule' },
             { path: 'dashboardcao', loadChildren: './reporting/dashboard/cao/dashboard.cao.module#DashboardCAOModule' },
             { path: 'dashboardcycle', loadChildren: './reporting/dashboard/cycle/dashboard.cycle.module#DashboardCycleModule' },
+            { path: 'dashboardsupplier', loadChildren: './reporting/dashboard/supplier/dashboard.supplier.module#DashboardSupplierModule' },
             /* Tutorial */
             { path: 'charts', loadChildren: './charts/charts.module#ChartsModule' },
             { path: 'tables', loadChildren: './tables/tables.module#TablesModule' },

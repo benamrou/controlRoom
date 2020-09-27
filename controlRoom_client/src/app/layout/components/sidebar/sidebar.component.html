@@ -157,6 +157,13 @@
                                 </a>
                             </ul>
                         </li>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('dashboard') !== -1 }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'dashboard' }"> 
+                                <a class="bbs_link_menu" routerLink="/dashboardsupplier" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-industry"></i> &nbsp; {{ 'Supplier' | translate}} </span>
+                                </a>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
             </div>

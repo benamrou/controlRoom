@@ -1,0 +1,41 @@
+<app-page-header [heading]="'Supplier dashboard'" [icon]="'fa-industry'"
+                 [(screenID)]="screenID"></app-page-header>
+                 
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+
+<!-- Search Panel -->
+<div class="bbs_search_panel"  >
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier : </span>
+    <span style="overflow: hidden; padding-right: .5em; width: 90%; line-height: 25px">
+        <input type="text"  [(ngModel)]="searchCode" placeholder="  Enter a code or a description" 
+               style="width: 50%;margin-left: 10px;"/>     
+    </span>
+
+    <span class="pull-right" style="padding-right: 20px">
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+                [disabled]="searchCode === '' || periodStart === '' || periodEnd === ''" 
+                style="margin-right: 15px"></button>
+        <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true"></button>
+    </span>
+</div>
+<!-- div class="bbs_search_sub_panel"  >
+</div -->
+<p></p>
+
+<p-dialog header="Update completed" [(visible)]="displayUpdateCompleted" modal="modal" width="500" responsive="true" [maximizable]="false">
+    <span>{{msgDisplayed}}</span>
+        <p-footer>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
+                    label="Ok">
+            </button>
+        </p-footer>
+</p-dialog>
+
+<!-- Panel resul -->
+<!-- Result panel of the resarch --> 
+<!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
+
