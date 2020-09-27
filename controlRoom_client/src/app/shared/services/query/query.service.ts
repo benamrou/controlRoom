@@ -34,11 +34,12 @@ export class QueryService {
    * Get Dashboard data using Smart data extract with the dashboard Id
    * @param queryId 
    */
-  getQueryResult(queryId: string) {
+  getQueryResult(queryId: string, param?: string) {
     this.request = this.baseQueryUrl;
     let headersSearch = new HttpHeaders();
     let options = new HttpHeaders();
     this.params= new HttpParams();
+    this.params = this.params.append('PARAM',param);
     this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
 
     headersSearch = headersSearch.set('QUERY_ID', queryId);

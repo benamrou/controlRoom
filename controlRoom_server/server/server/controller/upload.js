@@ -122,8 +122,6 @@ module.post = function (request,response) {
         });
 
 
-
-
     app.get('/api/upload/0/', function (request, response) {
             "use strict";
             response.setHeader('Access-Control-Allow-Origin', '*');
@@ -162,14 +160,14 @@ module.post = function (request,response) {
                     //response.end();
 
                 } else {
-                    console.log('file doesnt exist '  + templateFile);
+                    logger.log('[UPLOAD]', 'file doesnt exist '  + templateFile, 'upload', 3);
                     response.write("ERROR Template does not exist");
                     response.status(200).end();
                 }
             });
     });
         
-
+    // Check 
     app.post('/api/upload/1/', function (request, response) {
         "use strict";
         response.setHeader('Access-Control-Allow-Origin', '*');
@@ -211,10 +209,10 @@ module.post = function (request,response) {
 
                             }
             });
-        });
+    });
 
         /** EXECUTION */
-        app.post('/api/upload/2/', function (request, response) {
+    app.post('/api/upload/2/', function (request, response) {
             "use strict";
             response.setHeader('Access-Control-Allow-Origin', '*');
             // requestuest methods you wish to allow
@@ -223,11 +221,20 @@ module.post = function (request,response) {
 
             //console.log('/api/upload/1/ :', request);
             SQL.executeSQL(SQL.getNextTicketID(),
-                            "INSERT INTO JSON_INBOUND (jsonuserid, jsonfile, jsoncontent, jsonparam, jsonsid, jsonlang) " +
-                            " values (:jsonuserid, :jsonfile, :jsoncontent, :jsonparam, :jsonsid, :jsonlang) returning jsonid into :cursor",
+                            "INSERT INTO JSON_INBOUND (jsonuserid, jsonutil, jsonfile, jsoncontent, jsonnbrecord, jsonparam, jsonsid, jsonlang, jsonstatus,  " +
+                                                      " jsonimmediate, jsondsched, jsontrace, jsonstartdate) " +
+                            " values (:jsonuserid, :jsonutil,  :jsonfile, :jsoncontent, :jsonnbrecord, :jsonparam, :jsonsid, :jsonlang, :jsonstatus, " +
+                                    request.query.PARAM[3] + ',' +  // Immediate
+                                    "to_date('" + request.query.PARAM[4] + "', 'MM/DD/RR hh24:mi' ) " + ',' +  // Scheduled date
+                                    request.query.PARAM[2] + ',' +  // Trace
+                                    "to_date('" + request.query.PARAM[1] + "', 'MM/DD/RR' ) ) " +  // Start date
+                                    " returning jsonid into :cursor",
                             {jsonuserid: request.header('USER'),
+                             jsonutil: request.header('USER'),
                              jsonfile: request.header('FILENAME'), 
+                             jsonstatus: 0,
                              jsoncontent: JSON.stringify(request.body), 
+                             jsonnbrecord: JSON.stringify(request.body).length, 
                              jsonparam: "{" + request.query.PARAM + "}",
                              jsonsid: request.header('DATABASE_SID'), 
                              jsonlang: request.header('LANGUAGE'),
@@ -236,7 +243,7 @@ module.post = function (request,response) {
                              request,
                              response,
                              function (err, data) {
-                                 console.log('Upload :' + JSON.stringify(data));
+                                 logger.log('[UPLOAD]', + JSON.stringify(data), 'upload', 3);
                                  if (err) {
                                     response.json({
                                         RESULT: -1,
@@ -254,7 +261,7 @@ module.post = function (request,response) {
             });
     };
 
-
+    // Execute the mapping for the tool
     app.get('/api/upload/3/', function (request, response) {
         "use strict";
         response.setHeader('Access-Control-Allow-Origin', '*');
@@ -263,6 +270,57 @@ module.post = function (request,response) {
         //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
         SQL.executeLibQuery(SQL.getNextTicketID(),
                            "MAS0000002", 
+                            "'{" + request.query.PARAM + "}'",
+                            request.header('USER'),
+                            "'{" + request.header('DATABASE_SID') + "}'", 
+                            "'{" +request.header('LANGUAGE') + "}'", 
+                            request, response);
+    });
+
+    /**
+     * Retrieve Journal mass upload information
+     */
+    app.get('/api/upload/4/', function (request, response) {
+        "use strict";
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        // requestuest methods you wish to allow
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+        SQL.executeLibQuery(SQL.getNextTicketID(),
+                        "MAS0000003", 
+                            "'{" + request.query.PARAM + "}'",
+                            request.header('USER'),
+                            "'{" + request.header('DATABASE_SID') + "}'", 
+                            "'{" +request.header('LANGUAGE') + "}'", 
+                            request, response);
+    });
+    
+    // Collect integration issue 
+    app.get('/api/upload/5/', function (request, response) {
+        "use strict";
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        // requestuest methods you wish to allow
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+        SQL.executeLibQuery(SQL.getNextTicketID(),
+                           "MAS0000004", 
+                            "'{" + request.query.PARAM + "}'",
+                            request.header('USER'),
+                            "'{" + request.header('DATABASE_SID') + "}'", 
+                            "'{" +request.header('LANGUAGE') + "}'", 
+                            request, response);
+    });
+
+
+    // Update Mass change information
+    app.get('/api/upload/6/', function (request, response) {
+        "use strict";
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        // requestuest methods you wish to allow
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+        SQL.executeLibQuery(SQL.getNextTicketID(),
+                           "MAS0000005", 
                             "'{" + request.query.PARAM + "}'",
                             request.header('USER'),
                             "'{" + request.header('DATABASE_SID') + "}'", 

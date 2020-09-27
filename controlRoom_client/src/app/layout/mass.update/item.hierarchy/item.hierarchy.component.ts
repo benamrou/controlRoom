@@ -80,7 +80,7 @@ export class ItemHierarchyComponent implements OnInit{
   displayConfirm: boolean;
 
   constructor(private _widgetService: WidgetService, private _messageService: MessageService,
-              private _exportService: ExportService, private _importService: ImportService,
+              private _exportService: ExportService, public _importService: ImportService,
               private httpClient: HttpClient) {
     this.datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
@@ -176,9 +176,8 @@ export class ItemHierarchyComponent implements OnInit{
                                 () => { 
                                         this.indicatorXLSfileLoaded = true;
                                         this._messageService.add({key:'top', severity:'success', summary:'Data file loaded', detail:  
-                                                                  this.uploadedFiles[0].name + ' worksheet loaded.' }); 
+                                                                '"' + this.uploadedFiles[0].name + '" worksheet loaded.' }); 
                                         //console.log('sheets :', this._importService.wb.sheets);
-
                                         this.displayConfirm = this.checkGlobal();
 
                                 }
@@ -217,10 +216,12 @@ export class ItemHierarchyComponent implements OnInit{
     let userID;
     this.displayUpdateCompleted = false;
     if (this.checkGlobal()) {
+        this._messageService.add({key:'top', severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
         this._importService.postExecution(this.uploadedFiles[0].name, 
                             this.datePipe.transform(this.startDate,'MM/dd/yy'), 
-                            this.itemTrace,this.scheduleFlag,
-                            this.datePipe.transform(this.scheduleDate,'MM/dd/yy hh:mm aaa'), 
+                            +this.itemTrace, // Implicit cast to have 1: True, 0: False
+                            + !this.scheduleFlag, // Implicit cast to have 1: True, 0: False
+                            this.datePipe.transform(this.scheduleDate,'MM/dd/yy HH:mm'), 
                             JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
                             .subscribe (data => {  
                             executionId = data;
@@ -229,8 +230,8 @@ export class ItemHierarchyComponent implements OnInit{
                         error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                         () => { 
                     if (this.scheduleFlag) {
-                        this._messageService.add({key:'top', severity:'success', summary:'Data file execution plan', detail:  
-                                                    this.uploadedFiles[0].name + ' worksheet loaded for execution.' }); 
+                        this._messageService.add({key:'top', severity:'success', summary:'Step 2/2: Data file execution plan', detail:  
+                                                    '"' + this.uploadedFiles[0].name + '" worksheet loaded for scheduled execution.' }); 
                     }
                     else {
                         // Execute the file
@@ -239,65 +240,74 @@ export class ItemHierarchyComponent implements OnInit{
                             return;
                         }
                         /** Run the job integration */
+                        this._messageService.add({key:'top', severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
                                     console.log('data userID : ', data);
                                     userID = data[0].RESULT;
                                 },
                                 error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
-                                () => { 
-                                    this._importService.executeItem(userID).subscribe(
-                                        data => {  },
-                                    error => { this._messageService.add({key:'top', severity:'error', summary:'Execution issue', detail: error }); },
-                                    () => {  
-                                        this.msgFinalDisplayed = 'Item - Merchandise  ' + this.uploadedFiles[0].name + ' - ' + 
-                                                                 ' has been successfully processed.';
-                                        this.displayUpdateCompleted = true;
-
-                                });
-                            });
-                        }
-                }
-            );
+                                () =>    {  
+                                            
+                                    this._messageService.add({key:'top', severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
+                                    this._importService.executeItem(userID).subscribe( 
+                                            data => {  },
+                                            error => { this._messageService.add({key:'top', severity:'error', summary:'Execution issue', detail: error }); },
+                                            () => {  this._importService.collectResult(executionId.RESULT[0]).subscribe (
+                                                    data => { },
+                                                    error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                                                    () => { 
+                                                        this._messageService.add({key:'top', severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
+                                                        this.msgFinalDisplayed = 'Item - Merchandise  ' + this.uploadedFiles[0].name + ' - ' + 
+                                                                                ' has been successfully processed.';
+                                                        this.displayUpdateCompleted = true;
+                                                    });
+                                                });
+                                        });                     
+                            }
+                        });
+                    } 
+        else {
+                this._messageService.add({key:'top', severity:'error', summary:'Required data missing', detail: this.missingData }); 
+        }
     }
-    else {
-            this._messageService.add({key:'top', severity:'error', summary:'Required data missing', detail: this.missingData }); 
-    }
-  }
 
   /**
    * 
    */
   confirmFile() {
-        // To be implemented
-        console.log('confirmFile', this._importService.wb.sheets[0]);
-        if (this.checkGlobal()) {
-            this._importService.checkFile(this.uploadedFiles[0].name, 
-                                        JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
-                    .subscribe (data => {  
-                            console.log('data: ', data, this._importService.wb.sheets[0].worksheet.rows);
-                                this._importService.wb.sheets[0].worksheet.rows = data;
-                            },
-                            error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during check', detail: error }); },
-                            () => { 
+    console.log('confirmFile', this._importService.wb.sheets[0]);
+    this.activeIndex = 0;
+    if (this.checkGlobal()) {
+        this._importService.checkFile(this.uploadedFiles[0].name, 
+                                    JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
+                .subscribe (data => {  
+                        //console.log('data: ', data, this._importService.wb.sheets[0].worksheet.rows);
+                            this._importService.wb.sheets[0].worksheet.rows = data;
+                        },
+                        error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during check', detail: error }); },
+                        () => { 
 
-                                    this._messageService.add({key:'top', severity:'success', summary:'Content verification', detail:  
-                                                                this.uploadedFiles[0].name + ' data file content check completed.' }); 
-                                    //console.log('sheets :', this._importService.wb.sheets);
-                                    let rowsWithError = this._importService.wb.sheets[0].worksheet.rows.filter(item => item.COMMENTS !== '' && item.COMMENTS !== null);
-                                    console.log('rowsWithError: ', rowsWithError);
-                                    if (rowsWithError.length === 0) {
-                                        this.globalValid.push('<i class="fas fa-thumbs-up" style="padding-right: 1em;"></i> Data file verification SUCCESSFUL ' +
-                                                              ' <ul style="margin-bottom: 0px;"> ' +
-                                                              ' <li>Columns naming is respected</li>' +
-                                                              ' <li>Item codes are all recognized</li>' +
-                                                              ' <li>Merchandise hierarchy codes are all recognized</li></ul>'); 
-                                        this.activeIndex = this.activeIndex + 1; // Enable Configuration
-                                        this.activeIndex = this.activeIndex + 1; // Enable schedule
-                                        this.activeIndex = this.activeIndex + 1; // Enable Recap
-                                    }
-                            }
-                        );
+                                this._messageService.add({key:'top', severity:'success', summary:'Content verification', detail:  
+                                                            this.uploadedFiles[0].name + ' data file content check completed.' }); 
+                                //console.log('sheets :', this._importService.wb.sheets);
+                                let rowsWithError = this._importService.wb.sheets[0].worksheet.rows.filter(item => item.COMMENTS !== '' && item.COMMENTS !== null);
+                                console.log('rowsWithError: ', rowsWithError);
+                                if (rowsWithError.length === 0) {
+                                    this.globalValid.push('<i class="fas fa-thumbs-up" style="padding-right: 1em;"></i> Data file verification SUCCESSFUL ' +
+                                                            ' <ul style="margin-bottom: 0px;"> ' +
+                                                            ' <li>Columns naming is respected</li>' +
+                                                            ' <li>Item codes are all recognized</li>' +
+                                                            ' <li>Merchandise hierarchy codes are all recognized</li></ul>'); 
+                                    this.activeIndex = this.activeIndex + 1; // Enable Configuration
+                                    this.activeIndex = this.activeIndex + 1; // Enable schedule
+                                    this.activeIndex = this.activeIndex + 1; // Enable Recap
+
+                                    let MS_PER_MINUTE = 60000;
+                                    this.dateNow = new Date( new Date().getTime() + 5*MS_PER_MINUTE);
+                                }
+                        }
+                    );
         }
         else {
                 this._messageService.add({key:'top', severity:'error', summary:'Required data missing', detail: this.missingData }); 
@@ -321,7 +331,5 @@ export class ItemHierarchyComponent implements OnInit{
     }
     return result;
   }
-
-
  
 }

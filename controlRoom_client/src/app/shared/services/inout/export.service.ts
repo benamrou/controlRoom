@@ -383,7 +383,7 @@ export class ExportService{
         this.json2xls(workbook, ws, reportId, reportTitle, reportContent,rawData);
   
         if (!!image) {
-            console.log('image :',image);
+            //console.log('image :',image);
            let imageid =  workbook.addImage({ base64: image, extension: 'png'});
             ws.addImage(imageid, {
                     tl: { col: Object.keys(rawData[0]).length, row: 5 },
