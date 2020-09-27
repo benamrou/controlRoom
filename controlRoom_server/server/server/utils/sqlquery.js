@@ -172,6 +172,8 @@ async function executeLibQueryCallback(ticketId, queryNum, params, user, databas
                                 language + ", :cursor); END;";
         logger.log(ticketId, SQLquery, user);
 
+
+        oracledb.fetchAsString = [ oracledb.CLOB ];
         let promiseExecution = await dbConnect.executeCursor(
             SQLquery, 
             // Bind cursor for the resulset
@@ -224,6 +226,7 @@ async function executeQueryCallback(ticketId, query, params, user, database_sid,
                             language + ", :cursor); END;";
     logger.log(ticketId, SQLquery, user);
 
+    oracledb.fetchAsString = [ oracledb.CLOB ];
     let promiseExecution = await dbConnect.executeCursor(
         SQLquery, 
         // Bind cursor for the resulset
@@ -266,6 +269,7 @@ async function executeSQL(ticketId, sql, bindParams, user, request, response, ca
     //logger.log(ticketId, "LIBQUERY with Callback: ", user);
     logger.log(ticketId, sql + '\n' + JSON.stringify(bindParams), user);
 
+    oracledb.fetchAsString = [ oracledb.CLOB ];
     let promiseExecution = await dbConnect.executeQuery(sql, bindParams,
                             { autoCommit: true}, 
                             ticketId,

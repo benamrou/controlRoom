@@ -16,7 +16,13 @@ export class ConfirmationService {
         return this;
     }
 
+    close() {
+        this.requireConfirmationSource.next(null);
+        return this;
+    }
+
     onAccept() {
         this.acceptConfirmationSource.next();
     }
 }
+

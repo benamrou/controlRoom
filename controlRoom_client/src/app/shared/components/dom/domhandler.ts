@@ -1,3 +1,12 @@
+/**
+ * @dynamic is for runtime initializing DomHandler.browser
+ *
+ * If delete below comment, we can see this error message:
+ *  Metadata collected contains an error that will be reported at runtime:
+ *  Only initialized variables and constants can be referenced
+ *  because the value of this variable is needed by the template compiler.
+ */
+// @dynamic
 export class DomHandler {
 
     public static zindex: number = 1000;
@@ -56,7 +65,10 @@ export class DomHandler {
     }
 
     public static findSingle(element: any, selector: string): any {
-        return element.querySelector(selector);
+        if (element) {
+            return element.querySelector(selector);
+        }
+        return null;
     }
 
     public static index(element: any): number {
@@ -70,7 +82,7 @@ export class DomHandler {
     }
     
     public static indexWithinGroup(element: any, attributeName: string): number {
-        let children = element.parentNode.childNodes;
+        let children = element.parentNode ? element.parentNode.childNodes : [];
         let num = 0;
         for (var i = 0; i < children.length; i++) {
             if (children[i] == element) return num;
@@ -88,12 +100,14 @@ export class DomHandler {
 
         if ((targetOffset.top + targetHeight + elementDimensions.height) > viewport.height) {
             top = -1 * (elementDimensions.height);
+            element.style.transformOrigin = 'bottom';
             if (targetOffset.top + top < 0) {
-                top = 0;
+                top = -1 * targetOffset.top;
             }
         }
         else {
             top = targetHeight;
+            element.style.transformOrigin = 'top';
         }
 
         if (elementDimensions.width > viewport.width) {
@@ -127,15 +141,18 @@ export class DomHandler {
 
         if (targetOffset.top + targetOuterHeight + elementOuterHeight > viewport.height) {
             top = targetOffset.top + windowScrollTop - elementOuterHeight;
-            if(top < 0) {
-                top = 0 + windowScrollTop;
+            element.style.transformOrigin = 'bottom';
+
+            if (top < 0) {
+                top = windowScrollTop;
             }
         } 
         else {
             top = targetOuterHeight + targetOffset.top + windowScrollTop;
+            element.style.transformOrigin = 'top';
         }
 
-        if (targetOffset.left + targetOuterWidth + elementOuterWidth > viewport.width)
+        if (targetOffset.left + elementOuterWidth > viewport.width)
             left = Math.max(0, targetOffset.left + windowScrollLeft + targetOuterWidth - elementOuterWidth);
         else
             left = targetOffset.left + windowScrollLeft;
@@ -336,17 +353,17 @@ export class DomHandler {
     }
     
     public static getOffset(el) {
-        let rect = el.getBoundingClientRect();
-        
+        var rect = el.getBoundingClientRect();
+
         return {
-            top: rect.top + document.body.scrollTop,
-            left: rect.left + document.body.scrollLeft
+            top: rect.top + (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0),
+            left: rect.left + (window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0),
         };
     }
 
     public static replaceElementWith(element: any, replacementElement: any): any {
         let parentNode = element.parentNode;
-        if(!parentNode) 
+        if (!parentNode) 
             throw `Can't replace element`;
         return parentNode.replaceChild(replacementElement, element);
     }
@@ -390,21 +407,31 @@ export class DomHandler {
     }
      
     public static appendChild(element: any, target: any) {
-        if(this.isElement(target))
+        if (this.isElement(target))
             target.appendChild(element);
-        else if(target.el && target.el.nativeElement)
+        else if (target.el && target.el.nativeElement)
             target.el.nativeElement.appendChild(element);
         else
             throw 'Cannot append ' + target + ' to ' + element;
     }
     
     public static removeChild(element: any, target: any) {
-        if(this.isElement(target))
+        if (this.isElement(target))
             target.removeChild(element);
-        else if(target.el && target.el.nativeElement)
+        else if (target.el && target.el.nativeElement)
             target.el.nativeElement.removeChild(element);
         else
             throw 'Cannot remove ' + element + ' from ' + target;
+    }
+
+    public static remove(element) {
+        // Create Element.remove() function if not exist
+        if (!('remove' in Element.prototype)) {
+            element.parentNode.removeChild(element);
+        }
+        else {
+            element.remove();
+        }
     }
     
     public static isElement(obj: any) {
@@ -413,28 +440,34 @@ export class DomHandler {
         );
     }
     
-    public static calculateScrollbarWidth(): number {
-        if(this.calculatedScrollbarWidth !== null)
-            return this.calculatedScrollbarWidth;
-        
-        let scrollDiv = document.createElement("div");
-        scrollDiv.className = "ui-scrollbar-measure";
-        document.body.appendChild(scrollDiv);
+    public static calculateScrollbarWidth(el?: HTMLElement): number {
+        if (el) {
+            let style = getComputedStyle(el);
+            return (el.offsetWidth - el.clientWidth - parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth));
+        }
+        else {
+            if (this.calculatedScrollbarWidth !== null)
+                return this.calculatedScrollbarWidth;
+            
+            let scrollDiv = document.createElement("div");
+            scrollDiv.className = "p-scrollbar-measure";
+            document.body.appendChild(scrollDiv);
 
-        let scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-        document.body.removeChild(scrollDiv);
+            let scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+            document.body.removeChild(scrollDiv);
 
-        this.calculatedScrollbarWidth = scrollbarWidth;
-        
-        return scrollbarWidth;
+            this.calculatedScrollbarWidth = scrollbarWidth;
+            
+            return scrollbarWidth;
+        }
     }
 
     public static calculateScrollbarHeight(): number {
-        if(this.calculatedScrollbarHeight !== null)
+        if (this.calculatedScrollbarHeight !== null)
             return this.calculatedScrollbarHeight;
         
         let scrollDiv = document.createElement("div");
-        scrollDiv.className = "ui-scrollbar-measure";
+        scrollDiv.className = "p-scrollbar-measure";
         document.body.appendChild(scrollDiv);
 
         let scrollbarHeight = scrollDiv.offsetHeight - scrollDiv.clientHeight;
@@ -450,14 +483,14 @@ export class DomHandler {
     }
     
     public static clearSelection(): void {
-        if(window.getSelection) {
-            if(window.getSelection().empty) {
+        if (window.getSelection) {
+            if (window.getSelection().empty) {
                 window.getSelection().empty();
-            } else if(window.getSelection().removeAllRanges && window.getSelection().rangeCount > 0 && window.getSelection().getRangeAt(0).getClientRects().length > 0) {
+            } else if (window.getSelection().removeAllRanges && window.getSelection().rangeCount > 0 && window.getSelection().getRangeAt(0).getClientRects().length > 0) {
                 window.getSelection().removeAllRanges();
             }
         }
-        else if(document['selection'] && document['selection'].empty) {
+        else if (document['selection'] && document['selection'].empty) {
             try {
                 document['selection'].empty();
             } catch(error) {
@@ -467,7 +500,7 @@ export class DomHandler {
     }
 
     public static getBrowser() {
-        if(!this.browser) {
+        if (!this.browser) {
             let matched = this.resolveUserAgent();
             this.browser = {};
 
@@ -502,7 +535,7 @@ export class DomHandler {
     }
 
     public static isInteger(value): boolean {
-        if(Number.isInteger) {
+        if (Number.isInteger) {
             return Number.isInteger(value);
         }
         else {
@@ -512,5 +545,26 @@ export class DomHandler {
 
     public static isHidden(element: HTMLElement): boolean {
         return element.offsetParent === null;
+    }
+
+    public static getFocusableElements(element:HTMLElement) {
+        let focusableElements = DomHandler.find(element,`button:not([tabindex = "-1"]):not([disabled]):not([style*="display:none"]):not([hidden]), 
+                [href][clientHeight][clientWidth]:not([tabindex = "-1"]):not([disabled]):not([style*="display:none"]):not([hidden]), 
+                input:not([tabindex = "-1"]):not([disabled]):not([style*="display:none"]):not([hidden]), select:not([tabindex = "-1"]):not([disabled]):not([style*="display:none"]):not([hidden]), 
+                textarea:not([tabindex = "-1"]):not([disabled]):not([style*="display:none"]):not([hidden]), [tabIndex]:not([tabIndex = "-1"]):not([disabled]):not([style*="display:none"]):not([hidden]), 
+                [contenteditable]:not([tabIndex = "-1"]):not([disabled]):not([style*="display:none"]):not([hidden])`
+            );
+
+            let visibleFocusableElements = [];
+            for(let focusableElement of focusableElements) {
+                if (getComputedStyle(focusableElement).display != "none" && getComputedStyle(focusableElement).visibility != "hidden")
+                    visibleFocusableElements.push(focusableElement);
+            }
+        return visibleFocusableElements;
+    }
+
+    static generateZIndex() {
+        this.zindex = this.zindex||999;
+        return ++this.zindex;
     }
 }

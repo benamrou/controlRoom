@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule }  from '@angular/forms';
 import { PanelModule, TableModule, MultiSelectModule,ButtonModule, DialogModule,DragDropModule,
-        TooltipModule,
+        TooltipModule,CheckboxModule, ConfirmDialogModule, 
         DropdownModule, AutoCompleteModule, AccordionModule, TabViewModule,TreeTableModule,TreeModule,
          MessagesModule, GrowlModule, DataGridModule, CalendarModule, ToastModule} from '../../../shared/components/index';
 
@@ -18,7 +18,7 @@ import { MassJournalComponent} from './massjournal.component';
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, 
                 MassJournalRoutingModule, DragDropModule,
-               TooltipModule,
+               TooltipModule,CheckboxModule,ConfirmDialogModule,
                PanelModule, AutoCompleteModule,AccordionModule,TabViewModule,TreeTableModule,TreeModule,
                TableModule,DialogModule, MultiSelectModule, ButtonModule, DataGridModule, DropdownModule, 
                MessagesModule, GrowlModule, PageHeaderModule, CalendarModule, ToastModule ],
