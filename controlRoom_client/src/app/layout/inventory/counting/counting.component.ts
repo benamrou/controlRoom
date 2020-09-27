@@ -145,6 +145,8 @@ export class CountingComponent {
     this.alerts = [[],[],[],[],[],[]];
     this.rejectionData = null;
     this.movementData = null;
+
+    this.isCompleted = true; // End previous row selection
     this.isCompleted = false;
     this.ngOnDestroy();
     
@@ -154,7 +156,8 @@ export class CountingComponent {
     
     //this.runEvery = interval(10000);
 
-    this.runEverySubscription = interval(10000).pipe(takeWhile(() => !this.isCompleted)).subscribe(val => {this.getGOLDStep(datePipe.transform(event.data.inventorydate, 'MM/dd/yyyy'), 
+    this.runEverySubscription = interval(10000).pipe(takeWhile(() => !this.isCompleted)).subscribe(val => {
+                                                                      this.getGOLDStep(datePipe.transform(event.data.inventorydate, 'MM/dd/yyyy'), 
                                                                       event.data.site, event.data.filename);
                             });
     
@@ -188,7 +191,8 @@ export class CountingComponent {
     let datePipe = new DatePipe('en-US');
    let stepSubscribe = this._countingService.getCountingIntegrationInfo_STEP3(countingDate, site, filename)
             .subscribe( 
-                data => { this.search_STEP3_Result = data; 
+                data => { this.search_STEP3_Result = new CountStep();
+                          this.search_STEP3_Result = data; 
                           this.checkStep2_GOLDProcess(this.search_STEP3_Result);
                           this.checkStep3_GOLDProcess(this.search_STEP3_Result);
               }, // put the data returned from the server in our variable
@@ -216,7 +220,6 @@ export class CountingComponent {
  */
  checkStep0_SaleUpload (countingDate: string, site: string) {
   let processData: ProcessData;
-  this.alerts[0] = [];
   this.subscription.push(this._processService.getBatchDuration('pssti12p',' 10 ' + site + ' ', countingDate)
             .subscribe( 
                 data => { processData = data; 
@@ -246,22 +249,24 @@ export class CountingComponent {
  * @param counting 
  */
  checkStep1_PICSLoadProcess (counting: any) {
-   this.alerts[1] = [];
-   this.alerts[2] = [];
    // Check if file has been uploaded
    //console.log(' Counting PICSLoadProcess : ' + JSON.stringify(counting));
     if (counting.totalcount === 0) {
+      this.alerts[1] = [];
       this.alerts[1].push({ type: 'info', msg: 'STEP 1 - ' + counting.company + ' has not been uploaded...'});
     } else {
+      this.alerts[1] = [];
       this.alerts[1].push({ type: 'success', msg: 'STEP 1 - ' + counting.company + ' has been uploaded in the staging table at ' +
                                                   counting.createdat });
     }
     // Check if the counting file has been processed
     if (counting.tobeprocessed.total > 0) {
+      this.alerts[2] = [];
       this.alerts[2].push({ type: 'danger', msg: 'STEP 2 - ' + counting.company + ' integration/mapping not completed - ' + 
                                                  counting.tobeprocessed.total + ' record(s) to be processed...'});
     }
     if (counting.success.total > 0) {
+      this.alerts[2] = [];
       this.alerts[2].push({ type: 'success', msg: 'STEP 2 - ' + counting.company + ' integration/mapping has been completed at ' +
                                                   counting.success.updatedat });
     } 
@@ -272,11 +277,12 @@ export class CountingComponent {
  * @param counting 
  */
  checkStep2_GOLDProcess (countingStepGOLD: any) {
-  this.alerts[3] = [];
    // Check if file has been uploaded
     if (countingStepGOLD.initialisation === 0) {
+      this.alerts[3] = [];
       this.alerts[3].push({ type: 'info', msg: 'STEP 3 - Counting has not been integrated...'});
     } else {
+      this.alerts[3] = [];
       this.alerts[3].push({ type: 'success', msg: 'STEP 3 - Counting has been initialised in GOLD at ' + 
                                            countingStepGOLD.initialisationdate + ' ...'});
     }
@@ -289,10 +295,11 @@ export class CountingComponent {
  checkStep3_GOLDProcess (countingStepGOLD: any) {
    // Check if file has been uploade
    //console.log('countingStepGOLD: '  + JSON.stringify(countingStepGOLD));
-   this.alerts[4] = [];
     if (countingStepGOLD.stkupdate === 0) {
+      this.alerts[4] = [];
       this.alerts[4].push({ type: 'info', msg: 'STEP 4 - Counting has NOT been validated...'});
     } else {
+      this.alerts[4] = [];
       this.alerts[4].push({ type: 'success', msg: 'STEP 4 - Counting has been validated. Inventory layers have been updated at ' +
                                            countingStepGOLD.stkupdatedate + ' ...'});
     }

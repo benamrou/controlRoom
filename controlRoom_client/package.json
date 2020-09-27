@@ -6,6 +6,7 @@
         "ng": "ng",
         "start": "ng serve --host 0.0.0.0 --disableHostCheck",
         "build": "webpack-dev-server --config webpack/webpack.config.js --mode production --base-href /icr/ --output-hashing=all",
+        "post-build": "node ./src/build/post-build.js",
         "gitbuild": "ng build --prod --base-href /ICR/master/dist/ ",
         "prod": "ng build --prod --baseHref /icr/ --configuration=production",
         "prod_heinens": "ng build --prod --baseHref /icr/ --configuration=heinens --output-hashing=all",

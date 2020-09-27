@@ -26,6 +26,31 @@ export class WorkSheetJSON {
     public rows: Array<any> = [];
 }
 
+export class Journal {
+    JSONFILE;
+    USERNAME;
+    USERMAIL;
+    JSONENV;
+    JSONTOOL;
+    JSONTOOLCODE;
+    JSONSTEP;
+    JSONSTATUS;
+    JSONSTATUSCODE;
+    JSONIMMEDIATE;
+    JSONIMMEDIATECODE;
+    JSONDSCHED;
+    JSONSTARTDATE;
+    JSONDLOAD;
+    JSONDSAVE;
+    JSONDPROCESS;
+    JSONCONTENT;
+    SONPARAM;
+    JSONERROR;
+    JSONNBERROR;
+    JSONNBRECORD;
+    JSONTRACE;
+}
+
 @Injectable()
 export class ImportService{
 
@@ -34,6 +59,9 @@ export class ImportService{
     private checkUploadJSONUrl: string = '/api/upload/1/'; // Load and check process
     private validateUploadJSONUrl: string = '/api/upload/2/'; // Validated 
     private executeUploadJSONUrl: string = '/api/upload/3/'; // Execute
+    private getJournalJSONUrl: string = '/api/upload/4/'; // Journal
+    private collectResultUrl: string = '/api/upload/5/'; // Collect result
+    private updateJournalUrl: string = '/api/upload/6/'; // Update Journal
     private executeJobURL: string = '/api/execute/1/';
     
     private request: string;
@@ -117,7 +145,6 @@ export class ImportService{
     }
 
 
-
     postExecution (filename, startdate, trace, now, schedule_date,  json) {
         //console.log('postFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
         this.request = this.validateUploadJSONUrl;
@@ -177,7 +204,7 @@ export class ImportService{
 
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-    return this._http.get(this.request, this.params, this.options).map(response => {
+    return this._http.get(this.request, this.params, headersSearch).map(response => {
             let data = <any> response;
             return data;
     });
@@ -218,7 +245,6 @@ export class ImportService{
         //console.log('checkFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
         this.request = this.checkUploadJSONUrl;
         let headersSearch = new HttpHeaders();
-        let options = new HttpHeaders();
         this.params= new HttpParams();
         this.params = this.params.append('PARAM',filename);
         this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
@@ -269,4 +295,97 @@ export class ImportService{
 
     }
 
+    getJournal(filename, scope, loadDate, executionDate, futureOnly) {
+            this.request = this.getJournalJSONUrl;
+            let headersSearch = new HttpHeaders();
+            let options = new HttpHeaders();
+            this.params= new HttpParams();
+            this.params = this.params.set('PARAM', filename);
+            this.params = this.params.append('PARAM', scope);
+            this.params = this.params.append('PARAM', loadDate);
+            this.params = this.params.append('PARAM', executionDate);
+            this.params = this.params.append('PARAM', futureOnly);
+            headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+            headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+      
+            //console.log('Parameters delete: ' + JSON.stringify(this.params));
+            return this._http.get(this.request, this.params, headersSearch).pipe(map(response => {
+                      let data = <any> response;
+                      let result = [];
+                      let newJournal: any;
+                      console.log('data:', data);
+                    if (data.length > 0 ) {
+                        for(let i = 0; i < data.length; i ++) {
+                            newJournal = new Journal();
+                            newJournal.JSONID = data[i].JSONID;
+                            newJournal.JSONFILE = data[i].JSONFILE;
+                            newJournal.USERNAME = data[i].USERNAME;
+                            newJournal.USERMAIL = data[i].USERMAIL;
+                            newJournal.JSONENV = data[i].JSONENV;
+                            newJournal.JSONTOOL = data[i].JSONTOOL;
+                            newJournal.JSONTOOLCODE = data[i].JSONTOOLCODE;
+                            newJournal.JSONSTEP = data[i].JSONSTEP;
+                            newJournal.JSONSTATUS = data[i].JSONSTATUS;
+                            newJournal.JSONSTATUSCODE = data[i].JSONSTATUSCODE;
+                            newJournal.JSONIMMEDIATE = data[i].JSONIMMEDIATE;
+                            newJournal.JSONIMMEDIATECODE = data[i].JSONIMMEDIATECODE;
+                            if(data[i].JSONDSCHED === null) {  newJournal.JSONDSCHED = '' } else { newJournal.JSONDSCHED = new Date(data[i].JSONDSCHED);}
+                            if(data[i].JSONSTARTDATE === null) {  newJournal.JSONSTARTDATE = '' } else { newJournal.JSONSTARTDATE = new Date(data[i].JSONSTARTDATE);}
+                            if(data[i].JSONDLOAD === null) {  newJournal.JSONDLOAD = '' } else { newJournal.JSONDLOAD = new Date(data[i].JSONDLOAD);}
+                            if(data[i].JSONDSAVE === null) {  newJournal.JSONDSAVE = '' } else { newJournal.JSONDSAVE = new Date(data[i].JSONDSAVE);}
+                            if(data[i].JSONDPROCESS === null) {  newJournal.JSONDPROCESS = '' } else { newJournal.JSONDPROCESS = new Date(data[i].JSONDPROCESS);}
+                            if(data[i].JSONDSAVE === null) {  newJournal.JSONDSAVE = '' } else { newJournal.JSONDSAVE = new Date(data[i].JSONDSAVE);}
+                            newJournal.JSONCONTENT = data[i].JSONCONTENT;
+                            newJournal.JSONPARAM = data[i].JSONPARAM;
+                            newJournal.JSONERROR = data[i].JSONERROR;
+                            newJournal.JSONNBERROR = data[i].JSONNBERROR;
+                            newJournal.JSONNBRECORD= data[i].JSONNBRECORD;
+                            newJournal.JSONTRACE = data[i].JSONTRACE;
+
+                            result.push(newJournal);
+                        }
+                    }
+                    console.log('result:', result);
+                    return result;
+              }));
+    }
+
+    updateJournal(id, filename, startdate, trace, now, schedule_date, status) {
+        this.request = this.updateJournalUrl;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.append('PARAM',id);
+        this.params = this.params.append('PARAM',filename);
+        this.params = this.params.append('PARAM',startdate);
+        this.params = this.params.append('PARAM',trace);
+        this.params = this.params.append('PARAM',now);
+        this.params = this.params.append('PARAM',schedule_date);
+        this.params = this.params.append('PARAM',status);
+        this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+  
+        return this._http.get(this.request, this.params, headersSearch).map(response => {
+            let data = <any> response;
+            return data;
+        });
+    }
+
+    collectResult (jsonid) {
+        this.request = this.collectResultUrl;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.append('PARAM',jsonid);
+        this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+    
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+        return this._http.get(this.request, this.params, headersSearch).map(response => {
+                let data = <any> response;
+                return data;
+        });
+
+    }
 }
+
+
