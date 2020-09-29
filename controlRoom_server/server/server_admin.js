@@ -102,6 +102,7 @@ let crontab = require('./server/controller/crontab')(app, SQL);
 let finance = require('./server/controller/finance')(app, SQL);
 let scorecard = require('./server/controller/scorecard')(app, SQL);
 let dashboard = require('./server/controller/dashboard')(app, SQL);
+let supplier = require('./server/controller/supplier')(app, SQL);
 let query = require('./server/controller/query')(app, SQL);
 
 
@@ -136,6 +137,7 @@ warehouse.get(app, oracledb);
 scorecard.get(app, oracledb);
 dashboard.get(app, oracledb);
 query.get(app, oracledb);
+supplier.get(app, oracledb);
 //finance.get(aoo,oracledb);
 
 
