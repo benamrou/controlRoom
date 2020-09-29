@@ -1,5 +1,5 @@
 import {Component, ViewEncapsulation, ViewChild} from '@angular/core';
-import { Supplier,  SupplierPlanning, ValidePlanning } from '../../../../shared/services';
+import { SupplierService } from '../../../../shared/services';
 import { Dialog, SelectItem, Chips, Message, DataGrid, Schedule, FullCalendar } from '../../../../shared/components';
 import { MessageService } from '../../../../shared/components';
 import {DatePipe} from '@angular/common';
@@ -26,7 +26,7 @@ import 'rxjs/add/operator/toPromise';
 	moduleId: module.id,
     selector: 'dshsupplier',
     templateUrl: './dashboard.supplier.component.html',
-    providers: [MessageService],
+    providers: [MessageService, SupplierService],
     styleUrls: ['./dashboard.supplier.component.scss', '../../../../app.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
@@ -42,7 +42,7 @@ export class DashboardSupplierComponent {
 
   // Search result 
    searchResult : any [] = [];
-   selectedElement: Supplier;
+   selectedElement;
    columnsResult: any [] = [];
    columnsSchedule: any [] = [];
    activeValidateButton: boolean = false;
@@ -78,9 +78,11 @@ export class DashboardSupplierComponent {
   dateTomorrow : Date;
   day: any = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  _scheduleService;
+  // Request subscription
+  subscription: any[] = [];
 
   constructor(private datePipe: DatePipe,
+              private _supplierService: SupplierService,
               private _messageService: MessageService) {
     this.screenID =  'SCR0000000003';
     datePipe     = new DatePipe('en-US');
@@ -88,12 +90,10 @@ export class DashboardSupplierComponent {
     this.dateTomorrow =  new Date(this.dateNow.setDate(this.dateNow.getDate() + 1));
 
     this.columnsResult = [
-      { field: 'suppliercode', header: 'Supplier code' },
-      { field: 'servicecontract', header: 'Service contract code' },
-      { field: 'commercialcontract', header: 'Commercial contract code' },
-      { field: 'addresschain', header: 'Address chain' },
-      { field: 'supplierdescription', header: 'Description' },
-      { field: 'activeschedules', header: 'Number of schedules' }
+      { field: 'SUPPLIERCODE', header: 'Supplier code' },
+      { field: 'COMMERCIALCONTRACT', header: 'Commercial contract code' },
+      { field: 'ADDRESSCHAIN', header: 'Address chain' },
+      { field: 'SUPPLIERDESCRIPTION', header: 'Description' }
     ];
 
 
@@ -103,10 +103,8 @@ export class DashboardSupplierComponent {
   search() {
     //this.searchCode = searchCode;
     this.razSearch();
-    this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for the supplier schedule : ' + JSON.stringify(this.searchCode)});
-    this._scheduleService.getDashboardSupplierInfo(this.searchCode, 
-                                                  this.datePipe.transform(this.periodStart, 'MM/dd/yyyy'),
-                                                  this.datePipe.transform(this.periodEnd, 'MM/dd/yyyy'))
+    this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for the supplier : ' + JSON.stringify(this.searchCode)});
+    this.subscription.push(this._supplierService.getSupplierCode(this.searchCode)
             .subscribe( 
                 data => { this.searchResult = data; // put the data returned from the server in our variable
                 //console.log(JSON.stringify(this.searchResult));  
@@ -118,7 +116,7 @@ export class DashboardSupplierComponent {
                 () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Retrieved ' + 
                                      this.searchResult.length + ' reference(s).'});
                 }
-            );
+            ));
   }
 
   razSearch () {
@@ -136,5 +134,11 @@ export class DashboardSupplierComponent {
   onRowSelect(event) {
   }
 
+
+  ngOnDestroy() {
+    for(let i=0; i< this.subscription.length; i++) {
+      this.subscription[i].unsubscribe();
+    }
+  }
 }
 

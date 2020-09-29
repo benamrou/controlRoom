@@ -102,13 +102,13 @@
 :host ::ng-deep th.ui-state-highlight {
     color: red;
     background: white;
-    outline-color: white;
+    //outline-color: white;
 }
 
 :host ::ng-deep  p-table > .ui-table tbody > tr.ui-state-highlight {
     color: red;
     background: white;
-    outline-color: white;
+    //utline-color: white;
 }
 
 
@@ -116,7 +116,7 @@
     border: 1px solid lightgray;
     border-right-color: white;
     border-left-color: white;
-    outline-color: white;
+   // outline-color: white;
 }
 
 :host ::ng-deep p-table > .ui-table .ui-paginator-bottom {

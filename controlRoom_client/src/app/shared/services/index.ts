@@ -24,6 +24,7 @@ export * from './screen/screen.service';
 export * from './inout/export.service';
 export * from './inout/import.service';
 export * from './parameter/param.service';
+export * from './supplier/supplier.service';
 
 /** Prime NG Service  **/
 export * from '../components/index';

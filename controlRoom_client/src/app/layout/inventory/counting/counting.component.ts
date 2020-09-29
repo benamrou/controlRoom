@@ -108,14 +108,17 @@ export class CountingComponent {
   search() {
     //this.searchCode = searchCode;
     let datePipe = new DatePipe('en-US');
+    let searchDate;
     this.razSearch();
-    if (this.countingDate) {
+    if (this.countingDate != null) {
+      searchDate = datePipe.transform(this.countingDate, 'MM/dd/yyyy');
       this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for counting on : ' + 
-                      JSON.stringify(datePipe.transform(this.countingDate,"MM/dd/yyyy")) });
+                      JSON.stringify(searchDate) });
     } else {
       this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for all the countings.'});    
+      searchDate = '-1'
     }
-    this.subscription.push(this._countingService.getCountingIntegrationInfo_STEP1(datePipe.transform(this.countingDate, 'MM/dd/yyyy'))
+    this.subscription.push(this._countingService.getCountingIntegrationInfo_STEP1(searchDate)
             .subscribe( 
                 data => { if (data.counts.length > 0) {
                     this.searchResult = data; // put the data returned from the server in our variable
