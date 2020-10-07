@@ -32,7 +32,7 @@ export class CategoryComponent {
 
   onUpload(event) {
           this.msgs = [];
-          console.log(JSON.stringify(event));
+          //console.log(JSON.stringify(event));
           for(let file of event.files) {
               this.uploadedFiles.push(file);
               this.msgs.push({severity: 'info', summary: 'File validated ' + file.name, detail: ''});

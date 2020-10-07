@@ -1,1 +1,1 @@
-npm run prod_heinens
+npm run prod_heinens && npm run post-build

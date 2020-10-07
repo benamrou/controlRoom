@@ -206,7 +206,7 @@ export class WidgetService {
                 widget.columnResult.push(column);
                 widget.columns = JSON.parse(JSON.stringify(widget.columnResult));
                 this.widgetsInfo.widgets.push(widget);
-                console.log('Widget/1/ :',this.widgetsInfo.widgets);
+                //console.log('Widget/1/ :',this.widgetsInfo.widgets);
         });
     }
 

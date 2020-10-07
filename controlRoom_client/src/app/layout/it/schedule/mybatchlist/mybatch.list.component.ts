@@ -120,7 +120,7 @@ export class MyBatchListComponent {
       this.childStatusUpdate(rowNode, 'ORDERED')
       if (! rowNode.children) {
         let jobDone = false;
-        console.log('Running job : ', rowNode.data.BATCHID, rowNode.data.PARAMETER);
+        //console.log('Running job : ', rowNode.data.BATCHID, rowNode.data.PARAMETER);
         while (! jobDone) {
           if (rowNode.data.STATUS !== 'INPROGRESS') {
             rowNode.data.STATUS='INPROGRESS';
@@ -135,7 +135,7 @@ export class MyBatchListComponent {
                 () => {  
                         jobDone = true;
                         rowNode.data.STATUS='COMPLETED'; 
-                        console.log('Completed job : ', rowNode.data.BATCHID, rowNode.data.PARAMETER);
+                        //console.log('Completed job : ', rowNode.data.BATCHID, rowNode.data.PARAMETER);
                   });
           }
           await this.delay(1000);
@@ -149,9 +149,9 @@ export class MyBatchListComponent {
         // If all the child have been completed, MASTER is completed.
         //console.log('rowNode execute Job: ', rowNode, rowNode.children[rowNode.children.length-1].data.STATUS);
 
-        console.log('All jobs should be completed : ', rowNode);
+        //console.log('All jobs should be completed : ', rowNode);
         if (rowNode.children[rowNode.children.length-1].data.STATUS === 'COMPLETED') {
-          console.log('Updating Master status : ', rowNode.data.BATCHID, rowNode.data.STATUS);
+          //console.log('Updating Master status : ', rowNode.data.BATCHID, rowNode.data.STATUS);
           rowNode.data.STATUS = 'COMPLETED'; 
         }
       }
@@ -184,7 +184,7 @@ export class MyBatchListComponent {
   }
 
   onDrop(event, node) {
-    console.log('onDrop ', event, node);
+    //console.log('onDrop ', event, node);
     // Can't drop above ROOT
     if (node.node.data.BATCHID !== 'ROOT') {
       this.myRepositoryHistory.push(Object.assign(this.myRepository));
@@ -196,7 +196,7 @@ export class MyBatchListComponent {
   }
 
   deleteNode(topNode: TreeNode, selectedNode: TreeNode) {
-    console.log("deleteNode: ", topNode, selectedNode);
+    //console.log("deleteNode: ", topNode, selectedNode);
     if (topNode.children != null) {
         for (let i = 0; i < topNode.children.length; i++) {
             if (topNode.children[i].data.BATCHID == selectedNode.data.BATCHID &&
@@ -265,7 +265,7 @@ export class MyBatchListComponent {
   }
 
   addFolder() {
-  console.log('Adding folder ', this.selectedNode, this.myRepository);
+  //console.log('Adding folder ', this.selectedNode, this.myRepository);
   if(typeof this.selectedNode !== "undefined")  {
       this.selectedNode.children.push({
         "expanded" : true,
@@ -297,23 +297,23 @@ export class MyBatchListComponent {
   }
 
   undo() {
-    console.log('Undo :', this.myRepositoryHistoryIndicator, this.myRepositoryHistory);
+    //console.log('Undo :', this.myRepositoryHistoryIndicator, this.myRepositoryHistory);
     this.myRepositoryHistoryIndicator = this.myRepositoryHistoryIndicator - 1; 
     this.myRepository = Object.assign(this.myRepositoryHistory[this.myRepositoryHistoryIndicator]);
     this.myRepository = [...this.myRepository];
-    console.log('Undo this.myRepository', this.myRepository);
+    //console.log('Undo this.myRepository', this.myRepository);
   }
 
   redo() {
-    console.log('Redo :', this.myRepositoryHistoryIndicator, this.myRepositoryHistory);
+    //console.log('Redo :', this.myRepositoryHistoryIndicator, this.myRepositoryHistory);
     this.myRepositoryHistoryIndicator = this.myRepositoryHistoryIndicator + 1; 
     this.myRepository = Object.assign(this.myRepositoryHistory[this.myRepositoryHistoryIndicator]);
     this.myRepository = [...this.myRepository];
-    console.log('Redo this.myRepository', this.myRepository);
+    //console.log('Redo this.myRepository', this.myRepository);
   }
 
   addJob() {
-    console.log('Adding job ', this.selectedNode, this.myRepository);
+    //console.log('Adding job ', this.selectedNode, this.myRepository);
     if(typeof this.selectedNode !== "undefined")  {
         this.selectedNode.children.push({
           "expanded" : true,

@@ -157,10 +157,15 @@
                                 </a>
                             </ul>
                         </li>
-                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('dashboard') !== -1 }">
-                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'dashboard' }"> 
-                                <a class="bbs_link_menu" routerLink="/dashboardsupplier" [routerLinkActive]="['router-link-active']" >
-                                    <span><i class="fas fa-industry"></i> &nbsp; {{ 'Supplier' | translate}} </span>
+                    </ul>
+                    <ul class="submenu" style="padding-left: 1.1em;">
+                        <a class="list-group-item" (click)="addExpandClass('reporting;quality')" >
+                            <span><i class="fas fa-bars"></i> &nbsp; {{ 'Quality' | translate}} </span>
+                        </a>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('quality') !== -1 }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'quality' }"> 
+                                <a class="bbs_link_menu" routerLink="/qualitywhsreplenishment" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-industry"></i> &nbsp; {{ 'Whs Repl.' | translate}} </span>
                                 </a>
                             </ul>
                         </li>
