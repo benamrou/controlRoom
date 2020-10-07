@@ -104,6 +104,7 @@ let scorecard = require('./server/controller/scorecard')(app, SQL);
 let dashboard = require('./server/controller/dashboard')(app, SQL);
 let supplier = require('./server/controller/supplier')(app, SQL);
 let query = require('./server/controller/query')(app, SQL);
+let reporting = require('./server/controller/reporting')(app, SQL);
 
 
 //dbConnection.createPool('dd');
@@ -138,6 +139,7 @@ scorecard.get(app, oracledb);
 dashboard.get(app, oracledb);
 query.get(app, oracledb);
 supplier.get(app, oracledb);
+reporting.get(app, oracledb);
 //finance.get(aoo,oracledb);
 
 

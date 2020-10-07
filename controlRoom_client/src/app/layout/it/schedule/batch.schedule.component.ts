@@ -116,7 +116,7 @@ export class BatchScheduleComponent {
                 () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Retrieved ' + 
                                      this.searchResult.length + ' reference(s).'});
 
-                       console.log(JSON.stringify(this.searchResult));  
+                       //console.log(JSON.stringify(this.searchResult));  
                 }
             );
   }
@@ -161,7 +161,7 @@ export class BatchScheduleComponent {
   }
 
   checkFavorite(myRepository: TreeNode, batch: TreeNode): boolean {
-    console.log('checkFavorite : ', myRepository, batch)
+    //console.log('checkFavorite : ', myRepository, batch)
     if (!Object.prototype.hasOwnProperty.call(myRepository, 'children'))  { 
       return false;
     }
@@ -184,9 +184,9 @@ export class BatchScheduleComponent {
    * @param params 
    */
   executeJob(index: number, jobId: string, params: string){
-    console.log('INDEX ' + index);
-    console.log('this.searchResult ' + JSON.stringify(this.searchResult));
-    console.log('EXECUTING ' + JSON.stringify(this.searchResult[index]));
+    //console.log('INDEX ' + index);
+    //console.log('this.searchResult ' + JSON.stringify(this.searchResult));
+    //console.log('EXECUTING ' + JSON.stringify(this.searchResult[index]));
     this.searchResult[index].STATUS='INPROGRESS';
     this._processService.executeJob(jobId, params)
     .subscribe( 

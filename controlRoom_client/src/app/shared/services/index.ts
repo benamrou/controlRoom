@@ -25,6 +25,8 @@ export * from './inout/export.service';
 export * from './inout/import.service';
 export * from './parameter/param.service';
 export * from './supplier/supplier.service';
+export * from './reporting/replenishment.service';
+export * from './authentification/version.check.service';
 
 /** Prime NG Service  **/
 export * from '../components/index';

@@ -10,17 +10,6 @@ import { map } from 'rxjs/operators';
 import { HttpParams, HttpHeaders } from '@angular/common/http';
 
 
-/**
- * General Supplier Schedule view  includes:
- *    - Supplier internal and external code
- *    - Description
- *    - Commercial contract
- *    - Address chain
- *    - Supplier Schedule
- */
-
-  
-
 @Injectable()
 export class ReportingService {
 

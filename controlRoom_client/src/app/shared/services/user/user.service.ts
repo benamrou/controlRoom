@@ -193,7 +193,9 @@ export class UserService {
                             localStorage.setItem('ENV_PASS',env.connectionPassword);
                             this.userInfo.mainEnvironment.push(env);
                             this.userInfo.envDefaultLanguage = env.defaultLanguage;
-                            this.userInfo.sid.push(env.dbLink);
+                            if ( ! this.userInfo.sid.includes(env.dbLink)) {
+                                this.userInfo.sid.push(env.dbLink);
+                            }
                         } 
                     }
 

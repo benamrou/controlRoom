@@ -819,13 +819,13 @@ export class SupplierScheduleServiceContractComponent {
         schedule.numberWeekDaysArray= this.numberDaysWeekToArray(schedule);
         
 
-        console.log('startDate : ' + startDate);
-        console.log('endDate : ' + endDate);
-        console.log('currentWeekDay : ' + currentWeekDay);
-        console.log('numberWeekDays : ' + schedule.numberWeekDays);
-        console.log('lessDays : ' + lessDays);
-        console.log('first : ' + first);
-        console.log('dateFirst : ' + dateFirst);
+        //console.log('startDate : ' + startDate);
+        //console.log('endDate : ' + endDate);
+        //console.log('currentWeekDay : ' + currentWeekDay);
+        //console.log('numberWeekDays : ' + schedule.numberWeekDays);
+        //console.log('lessDays : ' + lessDays);
+        //console.log('first : ' + first);
+        //console.log('dateFirst : ' + dateFirst);
         let sdate = new Date(dateFirst);
         schedule.columnSchedule = [];
         schedule.columnName = [];
@@ -842,7 +842,7 @@ export class SupplierScheduleServiceContractComponent {
               weekSchedule.schedule = (Object.assign({}, schedule.weeklySchedule[i-1].schedule));
               schedule.weeklySchedule.push(weekSchedule);
           }
-          console.log('Column set up : '+ i + ' - ' + dateFirst.getTime());
+          //console.log('Column set up : '+ i + ' - ' + dateFirst.getTime());
           for (let j=0; j < 7; j++) {
             sdate.setTime(dateFirst.getTime() + (j + 7*i) * oneDay);
             schedule.columnSchedule.push(this.datePipe.transform(sdate, 'MM/dd'));
@@ -885,7 +885,7 @@ export class SupplierScheduleServiceContractComponent {
                 err => {},
                 () => { //console.log('Ok creation conpleted');
                   // Step 3 - execute job
-                  console.log('run job ');
+                  //console.log('run job ');
                   this.updateSchedule().subscribe (
                     data => {},
                     err => {},
@@ -928,8 +928,8 @@ export class SupplierScheduleServiceContractComponent {
             .subscribe( 
                 data => { },
                 error => { this._messageService.add({severity:'error', summary:'ERROR Message', detail: error }); },
-                () => { console.log('Deletion request Ok: ');
-                        console.log('Observer deletion completed');
+                () => { //console.log('Deletion request Ok: ');
+                        //console.log('Observer deletion completed');
                         observer.complete();
                     }
                 );
@@ -941,8 +941,8 @@ export class SupplierScheduleServiceContractComponent {
         .subscribe( 
             data => { },
             error => { this._messageService.add({severity:'error', summary:'ERROR Message', detail: error }); },
-            () => { console.log('Deletion request Ok: ');
-                    console.log('Observer deletion completed');
+            () => { //console.log('Deletion request Ok: ');
+                    //console.log('Observer deletion completed');
                     observer.complete();
                 }
             );
@@ -962,11 +962,11 @@ export class SupplierScheduleServiceContractComponent {
             console.log(' i : ' + i + ' - ' + JSON.stringify(this.validateSchedule[i]));
               this._scheduleService.createSchedule(this.validateSchedule[i])
               .subscribe( 
-                  data => { console.log('data ' +i ); },
+                  data => { /* console.log('data ' +i ); */ },
                   error => { this._messageService.add({severity:'error', summary:'ERROR Message', detail: error }); },
-                  () => { console.log('Creation request Ok: ' +i )
+                  () => { //console.log('Creation request Ok: ' +i )
                         count = count +1;
-                        console.log('count: ' + count + ' / ' +  'this.validateSchedule.length: ' + this.validateSchedule.length);
+                        //console.log('count: ' + count + ' / ' +  'this.validateSchedule.length: ' + this.validateSchedule.length);
                         if (count >= this.validateSchedule.length) {
                           observer.complete();
                         }
@@ -993,9 +993,9 @@ export class SupplierScheduleServiceContractComponent {
    * @param day day activated
    */
   activateDay(schedule : TemporaryScheduleWeekServiceContract, day: number) {
-    console.log('ActivateDay : ' + day);
+    //console.log('ActivateDay : ' + day);
     //console.log('Monday/Tuesday/Sunday : ' + schedule.schedule.leadTimeMonday + '/' + schedule.schedule.leadTimeTuesday + '/' + schedule.schedule.leadTimeSunday);
-    console.log ('Schedule : ' + JSON.stringify(schedule));
+    //console.log ('Schedule : ' + JSON.stringify(schedule));
     switch (day) {
         case 0:
           schedule.schedule.collectionTimeSunday1 = schedule.schedule.collectionTimeMonday1;
@@ -1007,9 +1007,9 @@ export class SupplierScheduleServiceContractComponent {
           schedule.schedule.leadTimeSunday = schedule.schedule.leadTimeMonday;
           break;
           case 1:
-            console.log('Ticked Monday');
+            //console.log('Ticked Monday');
             if (schedule.schedule.leadTimeMonday === null || schedule.schedule.leadTimeMonday === '0') {  
-              console.log('Monday is null');
+              //console.log('Monday is null');
             if (schedule.schedule.leadTimeSunday !== '0') {  
                 schedule.schedule.collectionTimeMonday1 = schedule.schedule.collectionTimeSunday1;
                 schedule.schedule.collectionTimeMonday2 = schedule.schedule.collectionTimeSunday2;
@@ -1020,7 +1020,7 @@ export class SupplierScheduleServiceContractComponent {
                 schedule.schedule.leadTimeMonday = schedule.schedule.leadTimeSunday;
             }
             else { // copy from Tuesday
-              console.log('Copy from Tuesday');
+              //console.log('Copy from Tuesday');
                 schedule.schedule.collectionTimeMonday1 = schedule.schedule.collectionTimeTuesday1;
                 schedule.schedule.collectionTimeMonday2 = schedule.schedule.collectionTimeTuesday2;
                 schedule.schedule.collectionTimeMonday3 = schedule.schedule.collectionTimeTuesday3;
@@ -1032,11 +1032,11 @@ export class SupplierScheduleServiceContractComponent {
             }
           break;
           case 2:
-          console.log('Copy from Tuesday : schedule.schedule.leadTimeTuesday : ' + schedule.schedule.leadTimeTuesday);
-          console.log('Copy from Tuesday : schedule.schedule.leadTimeMonday : ' + schedule.schedule.leadTimeMonday);
+          //console.log('Copy from Tuesday : schedule.schedule.leadTimeTuesday : ' + schedule.schedule.leadTimeTuesday);
+          //console.log('Copy from Tuesday : schedule.schedule.leadTimeMonday : ' + schedule.schedule.leadTimeMonday);
             if (schedule.schedule.leadTimeTuesday === null || schedule.schedule.leadTimeTuesday == '0') {  
             if (schedule.schedule.leadTimeMonday != '0') {  
-                console.log('Copying from Monday to Tuesday');
+                //console.log('Copying from Monday to Tuesday');
                 schedule.schedule.collectionTimeTuesday1 = schedule.schedule.collectionTimeMonday1;
                 schedule.schedule.collectionTimeTuesday2 = schedule.schedule.collectionTimeMonday2;
                 schedule.schedule.collectionTimeTuesday3 = schedule.schedule.collectionTimeMonday3;
