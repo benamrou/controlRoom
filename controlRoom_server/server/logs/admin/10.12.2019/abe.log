@@ -1,3 +1,4 @@
+
 10/12/2019 16:20:28 1: BEGIN PKREQUESTMANAGER.CALLQUERY(1,'ADM0000001','abe','{}', '{abe,abe}','{}', :cursor); END;
 10/12/2019 16:20:30 1: [{"USERID":"abe","USERFNAME":"Ahmed","USERLNAME":"Benamrouche","USEREMAIL":"ahmed.benamrouche@bbsymphony.com","USERMOBILE":"(678)9863021"}]
 10/12/2019 16:20:30 1: 1 Object(s) returned... [FETCH]

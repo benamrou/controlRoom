@@ -99,7 +99,7 @@ bats fly
  
  @-webkit-keyframes bats-fly {
     0%  {
-        left: 864px;
+        left: 90%;
     position: absolute;
     top: -94px;
     transform: scale(0.3) rotate(-15deg);
@@ -110,10 +110,13 @@ bats fly
  /* Standard syntax */
  @keyframes bats-fly {
     0%  {
-        left: 864px;
+        left: 80%;
         position: absolute;
         top: -94px;
         transform: scale(0.3) rotate(-15deg);
+    }
+    100% {
+        left:40%;
     }
  
  }
@@ -559,7 +562,7 @@ Building Blocks
         z-index:1;
     }
     .b4 {
-        height:280px;
+        height:180px;
         z-index:0;
         .moon{
             background: lighten(#FFE4C4,100%);
@@ -567,7 +570,7 @@ Building Blocks
             box-shadow: 0 0 5px 0 #e7e7e7, -50px 36px 79px 0 #71807b;
             content: "";
             height: 450px;
-            left: 100px;
+            left: 50px;
             position: absolute;
             top: -450px;
             width: 450px;
@@ -593,7 +596,7 @@ Building Blocks
     }
     .block.block-1 {
         height:200px;
-        left:140px;
+        left:70px;
         top:-150px;
         width:413px;
     }
@@ -629,13 +632,13 @@ Building Blocks
     }
     .block.block-2 {
         height:153px;
-        left:175px;
+        left:87px;
         top:-300px;
         width:350px;
     }
     .block.block-3 {
         height:150px;
-        left:215px;
+        left:107px;
         top:-440px;
         width:270px;
         .tower {
@@ -993,7 +996,7 @@ Tower Windows
 Bat
 ********************/
 .bats{
-    left: 24px;
+    left: 50%;
    position: absolute;
    top: -430px;
    @include bats-fly;
@@ -1344,7 +1347,7 @@ pumpkin
 }
 .pumpkin:nth-child(2) {
    left:298px;
-   top:-366px;
+   top:-350px;
    -webkit-transform:rotate(22deg) scale(.25);
    -ms-transform:rotate(22deg) scale(.25);
    transform:rotate(22deg) scale(.25);

@@ -8,10 +8,16 @@
 
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Warehouse : </span>
+    <bbs-multiselect [options]="warehouses" 
+                    (shareCheckedList)="shareCheckedList($event)" 
+                    (shareCheckedCodeList)="shareCheckedCodeList($event)" 
+                    (shareIndividualCheckedList)="shareIndividualCheckedList($event)">
+    </bbs-multiselect>
     <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier : </span>
-    <span style="overflow: hidden; padding-right: .5em; width: 90%; line-height: 25px">
+    <span style="overflow: hidden; padding-right: .5em; width: 20%; line-height: 25px">
         <input type="text"  [(ngModel)]="searchVendorCode" placeholder="  Enter a code or a description" 
-               style="width: 50%;margin-left: 10px;"/>     
+               style="width: 30%;margin-left: 10px;"/>     
     </span>
 
     <span class="pull-right" style="padding-right: 20px">
@@ -54,7 +60,14 @@
 <!-- Result panel of the resarch --> 
 <!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
 
-<div  item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
+<div class="pull-right">
+    <div  style="width: 100%">
+        <span>Inventory coverage {{inventoryCoverage}}% </span>
+    </div> 
+    <input type="range" min="0" max="100" [(ngModel)]="inventoryCoverage"  (change)="inventoryCoverageChange()"
+           style="position: relative;left: 10%;">
+</div>
+<div  item-width="400px" table-layout="fixed" *ngIf="searchResult !== null" style="margin-top:4em">
 
     <p-table #result [value]="searchResult" sortMode="multiple" 
     [rows]="20"  [rowsPerPageOptions]="[20,40,60]"
@@ -87,17 +100,60 @@
                     <p-sortIcon [field]="col.field"></p-sortIcon>
                 </th>
             </tr>       
-            <tr style="background-color: lightslategrey;">
+            <tr style="background-color: gray;">
                 <th *ngFor="let col of columnsResult">
-                    <input pInputText type="text" (input)="result.filter($event.target.value, col.field, 'contains')" [placeholder]=col.placeholder class="p-column-filter" [style.text-align]="col.align">
+                    <!-- Input filter-->
+                    <input *ngIf="col.type === 'input'"
+                            pInputText type="text" (input)="result.filter($event.target.value, col.field, 'contains')" 
+                            [placeholder]=col.placeholder class="p-column-filter" 
+                            [style.text-align]="col.align"
+                            style="border-radius:0px !important; border-width: 1px;">
+                    <!-- Multi-select filter -->
+                    <p-multiSelect *ngIf="col.type === 'select'"
+                                    styleClass="p-column-filter"
+                                   [options]="col.options"  
+                                   (onChange)="result.filter($event.target.value, col.field, 'contains')" >
+                            <ng-template let-option pTemplate="item">
+                                <div>
+                                    <span>{{option.label}}</span>
+                                </div>
+                            </ng-template>
+                    </p-multiSelect>
                 </th>
             </tr>
         </ng-template>
     <!-- BODY -->
         <ng-template pTemplate="body" let-rowData let-columns="columnsResult">
-            <tr [pSelectableRow]="rowData">
+            <tr [pSelectableRow]="rowData"
+                [ngStyle]="{'background-color' : rowData['COVERED'] == 1? 'none': 'darkorange',
+                            'color' : rowData['COVERED'] == 1? 'black': 'white',
+                            'font-weight' : rowData['COVERED'] == 1? 'normal': 'bold'}">
+                
                 <td *ngFor="let col of columnsResult" class="ui-resizable-column" [style.text-align]="col.align">
+                    <span *ngIf="col.field==='STORE_ORDERABLE' && rowData[col.field]==='Orderable'" 
+                          class="badge badge-success">
                         {{rowData[col.field]}}
+                    </span>                    
+                    <span *ngIf="col.field==='STORE_ORDERABLE' && rowData[col.field]==='Receivable'" 
+                            class="badge badge-warning">
+                        {{rowData[col.field]}}
+                    </span>                   
+                    <span *ngIf="col.field==='STORE_ORDERABLE' && rowData[col.field]!=='Orderable' && rowData[col.field]!=='Receivable'" 
+                            class="badge badge-secondary">
+                        Not active
+                    </span>              
+                    <span *ngIf="col.field==='TREND_COMING'">
+                        {{rowData[col.field] | number:'1.2' }}
+                    </span>
+                    <span *ngIf="col.field==='INV_CASE'">
+                        {{rowData[col.field] | number:'1.0' }}
+                    </span>
+                    <span *ngIf="col.field==='COVERED'">
+                        <input type="checkbox" [checked]="rowData[col.field]" disabled>
+                    </span>
+                    <span *ngIf="col.field!=='STORE_ORDERABLE' && col.field!=='TREND_COMING' && col.field!=='INV_CASE' && col.field!=='COVERED'">
+                        {{rowData[col.field]}}
+                    </span>   
                 </td>
             </tr>
         </ng-template>

@@ -1,14 +1,14 @@
 <!-- div class="login-page" [@routerTransition] style="background-color: steelblue; color: black" -->
 <div class="login-page" [@routerTransition] style="background-color: #82958f; color: black">
+	<div  class="pull-right" font-size="small" ><span #versionDiv style="visibility: hidden;font-size: small">vers. 6.0.1b0.9</span></div>
     <div class="row justify-content-md-center" >
 		<!-- Snow effect -->
 		<!--div *ngFor="let dummy of ' '.repeat(100).split('')" class="snowflake">*</div-->
 
         <div class="col-md-4">
-            <img src="./assets/images/logo.png" width="150px" class="user-avatar" />
-			<h1>Inventory Control Room</h1>
-			<p-message severity="info" text="PrimeNG Rocks"></p-message>
-			<p-messages [(value)]="connectionMessage"></p-messages>
+            <img src="./assets/images/logo.png" width="150px" class="user-avatar" (click)="showHideVersion()" />
+			<h1>Inventory Control Room</h1>  
+			<p-toast></p-toast>
 
             <form role="form" (ngSubmit)="onLoggedin()" >
                 <div class="form-content">
@@ -24,7 +24,7 @@
 							   style="border-radius: 10px">
                     </div>
                 </div>
-                <button class="btn rounded-btn" type="submit" [disabled]="authentification.username.length === 0" > Log in </button>
+                <button class="btn rounded-btn" type="submit" [disabled]="authentification.username.length === 0 " > Log in </button>
             </form>
 
 &nbsp;
@@ -1866,7 +1866,7 @@
 	<span>HAUNTED OFFICE</span>
 </div>
 
-<div class="b-layers">
+<div class="b-layers col-xs-8">
 	<div class="b1">
 		<!--blocks-->
 		<div class="blocks">
@@ -1917,7 +1917,7 @@
 	<div class="b2"></div>
 	<div class="b3"></div>
 	<div class="b4">
-				<div class="bats">
+	<div class="bats">
 	<!--new bat-->
 	<div class="haloween-bat">
 		<div class="h-left-wing">

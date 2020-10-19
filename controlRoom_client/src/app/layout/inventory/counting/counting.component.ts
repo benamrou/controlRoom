@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ViewEncapsulation } from '@angular/core';
 import {DatePipe } from '@angular/common';
 import { CountingService, CountResult, Count, CountStep } from '../../../shared/services/index';
@@ -20,7 +20,7 @@ import { takeWhile } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 
-export class CountingComponent {
+export class CountingComponent implements OnDestroy {
    
    screenID;
    columnOptions: SelectItem[];
@@ -165,6 +165,8 @@ export class CountingComponent {
                             });
     
     this.checkStep1_PICSLoadProcess(this.selectedElement);
+
+    this.getGOLDStep(datePipe.transform(event.data.inventorydate, 'MM/dd/yyyy'), event.data.site, event.data.filename);
     
     //this.checkAlert(this.selectedElement, this.search_STEP2_Result, this.search_STEP3_Result, 
     //                datePipe.transform(event.data.inventorydate, 'MM/dd/yyyy'), event.data.site);
@@ -191,6 +193,7 @@ export class CountingComponent {
   }
 
   getGOLDStep(countingDate: string, site: string, filename: string) {
+    console.log('Runnin GOLD Step');
     let datePipe = new DatePipe('en-US');
    let stepSubscribe = this._countingService.getCountingIntegrationInfo_STEP3(countingDate, site, filename)
             .subscribe( 
@@ -207,7 +210,6 @@ export class CountingComponent {
                   console.log('this.search_STEP3_Result :', this.search_STEP3_Result );
                   if (this.search_STEP3_Result.progressStockUpdate >= 1) {
                     stepSubscribe.unsubscribe();
-                    this.runEverySubscription.unsubscribe();
                     this.isCompleted = true;
                  }
                  else {  this.subscription.push(stepSubscribe);}
@@ -357,6 +359,7 @@ export class CountingComponent {
     for(let i=0; i< this.subscription.length; i++) {
       this.subscription[i].unsubscribe();
     }
+    this.isCompleted = true;
   }
 }
 

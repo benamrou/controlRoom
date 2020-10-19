@@ -1,0 +1,17 @@
+<div style="display: inline-block;">
+    <div (mouseleave)="showDropDown = false">
+        <button class="drop-toggle btn flat" (click)="showDropDown=!showDropDown"
+                style="font-size: small">
+            <span *ngIf=" 0 >= checkedList.length ">Pick in the list</span>
+            <span *ngIf="checkedList.length>0">{{checkedList.join(', ')}}</span>
+            <i class="fa fa-angle-down"></i>
+        </button>
+        <div class="drop-show" *ngIf="showDropDown">
+            <label *ngFor="let option of options" style="line-height: 1em; margin-top: 0.1em;">
+                <input type="checkbox" [(ngModel)]="option.checked" 
+                    (change)="getSelectedValue(option.checked,option.name, option.code)" />
+                <span style="margin-left:1em">{{option.label}}</span>
+            </label>
+        </div>
+    </div>
+</div>
