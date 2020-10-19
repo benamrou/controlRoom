@@ -107,12 +107,12 @@ export class QualityWhsReplenishmentComponent implements OnDestroy {
       { field: 'ITEM_CLASS', header: 'Class' , placeholder: 'All' , align:'center', type: 'input', options: []  },
       { field: 'LAST_X_MONTHS_SHIPPED', header: 'Qty shipped' , placeholder: '', align:'center', type: 'input', options: []   },
       { field: 'LAST_YEAR_SHIPPED', header: 'Qty shipped last year' , placeholder: '', align:'center', type: 'input', options: []   },
+      { field: 'COVERAGE', header: 'Coverage' , placeholder: '', align:'center', type: 'input', options: []   },
       { field: 'TREND_COMING', header: 'Ratio' , placeholder: '', align:'center', type: 'input', options: []   },
       { field: 'INV_CASE', header: 'Inventory' , placeholder: '', align:'center', type: 'input', options: []   },
       { field: 'QTY_TO_BE_DELIVERED', header: 'On order' , placeholder: '', align:'center', type: 'input', options: []   },
       { field: 'STORE_ORDERABLE', header: 'Store orderable' , placeholder: '', align:'center', type: 'input', options: []},
-      { field: 'END_STORE_ORDERABLE', header: 'End orderable' , placeholder: 'End orderable', align:'center', type: 'input', options: []   },
-      { field: 'COVERED', header: 'Covered' , placeholder: '', align:'center', type: 'input', options: []   }
+      { field: 'END_STORE_ORDERABLE', header: 'End orderable' , placeholder: 'End orderable', align:'center', type: 'input', options: []   }
     ];
 
 
@@ -148,10 +148,11 @@ export class QualityWhsReplenishmentComponent implements OnDestroy {
                                                                               this.datePipe.transform(this.periodEnd,'MM/dd/yyyy'))
             .subscribe( 
                 data => { this.searchResult = data; // put the data returned from the server in our variable
-                          this.inventoryCoverageChange();
+                  this.searchResult.slice();
+                  console.log('data:', this.searchResult);
               },
                 error => {
-                      // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
+                      // Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
                       this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                 },
                 () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Retrieved ' + 
@@ -205,12 +206,6 @@ export class QualityWhsReplenishmentComponent implements OnDestroy {
 
   shareIndividualCheckedList(item:{}){
     //console.log(item);
-  }
-
-  inventoryCoverageChange() {
-    this.searchResult.forEach( coverage => 
-      coverage.COVERED = (coverage.INV_CASE+coverage.QTY_TO_BE_DELIVERED) > (coverage.LAST_YEAR_SHIPPED*this.inventoryCoverage/100));
-    console.log('coverage :',this.searchResult);
   }
 
 

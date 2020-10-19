@@ -64,7 +64,7 @@
     <div  style="width: 100%">
         <span>Inventory coverage {{inventoryCoverage}}% </span>
     </div> 
-    <input type="range" min="0" max="100" [(ngModel)]="inventoryCoverage"  (change)="inventoryCoverageChange()"
+    <input type="range" min="0" max="100" [(ngModel)]="inventoryCoverage" 
            style="position: relative;left: 10%;">
 </div>
 <div  item-width="400px" table-layout="fixed" *ngIf="searchResult !== null" style="margin-top:4em">
@@ -108,26 +108,15 @@
                             [placeholder]=col.placeholder class="p-column-filter" 
                             [style.text-align]="col.align"
                             style="border-radius:0px !important; border-width: 1px;">
-                    <!-- Multi-select filter -->
-                    <p-multiSelect *ngIf="col.type === 'select'"
-                                    styleClass="p-column-filter"
-                                   [options]="col.options"  
-                                   (onChange)="result.filter($event.target.value, col.field, 'contains')" >
-                            <ng-template let-option pTemplate="item">
-                                <div>
-                                    <span>{{option.label}}</span>
-                                </div>
-                            </ng-template>
-                    </p-multiSelect>
                 </th>
             </tr>
         </ng-template>
     <!-- BODY -->
         <ng-template pTemplate="body" let-rowData let-columns="columnsResult">
             <tr [pSelectableRow]="rowData"
-                [ngStyle]="{'background-color' : rowData['COVERED'] == 1? 'none': 'darkorange',
-                            'color' : rowData['COVERED'] == 1? 'black': 'white',
-                            'font-weight' : rowData['COVERED'] == 1? 'normal': 'bold'}">
+                [ngStyle]="{'background-color' :  rowData['COVERAGE'] >= (inventoryCoverage /100)? 'unset': 'darkorange',
+                            'color' : rowData['COVERAGE'] >= (inventoryCoverage /100) ? 'black': 'white',
+                            'font-weight' : rowData['COVERAGE'] >= (inventoryCoverage /100) ?'normal': 'bold'}">
                 
                 <td *ngFor="let col of columnsResult" class="ui-resizable-column" [style.text-align]="col.align">
                     <span *ngIf="col.field==='STORE_ORDERABLE' && rowData[col.field]==='Orderable'" 
@@ -144,14 +133,14 @@
                     </span>              
                     <span *ngIf="col.field==='TREND_COMING'">
                         {{rowData[col.field] | number:'1.2' }}
+                    </span>  
+                    <span *ngIf="col.field==='COVERAGE'">
+                        {{rowData[col.field] | percent }}
                     </span>
                     <span *ngIf="col.field==='INV_CASE'">
                         {{rowData[col.field] | number:'1.0' }}
                     </span>
-                    <span *ngIf="col.field==='COVERED'">
-                        <input type="checkbox" [checked]="rowData[col.field]" disabled>
-                    </span>
-                    <span *ngIf="col.field!=='STORE_ORDERABLE' && col.field!=='TREND_COMING' && col.field!=='INV_CASE' && col.field!=='COVERED'">
+                    <span *ngIf="col.field!=='STORE_ORDERABLE' && col.field!=='TREND_COMING' && col.field!=='INV_CASE' &&  col.field !=='COVERAGE'">
                         {{rowData[col.field]}}
                     </span>   
                 </td>
