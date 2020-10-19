@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { DashboardGridComponent } from './components/grid/dashboard.grid.component';
@@ -19,7 +19,7 @@ import { WidgetService, Widget, MessageService, ScreenService } from '../../shar
     encapsulation: ViewEncapsulation.None
 })
 
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
     @ViewChild("gridster1") theGrid: ElementRef;
 

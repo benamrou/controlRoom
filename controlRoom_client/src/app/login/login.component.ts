@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { routerTransition } from '../router.animations';
 import { Message, MessageService } from '../shared/components/index';
@@ -14,6 +14,8 @@ import { mergeMap } from 'rxjs/operators';
 })
 export class LoginComponent implements OnInit {
 
+
+@ViewChild('versionDiv') divVersion: ElementRef;
 
 	authentification : any = {};
 	mess: string = '';
@@ -42,21 +44,28 @@ export class LoginComponent implements OnInit {
 
     onLoggedin() {
         //localStorage.setItem('isLoggedin', 'true');
-   		this._logginService.login(this.authentification.username, this.authentification.password) 
-            .subscribe( result => {
-                 this.canConnect = result;
-				 if (this.canConnect) {
-                    this.fetchUserConfiguration();
-				}
-				else {
-					this.showInvalidCredential();
-				}
-			}
-        );
+        if (!this.authentification.password) {
+            this.showInvalidCredential();
+        }
+        else {
+            this._logginService.login(this.authentification.username, this.authentification.password) 
+                .subscribe( result => {
+                    this.canConnect = result;
+                    if (this.canConnect) {
+                        this.fetchUserConfiguration();
+                    }
+                    else {
+                        this.showInvalidCredential();
+                    }
+                }
+            );
+        }
     }
+
     showInvalidCredential() {
+        console.log('Showing issue');
 		this.connectionMessage = [];
-        this.connectionMessage.push({severity:'error', summary:'Invalid credentials', detail:'Use your GOLD user/password'});
+        this._messageService.add({severity:'error', summary:'Invalid credentials', detail:'Use your GOLD user/password'});
 	}
 
     async fetchUserConfiguration() {
@@ -111,5 +120,14 @@ export class LoginComponent implements OnInit {
 
         //this._userService.getInfo(localStorage.getItem('ICRUser')).subscribe( result => { this.userInfoGathered = true; });
 		//this._userService.getEnvironment(localStorage.getItem('ICRUser')).subscribe( result => { this.environmentGathered = true; });
+    }
+
+    showHideVersion() {
+       if(this.divVersion.nativeElement.style.visibility === 'hidden') {
+            this.divVersion.nativeElement.style.visibility = 'visible';
+        }
+        else {
+            this.divVersion.nativeElement.style.visibility = 'hidden';
+        }
     }
 }

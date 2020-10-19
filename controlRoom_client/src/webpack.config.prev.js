@@ -94,7 +94,8 @@ module.exports = {
           automaticNameDelimiter: '~',
           name: true,
           cacheGroups: {
-            vendors: {
+            default: false
+            /*vendors: {
               test: /[\\/]node_modules[\\/]/,
               priority: -10
             },
@@ -102,7 +103,7 @@ module.exports = {
               minChunks: 2,
               priority: -20,
               reuseExistingChunk: true
-            }
+            }*/
           }
         }
       },

@@ -47,7 +47,6 @@ export class LogginService{
         options = options.set('PASSWORD', password);
         //console.log(JSON.stringify(options));
 
-        let content = {};
         let request = this.baseAuthentificationUrl;
         //console.log("LOGIN SERVICE: login function : " + JSON.stringify(options));
         return this._http.authentification(request, options).pipe(map(response => {

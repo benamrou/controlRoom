@@ -11,7 +11,8 @@ import { ChartModule } from '../../shared/graph';
 
 import { StatModule } from '../../shared';
 import { AlertModule } from 'ngx-bootstrap/alert';
-import { TableModule, ButtonModule, TooltipModule, DialogModule , PaginatorModule, MessagesModule, ToastModule } from '../../shared/components';
+import { TableModule, ButtonModule,  BlockUIModule,
+        TooltipModule, DialogModule , PaginatorModule, MessagesModule, ToastModule } from '../../shared/components';
 
 @NgModule({
     imports: [
@@ -22,6 +23,7 @@ import { TableModule, ButtonModule, TooltipModule, DialogModule , PaginatorModul
         DashboardRoutingModule,
         StatModule,
         GridsterModule,
+        BlockUIModule,
         MessagesModule,ToastModule,
         FormsModule,
         TableModule,PaginatorModule,

@@ -1,28 +1,27 @@
 {
-  "_from": "primeicons@^1.0.0",
-  "_id": "primeicons@1.0.0",
+  "_from": "primeicons@4.0.0",
+  "_id": "primeicons@4.0.0",
   "_inBundle": false,
-  "_integrity": "sha512-p/hzIjUVccW4eJPhuORHI3AUkDpqfvCQVrjxbFEejnTEdWY4C8fomVfjiaA9jCu83fSQnBHuRIGB96iAR8R6uA==",
+  "_integrity": "sha512-JQBIswGSItn8I0Pq21RchENpKJxSi1MjfBDfggMQpXtoKNKblJoHmol/7tCV3CAV2Dlb94ht8TD8qdIAW01pGg==",
   "_location": "/primeicons",
   "_phantomChildren": {},
   "_requested": {
-    "type": "range",
+    "type": "version",
     "registry": true,
-    "raw": "primeicons@^1.0.0",
+    "raw": "primeicons@4.0.0",
     "name": "primeicons",
     "escapedName": "primeicons",
-    "rawSpec": "^1.0.0",
+    "rawSpec": "4.0.0",
     "saveSpec": null,
-    "fetchSpec": "^1.0.0"
+    "fetchSpec": "4.0.0"
   },
   "_requiredBy": [
-    "#USER",
-    "/"
+    "#DEV:/"
   ],
-  "_resolved": "https://registry.npmjs.org/primeicons/-/primeicons-1.0.0.tgz",
-  "_shasum": "90061f168ef6227f21f0a7db8204ffa85cd27aec",
-  "_spec": "primeicons@^1.0.0",
-  "_where": "/Users/bbsymphony/Workspace/controlRoom.git/trunk/controlRoom_client",
+  "_resolved": "https://registry.npmjs.org/primeicons/-/primeicons-4.0.0.tgz",
+  "_shasum": "a3594b3af213dcf8c4c3d6fc99eea05b7c92f57c",
+  "_spec": "primeicons@4.0.0",
+  "_where": "/Users/bbsymphony/Downloads/primeng-master",
   "author": {
     "name": "PrimeTek"
   },
@@ -42,5 +41,5 @@
     "type": "git",
     "url": "git+https://github.com/primefaces/primeicons.git"
   },
-  "version": "4.0.1"
+  "version": "4.0.0"
 }
