@@ -125,6 +125,15 @@ export class ImportService{
         return getExcelFFileObserver;
     }
 
+    addColumns(columnName, value) {
+        this.wb.sheets[0].worksheet.rows.map(function(item) {
+            item[columnName] = value; 
+        });
+
+        this.wb.sheets[0].worksheet.columns.push( {field: columnName, header:columnName});
+        console.log('adding column', );
+    }
+
     /**
      * Private function to read file asyncchroniously
      * @param file 
@@ -145,17 +154,19 @@ export class ImportService{
     }
 
 
-    postExecution (filename, startdate, trace, now, schedule_date,  json) {
+    postExecution (filename, startdate, trace, now, schedule_date,  json, nbRecord) {
         //console.log('postFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
         this.request = this.validateUploadJSONUrl;
         let headersSearch = new HttpHeaders();
         let options = new HttpHeaders();
         this.params= new HttpParams();
+        console.log ('nbRecord', nbRecord);
         this.params = this.params.append('PARAM',filename);
         this.params = this.params.append('PARAM',startdate);
         this.params = this.params.append('PARAM',trace);
         this.params = this.params.append('PARAM',now);
         this.params = this.params.append('PARAM',schedule_date);
+        this.params = this.params.append('PARAM',nbRecord);
         this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
 
         headersSearch = headersSearch.set('QUERY_ID', this.request );

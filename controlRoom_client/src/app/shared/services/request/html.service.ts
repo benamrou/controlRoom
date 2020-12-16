@@ -174,6 +174,7 @@ export class HttpService  {
       headersOption = new HttpHeaders();
     }
     headersOption = headersOption.set('Content-Type', 'application/json');
+
     headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
     headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
     headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
@@ -196,15 +197,18 @@ export class HttpService  {
         }) as any);
   }
 
-  postFile(url: string, formData): Observable<Response> {
+  postFile(url: string,  paramOptions?: HttpParams, headersOption?:HttpHeaders, bodyOptions?: any ): Observable<Response> {
     //console.log('POST : URL => ' + JSON.stringify(url));
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
+    let body = {}
     if (typeof url === 'string') { // meaning we have to add the token to the options, not in url
       url = this.baseUrl + url;
     }
-    let headersOption = new HttpHeaders();
-    // File contains data the content-type must be multipart/form-data
+    if (!headersOption) {
+      // let's make option object
+      headersOption = new HttpHeaders();
+    }
     headersOption = headersOption.set('Content-Type', 'multipart/form-data');
 
     headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
@@ -212,9 +216,14 @@ export class HttpService  {
     headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
     headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
 
-    return this.httpClient.post(url, formData, {  headers:headersOption,
-                                            responseType: 'json'
-                                          }).pipe(catchError((error: Response, caught) => {
+    if (bodyOptions) {
+      body = bodyOptions;
+    }
+    console.log('Http post:', paramOptions, headersOption, body, bodyOptions);
+    return this.httpClient.post(url, body, {  headers:headersOption,
+                                              params: paramOptions, 
+                                              responseType: 'json'
+                                            }).pipe(catchError((error: Response, caught) => {
             if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                 console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
                 window.location.href = window.location.href + '?' + new Date().getMilliseconds();
@@ -223,7 +232,7 @@ export class HttpService  {
             return this.handleError(url,error);
         }) as any);
   }
-
+  
   execute(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders): Observable<Response> {
     //console.log('***** Get HTML ****');
 

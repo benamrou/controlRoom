@@ -22,6 +22,7 @@
 */
 
 var path = require('path');
+var cors= require('cors');
 var formidable = require('formidable');
 var fs = require('fs');
 let oracledb = require('oracledb');      // Oracle DB connection
@@ -67,8 +68,12 @@ module.get = function (request,response) {
 *
 */
 module.post = function (request,response) {
+
     app.post('/api/upload/', function (request, response) {
         // create an incoming form object
+        response.header('Access-Control-Allow-Origin', '*');
+        response.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+        response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         logger.log('[UPLOAD]', 'request : ' + request, 'upload', 2);
         console.log(request);
         var incoming = new formidable.IncomingForm();
@@ -168,13 +173,14 @@ module.post = function (request,response) {
     });
         
     // Check 
-    app.post('/api/upload/1/', function (request, response) {
-        "use strict";
-        response.setHeader('Access-Control-Allow-Origin', '*');
-        // requestuest methods you wish to allow
-        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+    app.post('/api/upload/1/', cors(), function (request, response) {
+        logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
 
+        response.header('Access-Control-Allow-Origin', '*');
+        response.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+        response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+        logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
         //console.log('/api/upload/1/ :', request);
         SQL.executeSQL(SQL.getNextTicketID(),
                         "INSERT INTO JSON_CHECK (jsonuserid, jsonfile, jsoncontent, jsonparam, jsonsid, jsonlang) " +
@@ -192,13 +198,17 @@ module.post = function (request,response) {
                          function (err, data) {
                              console.log('Upload :' + JSON.stringify(data));
                              if (err) {
+                                logger.log('[UPLOAD]', 'file ' + request.header('FILENAME') + JSON.stringify(err), request.header('USER'), 3);
                                 response.json({
                                     RESULT: -1,
                                     MESSAGE: JSON.stringify(err)
                                 });  
                              }
                              else {
-
+                                logger.log('[UPLOAD]', 'file ' + request.header('FILENAME') + 'being processed with Id: ' + data, request.header('USER'), 1);
+                                response.setHeader('Access-Control-Allow-Origin', '*');
+                                response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                                response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                                 SQL.executeLibQuery(SQL.getNextTicketID(),
                                                     "MAS0000001", 
                                                     "'{" + data + ',' + request.query.PARAM + "}'",
@@ -217,6 +227,7 @@ module.post = function (request,response) {
             response.setHeader('Access-Control-Allow-Origin', '*');
             // requestuest methods you wish to allow
             response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
             //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
 
             //console.log('/api/upload/1/ :', request);
@@ -234,7 +245,7 @@ module.post = function (request,response) {
                              jsonfile: request.header('FILENAME'), 
                              jsonstatus: 0,
                              jsoncontent: JSON.stringify(request.body), 
-                             jsonnbrecord: JSON.stringify(request.body).length, 
+                             jsonnbrecord: request.query.PARAM[5], 
                              jsonparam: "{" + request.query.PARAM + "}",
                              jsonsid: request.header('DATABASE_SID'), 
                              jsonlang: request.header('LANGUAGE'),

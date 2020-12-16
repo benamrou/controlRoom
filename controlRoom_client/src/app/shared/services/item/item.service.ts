@@ -197,7 +197,9 @@ export class ItemService {
 
   private baseItemUrl: string = '/api/item/';
   private baseRetailUrl: string = '/api/itemretail/';
+  private baseRetailSupplierUrl: string = '/api/itemretail/1/';
   private basePurchaseUrl: string = '/api/itemcost/';
+  private basePurchaseBySupplierUrl: string = '/api/itemcost/1/';
   private baseSubstitutionUrl: string = '/api/itemsubstitution/';
   private baseInventoryUrl: string = '/api/iteminventory/';
   
@@ -343,6 +345,7 @@ export class ItemService {
                 return this.itemInfo;
             }));
   }
+
  getRetailItemInfo (itemCode: string) {
         this.request = this.baseRetailUrl;
         let headersSearch = new HttpHeaders();
@@ -388,6 +391,53 @@ export class ItemService {
                 return this.pricingInfo;
             }));
   }
+
+  getRetailItemInfoBySupplier (warehouseCode, supplierCode) {
+    this.request = this.baseRetailSupplierUrl;
+    let headersSearch = new HttpHeaders();
+    this.params= new HttpParams();
+    this.params = this.params.set('PARAM', warehouseCode);
+    this.params = this.params.append('PARAM', supplierCode);
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+            let data = <any> response;
+            let retail;
+            this.pricingInfo = new Pricing();
+            //console.log('Item data: ' +  data.length + ' => ' + JSON.stringify(data));
+            for(let i = 0; i < data.length; i ++) {
+                retail = new Retail();
+
+                retail.pricelist = data[i].AVINTAR;
+                retail.pricelistdescription = data[i].TARIFDESC;
+                retail.itemcode = data[i].ARVCEXR;
+                retail.svcode = data[i].ARVCEXV;
+                retail.fullcode = data[i].ARVCEXR + '/' + data[i].ARVCEXV;
+                retail.itemdescription = data[i].ITEMDESC;
+                retail.itemfulldescription = retail.fullcode + ' ' + retail.itemdescription;
+                retail.type = data[i].AVISTAT;
+                retail.permpromo = data[i].PERMPROMO;
+                retail.retail = data[i].AVIPRIX;
+                retail.multi = data[i].AVIMULTI;
+                retail.priority = data[i].AVOPRIO;
+
+                retail.id = i; // id is used to retrieve back detail data
+                retail.title = data[i].AVINTAR + ' - ' + data[i].TARIFDESC + ' ' + '$' + data[i].AVIPRIX;
+                if (data[i].AVIMULTI) { retail.title = retail.title + '/' + data[i].AVIMULTI; }
+                retail.start = data[i].AVIDDEB;
+                retail.end = data[i].AVIDFIN;
+
+                if (data[i].AVISTAT === 1) { retail.color = this.regularColor; }
+                else { retail.color = this.promoColor; }
+                
+                this.pricingInfo.retails.push(retail);
+            }
+            //console.log('Item => ' + JSON.stringify(this.pricingInfo));
+            return this.pricingInfo;
+        }));
+}
 
  getRetailPermanentColor() {
      return this.regularColor;
@@ -537,6 +587,28 @@ export class ItemService {
                 //console.log('Item => ' + JSON.stringify(this.substitutionInfo));
                 return this.inventoryInfo;
             }));
+  }
+      /**
+     * This function retrieves the supplier code.
+     * @method getSupplierScheduleServiceContractInfo
+     * @param inputInfo 
+     * @returns JSON Supplier code information object
+     */
+    getPurchasingInfoBySupplier (itemCode, warehousecode, suppliercode) {
+        this.request = this.basePurchaseBySupplierUrl;
+        let headersSearch = new HttpHeaders();
+        let options = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.set('PARAM', itemCode);
+        this.params = this.params.append('PARAM', warehousecode);
+        this.params = this.params.append('PARAM', suppliercode);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+        return this.http.get(this.request, this.params, options).map(response => {
+            let data = <any> response;
+            return data;
+        });
   }
 } 
 

@@ -156,6 +156,11 @@
                                     <span><i class="fas fa-shopping-cart"></i> &nbsp; {{ 'PI adjustment' | translate}} </span>
                                 </a>
                             </ul>
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'dashboard' }"> 
+                                <a class="bbs_link_menu" routerLink="/dashboardsupplier" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-truck"></i> &nbsp; {{ 'Supplier service' | translate}} </span>
+                                </a>
+                            </ul>
                         </li>
                     </ul>
                     <ul class="submenu" style="padding-left: 1.1em;">
