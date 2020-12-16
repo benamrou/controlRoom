@@ -16,6 +16,7 @@
 
 let http = require('http');
 let express = require('express');        // Manage client request
+let cors = require('cors');              // Cors management
 let bodyParser = require('body-parser'); // Parse JSON file
 let oracledb = require('oracledb');      // Oracle DB connection
 let fs = require('fs-extra'); // File management
@@ -37,12 +38,23 @@ let app = express();
 process.env.UV_THREADPOOL_SIZE=264;
 
 // parse application/json
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.json({limit: '50mb', type: 'application/json'}));      // to support JSON-encoded bodies
 // parse application/x-www-form-urlencoded
 app.use( bodyParser.urlencoded({
          extended: true
     }) 
 );
+
+app.use(bodyParser());
+
+var corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200, // For legacy browser support
+    methods: "*"
+}
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 
 app.use(function(req, res, next) {
 	if (req.method === 'OPTIONS') {
@@ -67,10 +79,10 @@ app.use(function(req, res, next) {
 	      res.end();
 	}
 	else {
-        //console.log('request : ' +JSON.stringify(req));
 		next();
 	}
 });
+
 
 /* Publish the available routes and methodes */
 let dbConnection = require('./server/utils/dbconnect');

@@ -56,6 +56,97 @@ module.exports = function (app, SQL) {
                                 "'{" +request.header('LANGUAGE') + "}'", 
                                 request, response);
             });
+
+
+            app.get('/api/reporting/replenishment/2', function (request, response) {
+                "use strict";
+                response.setHeader('Access-Control-Allow-Origin', '*');
+                // requestuest methods you wish to allow
+                response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                SQL.executeLibQuery(SQL.getNextTicketID(),
+                                    "WSP0000002", 
+                                    "'{" + request.query.PARAM + "}'",
+                                    request.header('USER'),
+                                    "'{" + request.header('DATABASE_SID') + "}'", 
+                                    "'{" +request.header('LANGUAGE') + "}'", 
+                                    request, response);
+                });
+
+                app.get('/api/reporting/replenishment/3', function (request, response) {
+                    "use strict";
+                    response.setHeader('Access-Control-Allow-Origin', '*');
+                    // requestuest methods you wish to allow
+                    response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                    //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                    SQL.executeLibQuery(SQL.getNextTicketID(),
+                                        "WSP0000003", 
+                                        "'{" + request.query.PARAM + "}'",
+                                        request.header('USER'),
+                                        "'{" + request.header('DATABASE_SID') + "}'", 
+                                        "'{" +request.header('LANGUAGE') + "}'", 
+                                        request, response);
+                    });
+
+                    app.get('/api/reporting/replenishment/4', function (request, response) {
+                        "use strict";
+                        response.setHeader('Access-Control-Allow-Origin', '*');
+                        // requestuest methods you wish to allow
+                        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                        SQL.executeLibQuery(SQL.getNextTicketID(),
+                                            "WSP0000004", 
+                                            "'{" + request.query.PARAM + "}'",
+                                            request.header('USER'),
+                                            "'{" + request.header('DATABASE_SID') + "}'", 
+                                            "'{" +request.header('LANGUAGE') + "}'", 
+                                            request, response);
+                        });
+
+                        app.get('/api/reporting/replenishment/5', function (request, response) {
+                            "use strict";
+                            response.setHeader('Access-Control-Allow-Origin', '*');
+                            // requestuest methods you wish to allow
+                            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                            //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                            SQL.executeLibQuery(SQL.getNextTicketID(),
+                                                "WSP0000005", 
+                                                "'{" + request.query.PARAM + "}'",
+                                                request.header('USER'),
+                                                "'{" + request.header('DATABASE_SID') + "}'", 
+                                                "'{" +request.header('LANGUAGE') + "}'", 
+                                                request, response);
+                            });
+
+                            app.get('/api/reporting/replenishment/6', function (request, response) {
+                                "use strict";
+                                response.setHeader('Access-Control-Allow-Origin', '*');
+                                // requestuest methods you wish to allow
+                                response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                                //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                                SQL.executeLibQuery(SQL.getNextTicketID(),
+                                                    "WSP0000006", 
+                                                    "'{" + request.query.PARAM + "}'",
+                                                    request.header('USER'),
+                                                    "'{" + request.header('DATABASE_SID') + "}'", 
+                                                    "'{" +request.header('LANGUAGE') + "}'", 
+                                                    request, response);
+                                });
+
+                            app.get('/api/reporting/replenishment/7', function (request, response) {
+                                "use strict";
+                                response.setHeader('Access-Control-Allow-Origin', '*');
+                                // requestuest methods you wish to allow
+                                response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                                //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                                SQL.executeLibQuery(SQL.getNextTicketID(),
+                                                    "WSP0000007", 
+                                                    "'{" + request.query.PARAM + "}'",
+                                                    request.header('USER'),
+                                                    "'{" + request.header('DATABASE_SID') + "}'", 
+                                                    "'{" +request.header('LANGUAGE') + "}'", 
+                                                    request, response);
+                                });
     
         };
     

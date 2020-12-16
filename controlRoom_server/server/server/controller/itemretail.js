@@ -54,6 +54,22 @@ module.get = function (request,response) {
                             "'{" +request.header('LANGUAGE') + "}'", 
                             request, response);
         });
+
+
+        app.get('/api/itemretail/1/', function (request, response) {
+            "use strict";
+            response.setHeader('Access-Control-Allow-Origin', '*');
+            // requestuest methods you wish to allow
+            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+            SQL.executeLibQuery(SQL.getNextTicketID(),
+                               "ART000003A", 
+                                "'{" + request.query.PARAM + "}'",
+                                request.header('USER'),
+                                "'{" + request.header('DATABASE_SID') + "}'", 
+                                "'{" +request.header('LANGUAGE') + "}'", 
+                                request, response);
+            });
     };
 
    return module;

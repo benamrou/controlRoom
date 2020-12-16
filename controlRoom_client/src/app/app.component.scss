@@ -102,12 +102,14 @@
 :host ::ng-deep th.ui-state-highlight {
     color: red;
     background: white;
+    border:0.5em solid; 
     //outline-color: white;
 }
 
 :host ::ng-deep  p-table > .ui-table tbody > tr.ui-state-highlight {
-    color: red;
-    background: white;
+    color: red !important;
+    background: yellow !important;
+    border:0.5em solid; 
     //utline-color: white;
 }
 

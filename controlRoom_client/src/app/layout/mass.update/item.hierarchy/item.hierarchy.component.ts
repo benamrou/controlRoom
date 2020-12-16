@@ -1,6 +1,6 @@
 import {Component, ViewEncapsulation, OnInit, ViewChild} from '@angular/core';
 import { WarehouseService, WidgetService, ExportService, ImportService } from '../../../shared/services';
-import { MenuItem, Dialog, SelectItem, Chips, Message, DataGrid, FullCalendar, Messages } from '../../../shared/components';
+import { MenuItem, Table, Dialog, SelectItem, Chips, Message, DataGrid, FullCalendar, Messages } from '../../../shared/components';
 import { MessageService } from '../../../shared/components';
 import {DatePipe} from '@angular/common';
 
@@ -39,6 +39,7 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 export class ItemHierarchyComponent implements OnInit{
 
     @ViewChild('fileUpload') fileUpload: any;
+    @ViewChild('result') resultTable: Table;
 
    // Menu/Qorkflow list
    activeIndex: number = 0;
@@ -145,7 +146,7 @@ export class ItemHierarchyComponent implements OnInit{
   }
 
   onUploadCompleted(event) {
-    console.log('Upload completed :', event);
+    //console.log('Upload completed :', event);
     for(let file of event.files) {
         this.uploadedFiles.push(file);
         this._messageService.add({severity: 'info', summary: 'File Uploaded', detail: file});
@@ -177,6 +178,9 @@ export class ItemHierarchyComponent implements OnInit{
                                         this.indicatorXLSfileLoaded = true;
                                         this._messageService.add({key:'top', severity:'success', summary:'Data file loaded', detail:  
                                                                 '"' + this.uploadedFiles[0].name + '" worksheet loaded.' }); 
+
+                                        // add comments field
+                                        this._importService.addColumns('COMMENTS', '');
                                         //console.log('sheets :', this._importService.wb.sheets);
                                         this.displayConfirm = this.checkGlobal();
 
@@ -210,7 +214,7 @@ export class ItemHierarchyComponent implements OnInit{
 
   validationChanges() {
     // To be implemented
-    console.log('validationChanges', this._importService.wb.sheets[0]);
+    //console.log('validationChanges', this._importService.wb.sheets[0]);
 
     let executionId;
     let userID;
@@ -222,7 +226,8 @@ export class ItemHierarchyComponent implements OnInit{
                             +this.itemTrace, // Implicit cast to have 1: True, 0: False
                             + !this.scheduleFlag, // Implicit cast to have 1: True, 0: False
                             this.datePipe.transform(this.scheduleDate,'MM/dd/yy HH:mm'), 
-                            JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
+                            JSON.stringify(this._importService.wb.sheets[0].worksheet.rows),
+                            this._importService.wb.sheets[0].worksheet.rows.length)
                             .subscribe (data => {  
                             executionId = data;
                             console.log('executionId : ', executionId);
@@ -243,7 +248,7 @@ export class ItemHierarchyComponent implements OnInit{
                         this._messageService.add({key:'top', severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
-                                    console.log('data userID : ', data);
+                                    //console.log('data userID : ', data);
                                     userID = data[0].RESULT;
                                 },
                                 error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
@@ -276,8 +281,9 @@ export class ItemHierarchyComponent implements OnInit{
    * 
    */
   confirmFile() {
-    console.log('confirmFile', this._importService.wb.sheets[0]);
+    //console.log('confirmFile', this._importService.wb.sheets[0]);
     this.activeIndex = 0;
+    this.globalError = [];
     if (this.checkGlobal()) {
         this._importService.checkFile(this.uploadedFiles[0].name, 
                                     JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
@@ -292,7 +298,7 @@ export class ItemHierarchyComponent implements OnInit{
                                                             this.uploadedFiles[0].name + ' data file content check completed.' }); 
                                 //console.log('sheets :', this._importService.wb.sheets);
                                 let rowsWithError = this._importService.wb.sheets[0].worksheet.rows.filter(item => item.COMMENTS !== '' && item.COMMENTS !== null);
-                                console.log('rowsWithError: ', rowsWithError);
+                                //console.log('rowsWithError: ', rowsWithError);
                                 if (rowsWithError.length === 0) {
                                     this.globalValid.push('<i class="fas fa-thumbs-up" style="padding-right: 1em;"></i> Data file verification SUCCESSFUL ' +
                                                             ' <ul style="margin-bottom: 0px;"> ' +
@@ -305,6 +311,13 @@ export class ItemHierarchyComponent implements OnInit{
 
                                     let MS_PER_MINUTE = 60000;
                                     this.dateNow = new Date( new Date().getTime() + 5*MS_PER_MINUTE);
+                                }
+                                else {
+                                    this.globalError.push('File contains ' + rowsWithError.length + ' errors. Review red highlighted rows with error in comments.'); 
+                                    //this.resultTable.sortColumn = this.resultTable.columns.find(col => col.field === 'COMMENTS');
+                                    this.resultTable.sortOrder = -1;
+                                    this.resultTable.sortField = 'COMMENTS';
+                                    this.resultTable.sortSingle();
                                 }
                         }
                     );
@@ -329,6 +342,7 @@ export class ItemHierarchyComponent implements OnInit{
         this.globalError.push('The column B header must be named NEW_HIERARCHY'); 
       result = false;
     }
+
     return result;
   }
  
