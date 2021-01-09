@@ -38,7 +38,8 @@ const routes: Routes = [
             { path: 'scorecardcao', loadChildren: './reporting/scorecard/cao/scorecard.cao.module#ScorecardCAOModule' },
             { path: 'dashboardcao', loadChildren: './reporting/dashboard/cao/dashboard.cao.module#DashboardCAOModule' },
             { path: 'dashboardcycle', loadChildren: './reporting/dashboard/cycle/dashboard.cycle.module#DashboardCycleModule' },
-            { path: 'dashboardsupplier', loadChildren: './reporting/dashboard/supplier/dashboard.supplier.module#DashboardSupplierModule' },
+            // { path: 'dashboardsupplier', loadChildren: './reporting/dashboard/supplier/dashboard.supplier.module#DashboardSupplierModule' },
+            { path: 'dashboardsupplier', loadChildren: './dashboard/dashboard.module#DashboardModule' },
             { path: 'qualitywhsreplenishment', loadChildren: './reporting/quality/whs.replenishment/quality.whs.replenishment.module#QualityWhsReplenishmentModule' },
             /* Tutorial */
             { path: 'charts', loadChildren: './charts/charts.module#ChartsModule' },
