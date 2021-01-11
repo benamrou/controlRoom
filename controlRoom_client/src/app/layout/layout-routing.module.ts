@@ -34,12 +34,13 @@ const routes: Routes = [
             /* Mass-change */
             { path: 'massjournal', loadChildren: './mass.update/journal/massjournal.module#MassJournalModule' },
             { path: 'itemhierarchy', loadChildren: './mass.update/item.hierarchy/item.hierarchy.module#ItemHierarchyModule' },
+            { path: 'svattribute', loadChildren: './mass.update/sv.attribute/sv.attribute.module#SVAttributeModule' },
             /* Reporting */
             { path: 'scorecardcao', loadChildren: './reporting/scorecard/cao/scorecard.cao.module#ScorecardCAOModule' },
             { path: 'dashboardcao', loadChildren: './reporting/dashboard/cao/dashboard.cao.module#DashboardCAOModule' },
             { path: 'dashboardcycle', loadChildren: './reporting/dashboard/cycle/dashboard.cycle.module#DashboardCycleModule' },
-            // { path: 'dashboardsupplier', loadChildren: './reporting/dashboard/supplier/dashboard.supplier.module#DashboardSupplierModule' },
-            { path: 'dashboardsupplier', loadChildren: './dashboard/dashboard.module#DashboardModule' },
+            { path: 'dashboardsupplier', loadChildren: './reporting/dashboard/supplier/dashboard.supplier.module#DashboardSupplierModule' },
+            //{ path: 'dashboardsupplier', loadChildren: './dashboard/dashboard.module#DashboardModule' },
             { path: 'qualitywhsreplenishment', loadChildren: './reporting/quality/whs.replenishment/quality.whs.replenishment.module#QualityWhsReplenishmentModule' },
             /* Tutorial */
             { path: 'charts', loadChildren: './charts/charts.module#ChartsModule' },

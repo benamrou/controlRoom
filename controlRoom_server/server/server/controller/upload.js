@@ -126,7 +126,9 @@ module.post = function (request,response) {
             });
         });
 
-
+    /**
+     * Get Mass-upload template
+     */
     app.get('/api/upload/0/', function (request, response) {
             "use strict";
             response.setHeader('Access-Control-Allow-Origin', '*');
@@ -138,19 +140,19 @@ module.post = function (request,response) {
             console.log('Getting request ' + JSON.stringify(request.query.PARAM))
             /**
              * 1 - Item Merhandise Hierarhy template
-             * 2 - UPC change template
+             * 2 - SV Attribute
              */
-            if (request.query.PARAM === 'ICR_TEMPLATE001') {
+            /*if (request.query.PARAM === 'ICR_TEMPLATE001') {
                 templateFile= __dirname + '/../../templates/ICR_CATEGORY_CHANGE_TEMPLATE.xlsx'
-            }
-
+            }*/
+            templateFile= __dirname + '/../../templates/' + request.query.PARAM + '.xlsx';
             // Check if file specified by the filePath exists 
             fs.exists( templateFile, function(exists){
                 if (exists) {
                     // Content-type is very interesting part that guarantee that
                     // Web browser will handle response in an appropriate manner.
                     response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                    response.setHeader("Content-Disposition", "attachment; filename=" + 'ICR_CATEGORY_CHANGE_TEMPLATE.xlsx');
+                    response.setHeader("Content-Disposition", "attachment; filename=" + request.query.PARAM + '.xlsx');
 
                     let workbook = new excel.Workbook();
                     workbook.xlsx.readFile(templateFile)
@@ -183,10 +185,11 @@ module.post = function (request,response) {
         logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
         //console.log('/api/upload/1/ :', request);
         SQL.executeSQL(SQL.getNextTicketID(),
-                        "INSERT INTO JSON_CHECK (jsonuserid, jsonfile, jsoncontent, jsonparam, jsonsid, jsonlang) " +
-                        " values (:jsonuserid, :jsonfile, :jsoncontent, :jsonparam, :jsonsid, :jsonlang) returning jsonid into :cursor",
+                        "INSERT INTO JSON_CHECK (jsonuserid, jsonfile, jsontool, jsoncontent, jsonparam, jsonsid, jsonlang) " +
+                        " values (:jsonuserid, :jsonfile, :jsontool, :jsoncontent, :jsonparam, :jsonsid, :jsonlang) returning jsonid into :cursor",
                         {jsonuserid: request.header('USER'),
                          jsonfile: request.header('FILENAME'), 
+                         jsontool: request.query.PARAM[1],
                          jsoncontent: JSON.stringify(request.body), 
                          jsonparam: "{" + request.query.PARAM + "}",
                          jsonsid: request.header('DATABASE_SID'), 
@@ -232,20 +235,23 @@ module.post = function (request,response) {
 
             //console.log('/api/upload/1/ :', request);
             SQL.executeSQL(SQL.getNextTicketID(),
-                            "INSERT INTO JSON_INBOUND (jsonuserid, jsonutil, jsonfile, jsoncontent, jsonnbrecord, jsonparam, jsonsid, jsonlang, jsonstatus,  " +
+                            "INSERT INTO JSON_INBOUND (jsonuserid, jsonutil, jsonfile, jsontool, jsoncontent, jsonnbrecord, jsonparam, jsonsid, jsonlang, jsonstatus,  " +
                                                       " jsonimmediate, jsondsched, jsontrace, jsonstartdate) " +
-                            " values (:jsonuserid, :jsonutil,  :jsonfile, :jsoncontent, :jsonnbrecord, :jsonparam, :jsonsid, :jsonlang, :jsonstatus, " +
-                                    request.query.PARAM[3] + ',' +  // Immediate
-                                    "to_date('" + request.query.PARAM[4] + "', 'MM/DD/RR hh24:mi' ) " + ',' +  // Scheduled date
-                                    request.query.PARAM[2] + ',' +  // Trace
-                                    "to_date('" + request.query.PARAM[1] + "', 'MM/DD/RR' ) ) " +  // Start date
+                            " values (:jsonuserid, :jsonutil,  :jsonfile, " +
+                                    request.query.PARAM[1] + ',' + //jsontool, 
+                                    ":jsoncontent, :jsonnbrecord, :jsonparam, :jsonsid, :jsonlang, :jsonstatus, " +
+                                    request.query.PARAM[4] + ',' +  // Immediate
+                                    "to_date('" + request.query.PARAM[5] + "', 'MM/DD/RR hh24:mi' ) " + ',' +  // Scheduled date
+                                    request.query.PARAM[3] + ',' +  // Trace
+                                    "to_date('" + request.query.PARAM[2] + "', 'MM/DD/RR' ) ) " +  // Start date
                                     " returning jsonid into :cursor",
+
                             {jsonuserid: request.header('USER'),
                              jsonutil: request.header('USER'),
                              jsonfile: request.header('FILENAME'), 
                              jsonstatus: 0,
                              jsoncontent: JSON.stringify(request.body), 
-                             jsonnbrecord: request.query.PARAM[5], 
+                             jsonnbrecord: request.query.PARAM[6], 
                              jsonparam: "{" + request.query.PARAM + "}",
                              jsonsid: request.header('DATABASE_SID'), 
                              jsonlang: request.header('LANGUAGE'),

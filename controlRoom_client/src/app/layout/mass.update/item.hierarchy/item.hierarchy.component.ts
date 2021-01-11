@@ -12,16 +12,6 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 
 
 /**
- * In GOLD 5.10, there is no automation to generate the supplier planning automatically using the
- * service contract link. Users have to go in the screen and readjust the supplier planning
- * 
- * Symphony EYC has the license for GOLD source code and API. This solution is a workaround to generate
- * the service contract link and supplier planning within one operation.
- * 
- * Overall technical solution:
- *   1. Gather the actual service contract link information
- *   2. Send by interface (service contract link and Supplier schedule) the updated link
- *   3. Execute the integration batches.
  * 
  * @author Ahmed Benamrouche
  * 
@@ -47,6 +37,7 @@ export class ItemHierarchyComponent implements OnInit{
    uploadedFiles: any[] = [];
 
    templateID = 'ICR_TEMPLATE001';
+   toolID = 1;
 
    indicatorXLSfileLoaded: boolean = false;
 
@@ -221,7 +212,7 @@ export class ItemHierarchyComponent implements OnInit{
     this.displayUpdateCompleted = false;
     if (this.checkGlobal()) {
         this._messageService.add({key:'top', severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
-        this._importService.postExecution(this.uploadedFiles[0].name, 
+        this._importService.postExecution(this.uploadedFiles[0].name, this.toolID,
                             this.datePipe.transform(this.startDate,'MM/dd/yy'), 
                             +this.itemTrace, // Implicit cast to have 1: True, 0: False
                             + !this.scheduleFlag, // Implicit cast to have 1: True, 0: False
@@ -255,7 +246,7 @@ export class ItemHierarchyComponent implements OnInit{
                                 () =>    {  
                                             
                                     this._messageService.add({key:'top', severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
-                                    this._importService.executeItem(userID).subscribe( 
+                                    this._importService.executePlan(userID, this.toolID).subscribe( 
                                             data => {  },
                                             error => { this._messageService.add({key:'top', severity:'error', summary:'Execution issue', detail: error }); },
                                             () => {  this._importService.collectResult(executionId.RESULT[0]).subscribe (
@@ -285,7 +276,7 @@ export class ItemHierarchyComponent implements OnInit{
     this.activeIndex = 0;
     this.globalError = [];
     if (this.checkGlobal()) {
-        this._importService.checkFile(this.uploadedFiles[0].name, 
+        this._importService.checkFile(this.uploadedFiles[0].name, this.toolID,
                                     JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
                 .subscribe (data => {  
                         //console.log('data: ', data, this._importService.wb.sheets[0].worksheet.rows);
@@ -300,6 +291,7 @@ export class ItemHierarchyComponent implements OnInit{
                                 let rowsWithError = this._importService.wb.sheets[0].worksheet.rows.filter(item => item.COMMENTS !== '' && item.COMMENTS !== null);
                                 //console.log('rowsWithError: ', rowsWithError);
                                 if (rowsWithError.length === 0) {
+                                    this.globalValid = [];
                                     this.globalValid.push('<i class="fas fa-thumbs-up" style="padding-right: 1em;"></i> Data file verification SUCCESSFUL ' +
                                                             ' <ul style="margin-bottom: 0px;"> ' +
                                                             ' <li>Columns naming is respected</li>' +

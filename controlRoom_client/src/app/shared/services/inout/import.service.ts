@@ -154,14 +154,14 @@ export class ImportService{
     }
 
 
-    postExecution (filename, startdate, trace, now, schedule_date,  json, nbRecord) {
+    postExecution (filename, toolID, startdate, trace, now, schedule_date,  json, nbRecord) {
         //console.log('postFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
         this.request = this.validateUploadJSONUrl;
         let headersSearch = new HttpHeaders();
         let options = new HttpHeaders();
         this.params= new HttpParams();
-        console.log ('nbRecord', nbRecord);
         this.params = this.params.append('PARAM',filename);
+        this.params = this.params.append('PARAM',toolID);
         this.params = this.params.append('PARAM',startdate);
         this.params = this.params.append('PARAM',trace);
         this.params = this.params.append('PARAM',now);
@@ -180,13 +180,14 @@ export class ImportService{
 
    }
 
-   postFile (filename, startdate, trace, now, schedule_date,  json) {
+   postFile (filename, toolID, startdate, trace, now, schedule_date,  json) {
     //console.log('postFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
     this.request = this.validateUploadJSONUrl;
     let headersSearch = new HttpHeaders();
     let options = new HttpHeaders();
     this.params= new HttpParams();
     this.params = this.params.append('PARAM',filename);
+    this.params = this.params.append('PARAM',toolID);
     this.params = this.params.append('PARAM',startdate);
     this.params = this.params.append('PARAM',trace);
     this.params = this.params.append('PARAM',now);
@@ -223,21 +224,30 @@ export class ImportService{
     }
 
 
-    executeItem (userID) {
+    executePlan (userID, toolId) {
         /* Execute the batch  integration */
         //console.log ('Update request');
+        let pt33_1_MERCHHIERARCHY = 1;
+        let pt33_5_ITEMSVATTRIBUTE = 5;
         this.request = this.executeJobURL;
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
         let dateNow = new Date();
         let command = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
-                    'export GOLD_DEBUG=1; ' +
-                    // Batch to execute
-                    'psifa05p psifa05p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
-        
+                    'export GOLD_DEBUG=1; ' ;
+        switch (toolId)  {
+            case pt33_1_MERCHHIERARCHY: /* Item Merchandise change - psifa05p */
+                // Batch to execute
+                command = command + 'psifa05p psifa05p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                break;
+            case pt33_5_ITEMSVATTRIBUTE: /* Item/SV attribute - psifa122p */
+                command = command + 'psifa122p psifa122p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                break;
+            default:
+                console.log ('Unknown mass tool id : ', toolId);
+        }
         if(userID) {
-            command = command + '-u' + userID;
-
+            command = command + ' -u' + userID;
         }
         
         command = command + ' ' + this._userService.userInfo.envDefaultLanguage + ' 1;'
@@ -252,12 +262,13 @@ export class ImportService{
     }
 
 
-    checkFile (filename, json) {
+    checkFile (filename,toolId, json ) {
         //console.log('checkFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
         this.request = this.checkUploadJSONUrl;
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
         this.params = this.params.append('PARAM',filename);
+        this.params = this.params.append('PARAM',toolId);
         this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
 
         headersSearch = headersSearch.set('QUERY_ID', this.request );
