@@ -49,8 +49,8 @@ export class MassJournalComponent {
   // Search Panel
   searchExecutionID: string = '';
   searchScopeCode: string = '';
-  searchExecutionDate: string = '';
-  searchLoadingDate: string = '';
+  searchExecutionDate;
+  searchLoadingDate;
 
   columnsMyRepository: any [] = [];
 
@@ -145,10 +145,14 @@ export class MassJournalComponent {
     this.razSearch();
     this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for execution in the mass change journal.' });
     let scopeId = this.pt_33_data.find(e => e.TENTRYDESC.toUpperCase() === this.searchScopeCode.toUpperCase());
+    let loadDate, executionDate, filenameSearch ;
     //console.log('scopeId', scopeId);
-    if (scopeId === undefined) { scopeId='';} else {scopeId =  scopeId.PARAMENTRY}
-    this._importService.getJournal(this.searchExecutionID ,   scopeId, 
-                                    this.searchLoadingDate, this.searchExecutionDate,1)
+    if (this.searchExecutionID == '') { filenameSearch='-1';} else {filenameSearch =  this.searchExecutionID}
+    if (scopeId === undefined) { scopeId='-1';} else {scopeId =  scopeId.PARAMENTRY}
+    if (this.searchLoadingDate === undefined ) {loadDate = '-1'; } else { loadDate = this.datePipe.transform(this.searchLoadingDate,'MM/dd/yyyy')}
+    if (this.searchExecutionDate === undefined ) {executionDate = '-1'; } else { executionDate = this.datePipe.transform(this.searchExecutionDate,'MM/dd/yyyy')}
+    this._importService.getJournal(filenameSearch,   scopeId, 
+                                    loadDate, executionDate,1)
     .subscribe( 
         data => { this.searchResult = data; // put the data returned from the server in our variable
         },
@@ -314,7 +318,7 @@ export class MassJournalComponent {
                     () =>    {  
                                 
                         this._messageService.add({severity:'info', summary:'Step 2/4: Executing plan', detail: '"' + this.searchResult[index].JSONFILE  + '" processing plan completed. Collecting  final integration result.'});
-                        this._importService.executeItem(userID).subscribe( 
+                        this._importService.executePlan(userID, this.searchResult[index].JSONTOOL).subscribe( 
                                 data => {  },
                                 error => { this._messageService.add({key:'top', severity:'error', summary:'Execution issue', detail: error }); },
                                 () => {  this._importService.collectResult(this.searchResult[index].JSONID).subscribe (
