@@ -183,7 +183,7 @@ export class HttpService  {
     if (bodyOptions) {
       body = bodyOptions;
     }
-    console.log('Http post:', paramOptions, headersOption, body, bodyOptions);
+    //console.log('Http post:', paramOptions, headersOption, body, bodyOptions);
     return this.httpClient.post(url, body, {  headers:headersOption,
                                               params: paramOptions, 
                                               responseType: 'json'

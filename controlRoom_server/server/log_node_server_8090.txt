@@ -1,6 +1,0 @@
-log_node_server_8090.txt[33m[nodemon] 1.18.4[39m
-[33m[nodemon] to restart at any time, enter `rs`[39m
-[33m[nodemon] watching: *.*[39m
-[32m[nodemon] starting `node server_admin.js package.json 8090`[39m
-Creating connection pool {"user":"controlroom","password":"controlroom","connectString":"10.200.14.230/test","poolMin":1,"poolMax":200,"poolTimeout":0,"maxRows":70000,"autocommit":true,"_enableStats":false,"queueRequests":false,"queueTimeout":0,"stmtCacheSize":40}
-12/21/2019 13:35:16 [internal] 0: " Server is listening at http://:::8090"

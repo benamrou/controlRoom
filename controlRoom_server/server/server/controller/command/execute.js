@@ -87,7 +87,7 @@ module.exports = function (app, SQL) {
                 response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
          
                 // Command with arguments
-                console.log ('Executing command with arguments ' + request.query.PARAM  + ' ' + request.query.ARGS  + ' ... ');
+                console.log ('Executing command on ' + request.header('ENV_IP'),  + ' ' + request.header('ENV_COMMAND') );
     
     
                 //host configuration with connection settings and commands
@@ -120,6 +120,9 @@ module.exports = function (app, SQL) {
                     // if callback is provided, errors will be passed into it
                     // else errors will be thrown
                     },
+                    onError:            function( err, type, close = false, callback ) {
+                        console.log('SSH error ' + type + ' ' +  JSON.stringify(err));
+                       },
                     
                 };
                     

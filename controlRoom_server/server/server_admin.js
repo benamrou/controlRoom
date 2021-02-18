@@ -22,6 +22,7 @@ let oracledb = require('oracledb');      // Oracle DB connection
 let fs = require('fs-extra'); // File management
 let _= require("lodash");
 let inherits = require("inherits");
+let multer  = require('multer');
 
 let openHttpConnections = {};
 let httpServer;
@@ -117,6 +118,7 @@ let dashboard = require('./server/controller/dashboard')(app, SQL);
 let supplier = require('./server/controller/supplier')(app, SQL);
 let query = require('./server/controller/query')(app, SQL);
 let reporting = require('./server/controller/reporting')(app, SQL);
+let gdrive = require('./server/controller/gdrive')(app, SQL);
 
 
 //dbConnection.createPool('dd');
@@ -152,6 +154,7 @@ dashboard.get(app, oracledb);
 query.get(app, oracledb);
 supplier.get(app, oracledb);
 reporting.get(app, oracledb);
+gdrive.post(app, oracledb);
 //finance.get(aoo,oracledb);
 
 

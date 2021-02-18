@@ -8,4 +8,4 @@ export NODE_MODULE_PATH=${CONFIG_SERVER}/node_modules/lib/node_modules/ControlRo
 export NODE_PATH=${NODE_MODULE_PATH}
 
 cd ${CONTROLROOM}
-nodemon ${CONTROLROOM}/server_admin.js ${CONFIG_SERVER}/package.json
+./start_backend.sh

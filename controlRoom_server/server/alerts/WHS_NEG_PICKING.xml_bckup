@@ -1,0 +1,19 @@
+<ROOT>
+    <QUERY> 
+	 WITH ITEM_NEG_PICKING AS (select  ar_donord WHS, rp_adrpic PICKING_ADDRESS, ar_cproin ITEM, ar_ilogis LV,  ar_libpro ITEM_DESC ,  sum(nvl(rp_nqtuvc,0)) INVENTORY ,
+   to_CHAR(to_date(RP_DATDLC, ''DD/MM/RR''), ''MM/DD/RR'') UBD,   
+        pk_tracabilite.fc_tracabilite_lcums@HEINENS_STK_PROD(RP_USSCC,RP_CSSCC,rp_numlig,''GB'') UBD_DESC
+        from v_pick_3@HEINENS_STK_PROD, tb_art@HEINENS_STK_PROD,tb_fam@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD  
+        where rp_donord = ar_donord    and rp_cproin = ar_cproin    and rp_arprom = ar_arprom    and rp_ilogis = ar_ilogis    and fa_cfam(+) = ar_cfamin    
+        AND UL_USSCC = RP_USSCC    AND UL_CSSCC = RP_CSSCC    AND UL_NUMLIG = RP_NUMLIG    
+        group by  ar_donord, decode(nvl(ar_dlc,0), 0, NVL(fa_dlc, 0), ar_dlc ), RP_DATDLC,  pk_tracabilite.fc_tracabilite_lcums@HEINENS_STK_PROD(RP_USSCC,RP_CSSCC,rp_numlig,''GB''),  pk_statut.fc_get_staums@HEINENS_STK_PROD(RP_USSCC,RP_CSSCC,rp_numlig)  , rp_adrpic, ar_cproin , ar_ilogis, ar_libpro
+      )
+      SELECT * FROM ITEM_NEG_PICKING
+        WHERE 0 >  INVENTORY
+</QUERY>
+ 
+  <HEADERIFEMPTY>iNo Warehouse items with neg. UBD inventory </HEADERIFEMPTY>
+  <HEADER>Warehouse Warehouse Items Neg. inventory with UBD </HEADER>
+  
+</ROOT>
+

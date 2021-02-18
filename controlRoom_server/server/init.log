@@ -1,0 +1,15 @@
+[[0;32mPRE[0m]	 Deactivating existing SERVER NODE..... 	[[0;32mDONE[0m]
+[[0;32mSTART[0m]	 Starting SERVER NODE connecting to DB..... 	[[0;32mDONE[0m]
+[[0;32mLAST[0m]	 Daemonizing SERVER NODE..... 			[[0;32mDONE[0m]
+[[0;32mLAST[0m]	 - BATCH EXECUTION SERVER NODE: 8091..... 	[[0;32mDONE[0m]
+[[0;32mLAST[0m]	 - ALERTS EXECUTION SERVER NODE: 8092..... 	[[0;32mDONE[0m]
+[[0;32mLAST[0m]	 - SERVER NODE: 8090..... 			[[0;32mDONE[0m]
+[33mwarn[39m:    --minUptime not set. Defaulting to: 1000ms
+[33mwarn[39m:    --spinSleepTime not set. Your script will exit if it does not stay up for at least 1000ms
+[32minfo[39m:    Forever processing file: [90mserver_admin.js[39m
+[33mwarn[39m:    --minUptime not set. Defaulting to: 1000ms
+[33mwarn[39m:    --spinSleepTime not set. Your script will exit if it does not stay up for at least 1000ms
+[32minfo[39m:    Forever processing file: [90mserver_admin.js[39m
+[33mwarn[39m:    --minUptime not set. Defaulting to: 1000ms
+[33mwarn[39m:    --spinSleepTime not set. Your script will exit if it does not stay up for at least 1000ms
+[32minfo[39m:    Forever processing file: [90mserver_admin.js[39m

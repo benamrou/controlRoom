@@ -259,8 +259,6 @@ export class DashboardSupplierComponent {
                     this.nbReference = topBadges.length;
 
                     this.averageMargin = topBadges.map(res => res["MARGIN"]).reduce((accumulator, current) => {return accumulator + current; }) / this.nbReference;
-                    this.fillRateYearly = topBadges.map(res => res["YEARLY_FILL_RATE"]).reduce((accumulator, current) => {return accumulator + current; }) / this.nbReference;
-                    this.serviceRateYearly = topBadges.map(res => res["YEARLY_SERVICE_RATE"]).reduce((accumulator, current) => {return accumulator + current; }) / this.nbReference;
                   }
                 this.searchResult = data; // put the data returned from the server in our variable
                 this.searchResult.slice();
@@ -296,6 +294,10 @@ export class DashboardSupplierComponent {
         data => { 
           this.rawDataFillItem = data;
           this.rawDataFillItem.slice();
+
+          let totalQtyOrdered = this.rawDataFillItem.map(res => res["QTY_ORDERED"]).reduce((accumulator, current) => {return accumulator + current; });
+          let totalQtyPrepared = this.rawDataFillItem.map(res => res["QTY_PREPARED"]).reduce((accumulator, current) => {return accumulator + current; }); 
+          this.fillRateYearly = totalQtyPrepared/totalQtyOrdered;
         },
         error => {
               // Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
@@ -308,6 +310,10 @@ export class DashboardSupplierComponent {
     .subscribe( 
         data => { 
           this.rawDataServiceItem = data;
+
+          let totalQtyOrdered = this.rawDataServiceItem.map(res => res["QTY_ORDERED"]).reduce((accumulator, current) => {return accumulator + current; });
+          let totalQtyReceived = this.rawDataServiceItem.map(res => res["QTY_RECEIVED"]).reduce((accumulator, current) => {return accumulator + current; }); 
+          this.serviceRateYearly  = totalQtyReceived/totalQtyOrdered;
       },
         error => {
               // Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
@@ -420,8 +426,17 @@ export class DashboardSupplierComponent {
       this.nbReference = topBadges.length;
 
       this.averageMargin = topBadges.map(res => res["MARGIN"]).reduce((accumulator, current) => {return accumulator + current; }) / this.nbReference;
-      this.fillRateYearly = topBadges.map(res => res["YEARLY_FILL_RATE"]).reduce((accumulator, current) => {return accumulator + current; }) / this.nbReference;
-      this.serviceRateYearly = topBadges.map(res => res["YEARLY_SERVICE_RATE"]).reduce((accumulator, current) => {return accumulator + current; }) / this.nbReference;
+      //this.fillRateYearly = topBadges.map(res => res["YEARLY_FILL_RATE"]).reduce((accumulator, current) => {return accumulator + current; }) / this.nbReference;
+      //this.serviceRateYearly = topBadges.map(res => res["YEARLY_SERVICE_RATE"]).reduce((accumulator, current) => {return accumulator + current; }) / this.nbReference;
+    
+    
+      let totalQtyOrdered = this.rawDataFillItem.map(res => res["QTY_ORDERED"]).reduce((accumulator, current) => {return accumulator + current; });
+      let totalQtyReceived = this.rawDataFillItem.map(res => res["QTY_PREPARED"]).reduce((accumulator, current) => {return accumulator + current; }); 
+      this.fillRateYearly = totalQtyReceived/totalQtyOrdered;
+
+      totalQtyOrdered = this.rawDataServiceItem.map(res => res["QTY_ORDERED"]).reduce((accumulator, current) => {return accumulator + current; });
+      totalQtyReceived = this.rawDataServiceItem.map(res => res["QTY_RECEIVED"]).reduce((accumulator, current) => {return accumulator + current; }); 
+      this.serviceRateYearly  = totalQtyReceived/totalQtyOrdered;
     }
 
   }

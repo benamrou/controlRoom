@@ -1,0 +1,748 @@
+
+SQL*Plus: Release 12.1.0.2.0 Production on Tue Nov 24 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Tue Nov 24 2020 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Wed Nov 25 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Wed Nov 25 2020 12:00:05 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Nov 26 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Thu Nov 26 2020 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Fri Nov 27 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Fri Nov 27 2020 12:00:05 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sat Nov 28 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Nov 28 2020 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sun Nov 29 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sun Nov 29 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mon Nov 30 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Mon Nov 30 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Tue Dec 1 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Tue Dec 01 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Wed Dec 2 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Wed Dec 02 2020 12:00:05 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Dec 3 02:53:16 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Thu Dec 03 2020 02:50:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Dec 3 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Thu Dec 03 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Fri Dec 4 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Fri Dec 04 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sat Dec 5 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Dec 05 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sun Dec 6 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sun Dec 06 2020 12:00:05 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Tue Dec 8 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Tue Dec 08 2020 12:00:06 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Wed Dec 9 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Wed Dec 09 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Dec 10 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Thu Dec 10 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Fri Dec 11 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Fri Dec 11 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sat Dec 12 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Dec 12 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sun Dec 13 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sun Dec 13 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mon Dec 14 12:05:00 2020
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Mon Dec 14 2020 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mon Jan 11 17:11:46 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Mon Jan 11 2021 17:10:05 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Tue Jan 12 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Tue Jan 12 2021 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Wed Jan 13 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Wed Jan 13 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Jan 14 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Thu Jan 14 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Fri Jan 15 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Fri Jan 15 2021 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sat Jan 16 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Jan 16 2021 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sun Jan 17 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sun Jan 17 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mon Jan 18 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Mon Jan 18 2021 12:00:03 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Tue Jan 19 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Tue Jan 19 2021 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Wed Jan 20 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Wed Jan 20 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Jan 21 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Thu Jan 21 2021 12:00:03 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Fri Jan 22 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Fri Jan 22 2021 12:00:05 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sat Jan 23 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Jan 23 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sun Jan 24 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sun Jan 24 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mon Jan 25 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Mon Jan 25 2021 12:00:24 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Tue Jan 26 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Tue Jan 26 2021 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Wed Jan 27 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Wed Jan 27 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Jan 28 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Thu Jan 28 2021 12:00:05 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Fri Jan 29 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Fri Jan 29 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sat Jan 30 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Jan 30 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sun Jan 31 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sun Jan 31 2021 12:00:03 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mon Feb 1 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Mon Feb 01 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Tue Feb 2 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Tue Feb 02 2021 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Wed Feb 3 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Wed Feb 03 2021 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Feb 4 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Thu Feb 04 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Feb 4 12:05:01 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Thu Feb 04 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Fri Feb 5 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Fri Feb 05 2021 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sat Feb 6 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Feb 06 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Sun Feb 7 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Sun Feb 07 2021 12:00:04 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mon Feb 8 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Mon Feb 08 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Tue Feb 9 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Tue Feb 09 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Wed Feb 10 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Wed Feb 10 2021 12:00:05 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL*Plus: Release 12.1.0.2.0 Production on Thu Feb 11 12:05:00 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Last Successful login time: Thu Feb 11 2021 12:05:00 -05:00
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+

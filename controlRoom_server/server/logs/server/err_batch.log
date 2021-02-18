@@ -1,0 +1,178 @@
+Tue, 16 Feb 2021 20:57:36 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 20:57:36 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 20:58:11 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 20:58:11 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 20:59:55 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 20:59:55 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:00:18 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:00:18 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:01:16 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:01:16 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server/controller/gdrive.js:143
+         await stringify(content, {
+         ^^^^^
+
+SyntaxError: await is only valid in async function
+    at wrapSafe (internal/modules/cjs/loader.js:931:16)
+    at Module._compile (internal/modules/cjs/loader.js:979:27)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1035:10)
+    at Module.load (internal/modules/cjs/loader.js:879:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:724:14)
+    at Module.require (internal/modules/cjs/loader.js:903:19)
+    at require (internal/modules/cjs/helpers.js:74:18)
+    at Object.<anonymous> (/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server_admin.js:121:14)
+    at Module._compile (internal/modules/cjs/loader.js:1015:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1035:10)
+    at Module.load (internal/modules/cjs/loader.js:879:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:724:14)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:60:12)
+    at internal/main/run_main_module.js:17:47
+Tue, 16 Feb 2021 21:01:19 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:01:19 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server/controller/gdrive.js:143
+         await stringify(content, {
+         ^^^^^
+
+SyntaxError: await is only valid in async function
+    at wrapSafe (internal/modules/cjs/loader.js:931:16)
+    at Module._compile (internal/modules/cjs/loader.js:979:27)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1035:10)
+    at Module.load (internal/modules/cjs/loader.js:879:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:724:14)
+    at Module.require (internal/modules/cjs/loader.js:903:19)
+    at require (internal/modules/cjs/helpers.js:74:18)
+    at Object.<anonymous> (/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server_admin.js:121:14)
+    at Module._compile (internal/modules/cjs/loader.js:1015:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1035:10)
+    at Module.load (internal/modules/cjs/loader.js:879:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:724:14)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:60:12)
+    at internal/main/run_main_module.js:17:47
+Tue, 16 Feb 2021 21:01:22 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:01:22 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server/controller/gdrive.js:143
+         await stringify(content, {
+         ^^^^^
+
+SyntaxError: await is only valid in async function
+    at wrapSafe (internal/modules/cjs/loader.js:931:16)
+    at Module._compile (internal/modules/cjs/loader.js:979:27)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1035:10)
+    at Module.load (internal/modules/cjs/loader.js:879:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:724:14)
+    at Module.require (internal/modules/cjs/loader.js:903:19)
+    at require (internal/modules/cjs/helpers.js:74:18)
+    at Object.<anonymous> (/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server_admin.js:121:14)
+    at Module._compile (internal/modules/cjs/loader.js:1015:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1035:10)
+    at Module.load (internal/modules/cjs/loader.js:879:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:724:14)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:60:12)
+    at internal/main/run_main_module.js:17:47
+Tue, 16 Feb 2021 21:01:25 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:01:25 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:04:06 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:04:06 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:04:10 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:04:10 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:04:32 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:04:32 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:07:04 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:07:04 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:10:31 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:10:31 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:12:31 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:12:31 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:13:00 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:13:00 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:17:28 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:17:28 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:19:49 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:19:49 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:20:10 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:20:10 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:22:39 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:22:39 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:23:02 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:23:02 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:23:15 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:23:15 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server/controller/gdrive.js:145
+    });
+     ^
+
+SyntaxError: Unexpected token ')'
+    at wrapSafe (internal/modules/cjs/loader.js:931:16)
+    at Module._compile (internal/modules/cjs/loader.js:979:27)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1035:10)
+    at Module.load (internal/modules/cjs/loader.js:879:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:724:14)
+    at Module.require (internal/modules/cjs/loader.js:903:19)
+    at require (internal/modules/cjs/helpers.js:74:18)
+    at Object.<anonymous> (/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server_admin.js:121:14)
+    at Module._compile (internal/modules/cjs/loader.js:1015:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1035:10)
+    at Module.load (internal/modules/cjs/loader.js:879:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:724:14)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:60:12)
+    at internal/main/run_main_module.js:17:47
+Tue, 16 Feb 2021 21:23:18 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:23:18 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:23:21 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:23:21 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:26:18 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:26:18 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:26:33 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:26:33 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:26:56 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:26:56 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:28:17 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:28:17 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:28:36 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:28:36 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:39:22 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:39:22 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:41:16 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:41:16 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:43:03 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:43:03 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Tue, 16 Feb 2021 21:43:54 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Tue, 16 Feb 2021 21:43:54 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:00:48 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:00:48 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:02:18 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:02:18 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:05:05 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:05:05 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:05:28 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:05:28 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:06:03 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:06:03 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:07:01 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:07:01 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:07:11 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:07:12 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:07:58 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:07:58 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:08:44 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:08:44 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:09:01 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:09:01 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:10:28 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:10:28 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:12:21 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:12:21 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:13:00 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:13:00 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:13:48 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:13:48 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:14:05 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:14:05 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:14:31 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:14:31 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 12:15:27 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 12:15:27 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 13:39:25 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 13:39:25 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29
+Wed, 17 Feb 2021 13:45:31 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server_admin.js:49:9
+Wed, 17 Feb 2021 13:45:31 GMT body-parser deprecated undefined extended: provide extended option at node_modules/body-parser/index.js:105:29

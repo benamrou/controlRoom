@@ -5,12 +5,11 @@
 </div>
 
 <div class="content-section implementation" style="padding: 5px">
-    <p-toast key="top" [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+    <p-toast key="top" [style]="{marginTop: '80px'}" [sticky]=true position="top-right"></p-toast>
 </div>
 <div style="width: 50%; float: right;">
     <p-steps styleClass="steps-custom" 
             [model]="menuItems" [(activeIndex)]="activeIndex" [readonly]="true">
-
     </p-steps>
 </div>
 

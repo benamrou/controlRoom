@@ -1,5 +1,5 @@
 
-. /home/hntcen/env/envCEN
+. /home/hntcen/env/envICR
 
 sqlplus -s controlroom/controlroom @/opt/apps/controlRoom/controlRoom_server/server/scripts/sql/INVENTORY_store_list.sql
 

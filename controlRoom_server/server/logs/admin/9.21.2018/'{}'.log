@@ -1,4 +1,0 @@
-9/21/2018 22:47:43 ADM0000002: LIBQUERY with Callback: 
-9/21/2018 22:47:43 ADM0000002: BEGIN PKREQUESTMANAGER.CALLQUERY(ADM0000002,''{admin,admin}'',''{}'','{}', abe,[object Object], :cursor); END;
-9/21/2018 22:49:11 ADM0000002: LIBQUERY with Callback: 
-9/21/2018 22:49:11 ADM0000002: BEGIN PKREQUESTMANAGER.CALLQUERY(ADM0000002,''{admin,admin}'',''{}'','{}', abe,[object Object], :cursor); END;
