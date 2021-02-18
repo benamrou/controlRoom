@@ -99,7 +99,7 @@ export class SVAttributeComponent implements OnInit{
               title: 'Pick your item/SV attribute file',
               command: (event: any) => {
                   this.activeIndex = 0;
-                  this._messageService.add({key:'top', severity:'info', summary:'Pick your data file item-sv-attribute', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Pick your data file item-sv-attribute', detail: event.item.label});
               }
           },
           {
@@ -108,7 +108,7 @@ export class SVAttributeComponent implements OnInit{
               title: 'Define changes parameter',
               command: (event: any) => {
                 this.activeIndex = 1;
-                  this._messageService.add({key:'top', severity:'info', summary:'Specify change configuration', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Specify change configuration', detail: event.item.label});
               }
           },
           {
@@ -117,7 +117,7 @@ export class SVAttributeComponent implements OnInit{
               title: 'Execute now or schedule the change',
               command: (event: any) => {
                   this.activeIndex = 2;
-                  this._messageService.add({key:'top', severity:'info', summary:'Execute or Schedule change', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Execute or Schedule change', detail: event.item.label});
               }
           },
           {
@@ -126,14 +126,14 @@ export class SVAttributeComponent implements OnInit{
               title: 'Confirmation for execution/planification',
               command: (event: any) => {
                   this.activeIndex = 3;
-                  this._messageService.add({key:'top', severity:'info', summary:'Wrap up', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Wrap up', detail: event.item.label});
               }
           }
       ];
   }
 
   onBeforeUpload(event) {
-    console.log('Before upload :', event);
+    //console.log('Before upload :', event);
   }
 
   onUploadCompleted(event) {
@@ -164,10 +164,10 @@ export class SVAttributeComponent implements OnInit{
             this._importService.getExcelFile(this.uploadedFiles[0])
                     .subscribe (data => {  
                                 },
-                                error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during loading', detail: error }); },
+                                error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during loading', detail: error }); },
                                 () => { 
                                         this.indicatorXLSfileLoaded = true;
-                                        this._messageService.add({key:'top', severity:'success', summary:'Data file loaded', detail:  
+                                        this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Data file loaded', detail:  
                                                                 '"' + this.uploadedFiles[0].name + '" worksheet loaded.' }); 
 
                                         // add comments field
@@ -179,7 +179,7 @@ export class SVAttributeComponent implements OnInit{
                             );
 
         } catch (error) {
-            this._messageService.add({key:'top', severity:'error', summary:'ERROR file loading message', detail: error }); 
+            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'ERROR file loading message', detail: error }); 
         }
     }
 
@@ -188,15 +188,15 @@ export class SVAttributeComponent implements OnInit{
     this._importService.getTemplate(this.templateID)
     .subscribe (data => {  
                 existTemplate = data !== -1;
-                console.log('data getTemplate :', data);
+                //console.log('data getTemplate :', data);
                 },
-                error => { this._messageService.add({key:'top', severity:'error', summary:'Template error', detail: error }); },
+                error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Template error', detail: error }); },
                 () => { 
                         if (existTemplate) {
-                            this._messageService.add({key:'top', severity:'success', summary:'Template file', detail:  
+                            this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Template file', detail:  
                                                     'File Item/SV attribute downloaded.' }); 
                         } else {
-                            this._messageService.add({key:'top', severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
+                            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
                         }
                 }
             );
@@ -211,7 +211,7 @@ export class SVAttributeComponent implements OnInit{
     let userID;
     this.displayUpdateCompleted = false;
     if (this.checkGlobal()) {
-        this._messageService.add({key:'top', severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
+        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
         this._importService.postExecution(this.uploadedFiles[0].name, this.toolID,
                             this.datePipe.transform(this.startDate,'MM/dd/yy'), 
                             +this.itemTrace, // Implicit cast to have 1: True, 0: False
@@ -223,40 +223,41 @@ export class SVAttributeComponent implements OnInit{
                             executionId = data;
                             console.log('executionId : ', executionId);
                         },
-                        error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                        error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                         () => { 
                     if (this.scheduleFlag) {
-                        this._messageService.add({key:'top', severity:'success', summary:'Step 2/2: Data file execution plan', detail:  
+                        this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Step 2/2: Data file execution plan', detail:  
                                                     '"' + this.uploadedFiles[0].name + '" worksheet loaded for scheduled execution.' }); 
                     }
                     else {
                         // Execute the file
                         if(executionId.RESULT[0] < 0 ) {
-                            this._messageService.add({key:'top', severity:'error', summary:'Execution failure', detail: executionId.MESSAGE[0] }); 
+                            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution failure', detail: executionId.MESSAGE[0] }); 
                             return;
                         }
                         /** Run the job integration */
-                        this._messageService.add({key:'top', severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
+                        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
                                     //console.log('data userID : ', data);
                                     userID = data[0].RESULT;
                                 },
-                                error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                                error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                 () =>    {  
-                                            
-                                    this._messageService.add({key:'top', severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
+                                    this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
                                     this._importService.executePlan(userID, this.toolID).subscribe( 
                                             data => {  },
-                                            error => { this._messageService.add({key:'top', severity:'error', summary:'Execution issue', detail: error }); },
-                                            () => {  this._importService.collectResult(executionId.RESULT[0]).subscribe (
+                                            error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution issue', detail: error }); },
+                                            () => { this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
+                                                    this.msgFinalDisplayed = 'Item - SV attribute  ' + this.uploadedFiles[0].name + ' - ' + 
+                                                                            ' has been successfully processed.';
+                                                    this.displayUpdateCompleted = true;
+                                                
+                                                    // Collect result in the back
+                                                    this._importService.collectResult(executionId.RESULT[0]).subscribe (
                                                     data => { },
-                                                    error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                                                    error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                                     () => { 
-                                                        this._messageService.add({key:'top', severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
-                                                        this.msgFinalDisplayed = 'Item - SV attribute  ' + this.uploadedFiles[0].name + ' - ' + 
-                                                                                ' has been successfully processed.';
-                                                        this.displayUpdateCompleted = true;
                                                     });
                                                 });
                                         });                     
@@ -264,7 +265,7 @@ export class SVAttributeComponent implements OnInit{
                         });
                     } 
         else {
-                this._messageService.add({key:'top', severity:'error', summary:'Required data missing', detail: this.missingData }); 
+                this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Required data missing', detail: this.missingData }); 
         }
     }
 
@@ -276,18 +277,19 @@ export class SVAttributeComponent implements OnInit{
     this.activeIndex = 0;
     this.globalError = [];
     if (this.checkGlobal()) {
+        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Detail review', detail:  '"' + this.uploadedFiles[0].name + '" is getting reviewed in detail for confirmation.'});
         this._importService.checkFile(this.uploadedFiles[0].name, 
                                       this.toolID,
                                       JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
                 .subscribe (data => {  
                             //console.log('data confirm: ', data, this._importService.wb.sheets[0].worksheet.rows);
                             this._importService.wb.sheets[0].worksheet.rows = [...data];
-                            console.log('data confirm: ', data, this._importService.wb.sheets[0].worksheet);
+                            //console.log('data confirm: ', data, this._importService.wb.sheets[0].worksheet);
                         },
-                        error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during check', detail: error }); },
+                        error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during check', detail: error }); },
                         () => { 
 
-                                this._messageService.add({key:'top', severity:'success', summary:'Content verification', detail:  
+                                this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Content verification', detail:  
                                                             this.uploadedFiles[0].name + ' data file content check completed.' }); 
                                 //console.log('sheets :', this._importService.wb.sheets);
                                 let rowsWithError = this._importService.wb.sheets[0].worksheet.rows.filter(item => item.COMMENTS !== '' && item.COMMENTS !== null);
@@ -317,7 +319,7 @@ export class SVAttributeComponent implements OnInit{
                     );
         }
         else {
-                this._messageService.add({key:'top', severity:'error', summary:'Required data missing', detail: this.missingData }); 
+                this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Required data missing', detail: this.missingData }); 
         }
     }
 

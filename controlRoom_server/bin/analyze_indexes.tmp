@@ -1,0 +1,173 @@
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','ALERTDIST');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','ALERTLOG');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','ALERTS');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','ALERTSCHEDULE');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','ALERT_TEMP');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','CORPENV');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','CORPORATE');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','LABELS');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','LANGUAGE');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','LIBQUERY');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','MENU');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','MENUAUTH');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','MENUAUTH2');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','MYJOBLIST');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','PARAMETERS');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','TRA_APPLICATION');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','TRA_ENTRIES');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','TRA_LABELS');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','TRA_PARAMETERS');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','TRA_TECHOBJ');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','TRA_WIDGETS');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','USERSENV');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','USERSROOM');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','USER_PROFILES');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','USER_WIDGET');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','WIDGET');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','WIDGETLINK');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','WIDGETRESULT');
+exec DBMS_STATS.UNLOCK_TABLE_STATS ('CONTROLROOM','WIDGETUSERPREF');
+ANALYZE INDEX CORPORATE_PKEY COMPUTE STATISTICS;
+ANALYZE INDEX CORPORATE_PKEY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX CORPENV_PKEY COMPUTE STATISTICS;
+ANALYZE INDEX CORPENV_PKEY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX LABELS_PKEY COMPUTE STATISTICS;
+ANALYZE INDEX LABELS_PKEY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX LANGUAGE_PKEY COMPUTE STATISTICS;
+ANALYZE INDEX LANGUAGE_PKEY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX LIBQUERY_PK COMPUTE STATISTICS;
+ANALYZE INDEX LIBQUERY_PK VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX PARAMETERS_PKEY COMPUTE STATISTICS;
+ANALYZE INDEX PARAMETERS_PKEY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX APPLICATION_PKEY COMPUTE STATISTICS;
+ANALYZE INDEX APPLICATION_PKEY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX TRA_ENTRIES_PKEY COMPUTE STATISTICS;
+ANALYZE INDEX TRA_ENTRIES_PKEY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX PK_TRA_MENUS COMPUTE STATISTICS;
+ANALYZE INDEX PK_TRA_MENUS VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX TRA_PARAMETER_PKEY COMPUTE STATISTICS;
+ANALYZE INDEX TRA_PARAMETER_PKEY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX USERSENV_KEY COMPUTE STATISTICS;
+ANALYZE INDEX USERSENV_KEY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX USERSROOM_KEY COMPUTE STATISTICS;
+ANALYZE INDEX USERSROOM_KEY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX SYS_C00287065 COMPUTE STATISTICS;
+ANALYZE INDEX SYS_C00287065 VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX I1_ALERTDIST COMPUTE STATISTICS;
+ANALYZE INDEX I1_ALERTDIST VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX I1_ALERTLOG COMPUTE STATISTICS;
+ANALYZE INDEX I1_ALERTLOG VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX I2_ALERTLOG COMPUTE STATISTICS;
+ANALYZE INDEX I2_ALERTLOG VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX I1_LIBQUERY COMPUTE STATISTICS;
+ANALYZE INDEX I1_LIBQUERY VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX PK_MENU COMPUTE STATISTICS;
+ANALYZE INDEX PK_MENU VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX PK_TRA_TECHOBJ COMPUTE STATISTICS;
+ANALYZE INDEX PK_TRA_TECHOBJ VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX I1_TRA_TECHOBJ COMPUTE STATISTICS;
+ANALYZE INDEX I1_TRA_TECHOBJ VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX I1_MYJOBLIST COMPUTE STATISTICS;
+ANALYZE INDEX I1_MYJOBLIST VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX PK_ALERTSCHEDULE COMPUTE STATISTICS;
+ANALYZE INDEX PK_ALERTSCHEDULE VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+ANALYZE INDEX I1_ALERTS COMPUTE STATISTICS;
+ANALYZE INDEX I1_ALERTS VALIDATE STRUCTURE;
+select name, height, lf_rows, del_lf_rows, round((del_lf_rows/lf_rows)*100,2) as ratio from index_stats where (lf_rows > 10 and del_lf_rows
+> 0)
+and (height > 3 or ((del_lf_rows/lf_rows)*100) > 20);
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','ALERTDIST');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','ALERTLOG');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','ALERTS');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','ALERTSCHEDULE');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','ALERT_TEMP');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','CORPENV');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','CORPORATE');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','LABELS');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','LANGUAGE');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','LIBQUERY');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','MENU');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','MENUAUTH');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','MENUAUTH2');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','MYJOBLIST');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','PARAMETERS');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','TRA_APPLICATION');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','TRA_ENTRIES');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','TRA_LABELS');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','TRA_PARAMETERS');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','TRA_TECHOBJ');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','TRA_WIDGETS');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','USERSENV');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','USERSROOM');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','USER_PROFILES');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','USER_WIDGET');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','WIDGET');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','WIDGETLINK');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','WIDGETRESULT');
+exec DBMS_STATS.LOCK_TABLE_STATS ('CONTROLROOM','WIDGETUSERPREF');

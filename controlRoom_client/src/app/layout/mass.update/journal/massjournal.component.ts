@@ -143,7 +143,7 @@ export class MassJournalComponent {
     //this.searchCode = searchCode;
     //console.log('Looking for item code : ' + this.searchJobCode + ' - Picking Unit : ' + this.selectedPU);
     this.razSearch();
-    this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for execution in the mass change journal.' });
+    this._messageService.add({severity:'info', sticky:true, summary:'Info Message', detail: 'Looking for execution in the mass change journal.' });
     let scopeId = this.pt_33_data.find(e => e.TENTRYDESC.toUpperCase() === this.searchScopeCode.toUpperCase());
     let loadDate, executionDate, filenameSearch ;
     //console.log('scopeId', scopeId);
@@ -234,7 +234,7 @@ export class MassJournalComponent {
       header: 'Confirmation',
       icon: 'fas fa-exclamation-triangle',
       accept: () => {
-                      this._messageService.add({severity:'info', summary:'Info Message', detail: 'Cancelling "' +   this.searchResult[index].JSONFILE + '" schedule plan'});
+                      this._messageService.add({severity:'info', sticky:true, summary:'Info Message', detail: 'Cancelling "' +   this.searchResult[index].JSONFILE + '" schedule plan'});
                       this._importService.updateJournal(this.searchResult[index].JSONID, 
                                                         this.searchResult[index].JSONFILE, 
                                                         this.datePipe.transform(this.searchResult[index].JSONSTARTDATE,'MM/dd/yy'),
@@ -257,7 +257,7 @@ export class MassJournalComponent {
                                     );
           },
           reject: () => {
-              this._messageService.add({severity:'info', summary:'Info Message', detail: 'Cancelling "' +   this.searchResult[index].JSONFILE + '" aborded'});
+              this._messageService.add({severity:'info', sticky:true, summary:'Info Message', detail: 'Cancelling "' +   this.searchResult[index].JSONFILE + '" aborded'});
           }
 
         });
@@ -269,7 +269,7 @@ export class MassJournalComponent {
    * @param index 
    */
     updateExecution(index) {
-      this._messageService.add({severity:'info', summary:'Info Message', detail: 'Updating "' +   this.searchResult[index].JSONFILE + '" schedule plan'});
+      this._messageService.add({severity:'info', sticky:true, summary:'Info Message', detail: 'Updating "' +   this.searchResult[index].JSONFILE + '" schedule plan'});
       this._importService.updateJournal(this.searchResult[index].JSONID, 
                                         this.searchResult[index].JSONFILE, 
                                         this.datePipe.transform(this.searchResult[index].JSONSTARTDATE,'MM/dd/yy'),
@@ -317,16 +317,16 @@ export class MassJournalComponent {
                       this._messageService.add({severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                     () =>    {  
                                 
-                        this._messageService.add({severity:'info', summary:'Step 2/4: Executing plan', detail: '"' + this.searchResult[index].JSONFILE  + '" processing plan completed. Collecting  final integration result.'});
-                        this._importService.executePlan(userID, this.searchResult[index].JSONTOOL).subscribe( 
+                        this._messageService.add({severity:'info', sticky:true, summary:'Step 2/4: Executing plan', detail: '"' + this.searchResult[index].JSONFILE  + '" processing plan completed. Collecting  final integration result.'});
+                        this._importService.executePlan(userID, this.searchResult[index].JSONTOOLCODE).subscribe( 
                                 data => {  },
-                                error => { this._messageService.add({key:'top', severity:'error', summary:'Execution issue', detail: error }); },
+                                error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution issue', detail: error }); },
                                 () => {  this._importService.collectResult(this.searchResult[index].JSONID).subscribe (
                                         data => {  },
-                                        error => { this._messageService.add({key:'top', severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                                        error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                         () => { 
-                                          this._messageService.add({severity:'info', summary:'Step 3/4: Executing plan', detail:  '"' + this.searchResult[index].JSONFILE  + '" processing plan results collected.'});
-                                          this._messageService.add({severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.searchResult[index].JSONFILE  + '" has been successfully processed.'});
+                                          this._messageService.add({severity:'info', sticky:true, summary:'Step 3/4: Executing plan', detail:  '"' + this.searchResult[index].JSONFILE  + '" processing plan results collected.'});
+                                          this._messageService.add({severity:'info', sticky:true, summary:'Step 4/4: Executing plan', detail:  '"' + this.searchResult[index].JSONFILE  + '" has been successfully processed.'});
                                           this.searchResult[index].JSONNBERROR ='Need Refresh';
                                           this.searchResult[index].JSONSTATUSCODE = pt_32_1;
                                           this.searchResult[index].JSONSTATUS = pt_32_1_desc.TENTRYDESC;
@@ -339,7 +339,7 @@ export class MassJournalComponent {
                             
           },
           reject: () => {
-              this._messageService.add({severity:'info', summary:'Info Message', detail: 'Cancelling "' +   this.searchResult[index].JSONFILE + '" execution'});
+              this._messageService.add({severity:'info', sticky:true, summary:'Info Message', detail: 'Cancelling "' +   this.searchResult[index].JSONFILE + '" execution'});
           }
         });
     

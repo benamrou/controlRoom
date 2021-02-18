@@ -1,0 +1,1 @@
+NAME | HEIGHT | LF_ROWS | DEL_LF_ROWS | RATIO (del_lf_rows/lf_rows) %

@@ -29,6 +29,5 @@ echo -e ${CONTROLROOM}/config/.npmrc
 cp ${CONTROLROOM}/config/.npmrc ${HOME}/
 
 ./deploy_backend.sh
-./deploy_frontend.sh
 
 echo -e "${PURPLE}[`date +"%r"`] ${DARK_GRAY} CONTROL ROOM deployment.... \t\t\t\t${GREEN} [END]"

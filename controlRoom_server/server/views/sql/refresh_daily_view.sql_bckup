@@ -1,0 +1,36 @@
+DECLARE numerrs PLS_INTEGER;
+BEGIN 
+/*	DBMS_MVIEW.REFRESH(
+#		LIST => 'MV_ORDERABLE',         
+#		method => 'C', 
+#		atomic_refresh => FALSE, 
+#		parallelism => '8');
+
+#        DBMS_MVIEW.REFRESH(
+#                LIST => 'MV_MERCHSTR',
+#                method => 'C',
+#                atomic_refresh => FALSE,
+#                parallelism => '8');
+
+#	DBMS_STATS.gather_table_stats(
+#    		ownname => 'CONTROLROOM',
+#    		tabname => 'MV_ORDERABLE');
+
+#        DBMS_STATS.gather_table_stats(
+#                ownname => 'CONTROLROOM',
+#                tabname => 'MV_MERCHSTR');
+*/
+
+	DBMS_MVIEW.REFRESH(
+                LIST => 'MV_SALES',
+                method => 'C',
+                atomic_refresh => FALSE,
+                parallelism => '8');
+/*
+#	DBMS_STATS.gather_table_stats(
+#                ownname => 'CONTROLROOM',
+#                tabname => 'MV_SALES');
+*/
+END;
+/
+EXIT;

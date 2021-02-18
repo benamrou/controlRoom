@@ -1,4 +1,0 @@
-5/9/2019 4:20:5 137: LIBQUERY with Callback: 
-5/9/2019 4:20:5 137: BEGIN PKREQUESTMANAGER.CALLQUERY(137,'CLI0000003','undefined','{}', '{undefined}','{}', :cursor); END;
-5/9/2019 4:20:7 137: 0 Object(s) returned... [FETCH] :)
-5/9/2019 4:20:7 137: {}

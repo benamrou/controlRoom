@@ -1,0 +1,1 @@
+nohup curl -v -H ": " -H "cache-control: no-cache" -H "Connection: keep-alive" -H "Content-Type: application/x-www-form-urlencoded" -H "DATABASE_SID: HEINENS_CUSTOM_PROD" -H "LANGUAGE: HN" -H "USER: alert" -H "SUBJECT_EXT: for STORE #5 " "http://localhost:8092/api/notification/?PARAM=CGO0000000000_5&PARAM=5" -L &

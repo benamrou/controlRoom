@@ -1,26 +1,53 @@
-[[0;43mSTART[0m]	 Starting process for view creation..... Sat Mar 21 18:46:53 EDT 2020 	[[0;43mIN PROGRESS[0m]
 
-SQL*Plus: Release 12.1.0.2.0 Production on Sat Mar 21 18:46:53 2020
+SQL*Plus: Release 12.1.0.2.0 Production on Fri Nov 13 16:42:40 2020
 
 Copyright (c) 1982, 2014, Oracle.  All rights reserved.
 
-Last Successful login time: Sat Mar 21 2020 18:42:31 -04:00
+Last Successful login time: Fri Nov 13 2020 16:41:26 -05:00
 
 Connected to:
 Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
 
+DROP MATERIALIZED VIEW MV_SUPPLIERSERVICERATE
+*
+ERROR at line 1:
+ORA-12003: materialized view or zonemap "CONTROLROOM"."MV_SUPPLIERSERVICERATE"
+does not exist
 
-Materialized view dropped.
 
-AND TRUNC(stmdmvt) >= TRUNC(SYSDATE-7*5*8)  -- Last three months
-                            *
-ERROR at line 40:
-ORA-04020: deadlock detected while trying to lock object
-HNCUSTOM.PKARTUV@HEINENS_CUSTOM_PROD
+	   AND ROWNUM = 1) ITEM_CLASS,
+                           *
+ERROR at line 18:
+ORA-22818: subquery expressions not allowed here
 
 
 SQL> Error 45 initializing SQL*Plus
 Internal error
-[[0;32mEND[0m]\ View dashboard sale and margin deployed DSHSAL000001..... Sat Mar 21 19:54:41 EDT 2020 	[[0;32mIN PROGRESS[0m]
-./create_view.sh: line 19: unexpected EOF while looking for matching `"'
-./create_view.sh: line 20: syntax error: unexpected end of file
+[[0;43mSTART[0m]	 Starting process for view refresh..... Thu Dec  3 02:53:16 EST 2020 	[[0;43mIN PROGRESS[0m]
+Subject: DAILY VIEW REFRESH refreshed completer
+DAILY Materialized view has been refreshed.
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+220 hnapptest02.localdomain ESMTP Postfix
+250 hnapptest02.localdomain
+250 2.1.0 Ok
+250 2.1.5 Ok
+354 End data with <CR><LF>.<CR><LF>
+250 2.0.0 Ok: queued as C66AA7FABA
+221 2.0.0 Bye
+Connection closed by foreign host.
+[[0;43mSTART[0m]	 Starting process for view refresh..... Mon Jan 11 17:11:46 EST 2021 	[[0;43mIN PROGRESS[0m]
+Subject: DAILY VIEW REFRESH refreshed completer
+DAILY Materialized view has been refreshed.
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+220 hnapptest02.localdomain ESMTP Postfix
+250 hnapptest02.localdomain
+250 2.1.0 Ok
+250 2.1.5 Ok
+354 End data with <CR><LF>.<CR><LF>
+250 2.0.0 Ok: queued as F332D7FABA
+221 2.0.0 Bye
+Connection closed by foreign host.

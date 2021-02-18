@@ -1,0 +1,25 @@
+<ROOT>
+    <QUERY> 
+
+SELECT ar_donord WHS, he_livrea STORE_NUM, hE_NUMCDE  ORDER_NUM, hE_CPROIN ITEM_CODE, hE_ILOGIS LV, AR_LIBPRO ITEM_DESC, hE_UPREEL NB_CASE, hE_UVREEL NB_SKU, TRUNC(hE_DATEXP) SHIPMENT_DATE,
+       AR_FOURN VENDOR_CODE, AR_NRSFOU VENDOR_DESC, 
+       AR_CFAMIN DEPT_CODE,
+       AR_CSFAIN SDEPT_CODE,
+       AR_SGIFLS CAT_CODE,
+       AR_NIV4 SCAT_CODE,
+       (SELECT pkparpostes.get_postlibl@HEINENS_CUSTOM_PROD(1,10,1071, aratcde, ''HN'') FROM artuc@HEINENS_CUSTOM_PROD WHERE aracexr=ar_cproin AND aracexvl=to_number(ar_ilogis) AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin AND (arasite IN (1100, 1200, 1300) OR 55 > arasite ) AND ROWNUM=1) STORE_ORDERABLE,
+       (SELECT MAX(aradfin) FROM artuc@HEINENS_CUSTOM_PROD WHERE aracexr=ar_cproin AND aracexvl=to_number(ar_ilogis) AND (arasite IN (1100, 1200) OR 55 > arasite ) ) END_STORE_ORDERABLE
+FROM tb_hmvtex@HEINENS_STK_PROD, tb_art@HEINENS_STK_PROD
+WHERE ar_cproin=he_cproin
+AND ar_ilogis=he_ilogis
+AND ar_donord=he_donord
+AND ar_donord IN (90061, 91070, 91071)
+AND TRUNC(HE_DATEXP) BETWEEN to_date(''10/01/2019'',''MM/DD/RRRR'') AND to_date(''01/01/2020'',''MM/DD/RRRR'') 
+ORDER BY ar_donord, ar_fourn, he_datexp, ar_cproin ASC
+
+</QUERY>
+  <HEADERIFEMPTY>Warehouse Shipment from 10/01/19 to 01/01/20</HEADERIFEMPTY>
+  <HEADER>Warehouse Warehouse Shipment from 10/01/19 to 01/01/20</HEADER>
+  
+</ROOT>
+

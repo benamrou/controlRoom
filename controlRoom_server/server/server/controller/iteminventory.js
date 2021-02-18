@@ -80,7 +80,7 @@ module.get = function (request,response) {
                             request.header('USER'),
                             "'{" + request.header('DATABASE_SID') + "}'", 
                             "'{" +request.header('LANGUAGE') + "}'", 
-                            request.query.MODE, /* MODE 1 - Refresh with new data */
+                            request.query.MODE, /* MODE 1 - Refredh with new data */
                             "./repository/downloads/inventory/STK0000001_" + request.header('DATABASE_SID') + "_" +  request.query.STORE + ".json",
                             request, response);
         });

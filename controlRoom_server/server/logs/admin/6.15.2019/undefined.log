@@ -1,9 +1,0 @@
-6/15/2019 19:2:22 247: BEGIN PKREQUESTMANAGER.CALLQUERY(247,'STK0000001','undefined','{undefined}', '{5}','{undefined}', :cursor); END;
-6/15/2019 19:2:24 247: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-2019-ORA-02019:CONNECTIONDESCRIPTIONFORREMOTEDATABASENOTFOUND'":"Executing issue, check DBMS_SQL.EXECUTE rights. -2019-ORA-02019: connection description for remote database not found"}]
-6/15/2019 19:2:24 247: 1 Object(s) returned... [FETCH]
-6/15/2019 19:11:58 248: BEGIN PKREQUESTMANAGER.CALLQUERY(248,'STK0000001','undefined','{undefined}', '{5}','{undefined}', :cursor); END;
-6/15/2019 19:12:1 248: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-2019-ORA-02019:CONNECTIONDESCRIPTIONFORREMOTEDATABASENOTFOUND'":"Executing issue, check DBMS_SQL.EXECUTE rights. -2019-ORA-02019: connection description for remote database not found"}]
-6/15/2019 19:12:1 248: 1 Object(s) returned... [FETCH]
-6/15/2019 19:12:23 249: BEGIN PKREQUESTMANAGER.CALLQUERY(249,'STK0000001','undefined','{undefined}', '{5}','{undefined}', :cursor); END;
-6/15/2019 19:12:25 249: [{"'EXECUTINGISSUE,CHECKDBMS_SQL.EXECUTERIGHTS.-2019-ORA-02019:CONNECTIONDESCRIPTIONFORREMOTEDATABASENOTFOUND'":"Executing issue, check DBMS_SQL.EXECUTE rights. -2019-ORA-02019: connection description for remote database not found"}]
-6/15/2019 19:12:25 249: 1 Object(s) returned... [FETCH]

@@ -220,7 +220,7 @@ export class ImportService{
             let data = <any> response;
             return data;
     });
-
+    
     }
 
 
@@ -233,6 +233,7 @@ export class ImportService{
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
         let dateNow = new Date();
+        console.log(' Param :', userID, toolId);
         let command = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
                     'export GOLD_DEBUG=1; ' ;
         switch (toolId)  {
@@ -251,12 +252,15 @@ export class ImportService{
         }
         
         command = command + ' ' + this._userService.userInfo.envDefaultLanguage + ' 1;'
+
+        console.log(' command :', command)
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         headersSearch = headersSearch.set('ENV_COMMAND', command);
 
         return this._http.execute(this.request, this.params, headersSearch).pipe(map(response => {
                 let data = <any> response;
+                return data;
         }));
     
     }

@@ -1,0 +1,56 @@
+<ROOT>
+    <QUERY> 
+INSERT INTO heinens_no_sales@Heinens_Custom_Prod
+WITH VENDOR AS (
+        SELECT FOUCFIN
+        FROM FOUDGENE@Heinens_Custom_Prod
+        WHERE foutype=3 AND  FOUCNUF in (''H091071'',''H091070'', ''H090061'')),
+FIND_PRODUCT AS (
+  SELECT socsite STORE_NUM, DEPT DEPT_NUM, pkstrucobj.get_cext@Heinens_Custom_Prod(1, objpere) SUB_CAT_CODE,
+       pkstrucobj.get_desc@Heinens_Custom_Prod(1, objpere,''HN'') SUB_CAT_DESC,
+       aracexr ITEM_CODE,
+       pkartvl.get_vldesc@Heinens_Custom_Prod(1,araseqvl, ''HN'') ITEM_DESC,
+        (select arccode from artcoca@Heinens_Custom_Prod where arccinr=aracinr and arccinv=pkartstock.RecupCinlUVC@Heinens_Custom_Prod(1,aracinl) and trunc(sysdate) between arcddeb and arcdfin and rownum=1) UPC,
+       pkartstock.get_skuunits@Heinens_Custom_Prod(1,aracinl) PACK_SIZE,
+       (SELECT sum(ul_nqteup)
+         FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+        WHERE ue_usscc = ul_usscc
+        AND UL_CPROIN=aracexr
+        -- AND UL_ILOGIS=aracexvl
+        AND NVL(UE_STAPRE, 0) = 0   /* Only take into account available on hand (not in preparation)*/
+        AND UE_INDFIC = 1 ) INV_CASE_WHS,
+        (SELECT SUM(NVL(storeai, 0) + NVL(storeal, 0) - NVL(storeav, 0) +
+                NVL(storeae, 0) + NVL(storeac, 0) - NVL(storear, 0))
+        FROM stocouch@Heinens_Custom_Prod,artul@Heinens_Custom_Prod WHERE stosite=socsite AND aracinr=arucinr and arucinl=stocinl AND stotpos=0) INV_SKU_STORE,
+       (SELECT to_char(MAX(stmdmvt),''MM/DD/RR'') FROM stomvt@Heinens_Custom_Prod,artul@Heinens_Custom_Prod WHERE stmsite=socsite AND arucinr=aracinr and arucinl=stmcinl AND stmtmvt=150) LAST_SALE
+FROM artuc@Heinens_Custom_Prod, VENDOR, strucrel@Heinens_Custom_Prod, sitdgene@Heinens_Custom_Prod,  (SELECT ''102'' "DEPT" FROM dual UNION SELECT ''103'' "DEPT" FROM dual)
+WHERE aracfin=foucfin
+AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin
+AND aratcde=1
+AND aratfou=1
+AND objcint=aracinr
+AND TRUNC(SYSDATE) BETWEEN objddeb AND objdfin
+AND 55 > socsite 
+AND soccmag=10
+AND pkresrel.isSiteInReseau@Heinens_Custom_Prod(1,socsite, arasite) =1
+AND pkstrucobj.get_cext@Heinens_Custom_Prod(1, objpere) like DEPT || ''%''
+AND NOT EXISTS (SELECT 1 FROM stomvt@Heinens_Custom_Prod, artul@Heinens_Custom_Prod WHERE stmsite=socsite AND arucinr=aracinr and arucinl=stmcinl AND stmtmvt=150
+               AND TRUNC(stmdmvt)> TRUNC(SYSDATE-14))
+AND NVL((SELECT sum(ul_nqteup)
+         FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+        WHERE ue_usscc = ul_usscc
+        AND UL_CPROIN=aracexr
+        AND NVL(UE_STAPRE, 0) =0),0) > 0)
+select  TRUNC(sysdate) EXTRACT_DAY, STORE_NUM, 
+	(select store_type from HEINENS_STORE_TYPE c where c.STORE_NUM=b.STORE_NUM and ROWNUM=1) STORE_TYPE,
+	DEPT_NUM, COUNT(1) NB_ITEMS
+from FIND_PRODUCT b
+GROUP BY STORE_NUM, DEPT_NUM
+
+   </QUERY>
+ 
+  <HEADERIFEMPTY>No Item with inventory in warehouse </HEADERIFEMPTY>
+  <HEADER>ADMIN - Count Store items not sold within 14 days and inventory in warehouse</HEADER>
+  
+</ROOT>
+
