@@ -63,7 +63,7 @@
         "html-webpack-plugin": "2.16.0",
         "image-webpack-loader": "^4.6.0",
         "isomorphic-style-loader": "^5.0.1",
-        "jquery": "^3.3.1",
+        "jquery": "^3.5.0",
         "mini-css-extract-plugin": "^0.6.0",
         "ng2-charts": "^2.2.5",
         "ngc-webpack": "^4.1.2",
