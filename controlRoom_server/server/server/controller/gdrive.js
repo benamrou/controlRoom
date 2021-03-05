@@ -108,8 +108,12 @@ module.post = function (request,response) {
         //console.log('req ', request.file);
         let originalname;
         let i = request.file.originalname.lastIndexOf('.');
-        if (i <0 ){ originalname = request.file.originalname}
-        else { originalname = request.file.originalname.substr(0,i)}
+        if (i <0 ){ 
+            originalname = request.file.originalname;
+        }
+        else { 
+            originalname = request.file.originalname.substr(0,i);
+        }
 
         uploadFile(request.file.path, originalname, request.header('USER'))
         .then ( (value) => {
@@ -152,13 +156,15 @@ async function uploadFile(fileName, originalname, user) {
      * Step 2: If file not exists create the file
      */
     let file_id = '-1';
-    logger.log(1, 'Searching in drive the file : ' + originalname, user, 1);
+    logger.log(1, 'Searching in drive the file : ' + cred.web.heienens_folder_id + ' / ' + originalname, user, 1);
     const response = await drive.files.list({
-        q: "name = '" + originalname + "' and trashed = false",
+        q: " name = '" + originalname + "' and '" + cred.web.heienens_folder_id + "' in parents and trashed = false",
+        //q: "name='" + originalname + "' and trashed=false",
         spaces: 'drive',
-        includeRemoved: false,
-        fileId: cred.web.heienens_folder_id
+        includeRemoved: false
     }, function (err, file) {
+        logger.log(1, '[Response] xxx ' + JSON.stringify(file), user, 1);
+        logger.log(1, '[Response] err ' + JSON.stringify(err), user, 1);
         if (err) {
             // Handle error
             console.error(err);
