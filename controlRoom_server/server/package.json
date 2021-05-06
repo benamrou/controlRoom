@@ -42,7 +42,7 @@
     "simple-ssh": "^1.0.0",
     "ssh2": "^0.6.0",
     "ssh2shell": "^1.9.0",
-    "underscore": "^1.9.0",
+    "underscore": "^1.12.1",
     "xlsx": "^0.15.1",
     "xlsx-style": "^0.8.13",
     "xml2js": "^0.4.19",
