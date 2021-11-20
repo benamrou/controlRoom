@@ -50,12 +50,22 @@ module.exports = {
    timeout: 8800000
  },
  notification: {
-  email_service:  'bbsymphony.com',
-  email_host:  'ehub43.webhostinghub.com',
-  email_port:  587,
+   /* B&B SYMPHONY SMTP SERVER */
+  //email_service:  'bbsymphony.com',
+  //email_host:  'ehub43.webhostinghub.com',
+  //email_port:  587,
+  //email_secure:  false,
+  //email_user: 'heinens@bbsymphony.com',
+  //email_password: 'bbsymphony1!1!',
+  //email_private_key: '/opt/apps/controlRoom/controlRoom_server/server/config/private_key.pem',
+  //email_cache_dir: '/opt/apps/controlRoom/controlRoom_server/server/cache',
+   /* HEINENS SMTP SERVER */
+  email_service:  'heinens.com',
+  email_host:  'smtp.heinens.com',
+  email_port:  25,
   email_secure:  false,
-  email_user: 'heinens@bbsymphony.com',
-  email_password: 'bbsymphony1!1!',
+  email_user: 'inventorycontrol@heinens.com',
+  email_password: 'Warrensville4540!',
   email_private_key: '/opt/apps/controlRoom/controlRoom_server/server/config/private_key.pem',
   email_cache_dir: '/opt/apps/controlRoom/controlRoom_server/server/cache'
  },

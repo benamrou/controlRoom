@@ -1,18 +1,25 @@
 <div>
-    <app-page-header #pageHeader [heading]="'Item/SV attribute change'" [icon]="'fa-code-branch'"
+    <app-page-header #pageHeader [heading]="'Item Category Manager change'" [icon]="'fa-user'"
                      [(screenID)]="screenID">
     </app-page-header>
 </div>
 
 <div class="content-section implementation" style="padding: 5px">
-    <p-toast key="top" [style]="{marginTop: '80px'}" [sticky]=true position="top-right"></p-toast>
+    <p-toast key="top" [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
-<div style="width: 50%; float: right;">
-    <p-steps styleClass="steps-custom" 
-            [model]="menuItems" [(activeIndex)]="activeIndex" [readonly]="true">
-    </p-steps>
-</div>
+<div>
+    <div class="alert alert-warning" role="alert"  style="width: 40%; float: left; font-size:small; border: black 1px solid;">
+             <i class="fas fa-exclamation-circle"></i>
+              Use this functionnality outside business hours. Data integrity are locking items data, putting on-hold the mass update process.
+    </div>
+    <div style="width: 50%; float: right; ">
+        <p-steps styleClass="steps-custom" 
+                [model]="menuItems" [(activeIndex)]="activeIndex" [readonly]="true">
 
+        </p-steps>
+    </div>
+</div>
+<br>
 <p-dialog header="Update completed" [(visible)]="displayUpdateCompleted" modal="modal" width="500" responsive="true" [maximizable]="false">
     <span>{{msgFinalDisplayed}}</span>
         <p-footer>
@@ -23,7 +30,7 @@
         </p-footer>
 </p-dialog>
 
-<div style="padding-top: 5%;">
+<div style="padding-top: 10%;">
     <!-- Step 0 - File selection -->
     <p-fieldset #step0 [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder">
         <p-header>
@@ -31,13 +38,11 @@
         </p-header>
         <div class="row">
             <div class="col">
-                Select your Item-SV attribute file change. The XLS(x) Excel file should contain those five columns headers:
+                Select your Item-Category Manager file change. The XLS(x) Excel file should contain three columns:
                 <ul>
                     <li>COLUMN A: item code</li>
-                    <li>COLUMN B: sale variant code</li>
-                    <li>COLUMN C: Attribute class</li>
-                    <li>COLUMN D: Attribute code</li>
-                    <li>COLUMN E: Attribute value</li>
+                    <li>COLUMN B: New category manager name (for information, not used in the update process)</li>
+                    <li>COLUMN C: New category manager code (parameter table 1032)</li>
                 </ul>
             </div>
             <div class="col">
@@ -79,7 +84,7 @@
         </div>
              
         <div class="row" style="padding-left: 15px">
-            You can use the template file as example in order to respect the columns headers naming.
+            You can use the template file as example. Column name A must be ITEM_CODE, column name B must be CATEGORY_MANAGER_DESC, column name C must be CATEGORY_MANAGER_CODE.
         </div>
 
         <div class="alert alert-danger" role="alert" *ngFor="let message of globalError"
@@ -158,7 +163,7 @@
     </p-fieldset>
     <br>
     <!-- Step 1 - Configuration definition -->
-    <p-fieldset #step1 [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder" *ngIf="activeIndex > 0">
+    <!--p-fieldset #step1 [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder" *ngIf="activeIndex > 0">
         <p-header>
             {{menuItems[1].title}}
         </p-header>
@@ -184,7 +189,7 @@
             <span style="font-size: xx-small;">(*) Existing item link will be ended at this date - 1.</span>
         </div>
 
-    </p-fieldset>
+    </p-fieldset-->
 
     <br>
     <!-- Step 2 - Execution / Schedule -->
@@ -197,7 +202,7 @@
 
             <div style="width: 50%;">
                 <span style="padding-left: 15px; font-weight: bolder">
-                    When do you want to execute the item/SV attribute changes?
+                    When do you want to execute the Item Category Manager changes?
                 </span>
                 &nbsp;&nbsp;
                 <p-toggleButton [(ngModel)]="scheduleFlag" onLabel="Schedule-it" offLabel="Now" >

@@ -1,37 +1,36 @@
-   
 <div class="login-page" [@routerTransition] >
+	<div  class="pull-right" font-size="small" ><span #versionDiv style="visibility: hidden;font-size: small">vers. 6.0.1b0.10</span></div>
     <div class="row justify-content-md-center" >
 		<!-- Snow effect -->
 		<!--div *ngFor="let dummy of ' '.repeat(100).split('')" class="snowflake">*</div-->
 
-        <div class="col-md-4">
-            <img src="./assets/images/logo.png" width="150px" class="user-avatar" />
-			<h1>Inventory Control Room</h1>
-			<p-message severity="info" text="PrimeNG Rocks"></p-message>
-			<p-messages [(value)]="connectionMessage"></p-messages>
+        <div class="col-md-4" style="z-index: 99999">
+            <img src="./assets/images/logo.png" width="150px" class="user-avatar" (click)="showHideVersion()" />
+			<h1 style="color: black; font-weight: bold;">Inventory Control Room</h1>  
+			<p-toast></p-toast>
 
-            <form role="form" (ngSubmit)="onLoggedin()" >
+            <form role="form" (ngSubmit)="onLoggedin()" style="padding-top: 20%">
                 <div class="form-content">
                     <div class="form-group">
                         <input type="text" name="username" [(ngModel)]="authentification.username"  
 							   class="form-control input-underline input-lg" id="" placeholder="Username"
-							   style="border-radius: 10px">
+							   style="border-radius: 10px; border: 1px black solid; color:black">
                     </div>
 
                     <div class="form-group">
                         <input type="password" [(ngModel)]="authentification.password"  name="password"
                                class="form-control input-underline input-lg" id="" placeholder="Password"
-							   style="border-radius: 10px">
+							   style="border-radius: 10px; border: 1px black solid; color:black">
                     </div>
                 </div>
-                <button class="btn rounded-btn" style="color: white; font-weight: bold" type="submit" [disabled]="authentification.username.length === 0" > Log in </button>
+                <button class="btn rounded-btn" style="color: black; font-weight: bold; border: 1px black solid;"  type="submit" [disabled]="authentification.username.length === 0 " > Log in </button>
             </form>
 
 &nbsp;
 <br>
 <br>
 <br>
-		<div *ngIf="canConnect" style="text-align: left; width: 500px; font-size: smaller; line-height: 1">
+		<div *ngIf="canConnect" style="text-align: left; width: 500px; font-size: smaller; line-height: 1;">
 				<div class="ui-grid-row">
 					<div class="col-md-12" style="font-weight: bolder" >User authentification validation</div>
 					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="userInfoGathered"></i>
@@ -71,4 +70,85 @@
         </div>
 	</div>
 </div>
-<!-- SUMMER -->
+
+<!-- Chrismas TREE BEGIN -->
+<!--div style="padding-top: 10%;">
+	<div class="container_christmas" style="z-index: 99999"> 
+			<div class="star"></div>
+			<div class="pressie">
+				<div class="cover"></div>
+				<div class="wrap"> </div>
+				<div class="ribbon"></div>
+			</div>
+			<div class="tree">
+				<div class="base"> </div>
+				<div class="layer">
+				<div class="line"> </div>
+				<div class="bauble one"></div></div>
+				
+				<div class="layer two">
+				<div class="line two"> </div>
+				<div class="bauble two"></div>
+				<div class="socks"> 
+					<div class="top"> </div>
+					<div class="foot"></div></div>
+				</div>
+				
+				<div class="layer three">
+				<div class="line three"> </div>
+				<div class="bauble three"></div>
+				<div class="socks two"> 
+					<div class="top"> </div>
+					<div class="foot two"></div></div>
+				</div>
+					</div>
+				
+				<div class="layer four">
+				<div class="bauble four"></div>
+				<div class="star two"></div>
+				<div class="line four"> </div> 
+			</div>
+	</div>
+</div-->
+<!-- Chrismas TREE END -->
+
+<!-- Christmas banner-->
+<!--div class="bg fixed-bottom header">
+	<div class="mountain">
+	  <div class="mountain-top">
+		<div class="mountain-cap-1"></div>
+		<div class="mountain-cap-2"></div>
+		<div class="mountain-cap-3"></div>
+	  </div>
+	</div>
+	<div class="mountain-two">
+	  <div class="mountain-top">
+		<div class="mountain-cap-1"></div>
+		<div class="mountain-cap-2"></div>
+		<div class="mountain-cap-3"></div>
+	  </div>
+	</div>
+	 <div class="mountain-three">
+	  <div class="mountain-top">
+		<div class="mountain-cap-1"></div>
+		<div class="mountain-cap-2"></div>
+		<div class="mountain-cap-3"></div>
+	  </div>
+	</div>
+	<div class="cloud"></div>
+</div-->
+
+<!-- Spring -->
+<div class='flower flower-0'><span></span></div>
+<div class='flower flower-1'><span></span></div>
+<div class='flower flower-2'><span></span></div>
+<div class='flower flower-3'><span></span></div>
+<div class='flower flower-4'><span></span></div>
+<div class='flower flower-5'><span></span></div>
+<div class='flower flower-6'><span></span></div>
+<div class='flower flower-7'><span></span></div>
+<div class='flower flower-8'><span></span></div>
+<div class='flower flower-9'><span></span></div>
+<div class='flower flower-10'><span></span></div>
+<div class='flower flower-11'><span></span></div>
+<div class="title">Happy Spring</div>
