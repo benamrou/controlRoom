@@ -35,6 +35,7 @@ const routes: Routes = [
             { path: 'massjournal', loadChildren: './mass.update/journal/massjournal.module#MassJournalModule' },
             { path: 'itemhierarchy', loadChildren: './mass.update/item.hierarchy/item.hierarchy.module#ItemHierarchyModule' },
             { path: 'svattribute', loadChildren: './mass.update/sv.attribute/sv.attribute.module#SVAttributeModule' },
+            { path: 'categorymanager', loadChildren: './mass.update/category.manager/category.manager.module#CategoryManagerModule' },
             /* Reporting */
             { path: 'scorecardcao', loadChildren: './reporting/scorecard/cao/scorecard.cao.module#ScorecardCAOModule' },
             { path: 'dashboardcao', loadChildren: './reporting/dashboard/cao/dashboard.cao.module#DashboardCAOModule' },

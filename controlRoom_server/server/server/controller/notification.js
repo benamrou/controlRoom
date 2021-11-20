@@ -40,6 +40,9 @@ let transporter = nodemailer.createTransport({
         user: config.notification.email_user,
         pass: config.notification.email_password,
     },
+    tls: {
+          rejectUnauthorized: false
+      },
     dkim: {
         domainName: config.notification.email_service,
         keySelector: "default",
@@ -72,10 +75,12 @@ function sendSMS(to, subject, message) {
     //console.log("Preview URL: %s", nodemailer.getTestMessageUrl(infoMessage));
 }
 
-function sendEmail(to, subject, message) {
+function sendEmail(to, emailcc, emailbcc, subject, message) {
     let mailOptions = {
         from: config.notification.email_user,
         to,
+        cc: emailcc,
+        bcc: emailbcc,
         subject,
         html: message,
         dsn: {
@@ -94,7 +99,7 @@ function sendEmail(to, subject, message) {
             sendSMS('6789863021@tmomail.net','SPAM alert ' + subject, JSON.stringify(error));
         }
     });
-    logger.log('alert', 'Email sent to:' + to + ' subject: ' + subject, 'alert', 1);
+    logger.log('alert', 'Email sent to:' + to + ' cc:' +  emailcc + ' bcc:' + emailbcc + ' subject: ' + subject, 'alert', 1);
     //console.log("Message sent: %s", message);
     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
   
@@ -102,10 +107,12 @@ function sendEmail(to, subject, message) {
     //console.log("Preview URL: %s", nodemailer.getTestMessageUrl(infoMessage));
 }
 
-function sendEmailCSV(to, subject, message, stream, preHtml, forceExit) {
+function sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, forceExit) {
     let mailOptions = {
         from: config.notification.email_user,
         to,
+        cc: emailcc,
+        bcc: emailbcc,
         subject,
         html: message,
         attachments: [{
@@ -124,11 +131,11 @@ function sendEmailCSV(to, subject, message, stream, preHtml, forceExit) {
                 message = preHtml;
                 message += 'Refer to the attachment for details. Content can not be displayed in the email body.';
                 logger.log('alert', 'Resending email with lower content: ' + JSON.stringify(message) , 'alert', 3);
-                sendEmailCSV(to, subject, message, stream, preHtml, true);
+                sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, true);
             }
         }
         else {
-            logger.log('alert', 'Message sent to: ' + to + ' subject: ' + subject, 'alert', 1);
+            logger.log('alert', 'Email sent to:' + to + ' cc:' +  emailcc + ' bcc:' + emailbcc + ' subject: ' + subject, 'alert', 1);
             //console.log("Message sent: %s", message);
             // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
           
@@ -274,7 +281,7 @@ module.get = async function (request,response) {
                                                 if (detailData.length == 0) {
                                                     html += preHtml;
                                                     html += 'No reported elements.';
-                                                    sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html);
+                                                    sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html);
                                                 }
                                                 else {
                                                     if (detailData.length > 500) {
@@ -300,7 +307,7 @@ module.get = async function (request,response) {
                                                     if (html.indexOf('ERRORDIAGNOSED') < 1) {
                                                         workbook.xlsx.writeBuffer()
                                                         .then(function(buffer) {
-                                                            sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false);
+                                                            sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false);
                                                         });
                                                     }
                                                 }
