@@ -6,7 +6,7 @@
   "dependencies": {
     "@google-cloud/local-auth": "^1.0.1",
     "apiconnect-wsdl": "^1.6.3",
-    "async": "^2.6.0",
+    "async": "^2.6.4",
     "body-parser": "^1.18.2",
     "child_process": "^1.0.2",
     "cors": "^2.8.5",
