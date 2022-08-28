@@ -70,7 +70,7 @@
         "image-webpack-loader": "^4.6.0",
         "iphone": "^0.0.1",
         "isomorphic-style-loader": "^5.0.1",
-        "jquery": "^3.3.1",
+        "jquery": "^3.5.0",
         "mini-css-extract-plugin": "^0.6.0",
         "ng2-charts": "^2.2.5",
         "ngc-webpack": "^4.1.2",
