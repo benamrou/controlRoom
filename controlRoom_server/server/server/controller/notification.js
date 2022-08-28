@@ -322,13 +322,13 @@ module.get = async function (request,response) {
                                             }   
                                             //console.log ('detailData.length : ' + detailData.length);
                                             SQL.executeQuery(SQL.getNextTicketID(),
-                                            "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
-                                            JSON.stringify(detailData).substring(1,3000) + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from ALERTLOG WHERE rownum=1", 
-                                            "'" + result.ROOT.PARAM + "'",
-                                            request.header('USER'),
-                                            "'{" + request.header('DATABASE_SID') + "}'", 
-                                            "'{" +request.header('LANGUAGE') + "}'", 
-                                            request, response);
+                                                    "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
+                                                    JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
+                                                    "'{" + request.query.PARAM + "}'",
+                                                    request.header('USER'),
+                                                    "'{" + request.header('DATABASE_SID') + "}'", 
+                                                    "'{" +request.header('LANGUAGE') + "}'", 
+                                                    request,response);
 
                                             //sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT, 'body')  
                                             //response.send(detailData);

@@ -69,6 +69,19 @@ function executeLibQuery (ticketId, queryNum, params, user, database_sid, langua
 }
 module.exports.executeLibQuery = executeLibQuery; 
 
+function executeSQLQuery (ticketId, queryNum, commit, params, user, database_sid, language, request, response) {
+    let volume = 0; // No need for big result query
+    executeSQLQueryCallback(ticketId, queryNum, commit, params, user, database_sid, language, request, response, volume, 
+    function (err,data) {
+        //callbackSendData(response,data).then(console.log('Done execution'))
+        if(err) {
+            logger.log(ticketId, 'Error executeSQL ' + JSON.stringify(err), 3);
+        }
+        callbackSendData(response,data);
+    });
+}
+module.exports.executeSQLQuery = executeSQLQuery; 
+
 function executeLibQueryUsingMyCallback (ticketId, queryNum, params, user, database_sid, language, request, response, mycallback) {
     let volume = 0; // No need for big result query
     try {
@@ -97,7 +110,7 @@ module.exports.executeQueryUsingMyCallBack = executeQueryUsingMyCallBack;
 
 async function callbackSendData(response, data) {
     try {
-        response.send(data);
+        response.status(200).send(data);
     } catch (error ) {};
 }
 
@@ -198,6 +211,44 @@ async function executeLibQueryCallback(ticketId, queryNum, params, user, databas
   
 module.exports.executeLibQueryCallback = executeLibQueryCallback; 
 
+
+async function executeSQLQueryCallback(ticketId, query, commit, params, user, database_sid, language, request, response, volume, callback) {
+   
+    try {
+        let SQLquery = "BEGIN PKREQUESTMANAGER.CALLSQL(" + ticketId;
+
+        //console.log('SQL exec:', SQLquery, queryQuote);
+        //logger.log(ticketId, "LIBQUERY with Callback: ", user);
+        SQLquery = SQLquery + ",'" + query + "'," + commit + ",'" + user + "'," + database_sid + ", " + params  + "," +
+                                language + ", :cursor); END;";
+        //console.log('SQL exec:', SQLquery, queryQuote);
+        logger.log(ticketId, SQLquery, user);
+
+
+        oracledb.fetchAsString = [ oracledb.CLOB ];
+        let promiseExecution = await dbConnect.executeCursor(
+            SQLquery, 
+            // Bind cursor for the resulset
+            { cursor:  { type: oracledb.CURSOR, dir : oracledb.BIND_OUT }},
+            { autoCommit: true, outFormat: oracledb.OBJECT }, // Return the result as OBJECT
+            ticketId,
+            request,
+            response,
+            user,
+            volume,
+            callback
+            )
+            .catch (function(err) {
+                //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
+                console.log('SQLQuery - executeSQLQueryCallback : ' + err); 
+                //app.next(err);
+            });
+            //return promiseExecution;
+        } catch (error) {};
+            
+    };
+  
+module.exports.executeSQLQueryCallback = executeSQLQueryCallback; 
 
 /**
 * Method executeLibQuery is executing a query in parameter structure through their reference number. 

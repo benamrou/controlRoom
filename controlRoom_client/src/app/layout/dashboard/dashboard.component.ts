@@ -51,17 +51,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
                         this.subscription.push(this._widgetService.executeWidget( this._widgetService.widgetsInfo.widgets[i])
                         .subscribe( 
                         // put the data returned from the server 
-                        dataExecution  => {  
+                        data  => {  
                             // If chart, set the canvas
                             
                             this._widgetService.widgetsInfo.widgets[i].chartConfig.id = 
                             this._widgetService.widgetsInfo.widgets[i].widid + this._widgetService.widgetsInfo.widgets[i].widparam +
                             '_chart' + i;
-                            
-                            
+                            if(!this._widgetService.widgetsInfo.widgets[i].result)  {// if a is negative,undefined,null,empty value then...                             
+                                this._widgetService.widgetsInfo.widgets[i].result = [];
+                            }
                             //console.log('this._widgetService.widgetsInfo.widgets[i] : ',  this._widgetService.widgetsInfo.widgets[i]);
                             if(this._widgetService.widgetsInfo.widgets[i].widchart === 1) {
-                                
                                 //console.log('this._widgetService.widgetsInfo.widgets[i] : ',  this._widgetService.widgetsInfo.widgets[i]);
                                 //console.log('data: ',  this._widgetService.widgetsInfo.widgets[i].result);
                                 let data_labels = _.uniqBy(this._widgetService.widgetsInfo.widgets[i].result, 

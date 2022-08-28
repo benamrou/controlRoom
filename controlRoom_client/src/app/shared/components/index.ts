@@ -74,6 +74,9 @@ export * from  './utils/objectutils';
 export * from  './utils/filterutils';
 export * from  './fullcalendar/fullcalendar';
 export * from  './table/table';
+export * from  './badge/badge';
+export * from './dynamicdialog/dynamicdialog';
+export * from './focustrap/focustrap';
 
 /* Dashoard SB 4*/
 //export * from  './sidebar/sidebar';
@@ -83,3 +86,10 @@ export * from  './table/table';
 /* Extension Prime Widget */
 export * from  './filereader/filereader.component';
 export * from './card/card';
+
+import {ObjectUtils} from './utils/objectutils';
+import {UniqueComponentId} from './utils/uniquecomponentid';
+import ZIndexUtils from './utils/zindexutils';
+
+
+export {ZIndexUtils,UniqueComponentId,ObjectUtils};

@@ -12,6 +12,8 @@ export class PageHeaderComponent implements OnInit {
     @Input() screenID: string;
     @Input() heading: string;
     @Input() icon: string;
+    @Input() headcolor: string = '#e9ecef';
+    @Input() linkcolor: string = 'darkslategray';
 
     screenInfo;
     constructor(private _screenInfo: ScreenService) {
@@ -20,7 +22,9 @@ export class PageHeaderComponent implements OnInit {
     ngOnInit() {
         this._screenInfo.getScreenInfo(this.screenID).subscribe(
             data  => {  
-                if (data.length > 0) { this.screenInfo = data[0].SCREENINFO;  }
+                if(data)  {
+                    if (data.length > 0) { this.screenInfo = data[0].SCREENINFO;  }
+                }
             }
         );
     }

@@ -4,21 +4,21 @@
         {{heading}}
     </h2>
 
-    <p-overlayPanel #overlayScreenId [showCloseIcon]="false" [dismissable]="true"[appendTo]="'body'" 
+    <p-overlayPanel #overlayScreenId [showCloseIcon]="false" [dismissable]="true" [appendTo]="'body'" 
                     [style]="{'background-color': 'darkorange','border-radius':'10px', 'opacity':'0.8'}">
         <p style="font-weight: bold; margin: 0"><b>ScreenID: {{screenID}}</b></p>
     </p-overlayPanel>
 
     <div class="col-xl-12">
-        <ol class="breadcrumb" >
+        <ol class="breadcrumb" [ngStyle]="{'background-color': headcolor}">
             <li class="breadcrumb-item">
                 <i class="fas fa-tachometer-alt"></i> 
                     <a href="Javascript:void(0)" [routerLink]="['/dashboard']" style="padding: 0.5em">Dashboard</a>
             </li>
-            <li class="breadcrumb-item active">
+            <li class="breadcrumb-item active" [ngStyle]="{'color': linkcolor}">
                 <i class="fas {{icon}}"></i> {{heading}}
             </li>
-            <li  style="float: right; margin-left: auto; color:mediumvioletred" *ngIf="screenInfo">
+            <li  style="float: right; margin-left: auto; color:mediumvioletred" >
                 <i class="fas fa-info-circle" (mouseenter)="overlayInfo.show($event)" style="font-size:24px"></i>
                 <p-overlayPanel #overlayInfo [showCloseIcon]="true" [dismissable]="false"[appendTo]="'body'" 
                          [style]="{'background-color': 'lightgoldenrodyellow','border-radius':'10px','max-width':'500px'}">

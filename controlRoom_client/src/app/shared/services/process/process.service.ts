@@ -133,19 +133,46 @@ export class ProcessService {
     let headersSearch = new HttpHeaders();
     this.params= new HttpParams();
     let dateNow = new Date();
+
+    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
+                          'export GOLD_DEBUG=1; ' +
+                          // Batch to execute
+                          batchid + ' ' + batchid + '.icr' + ' $USERID ' + parameter + '; ' ;
     
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-    headersSearch = headersSearch.set('ENV_COMMAND', 
+
+    console.log('Executing job : ' ,headersSearch);
+    return this.http.execute(this.request, this.params, headersSearch, scriptToExecute).pipe(map(response => {
+            let data = <any> response;
+            return data;
+    }));
+    
+  }
+
+  executeScript(script: string) {
+    this.request = this.executeBatch;
+    let headersSearch = new HttpHeaders();
+    this.params= new HttpParams();
+    let dateNow = new Date();
+    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
+                          'export GOLD_DEBUG=1; ' +
+                          // Batch to execute
+                          script ;
+    
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    /*headersSearch = headersSearch.set('ENV_COMMAND', 
         // Initialization
         this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
         'export GOLD_DEBUG=1; ' +
         // Batch to execute
-        batchid + ' ' + batchid + '.icr' + ' $USERID ' + parameter);
+        script);*/
 
-    console.log('Executing job : ' ,headersSearch);
-    return this.http.execute(this.request, this.params, headersSearch).pipe(map(response => {
+    console.log('Executing script : ' ,headersSearch);
+    return this.http.execute(this.request, this.params, headersSearch, scriptToExecute).pipe(map(response => {
             let data = <any> response;
+            return data;
     }));
     
   }

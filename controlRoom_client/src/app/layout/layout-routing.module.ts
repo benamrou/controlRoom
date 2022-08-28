@@ -26,6 +26,8 @@ const routes: Routes = [
             { path: 'schedule', loadChildren: './schedule/supplier.schedule/supplier.schedule.module#SupplierScheduleModule' },
             { path: 'service', loadChildren: './schedule/service.contract/service.contract.module#SupplierScheduleServiceContractModule' },
             { path: 'reporting', loadChildren: './reporting/reporting.module#ReportingModule' },
+            /* HD Robot */
+            { path: 'robot', loadChildren: './robot/robot.module#RobotModule' },
             /* Warehouse */
             { path: 'warehouse', loadChildren: './warehouse/warehouse.module#WarehouseModule' },
             { path: 'fixpickingunit', loadChildren: './warehouse/toolkit/fix.picking.unit/fix.picking.unit.module#FixPickingUnitModule' },
@@ -34,7 +36,9 @@ const routes: Routes = [
             /* Mass-change */
             { path: 'massjournal', loadChildren: './mass.update/journal/massjournal.module#MassJournalModule' },
             { path: 'itemhierarchy', loadChildren: './mass.update/item.hierarchy/item.hierarchy.module#ItemHierarchyModule' },
+            { path: 'itemattribute', loadChildren: './mass.update/item.attribute/item.attribute.module#ItemAttributeModule' },
             { path: 'svattribute', loadChildren: './mass.update/sv.attribute/sv.attribute.module#SVAttributeModule' },
+            { path: 'svinfo', loadChildren: './mass.update/sv.info/sv.info.module#SVInfoModule' },
             { path: 'categorymanager', loadChildren: './mass.update/category.manager/category.manager.module#CategoryManagerModule' },
             /* Reporting */
             { path: 'scorecardcao', loadChildren: './reporting/scorecard/cao/scorecard.cao.module#ScorecardCAOModule' },
@@ -60,4 +64,4 @@ const routes: Routes = [
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule]
 })
-export class LayoutRoutingModule {}
+export class LayoutRoutingModule { }

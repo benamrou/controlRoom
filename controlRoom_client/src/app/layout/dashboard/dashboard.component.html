@@ -87,7 +87,7 @@
                 <div *ngIf="widget.dataReady" style="padding-top: 5px">
                     <!-- TABLE RESULT WIDGET -->
                     <div *ngIf="widget.widtable == 1">
-                        <p-table [attr.id]="widget.widid + widget.widparam + '_table' + indx" #result [value]="widget.result" sortMode="multiple" 
+                        <p-table *ngIf="!widget.widid" [attr.id]="widget.widid + widget.widparam + '_table' + indx" #result [value]="widget.result" sortMode="multiple" 
                         [rows]="widget.widrows"  [rowsPerPageOptions]="[5,10,50,100]"
                         [paginator]="true" [pageLinks]="3" 
                         [columns]="widget.columns"

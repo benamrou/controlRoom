@@ -233,11 +233,12 @@ export class HttpService  {
         }) as any);
   }
   
-  execute(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders): Observable<Response> {
+  execute(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders, bodyOptions?): Observable<Response> {
     //console.log('***** Get HTML ****');
 
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
+    let body = {command: ''}
     url = this.baseBatchUrl + url;
     if (!headersOption) {
       // let's make option object
@@ -253,11 +254,14 @@ export class HttpService  {
     headersOption = headersOption.set('ENV_ID', localStorage.getItem('ENV_ID'));
     headersOption = headersOption.set('ENV_PASS', localStorage.getItem('ENV_PASS'));
 
+    if (bodyOptions) {
+      body.command = bodyOptions;
+    }
 
     console.log ('Request : ' + url + ' / ' + JSON.stringify(headersOption));
     //console.log('headers '  + JSON.stringify(headersOption));
     //console.log('params '  + JSON.stringify(paramOptions));
-    return this.httpClient.get(url, { headers: headersOption,
+    return this.httpClient.post(url, body, { headers: headersOption,
                                       params: paramOptions,
                                       responseType: 'json'
                                     }
