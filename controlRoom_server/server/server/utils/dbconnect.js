@@ -225,7 +225,7 @@ module.exports.releaseConnections = releaseConnections;
 function executeQuery(sql, bindParams, options, ticketId, request, response, user, volume, callback) {
     options.isAutoCommit = true;
 
-    console.log('executing query 1 ' + sql);
+    //console.log('executing query 1 ', sql);
     let oracleQuery_config; 
     if (volume === 0) { // 70 rows query max
         oracleQuery_config = config.db.connAttrs;
@@ -241,6 +241,7 @@ function executeQuery(sql, bindParams, options, ticketId, request, response, use
                         //resolve(results);
                         let rowsToReturn = [];
                         callback(null,result.outBinds.cursor);  
+                        doClose(connection, result);   // always close the ResultSet
                         //fetchRowsFromRSCallback(ticketId, connection, result.outBinds.cursor, numRows, request, response, user, 0, callback, rowsToReturn);
                         process.nextTick(function() {
                             //releaseConnections(result, connection);
@@ -280,9 +281,9 @@ function executeCursor(sql, bindParams, options, ticketId, request, response, us
                 execute(sql, bindParams, options, connection, ticketId, user, callback)
                     .then(function(result) {
                         let rowsToReturn = [];
+                        //console.log('result: ', result);
                         fetchRowsFromRSCallback(ticketId, connection, result.outBinds.cursor, numRows, request, response, user, 0, callback, rowsToReturn);
                         process.nextTick(function() {
-                            //console.log('process next Ticket');
                         });
                     })
                     .catch(function(err) {

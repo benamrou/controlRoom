@@ -236,7 +236,7 @@ export class CategoryManagerComponent implements OnInit{
                             return;
                         }
                         /** Run the job integration */
-                        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
+                        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 2/4: Executing integration job', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
                                     //console.log('data userID : ', data);

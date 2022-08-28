@@ -349,8 +349,15 @@ export class SupplierScheduleService {
         'psifa60p psifa60p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ' +
         this._userService.userInfo.envDefaultLanguage + ' 1;');
 
+
+    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
+        'export GOLD_DEBUG=1; ' +
+        // Batch to execute
+        'psifa60p psifa60p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ' +
+        this._userService.userInfo.envDefaultLanguage + ' 1;';
+
     //console.log('headersSearch update: ' + JSON.stringify(headersSearch));
-    return this.http.execute(this.request, this.params, headersSearch).pipe(map(response => {
+    return this.http.execute(this.request, this.params, headersSearch, scriptToExecute).pipe(map(response => {
             let data = <any> response;
     }));
     

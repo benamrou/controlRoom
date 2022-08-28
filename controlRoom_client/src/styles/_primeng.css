@@ -81,3 +81,4 @@
 @import '../app/shared/export/export.component.scss';
 @import '../app/shared/modules/stat/stat.component.scss';
 @import '../app/shared/modules/page-header/page-header.component.scss';
+@import '../app/shared/components/badge/badge.css';

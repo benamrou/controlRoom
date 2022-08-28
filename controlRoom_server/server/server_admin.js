@@ -119,6 +119,7 @@ let supplier = require('./server/controller/supplier')(app, SQL);
 let query = require('./server/controller/query')(app, SQL);
 let reporting = require('./server/controller/reporting')(app, SQL);
 let gdrive = require('./server/controller/gdrive')(app, SQL);
+let executeSQL = require('./server/controller/executeSQL')(app, SQL);
 
 
 //dbConnection.createPool('dd');
@@ -146,6 +147,7 @@ upload.get(app,oracledb);
 upload.post(app,oracledb);
 ls.get(app,oracledb);
 command.get(app,oracledb);
+command.post(app,oracledb);
 widget.get(app, oracledb);
 notification.get(app, oracledb);
 warehouse.get(app, oracledb);
@@ -155,6 +157,7 @@ query.get(app, oracledb);
 supplier.get(app, oracledb);
 reporting.get(app, oracledb);
 gdrive.post(app, oracledb);
+executeSQL.post(app, oracledb);
 //finance.get(aoo,oracledb);
 
 
