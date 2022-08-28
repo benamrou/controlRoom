@@ -82,7 +82,7 @@
         "rxjs-compat": "^6.5.1",
         "sass-loader": "^7.1.0",
         "style-loader": "^0.23.1",
-        "terser": "^3.14.0",
+        "terser": "^4.8.1",
         "ts-loader": "^5.4.5",
         "tsickle": "^0.35.0",
         "uglifyjs-webpack-plugin": "^2.1.2",
