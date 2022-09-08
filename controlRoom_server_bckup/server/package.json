@@ -4,7 +4,7 @@
   "description": "Control Room Admnistration solution",
   "main": "server_admin.js",
   "dependencies": {
-    "apiconnect-wsdl": "^1.5.103",
+    "apiconnect-wsdl": "^1.8.31",
     "async": "^2.6.0",
     "body-parser": "^1.18.2",
     "child_process": "^1.0.2",
