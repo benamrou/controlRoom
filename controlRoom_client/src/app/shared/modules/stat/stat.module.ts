@@ -1,10 +1,13 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { StatComponent } from './stat.component';
 
 @NgModule({
-    imports: [CommonModule],
+    imports: [CommonModule, RouterModule, StatComponent],
     declarations: [StatComponent],
-    exports: [StatComponent]
+    exports: [StatComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class StatModule {}
+

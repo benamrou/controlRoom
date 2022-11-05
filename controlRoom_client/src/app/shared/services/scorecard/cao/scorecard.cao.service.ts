@@ -1,6 +1,4 @@
-import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
-import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
-import {Router} from '@angular/router';
+import { Injectable } from '@angular/core';
 import {HttpService} from '../../request/html.service';
 import {UserService} from '../../user/user.service';
 import { map } from 'rxjs/operators';
@@ -40,10 +38,10 @@ export class ScorecardCAOService {
 
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-    return this.http.get(this.request, this.params, headersSearch).map(response => {
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
             return data;
-    });
+    }));
   }
 
 
@@ -59,10 +57,10 @@ export class ScorecardCAOService {
 
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-    return this.http.get(this.request, this.params, headersSearch).map(response => {
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
             return data;
-    });
+    }));
   }
 
   getCAOStatus(caoDate: string, storeId: string, department: string) {
@@ -77,10 +75,10 @@ export class ScorecardCAOService {
 
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-    return this.http.get(this.request, this.params, headersSearch).map(response => {
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
             return data;
-    });
+    }));
   }
 
   getCAOActivity(caoDate: string, storeId: string, department: string) {
@@ -95,9 +93,9 @@ export class ScorecardCAOService {
 
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-    return this.http.get(this.request, this.params, headersSearch).map(response => {
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
             return data;
-    });
+    }));
   }
 }

@@ -1,4 +1,3 @@
-import { Response, Jsonp, Headers, RequestOptions } from '@angular/http';
 import { HttpHeaders, HttpParams } from '@angular/common/http'; 
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
@@ -70,7 +69,7 @@ export class LogginService{
     logout(): void {
         // clear token remove user from local storage to log user out
         //console.log('***** Logout ****');
-        this.token = null;
+        this.token = '';
         localStorage.removeItem('ICRUser');
         localStorage.removeItem('ICRAuthToken');
         localStorage.removeItem('ICRSID');

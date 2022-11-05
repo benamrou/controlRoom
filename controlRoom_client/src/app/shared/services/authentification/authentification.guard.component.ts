@@ -7,7 +7,7 @@ export class AuthentificationGuard implements CanActivate {
     constructor(private router: Router) { }
 
     canActivate() {
-        //console.log('canActivate() : ' + localStorage.getItem('ICRUser'));
+        //console.log('canActivate() : ' +localStorage.getItem('ICRUser')!);
         if (localStorage.getItem('ICRAuthToken')) {
             // logged in so return true
             return true;

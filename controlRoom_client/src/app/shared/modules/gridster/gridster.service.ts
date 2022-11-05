@@ -1,7 +1,4 @@
 import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/filter';
-
-
 import { GridList } from './gridList/gridList';
 import { IGridsterOptions } from './IGridsterOptions';
 import { IGridsterDraggableOptions } from './IGridsterDraggableOptions';

@@ -1,6 +1,4 @@
-import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
-import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
-import {Router} from '@angular/router';
+import { Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import {DatePipe} from '@angular/common';
@@ -22,7 +20,6 @@ export class ReportingService {
   private reportingList: any[] ;
   private request: string;
   private params: HttpParams;
-  private paramsItem: HttpParams;
   private options: HttpHeaders;
 
   constructor(private http : HttpService,private _userService: UserService, private datePipe: DatePipe){ }
@@ -46,10 +43,10 @@ export class ReportingService {
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-        return this.http.get(this.request, this.params, this.options).map(response => {
-                let data = <any> response;
-                return this.reportingList;
-            });
+        return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+            let data = <any> response;
+            return this.reportingList;
+          }));
   }
 
 
@@ -67,11 +64,10 @@ export class ReportingService {
     headersSearch = headersSearch.set('DSH_ID', dashboardId);
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-    return this.http.get(this.request, this.params, headersSearch).map(response => {
-      console.log('Data Dashboard received');
-            let data = <any> response;
-            return data;
-    });
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+        let data = <any> response;
+        return this.reportingList;
+      }));
   }
 
 
@@ -89,9 +85,9 @@ export class ReportingService {
     headersSearch = headersSearch.set('DSH_ID', dashboardId);
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-    return this.http.get(this.request, this.params, headersSearch).map(response => {
-            let data = <any> response;
-            return data;
-    });
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+        let data = <any> response;
+        return this.reportingList;
+    }));
   }
 }

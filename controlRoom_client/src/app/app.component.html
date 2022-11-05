@@ -1,1 +1,13 @@
-<router-outlet></router-outlet>
+<app-header *ngIf="!(_router.url === '/login' || _router.url === '/')" ></app-header>
+<app-sidebar *ngIf="!(_router.url === '/login' || _router.url === '/')"  
+             (collapsedEvent)="receiveCollapsed($event)"></app-sidebar>
+
+<section  *ngIf="!(_router.url === '/login' || _router.url === '/')" 
+         class="main-container"
+         [ngClass]="{collapsed: collapedSideBar}">
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
+</section>
+
+<router-outlet *ngIf="(_router.url === '/login')">
+</router-outlet>
+

@@ -8,8 +8,10 @@
         </button>
         <div class="drop-show" *ngIf="showDropDown">
             <label *ngFor="let option of options" style="line-height: 1em; margin-top: 0.1em;">
-                <input type="checkbox" [(ngModel)]="option.checked" 
-                    (change)="getSelectedValue(option.checked,option.name, option.code)" />
+                <p-checkbox value="option.checked" [(ngModel)]="option.checked" [binary]="true"
+                            (onChange)="getSelectedValue(option.checked,option.name, option.code)"></p-checkbox>
+                <!--input type="checkbox" [(ngModel)]="option.checked" 
+                    (change)="getSelectedValue(option.checked,option.name, option.code)" /-->
                 <span style="margin-left:1em">{{option.label}}</span>
             </label>
         </div>

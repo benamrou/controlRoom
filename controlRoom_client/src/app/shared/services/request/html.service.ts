@@ -1,16 +1,12 @@
 import {Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
-import {Http, XHRBackend, RequestOptions, Request, BrowserXhr,BaseRequestOptions,
-        RequestOptionsArgs, Response, Headers, ResponseOptionsArgs, ResponseType, ResponseContentType} from '@angular/http';
-import { MockBackend, MockConnection } from '@angular/http/testing';
+//import {Http, XHRBackend, RequestOptions, , BrowserXhr,BaseRequestOptions,
+//        RequestOptionsArgs, Response, Headers, ResponseOptionsArgs, ResponseType, ResponseContentType} from '@angular/http';
+
 import {Observable, ObservableInput, throwError} from 'rxjs';
 import {catchError } from 'rxjs/operators';
 import {environment} from '../../../../environments/environment';
-import { map } from 'rxjs/operators';
-import {NotAccessibleComponent} from '../../../not-accessible/not-accessible.component';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
 
 @Injectable()
 export class HttpService  {
@@ -62,8 +58,8 @@ export class HttpService  {
                 console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
                 window.location.href = window.location.href + '?' + new Date().getMilliseconds();
             }
-            
-            return Observable.throw(error);
+            return throwError(() => new Error(error.toString()));
+            //return Observable.throw(error);
         }) as any);
   }
 
@@ -84,8 +80,8 @@ export class HttpService  {
                 console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
                 window.location.href = window.location.href + '?' + new Date().getMilliseconds();
             }
-            
-            return Observable.throw(error);
+            return throwError(() => new Error(error.toString()));
+            //return Observable.throw(error);
         }) as any);
   }
 

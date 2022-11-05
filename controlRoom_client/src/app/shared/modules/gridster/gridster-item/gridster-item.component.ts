@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, Inject, Host, Input, Output, ViewChild,
     EventEmitter, SimpleChanges, OnChanges, OnDestroy, HostBinding, HostListener,
     ChangeDetectionStrategy, AfterViewInit, NgZone } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { GridsterService } from '../gridster.service';
 import { GridListItem } from '../gridList/GridListItem';

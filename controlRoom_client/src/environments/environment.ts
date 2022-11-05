@@ -5,15 +5,17 @@
 
 export const environment = {
   production: true,
+  //Heinen's
   hostURL           : "http://10.200.14.232:9086",
   serverURL_local   : "http://10.200.14.232:8090",
   serverURL         : "http://10.200.14.232:8090",
   serverBatchURL    : "http://10.200.14.232:8091",
   baseURL           : "http://10.200.14.232:9086/icr",
-  message: ""
-  //serverURL: 'http://localhost:8090',
-  // serverBatchURL: 'http://localhost:8091'
+  //message: "",
   // @HOME
-  //serverURL: 'http://192.168.1.101:8090'
-  // HEINENS Office
+  //hostURL           : "http://locahost:9086",
+  //serverURL         : 'http://localhost:8090',
+  //serverURL_local   : "http://localhost:8090",
+  //serverBatchURL    : 'http://localhost:8091',
+  //baseURL           : "http://localhost:9086/icr",
 };

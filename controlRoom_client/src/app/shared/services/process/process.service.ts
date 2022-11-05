@@ -1,15 +1,10 @@
-import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
-import {Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
-import {Router} from '@angular/router';
+import { Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import {map} from 'rxjs/operators';
 import {DatePipe} from '@angular/common';
 import {HttpParams, HttpHeaders } from '@angular/common/http';
-
-
-import { TreeNode } from '../../../shared/components';
-
+import { TreeNode } from 'primeng/api';
 
 export class ProcessData {
   processes: Process [] = [];

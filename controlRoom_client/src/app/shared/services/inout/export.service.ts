@@ -1,5 +1,5 @@
 import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
-import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
+import { HttpResponse } from '@angular/common/http';
 import {Router} from '@angular/router';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
@@ -168,82 +168,106 @@ export class ExportService{
     formatXLS (worksheet, dataRows, formatRule) {
         if (formatRule) {
             //logger.log('alert', 'formatting EXCEL : ' + JSON.stringify(formatRule), 'alert', 1);
-            let cellRuleXLS=JSON.parse(formatRule);
-            if(cellRuleXLS != null) {
-                //logger.log('alert', 'formatting EXCEL : ' + JSON.stringify(cellRuleXLS), 'alert', 1);
-                for (let i =0; i < cellRuleXLS.conditionalRule.length; i++) {
-                    let row = 0;
-                    let maxRow = 0;
-                    let every = 1;
-                    if (cellRuleXLS.conditionalRule[i].easeRule.repeat === '1') {
-                        row = +cellRuleXLS.conditionalRule[i].easeRule.lineStart;
-                        if (cellRuleXLS.conditionalRule[i].easeRule.hasOwnProperty('lineStop')) {
-                            maxRow = +cellRuleXLS.conditionalRule[i].easeRule.lineStop +1;
-                        }
-                        else {
-                            maxRow = dataRows.length + row + 1;
-                        }
-                        every = +cellRuleXLS.conditionalRule[i].easeRule.every;
-                    }
-                    //worksheet.getRow(32).addPageBreak();
-                    for (let k = row; k < maxRow; k += every) {
-                        if(cellRuleXLS.conditionalRule[i].hasOwnProperty('rules')) {
-                            for (let j =0; j < cellRuleXLS.conditionalRule[i].rules.length; j++) {
-                                let reference = cellRuleXLS.conditionalRule[i].easeRule.columnStart + k + ':' + 
-                                                cellRuleXLS.conditionalRule[i].easeRule.columnEnd + k;
-                                    for (let l =0; l < cellRuleXLS.conditionalRule[i].rules[j].rule.length; l++) {
-                                        
-                                        if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('style')) {
-                                            worksheet.addConditionalFormatting({
-                                                ref: reference,
-                                                rules: [{
-                                                    type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
-                                                    operator: cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator,
-                                                    style: cellRuleXLS.conditionalRule[i].rules[j].rule[l].style
-                                                }]}); 
-                                        }
-                                        if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('cfvo')) {
-                                            worksheet.addConditionalFormatting({
-                                                ref: reference,
-                                                rules: [{
-                                                    type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
-                                                    operator: cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator,
-                                                    cfvo: cellRuleXLS.conditionalRule[i].rules[j].rule[l].cfvo,
-                                                    color: cellRuleXLS.conditionalRule[i].rules[j].rule[l].color,
-                                                }]}); 
-                                        }
-
-                                            /*console.log('Ref : ' + reference);
-                                            console.log('j : ' + j);*/
-                                            //console.log('rules : ' + JSON.stringify(cellRuleXLS.conditionalRule[i].rules[j]) );
-                                            /*console.log('type : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].type);
-                                            console.log('operator : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator);
-                                            console.log('style : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].style);*/
-                                    }
+            try {
+                let cellRuleXLS=formatRule;
+                if(cellRuleXLS != null) {
+                    //logger.log('alert', 'formatting EXCEL : ' + JSON.stringify(cellRuleXLS), 'alert', 1);
+                    for (let i =0; i < cellRuleXLS.conditionalRule.length; i++) {
+                        let row = 0;
+                        let maxRow = 0;
+                        let every = 1;
+                        if (cellRuleXLS.conditionalRule[i].easeRule.repeat === '1') {
+                            row = +cellRuleXLS.conditionalRule[i].easeRule.lineStart;
+                            if (cellRuleXLS.conditionalRule[i].easeRule.hasOwnProperty('lineStop')) {
+                                maxRow = +cellRuleXLS.conditionalRule[i].easeRule.lineStop +1;
                             }
+                            else {
+                                maxRow = dataRows.length + row + 1;
+                            }
+                            every = +cellRuleXLS.conditionalRule[i].easeRule.every;
                         }
-                        if(cellRuleXLS.conditionalRule[i].hasOwnProperty('style')) {
-                                // Code to parse the first letter column to the end
-                            for(let m = cellRuleXLS.conditionalRule[i].easeRule.columnStart.charCodeAt(0); 
-                                    m <= cellRuleXLS.conditionalRule[i].easeRule.columnEnd.charCodeAt(0); m++) {
-                                        //console.log('process...');
-                                        //console.log('Lattre : ' + String.fromCharCode(m));
-                                        let cellToFormat = String.fromCharCode(m) + k + '';
-                                    worksheet.getCell(cellToFormat).style = cellRuleXLS.conditionalRule[i].style;
-                                    //worksheet.getCell(cellToFormat).value.result=undefined;
-                                    if(! Number.isNaN(parseFloat(worksheet.getCell(cellToFormat).value))) {
-                                        let value = parseFloat(worksheet.getCell(cellToFormat).value);
+                        //worksheet.getRow(32).addPageBreak();
+                        for (let k = row; k < maxRow; k += every) {
+                            if(cellRuleXLS.conditionalRule[i].hasOwnProperty('rules')) {
+                                for (let j =0; j < cellRuleXLS.conditionalRule[i].rules.length; j++) {
+                                    let reference = cellRuleXLS.conditionalRule[i].easeRule.columnStart + k + ':' + 
+                                                    cellRuleXLS.conditionalRule[i].easeRule.columnEnd + k;
+                                        for (let l =0; l < cellRuleXLS.conditionalRule[i].rules[j].rule.length; l++) {
+                                            
+                                            if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('style')) {
+                                                worksheet.addConditionalFormatting({
+                                                    ref: reference,
+                                                    rules: [{
+                                                        type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
+                                                        operator: cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator,
+                                                        text: cellRuleXLS.conditionalRule[i].rules[j].rule[l].text,
+                                                        style: cellRuleXLS.conditionalRule[i].rules[j].rule[l].style
+                                                    }]}); 
+                                            }
+                                            if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('cfvo')) {
+                                                worksheet.addConditionalFormatting({
+                                                    ref: reference,
+                                                    rules: [{
+                                                        type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
+                                                        operator: cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator,
+                                                        cfvo: cellRuleXLS.conditionalRule[i].rules[j].rule[l].cfvo,
+                                                        color: cellRuleXLS.conditionalRule[i].rules[j].rule[l].color,
+                                                    }]}); 
+                                            }
 
-                                        worksheet.getCell(cellToFormat).value=value/100;
-                                    }
-                                    //worksheet.getCell(cellToFormat).value=parseFloat(worksheet.getCell(cellToFormat).value)/100;
+                                                /*console.log('Ref : ' + reference);
+                                                console.log('j : ' + j);*/
+                                                //console.log('rules : ' + JSON.stringify(cellRuleXLS.conditionalRule[i].rules[j]) );
+                                                /*console.log('type : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].type);
+                                                console.log('operator : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator);
+                                                console.log('style : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].style);*/
+                                        }
+                                }
+                            }
+                            if(cellRuleXLS.conditionalRule[i].hasOwnProperty('style')) {
+                                    // Code to parse the first letter column to the end
+                                for(let m = this.lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnStart); 
+                                        m <= this.lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnEnd); m++) {
+                                            //console.log('process...');
+                                        //console.log('Lettre : ' + String.fromCharCode(m));
 
+                                        //console.log("Style ", m, this.lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnStart), 
+                                        //                         this.lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnEnd))
+                                        let cellToFormat = m ;//String.fromCharCode(m) + k + '';
+                                        let rowChange = worksheet.getRow(k);
+
+                                        if(cellRuleXLS.conditionalRule[i].style.hasOwnProperty('alignment')) {
+                                            rowChange.getCell(cellToFormat).alignment = cellRuleXLS.conditionalRule[i].style.alignment;
+                                        }
+                                        else {
+                                            rowChange.getCell(cellToFormat).style = cellRuleXLS.conditionalRule[i].style;
+                                            if(! Number.isNaN(parseFloat(rowChange.getCell(cellToFormat).value))) {
+                                                let value = parseFloat(rowChange.getCell(cellToFormat).value);
+
+                                                rowChange.getCell(cellToFormat).value=value/100;
+                                            }
+                                        }
+                                        //worksheet.getCell(cellToFormat).value.result=undefined;
+                                        //worksheet.getCell(cellToFormat).value=parseFloat(worksheet.getCell(cellToFormat).value)/100;
+
+                                }
                             }
                         }
                     }
                 }
             }
+            catch (e) {
+                console.log("Error format ", formatRule, e);
+            }
         }
+    }
+
+    lettersToNumber(letters){
+        var chrs = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ', mode = chrs.length - 1, number = 0;
+        for(var p = 0; p < letters.length; p++){
+            number = number * mode + chrs.indexOf(letters[p]);
+        }
+        return number;
     }
 
     /**
@@ -259,22 +283,22 @@ export class ExportService{
          * 
          */
 
-        worksheet.getCell('B2').value = 'Report Title';
+        worksheet.getCell('A2').value = 'Report Title';
         
-        worksheet.getCell('C2').value = subject;
-        worksheet.getCell('C3').value = content;
-        worksheet.mergeCells('C2','G2');
-        worksheet.mergeCells('C3','G3');
+        worksheet.getCell('B2').value = subject;
+        worksheet.getCell('B3').value = content;
+        worksheet.mergeCells('B2','F2');
+        worksheet.mergeCells('B3','F3');
 
 
-        worksheet.getCell('H2').value = 'Report ID';
-        worksheet.getCell('I2').value = reportid;
-        worksheet.mergeCells('I2','K2');
-        worksheet.mergeCells('I3','K3');
-        worksheet.getCell('H3').value = 'Report date';
-        worksheet.getCell('I3').value = new Date(); 
-        worksheet.getCell('I2').alignment = { vertical: 'top', horizontal: 'left' };
-        worksheet.getCell('I3').alignment = { vertical: 'top', horizontal: 'left' };
+        worksheet.getCell('G2').value = 'Report ID';
+        worksheet.getCell('H2').value = reportid;
+        worksheet.mergeCells('H2','J2');
+        worksheet.mergeCells('H3','J3');
+        worksheet.getCell('G3').value = 'Report date';
+        worksheet.getCell('H3').value = new Date(); 
+        worksheet.getCell('H2').alignment = { vertical: 'top', horizontal: 'left' };
+        worksheet.getCell('H3').alignment = { vertical: 'top', horizontal: 'left' };
 
         
         for (let i = 0; i< this.tableRow; i ++) {
@@ -282,12 +306,12 @@ export class ExportService{
                 type: 'pattern',
                 pattern:'lightTrellis',
                 fgColor:{argb:'FFFFFFFF'},
-                bgColor:{argb:'04225E80'}
+                bgColor:{argb:'FF002060'}
             };
         }
 
         // Styling the header
-        worksheet.getCell('B2').font = {
+        worksheet.getCell('A2').font = {
             name: 'Arial',
             family: 4,
             color: { argb: 'FFFFFFFF' },
@@ -295,10 +319,10 @@ export class ExportService{
             underline: false,
             bold: true
         };
-        worksheet.getCell('H2').font = worksheet.getCell('B2').font;
-        worksheet.getCell('H3').font = worksheet.getCell('B2').font
+        worksheet.getCell('G2').font = worksheet.getCell('A2').font;
+        worksheet.getCell('G3').font = worksheet.getCell('A2').font
 
-        worksheet.getCell('C2').font = {
+        worksheet.getCell('B2').font = {
             name: 'Arial',
             family: 4,
             color: { argb: 'FFFFFFFF' },
@@ -307,7 +331,7 @@ export class ExportService{
             bold: true
         };
 
-        worksheet.getCell('C3').font = {
+        worksheet.getCell('B3').font = {
             name: 'Arial',
             family: 4,
             color: { argb: '000000' },
@@ -316,8 +340,8 @@ export class ExportService{
             bold: false
         };
 
-        worksheet.getCell('I2').font = worksheet.getCell('C2').font
-        worksheet.getCell('I3').font = worksheet.getCell('C2').font
+        worksheet.getCell('H2').font = worksheet.getCell('B2').font
+        worksheet.getCell('H3').font = worksheet.getCell('B2').font
 
     }
 
@@ -334,7 +358,7 @@ export class ExportService{
         workbook.calcProperties.fullCalcOnLoad = true;
     }
 
-    json2xls(workbook, worksheet, reportid, subject, content, rawData) {
+    json2xls(workbook, worksheet, reportid, subject, content, rawData, formatStructure) {
 
         let valueColumns = Object.keys(rawData[0]);
         let dataColumns = [];
@@ -369,18 +393,18 @@ export class ExportService{
             rows: dataRows,
         });
         
-        this.formatXLS(worksheet,dataRows, null);
+        this.formatXLS(worksheet,dataRows, formatStructure);
         this.autofitColumns(worksheet);
         //this.setPrintArea(worksheet, null);
         //this.setPageBreak(worksheet, dataRows, null);
         this.setXLSProperties(workbook);
     }
 
-    saveCSV(rawData, image, imageWidth, imageHeight,reportId, reportTitle, reportContent) {
+    saveCSV(rawData, image, imageWidth, imageHeight,reportId, reportTitle, reportContent, formatStructure ?: any) {
         let workbook = new excel.Workbook();
         let ws = workbook.addWorksheet('result');
         
-        this.json2xls(workbook, ws, reportId, reportTitle, reportContent,rawData);
+        this.json2xls(workbook, ws, reportId, reportTitle, reportContent,rawData, formatStructure);
   
         if (!!image) {
             //console.log('image :',image);

@@ -1,25 +1,16 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { HttpModule } from '@angular/http';
-import { FormsModule }  from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule }  from '@angular/forms';
 import { ItemComponent } from './item.component';
-
-import { TableModule, MultiSelectModule, ButtonModule, ChipsModule,
-         MessagesModule, GrowlModule, InputTextModule,FullCalendarModule,
-        TooltipModule, PanelModule, DataListModule, ScheduleModule, CalendarModule, TabViewModule, DialogModule } from '../../components/index';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
 
 @NgModule({
-    imports: [ RouterModule,HttpModule, CommonModule,FormsModule,
-               TableModule,MultiSelectModule,
-               ButtonModule, ChipsModule, 
-               MessagesModule, GrowlModule, InputTextModule,
-               TabViewModule, DialogModule, FullCalendarModule,
-               TooltipModule, PanelModule, DataListModule, ScheduleModule, CalendarModule ],
+    imports: [ RouterModule,CommonModule,FormsModule,TableModule, DialogModule ],
     declarations: [ItemComponent],
     exports: [ItemComponent],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 
 export class ItemModule { }
-

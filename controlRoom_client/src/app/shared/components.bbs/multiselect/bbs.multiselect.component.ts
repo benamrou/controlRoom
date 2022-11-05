@@ -1,27 +1,36 @@
-import {Component,Input,Output,EventEmitter, ViewEncapsulation} from '@angular/core';
+import {Component,Input,Output,EventEmitter, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit } from '@angular/core';
 
 @Component({
-	moduleId: module.id,
+	
     selector : 'bbs-multiselect',
     templateUrl :'./bbs.multiselect.component.html',
     styleUrls : ['./bbs.multiselect.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class MultiSelectDropdownComponent{
-    @Input() options:any[]; 
+export class MultiSelectDropdownComponent implements AfterViewInit {
+    @Input() options :any[]; 
     
     @Output() shareCheckedList = new EventEmitter();
     @Output() shareCheckedCodeList = new EventEmitter();
     @Output() shareIndividualCheckedList = new EventEmitter();
     
-    showDropDown: boolean;
+    showDropDown!: boolean;
     checkedList : any[];
     checkedCodeList : any[];
-    currentSelected : {};
+    currentSelected !: {};
     
     constructor(){
         this.checkedList = [];
         this.checkedCodeList = [];
+    }
+
+    ngAfterViewInit() {
+        for(let i =0 ; i < this.options.length; i ++) {
+            if (this.options[i].checked) {
+                this.getSelectedValue(this.options[i].checked,this.options[i].name, this.options[i].code)
+            }
+        }
     }
 
     getSelectedValue(status:Boolean,value:String, code: String){

@@ -27,7 +27,5 @@ export * from './parameter/param.service';
 export * from './supplier/supplier.service';
 export * from './reporting/replenishment.service';
 export * from './authentification/version.check.service';
-export * from './robot/robot.service';
+export * from './comment/comment.service';
 
-/** Prime NG Service  **/
-export * from '../components/index';

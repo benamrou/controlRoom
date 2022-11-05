@@ -3,17 +3,16 @@ import { ViewEncapsulation, Input, OnChanges,} from '@angular/core';
 
 import { QueryService, UserService, WidgetService, StructureService } from '../services';
 
-import { Message } from '../components';
+import { Message } from 'primeng/api';
 
 import {NgModule } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 @Component({
-	moduleId: module.id,
+	
     selector: 'export-cmp',
     templateUrl: './export.component.html',
-    providers: [QueryService, WidgetService, UserService, StructureService],
     styleUrls: ['./export.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
@@ -21,30 +20,30 @@ import { delay } from 'rxjs/operators';
 export class ExportComponent implements OnChanges {
 
     //@ViewChild('fc') fc: FullCalendar;
-    @Input() selectedStructure;  
-    @Input() selectedNetwork;  
-    @Input() selectedFlow; 
-    @Input() disabledButton;
+    @Input() selectedStructure!: any;  
+    @Input() selectedNetwork!: any;  
+    @Input() selectedFlow!: any;  
+    @Input() disabledButton!: any;  
 
     @Output() clickRefresh = new EventEmitter();
     @Output() initCompleted = new EventEmitter();
 
-    network;
-    structure;
-    flow;
+    network !: any;
+    structure !: any;
+    flow !: any;
 
-    networkDataReady = false;
-    structureDataReady = false;
-    public flowDataReady = false;
+    networkDataReady: boolean = false;
+    structureDataReady: boolean = false;
+    public flowDataReady: boolean = false;
 
-    flatSelectedNetworkID = []; // contains the selected netork ID
-    flatSelectedStructureID = []; // contains the selected structure ID
-    flatSelectedFlowID = []; // contains the selected flow ID
+    flatSelectedNetworkID: any[] = []; // contains the selected netork ID
+    flatSelectedStructureID: any[] = []; // contains the selected structure ID
+    flatSelectedFlowID: any[] = []; // contains the selected flow ID
 
     
-    dataNetwork;
-    dataStructure;
-    dataFlow;
+    dataNetwork !: any;
+    dataStructure !: any;
+    dataFlow !: any;
 
     
     msgs: Message[] = [];
@@ -114,7 +113,7 @@ export class ExportComponent implements OnChanges {
         this.disabledButton = true;
     }
 
-    nodeSelect(flatData, e) {
+    nodeSelect(flatData: any, e: any) {
         //console.log('nodeSelect :', e);
         let indice = flatData.indexOf(e.node.NODE_ID)
         if (indice === -1 ) {
@@ -127,7 +126,7 @@ export class ExportComponent implements OnChanges {
         this.disabledButton = false;
     }
 
-    nodeUnSelect(flatData, e) {
+    nodeUnSelect(flatData: any, e: any) {
         //console.log('nodeUnSelect :', e);
         let indice = flatData.indexOf(e.node.NODE_ID)
         if (indice > -1 ) {
@@ -140,19 +139,19 @@ export class ExportComponent implements OnChanges {
         this.disabledButton = false;
     }
 
-    public setSelectedNetwork(nodeID) {
+    public setSelectedNetwork(nodeID: any) {
         this.setSelected(this.selectedNetwork, this.flatSelectedNetworkID, this.network.data[0], nodeID);
     }
 
-    public setSelectedStructure(nodeID) {
+    public setSelectedStructure(nodeID: any) {
         this.setSelected(this.selectedStructure, this.flatSelectedStructureID, this.structure.data[0], nodeID);
     }
 
-    public setSelectedFlow(nodeID) {
+    public setSelectedFlow(nodeID: any) {
         this.setSelected(this.selectedFlow, this.flatSelectedFlowID, this.flow[0], nodeID);
     }
 
-    public setSelected(masterNode, flatSelection, node, nodeID) {
+    public setSelected(masterNode: any, flatSelection: any, node: any, nodeID: any) {
         //console.log('setSelected : ', nodeID, node);
         if (node.children.length ===0 && node.NODE_ID === nodeID) {
             if(flatSelection.indexOf(node.NODE_ID) === -1)  {

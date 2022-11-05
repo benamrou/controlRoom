@@ -1,11 +1,11 @@
-import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
-import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
+import { Injectable } from '@angular/core';
 import {Router} from '@angular/router';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { ICRChart } from '../../graph/';
+import { ICRChart } from '../../graph/chart/chart.component';
+
 
 export class Widgets {
     public widgets: Widget[] = [];
@@ -38,6 +38,9 @@ export class Widget {
     public widchartnbset: string;
     public widcharttype: string;
     public widchartunit: string;
+    
+    public widcard: number;
+    public widcarddisplay: boolean = false;
 
     public widcollapse: string;
     // Linked widget
@@ -113,7 +116,7 @@ export class WidgetService {
         this.params =  this.params.append('PARAM', '-1');
         //this.options = new RequestOptions({ search : this.paramsEnvironment }); // Create a request option
 
-    return this.http.get(this.request, this.params).map((response: Response) => {
+    return this.http.get(this.request, this.params).pipe(map(response => {
                 //console.log('Response Widget/1/ ' + JSON.stringify(response));
                 let data = response as any;
                 let widget = new Widget();
@@ -123,7 +126,7 @@ export class WidgetService {
                     this.widgetsInfo = new Widgets();
                     }
                     if ( i  > 0 && ((widget.widid + widget.widparam) !== (data[i].WIDID + data[i].WIDPARAM))) {
-                        console.log('widparam:', widget);
+                        //console.log('widparam:', widget);
                         //if (!!widget.widparam && widget.widparam != data[i].WIDPARAM) {
                             widget.columnResult.push(column);
                             widget.columns = JSON.parse(JSON.stringify(widget.columnResult));
@@ -144,6 +147,7 @@ export class WidgetService {
                     widget.widdesc = data[i].WIDDESC;
                     widget.widbehavior = data[i].WIDBEHAVIOR;
                     widget.widtable = data[i].WIDTABLE;
+                    widget.widcard = data[i].WIDCARD;
                     widget.widrss = data[i].WIDRSS;
                     widget.widchart = data[i].WIDCHART;
                     widget.widinfo = data[i].WIDINFO;
@@ -207,7 +211,7 @@ export class WidgetService {
                 widget.columns = JSON.parse(JSON.stringify(widget.columnResult));
                 this.widgetsInfo.widgets.push(widget);
                 //console.log('Widget/1/ :',this.widgetsInfo.widgets);
-        });
+        }));
     }
 
     /**
@@ -237,9 +241,9 @@ export class WidgetService {
         this.params =  this.params.append('PARAM', widget.widparam);
         this.params =  this.params.append('FILENAME', widget.widsnapfile);
         return this.http.get(this.request, this.params)
-        .map (data => {
+        .pipe(map(data => {
                 widget.result = data;
-        });
+        }));
         //return Observable.of(this.widgetsInfo.widgets);
     }
 

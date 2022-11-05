@@ -1,5 +1,5 @@
 <div #menupath>
-    <h2 class="page-header" (mouseenter)="overlayScreenId.show($event)"  (mouseout)="overlayScreenId.hide()"
+    <h2 class="page-header" (mouseenter)="$any(overlayScreenId).show($event)"  (mouseout)="$any(overlayScreenId).hide()"
         style="text-align: right; font-size: 1em;font-weight: bolder; margin-right:20px">
         {{heading}}
     </h2>
@@ -10,17 +10,17 @@
     </p-overlayPanel>
 
     <div class="col-xl-12">
-        <ol class="breadcrumb" [ngStyle]="{'background-color': headcolor}">
+        <ol class="breadcrumb general-page-header" >
             <li class="breadcrumb-item">
                 <i class="fas fa-tachometer-alt"></i> 
-                    <a href="Javascript:void(0)" [routerLink]="['/dashboard']" style="padding: 0.5em">Dashboard</a>
+                    <a href="Javascript:void(0)" routerLink="['/dashboard']" style="padding: 0.5em">Dashboard</a>
             </li>
-            <li class="breadcrumb-item active" [ngStyle]="{'color': linkcolor}">
+            <li class="breadcrumb-item active">
                 <i class="fas {{icon}}"></i> {{heading}}
             </li>
-            <li  style="float: right; margin-left: auto; color:mediumvioletred" >
-                <i class="fas fa-info-circle" (mouseenter)="overlayInfo.show($event)" style="font-size:24px"></i>
-                <p-overlayPanel #overlayInfo [showCloseIcon]="true" [dismissable]="false"[appendTo]="'body'" 
+            <li  style="float: right; margin-left: auto; color:mediumvioletred" *ngIf="screenInfo">
+                <i class="fas fa-info-circle" (mouseenter)="$any(overlayInfo).show($event)" style="font-size:24px"></i>
+                <p-overlayPanel #overlayInfo [showCloseIcon]="true" [dismissable]="false" [appendTo]="'body'" 
                          [style]="{'background-color': 'lightgoldenrodyellow','border-radius':'10px','max-width':'500px'}">
                     <div [innerHTML]="screenInfo"></div>
                 </p-overlayPanel>

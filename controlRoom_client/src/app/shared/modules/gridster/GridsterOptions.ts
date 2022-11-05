@@ -1,6 +1,7 @@
-import { Observable } from 'rxjs/Observable';
+import { debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
+import { merge } from 'rxjs';
+import { fromEvent } from 'rxjs';
 import { of } from 'rxjs';
-import 'rxjs/add/operator/distinctUntilChanged';
 import { IGridsterOptions } from './IGridsterOptions';
 
 export class GridsterOptions {
@@ -45,13 +46,13 @@ export class GridsterOptions {
 
         this.responsiveOptions = this.extendResponsiveOptions(config.responsiveOptions || []);
 
-        this.change = Observable.merge(
+        this.change = merge(
                 of(this.getOptionsByWidth(document.documentElement.clientWidth)),
-                Observable.fromEvent(window, 'resize')
-                    .debounceTime(config.responsiveDebounce || 0)
-                    .map((event: Event) => this.getOptionsByWidth(document.documentElement.clientWidth))
+                fromEvent(window, 'resize')
+                    .pipe(debounceTime(config.responsiveDebounce || 0))
+                    .pipe(map((event: Event) => this.getOptionsByWidth(document.documentElement.clientWidth)))
             )
-            .distinctUntilChanged(null, (options: any) => options.minWidth);
+            .pipe(distinctUntilChanged(null, (options: any) => options.minWidth));
     }
 
     getOptionsByWidth(width: number): IGridsterOptions {

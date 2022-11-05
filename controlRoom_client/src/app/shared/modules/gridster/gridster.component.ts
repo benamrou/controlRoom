@@ -2,16 +2,9 @@ import {
     Component, OnInit, AfterContentInit, OnDestroy, ElementRef, ViewChild, NgZone,
     Input, Output, EventEmitter, ChangeDetectionStrategy, HostBinding
 } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/publish';
-import 'rxjs/add/operator/filter';
-
-
+import { connect, ConnectableObservable, debounceTime, filter, interval, multicast, publish, tap } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { fromEvent } from "rxjs";
 import { utils } from './utils/utils';
 import { GridsterService } from './gridster.service';
 import { IGridsterOptions } from './IGridsterOptions';
@@ -69,7 +62,7 @@ export class GridsterComponent implements OnInit, AfterContentInit, OnDestroy {
     @Output() ready = new EventEmitter<any>();
     @Output() reflow = new EventEmitter<any>();
     @Input() draggableOptions: IGridsterDraggableOptions;
-    @ViewChild('positionHighlight') $positionHighlight;
+    @ViewChild('positionHighlight', {static: true}) $positionHighlight;
 
     @HostBinding('class.gridster--dragging') isDragging = false;
     @HostBinding('class.gridster--resizing') isResizing = false;
@@ -98,31 +91,31 @@ export class GridsterComponent implements OnInit, AfterContentInit, OnDestroy {
         }
 
         const changeSub = this.gridsterOptions.change
-            .do((options) => {
+            .pipe(tap((options) => {
                 this.gridster.options = options;
                 if (this.gridster.gridList) {
                     this.gridster.gridList.options = options;
                 }
-            })
-            .do((options) => {
+            }))
+            .pipe(tap((options) => {
                 this.optionsChange.emit(options);
-            })
+            }))
             .subscribe();
         this.subscription.add(changeSub);
 
         this.gridster.init(this.gridster.options, this.draggableOptions, this);
 
-        const resizeSub = Observable.fromEvent(window, 'resize')
-            .debounceTime(this.gridster.options.responsiveDebounce || 0)
-            .filter(() => this.gridster.options.responsiveView)
+        const resizeSub = fromEvent(window, 'resize')
+            .pipe(debounceTime(this.gridster.options.responsiveDebounce || 0))
+            .pipe(filter(() => this.gridster.options.responsiveView))
             .subscribe(() => {
                 this.reload();
             });
         this.subscription.add(resizeSub);
 
         this.zone.runOutsideAngular(() => {
-            //const scrollSub = Observable.fromEvent(document, 'scroll', true)
-            const scrollSub = Observable.fromEvent(document, 'scroll')
+            //const scrollSub = fromEvent(document, 'scroll', true)
+            const scrollSub = fromEvent(document, 'scroll')
                 .subscribe(() => this.updateGridsterElementData());
             this.subscription.add(scrollSub);
         });
@@ -264,7 +257,7 @@ export class GridsterComponent implements OnInit, AfterContentInit, OnDestroy {
             .subscribe();
 
         const dropOverObservable = this.gridsterPrototype.observeDropOver(this.gridster)
-            .publish();
+            .pipe(publish());
 
         const dragObservable = this.gridsterPrototype.observeDragOver(this.gridster);
 
@@ -305,7 +298,8 @@ export class GridsterComponent implements OnInit, AfterContentInit, OnDestroy {
                 isEntered = false;
             });
 
-        dropOverObservable.connect();
+        //dropOverObservable.pipe(connect());
+        (dropOverObservable as ConnectableObservable<number>).connect();
     }
 
     private enableDraggable() {

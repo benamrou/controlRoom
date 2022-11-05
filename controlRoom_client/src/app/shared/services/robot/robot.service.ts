@@ -1,12 +1,8 @@
-import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
-import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
-import {Router} from '@angular/router';
+import {Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
-import { map } from 'rxjs/operators';
-import { HttpHeaders, HttpParams } from '@angular/common/http';
-import { ElementArrayFinder } from 'protractor';
-import { OrderComponent } from '../../cards/order/order.component';
+import {HttpHeaders, HttpParams } from '@angular/common/http';
+import { map } from 'rxjs';
 
 
 export class Diagnostic {
@@ -96,11 +92,11 @@ export class RobotService {
         this.params = this.params.set('PARAM', this._userService.userInfo.language);
 
         headersSearch = headersSearch.set('QUERY_ID', 'DIA0000004');
-        return  this.http.get(req, this.params, headersSearch).map(response => {
+        return  this.http.get(req, this.params, headersSearch).pipe(map(response => {
                 let data = <any> response;
                 this.diagnosticType = <DiagnosticType> data;
                 return this.diagnosticType;
-        });
+        }));
     }
 
     /**
@@ -114,11 +110,11 @@ export class RobotService {
         this.params = this.params.set('PARAM', this._userService.userInfo.language);
 
         headersSearch = headersSearch.set('QUERY_ID', 'DIA0000001');
-        return  this.http.get(req, this.params, headersSearch).map(response => {
+        return  this.http.get(req, this.params, headersSearch).pipe(map(response => {
                 let data = <any> response;
                 this.diagnosticList = <Diagnostic[]> data;
                 return this.diagnosticList;
-            });
+            }));
     }
 
     /**
@@ -132,10 +128,10 @@ export class RobotService {
             this.params = this.params.set('PARAM', this._userService.userInfo.language);
     
             headersSearch = headersSearch.set('QUERY_ID', 'DIA0000002');
-            return  this.http.get(req, this.params, headersSearch).map(response => {
+            return  this.http.get(req, this.params, headersSearch).pipe(map(response => {
                     let data = <any> response;
                     return data;
-                });
+                }));
         }
 
     /**
@@ -150,7 +146,7 @@ export class RobotService {
         this.params = this.params.append('PARAM', this._userService.userInfo.language);
 
         headersSearch = headersSearch.set('QUERY_ID', 'DIA0000003');
-        return  this.http.get(req, this.params, headersSearch).map(response => {
+        return  this.http.get(req, this.params, headersSearch).pipe(map(response => {
                 let data = <any> response;
                 this.diagnosticList = [];
                 let diagTemp = new Diagnostic();
@@ -208,7 +204,7 @@ export class RobotService {
                 diagTemp.checks.push(checkTemp);
                 this.diagnosticList.push(diagTemp);
                 return this.diagnosticList;
-            });
+            }));
     }
 
 } 

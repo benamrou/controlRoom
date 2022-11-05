@@ -1,0 +1,275 @@
+<app-page-header [heading]="'Mass Changes Journal'" [icon]="'fas fa-clipboard-check'"
+                 [screenID]="screenID"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+
+<!-- Confirmation boxes-->
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"></p-confirmDialog>
+<!-- End confirmation boxes -->
+
+<div class="bbs_search_panel"  >
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Mass filename: </span>
+    <span style="overflow: hidden; padding-left: 1em; width: 40%;">
+        <input type="text"  [(ngModel)]="searchExecutionID" placeholder=" Key part of the file name " 
+                style="width: 100%; height:35px"/>  
+    </span>
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Scope : </span>
+    <span style="margin-right:50px;">
+        <input [(ngModel)]="searchScopeCode" placeholder="" 
+                list="massTypeList" autocomplete="off"
+                onmousedown="value = '';" 
+                style="margin-left: 10px; text-align: center; height:35px"/>
+        <datalist id="massTypeList">
+            <option *ngFor="let mass of pt_33_data" [value]="mass.TENTRYDESC">
+        </datalist>
+    </span>
+
+    <span class="pull-right" style="padding-right: 20px">
+            <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+                    [style]="{'height': '35px'}" style="margin-right: 15px">
+            </button>
+            <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true"
+                    [style]="{'height': '35px'}"></button>
+    </span>
+</div>
+<div class="bbs_search_sub_panel"  >
+
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Loaded : </span>
+    <p-calendar [(ngModel)]="searchLoadingDate"  
+                [readonlyInput]="true"
+                dateFormat="mm/dd/yy"
+                [style]="{'height': '35px'}"
+                name="loadingDate" [showIcon]="true" 
+                [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
+
+    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Execution : </span>
+    <p-calendar [(ngModel)]="searchExecutionDate"  
+                [readonlyInput]="true"
+                dateFormat="mm/dd/yy"
+                [style]="{'height': '35px'}"
+                name="executionDate" [showIcon]="true" 
+                [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+
+</div>
+
+
+<p></p>
+
+<!-- When validation -->
+<p-dialog header="Update completed" *ngIf="displayUpdateCompleted"
+    [visible]="displayUpdateCompleted" [modal]="true" width="500" [responsive]="true" [maximizable]="false">
+    <span>{{msgDisplayed}}</span>
+        <p-footer>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
+                    label="Ok">
+            </button>
+        </p-footer>
+</p-dialog>
+
+<!-- When Edit -->
+<p-dialog *ngIf="displayEdit" [visible]="displayEdit" [modal]="true" [style]="{'width': '50vw'}"  [baseZIndex]="10000">
+    <p-header>
+        Execution plan
+    </p-header>
+    <div class="row" style=" border-style: outset; background-color: lightyellow; margin-right: 2em; font-size: smaller">
+        <div class="col" >
+            <span style="margin-right:1.3em;  font-weight: bolder">Filename : {{searchResult[indexEdit].JSONFILE}}</span>
+        </div>
+        <div class="col pull-right">
+            <span style="padding-left: 15px; float:right">Created on {{searchResult[indexEdit].JSONDLOAD | date:'MM/dd/yy hh:mm:ss' }} by {{searchResult[indexEdit].USERNAME}} </span>
+        </div>
+    </div>
+    <div class="row" style="margin-right: 2em; margin-top: 5px; font-size: smaller;border-bottom: solid thin; border-top: solid thin;">
+        <div class="col">
+            <span style="margin-right:1.3em; margin-top: 10px; ">Mass-tool scope:</span><b> {{scopeEdit.TENTRYDESC | uppercase}}</b>
+        </div>
+        <div class="col pull-right">
+            <span style="margin-right:1.3em; margin-top: 10px; ">Execution type:</span><b>  {{immediateEdit.TENTRYDESC | uppercase}} </b>
+        </div>
+    </div>
+    <div class="row"  style=" margin-top:2em; margin-right: 2em;font-size: smaller ">
+        <div class="col">
+            <span style="margin-right:1.3em; ">New Item link start date : </span>
+            <p-calendar [(ngModel)]="searchResult[indexEdit].JSONSTARTDATE"   appendTo="body" 
+                        [baseZIndex]="99999"
+                        [readonlyInput]="true"
+                        dateFormat="mm/dd/yy"
+                        [style]="{ 'position': 'relative', 'z-index': '99999' }"
+                        [defaultDate]="searchResult[indexEdit].JSONSTARTDATE"
+                        name="linkStart" [showIcon]="true" 
+                        [showOnFocus]="true" [showOtherMonths]="true">
+            </p-calendar>
+        </div>
+        <div class="col">
+            <span style="margin-right:1.3em; ">Schedule date : </span>
+            <p-calendar [(ngModel)]="searchResult[indexEdit].JSONDSCHED"   appendTo="body" 
+                [baseZIndex]="99999"
+                [minDate]="dateNow"
+                dateFormat="mm/dd/yy"
+                [minDate]="dateNow"
+                [showTime]="true" [showIcon]="true" [showOtherMonths]="true">
+            </p-calendar>
+        </div>
+    </div>
+
+
+    <div class="row"  style=" margin-right: 2em;font-size: smaller ">
+        <div class="col">
+            <p-checkbox [(ngModel)]="searchResult[indexEdit].JSONTRACE" binary="true"></p-checkbox>
+            <span style="margin-top: 5px; padding-left: 15px;">Item trace generation </span>
+        </div>
+    </div>
+    <p-footer>
+        <button pButton icon="fas fa-angle-left" iconPos="left" (click)="displayEdit=false" label="Back" style="float: left; margin-bottom:0.5em" ></button>
+        <button pButton icon="fas fa-play-circle" iconPos="right" (click)="runExecution(indexEdit)" label="Execute" style="float: right; margin-bottom:0.5em" ></button>
+        <button pButton icon="fas fa-check" iconPos="right" (click)="updateExecution(indexEdit)" label="Update" style="float: right; margin-bottom:0.5em" ></button>
+        <button pButton icon="fas fa-times" iconPos="right" (click)="cancelExecution(indexEdit)"  class="ui-button-warning" label="Cancel" style="float: right; margin-bottom:0.5em" ></button>
+    </p-footer>
+</p-dialog>
+
+<!-- Panel resul -->
+<!-- Result panel of the resarch --> 
+<!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
+<div  item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
+
+    <p-table #result [value]="searchResult" sortMode="multiple" 
+        [rows]="50"  [rowsPerPageOptions]="[50,100,200]"
+        [paginator]="true" [pageLinks]="3" 
+        [columns]="columnsResult"
+        selectionMode="single" [(selection)]="selectedElement" 
+        [resizableColumns]="true" columnResizeMode="expand"
+        [responsive]="true" [totalRecords]="searchResult.length"
+        [reorderableColumns]="true" scrollHeight="400px"
+        (onRowSelect)="onRowSelect($event)"
+        [globalFilterFields]="['JSONFILE','USERNAME', 'JSONTOOL']"
+        [autoLayout]="true" tableStyleClass="table-layout: auto;">
+        
+        <!-- FILTER -->
+        <ng-template pTemplate="caption">
+            <div class="table-header grid">
+                <div class="col-3">
+                    <span>
+                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                        </button>
+                    </span>
+                </div>
+                <div class="col-9" style="text-align: right;">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+        <!-- HEADER -->
+        <ng-template pTemplate="header">     
+                      
+            <tr style="background: lightyellow">
+                <th *ngFor="let col of columsCollapseResult;  let indice=index" [attr.colspan]="col.colspan" 
+                    [ngStyle]="{'width': col.width}" pResizableColumn>
+                    {{col.header}}
+                    <span *ngIf="col.expand === 1" class="fas fa-plus-square pull-right" (click)='expandColumn(indice)'> </span>
+                    <span *ngIf="col.expand === -1" class="far fa-minus-square pull-right" (click)='expandColumn(indice)'></span>
+                </th>
+                <th> <!-- Dwonload file--> </th>
+                <th> <!-- Dwonload Error-->  </th>
+                <th> <!-- Action -->  </th>
+            </tr>
+        <tr>        
+                <ng-container *ngFor="let col of columnsResult">
+                    <th *ngIf="col.display  && col.field !== 'JSONSTEP' && col.field !== 'JSONENV'  && col.field !== 'JSONSTATUS' 
+                               && col.field !== 'JSONNBERROR' && col.field !== 'JSONIMMEDIATE' && col.field !== 'JSONTRACE'" 
+                        [pSortableColumn]="col.field" pReorderableColumn pResizableColumn >
+                            {{col.header}}<p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                    <th *ngIf="col.display &&  (col.field === 'JSONENV' || col.field === 'JSONSTATUS' || col.field === 'JSONSTEP' || col.field === 'JSONIMMEDIATE' || 
+                               col.field === 'JSONTRACE' || col.field === 'JSONNBERROR')" [pSortableColumn]="col.field" 
+                        style="text-align: center;" pReorderableColumn pResizableColumn >
+                            {{col.header}}<p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </ng-container>
+                    <th style="text-align: center;" pReorderableColumn pResizableColumn >
+                            Data file
+                    </th>
+                    <th style="text-align: center;" pReorderableColumn pResizableColumn >
+                            Error file
+                    </th>
+                    <th style="text-align: center;" pReorderableColumn pResizableColumn >
+                            Action
+                    </th>
+            </tr>
+        </ng-template>
+        <!-- BODY -->
+            <ng-template pTemplate="body" let-rowData let-columns="columnsResult" let-index="rowIndex" >
+                <tr [pSelectableRow]="rowData" *ngIf="searchResult.length > 0" 
+                    [ngStyle]="{'background-color': rowData['JSONSTEP'] === 'EXECUTION' && rowData['JSONSTATUSCODE'] === 1 ? 'lawngreen':
+                                                    rowData['JSONSTEP'] === 'EXECUTION' && rowData['JSONSTATUSCODE'] === 0 ? 'yellow':
+                                                    rowData['JSONSTEP'] === 'EXECUTION' && rowData['JSONSTATUSCODE'] === 2 ?  'lightpink':''}">
+                    <ng-container *ngFor="let col of columnsResult" class="ui-resizable-column">
+                        <td *ngIf="col.display && col.field !== 'JSONSTEP' && col.field !== 'JSONSTATUS' && col.field !== 'JSONNBERROR' && col.field !== 'JSONNBRECORD' && col.field !== 'JSONENV'
+                                    && col.field !== 'JSONDSAVE' && col.field !== 'JSONDLOAD' && col.field !== 'JSONSTARTDATE' && col.field !== 'JSONDPROCESS'
+                                    && col.field !== 'JSONDSCHED' && col.field !== 'JSONTRACE'">
+                                {{rowData[col.field]}}
+                        </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONENV'" style="text-align: center;"> {{rowData[col.field]}} </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONSTATUS'" style="text-align: center;"> {{rowData[col.field]}} </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONSTEP'" style="text-align: center;"> {{rowData[col.field]}} </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONNBERROR'" style="text-align: center;"> {{rowData[col.field]}} </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONNBRECORD'" style="text-align: center;"> {{rowData[col.field]}} </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONDSCHED'"> {{rowData[col.field] | date:'MM/dd/yy HH:mm'}} </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONDSAVE'"> {{rowData[col.field] | date:'MM/dd/yy HH:mm'}} </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONDLOAD'"> {{rowData[col.field] | date:'MM/dd/yy HH:mm'}} </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONDPROCESS'"> {{rowData[col.field] | date:'MM/dd/yy HH:mm'}} </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONSTARTDATE'"> {{rowData[col.field] | date:'MM/dd/yy'}} </td>
+                        <td *ngIf="col.display &&  col.field === 'JSONTRACE'" style="text-align: center;">
+                            <p-checkbox [(ngModel)]="rowData[col.field]" binary="true" disabled="rowData['JSONIMMEDIATECODE']=== 1 || rowData['JSONSTATUSCODE']=== 1 "></p-checkbox>
+                        </td>
+                    </ng-container>
+                        <td> <!-- Download button -->
+                            <div style="text-align: center;">
+                                <button type="submit" 
+                                    #buttonDOWNLOAD_{{index}}
+                                    pButton (click)="downloadFile(index,  false)" 
+                                    icon="fas fa-file-excel" >
+                                </button>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="text-align: center;">
+                                <button type="submit" 
+                                    *ngIf="rowData['JSONNBERROR'] > 0"
+                                    #buttonERROR_{{index}}
+                                    pButton (click)="downloadFile(index, true)" 
+                                    icon="fas fa-file-excel" 
+                                    style="text-align: center;margin: 0"
+                                ></button>
+                                <button type="submit" 
+                                    *ngIf="rowData['JSONNBERROR'] === 0"
+                                    #buttonERROR_{{index}}
+                                    pButton (click)="downloadFile(index, true)" 
+                                    icon="fas fa-file-excel" 
+                                    style="text-align: center;margin: 0"
+                                    disabled
+                                ></button>
+                            </div>
+                        </td>
+                        <td> <!-- Action -->
+                            <div *ngIf="rowData['JSONIMMEDIATECODE'] === 0 && rowData['JSONSTATUSCODE'] === 0" style="text-align: center;" >
+                                <button type="submit"   pButton (click)="editExecutionPlan(index)" 
+                                        icon="fas fa-wrench" label="EDIT" 
+                                        #buttonEDIT_{{index}}
+                                        style="margin-right: 15px">
+                                </button>
+                            </div>
+                        </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <i class="FOOTER_Table" >{{searchResult.length}} references</i>
+</div>    

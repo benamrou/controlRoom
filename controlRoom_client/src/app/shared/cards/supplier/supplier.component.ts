@@ -1,23 +1,19 @@
 import { Component } from '@angular/core';
 import { ViewEncapsulation, Input, OnChanges } from '@angular/core';
-import { SelectItem, Chips, Message, Schedule } from '../../components/index';
+import { Message } from 'primeng//api';
 import { ItemService, Item, Purchasing, Pricing, Retail, Substitution, Inventory } from '../../services/index';
-import {NgModule } from '@angular/core';
-import {} from 'fullcalendar';
-
 
 @Component({
-	moduleId: module.id,
+	
     selector: 'supplier-cmp',
     templateUrl: './supplier.component.html',
-    providers: [ItemService],
     styleUrls: ['./supplier.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
 export class SupplierComponent implements OnChanges {
 
     //itemInternalCode\
-    @Input() itemInternalCode: string;
+    @Input() itemInternalCode!: string;
 
     // Item information
     itemInfos: Item;
@@ -34,7 +30,7 @@ export class SupplierComponent implements OnChanges {
 
     // Retail information
     headersRetail: any;
-    retailSelected: Retail;
+    retailSelected!: Retail;
     dialogRetailVisible: boolean = false;
 
 
@@ -51,8 +47,8 @@ export class SupplierComponent implements OnChanges {
     activeColor: string = 'white';
     mainColor: string = '#87CEFA'; // light brown
 
-    promoColor: string;
-    regularColor: string;
+    promoColor!: string;
+    regularColor!: string;
 
     constructor(private _itemService: ItemService) {
         this.itemInfos = new Item();
@@ -164,7 +160,7 @@ export class SupplierComponent implements OnChanges {
         return this.activeColor;
     }
 
-    handleRetailClick(e) {
+    handleRetailClick(e:any) {
         console.log('Retail click');
         this.retailSelected = new Retail();
         this.retailSelected.id = e.calEvent.id;
@@ -195,7 +191,7 @@ export class SupplierComponent implements OnChanges {
         this.dialogRetailVisible = false;
     }
 
-    itemLookUp(itemCode) {
+    itemLookUp(itemCode:any) {
         // Retrieve all the data for the item
     }
 

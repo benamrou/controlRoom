@@ -1,11 +1,7 @@
-import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
-import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
-import {Router} from '@angular/router';
+import { Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import { map } from 'rxjs/operators';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
 
 @Injectable()
 export class StructureService {
@@ -27,7 +23,6 @@ export class StructureService {
   networkTree;
   network;
 
-
   constructor(private http : HttpService){ }
 
 
@@ -40,7 +35,7 @@ export class StructureService {
         this.params = this.params.set('PARAM',localStorage.getItem('ICRUser'));
 
         headersSearch = headersSearch.set('QUERY_ID', 'STR0000001');
-        return  this.http.get(req, this.params, headersSearch).map(response => {
+        return  this.http.get(req, this.params, headersSearch).pipe(map(response => {
                 let data = <any> response;
                 this.network = data;
 
@@ -49,7 +44,7 @@ export class StructureService {
 
                 //this._userService.setNetwork(this.network, this.networkTree);
                 return this.networkTree;
-        });
+        }));
     }
 
       getStructure() {
@@ -61,7 +56,7 @@ export class StructureService {
         this.params = this.params.set('PARAM',localStorage.getItem('ICRUser'));
 
         headersSearch = headersSearch.set('QUERY_ID', 'STR0000002');
-        return  this.http.get(req, this.params, headersSearch).map(response => {
+        return  this.http.get(req, this.params, headersSearch).pipe(map(response => {
                 let data = <any> response;
                 this.structure = data;
                 this.structureTree = { "data": [] };
@@ -69,7 +64,7 @@ export class StructureService {
 
                 // console.log('this.structureTree : ', this._userService.structureTree);
                 return this.structureTree;
-        });
+        }));
     }
 
     treeify(list, idAttr, parentAttr, childrenAttr) {

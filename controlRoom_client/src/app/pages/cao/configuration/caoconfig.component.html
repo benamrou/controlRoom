@@ -1,0 +1,163 @@
+<app-page-header [heading]="'CGO Setting'" [icon]="'fas fa-robot'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-messages [value]="msgs" sticky="sticky"></p-messages>
+</div>
+
+<div class="bbs_search_panel"  >
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Location : </span>
+    <span style="margin-right:50px; line-height: 25px; align-self: center;">
+        <input type="number"  [(ngModel)]="locationCode" placeholder="" maxlength="5"
+               style="margin-left: 10px; text-align: center"/>
+    </span>
+    <span class="pull-right" style="padding-right: 20px">
+        <button type="submit" pButton (click)="search(0)" icon="fas fa-search" label="SEARCH"
+                [style]="{'height': '35px'}"
+                style="margin-right: 15px"></button>
+        <button type="submit" pButton (click)="search(1)" icon="fas fa-sync-alt"
+                [style]="{'height': '35px'}"></button>
+    </span>
+</div>
+<p></p>
+
+
+
+<!-- Panel resul -->
+<div  *ngIf="dataReadyCaoItem" item-width="400px" table-layout="fixed" >
+        <span style=" font-weight: bolder; font-size:large">CGO Item Configuration </span>
+        <p-table #resultCaoItem [value]="searchResultCaoItem" sortMode="multiple" 
+        [rows]="50"  [rowsPerPageOptions]="[50,100, 200]"
+        [paginator]="true" [pageLinks]="10" 
+        [columns]="columnsResultCaoItem"
+        selectionMode="single" [(selection)]="selectedElementCaoItem" 
+        [resizableColumns]="true" columnResizeMode="expand"
+        [responsive]="true" [totalRecords]="searchResultCaoItem.length"
+        [reorderableColumns]="true" scrollHeight="200px"
+        height="500px"
+        (onRowSelect)="handleRowSelect($event)"
+        [globalFilterFields]="['SOCSITE','SOCLMAG',
+                            'VENDOR_ID', 'VENDOR_DESC', 'ITEM_ID', 'ITEM_DESC', 'BARCODE', 
+                            'DEPT_ID','DEPT_DESC', 'SDEPT_ID', 'SDEPT_DESC',
+                            'CAT_ID', 'CAT_DESC', 'SCAT_ID', 'SCAT_DESC']"
+        [autoLayout]="true" tableStyleClass="table-layout: auto;">
+        
+        <!-- FILTER -->
+        <ng-template pTemplate="caption">
+            <div class="table-header grid">
+                <div class="col-3">
+                    <span>
+                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            label="CSV" (click)="resultCaoItem.exportCSV()" style="float:left">
+                        </button>
+                    </span>
+                </div>
+                <div class="col-9" style="text-align: right;">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="resultCaoItem.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+        <!-- HEADER -->
+        <ng-template pTemplate="header">             
+            <tr style="background: lightyellow">
+                <th *ngFor="let col of columsCollapseCaoItem;  let indice=index" [attr.colspan]="col.colspan">
+                    {{col.header}}
+                    <span *ngIf="col.expand === 1" class="fas fa-plus-square pull-right" (click)='expandColumnCaoItem(indice)'> </span>
+                    <span *ngIf="col.expand === -1" class="far fa-minus-square pull-right" (click)='expandColumnCaoItem(indice)'></span>
+                </th>
+            </tr>
+            <tr>
+                <ng-container *ngFor="let col of columnsResultCaoItem">
+                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                            {{col.header}}
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+        <!-- BODY -->
+            <ng-template pTemplate="body" let-rowData let-columns="columnsResultCaoItem">
+                <tr [pSelectableRow]="rowData">
+                    <ng-container *ngFor="let col of columnsResultCaoItem" class="ui-resizable-column">
+                        <td *ngIf="col.display">
+                                {{rowData[col.field]}}
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-template>
+        </p-table>
+        <i class="FOOTER_Table" >{{searchResultCaoItem.length}} Object</i>
+</div>
+
+<div  *ngIf="dataReadyCaoLift" item-width="400px" table-layout="fixed" >
+        <span style=" font-weight: bolder; font-size:large">CGO Parameter Leverage </span>
+        <p-table #resultCaoLift [value]="searchResultCaoLift" sortMode="multiple" 
+        [rows]="50"  [rowsPerPageOptions]="[50,100, 200]"
+        [paginator]="true" [pageLinks]="10" 
+        [columns]="columnsResultCaoLift"
+        selectionMode="single" [(selection)]="selectedElementCaoLift" 
+        [resizableColumns]="true" columnResizeMode="expand"
+        [responsive]="true" [totalRecords]="searchResultCaoLift.length"
+        [reorderableColumns]="true" scrollHeight="200px"
+        height="500px"
+        (onRowSelect)="handleRowSelect($event)"
+        [globalFilterFields]="['SOCSITE','SOCLMAG',
+                            'VENDOR_ID', 'VENDOR_DESC', 'ITEM_ID', 'ITEM_DESC', 'BARCODE', 
+                            'DEPT_ID','DEPT_DESC', 'SDEPT_ID', 'SDEPT_DESC',
+                            'CAT_ID', 'CAT_DESC', 'SCAT_ID', 'SCAT_DESC']"
+        [autoLayout]="true" tableStyleClass="table-layout: auto;">
+        
+        <!-- FILTER -->
+        <ng-template pTemplate="caption">           
+            <div class="table-header grid">
+                <div class="col-3">
+                    <span>
+                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            label="CSV" (click)="resultCaoLift.exportCSV()" style="float:left">
+                        </button>
+                    </span>
+                </div>
+                <div class="col-9" style="text-align: right;">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="resultCaoLift.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+        <!-- HEADER -->
+        <ng-template pTemplate="header">             
+            <tr style="background: lightyellow">
+                <th *ngFor="let col of columsCollapseCaoLift;  let indice=index" [attr.colspan]="col.colspan">
+                    {{col.header}}
+                    <span *ngIf="col.expand === 1" class="fas fa-plus-square pull-right" (click)='expandColumnCaoLift(indice)'> </span>
+                    <span *ngIf="col.expand === -1" class="far fa-minus-square pull-right" (click)='expandColumnCaoLift(indice)'></span>
+                </th>
+            </tr>
+            <tr>
+                <ng-container *ngFor="let col of columnsResultCaoLift">
+                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                            {{col.header}}
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+        <!-- BODY -->
+            <ng-template pTemplate="body" let-rowData let-columns="columnsResultCaoLift">
+                <tr [pSelectableRow]="rowData">
+                    <ng-container *ngFor="let col of columnsResultCaoLift" class="ui-resizable-column">
+                        <td *ngIf="col.display">
+                                {{rowData[col.field]}}
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-template>
+        </p-table>
+        <i class="FOOTER_Table" >{{searchResultCaoLift.length}} Object</i>
+</div>
+<p></p>

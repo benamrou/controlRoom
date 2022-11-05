@@ -1,0 +1,329 @@
+<app-page-header [heading]="'Smart UBD'" [icon]="'fa-clock'"
+                 [screenID]="screenID"></app-page-header>
+                       
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right" [sticky]="true"></p-toast>
+</div>
+
+<div *ngIf="displayComment"> 
+    <p-dialog header="{{commentHeader}}" [(visible)]="displayComment" [style]="{width: '50vw'}">
+        <textarea rows="5" cols="30" [(ngModel)]="displayedComment"
+                  pInputTextarea [autoResize]="true" style="margin-top: 1em; width:'100%'">
+        </textarea>
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-times" (click)="displayComment=false" label="CANCEL" styleClass="p-button-warning"></p-button>
+            <p-button icon="pi pi-check" (click)="saveAddComment($any($event))" label="SAVE" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog>
+</div>
+
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+<!-- Search Panel -->
+<div class="bbs_search_panel"  >
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Warehouse : </span>
+    <bbs-multiselect [options]="warehouses" 
+                    (shareCheckedList)="shareCheckedList($any($event))" 
+                    (shareCheckedCodeList)="shareCheckedCodeList($any($event))" 
+                    (shareIndividualCheckedList)="shareIndividualCheckedList($event)">
+    </bbs-multiselect>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier : </span>
+    <span style="padding-right: .5em;align-self: center;">
+        <input type="text"  [(ngModel)]="searchVendorCode" placeholder="  Enter a code or a description" 
+               style="margin-left: 10px;height: 35px;width: 200%;"/>     
+    </span>
+
+    <span class="pull-right" style="padding-right: 20px">
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+                [style]="{'height': '35px'}"
+                [disabled]="searchVendorCode == '' && selectedWarehouse.length === 0" 
+                style="margin-right: 15px"></button>
+        <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [style]="{'height': '35px'}" [disabled]="true"></button>
+    </span>
+    
+</div>
+
+<div class="bbs_search_sub_panel"  >
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Nb days UBD ending : </span>
+    <p-inputNumber inputId="integeronly" [(ngModel)]="searchUBDend" style="height: 35px;"
+                    [size]="3"  [max]="300" [maxlength]="3">
+    </p-inputNumber>
+
+</div>
+
+<!--  panel result -->
+<div  item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
+    <p-table #result [value]="searchResult" sortMode="multiple" 
+    [rows]="20"  [rowsPerPageOptions]="[20,50,100]"
+    [paginator]="true" [pageLinks]="3" 
+    [columns]="columnsResult"
+    selectionMode="single" [(selection)]="selectedElement" 
+    [resizableColumns]="true" columnResizeMode="fit"
+    [responsive]="true" [totalRecords]="searchResult.length"
+    [reorderableColumns]="true" scrollHeight="400px"
+    (onRowSelect)="onRowSelect($event)"
+    [autoLayout]="true" tableStyleClass="table-layout: auto;">
+    
+        <!-- FILTER -->
+        <ng-template pTemplate="caption">
+            <div class="table-header grid">
+                <div class="col-1">
+                    <span>
+                            <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                                *ngIf="searchResult.length>0"
+                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                            </button>
+                            <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                                disabled *ngIf="searchResult.length==0"
+                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                            </button>
+                    </span>
+                </div>
+                <div class="col-2">
+                    <span >
+                            <button type="button" pButton icon="pi pi-user" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="{{recapButtonTooltip}}" [escape]="false"
+                                disabled *ngIf="searchResult.length==0"
+                                label="Recap" (click)="exportExcelRecap()" style="float:left">
+                            </button>
+                            <button type="button" pButton icon="pi pi-user" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="{{recapButtonTooltip}}" [escape]="false"
+                                *ngIf="searchResult.length>0"
+                                label="Recap" (click)="exportExcelRecap()" style="float:left">
+                            </button>
+                    </span>
+                </div>
+                <div class="col-9" style="text-align: right;">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+        <!-- HEADER -->
+        <ng-template pTemplate="header">             
+            <tr style="background: darkslategrey; color: white" >
+                <th style="background-color:cadetblue; color: white" pReorderableColumn pResizableColumn 
+                    *ngFor="let col of columsCollapse;  let indice=index" [attr.colspan]="col.colspan">
+                    {{col.header}}
+                    <span style="padding-left: 1em" *ngIf="col.expand === 1" class="pi pi-plus-circle pull-right" (click)='expandColumn(indice)'> </span>
+                    <span style="padding-left: 1em" *ngIf="col.expand === -1" class="pi pi-minus-circle pull-right" (click)='expandColumn(indice)'></span>
+                </th>
+            </tr>
+            <tr style="background: lightyellow;">
+                <ng-container *ngFor="let col of columnsResult">
+                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.text-align]="col.align">
+                            {{col.header}}
+                    <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </ng-container>
+            </tr>
+
+            <ng-template pTemplate="caption">
+                <div class="table-header">
+                    <div class="pull-right p-input-icon-right FILTER_Right_Table">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Global Search" />
+                        </span>
+                    </div>
+                    <div >
+                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+                    </div>
+                </div>
+            </ng-template>
+        </ng-template>
+            
+        <!-- BODY -->
+        <ng-template pTemplate="body" let-rowData let-columns="columnsResult" let-globalIndice="rowIndex">
+            <tr [pSelectableRow]="rowData" >
+                <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column"  >
+                    <td *ngIf="col.display " class="ui-resizable-column" [style.text-align]="col.align" >
+                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'High'" class="badge bg-danger" pTooltip="{{col.tooltip}}" [escape]="false">{{rowData[col.field] }}</span>
+                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'Medium'" class="badge bg-warning" pTooltip="{{col.tooltip}}" [escape]="false">{{rowData[col.field] }}</span>
+                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'Low'" class="badge bg-light text-dark" pTooltip="{{col.tooltip}}" [escape]="false">{{rowData[col.field] }}</span>
+                        <div  *ngIf="col.field==='CLE retail' && rowData['Nb Promo'] > 0">
+                            <span>$ {{rowData[col.field]}}</span>
+                            <span class="badge bg-primary" style="margin-left:5px" pTooltip="Nb. coming promotions" tooltipPosition="right" [escape]="false">{{rowData['Nb Promo']}}</span>
+                        </div>
+                        <span *ngIf="col.field==='CLE retail' && rowData['Nb Promo'] == 0">$ {{rowData[col.field]}}</span>
+                        <!--span *ngIf="col.field==='CLE multiple'">{{rowData[col.field] | number : '1.0-0' }}</span-->
+                        <span *ngIf="col.field==='Case cost'">$ {{rowData[col.field] | number : '1.2-2'}}</span>
+                        <span *ngIf="col.field==='Unit cost'">$ {{rowData[col.field] | number : '1.2-2'}}</span>
+                        <span *ngIf="col.field==='Total cost'">$ {{rowData[col.field] | number : '1.2-2'}}</span>
+                        <span *ngIf="col.field==='Shipped per week'">{{rowData[col.field] | number : '1.2-2'}}</span>
+                        <span *ngIf="col.field==='Sold per week'">{{rowData[col.field] | number : '1.2-2'}}</span>
+                        <span *ngIf="col.field==='Projection case per week'">{{rowData[col.field] | number : '1.2-2'}}</span>
+                        <span *ngIf="col.field==='Hypothetical push' && rowData[col.field] > 0 ">{{rowData[col.field] | number : '1.2-2'}}</span>
+                        <span *ngIf="col.field==='Hypothetical push' && 0 >= rowData[col.field]">0</span>
+                        <span *ngIf="col.field==='UBD'">{{rowData[col.field] | date: 'MM/dd/yyyy'}}</span>
+                        <span *ngIf="col.field==='In Store'"  pTooltip="{{col.tooltip}}" [escape]="false">{{rowData[col.field] | number : '1.0-0'}} days</span>
+                        <span *ngIf="col.field==='Shipping unit' && rowData[col.field] !== 'Pck'" class="badge bg-warning">{{rowData[col.field] }}</span>      
+                        <span *ngIf="col.field==='Shipping unit' && rowData[col.field] === 'Pck'" >{{rowData[col.field] }}</span> 
+                        <span *ngIf="col.field==='SKU sold trend_1' && rowData[col.field]>=0" style="color: green"><i class="pi pi-arrow-up"></i>{{rowData[col.field] | percent : '1.2-2' }} <i style="font-size: smaller; color:black"> sold {{rowData['SKU sold week_1'] }} sku(s)</i> </span>    
+                        <span *ngIf="col.field==='SKU sold trend_1' && 0>rowData[col.field]" style="color: red"><i class="pi pi-arrow-down"></i>{{rowData[col.field] | percent : '1.2-2' }} <i style="font-size: smaller; color:black"> sold {{rowData['SKU sold week_1'] }} sku(s)</i> </span>  
+                        <span *ngIf="col.field==='SKU sold trend_2' && rowData[col.field]>=0" style="color: green"><i class="pi pi-arrow-up"></i>{{rowData[col.field] | percent : '1.2-2' }} <i style="font-size: smaller; color:black"> sold {{rowData['SKU sold week_2'] }} sku(s)</i> </span>    
+                        <span *ngIf="col.field==='SKU sold trend_2' && 0>rowData[col.field]" style="color: red"><i class="pi pi-arrow-down"></i>{{rowData[col.field] | percent : '1.2-2' }} <i style="font-size: smaller; color:black"> sold {{rowData['SKU sold week_2'] }} sku(s)</i> </span>  
+                        <span *ngIf="col.field==='SKU sold trend_3' && rowData[col.field]>=0 " style="color: green"><i class="pi pi-arrow-up"></i>{{rowData[col.field] | percent : '1.2-2' }} <i style="font-size: smaller; color:black"> sold {{rowData['SKU sold week_3'] }} sku(s)</i> </span>    
+                        <span *ngIf="col.field==='SKU sold trend_3' && 0>rowData[col.field]" style="color: red"><i class="pi pi-arrow-down"></i>{{rowData[col.field] | percent : '1.2-2' }} <i style="font-size: smaller; color:black"> sold {{rowData['SKU sold week_3'] }} sku(s)</i> </span>  
+                        <span *ngIf="col.field==='SKU sold trend_4' && rowData[col.field]>=0" style="color: green"><i class="pi pi-arrow-up"></i>{{rowData[col.field] | percent : '1.2-2' }} <i style="font-size: smaller; color:black"> sold {{rowData['SKU sold week_4'] }} sku(s)</i> </span>    
+                        <span *ngIf="col.field==='SKU sold trend_4' && 0>rowData[col.field]" style="color: red"><i class="pi pi-arrow-down"></i>{{rowData[col.field] | percent : '1.2-2' }} <i style="font-size: smaller; color:black"> sold {{rowData['SKU sold week_4'] }} sku(s)</i> </span>  
+                                  
+                        <span *ngIf="!col.format" pTooltip="{{col.tooltip}}" [escape]="false">{{rowData[col.field]}}</span>
+                        
+                    </td>
+                </ng-container>
+            </tr> 
+        </ng-template>
+    </p-table>
+    <i class="FOOTER_Table" >{{searchResult.length}} references</i>
+</div>
+
+<h3 style="background-color: cornflowerblue;color: white;border-radius: 5px;padding-left: 0.8em;margin-bottom: 1em;margin-top: 2em;">{{focussedItem}}</h3>
+<div class="grid">
+    <div class="col-8">  
+        <div class="grid">
+            <div >
+                <div *ngIf="selectedElement && focussedItemCinv" class=" card-body" >
+                    <div class=" chart-area">
+                        <chart-cmp *ngIf="chartSalesHistory.refreshChart  >=1"
+                            [chart_id]='chartSalesHistory.id' [chart_type]='chartSalesHistory.type'
+                            [axis_labels]='chartSalesHistory.axis_labels' [label_graph]='chartSalesHistory.label_graph'
+                            [data]='chartSalesHistory.data' [nbSetOfData]='chartSalesHistory.nbSetOfData'
+                            [borderColor]='chartSalesHistory.borderColor'
+                            [backgroundColor]='chartSalesHistory.backgroundColor'
+                            [stacked]= "false"
+                            [height]="'400px'"
+                            [width]="'100%'"
+                            [chart_unit]="chartSalesHistory.unit"
+                            [raw_data]="chartSalesHistory.data"
+                            [report_id]=""
+                            [options]="chartSalesHistory.options"
+                            [report_title]="chartSalesHistory.title"
+                            [report_content]="chartSalesHistory.content"
+                            [refreshChart]="chartSalesHistory.refreshChart">
+                        </chart-cmp>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div *ngIf="selectedElement && focussedItemCinv" class=" card-body" >
+                    <div class=" chart-area">
+                        <chart-cmp *ngIf="chartShipmentHistory.refreshChart  >=1"
+                            [chart_id]='chartShipmentHistory.id' [chart_type]='chartShipmentHistory.type'
+                            [axis_labels]='chartShipmentHistory.axis_labels' [label_graph]='chartShipmentHistory.label_graph'
+                            [data]='chartShipmentHistory.data' [nbSetOfData]='chartShipmentHistory.nbSetOfData'
+                            [borderColor]='chartShipmentHistory.borderColor'
+                            [backgroundColor]='chartShipmentHistory.backgroundColor'
+                            [stacked]= "false"
+                            [height]="'400px'"
+                            [width]="'100%'"
+                            [chart_unit]="chartShipmentHistory.unit"
+                            [raw_data]="chartShipmentHistory.data"
+                            [report_id]=""
+                            [options]="chartShipmentHistory.options"
+                            [report_title]="chartShipmentHistory.title"
+                            [report_content]="chartShipmentHistory.content"
+                            [refreshChart]="chartShipmentHistory.refreshChart">
+                        </chart-cmp>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+        <p-panel header="Comment tracker" [toggleable]="true" *ngIf="selectedElement && focussedItemCinv">
+            <ng-template pTemplate="icons">
+                    <button pButton class="p-panel-header-icon p-link" (click)="addComment($event)" 
+                            pTooltip="Add comment" tooltipPosition="top"
+                            style="margin-right: 0.5em;padding-left: 5%;background-color: coral;">
+                        <span class="pi pi-plus"></span>
+                    </button>
+                    <!-- Delete selected comment -->
+                    <button pButton class="p-panel-header-icon p-link" (click)="removeComment($event)" 
+                            pTooltip="Remove comment" tooltipPosition="top"
+                            *ngIf="this.focussedCommentId"
+                            style="margin-right: 0.5em;padding-left: 5%;background-color: coral;">
+                        <span class="pi pi-minus"></span>
+                    </button>
+                    <button pButton class="p-panel-header-icon p-link" (click)="removeComment($event)" 
+                            pTooltip="Remove comment" tooltipPosition="top"
+                            disabled *ngIf="!this.focussedCommentId"
+                            style="margin-right: 0.5em;padding-left: 5%;background-color: coral;">
+                        <span class="pi pi-minus"></span>
+                    </button>
+                    <!-- Edit comment -->
+                    <button pButton class="p-panel-header-icon p-link" (click)="removeComment($event)" 
+                            pTooltip="Edit the note" tooltipPosition="top"
+                            disabled *ngIf="!this.focussedCommentId"
+                            style="margin-right: 0.5em;padding-left: 5%;background-color: coral;">
+                        <span class="pi pi-pencil"></span>
+                    </button>
+                    <button pButton class="p-panel-header-icon p-link" (click)="editComment($event)" 
+                            pTooltip="Edit the note" tooltipPosition="top"
+                            *ngIf="this.focussedCommentId"
+                            style="margin-right: 0.5em;padding-left: 5%;background-color: coral;">
+                        <span class="pi pi-pencil"></span>
+                    </button>
+            </ng-template>
+
+
+            <p-table *ngIf="commentResult.length > 0" 
+                 #resultComment [value]="commentResult" sortMode="multiple" 
+                [rows]="5"  [rowsPerPageOptions]="[5,10,20]"
+                [paginator]="true" [pageLinks]="3" 
+                [columns]="columnsCommentResult"
+                selectionMode="single" [(selection)]="selectedComment" 
+                [resizableColumns]="true" columnResizeMode="fit"
+                [responsive]="true" [totalRecords]="commentResult.length"
+                [reorderableColumns]="true" 
+                (onRowSelect)="onCommentSelect($event)"
+                [autoLayout]="true" tableStyleClass="table-layout: auto;">
+                <!-- HEADER -->
+                <ng-template pTemplate="header">             
+                    <tr style="background: lightyellow;">
+                        <ng-container *ngFor="let col of columnsCommentResult">
+                            <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.text-align]="col.align">
+                                    {{col.header}}
+                            <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                    
+                <!-- BODY -->
+                <ng-template pTemplate="body" let-rowDataComment let-columns="columnsCommentResult" let-globalIndiceComment="rowIndex">
+                    <tr [pSelectableRow]="rowDataComment" >
+                        <ng-container *ngFor="let colComment of columnsCommentResult; let indice=index" class="ui-resizable-column"  >
+                            <td *ngIf="colComment.display && rowDataComment['UBDACTION'] != 1" class="ui-resizable-column" [style.text-align]="colComment.align" >
+                                <span *ngIf="colComment.field==='UBDDATE'"  pTooltip="{{colComment.tooltip}}" [escape]="false">{{rowDataComment[colComment.field] | date:'short' }}</span>
+                                <span *ngIf="!colComment.format" pTooltip="{{colComment.tooltip}}" [escape]="false">{{rowDataComment[colComment.field]}}</span>
+                            </td>
+                        </ng-container>
+                    </tr> 
+                </ng-template>
+            </p-table>
+            <i class="FOOTER_Table" >{{commentResult.length}} references</i>
+
+            <span *mgIf="commentResult.length ===0">No comment</span>
+        </p-panel>
+    </div>
+</div>
+
+
+
+
+
+

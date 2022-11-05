@@ -1,2 +1,2 @@
-//export * from './multiselect/bbs.multiselect.component';
 export * from './multiselect/bbs.multiselect.module';
+export * from './alert/alert.module';

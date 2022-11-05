@@ -1,0 +1,124 @@
+<!-- Preset Configuration-->
+<div class="bbs_search_panel"  >
+    <span class="pull-right" style="padding-right: 20px; ">
+        <button type="submit" pButton  icon="fas fa-save" label="Save changes"
+                [disabled]="true" 
+                [style]="{'height': '35px'}">
+        </button>
+    </span>
+</div>
+<br>
+
+  <!-- Panel resul -->
+    <!-- Result panel of the resarch --> 
+    <!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
+
+<div class="ui-g">
+    <div class="ui-g-8">
+        <div  item-width="400px" table-layout="fixed">
+            <p-table #result [value]="searchResult" sortMode="multiple" 
+            [rows]="50"  [rowsPerPageOptions]="[50,100,200]"
+            [paginator]="true" [pageLinks]="3" 
+            [columns]="columnsResult"
+            selectionMode="single" [(selection)]="selectedElement" 
+            [resizableColumns]="true" columnResizeMode="expand"
+            [responsive]="true" 
+            [reorderableColumns]="true" scrollHeight="400px"
+            [globalFilterFields]="['MERCH_ID','DEPT_ID', 'SDEPT_ID', 'CAT_ID', 'SCAT_ID']"
+            [autoLayout]="true" tableStyleClass="table-layout: auto;">
+            
+            <!-- FILTER -->
+            <ng-template pTemplate="caption">
+                <div class="table-header grid">
+                    <div class="col-3">
+                        <span>
+                            <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                            </button>
+                        </span>
+                    </div>
+                    <div class="col-9" style="text-align: right;">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        </span>
+                    </div>
+                </div>
+            </ng-template>
+            <!-- HEADER -->
+                <ng-template pTemplate="header" >            
+                    <tr>
+                        <th *ngFor="let col of columnsResult" [pSortableColumn]="col.field" 
+                                    [ngStyle]="{'width': col.width}"
+                                    pReorderableColumn pResizableColumn>
+                                {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+            <!-- BODY -->
+                <ng-template pTemplate="body" 
+                    let-rowData let-columns="columnsResult"  let-index="rowIndex" > 
+                    <tr [pSelectableRow]="rowData">
+                        <td *ngFor="let col of columnsResult" class="ui-resizable-column">
+                                {{rowData[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <i class="FOOTER_Table" >{{searchResult.length}} references</i>
+        </div>
+    </div>
+    <div class="ui-g-4">
+
+        <div  item-width="400px" table-layout="fixed" >
+            <p-table #resultStore [value]="searchResultStore" sortMode="multiple" 
+            [rows]="50"  [rowsPerPageOptions]="[50,100,200]"
+            [paginator]="true" [pageLinks]="3" 
+            [columns]="columnsResultStore"
+            selectionMode="single" 
+            [resizableColumns]="true" columnResizeMode="expand"
+            [responsive]="true" 
+            [reorderableColumns]="true" scrollHeight="400px"
+            [autoLayout]="true" tableStyleClass="table-layout: auto;">
+            
+            <!-- FILTER -->
+            <ng-template pTemplate="caption">
+                <div class="table-header">
+                    <span class="p-input-icon-right" style="padding-left: 70%">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="resultStore.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    </span>
+                    <span style="float: left">
+                    <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            label="CSV" (click)="resultStore.exportCSV()" style="float:left"></button>
+                    </span>
+                </div>
+            </ng-template>
+            <!-- HEADER -->
+                <ng-template pTemplate="header" >            
+                    <tr>
+                        <th *ngFor="let col of columnsResultStore" [pSortableColumn]="col.field" 
+                                    [ngStyle]="{'width': col.width}"
+                                    pReorderableColumn pResizableColumn>
+                                {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+            <!-- BODY -->
+                <ng-template pTemplate="body" 
+                    let-rowData let-columns="columnsResultStore"  let-index="rowIndex" > 
+                    <tr [pSelectableRow]="rowData" >
+                        <td *ngFor="let col of columnsResultStore" class="ui-resizable-column">
+                                {{rowData[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <i class="FOOTER_Table" >{{searchResultStore.length}} references</i>
+        </div>
+    </div>
+</div>    

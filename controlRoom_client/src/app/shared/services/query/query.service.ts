@@ -1,6 +1,4 @@
-import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
-import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
-import {Router} from '@angular/router';
+import { Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import {DatePipe} from '@angular/common';
@@ -21,7 +19,6 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
 export class QueryService {
 
   private baseQueryUrl: string = '/api/request/';
-  private executeQueryUrl: string = '/api/executeSQL/';
   
   private request: string;
   private params: HttpParams;
@@ -40,41 +37,17 @@ export class QueryService {
     let headersSearch = new HttpHeaders();
     let options = new HttpHeaders();
     this.params= new HttpParams();
-    this.params = this.params.append('PARAM',param);
-    this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+    if (param) {
+      this.params = this.params.append('PARAM',param);
+    }
+    this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
 
     headersSearch = headersSearch.set('QUERY_ID', queryId);
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-    return this.http.get(this.request, this.params, headersSearch).map(response => {
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
             return data;
-    });
+    }));
   }
-
-    /**
-   * Get Dashboard data using Smart data extract with the dashboard Id
-   * @param queryId 
-   */
-     getQuerySQLResult(querySQL: string, commitParam:number, param?: string) {
-      this.request = this.executeQueryUrl;
-      let headersSearch = new HttpHeaders();
-      let options = new HttpHeaders();
-      this.params= new HttpParams();
-      //this.params = this.params.set('PARAM',param);
-      this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
-
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-      
-      let body = {
-                    query: querySQL,
-                    commit: commitParam
-                  };
-      return this.http.post(this.request, this.params, headersSearch, body).map(response => {
-        let data = <any> response;
-        return data;
-      });
-    }
 }
-

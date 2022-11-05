@@ -1,30 +1,26 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { ScreenService } from '../../services/'
 
 @Component({
     selector: 'app-page-header',
     templateUrl: './page-header.component.html',
-    styleUrls: ['./page-header.component.scss', '../../../app.component.scss'],
-    providers: [ScreenService]
+    styleUrls: ['./page-header.component.scss', '../../../app.component.scss']
 })
 export class PageHeaderComponent implements OnInit {
     @Input() screenID: string;
     @Input() heading: string;
     @Input() icon: string;
-    @Input() headcolor: string = '#e9ecef';
-    @Input() linkcolor: string = 'darkslategray';
 
-    screenInfo;
+    screenInfo: any;
     constructor(private _screenInfo: ScreenService) {
+        console.log('Loading header page', this._screenInfo);
     }
 
     ngOnInit() {
+        console.log('ngOninit header page', this._screenInfo);
         this._screenInfo.getScreenInfo(this.screenID).subscribe(
             data  => {  
-                if(data)  {
-                    if (data.length > 0) { this.screenInfo = data[0].SCREENINFO;  }
-                }
+                if (data.length > 0) { this.screenInfo = data[0].SCREENINFO;  }
             }
         );
     }

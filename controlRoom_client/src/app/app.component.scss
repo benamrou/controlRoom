@@ -1,30 +1,38 @@
-
+$button_color: #0081c2;
+$button_background: white;
 /*******************************************/
 /* Override Prime-ng DATATABLE CSS         */
 /*******************************************/
 
+:host ::ng-deep .p-button{
+    vertical-align: middle;
+    line-height: normal;
+}
 :host ::ng-deep .CSV_Button {
-    color: white; 
-    background: #255; 
     border-radius:20px;
     border:0; 
     font-size:xx-small;
 }
 
-:host ::ng-deep .CSV_Button:hover {
-    background: #2399e5; 
+.FILTER_Right_Table {
+    float: right;
+    margin-top: 13px;
+    width: 16%;
+}
+.FILTER_Button_Table {
+    width: 100%;
 }
 
 :host ::ng-deep .TABLE_TOP_Button {
     color: white; 
-    background: #255; 
+    background: $button_background; 
     border-radius:20px;
     border:0; 
     font-size:xx-small;
 }
 
 :host ::ng-deep .TABLE_TOP_Button:hover {
-    background: #2399e5; 
+    background: $button_color; 
 }
 
 
@@ -53,93 +61,6 @@
     background: orange; 
 }
 
-//:host ::ng-deep .ui-datatable-resizable {
-    //height: -webkit-fill-available;
-//}
-
-:host ::ng-deep .ui-lightbox-content.ui-lightbox-loading + a { display:none; } 
-
-// Notification - Dialog
-:host ::ng-deep .ui-dialog.ui-widget .ui-dialog-titlebar {
-    padding: 0.2em 1.5em;
-}
-:host ::ng-deep .ui-dialog.ui-widget .ui-dialog-content {
-    padding: 1em 0.5em 1em 2em;
-    font-size: larger;
-}
-
-:host ::ng-deep .ui-dialog.ui-widget .ui-dialog-titlebar .ui-dialog-title {
-    font-size: 1em;
-}
-
-:host ::ng-deep .ui-widget-content {
-    border: none;
-    border-top: 1px solid #D5D5D5;
-}
-
-// Input no outline
-:host ::ng-deep input, input:valid {
-    outline: none;
-    border-radius: 10px;
-}
-
-// New TABLE PRIME NG 05/2019
-
-:host ::ng-deep  p-table > .ui-table table {
-    font-weight: 100;
-    font-size: x-small;
-}
-
-:host ::ng-deep  p-table > div > .ui-widget-header {
-    background: white;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    border-bottom: 1px solid lightgray;
-}
-
-
-:host ::ng-deep th.ui-state-highlight {
-    color: red;
-    background: white;
-    border:0.5em solid; 
-    //outline-color: white;
-}
-
-:host ::ng-deep  p-table > .ui-table tbody > tr.ui-state-highlight {
-    color: red !important;
-    background: yellow !important;
-    border:0.5em solid; 
-    //utline-color: white;
-}
-
-
-:host ::ng-deep  p-table > .ui-table tbody > tr {
-    border: 1px solid lightgray;
-    border-right-color: white;
-    border-left-color: white;
-   // outline-color: white;
-}
-
-:host ::ng-deep p-table > .ui-table .ui-paginator-bottom {
-    background: white;
-    border: none;
-}
-
-:host ::ng-deep .ui-dropdown .ui-dropdown-trigger .fa {
-    margin-top:-0.4em;
-    margin-left: -0.25em;
-}
-
-:host ::ng-deep .ui-button {
-    background: white;
-    color: #2399e5;
-    border: 1px solid #2399e5;
-}
-
-:host ::ng-deep .ui-toast {
-    width: 40em;
-}
 
 /* BB SYMPHONY CLASS */
 .bbs_search_panel {
@@ -147,6 +68,7 @@
     width: 100%;
     height: 65px;
     line-height: 60px;
+    display: flex;
 }
 .bbs_search_sub_panel {
     background: #F5F5F5;
@@ -156,7 +78,8 @@
 }
 
 .bbs_link_menu {
-    border-radius: 1.1em 0 0 1.1em !important
+    border-radius: 1.1em 0 0 1.1em !important;
+    text-decoration: none;
 }
 
 .bbs-3d {
@@ -172,4 +95,222 @@
 .bbs-keywords-scenario {
     font-weight: bold;
     color: orangered;
+}
+
+* {
+    -webkit-transition: margin-left 0.2s ease-in-out;
+    -moz-transition: margin-left 0.2s ease-in-out;
+    -ms-transition: margin-left 0.2s ease-in-out;
+    -o-transition: margin-left 0.2s ease-in-out;
+    transition: margin-left 0.2s ease-in-out;
+}
+.main-container {
+    margin-top: 56px;
+    margin-left: 235px;
+    padding: 15px;
+    -ms-overflow-x: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    position: relative;
+    overflow: initial;
+}
+.collapsed {
+    margin-left: 100px;
+}
+@media screen and (max-width: 992px) {
+    .main-container {
+        margin-left: 0px !important;
+    }
+}
+@media print {
+    .main-container {
+        margin-top: 0px !important;
+        margin-left: 0px !important;
+    }
+}
+
+.pull-right {
+    margin-left: auto;
+}
+
+.FOOTER_Table{
+    float:right;
+    font-size:smaller;
+}
+
+/* P-FIELDSET invalid display due to bootstrap reboot overwritting Primeng Legend class */
+legend {
+    display: block;
+    padding-inline-start: 2px;
+    padding-inline-end: 2px;
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+    float: unset;
+    padding: unset;
+    margin-bottom: unset;
+    font-size: unset;
+    line-height: unset;
+    width: 100%;
+    background-color: #0081c2!important;
+
+}
+
+.p-fieldset-legend>a, .p-fieldset-legend>span {
+    display: flex;
+    align-items: center;
+    justify-content: left !important;
+    color: $button_background !important;
+}
+
+.p-ripple {
+    overflow: hidden;
+    position: relative;
+    text-decoration: unset !important;
+}
+
+.p-steps .p-steps-item.p-highlight .p-steps-number {
+    background-color: $button_color !important;
+    color: $button_background !important;
+}
+
+.p-button {
+    vertical-align: middle;
+    line-height: normal;
+    background-color: $button_background;
+    color: $button_color !important;
+    border: 1px solid $button_color !important;
+}
+
+.p-button:hover {
+    background-color: $button_color;
+    color: $button_background !important;
+}
+
+.CSV_Reverse_Button {
+    background-color: $button_color;
+    color: $button_background !important;
+}
+
+.p-CSV_Reverse_Button:hover {
+    background-color: $button_background;
+    color: $button_color !important;
+}
+
+:host ::ng-deep .p-panel-toggleable .p-toggleable-content {
+    overflow: hidden !important;
+  }
+  
+  .p-panel-toggleable .p-toggleable-content {
+    overflow: hidden !important;
+  }
+
+  .p-datatable {
+    font-size: smaller !important;
+    line-height: 1px; //smaller line
+  }
+
+  .p-datatable .p-datatable-header {
+    background: none;
+    color: #343a40;
+    border-bottom: 1px solid #dee2e6;
+    border-width: 1px 0 1px 0;
+    padding-top: 1rem;
+    font-weight: 700;
+    padding-bottom: 3rem;
+    padding-left: 0em;
+    padding-right: 0em;
+    border-top: 0px solid;
+}
+
+// Reshape Calendar - Smaller
+.p-datepicker .p-datepicker-header .p-datepicker-title {
+    line-height: unset;
+}
+.p-datepicker .p-datepicker-header {
+    padding: 0.1rem;
+    color: #495057;
+    background: #ffffff;
+    font-weight: 600;
+    font-size: small;
+    margin: 0;
+    border-bottom: 1px solid #dee2e6;
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+}
+.p-datepicker table {
+    font-size: small;
+    margin: unset;
+}
+.p-datepicker table td {
+    padding: unset;
+}
+.p-datepicker table tr {
+    padding: unset;
+    line-height: 2px;
+}
+
+.p-button {
+    font-size: smaller !important;
+}
+
+.p-dropdown .p-dropdown-label {
+    background: transparent;
+    border: 0 none;
+    margin-top: 0.5em;
+}
+
+input, input:valid {
+    outline: none;
+    border-radius: 10px;
+}
+// Coloring header
+.p-panel.p-panel-toggleable .p-panel-header {
+    padding: 0.75rem 1.25rem;
+    background-color: #8fbc8f!important;
+    color: white;
+}
+
+.p-treetable {
+    font-size: smaller;
+}
+
+.p-dialog-draggable .p-dialog-header {
+    background-color: #8fbc8f!important;
+}
+thead, tbody, tfoot, tr, td, th {
+    line-height: 1em;
+}
+
+.p-datatable .p-datatable-header {
+    padding-bottom: 1em;
+}
+
+
+.p-tooltip {
+background-color: lightgoldenrodyellow;
+border-radius:10px;
+color:black;
+font-weight: lighter;
+font-size:  smaller;
+}
+
+
+.p-dialog .p-dialog-header {
+    background: lightblue;
+    height: 20px;
+  }
+  
+  .p-confirm-dialog .p-dialog-content {
+    padding-top: 1em;
+  }
+
+  .p-dialog .p-dialog-content {
+    padding-top: 1em;
+}
+
+.p-dialog .p-dialog-header .p-dialog-title {
+    font-size: medium;
+    color: white;
 }

@@ -1,22 +1,18 @@
-import { Component,  ChangeDetectorRef } from '@angular/core';
-import { ViewEncapsulation, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ViewEncapsulation, Input, OnChanges, SimpleChanges, Component,  ChangeDetectorRef } from '@angular/core';
+import { Message } from 'primeng/api';
 
-import { Message } from '../../components';
-
-import {NgModule } from '@angular/core';
-import Chart from '../../../../../node_modules/chart.js/';
-
+import { Chart, registerables } from 'chart.js';
 import { ExportService} from '../../services/inout/export.service';
 import 'chartjs-plugin-zoom'; // Extension to enable zoom in chartjs
 
 
 export class ICRChart {    
-    id: string;    // Chart Id e.g. 'chart1' will have a line chart and a bar chart 
+    id!: string;    // Chart Id e.g. 'chart1' will have a line chart and a bar chart 
     type: any[] = [];   // Chart type e.g. ['line','bar'] will have a line chart and a bar chart 
     axis_labels: any[] = [];  // Label on the X axis
     label_graph: any [] = []; // Legend for the data by dataset/graph
     data: any [] = [];        // datasets by graph
-    nbSetOfData: number; // Number of set of data 
+    nbSetOfData!: number; // Number of set of data 
     borderColor: any [] = []; // Color array for the graph e.g. ['green', 'red']
     colorTemplate: any[] = ['green','red', 'bleu', 'purple', 'orange', 'black',
                             '#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6', 
@@ -31,64 +27,71 @@ export class ICRChart {
                             '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF' ];
     refreshChart: number = 0; // Switch ready variable - to notify for change
     unit: string = '';
+    title: string = '';
+    content: string = '';
+    chartConfig: any;
+    options: any;
+    backgroundColor: any;
 
-    public getColorTemplate (i) {
+    public getColorTemplate (i: any) {
       return this.colorTemplate[i];
     }
 }
 
 @Component({
-	moduleId: module.id,
+	
     selector: 'chart-cmp',
     templateUrl: './chart.component.html',
-    providers: [ExportService],
     styleUrls: ['./chart.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
 export class ChartComponent implements OnChanges {
 
     //@ViewChild('fc') fc: FullCalendar;
-    @Input() chart_id;    // Chart Id e.g. 'chart1' will have a line chart and a bar chart 
-    @Input() chart_type;   // Chart type e.g. ['line','bar'] will have a line chart and a bar chart 
-    @Input() axis_labels;  // Label on the X axis ['Monday,'Tuesaday']
-    @Input() label_graph; // Legend for the data by dataset/graph ['Curve']
-    @Input() data;        // Multi-datasets by graph [[1,2,3],[4,5,6]]
-    @Input() nbSetOfData; // Number of set of data 2
-    @Input() borderColor; // Color array for the graph e.g. ['green', 'red']
+    @Input() chart_id!: string;    // Chart Id e.g. 'chart1' will have a line chart and a bar chart 
+    @Input() chart_type!: any[];   // Chart type e.g. ['line','bar'] will have a line chart and a bar chart 
+    @Input() axis_labels: any;  // Label on the X axis ['Monday,'Tuesaday']
+    @Input() label_graph!: any[]; // Legend for the data by dataset/graph ['Curve']
+    @Input() data : any[];        // Multi-datasets by graph [[1,2,3],[4,5,6]]
+    @Input() nbSetOfData!: number; // Number of set of data 2
+    @Input() borderColor!: any[]; // Color array for the graph e.g. ['green', 'red']
     @Input() stacked = false;     // Used for bar chart if data to be stacked
     @Input() height = '400px';     // Used for bar chart if data to be stacked
     @Input() width = '100%';     // Used for bar chart if data to be stacked.
     @Input() refreshChart = 0; // Switch refreshChart variable - to notify for change
-    @Input() chart_unit = ''; // chart unit allow to have % unit or regular unit label
+    @Input() chart_unit: any = ''; // chart unit allow to have % unit or regular unit label
 
-    @Input() report_id; // Used for export to display in EXCEL export 
-    @Input() report_title; // Used for export to display in EXCEL export 
-    @Input() report_content; // Used for export to display in EXCEL export 
-    @Input() raw_data; // Used for export to display in EXCEL export 
+    @Input() report_id: any; // Used for export to display in EXCEL export 
+    @Input() report_title: any; // Used for export to display in EXCEL export 
+    @Input() report_content: any; // Used for export to display in EXCEL export 
+    @Input() raw_data: any; // Used for export to display in EXCEL export 
+    @Input() options: any; 
+    @Input() backgroundColor: any;
 
     
-    msgs: Message[] = [];
+    public msgs: Message[] = [];
 
-    canvasDocument;
-    canvasChart : any;
-    chartConfig;
-    ctxChart;
-    chartData; 
-    downloadFile;
+    public canvasDocument: any;
+    public canvasChart : any;
+    public chartConfig: any;
+    public ctxChart: any;
+    public chartData!: Chart; 
+    public downloadFile: any;
 
-    gradientStroke:  any;
-    gradientBarChartConfiguration: any;
-    gradientChartOptionsConfigurationWithTooltipRed: any;
+    public gradientStroke:  any;
+    public gradientBarChartConfiguration: any;
+    public  gradientChartOptionsConfigurationWithTooltipRed: any;
 
-    PieChart; BarChart; LineChart;
+    public PieChart: any; public BarChart: any; public LineChart: any;
 
-    showCharts: boolean = true; //Toogle on charts lione display
+    public showCharts: boolean = true; //Toogle on charts lione display
 
     constructor(private _changeDetector: ChangeDetectorRef, private _exportService: ExportService) {
+      Chart.register(...registerables);
     }
 
 
-    handleRetailClick(e) {
+    handleRetailClick(e: any) {
     }
 
     ngAfterViewInit () {
@@ -98,7 +101,7 @@ export class ChartComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes['refreshChart']) {
-          if(changes.refreshChart.currentValue !== changes.refreshChart.previousValue) { 
+          if(changes['refreshChart'].currentValue !== changes['refreshChart'].previousValue) { 
               this.initializeData();
               this.refresh();
           }
@@ -119,7 +122,7 @@ export class ChartComponent implements OnChanges {
         },
 
         tooltips: {
-          callbacks:  {label: function(tooltipItem, data) {
+          callbacks:  {label: function(tooltipItem: { datasetIndex: string | number; yLabel: number; }, data: { datasets: { [x: string]: { label: string; }; }; unit: number; }) {
                         var label = data.datasets[tooltipItem.datasetIndex].label || '';
                         if (label) { label += ': '; }
                         label += Math.round(tooltipItem.yLabel) + data.unit;
@@ -135,7 +138,7 @@ export class ChartComponent implements OnChanges {
           position: "nearest"
         },
         scales: {
-          yAxes: [{
+          yAxes: {
             barPercentage: 1.6,
             gridLines: {
               drawBorder: false,
@@ -149,9 +152,9 @@ export class ChartComponent implements OnChanges {
               padding: 20,
               fontColor: "#9a9a9a"
             }
-          }],
+          },
 
-          xAxes: [{
+          xAxes: {
             barPercentage: 1.6,
             gridLines: {
               drawBorder: false,
@@ -162,12 +165,10 @@ export class ChartComponent implements OnChanges {
               padding: 20,
               fontColor: "#9a9a9a"
             }
-          }]
+          }
         }
       }
     
-  
-
       this.chartConfig = {
           type: this.chart_type[0],
           options: this.gradientChartOptionsConfigurationWithTooltipRed,
@@ -177,7 +178,20 @@ export class ChartComponent implements OnChanges {
               datasets: []
           }
       };
-            
+
+      if (typeof this.options != 'undefined' && this.options) {
+        this.chartConfig.options = this.options;
+      }
+       
+      let backgroundColorApplied;
+
+      if (typeof this.backgroundColor != 'undefined' && this.backgroundColor) {
+        backgroundColorApplied = [...this.backgroundColor];
+      }
+      else {
+        backgroundColorApplied = [...'#f5f5f5'];
+      }
+
       for (let i =0; i < this.nbSetOfData; i ++) { 
           this.chartConfig.data.datasets.push({
               label: this.label_graph[i],
@@ -185,6 +199,7 @@ export class ChartComponent implements OnChanges {
               fill: false,
               //backgroundColor: this.gradientStroke,
               borderColor: this.borderColor[i],
+              backgroundColor: backgroundColorApplied[i],
               borderWidth: 2,
               borderDash: [],
               borderDashOffset: 0.0,
@@ -209,7 +224,9 @@ export class ChartComponent implements OnChanges {
       let canvas = <HTMLCanvasElement> document.getElementById(this.chart_id);
       if (canvas) {
         let ctx = canvas.getContext('2d');
-        this.chartData = new Chart(ctx, this.chartConfig);
+        if (ctx) {
+          this.chartData = new Chart(ctx, this.chartConfig);
+        }
       }
 
     }

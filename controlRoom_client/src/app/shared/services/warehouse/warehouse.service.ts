@@ -1,15 +1,10 @@
-import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
-import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
-import {Router} from '@angular/router';
+import { Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import {DatePipe} from '@angular/common';
-
-import {Observable} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpParams, HttpHeaders } from '@angular/common/http';
 
-  
 
 @Injectable()
 export class WarehouseService {

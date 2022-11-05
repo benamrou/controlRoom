@@ -15,7 +15,7 @@
                         <p-header>
                             <b>Item Card</b>
                         </p-header>
-                        <p-dataList [value]="itemInfos.lvs" [paginator]="true" [rows]="2">
+                        <p-dataList value="itemInfos.lvs" [paginator]="true" [rows]="2">
                             <ng-template let-itemInfo pTemplate="item">
                                 <div class="ui-grid ui-grid-responsive ui-fluid" style="font-size:small;">
                                     <div class="ui-grid-row" [ngStyle]="{'background-color': getStatusColor(itemInfo.status, itemInfo.mainlv),
@@ -81,7 +81,7 @@
                         <p-header>
                             Purchasing view
                         </p-header>
-                        <p-dataList [value]="itemPurchasingInfos.costs" [paginator]="true" [rows]="3">
+                        <p-dataList value="itemPurchasingInfos.costs" [paginator]="true" [rows]="3">
                             <ng-template let-itemPurchasingInfo pTemplate="item">
                                 <div class="ui-grid ui-grid-responsive ui-fluid" style="font-size:small;">
                                     <div class="ui-grid-row" [ngStyle]="{'background-color': itemPurchasingInfo.mainsupplier==1? mainColor:'white'}">
@@ -97,10 +97,10 @@
                                                     <div>Site: {{itemPurchasingInfo.site}} </div>
                                                 </div>
                                                 <div class="ui-grid-row">
-                                                    <div>Cost Price: {{itemPurchasingInfo.cost | currency:'USD': 2}} / {{itemPurchasingInfo.uapp}}</div>
+                                                    <div>Cost Price: {{itemPurchasingInfo.cost | currency:'USD': '2'}} / {{itemPurchasingInfo.uapp}}</div>
                                                 </div>
                                                 <div class="ui-grid-row" *ngFor="let discount of itemPurchasingInfo.discounts" >
-                                                    <div *ngIf="discount.amount > 0">Discount: ({{discount.type}}) - {{discount.unit == 'C' ? (discount.amount | currency:'USD':2) + '/ ' + discount.uapp  :  discount.amount + discount.unit}} </div>
+                                                    <div *ngIf="discount.amount > 0">Discount: ({{discount.type}}) - {{discount.unit == 'C' ? (discount.amount | currency:'USD':'2') + '/ ' + discount.uapp  :  discount.amount + discount.unit}} </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -129,9 +129,9 @@
                         </p-header>
 
                         <p-fullCalendar #fc [events]="itemRetailInfos.retails" [header]="headersRetail" [eventLimit]="4" [editable]="true"
-                            (onEventClick)="handleRetailClick($event)" >
+                            (onEventClick)="handleRetailClick($any($event))" >
                         </p-fullCalendar>
-                        <p-dialog header="Retail Details" [(visible)]="dialogRetailVisible" [responsive]="true" showEffect="fade" [modal]="false" [contentStyle]="{'overflow':'visible'}"
+                        <p-dialog header="Retail Details" [visible]="dialogRetailVisible" [responsive]="true" showEffect="fade" [modal]="false" [contentStyle]="{'overflow':'visible'}"
                                 [style]="{'overflow':'visible'}" [resizable]="true" [width]="500">
                                 <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="retailSelected">
                                     <div class="ui-grid-row">
@@ -200,18 +200,19 @@
                 [rows]="5"  [rowsPerPageOptions]="[5,10,50,100]"
                 [paginator]="true" [pageLinks]="3" 
                 [columns]="columnsSubstitution"
-                selectionMode="single" [(selection)]="selectedElement" 
+                selectionMode="single" 
                 [resizableColumns]="true" columnResizeMode="expand"
                 [responsive]="true" [totalRecords]="itemSubstitutionInfos.details.length"
                 [reorderableColumns]="true" scrollHeight="400px"
-                [globalFilter]="gb" [autoLayout]="true"tableStyleClass="table-layout: auto;">
+                [autoLayout]="true"tableStyleClass="table-layout: auto;">
+                <!-- [globalFilter]="gb"  -->
             
             <!-- HEADER -->
                 <ng-template pTemplate="header">            
                     <tr>
-                        <th *ngFor="let col of columnsSubstitution" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                        <th *ngFor="let col of columnsSubstitution" pSortableColumn="col.field" pReorderableColumn pResizableColumn>
                             {{col.header}}
-                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                            <p-sortIcon field="col.field"></p-sortIcon>
                         </th>
                     </tr>
                 </ng-template>
@@ -242,18 +243,19 @@
                     [rows]="5"  [rowsPerPageOptions]="[5,10,50,100]"
                     [paginator]="true" [pageLinks]="3" 
                     [columns]="columnsInventory"
-                    selectionMode="single" [(selection)]="selectedElement" 
+                    selectionMode="single" 
                     [resizableColumns]="true" columnResizeMode="expand"
                     [responsive]="true" [totalRecords]="itemInventoryInfos.details.length"
                     [reorderableColumns]="true" scrollHeight="400px"
-                    [globalFilter]="gb" [autoLayout]="true"tableStyleClass="table-layout: auto;">
+                    [autoLayout]="true"tableStyleClass="table-layout: auto;">
+                    <!-- [globalFilter]="gb"  -->
                     
                     <!-- HEADER -->
                         <ng-template pTemplate="header">            
                             <tr>
-                                <th *ngFor="let col of columnsInventory" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                                <th *ngFor="let col of columnsInventory" pSortableColumn="col.field" pReorderableColumn pResizableColumn>
                                     {{col.header}}
-                                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                                    <p-sortIcon field="col.field"></p-sortIcon>
                                 </th>
                             </tr>
                         </ng-template>

@@ -1,13 +1,6 @@
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/share';
-import 'rxjs/add/operator/take';
-import 'rxjs/add/operator/skip';
+import { filter, from, map, Observable, share, skip, switchMap, take, takeUntil, tap } from 'rxjs';
+import { fromEvent } from 'rxjs';
+import { merge } from 'rxjs';
 
 import { DraggableEvent } from './DraggableEvent';
 import { utils } from './utils';
@@ -22,15 +15,15 @@ export class Draggable {
     // A simple requestAnimationFrame polyfill
     private requestAnimationFrame: Function;
     private cancelAnimationFrame: Function;
-    private mousemove: Observable<{} | Event> = Observable.merge(
-        Observable.fromEvent(document, 'mousemove'),
-        Observable.fromEvent(document, 'touchmove', {passive: true})
-    ).share();
-    private mouseup: Observable<{} | Event> = Observable.merge(
-        Observable.fromEvent(document, 'mouseup'),
-        Observable.fromEvent(document, 'touchend'),
-        Observable.fromEvent(document, 'touchcancel')
-    ).share();
+    private mousemove: Observable<{} | Event> = merge(
+        fromEvent(document, 'mousemove'),
+        fromEvent(document, 'touchmove', {passive: true})
+    ).pipe(share());
+    private mouseup: Observable<{} | Event> = merge(
+        fromEvent(document, 'mouseup'),
+        fromEvent(document, 'touchend'),
+        fromEvent(document, 'touchcancel')
+     ).pipe(share());
     private mousedown: Observable<{} | Event>;
     private config = {
         handlerClass: null,
@@ -43,14 +36,14 @@ export class Draggable {
 
     constructor(element: Element, config = {}) {
         this.element = element;
-        this.mousedown = Observable.merge(
-            Observable.fromEvent(element, 'mousedown'),
-            Observable.fromEvent(element, 'touchstart')
-        ).share();
+        this.mousedown = merge(
+            fromEvent(element, 'mousedown'),
+            fromEvent(element, 'touchstart')
+        ).pipe(share());
 
         this.config = { ...this.config, ...config };
 
-        this.dragStart = this.createDragStartObservable().share();
+        this.dragStart = this.createDragStartObservable().pipe(share());
         this.dragMove = this.createDragMoveObservable(this.dragStart);
         this.dragStop = this.createDragStopObservable(this.dragStart);
 
@@ -62,52 +55,52 @@ export class Draggable {
 
     private createDragStartObservable(): Observable<DraggableEvent> {
         return this.mousedown
-            .map(md => new DraggableEvent(md))
-            .filter((event: DraggableEvent) => this.isDragingByHandler(event))
-            .do(e => {
+            .pipe(map(md => new DraggableEvent(md)))
+            .pipe(filter((event: DraggableEvent) => this.isDragingByHandler(event)))
+            .pipe(tap(e => {
                 e.pauseEvent();
                 if (document.activeElement) {
                     (<any>document.activeElement).blur();
                 }
                 // prevents rendering performance issues while dragging item with selection inside
                 utils.clearSelection();
-            })
-            .switchMap((startEvent: DraggableEvent) => {
+            }))
+            .pipe(switchMap((startEvent: DraggableEvent) => {
 
                 return this.mousemove
-                    .map(mm => new DraggableEvent(mm))
-                    .filter((moveEvent: DraggableEvent) => this.inRange(startEvent, moveEvent, 5))
-                    .map(() => startEvent)
-                    .takeUntil(this.mouseup)
-                    .take(1);
-            });
+                    .pipe(map(mm => new DraggableEvent(mm)))
+                    .pipe(filter((moveEvent: DraggableEvent) => this.inRange(startEvent, moveEvent, 5)))
+                    .pipe(map(() => startEvent))
+                    .pipe(takeUntil(this.mouseup))
+                    .pipe(take(1));
+            }));
     }
 
     private createDragMoveObservable(dragStart: Observable<DraggableEvent>): Observable<DraggableEvent> {
         return dragStart
-            .switchMap(() => {
+            .pipe(switchMap(() => {
                 return this.mousemove
-                    .skip(1)
-                    .map(mm => new DraggableEvent(mm))
-                    .takeUntil(this.mouseup);
-            })
-            .filter(val => !!val)
-            .do((event: DraggableEvent) => {
+                    .pipe(skip(1))
+                    .pipe(map(mm => new DraggableEvent(mm)))
+                    .pipe(takeUntil(this.mouseup));
+            }))
+            .pipe(filter(val => !!val))
+            .pipe(tap((event: DraggableEvent) => {
                 if (this.config.scroll) {
                     this.startScroll(this.element, event);
                 }
-            });
+            }));
     }
 
     private createDragStopObservable(dragStart: Observable<DraggableEvent>): Observable<any> {
         return dragStart
-            .switchMap(() => {
-                return this.mouseup.take(1);
-            })
-            .map(e => new DraggableEvent(e))
-            .do(() => {
+            .pipe(switchMap(() => {
+                return this.mouseup.pipe(take(1));
+            }))
+            .pipe(map(e => new DraggableEvent(e)))
+            .pipe(tap(() => {
                 this.autoScrollingInterval.forEach(raf => this.cancelAnimationFrame(raf));
-            });
+            }));
     }
 
     private startScroll(item: Element, event: DraggableEvent) {

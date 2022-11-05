@@ -1,6 +1,4 @@
-import {Component, Inject, Injectable,Input,Output,EventEmitter } from '@angular/core';
-import { Response, Jsonp, Headers, RequestOptions, URLSearchParams } from '@angular/http';
-import {Router} from '@angular/router';
+import { Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import {DatePipe} from '@angular/common';
@@ -8,6 +6,7 @@ import {DatePipe} from '@angular/common';
 import {Observable} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpParams, HttpHeaders } from '@angular/common/http';
+
 
 @Injectable()
 export class ReportingReplenishmentService {
@@ -19,6 +18,9 @@ export class ReportingReplenishmentService {
   private baseReportingWhVendorLastFillRateUrl: string = '/api/reporting/replenishment/5/';
   private baseReportingWhVendorLastServiceRateUrl: string = '/api/reporting/replenishment/6/';
   private baseReportingWhVendorStoreItemInventoryeUrl: string = '/api/reporting/replenishment/7/';
+  private baseReportingWhUBDUrl: string = '/api/reporting/replenishment/8/';
+  private baseReportingWhsSalesUrl: string = '/api/reporting/replenishment/9/';
+  private baseReportingWhsShipmentUrl: string = '/api/reporting/replenishment/10/';
 
 
   private request: string;
@@ -49,10 +51,10 @@ export class ReportingReplenishmentService {
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-        return this.http.get(this.request, this.params, this.options).map(response => {
+        return this.http.get(this.request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
                 return data;
-            });
+            }));
   }
 
 
@@ -73,10 +75,10 @@ export class ReportingReplenishmentService {
       headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
       headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-      return this.http.get(this.request, this.params, this.options).map(response => {
+      return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
               return data;
-          });
+          }));
     }
 
     /**
@@ -96,10 +98,10 @@ export class ReportingReplenishmentService {
       headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
       headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-      return this.http.get(this.request, this.params, this.options).map(response => {
+      return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
               return data;
-          });
+          }));
     }
 
     /**
@@ -119,10 +121,10 @@ export class ReportingReplenishmentService {
       headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
       headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-      return this.http.get(this.request, this.params, this.options).map(response => {
+      return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
               return data;
-          });
+          }));
     }
 
 
@@ -143,10 +145,10 @@ export class ReportingReplenishmentService {
       headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
       headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-      return this.http.get(this.request, this.params, this.options).map(response => {
+      return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
               return data;
-          });
+          }));
     }
 
     /**
@@ -166,10 +168,10 @@ export class ReportingReplenishmentService {
       headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
       headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-      return this.http.get(this.request, this.params, this.options).map(response => {
+      return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
               return data;
-          });
+          }));
     }
 
         /**
@@ -189,10 +191,82 @@ export class ReportingReplenishmentService {
       headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
       headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-      return this.http.get(this.request, this.params, this.options).map(response => {
+      return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
               return data;
-          });
+          }));
     }
 
+    /**
+     * This function retrieves the warehouse item with bd information.
+     * @method getReportingWarehouseUBD
+     * @param supplier_code or description
+     * @param warehouseCode multiple warehouse code separated by '/' character 
+     * @param ubdEnd number of days before ubd end
+     * @returns JSON User information object
+     */
+         getReportingWarehouseUBD (warehouseCode: string, vendorCode:string, ubdEnd: string) {
+          this.request = this.baseReportingWhUBDUrl;
+          let headersSearch = new HttpHeaders();
+          let options = new HttpHeaders();
+          this.params= new HttpParams();
+          this.params = this.params.set('PARAM', vendorCode);
+          this.params = this.params.append('PARAM', warehouseCode);
+          this.params = this.params.append('PARAM', ubdEnd);
+          headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+          headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    
+          return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+                  let data = <any> response;
+                  return data;
+              }));
+        }
+
+    /**
+     * This function retrieves the warehouse stores sales by week for X days 
+     * @method getReportingWarehouseUBD
+     * @param itemCinv Item article sale variant internal code
+     * @param days how many days history 
+     * @returns JSON User information object
+     */
+     getReportingWarehouseSalesItem (itemCinv: string, days:string) {
+      this.request = this.baseReportingWhsSalesUrl;
+      let headersSearch = new HttpHeaders();
+      let options = new HttpHeaders();
+      this.params= new HttpParams();
+      this.params = this.params.set('PARAM', itemCinv);
+      this.params = this.params.append('PARAM', days);
+      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+      return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+              let data = <any> response;
+              return data;
+          }));
+    }
+
+    /**
+     * This function retrieves the warehouse shipment sales by week for X days 
+     * @method getReportingWarehouseShipmentItem
+     * @param warehouseCode  warehouse code
+     * @param itemCinv Item article sale variant internal code
+     * @param days how many days history 
+     * @returns JSON User information object
+     */
+     getReportingWarehouseShipmentItem (warehouseCode:string, itemCinv: string, days:string) {
+      this.request = this.baseReportingWhsShipmentUrl;
+      let headersSearch = new HttpHeaders();
+      let options = new HttpHeaders();
+      this.params= new HttpParams();
+      this.params = this.params.set('PARAM', warehouseCode);
+      this.params = this.params.append('PARAM', itemCinv);
+      this.params = this.params.append('PARAM', days);
+      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+      return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+              let data = <any> response;
+              return data;
+          }));
+    }
 }

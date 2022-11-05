@@ -1,25 +1,24 @@
 import { Component, ViewChild } from '@angular/core';
 import { ViewEncapsulation, Input, OnChanges } from '@angular/core';
-import { SelectItem, Chips, Message, Schedule, FullCalendar } from '../../../shared/components/';
+import { Message } from 'primeng/api';
+import { FullCalendar } from 'primeng/fullcalendar';
 
 import { ItemService, Item, Purchasing, Pricing, Retail, Substitution, Inventory } from '../../services/index';
-import {NgModule } from '@angular/core';
 
 
 @Component({
-	moduleId: module.id,
+	
     selector: 'item-cmp',
     templateUrl: './item.component.html',
-    providers: [ItemService],
     styleUrls: ['./item.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
 export class ItemComponent implements OnChanges {
 
-    @ViewChild('fc') fc: FullCalendar;
+    @ViewChild('fc') fc!: FullCalendar;
 
     //itemInternalCode\
-    @Input() itemInternalCode: string;
+    @Input() itemInternalCode!: string;
 
     // Item information
     itemInfos: Item;
@@ -36,7 +35,7 @@ export class ItemComponent implements OnChanges {
 
     // Retail information
     headersRetail: any;
-    retailSelected: Retail;
+    retailSelected!: Retail;
     dialogRetailVisible: boolean = false;
 
 
@@ -53,8 +52,8 @@ export class ItemComponent implements OnChanges {
     activeColor: string = 'white';
     mainColor: string = '#87CEFA'; // light brown
 
-    promoColor: string;
-    regularColor: string;
+    promoColor!: string;
+    regularColor!: string;
 
     constructor(private _itemService: ItemService) {
         this.itemInfos = new Item();
@@ -166,7 +165,7 @@ export class ItemComponent implements OnChanges {
         return this.activeColor;
     }
 
-    handleRetailClick(e) {
+    handleRetailClick(e: any) {
         console.log('Retail click');
         this.retailSelected = new Retail();
         this.retailSelected.id = e.calEvent.id;
@@ -197,7 +196,7 @@ export class ItemComponent implements OnChanges {
         this.dialogRetailVisible = false;
     }
 
-    itemLookUp(itemCode) {
+    itemLookUp(itemCode: any) {
         // Retrieve all the data for the item
     }
 
