@@ -24,12 +24,15 @@ AND a.cclqtec > 0
 AND a.cclcexcde != p.cclcexcde
 AND TRUNC(a.ccldlivd) > TRUNC(p.ccldlivd)
 GROUP BY a.cclcexcde, foucnuf, foulibl, a.cclcexcde, arlcexr, ITEM_DESC, LV, a.ccldcde, a.cclcinrc, a.cclsite, a.ccluvup)
-SELECT PO_NUM, ORDER_DATE, VENDOR_CODE, VENDOR_DESC,
-	ITEM_CODE, ITEM_DESC, LV, NB_CASE_ORDERED, NB_CASE_PREP, PO_OPEN,
-	NB_CASE as NB_CASE_TO_BE_DELIVERED,
+SELECT PO_NUM "PO# shorted", ORDER_DATE "Order date", VENDOR_CODE || '' | '' || VENDOR_DESC "Supplier code desc",
+	ITEM_CODE || ''/'' || LV || '' | '' || ITEM_DESC "Item code desc", 
+	CEIL(NB_CASE_ORDERED) "Qty ord. (case)", 
+	CEIL(NB_CASE_PREP) "Qty prep. (case)", 
+	PO_OPEN "PO# not cleared",
+	NB_CASE "Qty to be delivered",
        ( SELECT SUM(NVL(storeai, 0) + NVL(storeal, 0) - NVL(storeav, 0) +
                 NVL(storeae, 0) + NVL(storeac, 0) - NVL(storear, 0)) qte
-        FROM stocouch@Heinens_Custom_Prod WHERE stocinr=cclcinrc AND stosite=cclsite AND stotpos=0)/ NB_SKU_CASE Inventory
+        FROM stocouch@Heinens_Custom_Prod WHERE stocinr=cclcinrc AND stosite=cclsite AND stotpos=0)/ NB_SKU_CASE "Inventory (case)"
 FROM DETAIL t
 WHERE NB_CASE_ORDERED > NB_CASE_PREP 
 

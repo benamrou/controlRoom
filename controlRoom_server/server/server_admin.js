@@ -120,6 +120,7 @@ let query = require('./server/controller/query')(app, SQL);
 let reporting = require('./server/controller/reporting')(app, SQL);
 let gdrive = require('./server/controller/gdrive')(app, SQL);
 let executeSQL = require('./server/controller/executeSQL')(app, SQL);
+let ubd = require('./server/controller/ubd')(app, SQL);
 
 
 //dbConnection.createPool('dd');
@@ -158,6 +159,8 @@ supplier.get(app, oracledb);
 reporting.get(app, oracledb);
 gdrive.post(app, oracledb);
 executeSQL.post(app, oracledb);
+ubd.get(app, oracledb);
+ubd.post(app, oracledb);
 //finance.get(aoo,oracledb);
 
 

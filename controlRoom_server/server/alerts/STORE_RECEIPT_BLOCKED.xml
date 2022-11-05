@@ -1,8 +1,8 @@
 <ROOT>
     <QUERY> 
-SELECT irdsite STORE_NUM, irdcexcde PO_NUM, to_char(irddrec,''MM/DD/RR'') RECEIPT_DATE, irdcexr ITEM_CODE, 
-       pkstrucobj.get_desc@Heinens_Custom_Prod(1,artcinr,''HN'') ITEM_DESC, 
-       irdqtea QTY, COUNT(1) NB_LINE
+SELECT irdsite "Store #", irdcexcde "PO #", to_char(irddrec,''MM/DD/RR'') "Reception date", irdcexr || '' | '' ||  
+       pkstrucobj.get_desc@Heinens_Custom_Prod(1,artcinr,''HN'') "Item code desc.", 
+       irdqtea "Qty", COUNT(1) NB_LINE
 FROM intderec@Heinens_Custom_Prod, artrac@Heinens_Custom_Prod
 WHERE irdtrt=2
 AND irdcexr=artcexr

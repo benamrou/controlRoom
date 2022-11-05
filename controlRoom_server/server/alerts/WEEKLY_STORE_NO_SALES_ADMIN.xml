@@ -3,25 +3,25 @@
 
 WITH PIVOT_DATA AS 
 (SELECT *
-FROM (SELECT to_char(extract_day, ''MM/DD/RR'') EXTRACT_DAY, dept_num, DECODE(DEPT_NUM, 102, ''DAIRY/FROZEN'',''GROCERY'') DEPT_DESC, STORE_NUM, NB_ITEMS
+FROM (SELECT to_char(extract_day, ''RRRR/MM/DD'') EXTRACT_DAY, dept_num, DECODE(DEPT_NUM, 102, ''DAIRY/FROZEN'',''GROCERY'') DEPT_DESC, STORE_NUM, NB_ITEMS
       FROM heinens_no_sales@Heinens_Custom_Prod )
 PIVOT (SUM(NB_ITEMS) FOR (STORE_NUM) IN (1 AS "1",4 AS "4" ,5 AS "5",6 AS "6",7 AS "7",8 AS "8",9 AS "9",10 AS "10",11 AS "11",
                                          12 AS "12",14 AS "14",15 AS "15",16 AS "16",17 AS "17",18 AS "18",19 AS "19",20 AS "20",21 AS "21",22 AS "22",
                                          41 AS "41",42 AS "42",43 AS "43",44 AS "44"))
 ORDER BY dept_num ASC, EXTRACT_DAY DESC)
-SELECT '''' EXTRACT_DAY, 102 DEPT_NUM, ''DAIRY/FROZEN'' DEPT_DESC, NULL AS "1",NULL AS "4" ,NULL AS "5",NULL AS "6",NULL AS "7",NULL AS "8",NULL AS "9",NULL AS "10",NULL AS "11",
+SELECT '''' "Day", 102 || '' DAIRY/FROZEN'' "Dept num desc", NULL AS "1",NULL AS "4" ,NULL AS "5",NULL AS "6",NULL AS "7",NULL AS "8",NULL AS "9",NULL AS "10",NULL AS "11",
                                          NULL AS "12",NULL AS "14",NULL AS "15",NULL AS "16",NULL AS "17",NULL AS "18",NULL AS "19",NULL AS "20",NULL AS "21",NULL AS "22",
                                          NULL AS "41",NULL AS "42",NULL AS "43",NULL AS "44"
 FROM dual
 UNION
-SELECT  extract_day, dept_num, DEPT_DESC, "1","4","5","6","7","8","9","10","11","12","14","15","16","17","18","19","20","21","22","41","42","43","44"
+SELECT  extract_day "Day", dept_num || '' '' || DEPT_DESC "Dept num desc", "1","4","5","6","7","8","9","10","11","12","14","15","16","17","18","19","20","21","22","41","42","43","44"
 FROM PIVOT_DATA
 UNION 
-SELECT '''' EXTRACT_DAY, 103 DEPT_NUM, ''GGOCERY'' DEPT_DESC, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
+SELECT '''' "Day", 103 || '' GROCERY'' "Dept num desc", NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                                         NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                                         NULL,NULL, NULL
 FROM dual
-ORDER BY DEPT_NUM ASC, EXTRACT_DAY DESC
+ORDER BY "Dept num desc" ASC, "Day" DESC
 
    </QUERY>
  

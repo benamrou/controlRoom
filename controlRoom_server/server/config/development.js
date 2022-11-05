@@ -21,14 +21,14 @@ module.exports = {
 
           //"connectString": "10.200.14.230/test",
           "poolMin": 1,
-          "poolMax": 200,
+          "poolMax": 2000,
           "poolTimeout": 0,
           "maxRows": 70000,
           "autocommit"  : true,   // default is false
           "_enableStats"  : false,   // default is false
           "queueRequests": false,
           "queueTimeout": 0, // 60 seconds
-          "stmtCacheSize": 40
+          "stmtCacheSize": 0 // 40 by default
         },
     connAttrs_volume: {
       "user": "controlroom",
@@ -43,23 +43,13 @@ module.exports = {
       "_enableStats"  : false,   // default is false
       "queueRequests": false,
       "queueTimeout": 0, // 60 seconds
-      "stmtCacheSize": 40
+      "stmtCacheSize": 0 // 40 by default
     }
  },
  server : {
    timeout: 8800000
  },
  notification: {
-   /* B&B SYMPHONY SMTP SERVER */
-  //email_service:  'bbsymphony.com',
-  //email_host:  'ehub43.webhostinghub.com',
-  //email_port:  587,
-  //email_secure:  false,
-  //email_user: 'heinens@bbsymphony.com',
-  //email_password: 'bbsymphony1!1!',
-  //email_private_key: '/opt/apps/controlRoom/controlRoom_server/server/config/private_key.pem',
-  //email_cache_dir: '/opt/apps/controlRoom/controlRoom_server/server/cache',
-   /* HEINENS SMTP SERVER */
   email_service:  'heinens.com',
   email_host:  'smtp.heinens.com',
   email_port:  25,

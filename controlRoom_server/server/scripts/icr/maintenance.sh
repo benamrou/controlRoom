@@ -9,3 +9,11 @@ exp controlroom/controlroom owner=controlroom file=/data/hntcen/icr/backup/contr
 find /data/hntcen/icr/backup/  -mtime +3 -exec rm {} \;
 find /opt/apps/controlRoom/controlRoom_server/server/scripts/icr/logs/ -mtime +5 -exec rm {} \;
 
+# REMOVE NOHUP
+find /opt/apps/controlRoom/controlRoom_server/server/ -name "nohup.out" -print -exec rm {} \;
+
+# RUN DB Maintenance
+sqlplus controlroom/controlroom @/opt/apps/controlRoom/controlRoom_server/server/scripts/icr/sql/maintenance.sql
+
+# RUN PROD DB Maintenance
+/opt/apps/controlRoom/controlRoom_server/server/scripts/prod/maintenance.sh 

@@ -1,0 +1,50 @@
+<ROOT>
+    <QUERY> 
+
+WITH WHS_DEACTIVE AS (SELECT araseqvl, aracinr, aracexr, aracexvl, arasite, 
+                      to_char(MIN(araddeb), ''MM/DD/RR'') "Whs active since", to_char(MAX(aradfin), ''MM/DD/RR'') "Whs ended on"
+FROM artuc@heinens_custom_prod whsartuc
+WHERE TRUNC(SYSDATE) > aradfin
+AND arasite IN (90061,91070, 91071)
+AND aratcde=1 /* Orderable */
+AND aratfou=1 /* Main supplier */
+AND NOT EXISTS (SELECT 1 FROM artuc@heinens_custom_prod whs2artuc
+                WHERE whs2artuc.araseqvl=whsartuc.araseqvl 
+                AND whsartuc.arasite=whs2artuc.arasite 
+                AND TRUNC(SYSDATE) BETWEEN whs2artuc.araddeb AND whs2artuc.aradfin)
+GROUP BY araseqvl, aracinr, aracexr, arasite, aracexvl),
+WHS_DEACTIVE_INFO AS (
+SELECT arasite "Whs #", 
+       (SELECT ar_fourn || '' | '' || ar_nrsfou 
+        FROM tb_art@heinens_stk_prod WHERE ar_cproin=aracexr AND to_number(ar_ilogis)=arlcexvl AND ar_donord=arasite) "Supplier code desc.",
+       aracexr || ''/'' || aracexvl || '' '' || pkartvl.get_vldesc@heinens_custom_prod(1,araseqvl,''HN'') "Item code desc.",
+       "Whs active since",
+       "Whs ended on",
+       arvcexv "SV #",
+       pkartcoca.Get_Arccode@heinens_custom_prod(1,arvcinv) "UPC",
+       ROUND((SELECT SUM(ul_nqtuvc/ (ul_nuvspc*ul_nspcca)) FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+        WHERE UL_USSCC  = UE_USSCC
+         AND NVL(UE_INDFIC, ''1'') = ''1''
+        AND ul_donord=arasite
+        AND ul_cproin=arlcexr
+	AND ue_staums=0
+        AND to_number(ul_ilogis)=arlcexvl),0) "Whs inventory (case)",
+       (SELECT  ''['' || to_char(MIN(arrddeb), ''MM/DD/RR'') || '' - '' || to_char(MAX(arrdfin), ''MM/DD/RR'') || '']'' FROM artrempl@heinens_custom_prod WHERE arrseqvlo=arlseqvl) "Replacement since/until"
+FROM WHS_DEACTIVE, artvl@heinens_custom_prod, artul@heinens_custom_prod, artuv@heinens_custom_prod
+WHERE arlseqvl=araseqvl
+AND aruseqvl=arlseqvl
+AND arucinr=arlcinr
+AND arutypul=41 /* Pack */
+AND arlcinluvc=arvcinv
+)
+SELECT *
+FROM WHS_DEACTIVE_INFO
+WHERE NVL("Whs inventory (case)",0) > 0
+ORDER BY "Whs #" ASC, to_date("Whs ended on", ''MM/DD/RR'') ASC
+
+</QUERY>
+  <HEADERIFEMPTY>No warehouse discontinued with inventory</HEADERIFEMPTY>
+  <HEADER>Warehouse discontinued with inventory</HEADER>
+  
+</ROOT>
+

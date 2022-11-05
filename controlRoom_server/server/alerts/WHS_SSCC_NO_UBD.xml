@@ -1,10 +1,15 @@
 <ROOT>
     <QUERY> 
 	
-SELECT ar_donord WHS, ue_usscc SSCC, ar_fourn VENDOR_CODE, ar_nrsfou VENDOR_DESC, ar_cproin ITEM_CODE, ar_ilogis LV, ar_libpro ITEM_DESC, ar_dlc UBD_DAYS, ul_nqteup NB_CASE, UL_DATCRE DATE_ENTRY_SSCC 
+SELECT distinct ar_donord "Whs #", ue_usscc "SSCC #", 
+	ar_fourn || '' | '' || ar_nrsfou "Supplier code desc.", 
+	ar_cproin || ''/'' || ar_ilogis || '' | '' || ar_libpro "Item code desc.", 
+	ar_dlc "UBD days", 
+	ul_nqteup "Nb. cases", 
+	to_char(UL_DATCRE,''MM/DD/RR HH12:MI'') "Date entry SSCC",
+        (SELECT ue_codrec || '' / '' || ausdesc FROM adm_users@HEINENS_STK_PROD WHERE ue_codrec=ausextuser and rownum=1) "Received by"
 FROM tb_eums@HEINENS_STK_PROD t , tb_lcums@HEINENS_STK_PROD , tb_art@HEINENS_STK_PROD
-WHERE 
-ue_usscc = ul_usscc
+WHERE ue_usscc = ul_usscc
 AND ue_codtsu = ''1''
 AND ar_cproin=ul_cproin
 AND ar_ilogis=ul_ilogis

@@ -147,6 +147,51 @@ module.exports = function (app, SQL) {
                                                     "'{" +request.header('LANGUAGE') + "}'", 
                                                     request, response);
                                 });
+
+                            app.get('/api/reporting/replenishment/8', function (request, response) {
+                                "use strict";
+                                response.setHeader('Access-Control-Allow-Origin', '*');
+                                // requestuest methods you wish to allow
+                                response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                                //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                                SQL.executeLibQuery(SQL.getNextTicketID(),
+                                                    "UBD0000001", 
+                                                    "'{" + request.query.PARAM + "}'",
+                                                    request.header('USER'),
+                                                    "'{" + request.header('DATABASE_SID') + "}'", 
+                                                    "'{" +request.header('LANGUAGE') + "}'", 
+                                                    request, response);
+                                });
+
+                                app.get('/api/reporting/replenishment/9', function (request, response) {
+                                    "use strict";
+                                    response.setHeader('Access-Control-Allow-Origin', '*');
+                                    // requestuest methods you wish to allow
+                                    response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                                    //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                                    SQL.executeLibQuery(SQL.getNextTicketID(),
+                                                        "UBD0000002", 
+                                                        "'{" + request.query.PARAM + "}'",
+                                                        request.header('USER'),
+                                                        "'{" + request.header('DATABASE_SID') + "}'", 
+                                                        "'{" +request.header('LANGUAGE') + "}'", 
+                                                        request, response);
+                                    });
+
+                                    app.get('/api/reporting/replenishment/10', function (request, response) {
+                                        "use strict";
+                                        response.setHeader('Access-Control-Allow-Origin', '*');
+                                        // requestuest methods you wish to allow
+                                        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                                        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                                        SQL.executeLibQuery(SQL.getNextTicketID(),
+                                                            "UBD0000003", 
+                                                            "'{" + request.query.PARAM + "}'",
+                                                            request.header('USER'),
+                                                            "'{" + request.header('DATABASE_SID') + "}'", 
+                                                            "'{" +request.header('LANGUAGE') + "}'", 
+                                                            request, response);
+                                        });
     
         };
     

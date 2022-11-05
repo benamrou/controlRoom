@@ -1,6 +1,6 @@
 <ROOT>
     <QUERY> 
-  
+WITH DATA_RESULT AS (  
 SELECT DISTINCT hd_donord WHS_NUM,
        dh_numcde PO_NUM, 
        hd_livrea STORE_NUM,
@@ -15,7 +15,7 @@ SELECT DISTINCT hd_donord WHS_NUM,
         AND UL_CPROIN=ar_cproin
         AND UL_ILOGIS=ar_ilogis
         AND NVL(UE_STAPRE, 0) = 0   /* Only take into account available on hand (not in preparation)*/
-        AND UE_INDFIC = 1 ) as "INVENTORY (Case)"
+        AND UE_INDFIC = 1 ) INV_STK
 FROM tb_hlcde@HEINENS_STK_PROD, tb_hecde@HEINENS_STK_PROD, tb_art@HEINENS_STK_PROD, cdedetcde@HEINENS_CUSTOM_PROD
 WHERE TRUNC(dh_datmod)=TRUNC(SYSDATE-1) 
 AND dh_qtei > dh_qterep
@@ -23,7 +23,15 @@ AND dh_statut != ''3''
 AND dh_numcde =hd_numcde
 AND ar_cproin=dh_cproin
 AND dcdcexcde=dh_numcde
-AND dcdcode=ar_cproin
+-- exclude Produce
+and dh_donord != 95073
+AND dcdcode=ar_cproin)
+SELECT WHS_NUM "Whs.", PO_NUM "PO#", STORE_NUM "Store #", 
+	ITEM_CODE || '' | '' || ITEM_DESC "Item code desc", 
+	AISLE "Aisle", STATUS "Status", QTY_ORDERED "Qty ord.", QTY_PREP "Qty prep.", 
+	PREP_DATE "Prep. date", INV_STK as "Inventory (case)"
+FROM DATA_RESULT
+WHERE NVL(INV_STK,0) > 0
 ORDER BY WHS_NUM ASC, PO_NUM ASC
 
   </QUERY>
