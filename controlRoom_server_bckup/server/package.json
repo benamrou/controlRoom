@@ -5,7 +5,7 @@
   "main": "server_admin.js",
   "dependencies": {
     "apiconnect-wsdl": "^1.5.103",
-    "async": "^2.6.0",
+    "async": "^2.6.4",
     "body-parser": "^1.18.2",
     "child_process": "^1.0.2",
     "es6-promise": "^4.2.4",
