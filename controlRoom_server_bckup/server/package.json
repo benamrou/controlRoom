@@ -20,7 +20,7 @@
     "node-ssh": "^5.1.1",
     "nodemon": "^1.17.3",
     "oracledb": "https://github.com/oracle/node-oracledb/releases/download/v2.2.0/oracledb-src-2.2.0.tgz",
-    "shelljs": "^0.8.1",
+    "shelljs": "^0.8.5",
     "simple-ssh": "^1.0.0",
     "ssh2": "^0.6.0",
     "ssh2shell": "^1.9.0",
