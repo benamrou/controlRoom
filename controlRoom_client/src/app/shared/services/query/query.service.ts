@@ -19,6 +19,7 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
 export class QueryService {
 
   private baseQueryUrl: string = '/api/request/';
+  private executeQueryUrl: string = '/api/executeSQL/';
   
   private request: string;
   private params: HttpParams;
@@ -50,4 +51,29 @@ export class QueryService {
             return data;
     }));
   }
+
+  /**
+   * Get Dashboard data using Smart data extract with the dashboard Id
+   * @param queryId 
+   */
+     getQuerySQLResult(querySQL: string, commitParam:number, param?: string) {
+      this.request = this.executeQueryUrl;
+      let headersSearch = new HttpHeaders();
+      let options = new HttpHeaders();
+      this.params= new HttpParams();
+      //this.params = this.params.set('PARAM',param);
+      this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
+
+      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+      
+      let body = {
+                    query: querySQL,
+                    commit: commitParam
+                  };
+      return this.http.post(this.request, this.params, headersSearch, body).pipe(map(response => {
+        let data = <any> response;
+        return data;
+      }));
+    }
 }

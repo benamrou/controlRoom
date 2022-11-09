@@ -225,117 +225,200 @@ module.get = async function (request,response) {
                             bannerAdjusted = bannerAdjusted.replace(/'/g,"''")
                             queryAdjusted = queryAdjusted.replace(/'/g,"''")
                             
-                            SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                                result.ROOT.BANNER, 
+                            if (result.ROOT.BANNER) {
+                                SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
+                                    result.ROOT.BANNER, 
+                                    "'{" + request.query.PARAM + "}'",
+                                    request.header('USER'),
+                                    "'{" + request.header('DATABASE_SID') + "}'", 
+                                    "'{" +request.header('LANGUAGE') + "}'", 
+                                    request.req_dataBanner, request.response_dataBanner, 
+                                    function (err,dataBanner) {
+                                        let bannerData = dataBanner;
+                                        //console.log('BANNER : ' + JSON.stringify(bannerData));
+
+                                        SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
+                                            result.ROOT.QUERY, 
+                                            "'{" + request.query.PARAM + "}'",
+                                            request.header('USER'),
+                                            "'{" + request.header('DATABASE_SID') + "}'", 
+                                            "'{" +request.header('LANGUAGE') + "}'", 
+                                            request.req_datadetail, request.response_dataDetail, 
+                                            function (err,dataDetail) {
+                                                let detailData =dataDetail;
+                                                if (detailData.length > 0 || alertData[0].ALTREALTIME == '0') {
+                                                    let html = '';
+                                                    let preHtml='';
+                                                    let bannerHtml='';
+                                                    let workbook, worksheet;
+                                                    if (bannerData.length >= 1) {
+                                                        if (bannerData[0].MESSAGE) {
+                                                        //console.log('BANNER2 : ' + JSON.stringify(bannerData));
+                                                        //console.log('bannerData[0].MESSAGE : ' + bannerData[0].MESSAGE);
+                                                        if (bannerData[0].CRITICALITY === 'WARNING') {
+                                                            bannerHtml += '<div style="position: absolute; top: 0; left: 0;  width: 100%; text-align: center;background-color: #bb3434; ">';
+                                                            bannerHtml += '<span style="font-weight: bolder;color:#FFFFFF">';
+                                                        }
+                                                        else {
+                                                            bannerHtml += '<div style="position: absolute; top: 0; left: 0;  width: 100%; text-align: center;background-color: #32CD32;">'
+                                                            bannerHtml += '<span style="font-weight: bolder;color:#000000">'
+                                                        }
+                                                        bannerHtml += bannerData[0].MESSAGE;
+                                                        bannerHtml += '</span>';
+                                                        bannerHtml += '</div>';
+                                                        bannerHtml += '<br>';
+                                                        bannerHtml += '<br>';
+                                                        
+                                                        }
+                                                    }
+                                                    preHtml += bannerHtml;
+                                                    preHtml += '<strong>' + alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] </strong>';
+                                                    preHtml += '<br>';
+                                                    preHtml += '<br>';
+                                                    preHtml += alertData[0].ALTCONTENTHTML;
+                                                    preHtml += '<br>';
+                                                    preHtml += '<br>';
+                                                    preHtml += '<br>';
+                                                    if (detailData.length == 0) {
+                                                        html += preHtml;
+                                                        html += 'No reported elements.';
+                                                        sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html);
+                                                    }
+                                                    else {
+                                                        if (detailData.length > 500) {
+                                                            html += preHtml;
+                                                            html += 'Number of objects > 500 - Look at the attachment for details.';
+                                                        }
+                                                        else {
+                                                            html = preHtml;
+                                                            html = json2html.json2table(detailData, html, alertData[0].ALTFORMAT);
+                                                        }
+                                                        //console.log('HTML : ' + html);
+                                                        
+                                                        let workbook = new excel.Workbook();
+                                                        let worksheet = workbook.addWorksheet('RESULT', {properties:{tabColor:{argb:'FFC0000'}}});
+
+                                                        try {
+                                                            json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT);
+                                                        } catch (err) {
+                                                            logger.log('alert', 'Error json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
+                                                        }
+                                                        
+
+                                                        if (html.indexOf('ERRORDIAGNOSED') < 1) {
+                                                            workbook.xlsx.writeBuffer()
+                                                            .then(function(buffer) {
+                                                                sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false);
+                                                            });
+                                                        }
+                                                    }
+
+                                                    if (alertData[0].ALTSMSCONTENT != '' && html.indexOf('ERRORDIAGNOSED') < 1) {
+                                                        let newLineSMS = '<br>'
+                                                        sendSMS(alertData[0].ALTMOBILE,   /* To */
+                                                                alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT,  /* Subject */
+                                                                alertData[0].ALTSMSCONTENT + ' : ' + detailData.length + newLineSMS +
+                                                                        '<b>Distribution list : </b> ' + alertData[0].ALTEMAIL) ;  /* Content */
+                                                    }
+                                                }   
+                                                //console.log ('detailData.length : ' + detailData.length);
+                                                SQL.executeQuery(SQL.getNextTicketID(),
+                                                        "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
+                                                        JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
+                                                        "'{" + request.query.PARAM + "}'",
+                                                        request.header('USER'),
+                                                        "'{" + request.header('DATABASE_SID') + "}'", 
+                                                        "'{" +request.header('LANGUAGE') + "}'", 
+                                                        request,response);
+
+                                                //sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT, 'body')  
+                                                //response.send(detailData);
+                                                //return;
+                                            });
+                                        });
+                                }
+                            else {
+                                SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
+                                result.ROOT.QUERY, 
                                 "'{" + request.query.PARAM + "}'",
                                 request.header('USER'),
                                 "'{" + request.header('DATABASE_SID') + "}'", 
                                 "'{" +request.header('LANGUAGE') + "}'", 
-                                request.req_dataBanner, request.response_dataBanner, 
-                                function (err,dataBanner) {
-                                    let bannerData = dataBanner;
-                                    //console.log('BANNER : ' + JSON.stringify(bannerData));
+                                request.req_datadetail, request.response_dataDetail, 
+                                function (err,dataDetail) {
+                                    let detailData =dataDetail;
+                                    if (detailData.length > 0 || alertData[0].ALTREALTIME == '0') {
+                                        let html = '';
+                                        let preHtml='';
+                                        let bannerHtml='';
+                                        let workbook, worksheet;
+                                        
+                                        preHtml += '<strong>' + alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] </strong>';
+                                        preHtml += '<br>';
+                                        preHtml += '<br>';
+                                        preHtml += alertData[0].ALTCONTENTHTML;
+                                        preHtml += '<br>';
+                                        preHtml += '<br>';
+                                        preHtml += '<br>';
+                                        if (detailData.length == 0) {
+                                            html += preHtml;
+                                            html += 'No reported elements.';
+                                            sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html);
+                                        }
+                                        else {
+                                            if (detailData.length > 500) {
+                                                html += preHtml;
+                                                html += 'Number of objects > 500 - Look at the attachment for details.';
+                                            }
+                                            else {
+                                                html = preHtml;
+                                                html = json2html.json2table(detailData, html, alertData[0].ALTFORMAT);
+                                            }
+                                            //console.log('HTML : ' + html);
+                                            
+                                            let workbook = new excel.Workbook();
+                                            let worksheet = workbook.addWorksheet('RESULT', {properties:{tabColor:{argb:'FFC0000'}}});
 
-                                    SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                                        result.ROOT.QUERY, 
-                                        "'{" + request.query.PARAM + "}'",
-                                        request.header('USER'),
-                                        "'{" + request.header('DATABASE_SID') + "}'", 
-                                        "'{" +request.header('LANGUAGE') + "}'", 
-                                        request.req_datadetail, request.response_dataDetail, 
-                                        function (err,dataDetail) {
-                                            let detailData =dataDetail;
-                                            if (detailData.length > 0 || alertData[0].ALTREALTIME == '0') {
-                                                let html = '';
-                                                let preHtml='';
-                                                let bannerHtml='';
-                                                let workbook, worksheet;
-                                                if (bannerData.length >= 1) {
-                                                    if (bannerData[0].MESSAGE) {
-                                                    //console.log('BANNER2 : ' + JSON.stringify(bannerData));
-                                                    //console.log('bannerData[0].MESSAGE : ' + bannerData[0].MESSAGE);
-                                                    if (bannerData[0].CRITICALITY === 'WARNING') {
-                                                        bannerHtml += '<div style="position: absolute; top: 0; left: 0;  width: 100%; text-align: center;background-color: #bb3434; ">';
-                                                        bannerHtml += '<span style="font-weight: bolder;color:#FFFFFF">';
-                                                    }
-                                                    else {
-                                                        bannerHtml += '<div style="position: absolute; top: 0; left: 0;  width: 100%; text-align: center;background-color: #32CD32;">'
-                                                        bannerHtml += '<span style="font-weight: bolder;color:#000000">'
-                                                    }
-                                                    bannerHtml += bannerData[0].MESSAGE;
-                                                    bannerHtml += '</span>';
-                                                    bannerHtml += '</div>';
-                                                    bannerHtml += '<br>';
-                                                    bannerHtml += '<br>';
-                                                    
-                                                    }
-                                                }
-                                                preHtml += bannerHtml;
-                                                preHtml += '<strong>' + alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] </strong>';
-                                                preHtml += '<br>';
-                                                preHtml += '<br>';
-                                                preHtml += alertData[0].ALTCONTENTHTML;
-                                                preHtml += '<br>';
-                                                preHtml += '<br>';
-                                                preHtml += '<br>';
-                                                if (detailData.length == 0) {
-                                                    html += preHtml;
-                                                    html += 'No reported elements.';
-                                                    sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html);
-                                                }
-                                                else {
-                                                    if (detailData.length > 500) {
-                                                        html += preHtml;
-                                                        html += 'Number of objects > 500 - Look at the attachment for details.';
-                                                    }
-                                                    else {
-                                                        html = preHtml;
-                                                        html = json2html.json2table(detailData, html, alertData[0].ALTFORMAT);
-                                                    }
-                                                    //console.log('HTML : ' + html);
-                                                    
-                                                    let workbook = new excel.Workbook();
-                                                    let worksheet = workbook.addWorksheet('RESULT', {properties:{tabColor:{argb:'FFC0000'}}});
+                                            try {
+                                                json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT);
+                                            } catch (err) {
+                                                logger.log('alert', 'Error json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
+                                            }
+                                            
 
-                                                    try {
-                                                        json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT);
-                                                    } catch (err) {
-                                                        logger.log('alert', 'Error json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
-                                                    }
-                                                    
+                                            if (html.indexOf('ERRORDIAGNOSED') < 1) {
+                                                workbook.xlsx.writeBuffer()
+                                                .then(function(buffer) {
+                                                    sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false);
+                                                });
+                                            }
+                                        }
 
-                                                    if (html.indexOf('ERRORDIAGNOSED') < 1) {
-                                                        workbook.xlsx.writeBuffer()
-                                                        .then(function(buffer) {
-                                                            sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false);
-                                                        });
-                                                    }
-                                                }
+                                        if (alertData[0].ALTSMSCONTENT != '' && html.indexOf('ERRORDIAGNOSED') < 1) {
+                                            let newLineSMS = '<br>'
+                                            sendSMS(alertData[0].ALTMOBILE,   /* To */
+                                                    alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT,  /* Subject */
+                                                    alertData[0].ALTSMSCONTENT + ' : ' + detailData.length + newLineSMS +
+                                                            '<b>Distribution list : </b> ' + alertData[0].ALTEMAIL) ;  /* Content */
+                                        }
+                                    }   
+                                    //console.log ('detailData.length : ' + detailData.length);
+                                    SQL.executeQuery(SQL.getNextTicketID(),
+                                            "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
+                                            JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
+                                            "'{" + request.query.PARAM + "}'",
+                                            request.header('USER'),
+                                            "'{" + request.header('DATABASE_SID') + "}'", 
+                                            "'{" +request.header('LANGUAGE') + "}'", 
+                                            request,response);
 
-                                                if (alertData[0].ALTSMSCONTENT != '' && html.indexOf('ERRORDIAGNOSED') < 1) {
-                                                    let newLineSMS = '<br>'
-                                                    sendSMS(alertData[0].ALTMOBILE,   /* To */
-                                                            alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT,  /* Subject */
-                                                            alertData[0].ALTSMSCONTENT + ' : ' + detailData.length + newLineSMS +
-                                                                    '<b>Distribution list : </b> ' + alertData[0].ALTEMAIL) ;  /* Content */
-                                                }
-                                            }   
-                                            //console.log ('detailData.length : ' + detailData.length);
-                                            SQL.executeQuery(SQL.getNextTicketID(),
-                                                    "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
-                                                    JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
-                                                    "'{" + request.query.PARAM + "}'",
-                                                    request.header('USER'),
-                                                    "'{" + request.header('DATABASE_SID') + "}'", 
-                                                    "'{" +request.header('LANGUAGE') + "}'", 
-                                                    request,response);
-
-                                            //sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT, 'body')  
-                                            //response.send(detailData);
-                                            //return;
-                                        });
-                                    });
+                                    //sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT, 'body')  
+                                    //response.send(detailData);
+                                    //return;
                                 });
+
+                            }
+                                    });
                             });
                         }
                     }

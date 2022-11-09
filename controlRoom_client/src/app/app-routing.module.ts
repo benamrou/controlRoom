@@ -38,6 +38,7 @@ import { CategoryManagerComponent } from './pages/mass.update/category.manager/c
 import { AuthentificationGuard } from './shared/services/authentification/authentification.guard.component';
 import { SmartUBDComponent } from './pages/reporting/smartUBD/smart.ubd.component';
 import { GenerateScheduleComponent } from './pages/schedule/generate.schedule/generate.schedule.component';
+import { RobotComponent } from './pages/robot/robot.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -65,6 +66,8 @@ const routes: Routes = [
   /* IT */
   { path: 'batchschedule', component: BatchScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'batchlist', component: MyBatchListComponent, canActivate: [AuthentificationGuard] },
+  /* ROBOT */
+  { path: 'robot', component: RobotComponent, canActivate: [AuthentificationGuard] },
   /* MASS_CHANGE */
   { path: 'massjournal', component: MassJournalComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemattribute', component: ItemAttributeComponent, canActivate: [AuthentificationGuard] },

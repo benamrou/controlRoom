@@ -29,4 +29,63 @@
 { [data not shown]
 100    25  100    25    0     0     60      0 --:--:-- --:--:-- --:--:--    60
 * Connection #0 to host localhost left intact
-[{"'ALTERED'":"altered"}]
+[{"'ALTERED'":"altered"}]***     Trying 127.0.0.1:8092...
+  Trying 127.0.0.1:8092...
+  Trying 127.0.0.1:8092...
+      %%  TToottaall %   T o%t aRle c e i v%e dR e%c eXifveerdd  %  AXvfeerradg e  ASvpeereadg e   STpiemeed       TTiimmee        T iTmie        % Tm e i mCeu r rCeunrtr
+e n t 
+                                                            D l o aDdl o aUdp R elUoceaidv ep d  Tlo%toa la X fedr dS p  A v eTreaogten tSaple e d  S  p e   TLienftt    mS pee eLde
+f  t    S p e0e dT
+ i  m   e0  0        0      0T im e     C0u r r e n 0 t0 
+           0  0     0            0            0          0             0   - - : -D-l:o-a-d  - -U:p-l-o:a-d-   - -T:o-t-a:l- -    S p e n0t   *  LConnected to localhost (127.0.0.1) port 8092 (#0)
+eft  Speed
+  0     > GET /api/notification/?PARAM=WHS0000000004&PARAM=1 HTTP/1.1
+> Host: localhost:8092
+> 0User-Agent: curl/7.79.1
+ >   Accept: */*
+ >  0cache-control: no-cache
+ >- -Connection: keep-alive
+:>- -Content-Type: application/x-www-form-urlencoded
+:>- -DATABASE_SID: HEINENS_CUSTOM_PROD
+ >- -LANGUAGE: HN
+:>- -USER: abe
+:>- -SUBJECT_EXT: for Warehouse #1
+ >- -
+:    -0- : - -    0      0 0*   Connected to localhost (127.0.0.1) port 8092 (#0)
+   0>   GET /api/notification/?PARAM=WHS0000000004_1&PARAM=2 HTTP/1.1
+ >   Host: localhost:8092
+ >0  User-Agent: curl/7.79.1
+ >   Accept: */*
+ >  0cache-control: no-cache
+ >- -Connection: keep-alive
+:>- -Content-Type: application/x-www-form-urlencoded
+:>- -DATABASE_SID: HEINENS_CUSTOM_PROD
+ >- -LANGUAGE: HN
+:>- -USER: abe
+:>- -SUBJECT_EXT: for Warehouse #2
+ >- -
+:--:--     0* Connected to localhost (127.0.0.1) port 8092 (#0)
+> GET /api/notification/?PARAM=WHS0000000004_2&PARAM=3 HTTP/1.1
+> Host: localhost:8092
+> User-Agent: curl/7.79.1
+> Accept: */*
+> cache-control: no-cache
+> Connection: keep-alive
+> Content-Type: application/x-www-form-urlencoded
+> DATABASE_SID: HEINENS_CUSTOM_PROD
+> LANGUAGE: HN
+> USER: abe
+> SUBJECT_EXT: for Produce Warehouse
+> 
+  0   0         00      0   0       0    0    0    0      0    0        0    0        0   -0- :----::----: - -0 : 000::0001: 0-1- :----::----: - -      0  0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0  0  0   0         00        00          00        00          00        0      0 --:--:--  0:00:01 --:--:--     0* Empty reply from server
+  0     0    0     0    0     0      0      0 --:     0    0     0    0     0      0    --:--  0:00:01 --:--:--     0
+* Closing connection 0
+curl: (52) Emp   0 --:--:--  0:00:01 --:--:--     0* Empty reply from server
+  0     0    0     0    0     0      0      0 --:--:--     0      0 --:--:--  0:00:01 --:--:--     0* Empty reply from server
+  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0
+* Closing connection 0
+ty reply from server
+0:00c:u0r1l :- -(:5-2-): -E-m p t y   r0e
+pl*y  Closing connection 0
+from servceurr
+l: (52) Empty reply from server

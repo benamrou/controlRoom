@@ -1,0 +1,939 @@
+/* Turkey */
+html {
+  height: 100%;
+  background: #fbb343;
+  background: linear-gradient(to right, rgba(151, 180, 67, 1) 0%, rgba(247, 153, 13, 1) 100%);
+}
+
+body {
+  background-color: brown;
+  background: -moz-radial-gradient(center, ellipse cover, rgba(252, 252, 252, 1) 0%, rgba(254, 182, 69, 1) 100%);
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(252, 252, 252, 1) 0%, rgba(254, 182, 69, 1) 100%);
+  background: radial-gradient(ellipse at center, rgba(252, 252, 252, 1) 0%, rgba(254, 182, 69, 1) 100%);
+  background-repeat: no-repeat;
+  height: 438px;
+}
+
+.JT {
+  position: absolute;
+  top: 302px;
+  left: 12%;
+  top: 70%;
+  transform: translate(-50%);
+}
+
+.JT-leg {
+  position: absolute;
+  top: 90px;
+  z-index: -100;
+}
+
+.JT-leg_left {
+  left: 48%;
+}
+
+.JT-leg_right {
+  left: 63%;
+}
+
+.JT-leg-shin {
+  width: 10px;
+  height: 40px;
+  background: #f8931f;
+  position: relative;
+  z-index: 100;
+  background: linear-gradient(to right, #f7ad59 0%, #f9a94a 100%);
+}
+
+.JT-leg-foot {
+  width: 40px;
+  height: 10px;
+  background-color: #f8931f;
+  border-top-left-radius: 100% 100%;
+  border-top-right-radius: 100% 100%;
+  border-bottom-right-radius: 14% 100%;
+  border-bottom-left-radius: 14% 100%;
+  position: absolute;
+  z-index: 200;
+  bottom: -5px;
+}
+
+.JT-leg-foot-left {
+  left: -30px;
+  transform-origin: left;
+  transform: rotate(0deg);
+  position: absolute;
+}
+
+.JT-leg-foot-right {
+  left: 0px;
+  position: absolute;
+  transform-origin: left;
+  transform: rotate(-20deg);
+  -webkit-animation: shake .5s infinite;
+  animation: shake .5s infinite;
+}
+
+.JT-feathers {
+  position: absolute;
+  z-index: 50;
+  left: -100%;
+  top: 20%;
+  transform: tronsform-origin(left bottom);
+  transform: rotate(-5deg);
+}
+
+.JT-feather {
+  width: 180px;
+  height: 60px;
+  background-color: #aa6615;
+  border-top-left-radius: 40% 100%;
+  border-top-right-radius: 100% 70%;
+  border-bottom-right-radius: 100% 100%;
+  border-bottom-left-radius: 40% 100%;
+  box-shadow: 0px 0px 0px #000000;
+  position: absolute;
+  transform-origin: right center;
+}
+
+.JT-feather-1 {
+  transform: rotate(20deg);
+  background-color: #a95026;
+}
+
+.JT-feather-2 {
+  transform: rotate(40deg);
+  background-color: #ab8427;
+}
+
+.JT-feather-3 {
+  transform: rotate(60deg)
+}
+
+.JT-feather-4 {
+  transform: rotate(80deg);
+  background-color: #f8931f;
+}
+
+.JT-feather-5 {
+  transform: rotate(100deg);
+  background-color: #f8931f;
+}
+
+.JT-feather-6 {
+  transform: rotate(120deg)
+}
+
+.JT-feather-7 {
+  transform: rotate(140deg);
+  background-color: #ab8427;
+}
+
+.JT-feather-8 {
+  transform: rotate(160deg);
+  background-color: #a95026;
+}
+
+.JT-feather-9 {
+  transform: rotate(180deg)
+}
+
+.JT-bod {
+  position: relative;
+  width: 120px;
+  height: 100px;
+  background-color: #7b2e12;
+  background: linear-gradient(to right, rgba(123, 46, 18, 1) 0%, rgba(64, 19, 3, 1) 100%);
+  border-top-left-radius: 100% 100%;
+  border-top-right-radius: 100% 100%;
+  border-bottom-right-radius: 50% 80%;
+  border-bottom-left-radius: 50% 80%;
+  z-index: 900;
+}
+
+.JT-sign {
+  position: absolute;
+  z-index: 1300;
+  width: 140px;
+  height: 40px;
+  line-height: 45px;
+  left: -10px;
+  background: #fff;
+  background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(246, 246, 246, 1) 47%, rgba(207, 205, 207, 1) 100%);
+  top: 45px;
+  transform: rotate(5deg);
+  text-align: center;
+  font-family: 'Indie Flower', cursive;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.JT-sign::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  display: block;
+  position: absolute;
+  left: -10px;
+  top: -5px;
+  background-color: #7b2e12;
+  border-top-left-radius: 50% 50%;
+  border-top-right-radius: 50% 50%;
+  border-bottom-right-radius: 30% 30%;
+  border-bottom-left-radius: 30% 30%;
+  transform: rotate(90deg);
+}
+
+.JT-sign::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-color: #7b2e12;
+  display: block;
+  position: absolute;
+  right: -12px;
+  top: 15px;
+  background-color: #7b2e12;
+  border-top-left-radius: 50% 50%;
+  border-top-right-radius: 50% 50%;
+  border-bottom-right-radius: 30% 30%;
+  border-bottom-left-radius: 30% 30%;
+  transform: rotate(-90deg);
+}
+
+.JT-head {
+  position: absolute;
+  z-index: 1000;
+  left: 20%;
+  top: -50px;
+  width: 70px;
+  height: 75px;
+  background-color: #c4694a;
+  background: linear-gradient(to right, rgba(194, 142, 124, 1) 0%, rgba(196, 104, 74, 1) 100%);
+  border-radius: 100%;
+}
+
+.JT-eye {
+  border-radius: 100%;
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  position: absolute;
+  top: -55px;
+  z-index: 1050;
+}
+
+.JT-eye-left {
+  left: 15px;
+}
+
+.JT-eye-right {
+  left: 55px;
+}
+
+.JT-eye-iris {
+  position: absolute;
+  top: 36px;
+  left: 20px;
+  z-index: 1060;
+  border-radius: 100%;
+  width: 10px;
+  height: 10px;
+  background: #000;
+}
+
+.JT-beak {
+  position: absolute;
+  top: -14px;
+  left: 40px;
+  z-index: 1040;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 35px 20px 0 20px;
+  border-color: #f8d04f transparent transparent transparent;
+  border-radius: 200px;
+}
+
+.JT-hat {
+  position: absolute;
+  top: -115px;
+  left: 15px;
+  z-index: 1100;
+  transform: tronsform-origin(left bottom);
+  transform: rotate(-10deg);
+}
+
+.JT-hat-pipe {
+  width: 70px;
+  height: 60px;
+  background-color: #000;
+  background: linear-gradient(to right, rgba(74, 74, 74, 1) 0%, rgba(0, 0, 0, 1) 100%);
+  border-bottom: 15px solid #fff;
+  z-index: 1200;
+  position: relative;
+}
+
+.JT-hat-brim {
+  position: absolute;
+  bottom: -15px;
+  left: -60%;
+  z-index: 1150;
+  width: 160px;
+  height: 26px;
+  background-color: #000;
+  background: linear-gradient(to right, rgba(74, 74, 74, 1) 0%, rgba(0, 0, 0, 1) 100%);
+  border-top-left-radius: 100% 100%;
+  border-top-right-radius: 100% 100%;
+  border-bottom-right-radius: 57% 32%;
+  border-bottom-left-radius: 66% 32%;
+}
+
+.JT-shake {
+  -webkit-animation: shake 3.5s infinite;
+  animation: shake 3.5s infinite;
+}
+
+.JT-rock {
+  -webkit-animation: rock 3.5s infinite;
+  animation: rock 3.5s infinite;
+}
+
+.JT-bounce {
+  -webkit-animation: bounce 1s infinite;
+  animation: bounce 1s infinite;
+}
+
+@keyframes shake {
+  0% {
+    -webkt-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  50% {
+    -webkt-transform: rotate(-10deg);
+    transform: rotate(-10deg);
+  }
+  100% {
+    -webkt-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes rock {
+  0% {
+    -webkit-transform: translate(10px);
+    transform: translate(10px);
+  }
+  50% {
+    -webkit-transform: translate(0px);
+    transform: translate(0px);
+  }
+  100% {
+    -webkit-transform: translate(10px);
+    transform: translate(10px);
+  }
+}
+
+@keyframes bounce {
+  0% {
+    -webkit-transform: translate(0px, 0px);
+    transform: translate(0px, 0px);
+  }
+  30% {
+    -webkit-transform: translate(0px, 3px);
+    transform: translate(0px, 3px);
+  }
+  75% {
+    -webkit-transform: translate(0px, -3px);
+    transform: translate(0px, -3px);
+  }
+  100% {
+    -webkit-transform: translate(0px, 0px);
+    transform: translate(0px, 0px);
+  }
+}
+
+/* Farm */
+/* ------------- sky -------------- */
+.sky {
+  flex-basis: 35%;
+  background-color: skyblue;
+  background-color: #39cccc;
+  background-color: skyblue;
+  position: relative;
+}
+
+.sun {
+  position: absolute;
+  top: 3rem;
+  left: 3rem;
+  width: 10rem;
+  height: 10rem;
+  box-shadow: 0 0 100px rgba(255, 255, 255, 0.8);
+  background-color: #ffdc00;
+  animation: sun 5s linear 0s infinite alternate;
+  border-radius: 50%;
+}
+
+.cloud {
+  background: white;
+  border-radius: 100px;
+  position: absolute;
+  top: 5rem;
+  right: 100px;
+  width: 15rem;
+  height: 5rem;
+  /* border: 3px solid blue; */
+  animation: cloud1 50s linear 0s infinite;
+  /* visibility: hidden; */
+}
+
+.cloud2 {
+  /* border: 1px solid blue; */
+
+  top: 6rem;
+  animation: cloud2 60s linear 0s infinite;
+}
+.clouds3 {
+  animation: cloud3 70s linear 0s infinite;
+
+  top: 7rem;
+}
+.clouds4 {
+  animation: cloud4 80s linear 0s infinite;
+
+  top: 4rem;
+}
+
+.cloud-right {
+  width: 6rem;
+  height: 6rem;
+  top: -35%;
+  right: 5%;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  /* border: 3px solid red; */
+}
+
+.cloud-left {
+  width: 6.5rem;
+  height: 6.5rem;
+  top: -80%;
+  left: 15%;
+  border-radius: 200px;
+  background: white;
+  position: absolute;
+  /* border: 3px solid green; */
+}
+
+.cloud-bottom {
+  /* border: 3px solid yellow; */
+  width: 7rem;
+  height: 7rem;
+  bottom: -55%;
+  right: 40%;
+  border-radius: 100px;
+  background: white;
+  position: absolute;
+}
+
+/* ------------- grass -------------- */
+.land {
+  flex-grow: 1;
+  width: 300%;
+  /*position: relative;*/
+  background-color: #2bc03c;
+  background-color: #2ecc40;
+  background-color: #75ce19;
+  animation: land 25s linear 0s infinite;
+  top: 85%;
+}
+
+.fence-far {
+  position: absolute;
+  top: 80%;
+  left: 0;
+  height: 20rem;
+}
+
+.fence-near {
+  position: absolute;
+  bottom: 0;
+  left: 0px;
+  height: 20rem;
+  z-index: 5;
+  /* animation: fence_near 3s linear 0s infinite; */
+}
+
+.hbox {
+  margin-bottom: 4rem;
+  height: 1.5rem;
+  width: 400rem;
+  border-radius: 5px;
+  background-color: #c47c34;
+  display: flex;
+}
+
+.vbox {
+  height: 10rem;
+  width: 4rem;
+  margin-right: 17rem;
+  margin-top: -2rem;
+  border-radius: 5px;
+  background-color: #eb953e;
+  /* border: red 1px solid; */
+}
+
+.tree {
+  display: inline-block;
+  position: absolute;
+  left: 60%;
+  top: 15rem;
+  z-index: 5;
+  /* animation: tree1 50s linear 0s infinite; */
+}
+
+.wood {
+  position: absolute;
+  width: 1rem;
+  height: 27rem;
+  background-color: burlywood;
+  z-index: 2;
+}
+
+.leafs {
+  width: 25rem;
+  height: 25rem;
+  border-radius: 50%;
+  background-color: #10ac85bb;
+  position: absolute;
+  z-index: 1;
+  top: -120px;
+  left: -120px;
+}
+
+.branch {
+  position: absolute;
+  width: 1rem;
+  height: 10rem;
+  background-color: burlywood;
+  z-index: 2;
+  transform-origin: bottom;
+}
+
+.branch1 {
+  top: 0;
+  left: 0rem;
+  transform: rotate(50deg)
+}
+.branch2 {
+  top: 0;
+  left: 0rem;
+  transform: rotate(310deg)
+}
+
+
+//body transition
+@-webkit-keyframes bodyMove {
+  0%   {transform:rotate(-10deg)}
+  30%   {transform:rotate(-10deg)}
+  70% {transform:rotate(4deg);border-top-right-radius:150%;}
+  100% {transform:rotate(4deg);border-top-right-radius:150%;}
+}
+
+/* Standard syntax */
+@keyframes bodyMove {
+  0%   {transform:rotate(-10deg)}
+  30%   {transform:rotate(-10deg)}
+  70% {transform:rotate(4deg);border-top-right-radius:150%;}
+  100% {transform:rotate(4deg);border-top-right-radius:150%;}
+}
+
+//head transition
+@-webkit-keyframes headMove {
+  0%   {left:24%;top:40%;}
+  30%   {left:24%;top:40%;}
+  70% {left:40%;top:56%;box-shadow:2px 2px 2px rgba(0,0,0,0.3)}
+100% {left:40%;top:56%;box-shadow:2px 2px 2px rgba(0,0,0,0.3)}
+}
+
+/* Standard syntax */
+@keyframes headMove {
+   0%   {left:24%;top:40%;}
+  30%   {left:24%;top:40%;}
+  70% {left:40%;top:56%;box-shadow:2px 2px 2px rgba(0,0,0,0.3)}
+100% {left:40%;top:56%;box-shadow:2px 2px 2px rgba(0,0,0,0.3)}
+}
+
+//leg transition
+@-webkit-keyframes legMove {
+  0%   {background:#F7CA18;width:15px;
+  height:30px; top:70%;
+  left:40%;}
+  30%   {background:#F7CA18;width:15px;
+  height:30px; top:70%;
+  left:40%;}
+  70% {width:200px; height:10px;z-index:1; background:#ABB7B7;left:23%;top:67%;border-bottom-left-radius:30%; border-bottom-right-radius:30%;border-top-right-radius:10%;border-top-left-radius:10%;}
+  100% {width:200px; height:10px;z-index:1; background:#ABB7B7;left:23%;top:67%;border-bottom-left-radius:30%; border-bottom-right-radius:30%;border-top-right-radius:10%;border-top-left-radius:10%;}
+}
+
+/* Standard syntax */
+@keyframes legMove {
+  0%   {background:#F7CA18;width:15px;
+  height:30px; top:70%;
+  left:40%;}
+  30%   {background:#F7CA18;width:15px;
+  height:30px; top:70%;
+  left:40%;}
+  70% {width:200px; height:10px;z-index:1; background:#ABB7B7;left:23%;top:67%;border-bottom-left-radius:30%; border-bottom-right-radius:30%;border-top-right-radius:10%;border-top-left-radius:10%;}
+  100% {width:200px; height:10px;z-index:1; background:#ABB7B7;left:23%;top:67%;border-bottom-left-radius:30%; border-bottom-right-radius:30%;border-top-right-radius:10%;border-top-left-radius:10%;}
+}
+
+//feather3 transition
+@-webkit-keyframes bf3Move {
+  0%   {width:20px;
+  height:70px;
+  background:#D35400;
+  left:61.5%;
+  top:49%;
+  transform:rotate(80deg);}
+  30%   {width:20px;
+  height:70px;
+  background:#D35400;
+  left:61.5%;
+  top:49%;
+  transform:rotate(80deg);}
+  70% {left:50%;top:61%;box-shadow:2px 2px 2px rgba(0,0,0,0.3);background:#FDE3A7;width:30px;height:30px;border-radius:50%;}
+  100% {left:50%;top:61%;box-shadow:2px 2px 2px rgba(0,0,0,0.3);background:#FDE3A7;width:30px;height:30px;border-radius:50%;}
+}
+
+/* Standard syntax */
+@keyframes bf3Move {
+  0%   {width:20px;
+  height:70px;
+  background:#D35400;
+  left:61.5%;
+  top:49%;
+  transform:rotate(80deg);}
+  30%   {width:20px;
+  height:70px;
+  background:#D35400;
+  left:61.5%;
+  top:49%;
+  transform:rotate(80deg);}
+  70% {left:50%;top:61%;box-shadow:2px 2px 2px rgba(0,0,0,0.3);background:#FDE3A7;width:30px;height:30px;border-radius:50%;}
+  100% {left:50%;top:61%;box-shadow:2px 2px 2px rgba(0,0,0,0.3);background:#FDE3A7;width:30px;height:30px;border-radius:50%;}
+}
+
+//feather1 transition
+@-webkit-keyframes bf1Move {
+  0%   {left:43%;
+  top:35%;width:20px;
+  height:70px;
+  background:#D35400;}
+  30%   {left:43%;
+  top:35%;width:20px;
+  height:70px;
+  background:#D35400;}
+  80% {left:36%;top:41%;background:#DADFE1;width:10px;height:40px;}
+  100% {left:36%;top:41%;background:#DADFE1;width:10px;height:40px;}
+}
+
+/* Standard syntax */
+@keyframes bf1Move {
+  0%   {left:43%;
+  top:35%;width:20px;
+  height:70px;
+  background:#D35400;}
+  30%   {left:43%;
+  top:35%;width:20px;
+  height:70px;
+  background:#D35400;}
+  80% {left:36%;top:41%;background:#DADFE1;width:10px;height:40px;}
+  100% {left:36%;top:41%;background:#DADFE1;width:10px;height:40px;}
+}
+
+//feather2 transition
+@-webkit-keyframes bf2Move {
+  0%   {width:20px;
+  height:70px;
+  background:#D35400;
+  left:54%;
+  top:38%;
+  transform:rotate(28deg);}
+  30%   {width:20px;
+  height:70px;
+  background:#D35400;
+  left:54%;
+  top:38%;
+  transform:rotate(28deg);}
+  80% {left:45%;top:41%;background:#DADFE1;width:10px;height:40px;transform:rotate(0deg)}
+ 100% {left:45%;top:41%;background:#DADFE1;width:10px;height:40px;transform:rotate(0deg)}
+}
+
+/* Standard syntax */
+@keyframes bf2Move {
+  0%   {width:20px;
+  height:70px;
+  background:#D35400;
+  left:54%;
+  top:38%;
+  transform:rotate(28deg);}
+  30%   {width:20px;
+  height:70px;
+  background:#D35400;
+  left:54%;
+  top:38%;
+  transform:rotate(28deg);}
+  80% {left:45%;top:41%;background:#DADFE1;width:10px;height:40px;transform:rotate(0deg)}
+  100% {left:45%;top:41%;background:#DADFE1;width:10px;height:40px;transform:rotate(0deg)}
+}
+
+//smallfeather1 transition
+@-webkit-keyframes sf1Move {
+0%{width:15px;
+height:50px;
+background:#FDE3A7;
+top:38%;
+left:49%;
+transform:rotate(11deg);}
+30%{width:15px;
+height:50px;
+background:#FDE3A7;
+top:38%;
+left:49%;
+transform:rotate(11deg);}
+70%{left:40.5%;top:44%;background:#DADFE1;width:10px;height:20px;transform:rotate(0deg)}
+100%{left:40.5%;top:44%;background:#DADFE1;width:10px;height:20px;transform:rotate(0deg)}
+}
+
+/* Standard syntax */
+@keyframes sf1Move {
+0%{width:15px;
+height:50px;
+background:#FDE3A7;
+top:38%;
+left:49%;
+transform:rotate(11deg);}
+30%{width:15px;
+height:50px;
+background:#FDE3A7;
+top:38%;
+left:49%;
+transform:rotate(11deg);}
+70%{left:40.5%;top:44%;background:#DADFE1;width:10px;height:20px;transform:rotate(0deg)}
+100%{left:40.5%;top:44%;background:#DADFE1;width:10px;height:20px;transform:rotate(0deg)}
+}
+
+//smallfeather2 
+@-webkit-keyframes sf2Move {
+0%{}
+50%{opacity:0;}
+100%{opacity:0;}
+}
+
+/* Standard syntax */
+@keyframes sf2Move {
+0%{}
+50%{opacity:0;}
+100%{opacity:0;}
+}
+
+
+//beak transition 
+@-webkit-keyframes beakMove {
+0%{}
+50%{opacity:0;}
+100%{opacity:0;}
+}
+
+/* Standard syntax */
+@keyframes beakMove {
+0%{}
+50%{opacity:0;}
+100%{opacity:0;}
+}
+
+
+//beak transition 
+@-webkit-keyframes gMove {
+0%{}
+50%{opacity:0;}
+100%{opacity:0;}
+}
+
+/* Standard syntax */
+@keyframes gMove {
+0%{}
+50%{opacity:0;}
+100%{opacity:0;}
+}
+
+body {
+background:radial-gradient(#D64541, #96281B);
+}
+
+.HappyText {
+  width:500px;
+  height:500px;
+  margin:0 auto;
+  top: 30%;
+  left:69%;
+  position: absolute;
+  background:transparent;
+  text-align:center;
+  font-size:40px;
+  color: white;
+  font-family: 'Font Awesome 6 Free';
+}
+
+.wrapperTurkey {
+width:500px;
+height:500px;
+margin:0 auto;
+top: 20%;
+left:70%;
+position: absolute;
+background:transparent;
+
+
+h1 {
+  color:white;
+  text-align:center;
+  font-size:40px;
+  font-family: "Helvetica Neue";
+  
+  .happyTurkey{
+    font-size:30px;
+  }
+  
+  .t {
+    font-size:40px;
+  }
+  
+  .thanksgivingTurkey {
+    font-size:30px;
+  }
+}
+.bodyTurkey {
+  width:130px;
+  height:90px;
+  background:#F27935;
+  position: absolute;
+  left:30%;
+  top:50%;
+  border-top-left-radius:100%;
+  border-bottom-left-radius:90%;
+  border-top-right-radius:100%;
+  border-bottom-right-radius:100%;
+  transform:rotate(-10deg);
+  /*border-top-left-radius:40%;
+  border-top-right-radius:80%;
+  border-bottom-left-radius:30%;
+  border-bottom-right-radius:30%;*/
+  -webkit-animation: bodyMove 2s linear 1s infinite alternate; /* Chrome, Safari, Opera */
+  animation: bodyMove 2s linear 1s infinite alternate; /* Standard syntax */
+}
+.headTurkey {
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  position: absolute;
+  left:24%;
+  top:40%;
+  background-color:#F27935;
+  -webkit-animation: headMove 2s linear 1s infinite alternate; /* Chrome, Safari, Opera */
+  animation: headMove 2s linear 1s infinite alternate; /* Standard syntax */
+}
+
+.beakTurkey {
+width: 0;
+height: 0;
+border-top: 12px solid transparent;
+border-right: 22px solid #F7CA18;
+border-bottom: 12px solid transparent;
+position: absolute;
+top:47%;
+left:19.5%;
+transform:rotate(-22deg);
+-webkit-animation: beakMove 2s linear 1s infinite alternate; /* Chrome, Safari, Opera */
+  animation: beakMove 2s linear 1s infinite alternate; /* Standard syntax */
+}
+.gTurkey {
+  width:10px;
+  height:20px;
+  position: absolute;
+  background:#CF000F;
+  left:24%;
+  top:52%;
+  -webkit-animation: gMove 2s linear 1s infinite alternate; /* Chrome, Safari, Opera */
+  animation: gMove 2s linear 1s infinite alternate; /* Standard syntax */
+}
+
+.bf1Turkey {
+  width:20px;
+  height:70px;
+  background:#D35400;
+  position: absolute;
+  left:43%;
+  top:35%;
+   -webkit-animation: bf1Move 2s linear 1s infinite alternate; /* Chrome, Safari, Opera */
+  animation: bf1Move 2s linear 1s infinite alternate; /* Standard syntax */
+}
+.bf2Turkey {
+  width:20px;
+  height:70px;
+  background:#D35400;
+  position: absolute;
+  left:54%;
+  top:38%;
+  transform:rotate(28deg);
+    -webkit-animation: bf2Move 2s linear 1s infinite alternate; /* Chrome, Safari, Opera */
+  animation: bf2Move 2s linear 1s infinite alternate; /* Standard syntax */
+}
+.bf3Turkey {
+  width:20px;
+  height:70px;
+  background:#D35400;
+  position: absolute;
+  left:61.5%;
+  top:49%;
+  transform:rotate(80deg);
+  -webkit-animation: bf3Move 2s linear 1s infinite alternate; /* Chrome, Safari, Opera */
+  animation: bf3Move 2s linear 1s infinite alternate; /* Standard syntax */
+}
+.sf1Turkey{
+width:15px;
+height:50px;
+background:#FDE3A7;
+position: absolute;
+top:38%;
+left:49%;
+transform:rotate(11deg);
+-webkit-animation: sf1Move 2s linear 1s infinite alternate; /* Chrome, Safari, Opera */
+  animation: sf1Move 2s linear 1s infinite alternate; /* Standard syntax */
+}
+ .sf2Turkey{
+width:15px;
+height:50px;
+background:#FDE3A7;
+position: absolute;
+top:45%;
+left:59%;
+transform:rotate(53deg);
+-webkit-animation: sf2Move 2s linear 1s infinite alternate; /* Chrome, Safari, Opera */
+  animation: sf2Move 2s linear 1s infinite alternate; /* Standard syntax */
+}
+.legTurkey {
+  width:15px;
+  height:30px;
+  background:#F7CA18;
+  position: absolute;
+  top:70%;
+  left:40%;
+  -webkit-animation: legMove 2s linear 1s infinite alternate; /* Chrome, Safari, Opera */
+  animation: legMove 2s linear 1s infinite alternate; /* Standard syntax */
+}
+}
+

@@ -40,6 +40,7 @@ import { ReportingService } from './shared/services';
 import { QueryService } from './shared/services';
 import { AuthentificationGuard } from './shared/services';
 import { CommentService } from './shared/services';
+import { RobotService } from './shared/services';
 
 /** Component */
 import { HeaderComponent } from './layouts/header/header.component';
@@ -74,6 +75,7 @@ import { BatchScheduleModule } from './pages/it/schedule/batch.schedule.module';
 import { CountingModule } from './pages/inventory/counting/counting.module';
 import { StockModule } from './pages/inventory/stock/stock.module';
 import { CategoryManagerModule } from './pages/mass.update/category.manager/category.manager.module';
+import { RobotModule } from './pages/robot/robot.module';
 
 import { DashboardModule } from './pages/dashboard/dashboard.module';
 import { EDIInvoiceModule } from './pages/finance/edi/ediinvoice.module';
@@ -175,7 +177,8 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     SearchModule,
     SVAttributeModule,
     SmartUBDModule,
-    GenerateScheduleModule
+    GenerateScheduleModule,
+    RobotModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,
@@ -187,6 +190,7 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
               ReportingService,
               QueryService,
               CommentService,
+              RobotService,
               WarehouseItemService, WarehouseService,
               ExportService, ImportService, ItemService,SupplierScheduleService,SupplierContractScheduleService,
               SearchService, FinanceService, ProcessService, InventoryService,

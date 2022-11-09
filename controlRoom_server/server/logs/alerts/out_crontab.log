@@ -3,253 +3,150 @@
 [33m[nodemon] watching path(s): server/**/*[39m
 [33m[nodemon] watching extensions: js,mjs,json[39m
 [32m[nodemon] starting `node /Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server_admin.js package.json 8092 CRONTAB server_admin.js ./alerts/ ./node_modules/ ./scripts/ ./uploads/ ./views/ ./documentation/ ./logs/`[39m
-[2022-11-04 14:46:42] DEBUG Creating transport: nodemailer (6.8.0; +https://nodemailer.com/; SMTP/6.8.0[client:6.8.0])
-11/4/2022 15:46:46 [crontab] 1: "BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;"
+[2022-11-09 17:36:16] DEBUG Creating transport: nodemailer (6.8.0; +https://nodemailer.com/; SMTP/6.8.0[client:6.8.0])
+11/9/2022 18:36:17 [crontab] 1: "BEGIN PKREQUESTMANAGER.CALLQUERY(1,'CRON000001','crontab','{}', '{}','{}', :cursor); END;"
 
 Creating connection pool {"user":"controlroom","password":"controlroom","connectString":"10.200.14.230/test","poolMin":1,"poolMax":2000,"poolTimeout":0,"maxRows":70000,"autocommit":true,"_enableStats":false,"queueRequests":false,"queueTimeout":0,"stmtCacheSize":0}
-11/4/2022 15:46:48 [internal] 0: " Server is listening at http://:::8092"
+11/9/2022 18:36:18 [internal] 0: " Server is listening at http://:::8092"
 
-11/4/2022 15:46:48 [crontab] 1: "54 Object(s) returned... [FETCH]"
+11/9/2022 18:36:19 [crontab] 1: "54 Object(s) returned... [FETCH]"
 
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_SSCC_NO_UBD is now scheduled using cron setup : */55 * * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_SSCC_NO_UBD is now scheduled using cron setup : */55 * * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job WEEKLY_STORE_NO_SALES is now scheduled using cron setup : 5 6 * * 1"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job WEEKLY_STORE_NO_SALES is now scheduled using cron setup : 5 6 * * 1"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job EXP_WHS_INVALID_PICKING is now scheduled using cron setup : 5 9 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job EXP_WHS_INVALID_PICKING is now scheduled using cron setup : 7 9 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job EXP_WHS_FAULTY_DO is now scheduled using cron setup : 5 11 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job EXP_WHS_FAULTY_DO is now scheduled using cron setup : 5 11 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job WHS_MISS_ROUTE is now scheduled using cron setup : 0 * * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job WHS_MISS_ROUTE is now scheduled using cron setup : 0 * * * *"
 [0m
-[41m11/4/2022 15:46:48 [crontab] CRON: "Cron Job MONTHLY_SALES_REPORT is not active. Activation date on Fri Dec 31 2049 00:00:00 GMT+0100 (Central European Standard Time)"
+[41m11/9/2022 18:36:19 [crontab] CRON: "Cron Job MONTHLY_SALES_REPORT is not active. Activation date on Fri Dec 31 2049 00:00:00 GMT+0100 (Central European Standard Time)"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_EXPIRING_SSCC is now scheduled using cron setup : 0 10 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_EXPIRING_SSCC is now scheduled using cron setup : 0 10 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_STORE_SHORTED is now scheduled using cron setup : 5 7 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_STORE_SHORTED is now scheduled using cron setup : 10 7 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_RETAIL_NO_MULTIPLE is now scheduled using cron setup : 0 7-18 * * 1,2,3,4,5"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_RETAIL_NO_MULTIPLE is now scheduled using cron setup : 0 7-18 * * 1,2,3,4,5"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_SALES_LOAD_CHECK is now scheduled using cron setup : 15 5-19 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_SALES_LOAD_CHECK is now scheduled using cron setup : 15 5-19 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_INTERDEPT_ERROR_DETECTION is now scheduled using cron setup : 0 11 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_INTERDEPT_ERROR_DETECTION is now scheduled using cron setup : 0 11 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_RECEIPT_OOS is now scheduled using cron setup : 30 9 * * 1-5"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_RECEIPT_OOS is now scheduled using cron setup : 30 9 * * 1-5"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_PURCHASE_PRICE_XML_CHECK is now scheduled using cron setup : 0 2 * * 1-7"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_PURCHASE_PRICE_XML_CHECK is now scheduled using cron setup : 0 2 * * 1-7"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_STORE_BLOCKED_RECEIPT is now scheduled using cron setup : 5 7 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_STORE_BLOCKED_RECEIPT is now scheduled using cron setup : 15 7 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job WEEKLY_STORE_NO_SALES_ADMIN is now scheduled using cron setup : 5 7 * * 1"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job WEEKLY_STORE_NO_SALES_ADMIN is now scheduled using cron setup : 5 7 * * 1"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_EDI_UNKNOWN_UPC is now scheduled using cron setup : 0 9 * * 1,2,3,4,5"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_EDI_UNKNOWN_UPC is now scheduled using cron setup : 0 11 * * 1,2,3,4,5"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_TI_DIFFERENCE is now scheduled using cron setup : 0 9 * * 1,2,3,4,5,6"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_TI_DIFFERENCE is now scheduled using cron setup : 15 9 * * 1,2,3,4,5,6"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job WEEKLY_WHS_DISCONTINUED is now scheduled using cron setup : 0 19 * * 1"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job WEEKLY_WHS_DISCONTINUED is now scheduled using cron setup : 0 19 * * 1"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job WEEKLY_EDI_invoice_WEEKLY is now scheduled using cron setup : 1 19 * * 7"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job WEEKLY_EDI_invoice_WEEKLY is now scheduled using cron setup : 1 19 * * 7"
 [0m
-[41m11/4/2022 15:46:48 [crontab] CRON: "Cron Job ONGOING_EDI_invoice_SCAN is not active. Activation date on Fri Dec 31 2049 00:00:00 GMT+0100 (Central European Standard Time)"
+[41m11/9/2022 18:36:19 [crontab] CRON: "Cron Job ONGOING_EDI_invoice_SCAN is not active. Activation date on Fri Dec 31 2049 00:00:00 GMT+0100 (Central European Standard Time)"
 [0m
-[41m11/4/2022 15:46:48 [crontab] CRON: "Cron Job CGO_ALERT is not active. Activation date on Tue Jan 12 2049 00:00:00 GMT+0100 (Central European Standard Time)"
+[41m11/9/2022 18:36:19 [crontab] CRON: "Cron Job CGO_ALERT is not active. Activation date on Tue Jan 12 2049 00:00:00 GMT+0100 (Central European Standard Time)"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_CAO_Negative_Inventory_1130AM is now scheduled using cron setup : 30 11 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_CAO_Negative_Inventory_1130AM is now scheduled using cron setup : 30 11 * * *"
 [0m
-[41m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_CAO_Negative_Inventory_0530AM is not active. Activation date on Tue Jan 12 2049 00:00:00 GMT+0100 (Central European Standard Time)"
+[41m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_CAO_Negative_Inventory_0530AM is not active. Activation date on Tue Jan 12 2049 00:00:00 GMT+0100 (Central European Standard Time)"
 [0m
-[41m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_CAO_Order_Recap is not active. Activation date on Fri Dec 31 2049 00:00:00 GMT+0100 (Central European Standard Time)"
+[41m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_CAO_Order_Recap is not active. Activation date on Fri Dec 31 2049 00:00:00 GMT+0100 (Central European Standard Time)"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_Store_Sales is now scheduled using cron setup : 5 8 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_Store_Sales is now scheduled using cron setup : 5 8 * * *"
 [0m
-[41m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_CAO_Store_Sales is not active. Activation date on Tue Jan 12 2049 00:00:00 GMT+0100 (Central European Standard Time)"
+[41m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_CAO_Store_Sales is not active. Activation date on Tue Jan 12 2049 00:00:00 GMT+0100 (Central European Standard Time)"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job WEEKLY_Store_shrink is now scheduled using cron setup : 5 19 * * 7"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job WEEKLY_Store_shrink is now scheduled using cron setup : 5 19 * * 7"
 [0m
-[41m11/4/2022 15:46:48 [crontab] CRON: "Cron Job WEEKLY_CAO_Store_shrink is not active. Activation date on Tue Jan 12 2049 00:00:00 GMT+0100 (Central European Standard Time)"
+[41m11/9/2022 18:36:19 [crontab] CRON: "Cron Job WEEKLY_CAO_Store_shrink is not active. Activation date on Tue Jan 12 2049 00:00:00 GMT+0100 (Central European Standard Time)"
 [0m
-[41m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_BUYER_Pushout is not active. Activation date on Tue Jan 12 2049 00:00:00 GMT+0100 (Central European Standard Time)"
+[41m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_BUYER_Pushout is not active. Activation date on Tue Jan 12 2049 00:00:00 GMT+0100 (Central European Standard Time)"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_EDI_BLANK_REF is now scheduled using cron setup : 5 7 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_EDI_BLANK_REF is now scheduled using cron setup : 5 7 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job ICR_MAINTENANCE is now scheduled using cron setup : 5 3 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job ICR_MAINTENANCE is now scheduled using cron setup : 5 3 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_INVALIDCOLLECTION_TIME is now scheduled using cron setup : 0 7-18 * * 1,2,3,4,5"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_INVALIDCOLLECTION_TIME is now scheduled using cron setup : 0 7-18 * * 1,2,3,4,5"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_EDI_INVALIDDEALS is now scheduled using cron setup : 0 9 * * 1,2,3,4,5"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_EDI_INVALIDDEALS is now scheduled using cron setup : 40 7 * * 1,2,3,4,5"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_INVOICE_FAILURE is now scheduled using cron setup : 0 11 * * 1,2,3,4,5"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_INVOICE_FAILURE is now scheduled using cron setup : 15 11 * * 1,2,3,4,5"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_SHIPMENT_BLOCKED is now scheduled using cron setup : 15 * * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_SHIPMENT_BLOCKED is now scheduled using cron setup : 15 * * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_DUNHUMMBY_ITEM_EXCEPTION is now scheduled using cron setup : 0 10 * * 1-5"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_DUNHUMMBY_ITEM_EXCEPTION is now scheduled using cron setup : 0 10 * * 1-5"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job WEEKLY_WHS_ACTIVE_STORE_FUTURE is now scheduled using cron setup : 0 19 * * 1"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job WEEKLY_WHS_ACTIVE_STORE_FUTURE is now scheduled using cron setup : 0 19 * * 1"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job VIEW_REFRESH_DAILY is now scheduled using cron setup : 5 12 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job VIEW_REFRESH_DAILY is now scheduled using cron setup : 5 12 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job VIEW_REFRESH_HOURLY is now scheduled using cron setup : 5 11 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job VIEW_REFRESH_HOURLY is now scheduled using cron setup : 5 11 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_CUT is now scheduled using cron setup : 5 7 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_CUT is now scheduled using cron setup : 5 7 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_UBD is now scheduled using cron setup : 5 8 * * 1-5"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_UBD is now scheduled using cron setup : 5 8 * * 1-5"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_NEG_UBD is now scheduled using cron setup : 0 2 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_NEG_UBD is now scheduled using cron setup : 0 2 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job WEEKLY_STORE_NO_SALES_CAPTURE_ADMIN is now scheduled using cron setup : 5 6 * * 1"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job WEEKLY_STORE_NO_SALES_CAPTURE_ADMIN is now scheduled using cron setup : 5 6 * * 1"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_FILL_RATE_CAPTURE is now scheduled using cron setup : 0 16 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_FILL_RATE_CAPTURE is now scheduled using cron setup : 0 16 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_SERVICE_RATE_CAPTURE is now scheduled using cron setup : 0 16 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_SERVICE_RATE_CAPTURE is now scheduled using cron setup : 0 16 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_BLOCKED_PO is now scheduled using cron setup : 5 10 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_BLOCKED_PO is now scheduled using cron setup : 5 10 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_HIGH_INV is now scheduled using cron setup : 0 11 * * 1"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_HIGH_INV is now scheduled using cron setup : 0 11 * * 1"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_LOW_INV is now scheduled using cron setup : 0 11 * * 1"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_LOW_INV is now scheduled using cron setup : 0 11 * * 1"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_SSCC_SUSPICIOUS_UBD is now scheduled using cron setup : 0 9 * * 1,2,3,4,5,6"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_SSCC_SUSPICIOUS_UBD is now scheduled using cron setup : 10 9 * * 1,2,3,4,5,6"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_RECEIVED_CUT_OVER is now scheduled using cron setup : 0 9 * * 1,2,3,4,5,6"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_RECEIVED_CUT_OVER is now scheduled using cron setup : 11 9 * * 1,2,3,4,5,6"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_PRODUCE_0_LEAD_TIME is now scheduled using cron setup : 5 9 * * 1-5"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_PRODUCE_0_LEAD_TIME is now scheduled using cron setup : 5 9 * * 1-5"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_FIN_SHRINK_INVOICE is now scheduled using cron setup : 30 7 * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_FIN_SHRINK_INVOICE is now scheduled using cron setup : 30 7 * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_MULTICONSIGNMENT is now scheduled using cron setup : */30 * * * *"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_MULTICONSIGNMENT is now scheduled using cron setup : */30 * * * *"
 [0m
-[33m11/4/2022 15:46:48 [crontab] CRON: "Cron Job DAILY_WHS_SKU_WEIGHT is now scheduled using cron setup : 20 11 * * 1-5"
+[33m11/9/2022 18:36:19 [crontab] CRON: "Cron Job DAILY_WHS_SKU_WEIGHT is now scheduled using cron setup : 20 11 * * 1-5"
 [0m
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
-stdout 
+11/9/2022 18:37:50 [abe] 2: "BEGIN PKREQUESTMANAGER.CALLQUERY(2,'NOT0000001','abe','{HEINENS_CUSTOM_PROD}', '{WHS0000000004,1}','{HN}', :cursor); END;"
+
+11/9/2022 18:37:50 [abe] 3: "BEGIN PKREQUESTMANAGER.CALLQUERY(3,'NOT0000001','abe','{HEINENS_CUSTOM_PROD}', '{WHS0000000004_1,2}','{HN}', :cursor); END;"
+
+11/9/2022 18:37:51 [abe] 4: "BEGIN PKREQUESTMANAGER.CALLQUERY(4,'NOT0000001','abe','{HEINENS_CUSTOM_PROD}', '{WHS0000000004_2,3}','{HN}', :cursor); END;"
+
+[2022-11-09 17:37:51] DEBUG [jngEKCSVp4g] Resolved smtp.heinens.com as 10.40.3.61 [cache miss]
+[2022-11-09 17:37:51] DEBUG [K5pHfbBYsiQ] Resolved smtp.heinens.com as 10.40.3.61 [cache miss]
+[2022-11-09 17:37:51] DEBUG [5lPL0Mze5U] Resolved smtp.heinens.com as 10.40.3.61 [cache miss]
+[2022-11-09 17:37:51] INFO  [K5pHfbBYsiQ] Connection established to 10.40.3.61:25
+[2022-11-09 17:37:51] INFO  [5lPL0Mze5U] Connection established to 10.40.3.61:25
+[2022-11-09 17:37:52] INFO  [5lPL0Mze5U] Connection upgraded with STARTTLS
+[2022-11-09 17:37:52] INFO  [K5pHfbBYsiQ] Connection upgraded with STARTTLS
+[2022-11-09 17:37:52] DEBUG [K5pHfbBYsiQ] SMTP handshake finished
+[2022-11-09 17:37:52] DEBUG [5lPL0Mze5U] SMTP handshake finished
+[2022-11-09 17:37:52] INFO  [jngEKCSVp4g] Connection established to 10.40.3.61:25
+[2022-11-09 17:37:52] DEBUG [5lPL0Mze5U] Closing connection to the server using "end"
+[2022-11-09 17:37:52] DEBUG [K5pHfbBYsiQ] Closing connection to the server using "end"
+[2022-11-09 17:37:52] INFO  [K5pHfbBYsiQ] Connection closed
+[2022-11-09 17:37:52] INFO  [5lPL0Mze5U] Connection closed
+11/9/2022 18:37:52 [abe] 2: "[{\"ALTID\":\"WHS0000000004\",\"ALTQUERY\":\"WHS0000000004\",\"ALTFILE\":\"/opt/apps/controlRoom/controlRoom_server/server/alerts/WHS_MULTICONSIGNMENT.xml\",\"ALTSUBJECT\":\"EXCEPTION REPORT - Warehouse AGRN with multiple consignment\",\"ALTCONTENT\":\"Buyers adjusted the PO on an AGRN already under process (ON_GOING consignment). Please note the additional consignment to receive the adjusted PO from the buyer.\\n<b>RESOLUTION:</b>Warehouse will receive the PO change on the additional consignment.\",\"ALTSMSCONTENT\":\"Check your email for detail, Warehouse multiple consignment (# records) : \",\"ALTREALTIME\":1,\"ALTORIENTATION\":\"landscape\",\"ALTPRINTAREA\":null,\"ALTMARGIN\":\"{ left: 0.3, right: 0.3,top: 0.5, bottom: 0.75, header: 0.3, footer: 0.3}\",\"ALTFITPAGE\":1,\"ALTFITHEIGHT\":99,\"ALTFITWIDTH\":1,\"ALTTITLEREPEAT\":\"1:5\",\"ALTFOOTER\":\"&L&D&T&RPage &P of &N\",\"ALTFORMAT\":null,\"ALTFORMATXLS1\":null,\"ALTFORMATXLS2\":null,\"ALTCONTENTHTML\":\"Buyers adjusted the PO on an AGRN already under process (ON_GOING consignment). Please note the additional consignment to receive the adjusted PO from the buyer.\\n<b>RESOLUTION:</b>Warehouse will receive the PO change on the additional consignment.\",\"ALTXLSBREAK\":null,\"ALTSCALE\":100,\"ALTCOLMOVE\":null,\"ALTEMAIL\":\"dcarter@heinens.com; kylekane@heinens.com\",\"ALTEMAILCC\":\"pdaniels@heinens.com; rfink@heinens.com;\",\"ALTEMAILBCC\":\"abenamrouche@heinens.com\",\"ALTMOBILE\":null}]"
+
+11/9/2022 18:37:52 [abe] 2: "1 Object(s) returned... [FETCH]"
+
+Shutting down
+Closing Inventory Control Room backend server
+Web server closed
+[2022-11-09 17:37:52] INFO  [jngEKCSVp4g] Connection upgraded with STARTTLS
+Connection pool terminated
+Exiting process
+[32m[nodemon] clean exit - waiting for changes before restart[39m
