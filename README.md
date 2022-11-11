@@ -51,7 +51,7 @@ export const environment = {
   baseURL           : "http://xx.xxx.xx.xxx:9086/icr",
 };
 
-
-$ npm install
+# Start the client
+$ npm start
 
 
