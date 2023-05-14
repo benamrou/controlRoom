@@ -1,0 +1,23 @@
+<ROOT>
+    <QUERY> 
+/***********************************************************************/
+/* Query : Report invoice integration error                            */
+/***********************************************************************/
+
+SELECT cfiinvid "Invoice #", 
+       to_char(cfidate,''MM/DD/RRRR'') "Invoice date", 
+       foucnuf || '' | ''  || foulibl "Supplier code desc.",
+       cfimfac "Amount",
+       to_char(cfidtrt,''MM/DD/RRRR'') "Processing date",
+       cfifich "File",
+       cfinerr || '' | '' || cfimess "Integration error message"
+FROM intcfinv@heinens_custom_prod, foudgene@heinens_custom_prod 
+WHERE cfistat=2 AND cficfin=foucfin AND TRUNC(cfidcre)>= trunc(SYSDATE-30)
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No invoice integration error</HEADERIFEMPTY>
+  <HEADER>Invoice integration failure</HEADER>
+  
+</ROOT>
+

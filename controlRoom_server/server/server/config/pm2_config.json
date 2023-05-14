@@ -1,0 +1,19 @@
+{
+  "apps": [
+    {
+      "name": "icr",
+      "script": "./server_admin.js ",
+      "node_args": "8091"
+    },
+    {
+      "name": "icr_alert",
+      "script": "./server_admin.js ",
+      "node_args": "8092 CRONTAB --max-old-space-size=1024 --expose-gc"
+    },
+    {
+      "name": "icr_batch",
+      "script": "./server_admin.js ",
+      "node_args": "8090"
+    }
+  ]
+}

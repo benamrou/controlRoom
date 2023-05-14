@@ -1,0 +1,80 @@
+0 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/gaia_out txt.2* 1
+1 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/gaia_out log 1
+2 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/tomee_log log 14
+3 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/tomee_log txt 14
+4 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/tomee_log gz 14
+5 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/bin_log log 14
+6 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/nmon_files nmon 365
+7 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/nmon_files gz 365
+8 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/ws_log gz 14
+9 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/ws_log txt 14
+10 1 * * * /home/hntcen/bin/deleteFiles /home/hntcen/bin/shell/logs log 30
+
+# ICR
+5 5 * * * /opt/apps/controlRoom/controlRoom_server/server/start_backend.sh > /opt/apps/controlRoom/controlRoom_server/server/init.log
+30 0 * * * /opt/apps/controlRoom/controlRoom_server/server/scripts/prod/maintenance.sh
+*/9 * * * * /opt/apps/controlRoom/controlRoom_server/server/scripts/icr/restart/check_icr_status.sh
+
+# Supplier schedule
+0 19 * * * /home/hnpcen/bin/shell/supplierSchedule/supplierSchedule.sh
+0 11 * * 0 /home/hnpcen/bin/shell/supplierSchedule/supplierSchedule_Year1.sh
+0 13 * * 0 /home/hnpcen/bin/shell/supplierSchedule/supplierSchedule_Year2.sh
+
+# ICR ALERTS
+*/55 * * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_SSCC_NO_UBD.sh
+5 6 * * 1 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WEEKLY_STORE_NO_SALES.sh
+7 9 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_FLT_PICK_INVALID.sh
+5 11 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_FAULTY_DO.sh
+0 * * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_MISS_ROUTE.sh
+0 10 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_EXPIRING_UBD.sh
+15 9 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_RECEIPT_BLOCKED.sh
+0 13 * * 2 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_SMART_UBD.sh
+6 11 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_USERS_DEL.sh
+10 7 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/SHORTAGE_OPEN_PO.sh
+41 7-18 * * 1,2,3,4,5 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/RETAIL_NO_MULTIPLE.sh
+18 5-19 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/DAILY_SALES_LOAD_CHECK.sh
+1 11 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/INTERDEPT_ERROR.sh
+30 0-23 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_RECEIPT_OOS.sh
+*/30 * * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/PO_NOT_COLLECTED.sh
+15 7 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/STORE_RECEIPT_BLOCKED.sh
+5 7 * * 1 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WEEKLY_STORE_NO_SALES_ADMIN.sh
+4 11 * * 1,2,3,4,5 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/EDI_UNKNOWN_UPC.sh
+15 9 * * 1,2,3,4,5,6 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_TI_DISCREPANCY.sh
+5 19 * * 1 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_DEACTIVATED_WITH_INVENTORY.sh
+15 13 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/STORE_INVALID_TRANSFER_PRICE.sh
+1 19 * * 7 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/EDI_invoice_WEEKLY_alert.sh
+30 11 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/CGO_negative_inventory_RUN2.sh
+5 8 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/DAILY_STORES_SALES.sh
+5 19 * * 7 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WEEKLY_STORES_SHRINK.sh
+5 7 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/DAILY_EDI_BLANK_REF.sh
+7 7-18 * * 1,2,3,4,5 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/INVALID_COLLECTION_TIME.sh
+40 7 * * 1,2,3,4,5 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/EDI_INVALIDDEALS.sh
+15 11 * * 1,2,3,4,5 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/FIN_INVOICE_ERROR.sh
+45 * * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_SHIPMENT_BLOCKED.sh
+9 10 * * 1-5 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/DUNHUMMBY_ITEM_EXCEPTION.sh
+5 19 * * 1 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_ACTIVE_STORE_FUTURE.sh
+0 13 * * 3 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_PUSH_UBD.sh
+31 8 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/VESTCOM_REPORT.sh
+5 12 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/views/DAILY_VIEW_REFRESH.sh
+5 11 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/views/HOURLY_VIEW_REFRESH.sh
+5 7 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_CUT_DELIVERY.sh
+0 2 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_NEG_PICKING.sh
+5 6 * * 1 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WEEKLY_STORE_NO_SALES_CAPTURE_ADMIN.sh
+3 16 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/DAILY_FILL_RATE.sh
+4 16 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/DAILY_SERVICE_RATE.sh
+5 10 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_BLOCKED_PO.sh
+2 11 * * 1 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_HIGH_INVENTORY.sh
+3 11 * * 1 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_LOW_INVENTORY.sh
+10 9 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_SSCC_UBD_RECEIVED.sh
+11 9 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_CUT_OVER_RECEIPT.sh
+5 9 * * 1-5 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/PRODUCE_0_LEADTIME.sh
+30 7 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/FIN_SHRINK_INVOICE.sh
+*/30 * * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_MULTICONSIGNMENT.sh
+20 11 * * 1-5 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_SKUWEIGHT_ISSUE.sh
+5 19 * * 1 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_RECEIVABLE_ONLY_WITH_INVENTORY.sh
+5 9 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_OVER_ORDERED.sh
+5 11 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/ECOMMERCE_ISSUE.sh
+5 7 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_FILL_RATE_PROMO.sh
+6 7 * * * source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_FILL_RATE_CAT.sh
+5 19 * * 2 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_NO_TAX_NO_UBD.sh
+6 19 * * 2 source $HOME/env/envCEN; /opt/apps/controlRoom/controlRoom_server/server/scripts/WHS_TAX_UBD.sh

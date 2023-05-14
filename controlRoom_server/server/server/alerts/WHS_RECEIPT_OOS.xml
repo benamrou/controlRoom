@@ -1,0 +1,29 @@
+<ROOT>
+    <QUERY> 
+/***********************************************************************/
+/* Query : Warehouse reception - Out of Sync Central (Status)          */
+/***********************************************************************/
+
+SELECT ecdsite"Whs #", ecdcexcde "PO #", oe_fourn || '' | '' || oe_librs "Supplier code desc.",
+       to_char(ecddcom, ''MM/DD/RR HH24:MI:SS'') "Ordered on", 
+       to_char(ecddliv, ''MM/DD/RR HH24:MI:SS'') "Exp. delivery date",
+       to_char(oe_datrec, ''MM/DD/RR HH24:MI:SS'') "Received on", 
+       ecdetat || '' | '' || UPPER(pkparpostes.get_postlibl@heinens_custom_prod(1,10,502, ecdetat, ''HN'')) "Central status",
+       (SELECT oe_statut || '' | '' || pi_libpos 
+       from tb_parl@heinens_stk_prod  where pi_lang = ''GB'' AND pi_postex=oe_statut and pi_tablex = ''STA'')  "Stock status"
+FROM cdeentcde@heinens_custom_prod, tb_erec@heinens_stk_prod  
+WHERE ecdetat=5      -- Central - Awaiting delivery
+AND  oe_statut=''3'' -- Warehouse CLEARED
+AND ecdcexcde=oe_ncdefo
+AND ecdsite=oe_donord
+AND ecdsite IN (91070,91071, 90061)
+AND ecdcincde=oe_cincde
+AND TRUNC(sysdate+1) >= TRUNC(oe_datrec) 
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No Warehouse receipt OOS</HEADERIFEMPTY>
+  <HEADER>Warehouse receipt not in synch with Central (status)</HEADER>
+  
+</ROOT>
+

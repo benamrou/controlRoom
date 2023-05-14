@@ -1,0 +1,21 @@
+<ROOT>
+    <QUERY> 
+SELECT arvcexr || ''/'' || arvcexv || '' '' || pkstrucobj.get_desc@heinens_custom_prod(1,arvcinr,''HN'') "Item/SV code desc.",
+       pkartcoca.Get_Arccode@heinens_custom_prod(1, arvcinv) "UPC code",
+       (SELECT to_char(MAX(aradfin),''MM/DD/RRRR'') FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod WHERE arlseqvl=araseqvl AND arlcinluvc=arvcinv) "Orderable ending on",
+       uatccla "Vestcom attribute",
+       uatcatt || '' | '' || uatvaln "Value",
+       uatutil "Updated by",
+       to_char(uatdmaj, ''MM/DD/RR HH24:MI:SS'') "Updated on"
+FROM artuvattri@heinens_custom_prod, artuv@heinens_custom_prod
+WHERE uatcinv=arvcinv
+AND uatccla=''STVT'' 
+AND TRUNC(uatddeb)=TRUNC(SYSDATE-4)
+AND upper(uatutil)=''PSIFA122P''
+</QUERY>
+ 
+  <HEADERIFEMPTY>No Vestcom items suppression flagged</HEADERIFEMPTY>
+  <HEADER>Vestcom items suppression</HEADER>
+  
+</ROOT>
+

@@ -1,0 +1,45 @@
+<ROOT>
+    <QUERY> 
+WITH MAX_LV AS (
+SELECT ar_donord donord, ar_cproin ITEM_CODE, MAX(ar_ilogis) LV
+FROM tb_art@heinens_custom_prod
+WHERE ar_stprod in (0,2) 
+GROUP BY ar_donord, ar_cproin)
+SELECT ar_donord "Whs",
+       ar_cproin || ''/'' ||ar_ilogis || '' '' || ar_libpro "Item/lv description",
+       ar_fourn || '' | '' || ar_nrsfou "Supplier desc",
+       (SELECT ea_ean13 FROM tb_ean@heinens_stk_prod WHERE ar_cproin||ar_ilogis||ar_donord = ea_cproin||ea_ilogis||ea_donord
+        AND ea_typcod IN (6,7) AND ROWNUM=1) "UPC",
+       /* Pick slot */
+       (SELECT rp_adrpic FROM tb_pick@heinens_stk_prod WHERE ar_cproin||ar_ilogis||ar_donord = rp_cproin||rp_ilogis||rp_donord
+       AND rownum=1) as "Picking address",
+       DECODE(ar_codeup,1, ''SKU'', 2, ''Inner'', 3, ''Case'', 4, ''Layer'', 5, ''Pallet'', ar_codeup) "Prep. unit",
+       round(ar_poinet,2) "SKU net weight (lbs)",
+       ar_nuvspc*ar_nspcca "Nb Sku per case",
+       round(ar_poinet*ar_nuvspc*ar_nspcca,2) "Calculation case weight (lbs)",
+       round(ar_pdscar,2) "Case net weight (lbs)",
+       /* Inventory */
+       (SELECT   SUM(ul_nqteup) INV_PU
+        FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+        WHERE UL_USSCC  = UE_USSCC
+        AND UE_INDFIC = ''1''
+        AND ul_cproin = ar_cproin
+        AND ul_ilogis = ar_ilogis
+        AND ul_arprom=ar_arprom
+        AND UL_DONORD = ar_donord) "Inventory (case)"
+FROM tb_art@heinens_custom_prod, artvl@heinens_custom_prod, MAX_LV
+WHERE ((ar_donord in (90061, 95073,95074) AND :PARAM2=2)
+OR (ar_donord IN (91070, 91071, 91072) AND :PARAM2=1))
+AND ar_cproin=ITEM_CODE
+AND ar_ilogis=LV
+AND ar_donord=donord
+and ar_stprod in (0,2) 
+AND ABS(ar_poinet*ar_nuvspc*ar_nspcca - ar_pdscar) > 1
+AND arlcexr=ar_cproin AND arlcexvl=to_number(ar_ilogis)
+</QUERY>
+ 
+  <HEADERIFEMPTY>Warehouse no wrong SKU weight</HEADERIFEMPTY>
+  <HEADER>Warehouse Warehouse invalid SKU weight</HEADER>
+  
+</ROOT>
+

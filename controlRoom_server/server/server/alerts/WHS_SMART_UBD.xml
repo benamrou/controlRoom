@@ -1,0 +1,487 @@
+<ROOT>
+  <QUERY> 
+WITH UBD_ITEMS AS
+ (SELECT UL_DONORD,
+         ''['' || LISTAGG(UE_USSCC, '' | '' ON OVERFLOW TRUNCATE) WITHIN GROUP(ORDER BY UE_USSCC) || '']'' SSCC_ADDRESS,
+         UL_CPROIN,
+         UL_ILOGIS,
+         UL_ARPROM,
+         UT_VALIND,
+         SUM(UL_NQTUVC) INV_SKU,
+         SUM(UL_NQTEUP) INV_PU,
+         AR_LIBPRO,
+         AR_FOURN,
+         AR_NRSFOU,
+         AR_NIV4,
+         AR_NUVSPC * AR_NSPCCA PCK,
+         AR_NUVSPC IPCK,
+         AR_NUVCUP "Shipping qty",
+         AR_NCOUPA,
+         AR_NCACOU,
+         AR_NSPCCA,
+         AR_NUVSPC,
+         AR_CODEUP, /* 2 : inner, 3: Pck */
+         ARLCINLUVC,
+         NVL(ARTPOV, 0) ARTPOV,
+         NVL(ARTPOC, 0) ARTPOC,
+         TRUNC(ue_datrec) "Received on",
+         ARLSEQVL
+    FROM TB_EUMS@HEINENS_STK_PROD,
+         TB_LCUMS@HEINENS_STK_PROD,
+         TB_TRAUMS@HEINENS_STK_PROD,
+         TB_ART@HEINENS_STK_PROD,
+         ARTVL@HEINENS_CEN_PROD,
+         ARTRAC@HEINENS_CEN_PROD
+   WHERE UT_VALIND IS NOT NULL
+     AND UL_USSCC = UE_USSCC
+     AND UE_INDFIC = ''1''
+     AND UL_USSCC = UT_USSCC
+     AND UL_CSSCC = UT_CSSCC
+--     AND (INSTR(''90061/91070/91071'', UL_DONORD) > 0)
+     AND UL_DONORD=:param2
+     AND UL_NUMLIG = UT_NUMLIG
+     AND AR_CPROIN = UL_CPROIN
+--     AND ar_cproin=''186372''
+     AND AR_ILOGIS = UL_ILOGIS
+     AND AR_ARPROM = UL_ARPROM
+     AND AR_DONORD = UL_DONORD
+     AND ARLCINR = ARTCINR
+--     AND ar_fourn=''12664''
+     AND (TRUNC(SYSDATE) + :param3 + NVL(ARTPOV, 0) + NVL(ARTPOC, 0)) >= TO_DATE(UT_VALIND, ''RRRRMMDD'')
+     AND UL_CPROIN = ARLCEXR
+     AND ARLCEXVL = TO_NUMBER(UL_ILOGIS)
+   GROUP BY UL_DONORD,
+            UT_VALIND,
+            UL_CPROIN,
+            UL_ILOGIS,
+            UL_ARPROM,
+            AR_NUVSPC,
+            AR_CODEUP,
+            ARLSEQVL,
+	    TRUNC(ue_datrec),
+            AR_NUVCUP,
+            AR_NCOUPA,
+            AR_NCACOU,
+            AR_NSPCCA,
+            AR_NUVSPC,
+            AR_LIBPRO,
+            AR_FOURN,
+            AR_NRSFOU,
+            AR_NIV4,
+            ARTPOV,
+            ARTPOC,
+            AR_NUVSPC * AR_NSPCCA,
+            ARLCINLUVC),
+UBD_ITEMS_MULTI_SSCC AS
+ (SELECT UL_DONORD,
+         SSCC_ADDRESS,
+         UL_CPROIN,
+         UL_ILOGIS,
+         UL_ARPROM,
+         UT_VALIND,
+	 "Received on",
+         INV_SKU,
+         INV_PU,
+         AR_LIBPRO,
+         AR_FOURN,
+         AR_NRSFOU,
+         AR_NIV4,
+         PCK,
+         IPCK,
+	 (TO_DATE(UT_VALIND, ''RRRRMMDD'') - ARTPOV - ARTPOC - trunc(sysdate)) "Days to push" ,
+         "Shipping qty",
+         AR_NCOUPA,
+         AR_NCACOU,
+         AR_NSPCCA,
+         AR_NUVSPC,
+         AR_CODEUP, /* 2 : inner, 3: Pck */
+         ARLCINLUVC,
+         NVL(ARTPOV, 0) ARTPOV,
+         NVL(ARTPOC, 0) ARTPOC,
+         ARLSEQVL,
+         /* OLD PERIOD MIN - issue Algo is starting the next pallet push at the UBD end 
+	NVL((SELECT MAX(TO_DATE(UT_VALIND, ''RRRRMMDD'') - ARTPOV - ARTPOC)
+               FROM UBD_ITEMS OTH
+              WHERE IT.UL_CPROIN = OTH.UL_CPROIN
+                AND IT.ARLSEQVL = OTH.ARLSEQVL
+                AND IT.UT_VALIND > OTH.UT_VALIND
+                AND IT.UL_DONORD = OTH.UL_DONORD
+                AND INV_SKU > 0),
+             TRUNC(SYSDATE)) PERIOD_MIN,
+        */
+         NVL((
+                SELECT LEAST(STARTAT, TRUNC(SYSDATE) + DECODE(SHIP_AVERAGE_DAILY,0,999,(ALL_SKU/SHIP_AVERAGE_DAILY)))
+                FROM (SELECT (MAX(TO_DATE(OTH.UT_VALIND, ''RRRRMMDD'') - ARTPOV - ARTPOC)) STARTAT, SUM(INV_SKU) ALL_SKU
+               FROM UBD_ITEMS OTH
+              WHERE IT.UL_CPROIN = OTH.UL_CPROIN
+                AND IT.ARLSEQVL = OTH.ARLSEQVL
+                AND IT.UT_VALIND > OTH.UT_VALIND
+                AND IT.UL_DONORD = OTH.UL_DONORD
+                AND INV_SKU > 0), (SELECT ROUND(SUM(PVDREEL) / (4*7), 2) SHIP_AVERAGE_DAILY
+                                                     FROM FCTENTPVH@HEINENS_CEN_PROD, FCTDETPVH@HEINENS_CEN_PROD
+                                                    WHERE PVDEID = PVEID
+                                                      AND PVESITE = UL_DONORD
+                                                      AND PVECINL = ARLCINLUVC
+                                                      AND PVDNSEM BETWEEN TO_CHAR(SYSDATE - 5 * 7, ''RRRRWW'') AND
+                                                          TO_CHAR(SYSDATE - 1 * 7, ''RRRRWW''))),
+             TRUNC(SYSDATE)) PERIOD_MIN,
+         (SELECT COUNT(DISTINCT UT_VALIND)
+            FROM UBD_ITEMS OTH
+           WHERE IT.UL_CPROIN = OTH.UL_CPROIN
+             AND IT.ARLSEQVL = OTH.ARLSEQVL
+             AND IT.UL_DONORD = OTH.UL_DONORD
+             AND INV_SKU > 0) NB_SSCC
+    FROM UBD_ITEMS IT),
+UBD_ITEMS_WITH_PROJECTION AS
+ (SELECT UL_DONORD,
+         SSCC_ADDRESS,
+         UL_CPROIN,
+         UL_ILOGIS,
+         "Shipping qty",
+         UT_VALIND,
+	 "Received on",
+         INV_SKU,
+         INV_PU,
+         PCK,
+         IPCK,
+         AR_FOURN,
+         AR_NRSFOU,
+         AR_LIBPRO,
+         ARLCINLUVC,
+         AR_CODEUP,
+         ARLSEQVL,
+	"Days to push",
+         NVL((SELECT ROUND(SUM(PVDREEL) / 4, 2)
+               FROM FCTENTPVH@HEINENS_CEN_PROD, FCTDETPVH@HEINENS_CEN_PROD
+              WHERE PVDEID = PVEID
+                AND PVESITE = UL_DONORD
+                AND PVECINL = ARLCINLUVC
+                AND PVDNSEM BETWEEN TO_CHAR(SYSDATE - 5 * 7, ''RRRRWW'') AND
+                    TO_CHAR(SYSDATE - 1 * 7, ''RRRRWW'')),
+             0) "SKU shipped per week",
+         NVL((SELECT AVG(NVL(PVDCORR,PVDCALC))
+            FROM FCTENTPVH@HEINENS_CEN_PROD, FCTDETPVH@HEINENS_CEN_PROD
+           WHERE PVDEID = PVEID
+             AND PVESITE = UL_DONORD
+             AND PVECINL = ARLCINLUVC
+             AND PVDNSEM BETWEEN TO_NUMBER(TO_CHAR(PERIOD_MIN, ''RRRRWW'')) AND
+                 TO_NUMBER(TO_CHAR(TO_DATE(UT_VALIND, ''RRRRMMDD'') - ARTPOV -
+                                   ARTPOC,
+                                   ''RRRRWW''))),0) "Projection",
+         NVL((SELECT SUM(NVL(PVDCORR,PVDCALC))
+            FROM FCTENTPVH@HEINENS_CEN_PROD, FCTDETPVH@HEINENS_CEN_PROD
+           WHERE PVDEID = PVEID
+             AND PVESITE = UL_DONORD
+             AND PVECINL = ARLCINLUVC
+             AND PVDNSEM BETWEEN TO_NUMBER(TO_CHAR(PERIOD_MIN, ''RRRRWW'')) AND
+                 TO_NUMBER(TO_CHAR(TO_DATE(UT_VALIND, ''RRRRMMDD'') - ARTPOV -
+                                   ARTPOC,
+                                   ''RRRRWW''))),0) "Projection SKU",
+         (SELECT ROUND(SUM(STMVAL) * -1 / 4, 2)
+            FROM STOMVT@HEINENS_CEN_PROD
+           WHERE STMTMVT = 150
+             AND TRUNC(STMDMVT) BETWEEN TRUNC(SYSDATE - 5 * 7) AND
+                 TRUNC(SYSDATE - 1)
+             AND STMCINL = ARLCINLUVC) "SKU sold per week",
+         (SELECT ROUND(SUM(SMSSAIU - SMSCRIU), 2)
+            FROM STOMVSEMAINE@HEINENS_CEN_PROD
+           WHERE SMSTPOS = 0
+             AND SMSSEMAINE = TO_CHAR(SYSDATE - 7, ''RRRRWW'')
+             AND SMSTTVA = 0
+             AND SMSNPOS = 0
+             AND SMSCINL = ARLCINLUVC
+             AND 50 > SMSSITE) "SKU sold week_1",
+         (SELECT ROUND(SUM(SMSSAIU - SMSCRIU), 2)
+            FROM STOMVSEMAINE@HEINENS_CEN_PROD
+           WHERE SMSTPOS = 0
+             AND SMSSEMAINE = TO_CHAR(SYSDATE - 2 * 7, ''RRRRWW'')
+             AND SMSTTVA = 0
+             AND SMSNPOS = 0
+             AND SMSCINL = ARLCINLUVC
+             AND 50 > SMSSITE) "SKU sold week_2",
+         (SELECT ROUND(SUM(SMSSAIU - SMSCRIU), 2)
+            FROM STOMVSEMAINE@HEINENS_CEN_PROD
+           WHERE SMSTPOS = 0
+             AND SMSSEMAINE = TO_CHAR(SYSDATE - 3 * 7, ''RRRRWW'')
+             AND SMSTTVA = 0
+             AND SMSNPOS = 0
+             AND SMSCINL = ARLCINLUVC
+             AND 50 > SMSSITE) "SKU sold week_3",
+         (SELECT ROUND(SUM(SMSSAIU - SMSCRIU), 2)
+            FROM STOMVSEMAINE@HEINENS_CEN_PROD
+           WHERE SMSTPOS = 0
+             AND SMSSEMAINE = TO_CHAR(SYSDATE - 4 * 7, ''RRRRWW'')
+             AND SMSTTVA = 0
+             AND SMSNPOS = 0
+             AND SMSCINL = ARLCINLUVC
+             AND 50 > SMSSITE) "SKU sold week_4",
+         (SELECT ROUND(SUM(SMSSAIU - SMSCRIU), 2)
+            FROM STOMVSEMAINE@HEINENS_CEN_PROD
+           WHERE SMSTPOS = 0
+             AND SMSSEMAINE = TO_CHAR(SYSDATE - 5 * 7, ''RRRRWW'')
+             AND SMSTTVA = 0
+             AND SMSNPOS = 0
+             AND SMSCINL = ARLCINLUVC
+             AND 50 > SMSSITE) "SKU sold week_5",
+         (SELECT ROUND(TAPPBRUT, 2) * 1
+            FROM TARPRIX@HEINENS_CEN_PROD, FOUDGENE@HEINENS_CEN_PROD
+           WHERE FOUCFIN = TAPCFIN
+             AND TAPSITE = UL_DONORD
+             AND TAPSEQVL = ARLSEQVL
+             AND TRUNC(SYSDATE) BETWEEN TAPDDEB AND TAPDFIN
+             AND FOUCNUF = AR_FOURN
+             AND ROWNUM = 1) "Case cost",
+         (SELECT DECODE(TAPUAPP,
+                        1,
+                        1,
+                        21,
+                        AR_NUVSPC,
+                        41,
+                        AR_NUVSPC * AR_NSPCCA,
+                        61,
+                        AR_NUVSPC * AR_NSPCCA * AR_NCACOU,
+                        81,
+                        AR_NUVSPC * AR_NSPCCA * AR_NCACOU * AR_NCOUPA)
+            FROM TARPRIX@HEINENS_CEN_PROD, FOUDGENE@HEINENS_CEN_PROD
+           WHERE FOUCFIN = TAPCFIN
+             AND TAPSITE = UL_DONORD
+             AND TAPSEQVL = ARLSEQVL
+             AND TRUNC(SYSDATE) BETWEEN TAPDDEB AND TAPDFIN
+             AND FOUCNUF = AR_FOURN
+             AND ROWNUM = 1) "Cost unit",
+         ARTPOC + ARTPOV ARTPOVARTPOC,
+         NB_SSCC
+    FROM UBD_ITEMS_MULTI_SSCC
+   WHERE INV_SKU > 0),
+UBD_ITEMS_DATA_PREP AS
+ (SELECT UL_DONORD "Whs",
+         "Shipping qty",
+         UL_CPROIN "Article",
+         UL_ILOGIS "LV",
+	 "Received on",
+	 ROUND((SELECT AVG(TO_DATE(ht_valind,''RRRRMMDD'') - TRUNC(he_datrec)) 
+		FROM tb_heums@HEINENS_STK_PROD t , tb_hlcums@HEINENS_STK_PROD, tb_htraums@HEINENS_STK_PROD
+        	WHERE he_usscc = hl_usscc
+        	AND he_codtsu = ''1''
+        	AND ul_cproin=hl_cproin
+        	AND ul_ilogis=hl_ilogis
+		AND ul_donord=hl_donord
+        	AND ht_usscc=hl_usscc AND ht_typind=''DLC''
+        	AND TRUNC("Received on") > TRUNC(he_datrec)),0)  "Average UBD",
+         AR_LIBPRO "Description",
+         UL_CPROIN || ''/'' || TO_NUMBER(UL_ILOGIS) || '' '' || AR_LIBPRO "Item code desc",
+         AR_FOURN || '' | '' || AR_NRSFOU "Supplier code desc",
+         (SELECT TO_CHAR(MIN(ARADDEB), ''MM/DD/RR'')
+            FROM ARTUC@HEINENS_CEN_PROD
+           WHERE ARACEXR = UL_CPROIN
+             AND ARASITE = UL_DONORD) "Active since",
+         (SELECT TO_CHAR(MAX(ARADFIN), ''MM/DD/RR'')
+            FROM ARTUC@HEINENS_CEN_PROD
+           WHERE ARACEXR = UL_CPROIN
+             AND ARASITE = UL_DONORD) "Whs. discontinued on",
+         (SELECT TATTLIBL
+            FROM ARTATTRI@HEINENS_CEN_PROD,
+                 ARTRAC@HEINENS_CEN_PROD,
+                 TRA_ATTRIVAL@HEINENS_CEN_PROD
+           WHERE ARTCEXR = UL_CPROIN
+             AND ARTCINR = AATCINR
+             AND AATCCLA = ''SSNL''
+             AND TATTCCLA = AATCCLA
+             AND TATTCODE = AATCATT
+             AND LANGUE = ''HN''
+             AND TRUNC(SYSDATE) BETWEEN AATDDEB AND AATDFIN
+             AND ROWNUM = 1) "Seasonal",
+         (SELECT TPARLIBL
+            FROM ARTRAC@HEINENS_CEN_PROD, TRA_PARPOSTES@HEINENS_CEN_PROD
+           WHERE ARTCEXR = UL_CPROIN
+             AND ARTGEST = TPARPOST
+             AND TPARCMAG = 0
+             AND TPARTABL = 1032
+             AND LANGUE = ''HN''
+             AND ROWNUM = 1) "Categ",
+         (SELECT ''$ '' || trim(TO_CHAR(AVIPRIX, ''999G999G999G999G999G999G990D99'') || ''/'' ||
+                 AVIMULTI)
+            FROM AVEPRIX@HEINENS_CEN_PROD
+           WHERE AVICINV = ARLCINLUVC
+             AND TRUNC(SYSDATE) BETWEEN AVIDDEB AND AVIDFIN
+             AND AVINTAR = 2
+             AND ROWNUM = 1) "CLE retail",
+         (SELECT AVIMULTI
+            FROM AVEPRIX@HEINENS_CEN_PROD
+           WHERE AVICINV = ARLCINLUVC
+             AND TRUNC(SYSDATE) BETWEEN AVIDDEB AND AVIDFIN
+             AND AVINTAR = 2
+             AND ROWNUM = 1) "CLE multiple",
+         (SELECT ''['' ||
+                 LISTAGG(AVINTAR || '' - $'' || AVIPRIX || '' / '' || AVIMULTI,
+                         '' | '' ON OVERFLOW TRUNCATE) WITHIN GROUP(ORDER BY AVINTAR) || '']''
+            FROM AVEPRIX@HEINENS_CEN_PROD, AVETAR@HEINENS_CEN_PROD
+           WHERE AVICINV = ARLCINLUVC
+             AND AVINTAR = AVENTAR
+             AND AVESTAT = 2 /* Temporary */
+             AND UT_VALIND >= TO_NUMBER(TO_CHAR(AVIDDEB, ''RRRRWW''))
+             AND AVIDDEB >= TRUNC(SYSDATE)) "On Promo",
+         (SELECT COUNT(DISTINCT(AVIDDEB))
+            FROM AVEPRIX@HEINENS_CEN_PROD, AVETAR@HEINENS_CEN_PROD
+           WHERE AVICINV = ARLCINLUVC
+             AND AVINTAR = AVENTAR
+             AND AVESTAT = 2 /* Temporary */
+ 	     AND TO_DATE(UT_VALIND, ''RRRRMMDD'') >= AVIDDEB 
+             AND AVIDDEB >= TRUNC(SYSDATE)) "Nb Promo",
+         (SELECT COUNT(DISTINCT(AVIDDEB))
+            FROM AVEPRIX@HEINENS_CEN_PROD, AVETAR@HEINENS_CEN_PROD
+           WHERE AVICINV = ARLCINLUVC
+             AND AVINTAR = AVENTAR
+             AND AVESTAT = 2 /* Temporary */
+             AND TO_NUMBER(TO_CHAR(AVIDDEB, ''RRRRWW'')) >=  to_number(to_char(TRUNC(SYSDATE),''RRRRWW'')-7)
+             AND to_number(to_char(TRUNC(SYSDATE),''RRRRWW''))>= TO_NUMBER(TO_CHAR(AVIDFIN, ''RRRRWW''))) "Nb Promo past 13 weeks",
+         TO_DATE(UT_VALIND, ''RRRRMMDD'') "UBD",
+         SSCC_ADDRESS "SSCC",
+	 "Days to push",
+         CEIL(INV_SKU / "Shipping qty") "Inventory (Ship. unit)",
+         "Shipping qty" "Case Pack",
+         ROUND("Projection" / "Shipping qty") "Projection per week",
+         DECODE(AR_CODEUP, 2, ''Inner pack'', 3, ''Pck'', AR_CODEUP) "Shipping unit",
+         ''$ '' || to_char(ROUND("Case cost", 2), ''FM99999.00'') "Case cost",
+         ''$ '' || to_char(ROUND("Case cost" / "Cost unit", 2), ''FM99999.00'') "Unit cost",
+         ''$ '' || to_char(ROUND(INV_SKU * "Case cost" / "Cost unit", 2), ''FM99999.00'') "Total cost",
+         ROUND(CEIL(INV_SKU / DECODE("SKU shipped per week",
+                                     0,
+                                     "SKU sold per week",
+                                     "SKU shipped per week")),
+               1) "Weeks of inventory",
+         (CASE
+           WHEN 0.8 > "Projection SKU" / INV_SKU THEN
+            ''High''
+           WHEN "Projection SKU" / INV_SKU BETWEEN 0.8 AND 1 THEN
+            ''Medium''
+           WHEN "Projection SKU" / INV_SKU BETWEEN 1 AND 1.2 THEN
+            ''Low''
+           WHEN "Projection SKU" / INV_SKU > 1.2 AND
+                TRUNC(SYSDATE + :param4) >= TO_DATE(UT_VALIND, ''RRRRMMDD'') THEN
+            ''Closed''
+           WHEN "Projection SKU" / INV_SKU > 1.2 AND
+                TO_DATE(UT_VALIND, ''RRRRMMDD'') > TRUNC(SYSDATE + :param4) AND
+                NB_SSCC > 1 THEN
+            ''Linked''
+           ELSE
+            ''----''
+         END) "PreStatus",
+         (CASE
+           WHEN 0.8 > "Projection SKU" / INV_SKU THEN
+            ''1''
+           WHEN "Projection SKU" / INV_SKU BETWEEN 0.8 AND 1 THEN
+            ''2''
+           WHEN "Projection SKU" / INV_SKU BETWEEN 1 AND 1.2 THEN
+            ''3''
+           WHEN "Projection SKU" / INV_SKU > 1.2 AND
+                TRUNC(SYSDATE + :param4) >= TO_DATE(UT_VALIND, ''RRRRMMDD'') THEN
+            ''4''
+           WHEN "Projection SKU" / INV_SKU > 1.2 AND
+                TO_DATE(UT_VALIND, ''RRRRMMDD'') > TRUNC(SYSDATE + :param4) AND
+                NB_SSCC > 1 THEN
+            ''5''
+           ELSE
+            ''6''
+         END) "StatusNumber",
+         ROUND("SKU shipped per week" / "Shipping qty", 2) "Shipped per week",
+         ROUND("SKU sold per week" / "Shipping qty", 2) "Sold per week",
+         "Projection",
+         ARLCINLUVC,
+         ARLSEQVL,
+         SSCC_ADDRESS,
+         GREATEST(CEIL((INV_SKU - "Projection SKU") / "Shipping qty"), 0) "Hypothetical push",
+         ARTPOVARTPOC "In Store",
+         "SKU sold week_5",
+         "SKU sold week_4",
+         "SKU sold week_3",
+         "SKU sold week_2",
+         "SKU sold week_1",
+         ROUND(("SKU sold week_4" - "SKU sold week_5") /
+               DECODE("SKU sold week_5", 0, 1, "SKU sold week_5"),
+               2) "SKU sold trend_4",
+         ROUND(("SKU sold week_3" - "SKU sold week_4") /
+               DECODE("SKU sold week_4", 0, 1, "SKU sold week_4"),
+               2) "SKU sold trend_3",
+         ROUND(("SKU sold week_2" - "SKU sold week_3") /
+               DECODE("SKU sold week_3", 0, 1, "SKU sold week_3"),
+               2) "SKU sold trend_2",
+         ROUND(("SKU sold week_1" - "SKU sold week_2") /
+               DECODE("SKU sold week_2", 0, 1, "SKU sold week_2"),
+               2) "SKU sold trend_1"
+    FROM UBD_ITEMS_WITH_PROJECTION),
+PRE_FORMAT AS (
+SELECT "Item code desc",
+       "UBD",
+       NVL((SELECT ''Linked''
+             FROM UBD_ITEMS_DATA_PREP OTH
+            WHERE it."Whs" = oth."Whs"
+              AND it."Article" = oth."Article"
+              AND IT.ARLSEQVL = OTH.ARLSEQVL
+              AND it."UBD" != oth."UBD"
+              AND "PreStatus" IN (''Linked'', ''----'')
+              AND ROWNUM = 1
+              AND "Hypothetical push" > 0),
+           "PreStatus") "Status",
+           "Hypothetical push",
+	   "Days to push",
+	   "Received on",
+	   "Average UBD",
+           "In Store" "Shelf life (store/consumer)", 
+           "Inventory (Ship. unit)",
+           "Projection per week",
+           "Case Pack",
+           "CLE retail",  
+	   "Unit cost",
+           "Case cost",
+           "Total cost", 
+           "Weeks of inventory" ,
+           "Nb Promo", 
+	   "Nb Promo past 13 weeks",
+           "Active since",  
+           "Whs. discontinued on",
+           "Shipping unit", 
+           "Shipped per week",
+           "Sold per week", 
+
+          (SELECT his."Hypothetical push" FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
+          AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-1)  and rownum=1) "Hyp. push Week-1",
+          (SELECT his."Hypothetical push" FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
+          AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-2)  and rownum=1) "Hyp. push Week-2",
+          (SELECT his."Hypothetical push" FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
+          AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-3)  and rownum=1) "Hyp. push Week-3",
+
+           "SKU sold trend_1"*100 "Trend sales Week-1 (%)",  
+           "SKU sold trend_2"*100 "Trend sales Week-2 (%)",  
+           "SKU sold trend_3"*100 "Trend sales Week-3 (%)",  
+           "SKU sold trend_4"*100 "Trend sales Week-4 (%)",  
+           "SKU sold week_1" "Qty sold Week-1 (sku)", 
+           "SKU sold week_2" "Qty sold Week-2 (sku)", 
+           "SKU sold week_3" "Qty sold Week-3 (sku)",
+           "SKU sold week_4" "Qty sold Week-4 (sku)",
+	   NVL((SELECT 0 FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
+		     AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-1)  and rownum=1),1) "New in report item",
+           NVL((SELECT NVL(IT."Hypothetical push",0) - NVL(his."Hypothetical push",0) 
+	        FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
+                     AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-1)  and rownum=1),0) "Trend Hyp. push", 
+	   "Whs", 
+           "Supplier code desc",
+           "Categ" "Category Mgr"
+  FROM UBD_ITEMS_DATA_PREP IT
+  ORDER BY "Days to push" ASC)
+  SELECT * 
+  FROM PRE_FORMAT t
+  WHERE ("Status" IN (''High'', ''Medium'', ''Closed'')
+         OR ("Status"=''Linked'' AND EXISTS (SELECT 1 
+                                          FROM PRE_FORMAT p 
+                                          WHERE p."Status" IN (''High'', ''Medium'') 
+                                          AND p."Item code desc"=t."Item code desc"
+                                          AND p."UBD" != t."UBD")))
+  OR (0 > "Trend sales Week-1 (%)" AND 0 > "Trend sales Week-2 (%)" AND 0 > "Trend sales Week-3 (%)" AND 0 > "Trend sales Week-4 (%)")
+
+  </QUERY>
+  <HEADERIFEMPTY>No Warehouse UBD focus</HEADERIFEMPTY>
+  <HEADER>Warehouse UBD ending in xxx days</HEADER>
+  
+</ROOT>
+

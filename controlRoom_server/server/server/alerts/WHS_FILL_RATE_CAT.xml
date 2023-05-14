@@ -1,0 +1,440 @@
+<ROOT>
+    <NAME>Fill rate by Cat.</NAME>
+    <QUERY> 
+
+/***********************************************************************/
+/* Query : Warehouse fill rate by category                             */
+/***********************************************************************/
+WITH ORDERID AS
+ (SELECT ECDCEXCDE
+    FROM CDEENTCDE@HEINENS_CUSTOM_PROD, FOUDGENE@HEINENS_CUSTOM_PROD
+   WHERE TRUNC(ECDDLIV) = TRUNC(SYSDATE)
+     AND ECDCFIN = FOUCFIN
+     AND FOUCNUF NOT LIKE ''CD%''),
+DETAIL AS
+ (SELECT /*+ materialize */
+   COMM_ORD,
+   COMM_ORD_DESC,
+   CCLCINRC,
+   (SELECT SUBSTR(SOBCEXT, 7, 3) || '' | '' ||
+               PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1, SOBCINT, ''HN'')
+          FROM STRUCTURE@HEINENS_CUSTOM_PROD,
+               STRUCREL@HEINENS_CUSTOM_PROD,
+               STRUCOBJ@HEINENS_CUSTOM_PROD
+         WHERE CCLCINRC = OBJCINT
+           AND OBJPERE = STRCINT
+           AND STRPERE = SOBCINT
+           AND TRUNC(SYSDATE) BETWEEN OBJDDEB AND OBJDFIN
+           AND TRUNC(SYSDATE) BETWEEN STRDDEB AND STRDFIN
+           AND strlevel=1) CAT,
+   SUM(ROUND(COMM_ORD_QTY, 5)) QTY_ORD,
+   COMM_PREP,
+   COMM_PREP_DESC,
+   SUM(ROUND(COMM_PREP_QTY, 5)) QTY_PREP,
+   SUM(ROUND(COMM_SHIP_QTY, 5)) QTY_SHIP
+    FROM (SELECT /*+ materialize */
+           COMM_ORD,
+           COMM_ORD_DESC,
+           COMM_ORD_QTY,
+           COMM_PREP,
+           COMM_PREP_DESC,
+           COMM_PREP_QTY,
+           COMM_SHIP_QTY,
+           CCLCINRC,
+           RANK() OVER(PARTITION BY ARACEXR ORDER BY ARADDEB DESC) RK
+            FROM (SELECT PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1, CCLCINRC) COMM_ORD,
+                         PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                 CCLCINRC,
+                                                                 ''HN'') COMM_ORD_DESC,
+                         SUM(CCLQTEC /
+                             (DECODE(ARUTYPUL,
+                                     81,
+                                     PKARTSTOCK.GET_SKUUNITS@HEINENS_CUSTOM_PROD(1,
+                                                                                 PKARTSTOCK.RECUPERECINLDEST@HEINENS_CUSTOM_PROD(1,
+                                                                                                                                 CCLSEQVLC,
+                                                                                                                                 41)),
+                                     DECODE(CCLUVUP, 0, 1, CCLUVUP)))) COMM_ORD_QTY,
+                         PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1, CCLCINRP) COMM_PREP,
+                         PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                 CCLCINRP,
+                                                                 ''HN'') COMM_PREP_DESC,
+                         SUM(NVL(CCLQTEP, 0) /
+                             (DECODE(ARUTYPUL,
+                                     81,
+                                     PKARTSTOCK.GET_SKUUNITS@HEINENS_CUSTOM_PROD(1,
+                                                                                 PKARTSTOCK.RECUPERECINLDEST@HEINENS_CUSTOM_PROD(1,
+                                                                                                                                 CCLSEQVLC,
+                                                                                                                                 41)),
+                                     DECODE(CCLUVUP, 0, 1, CCLUVUP)))) COMM_PREP_QTY,
+                         SUM(NVL(CCLQTEUPX, 0)) COMM_SHIP_QTY,
+                         CCLSEQVLC SEQVL_ORD,
+                         CCLCINRC
+                    FROM CCLDETCCL@HEINENS_CUSTOM_PROD,
+                         ORDERID,
+                         ARTUL@HEINENS_CUSTOM_PROD
+                   WHERE CCLCEXCDE = ECDCEXCDE
+                     AND CCLSITE = :param2
+                     AND CCLTCDE = 1 /* On Stock */
+                     AND CCLSTATUS >= 3 /* Exclude Display Orders*/
+                     AND CCLCINLC = ARUCINL
+                     AND TRUNC(CCLDCDE) + 5 > TRUNC(CCLDLIVD)
+                   GROUP BY CCLCINRC, PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1,
+                                                                     CCLCINRC),
+                            PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                    CCLCINRC,
+                                                                    ''HN''),
+                            PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1,
+                                                                     CCLCINRP),
+                            PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                    CCLCINRP,
+                                                                    ''HN''),
+                            CCLSEQVLC,
+                            CCLSITE
+                  UNION ALL
+                  SELECT PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1, CCLCINRC) COMM_ORD,
+                         PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                 CCLCINRC,
+                                                                 ''HN'') COMM_ORD_DESC,
+                         SUM(CCLQTEC /
+                             (DECODE(ARUTYPUL,
+                                     81,
+                                     PKARTSTOCK.GET_SKUUNITS@HEINENS_CUSTOM_PROD(1,
+                                                                                 PKARTSTOCK.RECUPERECINLDEST@HEINENS_CUSTOM_PROD(1,
+                                                                                                                                 CCLSEQVLC,
+                                                                                                                                 41)),
+                                     DECODE(CCLUVUP, 0, 1, CCLUVUP)))) COMM_ORD_QTY,
+                         PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1, CCLCINRP) COMM_PREP,
+                         PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                 CCLCINRP,
+                                                                 ''HN'') COMM_PREP_DESC,
+                         SUM(NVL(CCLQTEP, 0) /
+                             (DECODE(ARUTYPUL,
+                                     81,
+                                     PKARTSTOCK.GET_SKUUNITS@HEINENS_CUSTOM_PROD(1,
+                                                                                 PKARTSTOCK.RECUPERECINLDEST@HEINENS_CUSTOM_PROD(1,
+                                                                                                                                 CCLSEQVLC,
+                                                                                                                                 41)),
+                                     DECODE(CCLUVUP, 0, 1, CCLUVUP)))) COMM_PREP_QTY,
+                         SUM(CCLQTEUPX) COMM_SHIP_QTY,
+                         CCLSEQVLC SEQVL_ORD,
+                         CCLCINRC
+                    FROM HCCLDETCCL@HEINENS_CUSTOM_PROD,
+                         ORDERID,
+                         ARTUL@HEINENS_CUSTOM_PROD
+                   WHERE CCLCEXCDE = ECDCEXCDE
+                     AND CCLSITE = :param2
+                     AND CCLTCDE = 1 /* On Stock */
+                     AND CCLSTATUS >= 3 /*Exclude Display Orders*/
+                     AND CCLCINLC = ARUCINL
+                     AND TRUNC(CCLDCDE) + 5 > TRUNC(CCLDLIVD)
+                   GROUP BY CCLCINRC, PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1,
+                                                                     CCLCINRC),
+                            PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                    CCLCINRC,
+                                                                    ''HN''),
+                            PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1,
+                                                                     CCLCINRP),
+                            PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                    CCLCINRP,
+                                                                    ''HN''),
+                            CCLSEQVLC,
+                            CCLSITE),
+                 ARTUC@HEINENS_CUSTOM_PROD,
+                 FOUDGENE@HEINENS_CUSTOM_PROD,
+                 SECAPPRO@HEINENS_CUSTOM_PROD,
+                 LIENSECAPPRO@HEINENS_CUSTOM_PROD
+           WHERE COMM_ORD = ARACEXR(+)
+             AND COMM_PREP = ARACEXR(+)
+             AND COMM_PREP = ARACEXR(+)
+             AND COMM_ORD = ARACEXR(+) /* Sector Supply Management*/
+             AND LIACFIN = FOUCFIN
+             AND LIACINAP = SAPCINAP
+             AND SAPTYPE = 1 /* Supply sector*/
+             AND LIASITE = ARASITE
+             AND ARASITE = :param2
+             AND ARACFIN = FOUCFIN
+             AND ARACCIN = LIACCIN
+             AND ARATFOU = 1
+             AND ARADFIN > TRUNC(SYSDATE - 60))
+  
+   WHERE RK = 1
+   GROUP BY 
+            CCLCINRC,
+            COMM_ORD,
+            COMM_ORD_DESC,
+            COMM_PREP,
+            COMM_PREP_DESC)
+SELECT TO_CHAR(SYSDATE, ''MM.DD.RR'') ||
+       DECODE(:param2,
+              90061,
+              '' Grocery'',
+              91070,
+              '' Dairy'',
+              91071,
+              '' Freezer'',
+              :param2) || '' Fill Rate '' ||
+       NVL((SELECT TO_CHAR(ROUND(SUM(QTY_PREP) / SUM(QTY_ORD), 4) * 100)
+             FROM DETAIL),
+           100) || ''% &amp; In-Stock Rate '' ||
+       TO_CHAR(ROUND((1 -
+                     (NVL((SELECT COUNT(1)
+                             FROM DETAIL
+                            WHERE NVL(QTY_PREP, 0) = 0),
+                           0) / NVL((SELECT COUNT(1) FROM DETAIL), 1))),
+                     4) * 100) || ''%'' "Category code desc.",
+       NULL "Ord. quantity",
+       NULL "Prep. quantity",
+       NULL "Holes",
+       NULL "Unique items ord.",
+       NULL "Fill rate",
+       NULL "In-Stock rate",
+       ''Recap'' "Notes"
+  FROM DUAL
+  WHERE (SELECT SUM(QTY_ORD)
+          FROM DETAIL) > 0
+UNION
+SELECT 
+      "Category code desc.",
+      "Ord. quantity",
+      "Prep. quantity",
+      "Holes",
+      "Unique items ord.",
+       (ROUND("Prep. quantity"/"Ord. quantity",4)* 100) "Fill rate",
+       (ROUND((1 - "Holes"/ "Unique items ord.") ,4)* 100) "In-Stock rate",
+      "Notes" 
+      FROM (SELECT 
+            CAT "Category code desc.",
+            CEIL(SUM(QTY_ORD)) "Ord. quantity",
+            CEIL(SUM(QTY_PREP)) "Prep. quantity",
+            COUNT(CASE WHEN (QTY_ORD - QTY_PREP) > 0 THEN 1 END) "Holes",
+            count(distinct COMM_ORD) "Unique items ord.",
+            '''' "Notes"
+        FROM DETAIL
+      GROUP BY CAT)
+ ORDER BY "Notes" ASC, "Holes" DESC, 1, 2
+
+</QUERY>
+<NAME2>Fill rate by Cat. Vendor</NAME2>
+<QUERY2> 
+  
+/***********************************************************************/
+/* Query : Warehouse fill rate by category                             */
+/***********************************************************************/
+WITH ORDERID AS
+ (SELECT ECDCEXCDE
+    FROM CDEENTCDE@HEINENS_CUSTOM_PROD, FOUDGENE@HEINENS_CUSTOM_PROD
+   WHERE TRUNC(ECDDLIV) = TRUNC(SYSDATE)
+     AND ECDCFIN = FOUCFIN
+     AND FOUCNUF NOT LIKE ''CD%''),
+DETAIL AS
+ (SELECT /*+ materialize */
+   COMM_ORD,
+   COMM_ORD_DESC,
+   CCLCINRC,
+   (select foucnuf || '' | '' || foulibl from FOUDGENE@HEINENS_CUSTOM_PROD, ARTUC@HEINENS_CUSTOM_PROD where arasite=:param2 and aracfin=foucfin and aracinr=cclcinrc and trunc(sysdate) between araddeb and aradfin and aratfou=1 and rownum=1) "Supplier code desc.", 
+   (SELECT SUBSTR(SOBCEXT, 7, 3) || '' | '' ||
+               PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1, SOBCINT, ''HN'')
+          FROM STRUCTURE@HEINENS_CUSTOM_PROD,
+               STRUCREL@HEINENS_CUSTOM_PROD,
+               STRUCOBJ@HEINENS_CUSTOM_PROD
+         WHERE CCLCINRC = OBJCINT
+           AND OBJPERE = STRCINT
+           AND STRPERE = SOBCINT
+           AND TRUNC(SYSDATE) BETWEEN OBJDDEB AND OBJDFIN
+           AND TRUNC(SYSDATE) BETWEEN STRDDEB AND STRDFIN
+           AND strlevel=1) CAT,
+   SUM(ROUND(COMM_ORD_QTY, 5)) QTY_ORD,
+   COMM_PREP,
+   COMM_PREP_DESC,
+   SUM(ROUND(COMM_PREP_QTY, 5)) QTY_PREP,
+   SUM(ROUND(COMM_SHIP_QTY, 5)) QTY_SHIP
+    FROM (SELECT /*+ materialize */
+           COMM_ORD,
+           COMM_ORD_DESC,
+           COMM_ORD_QTY,
+           COMM_PREP,
+           COMM_PREP_DESC,
+           COMM_PREP_QTY,
+           COMM_SHIP_QTY,
+           CCLCINRC,
+           RANK() OVER(PARTITION BY ARACEXR ORDER BY ARADDEB DESC) RK
+            FROM (SELECT PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1, CCLCINRC) COMM_ORD,
+                         PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                 CCLCINRC,
+                                                                 ''HN'') COMM_ORD_DESC,
+                         SUM(CCLQTEC /
+                             (DECODE(ARUTYPUL,
+                                     81,
+                                     PKARTSTOCK.GET_SKUUNITS@HEINENS_CUSTOM_PROD(1,
+                                                                                 PKARTSTOCK.RECUPERECINLDEST@HEINENS_CUSTOM_PROD(1,
+                                                                                                                                 CCLSEQVLC,
+                                                                                                                                 41)),
+                                     DECODE(CCLUVUP, 0, 1, CCLUVUP)))) COMM_ORD_QTY,
+                         PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1, CCLCINRP) COMM_PREP,
+                         PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                 CCLCINRP,
+                                                                 ''HN'') COMM_PREP_DESC,
+                         SUM(NVL(CCLQTEP, 0) /
+                             (DECODE(ARUTYPUL,
+                                     81,
+                                     PKARTSTOCK.GET_SKUUNITS@HEINENS_CUSTOM_PROD(1,
+                                                                                 PKARTSTOCK.RECUPERECINLDEST@HEINENS_CUSTOM_PROD(1,
+                                                                                                                                 CCLSEQVLC,
+                                                                                                                                 41)),
+                                     DECODE(CCLUVUP, 0, 1, CCLUVUP)))) COMM_PREP_QTY,
+                         SUM(NVL(CCLQTEUPX, 0)) COMM_SHIP_QTY,
+                         CCLSEQVLC SEQVL_ORD,
+                         CCLCINRC
+                    FROM CCLDETCCL@HEINENS_CUSTOM_PROD,
+                         ORDERID,
+                         ARTUL@HEINENS_CUSTOM_PROD
+                   WHERE CCLCEXCDE = ECDCEXCDE
+                     AND CCLSITE = :param2
+                     AND CCLTCDE = 1 /* On Stock */
+                     AND CCLSTATUS >= 3 /* Exclude Display Orders*/
+                     AND CCLCINLC = ARUCINL
+                     AND TRUNC(CCLDCDE) + 5 > TRUNC(CCLDLIVD)
+                   GROUP BY CCLCINRC, PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1,
+                                                                     CCLCINRC),
+                            PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                    CCLCINRC,
+                                                                    ''HN''),
+                            PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1,
+                                                                     CCLCINRP),
+                            PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                    CCLCINRP,
+                                                                    ''HN''),
+                            CCLSEQVLC,
+                            CCLSITE
+                  UNION ALL
+                  SELECT PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1, CCLCINRC) COMM_ORD,
+                         PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                 CCLCINRC,
+                                                                 ''HN'') COMM_ORD_DESC,
+                         SUM(CCLQTEC /
+                             (DECODE(ARUTYPUL,
+                                     81,
+                                     PKARTSTOCK.GET_SKUUNITS@HEINENS_CUSTOM_PROD(1,
+                                                                                 PKARTSTOCK.RECUPERECINLDEST@HEINENS_CUSTOM_PROD(1,
+                                                                                                                                 CCLSEQVLC,
+                                                                                                                                 41)),
+                                     DECODE(CCLUVUP, 0, 1, CCLUVUP)))) COMM_ORD_QTY,
+                         PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1, CCLCINRP) COMM_PREP,
+                         PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                 CCLCINRP,
+                                                                 ''HN'') COMM_PREP_DESC,
+                         SUM(NVL(CCLQTEP, 0) /
+                             (DECODE(ARUTYPUL,
+                                     81,
+                                     PKARTSTOCK.GET_SKUUNITS@HEINENS_CUSTOM_PROD(1,
+                                                                                 PKARTSTOCK.RECUPERECINLDEST@HEINENS_CUSTOM_PROD(1,
+                                                                                                                                 CCLSEQVLC,
+                                                                                                                                 41)),
+                                     DECODE(CCLUVUP, 0, 1, CCLUVUP)))) COMM_PREP_QTY,
+                         SUM(CCLQTEUPX) COMM_SHIP_QTY,
+                         CCLSEQVLC SEQVL_ORD,
+                         CCLCINRC
+                    FROM HCCLDETCCL@HEINENS_CUSTOM_PROD,
+                         ORDERID,
+                         ARTUL@HEINENS_CUSTOM_PROD
+                   WHERE CCLCEXCDE = ECDCEXCDE
+                     AND CCLSITE = :param2
+                     AND CCLTCDE = 1 /* On Stock */
+                     AND CCLSTATUS >= 3 /*Exclude Display Orders*/
+                     AND CCLCINLC = ARUCINL
+                     AND TRUNC(CCLDCDE) + 5 > TRUNC(CCLDLIVD)
+                   GROUP BY CCLCINRC, PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1,
+                                                                     CCLCINRC),
+                            PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                    CCLCINRC,
+                                                                    ''HN''),
+                            PKARTRAC.GET_ARTCEXR@HEINENS_CUSTOM_PROD(1,
+                                                                     CCLCINRP),
+                            PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1,
+                                                                    CCLCINRP,
+                                                                    ''HN''),
+                            CCLSEQVLC,
+                            CCLSITE),
+                 ARTUC@HEINENS_CUSTOM_PROD,
+                 FOUDGENE@HEINENS_CUSTOM_PROD,
+                 SECAPPRO@HEINENS_CUSTOM_PROD,
+                 LIENSECAPPRO@HEINENS_CUSTOM_PROD
+           WHERE COMM_ORD = ARACEXR(+)
+             AND COMM_PREP = ARACEXR(+)
+             AND COMM_PREP = ARACEXR(+)
+             AND COMM_ORD = ARACEXR(+) /* Sector Supply Management*/
+             AND LIACFIN = FOUCFIN
+             AND LIACINAP = SAPCINAP
+             AND SAPTYPE = 1 /* Supply sector*/
+             AND LIASITE = ARASITE
+             AND ARASITE = :param2
+             AND ARACFIN = FOUCFIN
+             AND ARACCIN = LIACCIN
+             AND ARATFOU = 1
+             AND ARADFIN > TRUNC(SYSDATE - 60))
+  
+   WHERE RK = 1
+   GROUP BY 
+            CCLCINRC,
+            COMM_ORD,
+            COMM_ORD_DESC,
+            COMM_PREP,
+            COMM_PREP_DESC)
+SELECT TO_CHAR(SYSDATE, ''MM.DD.RR'') ||
+       DECODE(:param2,
+              90061,
+              '' Grocery'',
+              91070,
+              '' Dairy'',
+              91071,
+              '' Freezer'',
+              :param2) || '' Fill Rate '' ||
+       NVL((SELECT TO_CHAR(ROUND(SUM(QTY_PREP) / SUM(QTY_ORD), 4) * 100)
+             FROM DETAIL),
+           100) || ''% &amp; In-Stock Rate '' ||
+       TO_CHAR(ROUND((1 -
+                     (NVL((SELECT COUNT(1)
+                             FROM DETAIL
+                            WHERE NVL(QTY_PREP, 0) = 0),
+                           0) / NVL((SELECT COUNT(1) FROM DETAIL), 1))),
+                     4) * 100) || ''%'' "Category code desc.",
+       NULL "Supplier code desc.",
+       NULL "Ord. quantity",
+       NULL "Prep. quantity",
+       NULL "Holes",
+       NULL "Unique items ord.",
+       NULL "Fill rate",
+       NULL "In-Stock rate",
+       ''Recap'' "Notes"
+  FROM DUAL
+  WHERE (SELECT SUM(QTY_ORD)
+          FROM DETAIL) > 0
+UNION
+SELECT 
+      "Category code desc.",
+      "Supplier code desc.",
+      "Ord. quantity",
+      "Prep. quantity",
+      "Holes",
+      "Unique items ord.",
+       (ROUND("Prep. quantity"/"Ord. quantity",4)* 100) "Fill rate",
+       (ROUND((1 - "Holes"/ "Unique items ord.") ,4)* 100) "In-Stock rate",
+      "Notes" 
+      FROM (SELECT 
+            CAT "Category code desc.",
+            "Supplier code desc.",
+            CEIL(SUM(QTY_ORD)) "Ord. quantity",
+            CEIL(SUM(QTY_PREP)) "Prep. quantity",
+            COUNT(CASE WHEN (QTY_ORD - QTY_PREP) > 0 THEN 1 END) "Holes",
+            count(distinct COMM_ORD) "Unique items ord.",
+            '' '' "Notes"
+        FROM DETAIL
+      GROUP BY CAT, "Supplier code desc.")
+ ORDER BY "Notes" DESC, "Holes" DESC, 1, 2
+</QUERY2>
+ 
+  <HEADERIFEMPTY>No Warehouse fill rate by cat</HEADERIFEMPTY>
+  <HEADER>Warehouse fill rate by cat</HEADER>
+  
+</ROOT>
+

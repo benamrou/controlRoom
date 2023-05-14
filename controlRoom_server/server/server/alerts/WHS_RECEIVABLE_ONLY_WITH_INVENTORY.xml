@@ -1,0 +1,44 @@
+<ROOT>
+    <QUERY> 
+
+WITH WHS_RECEIVABLE AS (SELECT araseqvl, aracinr, aracexr, aracexvl, substr(foucnuf,3,5) arasite,
+                      to_char(MIN(araddeb), ''MM/DD/RR'') "Whs active since", to_char(MAX(aradfin), ''MM/DD/RR'') "Whs ended on"
+FROM artuc@heinens_custom_prod whsartuc, foudgene@heinens_custom_prod
+WHERE TRUNC(SYSDATE) between araddeb and aradfin
+AND foucnuf IN (''H090061'',''H091070'', ''H091071'')
+AND aracfin=foucfin
+AND aratcde=2 /* Receivable */
+AND aratfou=1 /* Main supplier */
+AND NOT EXISTS (SELECT 1 FROM artrempl@heinens_custom_prod WHERE arrseqvlo=araseqvl AND arrdfin > TRUNC(SYSDATE)) 
+AND NOT EXISTS (SELECT 1 FROM artuc@heinens_custom_prod uc2 WHERE uc2.aracinr=whsartuc.aracinr AND uc2.araseqvl != whsartuc.araseqvl AND uc2.aradfin > TRUNC(SYSDATE) AND uc2.aratcde=1) 
+GROUP BY araseqvl, aracinr, aracexr,aracexvl, substr(foucnuf,3,5)),
+WHS_RECEIVABLE_INFO AS (
+SELECT arasite "Whs #", 
+       (SELECT ar_fourn || '' | '' || ar_nrsfou 
+        FROM tb_art@heinens_stk_prod WHERE ar_cproin=aracexr AND to_number(ar_ilogis)=arlcexvl AND ar_donord=arasite) "Supplier code desc.",
+       aracexr || ''/'' || aracexvl || '' '' || pkartvl.get_vldesc@heinens_custom_prod(1,araseqvl,''HN'') "Item code desc.",
+       "Whs active since",
+       "Whs ended on",
+       (SELECT arvcexv FROM artuv@HEINENS_CEN_PROD WHERE arlcinluvc=arvcinv) "SV #",
+       pkartcoca.Get_Arccode@heinens_custom_prod(1,arlcinluvc) "UPC",
+       NVL(ROUND((SELECT SUM(ul_nqtuvc/ (ul_nuvspc*ul_nspcca)) FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+        WHERE UL_USSCC  = UE_USSCC
+         AND NVL(UE_INDFIC, ''1'') = ''1''
+        AND ul_donord=arasite
+        AND ul_cproin=arlcexr
+	AND ue_staums=0
+        AND to_number(ul_ilogis)=arlcexvl),0),0) "Whs inventory (case)"
+FROM WHS_RECEIVABLE, artvl@heinens_custom_prod
+WHERE arlseqvl=araseqvl
+)
+SELECT *
+FROM WHS_RECEIVABLE_INFO
+WHERE NVL("Whs inventory (case)",0) > 0
+ORDER BY "Whs #" ASC, to_date("Whs ended on", ''MM/DD/RR'') ASC
+
+</QUERY>
+  <HEADERIFEMPTY>No warehouse receivable with inventory</HEADERIFEMPTY>
+  <HEADER>Warehouse receivable with inventory</HEADER>
+  
+</ROOT>
+

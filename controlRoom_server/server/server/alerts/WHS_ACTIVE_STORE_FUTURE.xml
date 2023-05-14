@@ -1,0 +1,51 @@
+<ROOT>
+    <QUERY> 
+              
+WITH WHS_ACTIVE_NO_STORE AS (
+SELECT arasite "Whs #", foucnuf || '' | '' || foulibl "Supplier code desc.",
+       aracexr || ''/'' || aracexvl || '' '' || pkartvl.get_vldesc@heinens_custom_prod(1,araseqvl,''HN'') "Item code desc.",
+       to_char(araddeb, ''MM/DD/RR'') "Whs active since",
+       to_char(aradfin, ''MM/DD/RR'') "End on",
+       (SELECT to_char(MIN(araddeb),''MM/DD/RR'') FROM artuc@heinens_custom_prod strartuc, reseau@heinens_custom_prod, sitdgene@heinens_custom_prod
+                WHERE strartuc.araseqvl=whsartuc.araseqvl 
+                AND respere=strartuc.arasite 
+                AND  strartuc.araddeb > TRUNC(SYSDATE)
+                AND TRUNC(SYSDATE) BETWEEN resddeb AND resdfin
+                AND socsite=ressite
+                AND soccmag=10) "Store ord. active on",
+       pkstock.getStockDispoEnQte@heinens_custom_prod(1, arasite, arlcinluvc)/pkartstock.ConvertirQteUl@heinens_custom_prod(1,1,arucinl, 1) "Whs inventory (case)"
+FROM artuc@heinens_custom_prod whsartuc, foudgene@heinens_custom_prod, artvl@heinens_custom_prod, artul@heinens_custom_prod
+WHERE TRUNC(SYSDATE) BETWEEN araddeb AND aradfin
+AND arasite IN (90061,91070, 91071)
+AND arlseqvl=araseqvl
+AND aratcde=1 /* Orderable */
+AND aruseqvl=arlseqvl
+AND arucinr=arlcinr
+AND arutypul=41 /* Pack */
+AND aratfou=1 /* Main supplier */
+AND aracfin=foucfin
+AND NOT EXISTS (SELECT 1 FROM artuc@heinens_custom_prod strartuc, reseau@heinens_custom_prod, sitdgene@heinens_custom_prod
+                WHERE strartuc.araseqvl=whsartuc.araseqvl 
+                AND respere=strartuc.arasite 
+                AND TRUNC(SYSDATE) BETWEEN strartuc.araddeb AND strartuc.aradfin
+                AND TRUNC(SYSDATE) BETWEEN resddeb AND resdfin
+                AND socsite=ressite
+                AND soccmag=10) 
+AND  EXISTS (SELECT 1 FROM artuc@heinens_custom_prod strartuc, reseau@heinens_custom_prod, sitdgene@heinens_custom_prod
+              WHERE strartuc.araseqvl=whsartuc.araseqvl 
+              AND respere=strartuc.arasite 
+              AND  strartuc.araddeb > TRUNC(SYSDATE)
+              AND TRUNC(SYSDATE) BETWEEN resddeb AND resdfin
+              AND socsite=ressite
+              AND soccmag=10)
+)
+SELECT *
+FROM WHS_ACTIVE_NO_STORE
+WHERE NVL("Whs inventory (case)",0) > 0
+
+</QUERY>
+  <HEADERIFEMPTY>No warehouse active and future store orderable</HEADERIFEMPTY>
+  <HEADER>Warehouse active and future store orderable</HEADER>
+  
+</ROOT>
+

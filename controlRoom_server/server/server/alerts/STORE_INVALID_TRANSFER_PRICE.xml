@@ -1,0 +1,31 @@
+<ROOT>
+    <QUERY> 
+WITH data_store_item AS (
+SELECT socsite "Store", arlcexr "Item", arlcexvl "LV", 
+       (SELECT stopurp FROM stocouch@heinens_custom_prod sc, (SELECT MAX(stoseq) sseq FROM stocouch@heinens_custom_prod SS WHERE ss.stocinl=arlcinluvc AND ss.stosite=socsite 
+        AND ss.stotpos=0 AND ss.stonpos=0)
+        WHERE  sc.stocinl=arlcinluvc AND sc.stosite=socsite 
+        AND sc.stotpos=0 AND sc.stonpos=0 AND sc.stoseq=sseq) "Cost price", 
+       pkstock.getStockPrixRevient@heinens_custom_prod(1,socsite, arlcinluvc) "Transfer cost",
+       arlseqvl, arlcinluvc, arlcinr
+FROM artvl@heinens_custom_prod, sitdgene@heinens_custom_prod
+WHERE 50 > socsite 
+AND nvl(pkstock.getStockDispoEnQte@heinens_custom_prod(1,socsite, arlcinluvc),0) > 0
+/*AND arlcexr IN (911149)*/
+)
+SELECT "Store", "Item", "Item" || ''/'' || "LV" || '' '' || pkstrucobj.get_desc@heinens_custom_prod(1,arlcinr, ''HN'') "Item code desc.",
+       "Cost price", "Transfer cost",
+       (SELECT MIN (araddeb) FROM artuc@heinens_custom_prod WHERE araseqvl=arlseqvl 
+        AND EXISTS (SELECT * FROM reseau@heinens_custom_prod WHERE ressite="Store" AND respere=arasite AND TRUNC(SYSDATE) BETWEEN resddeb AND resdfin)) "Orderable since",
+       (SELECT MAX (aradfin) FROM artuc@heinens_custom_prod WHERE araseqvl=arlseqvl 
+        AND EXISTS (SELECT * FROM reseau@heinens_custom_prod WHERE ressite="Store" AND respere=arasite AND TRUNC(SYSDATE) BETWEEN resddeb AND resdfin)) "Orderable end",
+        pkartcoca.Get_Arccode@heinens_custom_prod(1,arlcinluvc) "UPC"
+FROM data_store_item
+WHERE ABS("Cost price" - "Transfer cost") > 10 
+
+  </QUERY>
+  <HEADERIFEMPTY>No invalid store stock layer</HEADERIFEMPTY>
+  <HEADER>Invalid store item transfer price</HEADER>
+  
+</ROOT>
+

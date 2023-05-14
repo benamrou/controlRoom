@@ -1,0 +1,42 @@
+<ROOT>
+    <QUERY> 
+WITH DATA_RESULT AS (  
+SELECT DISTINCT hd_donord WHS_NUM,
+       dh_numcde PO_NUM, 
+       hd_livrea STORE_NUM,
+       dh_cproin ITEM_CODE, ar_libpro ITEM_DESC,
+       (SELECT LISTAGG( rp_allee, '','') WITHIN GROUP (ORDER BY rp_allee DESC)  FROM tb_pick@HEINENS_STK_PROD WHERE rp_donord=hd_donord and rp_cproin=ar_cproin AND rp_arprom=ar_arprom AND rp_ilogis=rp_ilogis) AISLE, 
+                            (SELECT  pi_li2pos from tb_parl@HEINENS_STK_PROD where pi_lang = ''GB'' AND  pi_postex=dh_statut
+                             and pi_tablex = ''SCD'' ) Status,
+       dh_qtei/dcduauvc QTY_ORDERED, dh_qterep/dcduauvc QTY_PREP, to_char(dh_datmod,''MM/DD/RR'') PREP_DATE,
+(SELECT sum(ul_nqteup)
+         FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+        WHERE ue_usscc = ul_usscc
+        AND UL_CPROIN=ar_cproin
+        AND UL_ILOGIS=ar_ilogis
+        AND NVL(UE_STAPRE, 0) = 0   /* Only take into account available on hand (not in preparation)*/
+        AND UE_INDFIC = 1 ) INV_STK
+FROM tb_hlcde@HEINENS_STK_PROD, tb_hecde@HEINENS_STK_PROD, tb_art@HEINENS_STK_PROD, cdedetcde@HEINENS_CUSTOM_PROD
+WHERE TRUNC(dh_datmod)=TRUNC(SYSDATE-1) 
+AND dh_qtei > dh_qterep
+AND dh_statut != ''3''
+AND dh_numcde =hd_numcde
+AND ar_cproin=dh_cproin
+AND dcdcexcde=dh_numcde
+-- exclude Produce
+and dh_donord != 95073
+AND dcdcode=ar_cproin)
+SELECT WHS_NUM "Whs.", PO_NUM "PO#", STORE_NUM "Store #", 
+	ITEM_CODE || '' | '' || ITEM_DESC "Item code desc", 
+	AISLE "Aisle", STATUS "Status", QTY_ORDERED "Qty ord.", QTY_PREP "Qty prep.", 
+	PREP_DATE "Prep. date", INV_STK as "Inventory (case)"
+FROM DATA_RESULT
+WHERE NVL(INV_STK,0) > 0
+ORDER BY WHS_NUM ASC, PO_NUM ASC
+
+  </QUERY>
+  <HEADERIFEMPTY>No Warehouse delivery order cut</HEADERIFEMPTY>
+  <HEADER>Warehouse Delivery Order -Cut DO/Skip Aisle</HEADER>
+  
+</ROOT>
+

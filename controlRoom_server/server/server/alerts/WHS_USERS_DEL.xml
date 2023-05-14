@@ -1,0 +1,20 @@
+<ROOT>
+    <QUERY> 
+
+SELECT ausextuser "User id", ausdesc "User desc.", ausappli "Application",
+       ausprof "Profile", ausright "Right", to_char(ausddercon,''MM/DD/RRRR'') "Last connection",
+       to_char(ausdmaj, ''MM/DD/RRRR'') "Deactivated on",
+       to_char(ausdmaj+30, ''MM/DD/RRRR'') "Expiration day",
+       to_char(ausdmaj+37, ''MM/DD/RRRR'') "Deletion day"
+FROM adm_users@HEINENS_STK_PROD
+WHERE ausprof=''DEL'' /* Deletion status profile */
+AND TRUNC(SYSDATE-30)>=TRUNC(ausdmaj)
+ORDER BY ausextuser ASC
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No GOLD Stock users to be removed </HEADERIFEMPTY>
+  <HEADER>GOLD Stock users to be removed</HEADER>
+  
+</ROOT>
+

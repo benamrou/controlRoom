@@ -1,0 +1,54 @@
+<ROOT>
+    <QUERY> 
+WITH VENDOR AS (
+        SELECT FOUCFIN
+        FROM FOUDGENE@Heinens_Custom_Prod
+        WHERE foutype=3 AND  ((:param3=102 and FOUCNUF in (''H091071'',''H091070''))
+  OR (:param3=103 and FOUCNUF=''H090061''))),
+FIND_PRODUCT AS (
+  SELECT pkstrucobj.get_cext@Heinens_Custom_Prod(1, objpere) || '' | '' ||
+       pkstrucobj.get_desc@Heinens_Custom_Prod(1, objpere,''HN'') "Sub-cat. code desc",
+       aracexr || '' | '' ||
+       pkartvl.get_vldesc@Heinens_Custom_Prod(1,araseqvl, ''HN'') "Item code desc",
+        (select arccode from artcoca@Heinens_Custom_Prod where arccinr=aracinr and arccinv=pkartstock.RecupCinlUVC@Heinens_Custom_Prod(1,aracinl) and trunc(sysdate) between arcddeb and arcdfin and rownum=1) UPC,
+       pkartstock.get_skuunits@Heinens_Custom_Prod(1,aracinl) "Pack size",
+       (SELECT sum(ul_nqteup)
+         FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+        WHERE ue_usscc = ul_usscc
+        AND UL_CPROIN=aracexr
+        -- AND UL_ILOGIS=aracexvl
+        AND NVL(UE_STAPRE, 0) = 0   /* Only take into account available on hand (not in preparation)*/
+        AND UE_INDFIC = 1 ) "Whs. inventory (case)",
+        (SELECT SUM(NVL(storeai, 0) + NVL(storeal, 0) - NVL(storeav, 0) +
+                NVL(storeae, 0) + NVL(storeac, 0) - NVL(storear, 0))
+        FROM stocouch@Heinens_Custom_Prod,artul@Heinens_Custom_Prod WHERE stosite=:param2 AND aracinr=arucinr and arucinl=stocinl AND stotpos=0) "Store inventory (sku)",
+       (SELECT to_char(MAX(stmdmvt),''MM/DD/RR'') FROM stomvt@Heinens_Custom_Prod,artul@Heinens_Custom_Prod WHERE stmsite=:param2 AND arucinr=aracinr and arucinl=stmcinl AND stmtmvt=150) "Last store sale",
+(SELECT to_char(MAX(dcddcom),''MM/DD/RR'') 
+        FROM  cdedetcde@Heinens_Custom_Prod WHERE dcdetat>=5 AND dcdsite=:param2 AND dcdcfin=foucfin AND dcdcexr=aracexr) "Last store order"
+FROM artuc@Heinens_Custom_Prod, VENDOR, strucrel@Heinens_Custom_Prod
+WHERE aracfin=foucfin
+AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin
+AND aratcde=1
+AND aratfou=1
+AND objcint=aracinr
+AND TRUNC(SYSDATE) BETWEEN objddeb AND objdfin
+AND pkresrel.isSiteInReseau@Heinens_Custom_Prod(1,:param2, arasite) =1
+AND pkstrucobj.get_cext@Heinens_Custom_Prod(1, objpere) like :param3 || ''%''
+AND NOT EXISTS (SELECT 1 FROM stomvt@Heinens_Custom_Prod, artul@Heinens_Custom_Prod WHERE stmsite=:param2 AND aracinr=arucinr AND arucinl=stmcinl AND stmtmvt=150
+               AND TRUNC(stmdmvt)> TRUNC(SYSDATE-14))
+AND NVL((SELECT sum(ul_nqteup)
+         FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+        WHERE ue_usscc = ul_usscc
+        AND UL_CPROIN=aracexr
+        AND NVL(UE_STAPRE, 0) =0),0) > 0)
+select *
+from FIND_PRODUCT
+-- where sub_cat_code like :param3 || ''%''
+ORDER BY 1 ASC, 5 ASC       
+    </QUERY>
+ 
+  <HEADERIFEMPTY>No Item with inventory in warehouse </HEADERIFEMPTY>
+  <HEADER>Store items not sold within 14 days and inventory in warehouse</HEADER>
+  
+</ROOT>
+

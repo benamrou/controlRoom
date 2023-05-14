@@ -1,0 +1,98 @@
+<ROOT>
+    <QUERY> 
+WITH PRODUCE_VENDOR AS (SELECT * 
+FROM lienserv@heinens_custom_prod, foudgene@heinens_custom_prod
+WHERE liscfin=foucfin
+AND TRUNC(SYSDATE) BETWEEN lisddeb AND lisdfin
+AND lissite=95073)
+SELECT lissite "Whs#", foucnuf || '' | '' || foulibl "Supplier code desc.",
+       ''Monday'' "Day",
+       lislilu "Lead time",
+       lishrlu "Collection time",
+       lishllu "Delivery time",
+       ''UPDATE LIENSERV SET lishrlu=1200, lishllu=1300 '' ||
+       ''where trunc(sysdate) between lisddeb and lisdfin and liscdlu=1 and lislilu=0 and lissite=95073 and liscfin='' || liscfin || '' ;'' "SCRIPT"
+FROM PRODUCE_VENDOR
+WHERE liscdlu=1
+AND lislilu=0
+AND (lishrlu IS NULL OR lishllu IS NULL)
+UNION 
+SELECT lissite "Whs#", foucnuf || '' | '' || foulibl "Supplier code desc.",
+       ''Tuesday'' "Day",
+       lislima "Lead time",
+       lishrma "Collection time",
+       lishlma "Delivery time",
+       ''UPDATE LIENSERV SET lishrma=1200, lishlma=1300 '' ||
+       ''where trunc(sysdate) between lisddeb and lisdfin and liscdma=1 and lislima=0 and lissite=95073 and liscfin='' || liscfin || '' ;'' "SCRIPT"
+FROM PRODUCE_VENDOR
+WHERE liscdma=1
+AND lislima=0
+AND (lishrma IS NULL OR lishlma IS NULL)
+UNION 
+SELECT lissite "Whs#", foucnuf || '' | '' || foulibl "Supplier code desc.",
+       ''Wednesday'' "Day",
+       lislime "Lead time",
+       lishrme "Collection time",
+       lishlme "Delivery time",
+       ''UPDATE LIENSERV SET lishrme=1200, lishlme=1300 '' ||
+       ''where trunc(sysdate) between lisddeb and lisdfin and liscdme=1 and lislime=0 and lissite=95073 and liscfin='' || liscfin || '' ;'' "SCRIPT"
+FROM PRODUCE_VENDOR
+WHERE liscdme=1
+AND lislime=0
+AND (lishrme IS NULL OR lishlme IS NULL)
+UNION 
+SELECT lissite "Whs#", foucnuf || '' | '' || foulibl "Supplier code desc.",
+       ''Thursday'' "Day",
+       lislije "Lead time",
+       lishrje "Collection time",
+       lishlje "Delivery time",
+       ''UPDATE LIENSERV SET lishrje=1200, lishlje=1300 '' ||
+       ''where trunc(sysdate) between lisddeb and lisdfin and liscdje=1 and lislije=0 and lissite=95073 and liscfin='' || liscfin || '' ;'' "SCRIPT"
+FROM PRODUCE_VENDOR
+WHERE liscdje=1
+AND lislije=0
+AND (lishrje IS NULL OR lishlje IS NULL)
+UNION 
+SELECT lissite "Whs#", foucnuf || '' | '' || foulibl "Supplier code desc.",
+       ''Friday'' "Day",
+       lislive "Lead time",
+       lishrve "Collection time",
+       lishlve "Delivery time",
+       ''UPDATE LIENSERV SET lishrve=1200, lishlve=1300 '' ||
+       ''where trunc(sysdate) between lisddeb and lisdfin and liscdve=1 and lislive=0 and lissite=95073 and liscfin='' || liscfin || '' ;'' "SCRIPT"
+FROM PRODUCE_VENDOR
+WHERE liscdve=1
+AND lislive=0
+AND (lishrve IS NULL OR lishlve IS NULL)
+UNION 
+SELECT lissite "Whs#", foucnuf || '' | '' || foulibl "Supplier code desc.",
+       ''Saturday'' "Day",
+       lislisa "Lead time",
+       lishrsa "Collection time",
+       lishlsa "Delivery time",
+       ''UPDATE LIENSERV SET lishrsa=1200, lishlsa=1300 '' ||
+       ''where trunc(sysdate) between lisddeb and lisdfin and liscdsa=1 and lislisa=0 and lissite=95073 and liscfin='' || liscfin || '' ;'' "SCRIPT"
+FROM PRODUCE_VENDOR
+WHERE liscdsa=1
+AND lislisa=0
+AND (lishrsa IS NULL OR lishlsa IS NULL)
+UNION 
+SELECT lissite "Whs#", foucnuf || '' | '' || foulibl "Supplier code desc.",
+       ''Sunday'' "Day",
+       lislidi "Lead time",
+       lishrdi "Collection time",
+       lishldi "Delivery time",
+       ''UPDATE LIENSERV SET lishrdi=1200, lishldi=1300 '' ||
+       ''where trunc(sysdate) between lisddeb and lisdfin and liscddi=1 and lislidi=0 and lissite=95073 and liscfin='' || liscfin || '' ;'' "SCRIPT"
+FROM PRODUCE_VENDOR
+WHERE liscddi=1
+AND lislidi=0
+AND (lishrdi IS NULL OR lishldi IS NULL)
+ORDER BY "Supplier code desc." ASC	
+</QUERY>
+ 
+  <HEADERIFEMPTY>No issue in Produce vendor</HEADERIFEMPTY>
+  <HEADER>Produce vendor 0 day lead time</HEADER>
+  
+</ROOT>
+

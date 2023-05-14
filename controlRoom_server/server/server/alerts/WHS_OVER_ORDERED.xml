@@ -1,0 +1,38 @@
+<ROOT>
+    <QUERY> 
+
+WITH ORDER_YESTERDAY AS (
+SELECT *
+FROM cdedetcde@heinens_cen_prod
+WHERE dcdsite IN (90061, 91071, 91070)
+AND TRUNC(dcddcom)=TRUNC (SYSDATE)-1),
+AVG_QTY AS
+(SELECT dcdsite "Whs #",
+        foucnuf || '' | '' || foulibl "Supplier code desc", 
+         dcdcexcde "PO#", 
+        to_char(dcddcom,''MM/DD/YY'') "Order date",
+        arlcexr || ''/'' || arlcexvl || '' '' || pkartvl.get_vldesc@heinens_cen_prod(1, dcdseqvl, ''HN'') "Item code desc.",
+        dcdcoli "Ord. qty",
+        dcdqtec,
+        dcduauvc,
+        (SELECT AVG(dcdqtec) FROM cdedetcde@heinens_cen_prod oldcde 
+         WHERE  oldcde.dcdsite=yest.dcdsite AND oldcde.dcdcinr=yest.dcdcinr AND TRUNC(oldcde.dcddcom)>=TRUNC(SYSDATE-365) AND oldcde.dcdetat IN (5,7)
+         AND oldcde.dcdcincde !=yest.dcdcincde) "Avg qty",
+        ''Yesterday ordered qty is 150% higher than usual whs. replenishment.'' "Comment"
+ FROM ORDER_YESTERDAY yest, foudgene@heinens_cen_prod, artvl@heinens_cen_prod
+ WHERE dcdcfin=foucfin
+ AND dcdseqvl=arlseqvl)
+SELECT "Whs #", "Supplier code desc", "PO#", "Order date",
+       "Item code desc.",
+       "Ord. qty",
+       ROUND("Avg qty"/dcduauvc,0) "Avg qty", "Comment"
+FROM AVG_QTY
+WHERE dcdqtec  >= ("Avg qty" + "Avg qty"*1.5)
+ORDER BY "Whs #" ASC
+
+</QUERY>
+  <HEADERIFEMPTY>No warehouse over replenishment ordered qty</HEADERIFEMPTY>
+  <HEADER>Warehouse replenishment with high quantity</HEADER>
+  
+</ROOT>
+

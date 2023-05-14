@@ -1,0 +1,25 @@
+<ROOT>
+    <QUERY> 
+/***********************************************************************/
+/* Query : Receiving blocked                                           */
+/***********************************************************************/
+
+SELECT wrdsite "Whs #", 
+       wrdcexcde "PO #", 
+       to_char(wrddrec, ''MM/DD/RR HH24:MI'') "Receiving date", 
+       wrdnomr "Received by",
+       arlcexr || ''/'' || arlcexvl || '' '' || pkartvl.get_vldesc@heinens_custom_prod(1,wrdseqvl,''HN'') "Item/LV code desc.",
+       wrdqtea "Received qty (SKUs)",
+       wrdmess "Issue",
+       ''UPDATE WDETREC SET WRDTRT=0, WRDNERR=NULL, WRDMESS=NULL WHERE WRDCINCDE= '' || WRDCINCDE "Reflag script"
+FROM wdetrec@heinens_custom_prod, artvl@heinens_custom_prod
+WHERE wrdtrt=2 AND wrdseqvl=arlseqvl
+AND TRUNC(wrddcre) >= TRUNC(SYSDATE-7) 
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No receipt blocked</HEADERIFEMPTY>
+  <HEADER>Warehouse receiving blocked</HEADER>
+  
+</ROOT>
+

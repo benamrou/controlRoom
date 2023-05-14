@@ -1,0 +1,30 @@
+{
+    "apps": [
+        {
+          "name": "MAIN",
+          "script": "./server_admin.js",
+          "node_args"   : "--use-strict --expose-gc --no-warnings --max-old-space-size=500 --optimize-for-size",
+          "args": "8090",
+          "watch": true,
+          "ignore_watch": ["node_modules", "scripts","uploads","views","documentation","logs"]
+        },
+        {
+          "name": "BATCH",
+          "script": "./server_admin.js",
+          "node_args"   : "--use-strict --expose-gc --no-warnings --max-old-space-size=500 --optimize-for-size",
+          "args": "8091",
+          "watch": true,
+          "ignore_watch": ["node_modules", "scripts","uploads","views","documentation","logs"]
+        },
+        {
+          "name": "ALERT",
+          "script": "./server_admin.js",
+          "instances": "0",
+          "exec_mode": "cluster",
+          "node_args"   : "--use-strict --expose-gc --no-warnings --max-old-space-size=500 --optimize-for-size",
+          "args": "8092 CRONTAB",
+          "watch": true,
+          "ignore_watch": ["node_modules", "scripts","uploads","views","documentation","logs"]
+        }
+      ]
+  }

@@ -1,0 +1,55 @@
+<ROOT>
+    <QUERY> 
+        WITH WHS_ORDERABLE_NOUBD AS (SELECT araseqvl, aracinr, aracexr, aracexvl, substr(foucnuf,3,5) arasite,
+                                to_char(MIN(araddeb), ''MM/DD/RR'') "Whs active since", to_char(MAX(aradfin), ''MM/DD/RR'') "Whs ended on"
+        FROM artuc@heinens_custom_prod whsartuc, foudgene@heinens_custom_prod, artrac@heinens_custom_prod, artvl@heinens_custom_prod
+        WHERE TRUNC(SYSDATE) between araddeb and aradfin
+        AND foucnuf IN (''H090061'',''H091070'', ''H091071'')
+        AND aracfin=foucfin
+        AND aratcde=1 /* Orderable */
+        AND aratfou=1 /* Main supplier */
+        AND artcinr=aracinr
+        AND arlseqvl=araseqvl
+        AND artdlim IS NULL /* No UBD */
+        AND NOT EXISTS (SELECT * FROM artuvattri@heinens_custom_prod WHERE uatccla=''TAXY'' AND uatcinv=arlcinluvc AND TRUNC(SYSDATE) BETWEEN uatddeb AND uatdfin)
+        AND NOT EXISTS (SELECT * FROM artuvattri@heinens_custom_prod WHERE uatccla=''TXCH'' AND UATCATT=''HIGH'' AND uatcinv=arlcinluvc AND TRUNC(SYSDATE) BETWEEN uatddeb AND uatdfin)
+        AND NOT EXISTS (SELECT * FROM artuvattri@heinens_custom_prod WHERE uatccla=''TXCH'' AND UATCATT=''LOW'' AND uatcinv=arlcinluvc AND TRUNC(SYSDATE) BETWEEN uatddeb AND uatdfin)
+        GROUP BY araseqvl, aracinr, aracexr,aracexvl, substr(foucnuf,3,5)),
+        WHS_ORDERABLE_NOUBD_INFO AS (
+        SELECT arasite "Whs #", 
+                (SELECT sapcexap || '' | '' || saplibl FROM liensecappro@HEINENS_CUSTOM_PROD, secappro@HEINENS_CUSTOM_PROD,
+                                                        artuc@HEINENS_CUSTOM_PROD ext, foudgene@HEINENS_CUSTOM_PROD
+                        WHERE ext.araseqvl= ubd.araseqvl AND TRUNC(SYSDATE) BETWEEN ext.araddeb AND ext.aradfin AND ext.aratfou=1 
+                        AND ext.aracfin=foucfin 
+                        AND foutype=1 /* External */  
+                        AND liacinap=sapcinap
+                        AND liasite=ext.arasite
+                        AND liacfin=ext.aracfin
+                        AND liaccin=ext.araccin) "Buyer",
+        (SELECT ar_fourn || '' | '' || ar_nrsfou 
+                FROM tb_art@heinens_stk_prod WHERE ar_cproin=aracexr AND to_number(ar_ilogis)=arlcexvl AND ar_donord=arasite) "Supplier code desc.",
+        aracexr || ''/'' || aracexvl || '' '' || pkartvl.get_vldesc@heinens_custom_prod(1,araseqvl,''HN'') "Item code desc.",
+        "Whs active since",
+        "Whs ended on",
+        (SELECT arvcexv FROM artuv@HEINENS_CEN_PROD WHERE arlcinluvc=arvcinv) "SV #",
+        pkartcoca.Get_Arccode@heinens_custom_prod(1,arlcinluvc) "UPC",
+        NVL(ROUND((SELECT SUM(ul_nqtuvc/ (ul_nuvspc*ul_nspcca)) FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+                WHERE UL_USSCC  = UE_USSCC
+                AND NVL(UE_INDFIC, ''1'') = ''1''
+                AND ul_donord=arasite
+                AND ul_cproin=arlcexr
+        AND ue_staums=0
+                AND to_number(ul_ilogis)=arlcexvl),0),0) "Whs inventory (case)"
+        FROM WHS_ORDERABLE_NOUBD ubd, artvl@heinens_custom_prod
+        WHERE arlseqvl=araseqvl
+        )
+        SELECT *
+        FROM WHS_ORDERABLE_NOUBD_INFO
+        WHERE NVL("Whs inventory (case)",0) > 0
+        ORDER BY "Whs #" ASC, "Supplier code desc." ASC
+</QUERY>
+  <HEADERIFEMPTY>No warehouse non taxable item with no UBD</HEADERIFEMPTY>
+  <HEADER>Non-Taxable warehouse item with no UBD</HEADER>
+  
+</ROOT>
+

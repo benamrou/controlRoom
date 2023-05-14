@@ -1,0 +1,12 @@
+<ROOT>
+    <QUERY> 
+SELECT *
+FROM XNTTARPRIX@heinens_custom_prod
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No XML Purchase Price</HEADERIFEMPTY>
+  <HEADER>XML Purchase Price</HEADER>
+  
+</ROOT>
+

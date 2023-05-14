@@ -1,0 +1,18 @@
+<ROOT>
+    <QUERY> 
+
+SELECT arvcexr || ''/'' || arvcexv || '' '' || pkartuv.get_libelle_long@heinens_custom_prod(1,arvcinv, ''HN'')  "Item/SV code desc.", 
+       artdesdmec "Info", to_char(artdesddeb, ''MM/DD/RR'') "Start on",  artdesutil "Created by",
+       to_char(artdesdmaj, ''MM/DD/RR'') "Created on",
+       ''This e-commerce description start date is not aligned with the attribute start date. Item maintenance can''''t access to the item'' "Comment"
+FROM artdescges@heinens_custom_prod t, artuv@heinens_custom_prod
+WHERE artdescinv=arvcinv 
+AND NOT EXISTS (SELECT 1 FROM tra_artdescges@heinens_custom_prod WHERE artdescinv=tartdescinv AND artdesddeb=tartdesddeb)
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No e-commerce desc issue</HEADERIFEMPTY>
+  <HEADER>E-commerce desription issue</HEADER>
+  
+</ROOT>
+

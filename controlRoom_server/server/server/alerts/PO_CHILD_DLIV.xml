@@ -1,0 +1,23 @@
+<ROOT>
+    <QUERY> 
+
+
+WITH PO_CHILD AS (
+SELECT * 
+FROM cdeentcde@heinens_cen_prod 
+WHERE ecdcexglo IS NOT NULL )
+SELECT DISTINCT p.ecdsite "Whs", p.ecdcexcde "Parent PO", TRUNC(p.ecddliv) "Parent del. date", TRUNC(c.ecddliv) "Child del. date"
+FROM  PO_CHILD c, cdeentcde@heinens_cen_prod  p
+WHERE p.ecdcexcde=c.ecdcexglo
+AND p.ecdsite > 90000
+AND TRUNC(c.ecddliv) < TRUNC(p.ecddliv)
+AND p.ecdetat=5
+ORDER BY "Parent del. date" ASC
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No child PO with invalid delivery date </HEADERIFEMPTY>
+  <HEADER>Child PO with invalid delivery date </HEADER>
+  
+</ROOT>
+

@@ -1,0 +1,66 @@
+<ROOT>
+    <QUERY> 
+/***********************************************************************/
+/* Query #2 : Qty receivred +/- 20%                                    */
+/***********************************************************************/
+WITH QTE_RECEIVED AS (
+SELECT ol_donord "Whs", ol_cproin || ''/'' || ol_ilogis || '' '' || ar_libpro "Item code desc",
+       oe_fourn || '' '' || oe_librs "Supplier code desc",
+       TRUNC(oe_datrec) "Receiving date",
+       OL_NUMORC,ar_nuvcup,
+       SUM(ol_qteuvc) "Ordered",
+	ol_cproin, oe_ncdefo,oe_cincde,ol_ilogis,
+       SUM(NVL(ol_uvcrec,0)) "Received"
+FROM tb_erec@heinens_stk_prod,tb_lrec@heinens_stk_prod, tb_art@heinens_stk_prod
+WHERE TRUNC(oe_datrec) = TRUNC(SYSDATE-1)
+AND oe_numorc=ol_numorc
+AND oe_donord=ol_donord
+AND (ol_depot= 92 - :param2)
+AND ol_cproin=ar_cproin 
+AND ol_ilogis=ar_ilogis
+AND ol_donord=ar_donord
+AND ol_statut != 9 
+GROUP BY ol_donord, ol_cproin || ''/'' || ol_ilogis || '' '' || ar_libpro,
+       oe_fourn || '' '' || oe_librs,
+       ol_cproin, oe_ncdefo,oe_cincde,ol_ilogis,
+       TRUNC(oe_datrec),
+       OL_NUMORC, ar_nuvcup),
+QTE_RECEIVED_ORDERED AS (
+SELECT "Whs", "Supplier code desc",
+       "Item code desc",
+       OL_NUMORC "AGRN num",
+       "Receiving date",
+       ar_nuvcup,
+       ol_cproin, ol_ilogis,
+       (SELECT SUM(dcdqtei) FROM cdedetcde@heinens_custom_prod, artrac@heinens_custom_prod WHERE dcdcincde=oe_cincde AND artcexr=ol_cproin AND dcdcinr=artcinr) "Ordered Initial",
+       (SELECT SUM(dcdqtec) FROM cdedetcde@heinens_custom_prod, artrac@heinens_custom_prod WHERE dcdcincde=oe_cincde AND artcexr=ol_cproin AND dcdcinr=artcinr) "Ordered",
+       "Received"
+FROM QTE_RECEIVED)
+SELECT "Whs", "Supplier code desc",
+       "Item code desc",
+       "AGRN num",
+       to_char("Receiving date", ''MM/DD/RRRR'') "Receiving date",
+       Round("Ordered"/ar_nuvcup,0) "Qty Init. Ord.",
+       Round("Ordered"/ar_nuvcup,0) "Qty Ord.",
+       Round("Received"/ar_nuvcup,0) "Qty Rec.",
+       (SELECT SUM(UL_NQTEUP)
+        FROM TB_EUMS@HEINENS_STK_PROD,
+             TB_LCUMS@HEINENS_STK_PROD
+       WHERE UL_USSCC = UE_USSCC
+         AND UE_INDFIC = ''1''
+         AND UL_DONORD="Whs"
+         AND UL_CPROIN=ol_cproin
+         AND UL_ILOGIS=ol_ilogis ) "Whs On-Hand"       
+FROM QTE_RECEIVED_ORDERED
+WHERE NVL("Received",0) != 0 AND ("Ordered"/"Received" > 1.2
+OR 0.8 > "Ordered"/"Received")
+OR NVL("Received",0) = 0
+ORDER BY "AGRN num" ASC, "Qty Rec." ASC
+	
+</QUERY>
+ 
+  <HEADERIFEMPTY>No Warehouse CUT/OVER received item</HEADERIFEMPTY>
+  <HEADER>Warehouse receipt CUT/OVER received</HEADER>
+  
+</ROOT>
+

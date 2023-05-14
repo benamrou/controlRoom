@@ -1,0 +1,330 @@
+<ROOT>
+    <QUERY>
+WITH LASSTXWEEKS as (
+SELECT TRUNC(TRUNC(sysdate) - LEVEL - 1) AS DT,
+       to_char(TRUNC(TRUNC(sysdate) - LEVEL - 1),''MM/DD'') DT_DATE,
+       to_char(TRUNC(TRUNC(sysdate) - LEVEL -1),''D'') DT_DAY,
+       to_char(TRUNC(TRUNC(sysdate) - LEVEL - 1), ''IWRRRR'') wk
+FROM dual
+WHERE to_char(TRUNC(TRUNC(TRUNC(sysdate) - LEVEL - 1), ''iw''), ''RRRR'') = to_char(TRUNC(sysdate),''RRRR'')
+CONNECT BY LEVEL &lt; TRUNC(sysdate) - TRUNC(NEXT_DAY(sysdate-28-to_number(to_char(sysdate-1,''D'')), ''MON''))),
+PI_NEG AS (
+SELECT to_char(extract_date, ''MM/DD'') COUNTING_DATE, 
+       to_char(trunc(extract_date), ''IWRRRR'') WK,
+       to_char(trunc(extract_date),''D'') COUNTING_DAY,
+       SALE_LOAD,
+       STORE_NUM, DEPT_CODE, DEPT_DESC,
+       SUM (CASE WHEN QTY &lt; 0 THEN 1 ELSE 0 END) NEG_MORNING,
+       SUM (CASE WHEN QTY = 0 THEN 1 ELSE 0 END) ZERO_MORNING,
+       SUM (CASE WHEN QTY &lt; 0 AND 
+		      NOT EXISTS (SELECT 1 FROM INVDETINV@Heinens_Custom_Prod, ARTRAC@Heinens_Custom_Prod
+                      WHERE DINSITE = STORE_NUM
+                        AND ARTCEXR = ITEM_CODE
+                        AND DINCINR = ARTCINR
+                        AND TRUNC(DINDCRE) = TRUNC(EXTRACT_DATE)) THEN 1 ELSE 0 END) NEG_EVENING,
+       (SELECT COUNT(DISTINCT stmcinl) OTHER_CYCLE
+        FROM stomvt@Heinens_Custom_Prod, STRUCTURE@Heinens_Custom_Prod, artvl@Heinens_Custom_Prod
+        WHERE STORE_NUM=stmsite AND stmtmvt=125 AND TRUNC(stmdmvt)=TRUNC(extract_date)
+        AND stmseqvl=arlseqvl
+        /* belong to this departemet */
+        AND TRUNC(SYSDATE) BETWEEN strddeb AND strdfin
+        AND strcint=pkstrucrel.GET_CINT_PERE@Heinens_Custom_Prod(1,''1'',arlcinr, TRUNC(SYSDATE))
+        AND DEPT_CODE=pkstrucobj.get_cext@Heinens_Custom_Prod(1,strpere)
+        AND NOT EXISTS (SELECT 1 
+                        FROM heinens_neg_inventory@Heinens_Custom_Prod other 
+                        WHERE other.item_code=arlcexr AND stmseqvl=arlseqvl
+                        AND other.store_num=neg_inv.store_num 
+                        AND other.extract_date=neg_inv.extract_date))  OTHER_CYCLE
+FROM heinens_neg_inventory@Heinens_Custom_Prod neg_inv
+WHERE TRUNC(EXTRACT_DATE) >= (SELECT MIN(DT) FROM LASSTXWEEKS)
+AND STORE_NUM=:param2
+/* Exclude Food Services - Only Dairy/Grocery */
+AND DEPT_CODE in (''1020000000000'', ''1030000000000'')
+GROUP BY extract_date, store_num, dept_code, dept_desc, sale_load
+ORDER BY extract_date, store_num ASC, dept_code ASC),
+PI_NEG_WK AS (
+SELECT DISTINCT WK, STORE_NUM, DEPT_CODE, DEPT_DESC, SALE_LOAD
+FROM PI_NEG),
+PI_NEG_PERC AS (
+SELECT STORE_NUM, DEPT_CODE, DEPT_DESC,  WK, 
+       COUNTING_DATE,
+       COUNTING_DAY,
+       NEG_MORNING, NEG_EVENING,
+       DECODE(SALE_LOAD,0, ''N/A'',
+       DECODE (NEG_MORNING,0, 100,
+       ROUND(100* (1-NEG_EVENING / NEG_MORNING),2)))   NEG_SALEFAIL_COVERED,
+       DECODE (NEG_MORNING,0, 100,
+       ROUND(100* (1-NEG_EVENING / NEG_MORNING),2)) NEG_COVERED,
+       ZERO_MORNING,
+       OTHER_CYCLE
+FROM PI_NEG),
+RESULT AS (
+/* Separator */
+SELECT STORE_NUM, DEPT_CODE, DEPT_DESC,
+       ''-----'' INFO,
+       ''-----'' WK,
+       ''-----'' MONDAY,
+       ''-----'' TUESDAY,
+       ''-----'' WEDNESDAY,
+       ''-----'' THURSDAY,
+       ''-----'' FRIDAY,
+       ''-----'' SATURDAY,
+       ''-----''  SUNDAY
+FROM PI_NEG_WK WK
+UNION 
+/* week days */
+SELECT STORE_NUM, DEPT_CODE, DEPT_DESC,
+       ''# Week days'' INFO,
+       WK.WK,
+       NVL((SELECT COUNTING_DATE
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''2''),
+        (SELECT DT_DATE FROM LASSTXWEEKS lw WHERE WK.WK=lw.WK AND lw.DT_DAY=''2'')) MONDAY,
+       NVL((SELECT COUNTING_DATE
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''3''),
+        (SELECT DT_DATE FROM LASSTXWEEKS lw WHERE WK.WK=lw.WK AND lw.DT_DAY=''3'')) TUESDAY,
+       NVL((SELECT COUNTING_DATE
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''4''),
+        (SELECT DT_DATE FROM LASSTXWEEKS lw WHERE WK.WK=lw.WK AND lw.DT_DAY=''4'')) WEDNESDAY,
+       NVL((SELECT COUNTING_DATE
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''5''),
+        (SELECT DT_DATE FROM LASSTXWEEKS lw WHERE WK.WK=lw.WK AND lw.DT_DAY=''5'')) THURSDAY,
+       NVL((SELECT COUNTING_DATE
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''6''),
+        (SELECT DT_DATE FROM LASSTXWEEKS lw WHERE WK.WK=lw.WK AND lw.DT_DAY=''6'')) FRIDAY,
+       NVL((SELECT COUNTING_DATE
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''7''),
+        (SELECT DT_DATE FROM LASSTXWEEKS lw WHERE WK.WK=lw.WK AND lw.DT_DAY=''7'')) SATURDAY,
+       NVL((SELECT COUNTING_DATE
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''1''),
+        (SELECT DT_DATE FROM LASSTXWEEKS lw WHERE WK.WK=lw.WK AND lw.DT_DAY=''1'')) SUNDAY
+FROM PI_NEG_WK WK
+UNION
+/* Negative Morning reported */
+SELECT STORE_NUM, DEPT_CODE, DEPT_DESC,
+       ''#1 Negative inventory'' INFO,
+       WK.WK,
+       (SELECT to_char(NEG_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''2'') MONDAY,
+       (SELECT to_char(NEG_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''3'') TUESDAY,
+       (SELECT to_char(NEG_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''4'') WEDNESDAY,
+       (SELECT to_char(NEG_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''5'') THURSDAY,
+       (SELECT to_char(NEG_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''6'') FRIDAY,
+       (SELECT to_char(NEG_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''7'') SATURDAY,
+       (SELECT to_char(NEG_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''1'') SUNDAY
+FROM PI_NEG_WK WK
+UNION 
+/* Zero  reported */
+SELECT STORE_NUM, DEPT_CODE, DEPT_DESC,
+       ''#2 Zero inventory'' INFO,
+       WK.WK,
+       (SELECT to_char(ZERO_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''2'') MONDAY,
+       (SELECT to_char(ZERO_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''3'') TUESDAY,
+       (SELECT to_char(ZERO_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''4'') WEDNESDAY,
+       (SELECT to_char(ZERO_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''5'') THURSDAY,
+       (SELECT to_char(ZERO_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''6'') FRIDAY,
+       (SELECT to_char(ZERO_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''7'') SATURDAY,
+       (SELECT to_char(ZERO_MORNING)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''1'') SUNDAY
+FROM PI_NEG_WK WK
+UNION
+/* Other Cycled */
+SELECT STORE_NUM, DEPT_CODE, DEPT_DESC,
+       ''#3 Other cycled'' INFO,
+       WK.WK,
+       (SELECT to_char(OTHER_CYCLE)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''2'') MONDAY,
+       (SELECT to_char(OTHER_CYCLE)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''3'') TUESDAY,
+       (SELECT to_char(OTHER_CYCLE)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''4'') WEDNESDAY,
+       (SELECT to_char(OTHER_CYCLE)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''5'') THURSDAY,
+       (SELECT to_char(OTHER_CYCLE)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''6'') FRIDAY,
+       (SELECT to_char(OTHER_CYCLE)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''7'') SATURDAY,
+       (SELECT to_char(OTHER_CYCLE)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''1'') SUNDAY
+FROM PI_NEG_WK WK
+UNION 
+
+/* Negative Fixed */
+SELECT STORE_NUM, DEPT_CODE, DEPT_DESC,
+       ''#4 Negative Fixed'' INFO,
+       WK.WK,
+       (SELECT to_char(NEG_COVERED)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''2'') MONDAY,
+       (SELECT to_char(NEG_COVERED)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''3'') TUESDAY,
+       (SELECT to_char(NEG_COVERED)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''4'') WEDNESDAY,
+       (SELECT to_char(NEG_COVERED)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''5'') THURSDAY,
+       (SELECT to_char(NEG_COVERED)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''6'') FRIDAY,
+       (SELECT to_char(NEG_COVERED)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''7'') SATURDAY,
+       (SELECT to_char(NEG_COVERED)
+        FROM PI_NEG_PERC pneg_perc
+        WHERE pneg_perc.WK=wk.WK
+        AND   pneg_perc.STORE_NUM=wk.STORE_NUM
+        AND   pneg_perc.DEPT_CODE=wk.DEPT_CODE
+        AND   pneg_perc.COUNTING_DAY=''1'') SUNDAY
+FROM PI_NEG_WK WK)
+SELECT *
+FROM RESULT
+ORDER BY STORE_NUM, DEPT_CODE ASC, REPLACE(WK, ''-'',''9'') DESC, INFO ASC
+ 
+</QUERY>
+  <HEADERIFEMPTY>Store Neg. Inventory Activity</HEADERIFEMPTY>
+  <HEADER>FLASH REPORT - Daily Stores Neg. Inventory Activity</HEADER>
+  
+</ROOT>
+

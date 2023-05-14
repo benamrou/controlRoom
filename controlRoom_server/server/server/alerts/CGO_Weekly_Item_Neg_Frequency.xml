@@ -1,0 +1,42 @@
+<ROOT>
+    <QUERY> 
+	WITH TOP_ITEMS AS (SELECT store_num, suopplier_code, supplier_desc, 
+       dept_code, dept_desc,
+       sub_dept_code, sub_dept_desc,
+       cat_code, cat_desc,
+       root_code, sv, barcode, sv_desc, COUNT(1) CNT
+FROM pi_neg_inventory@Heinens_Custom_Prod, tbl_REF_HEINENS_SiteAttribute@Heinens_Custom_Prod
+WHERE "SiteType" = 10 AND "TopaseGoLiveDate" BETWEEN ''1-JAN-18'' AND trunc(sysdate) 
+AND ("SiteCode"=:param2 OR :param2=-1)
+AND CGO=''Yes''
+AND "SiteCode"=STORE_NUM
+AND extract_date >= TRUNC(SYSDATE-4*7)
+GROUP BY store_num, suopplier_code, supplier_desc, 
+       dept_code, dept_desc,
+       sub_dept_code, sub_dept_desc,
+       cat_code, cat_desc,
+       root_code, sv, barcode, sv_desc
+HAVING COUNT(1) >1)
+SELECT t.store_num, t.suopplier_code, t.supplier_desc, 
+       t.dept_code, t.dept_desc,
+       t.sub_dept_code, t.sub_dept_desc,
+       t.cat_code, t.cat_desc,
+       t.root_code, t.sv, t.barcode, t.sv_desc,
+       pkparpostes.get_postlibl@Heinens_Custom_Prod(1,10,964,arecomm, ''HN'') CGO_MODE,
+       areqtec MAX_QTY, aresecu MIN_QTY,
+       pkstock.getStockDispoEnQte@Heinens_Custom_Prod(1,store_num, arvcinv) ACTUAL_QTY,
+       CNT NB_TIMES_NEG_LAST_4_WEEKS
+FROM TOP_ITEMS t, artreap@Heinens_Custom_Prod, artuv@Heinens_Custom_Prod
+WHERE aresite=store_num
+AND arecinr=arvcinr
+AND arvcexr=root_code
+AND arvcexv=sv
+AND pkartstock.RecupCinlUVC@Heinens_Custom_Prod(1,arecinl)=arvcinv
+AND TRUNC(SYSDATE) BETWEEN areddeb AND aredfin
+ORDER BY store_num ASC, CNT DESC, root_code ASC	
+</QUERY>
+  <HEADERIFEMPTY>Weekly CGO TOP Item w/ negative inventory</HEADERIFEMPTY>
+  <HEADER>Weekly CGO TOP items with negative inventory</HEADER>
+  
+</ROOT>
+

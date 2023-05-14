@@ -1,0 +1,32 @@
+<ROOT>
+    <QUERY> 
+	
+SELECT distinct ar_donord "Whs #", ue_usscc "SSCC #", 
+	ar_fourn || '' | '' || ar_nrsfou "Supplier code desc.", 
+	ar_cproin || ''/'' || ar_ilogis || '' | '' || ar_libpro "Item code desc.", 
+	ar_dlc "UBD days", 
+	ul_nqteup "Nb. cases", 
+	to_char(UL_DATCRE,''MM/DD/RR HH12:MI'') "Date entry SSCC",
+        (SELECT ue_codrec || '' / '' || ausdesc FROM adm_users@HEINENS_STK_PROD WHERE ue_codrec=ausextuser and rownum=1) "Received by"
+FROM tb_eums@HEINENS_STK_PROD t , tb_lcums@HEINENS_STK_PROD , tb_art@HEINENS_STK_PROD
+WHERE ue_usscc = ul_usscc
+AND ue_codtsu = ''1''
+AND ar_cproin=ul_cproin
+AND ar_ilogis=ul_ilogis
+AND ar_dlc >0
+and (ue_stapre is null or (ue_stapre in (0, 50) 
+and ue_staums = 1 
+AND ue_typpre in (''P'',''R'') and ue_typums = ''0'' ))  
+and  NVL(ue_indfic,''1'') != ''0''
+AND NOT EXISTS (SELECT 1 FROM tb_traums@HEINENS_STK_PROD WHERE ut_usscc=ul_usscc AND ut_typind=''DLC'' AND ut_valind IS NOT NULL)
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''UBD0000000003''
+                                AND LALTMESS LIKE ''%'' || ue_usscc || ''%'')
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No Warehouse SCCC with no UBD </HEADERIFEMPTY>
+  <HEADER>Warehouse Warehouse SSCC with no UBD </HEADER>
+  
+</ROOT>
+

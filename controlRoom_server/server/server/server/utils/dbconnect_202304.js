@@ -12,7 +12,7 @@
 * Date: March 2017
 */
 
-
+"use strict";
 
 var logger = require("./logger.js");
 let config = new require("../../config/" + (process.env.NODE_ENV || "development") + ".js");
@@ -23,15 +23,19 @@ var pool;
 var buildupScripts = [];
 var teardownScripts = [];
 
+var sql_param, bindParams_param, options_param, ticketId_param;
+var request_param, response_param, user_param, volume_param, callback_param;
+var whichFunction;
+
 
 var numRows = config.db.maxRows; // max number of rows by packets
 
 module.exports.OBJECT = oracledb.OBJECT;
 
-function createPool(config) {
+async function createPool(config) {
     console.log('Creating connection pool ' + JSON.stringify(config));
-    return new Promise(function(resolve, reject) {
-        oracledb.createPool(
+    return await new Promise(async function(resolve, reject) {
+        await oracledb.createPool(
             config,
             function(err, p) {
                 if (err) {
@@ -47,8 +51,8 @@ function createPool(config) {
 
 module.exports.createPool = createPool;
 
-function terminatePool() {
-    return new Promise(function(resolve, reject) {
+async function terminatePool() {
+    return await new Promise(function(resolve, reject) {
         if (pool) {
             pool.terminate(function(err) {
                 if (err) {
@@ -95,22 +99,22 @@ function addTeardownSql(statement) {
 
 module.exports.addTeardownSql = addTeardownSql;
 
-function getConnection() {
+async function getConnection() {
     // Display the Pool stats
     // pool._logStats();
-    return new Promise(function(resolve, reject) {
-        pool.getConnection(function(err, connection) {
+    return await new Promise(async function(resolve, reject) {
+        await pool.getConnection(function(err, connection) {
             if (err) {
                 throw err;
             }
              
             async.eachSeries(
                 buildupScripts,
-                function(statement, callback) {
-                    connection.execute(statement.sql, statement.binds, statement.options, function(err) {
+                async function(statement, callback) {
+                    await connection.execute(statement.sql, statement.binds, statement.options, function(err) {
                         callback(err);
                     });
-                    connection.close({drop: true});
+                    await connection.close({drop: true});
                 },null
                 /*function (err) {
                     if (err) {
@@ -135,7 +139,7 @@ async function executeStream(sql, bindParams, options, connection) {
     console.log('execute bindParams:' + JSON.stringify(bindParams));
     console.log('execute options:' + JSON.stringify(options));
     let stream = await connection.queryStream(sql, bindParams, options);
-    const consumeStream = new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
         stream.on('error', 
                 function (error) {
                             console.log ('004 - execute connection rejection  ' + error);
@@ -167,8 +171,6 @@ async function executeStream(sql, bindParams, options, connection) {
             // be closed, if desired.  Note: do not close connections on 'end'.
             resolve(rowcount);
         });
-        
-
         /*return new Promise(function(resolve, reject) {
             connection.execute(sql, bindParams, options, function(err, results) {
                 if (err) {
@@ -187,9 +189,9 @@ async function executeStream(sql, bindParams, options, connection) {
 
 module.exports.executeStream = executeStream;
 
-function execute(sql, bindParams, options, connection, ticketId, user, callback) {
-    return new Promise(function(resolve, reject) {
-        connection.execute(sql, bindParams, options, function(err, results) {
+async function execute(sql, bindParams, options, connection, ticketId, user, callback) {
+    return await new Promise(async function(resolve, reject) {
+        await connection.execute(sql, bindParams, options, function(err, results) {
             if (err) {
                 logger.log(ticketId, '003 - ' + err, user, 3);
                 callback(err, -1);
@@ -222,9 +224,12 @@ function releaseConnections(results, connection) {
 //module.exports.releaseConnection = releaseConnection;
 module.exports.releaseConnections = releaseConnections;
 
-function executeQuery(sql, bindParams, options, ticketId, request, response, user, volume, callback) {
+async function executeQuery(sql, bindParams, options, ticketId, request, response, user, volume, callback) {
     options.isAutoCommit = true;
-
+    
+    whichFunction = 'executeQuery';
+    saveRequest(whichFunction, sql, bindParams, options, ticketId, request, response, user, volume, callback);
+    
     //console.log('executing query 1 ', sql);
     let oracleQuery_config; 
     if (volume === 0) { // 70 rows query max
@@ -233,23 +238,23 @@ function executeQuery(sql, bindParams, options, ticketId, request, response, use
     else { // Big data query
         oracleQuery_config = config.db.connAttrs_volume;
     }
-    return new Promise(function(resolve, reject) {
-        oracledb.getConnection()
-            .then(function(connection){
-                execute(sql, bindParams, options, connection, ticketId, user, callback)
-                    .then(function(result) {
+    return await new Promise(async function(resolve, reject) {
+        await oracledb.getConnection()
+            .then(async function(connection){
+                await execute(sql, bindParams, options, connection, ticketId, user, callback)
+                    .then(async function(resultSet) {
                         //resolve(results);
                         let rowsToReturn = [];
-                        callback(null,result.outBinds.cursor);  
-                        doClose(connection, result);   // always close the ResultSet
+                        await callback(null,resultSet.outBinds.cursor);  
+                        await doClose(connection, resultSet);   // always close the ResultSet
                         //fetchRowsFromRSCallback(ticketId, connection, result.outBinds.cursor, numRows, request, response, user, 0, callback, rowsToReturn);
                         process.nextTick(function() {
                             //releaseConnections(result, connection);
                         });
                     })
-                    .catch(function(err) {
-                        //reject(err);
-                        logger.log(ticketId, '005 - ' + err, user, 3);    
+                    .catch(async function(err) {
+                        logger.log(ticketId, '005 - ' + err, user, 3);   
+                        await doClose(connection, resultSet) ;
                         process.nextTick(function() {
                         });
                     });
@@ -263,10 +268,13 @@ function executeQuery(sql, bindParams, options, ticketId, request, response, use
 module.exports.executeQuery = executeQuery;
 
 
-function executeCursor(sql, bindParams, options, ticketId, request, response, user, volume, callback) {
+async function executeCursor(sql, bindParams, options, ticketId, request, response, user, volume, callback) {
     options.isAutoCommit = true;
     options.outFormat = oracledb.OUT_FORMAT_OBJECT;
     
+    whichFunction = 'executeCursor';
+    saveRequest(whichFunction, sql, bindParams, options, ticketId, request, response, user, volume, callback);
+
     let oracleQuery_config; 
     if (volume === 0) { // 70 rows query max
         oracleQuery_config = config.db.connAttrs;
@@ -274,15 +282,15 @@ function executeCursor(sql, bindParams, options, ticketId, request, response, us
     else { // Big data query
         oracleQuery_config = config.db.connAttrs_volume;
     }
-    return new Promise(function(resolve, reject) {
-        oracledb.getConnection(oracleQuery_config)
-            .then(function(connection){
+    return await new Promise(async function(resolve, reject) {
+        await oracledb.getConnection(oracleQuery_config)
+            .then(async function(connection){
                 //console.log ('execute');
-                execute(sql, bindParams, options, connection, ticketId, user, callback)
-                    .then(function(result) {
+                await execute(sql, bindParams, options, connection, ticketId, user, callback)
+                    .then(async function(result) {
                         let rowsToReturn = [];
                         //console.log('result: ', result);
-                        fetchRowsFromRSCallback(ticketId, connection, result.outBinds.cursor, numRows, request, response, user, 0, callback, rowsToReturn);
+                        await fetchRowsFromRSCallback(ticketId, connection, result.outBinds.cursor, numRows, request, response, user, 0, callback, rowsToReturn);
                         process.nextTick(function() {
                         });
                     })
@@ -301,22 +309,22 @@ function executeCursor(sql, bindParams, options, ticketId, request, response, us
 
 module.exports.executeCursor = executeCursor;
 
-function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, clear, callback, rowsToReturn)
+async function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, clear, callback, rowsToReturn)
 {
  if (resultSet == null) {
         logger.log(ticketId, " Resulset empty...", user);    // close the result set and release the connection
-        callback(null,[]);
+        await callback(null,[]);
  }
  else {
     resultSet.getRows( // get numRows rows
       numRows,
-    function (err, rows)
+    async function (err, rows)
     {
       if (err) { 
-        callback(null,err); 
-        logger.log(ticketId, " Error... : " + JSON.stringify(err),user);
-        doClose(connection, resultSet);   // always close the ResultSet
-        return; 
+        logger.log(ticketId, " Error has errorNum... : " + JSON.stringify(rows),user,3);
+        await callback(null,err); 
+        await doClose(connection, resultSet);
+        //{\"errorNum\":0,\"offset\":0}"
       } 
       else if (rows.length == 0) {  // no rows, or no more rows
         if (clear == 0) {
@@ -327,8 +335,12 @@ function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, reque
             logger.log(ticketId, rows.length + " Object(s) returned... [FETCH]", user);
         }
 
-        callback(null,rowsToReturn);  
-        doClose(connection, resultSet);   // always close the ResultSet
+            await new Promise(async function(resolve, reject) {
+                await callback(null,rowsToReturn)
+                }).then(async function(result) {
+                    await doClose(connection, resultSet);   // always close the ResultSet
+            });
+        
         return;
       } else if (rows.length > 0) {
                 rowsToReturn.push.apply(rowsToReturn,rows);
@@ -337,7 +349,7 @@ function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, reque
             }
             logger.log(ticketId, rows.length + " Object(s) returned... [FETCH]", user);
             // If more than max Rows Fetch again
-            fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, 1, callback, rowsToReturn);  // get next set of rows
+            await fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, 1, callback, rowsToReturn);  // get next set of rows
         }
         else {
             doClose(connection, resultSet);   // always close the ResultSet
@@ -346,21 +358,81 @@ function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, reque
  }
 }
 
-function doRelease(connection) {
-    connection.close(
+async function doRelease(connection) {
+    await connection.close(
       function(err) {
         if (err) { console.error(err.message); }
       });
+
+      try {
+        if (global.gc) {
+            logger.log('alert', 'Garbage collector execution ' + JSON.stringify(e), 'alert', 1);
+            global.gc();
+        }
+      } catch (e) {
+        logger.log('alert', 'Garbage collector issue ' + JSON.stringify(e), 'alert', 3);
+      }
   }
   
-  function doClose(connection, resultSet) {
+async function doClose(connection, resultSet) {
+    await Promise.resolve(resultSet.close(
+    function(err) {
+    if (err) { console.error(err.message); }
+    doRelease(connection);
+    }));
 
-    try { 
-    resultSet.close(
-      function(err) {
-        if (err) { console.error(err.message); }
-        doRelease(connection);
-        
-      });
-    } catch (error ) {};
-  }
+    try {
+        if (global.gc) {
+            logger.log('alert', 'Garbage collector execution ' + JSON.stringify(e), 'alert', 1);
+            global.gc();
+        }
+      } catch (e) {
+        logger.log('alert', 'Garbage collector issue ' + JSON.stringify(e), 'alert', 3);
+      }
+}
+
+
+function saveRequest(fct, sql, bindParams, options, ticketId, request, response, user, volume, callback) {
+    sql_param = sql; 
+    bindParams_param = bindParams; 
+    options_param = options; 
+    ticketId_param = ticketId; 
+    request_param = request; 
+    response_param = response; 
+    user_param = user; 
+    volume_param = volume; 
+    callback_param=callback;
+}
+
+async function reprocess() {
+    //terminatePool();
+    //logger.log(ticketId, 'Reprocessing ... ' + config.db.connAttrs, user, 3);   
+    /*createPool(config.db.connAttrs).then(function() {
+            let server = httpServer.listen(argv[1], function () {
+            let host = server.address().address,
+                port = server.address().port;
+
+            logger.log(0,' Server is listening at http://' + host + ':' + port, "internal");
+        })
+        .catch(function(err) {
+            console.error('Error occurred creating database connection pool', err);
+            console.log('Exiting process');
+            process.exit(0);
+        }
+    );*/
+    await sleep(2000); // Sleeps for 2 seconds
+    if (whichFunction == 'executeQuery') {
+        executeQuery(sql_param, bindParams_param, options_param, ticketId_param, 
+                    request_param, response_param, user_param, volume_param, callback_param);
+    }
+    if (whichFunction == 'executeCursor') {
+        executeCursor(sql_param, bindParams_param, options_param, ticketId_param, 
+                    request_param, response_param, user_param, volume_param, callback_param);
+    }
+
+
+}
+
+async function sleep(ms) {
+    return await new Promise((resolve) => setTimeout(resolve, ms));
+}
