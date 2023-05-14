@@ -20,9 +20,12 @@
 * @author Ahmed Benamrouche
 * Date: March 2020
 */
+
+"use strict";
+
 module.exports = function (app, SQL) {
 
-var module = {};
+let module = {};
 
 /**
 * GET method description.  

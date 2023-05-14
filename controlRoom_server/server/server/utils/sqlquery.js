@@ -3,7 +3,7 @@
 * This call return the results of the requested query
 * All the SQLQUERY request are logs.
 *
-* Environment variable used:
+* Environment letiable used:
 *   > db.maxRows in the configuration file (config folder). Represent the number of max Rows to fetch.
 *
 * @class SQLQUERY
@@ -14,17 +14,23 @@
 
 //module.exports = function (app, oracledb) {
 
-//var module = {};
-var id = 0;
+//let module = {};
 
-var config = require("../../config/" + (process.env.NODE_ENV || "development") + ".js");
-var logger = require("./logger.js");
-var dbConnect = require ("./dbconnect.js");
-let oracledb = require('oracledb');      // Oracle DB connection
-var fs = require('fs-extra'); // File management
+let id = 0;
 
-var numRows = config.db.maxRows; // max number of rows by packets
-let cursor;
+"use strict"
+
+let configuration = {
+    config : require("../../config/" + (process.env.NODE_ENV || "development") + ".js")
+}
+
+let heap = {
+    logger : require("./logger.js"),
+    dbConnect : require ("./dbconnect.js"),
+    oracledb : require('oracledb'),     // Oracle DB connection
+    fs : require('fs-extra'), // File management
+    numRows : configuration.config.db.maxRows // max number of rows by packets
+}
 
 /**
 * Method executeLibQuery is executing a query stored in the LIBQUERY structure through their reference number. 
@@ -48,7 +54,7 @@ module.exports.getNextTicketID = getNextTicketID;
 *
 * @method executeLibQuery
 * @param {String} querynum represents the query ID in the LIBQUERY
-* @param {String} params are the bind variables value. The params object must respect the param varibale in their orders.
+* @param {String} params are the bind letiables value. The params object must respect the param letibale in their orders.
 * @param {String} user is the user requesting this transaction
 * @param {Object} request HTTP request. The request must contain :
 * @param {Object} response is the query server response (contains the results of the query)
@@ -60,9 +66,8 @@ function executeLibQuery (ticketId, queryNum, params, user, database_sid, langua
     let volume = 0; // No need for big result query
     executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, volume, 
     function (err,data) {
-        //callbackSendData(response,data).then(console.log('Done execution'))
         if(err) {
-            logger.log(ticketId, 'Error executeLibQuery ' + JSON.stringify(err), 3);
+            heap.logger.log(ticketId, 'Error executeLibQuery ' + JSON.stringify(err), 3);
         }
         callbackSendData(response,data);
     });
@@ -73,21 +78,21 @@ function executeSQLQuery (ticketId, queryNum, commit, params, user, database_sid
     let volume = 0; // No need for big result query
     executeSQLQueryCallback(ticketId, queryNum, commit, params, user, database_sid, language, request, response, volume, 
     function (err,data) {
-        //callbackSendData(response,data).then(console.log('Done execution'))
         if(err) {
-            logger.log(ticketId, 'Error executeSQL ' + JSON.stringify(err), 3);
+            heap.logger.log(ticketId, 'Error executeSQL ' + JSON.stringify(err), 3);
         }
         callbackSendData(response,data);
     });
 }
 module.exports.executeSQLQuery = executeSQLQuery; 
 
-function executeLibQueryUsingMyCallback (ticketId, queryNum, params, user, database_sid, language, request, response, mycallback) {
+async function executeLibQueryUsingMyCallback (ticketId, queryNum, params, user, database_sid, language, request, response, mycallback) {
     let volume = 0; // No need for big result query
     try {
-        executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, volume, mycallback);
+        await executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, volume, mycallback);
+        
     } catch(err) {
-        logger.log(user, 'Execution SQL error : ' + JSON.stringify(err), user, 3);
+        heap.logger.log(user, 'Execution SQL error : ' + JSON.stringify(err), user, 3);
     }
 }
 module.exports.executeLibQueryUsingMyCallback = executeLibQueryUsingMyCallback; 
@@ -96,7 +101,6 @@ function executeQuery (ticketId, query, params, user, database_sid, language, re
     let volume = 0; // No need for big result query
     executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, volume, 
     function (err,data) {
-        //callbackSendData(response,data).then(console.log('Done execution'))
         callbackSendData(response,data);
     });
 }
@@ -122,7 +126,7 @@ async function callbackSendData(response, data) {
 *
 * @method executeLibQuery
 * @param {String} querynum represents the query ID in the LIBQUERY
-* @param {String} params are the bind variables value. The params object must respect the param varibale in their orders.
+* @param {String} params are the bind letiables value. The params object must respect the param letibale in their orders.
 * @param {String} user is the user requesting this transaction
 * @param {String} mode is mode to retrieve data
 *               Mode 0: Use data alreaddy downloaded
@@ -139,10 +143,10 @@ function executeSmartLoadedQuery (ticketId, queryNum, params, user, database_sid
     // Use stamped file if mode =0
     if (mode === 0 ) {
         // File xists
-        if (fs.existsSync(__dirname + '/../../' + filename)) {
+        if (heap.fs.existsSync(__dirname + '/../../' + filename)) {
             let data = require(__dirname + '/../../' + filename);
             //let data = require(filename);
-            logger.log(ticketId, filename + " File(s) returned... [FETCH]", user);
+            heap.logger.log(ticketId, filename + " File(s) returned... [FETCH]", user);
             callbackSendData(response,data);
             return;
         }
@@ -150,7 +154,7 @@ function executeSmartLoadedQuery (ticketId, queryNum, params, user, database_sid
         executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, volume,
                                 function (err,data) {
                                     callbackSendData(response,data);
-                                    if (filename) { fs.writeJson(filename, data)};
+                                    if (filename) { heap.fs.writeJson(filename, data)};
     });
 }
 
@@ -163,7 +167,7 @@ module.exports.executeSmartLoadedQuery = executeSmartLoadedQuery;
 *
 * @method executeLibQuery
 * @param {String} querynum represents the query ID in the LIBQUERY
-* @param {String} params are the bind variables value. The params object must respect the param varibale in their orders.
+* @param {String} params are the bind letiables value. The params object must respect the param letibale in their orders.
 * @param {String} user is the user requesting this transaction
 * @param {Object} request HTTP request. The request must contain :
 * @param {Object} response is the query server response (contains the results of the query)
@@ -180,18 +184,18 @@ async function executeLibQueryCallback(ticketId, queryNum, params, user, databas
     try {
         let SQLquery = "BEGIN PKREQUESTMANAGER.CALLQUERY(" + ticketId;
 
-        //logger.log(ticketId, "LIBQUERY with Callback: ", user);
+        //heap.logger.log(ticketId, "LIBQUERY with Callback: ", user);
         SQLquery = SQLquery + ",'" + queryNum + "','" + user + "'," + database_sid + ", " + params  + "," +
                                 language + ", :cursor); END;";
-        logger.log(ticketId, SQLquery, user);
+        heap.logger.log(ticketId, SQLquery, user);
 
 
-        oracledb.fetchAsString = [ oracledb.CLOB ];
-        let promiseExecution = await dbConnect.executeCursor(
+        heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
+        await heap.dbConnect.executeCursor(
             SQLquery, 
             // Bind cursor for the resulset
-            { cursor:  { type: oracledb.CURSOR, dir : oracledb.BIND_OUT }},
-            { autoCommit: true, outFormat: oracledb.OBJECT }, // Return the result as OBJECT
+            { cursor:  { type: heap.oracledb.CURSOR, dir : heap.oracledb.BIND_OUT }},
+            { autoCommit: true, outFormat: heap.oracledb.OBJECT }, // Return the result as OBJECT
             ticketId,
             request,
             response,
@@ -200,8 +204,8 @@ async function executeLibQueryCallback(ticketId, queryNum, params, user, databas
             callback
             )
             .catch (function(err) {
-                //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
-                console.log('SQLQuery - executeLibQueryCallback : ' + err); 
+                //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
+                heap.logger.log(ticketId,'SQLQuery - executeLibQueryCallback : ' + err, user);
                 //app.next(err);
             });
             //return promiseExecution;
@@ -217,20 +221,17 @@ async function executeSQLQueryCallback(ticketId, query, commit, params, user, da
     try {
         let SQLquery = "BEGIN PKREQUESTMANAGER.CALLSQL(" + ticketId;
 
-        //console.log('SQL exec:', SQLquery, queryQuote);
-        //logger.log(ticketId, "LIBQUERY with Callback: ", user);
         SQLquery = SQLquery + ",'" + query + "'," + commit + ",'" + user + "'," + database_sid + ", " + params  + "," +
                                 language + ", :cursor); END;";
-        //console.log('SQL exec:', SQLquery, queryQuote);
-        logger.log(ticketId, SQLquery, user);
+        heap.logger.log(ticketId, SQLquery, user);
 
 
-        oracledb.fetchAsString = [ oracledb.CLOB ];
-        let promiseExecution = await dbConnect.executeCursor(
+        heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
+        await heap.dbConnect.executeCursor(
             SQLquery, 
             // Bind cursor for the resulset
-            { cursor:  { type: oracledb.CURSOR, dir : oracledb.BIND_OUT }},
-            { autoCommit: true, outFormat: oracledb.OBJECT }, // Return the result as OBJECT
+            { cursor:  { type: heap.oracledb.CURSOR, dir : heap.oracledb.BIND_OUT }},
+            { autoCommit: true, outFormat: heap.oracledb.OBJECT }, // Return the result as OBJECT
             ticketId,
             request,
             response,
@@ -239,8 +240,8 @@ async function executeSQLQueryCallback(ticketId, query, commit, params, user, da
             callback
             )
             .catch (function(err) {
-                //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
-                console.log('SQLQuery - executeSQLQueryCallback : ' + err); 
+                //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
+                heap.logger.log(ticketId,'SQLQuery - executeCursor : ' + err, user);
                 //app.next(err);
             });
             //return promiseExecution;
@@ -256,7 +257,7 @@ module.exports.executeSQLQueryCallback = executeSQLQueryCallback;
 *
 * @method executeQueryCallback
 * @param {String} query represents the query SELECT/UPDATE/INSERT statement
-* @param {String} params are the bind variables value. The params object must respect the param varibale in their orders.
+* @param {String} params are the bind letiables value. The params object must respect the param letibale in their orders.
 * @param {String} user is the user requesting this transaction
 * @param {Object} request HTTP request. The request must contain :
 * @param {Object} response is the query server response (contains the results of the query)
@@ -272,17 +273,17 @@ async function executeQueryCallback(ticketId, query, params, user, database_sid,
 
     let SQLquery = "BEGIN PKREQUESTMANAGER.EXECUTEQUERY(" + ticketId;
 
-    //logger.log(ticketId, "LIBQUERY with Callback: ", user);
+    //heap.logger.log(ticketId, "LIBQUERY with Callback: ", user);
     SQLquery = SQLquery + ",'" + query + "','" + user + "'," + database_sid + ", " + params  + "," +
                             language + ", :cursor); END;";
-    logger.log(ticketId, SQLquery, user);
+    heap.logger.log(ticketId, SQLquery, user);
 
-    oracledb.fetchAsString = [ oracledb.CLOB ];
-    let promiseExecution = await dbConnect.executeCursor(
+    heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
+    await heap.dbConnect.executeCursor(
         SQLquery, 
         // Bind cursor for the resulset
-        { cursor:  { type: oracledb.CURSOR, dir : oracledb.BIND_OUT }},
-        { autoCommit: true, outFormat: oracledb.OBJECT }, // Return the result as OBJECT
+        { cursor:  { type: heap.oracledb.CURSOR, dir : heap.oracledb.BIND_OUT }},
+        { autoCommit: true, outFormat: heap.oracledb.OBJECT }, // Return the result as OBJECT
         ticketId,
         request,
         response,
@@ -291,12 +292,13 @@ async function executeQueryCallback(ticketId, query, params, user, database_sid,
         callback
         )
         .catch (function(err) {
-            //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
-            console.log('SQLQuery - executeQueryCallback : ' + err); 
+            //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
+            heap.logger.log(ticketId,'SQLQuery - executeQueryCallback : ' + err, user);
             //app.next(err);
         });
         //return promiseExecution;
         
+        global.gc();
     };
   
 
@@ -309,7 +311,7 @@ module.exports.executeQueryCallback = executeQueryCallback;
 *
 * @method executeSQL
 * @param {String} sql represents the query SELECT/UPDATE/INSERT statement
-* @param {String} bindParams are the bind variables value. The params object must respect the param varibale in their orders.
+* @param {String} bindParams are the bind letiables value. The params object must respect the param letibale in their orders.
 * @param {String} options is the user requesting this transaction
 *
 * Sub-Method calls PKREQUESTMANAGER.CALLQUERY in the Oracle Database
@@ -317,11 +319,11 @@ module.exports.executeQueryCallback = executeQueryCallback;
 */
 async function executeSQL(ticketId, sql, bindParams, user, request, response, callback)  {
 
-    //logger.log(ticketId, "LIBQUERY with Callback: ", user);
-    logger.log(ticketId, sql + '\n' + JSON.stringify(bindParams), user);
+    //heap.logger.log(ticketId, "LIBQUERY with Callback: ", user);
+    heap.logger.log(ticketId, sql + '\n' + JSON.stringify(bindParams), user);
 
-    oracledb.fetchAsString = [ oracledb.CLOB ];
-    let promiseExecution = await dbConnect.executeQuery(sql, bindParams,
+    heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
+    await heap.dbConnect.executeQuery(sql, bindParams,
                             { autoCommit: true}, 
                             ticketId,
                             request,
@@ -330,8 +332,8 @@ async function executeSQL(ticketId, sql, bindParams, user, request, response, ca
                             0,
                             callback)
         .catch (function(err) {
-            //try { dbConnect.releaseConnections(result, connection) } catch (error ) {};
-            console.log('SQLQuery - executeSQL : ' + err); 
+            //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
+            heap.logger.log(ticketId,'SQLQuery - executeSQL : ' + err, user);
             //app.next(err);
         });
         //return promiseExecution;

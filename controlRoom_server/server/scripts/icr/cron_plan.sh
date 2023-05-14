@@ -47,7 +47,7 @@ do
   echo "[`date +%D`] : Executing scheduled plan JSONID: $JSONID" >> /opt/apps/controlRoom/controlRoom_server/server/scripts/icr/logs/controlroom_$date_today.log
 done
 
-# curl -v -H ": " -H "cache-control: no-cache" -H "Connection: keep-alive" -H "Content-Type: application/x-www-form-urlencoded" -H "DATABASE_SID: HEINENS_CUSTOM_PROD" -H "LANGUAGE: HN" -H "USER: abe" "http://localhost:8092/api/upload/3/?PARAM=$JSONID&PARAM=cron" -L &
+# curl -v -H ": " -H "cache-control: no-cache" -H "Connection: keep-alive" -H "Content-Type: application/x-www-form-urlencoded" -H "DATABASE_SID: HEINENS_CUSTOM_PROD" -H "LANGUAGE: HN" -H "USER: alert" "http://localhost:8092/api/upload/3/?PARAM=$JSONID&PARAM=cron" -L &
 
 # sleep 1000000
 

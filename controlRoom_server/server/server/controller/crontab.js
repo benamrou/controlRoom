@@ -11,15 +11,17 @@
 * Date: October 2019
 */
 
-var logger = require("../utils/logger.js");
-var user   = "crontab";
-const cron = require('node-cron');
-const spawn  = require('child_process').execFile;
-const exec  = require('child_process').execFile;
-var cronTab = [];
+"use strict";
+
+let logger = require("../utils/logger.js");
+let {streamWrite, streamEnd, onExit} = require('@rauschma/stringio');
+let cron = require('node-cron');
+let spawn  = require('child_process').spawn;
+let user   = "crontab";
+
 module.exports = function (app, SQL) {
 
-    var module = {};
+    let module = {};
     
     /**
     * PROCESS method description. Execute according to ALRTSCHEDULE table the jobs
@@ -40,6 +42,7 @@ module.exports = function (app, SQL) {
                             "'{}'" /* LANGUAGE */, 
                             request, response, 
             function (err,data) { 
+                let cronTab = [];
                 if (err) {
                     logger.log('CRON', 'Error gathering scheduler data query : ' + JSON.stringify(err), user, 3);
                 }
@@ -52,24 +55,66 @@ module.exports = function (app, SQL) {
                             else {
 
                                 logger.log('CRON', 'Cron Job ' + data[i].SALTID + ' is now scheduled using cron setup : ' + data[i].SALTCRON, user, 2);
-                                cronTab.push (cron.schedule(data[i].SALTCRON,()=> {
+                                cronTab.push (cron.schedule(data[i].SALTCRON,async ()=> {
                                     if (data[i].SALTJOB) {
-                                        const command = spawn(data[i].SALTJOB, [], (error, stdout, stderr) => {
-                                            if (error) {
-                                                console.error('stderr', stderr);
+                                        try {
+                                                let command = spawn(data[i].SALTJOB, {}, {stdio: ['pipe', process.stdout, process.stderr]}); 
+                                                writeToWritable(command.stdin); // (B)
+                                                await onExit(command);
+                                                command.on('error', err => {
+                                                    if (err) {
+                                                        logger.log('CRON', 'ERROR - Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' ' + stderr + error + stdout, user, 3);
+                                                    } else {
+                                                        logger.log('CRON', 'Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' [COMPLETED]' , user, 2);
+                                                    }
+                                                });
                                             }
-                                            console.log('stdout', stdout);
-                                        });
-                                    }
+                                        catch (err) {
+                                            logger.log('CRON', 'ERROR - Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' ' + err, user, 3);
+                                        }
+                                        global.gc();
+                                    } 
                                 }));
-
                             }
                         }
+
+                         /** Test if alert of the day didn't run yet */
+                         SQL.executeLibQueryUsingMyCallback(SQL.getNextTicketID(),
+                         "CRON000002", 
+                         "'{}'" /* request.query.PARAM  */,
+                         "crontab",
+                         "'{}'" /* DATABASE_SID */, 
+                         "'{}'" /* LANGUAGE */, 
+                         request.dataJob, response.dataJob, 
+                        async function (errorMissing,dataMissingRun) {
+                            for (let j=0; j < dataMissingRun.length; j++) {
+                                logger.log('CRON','RUN : ' +  dataMissingRun[j].SALTJOB, user);
+                                if (dataMissingRun[j].SALTJOB) {
+                                    let command = spawn(dataMissingRun[j].SALTJOB, {},  {stdio: ['pipe', process.stdout, process.stderr]}); 
+                                    writeToWritable(command.stdin); // (B)
+                                    await onExit(command);
+
+                                    command.on('error', err => {
+                                        if (err) {
+                                            logger.log('CRON', 'ERROR - Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' ' + stderr + error + stdout, user, 3);
+                                        } else {
+                                            logger.log('CRON', 'Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' [COMPLETED]' , user, 2);
+                                        }
+                                    });
+                                }
+                            }
+                                    
+                        })
                     }
                 }
-
         });
     }
+
+    async function writeToWritable(writable) {
+        //await streamWrite(writable, '');
+        await streamEnd(writable);
+
+      }
 
     module.killJob = function (request,response) {
         for(let i =0;i < cronTab.length ; i ++) {

@@ -21,17 +21,19 @@
 * Date: October 2022
 */
 
-var path = require('path');
-var cors= require('cors');
-var formidable = require('formidable');
-var fs = require('fs');
+"use strict";
+
+let path = require('path');
+let cors= require('cors');
+let formidable = require('formidable');
+let fs = require('fs');
 let oracledb = require('oracledb');      // Oracle DB connection
-var logger = require("../utils/logger.js");
+let logger = require("../utils/logger.js");
 let excel = require('exceljs');
 
 module.exports = function (app, SQL) {
 
-var module = {};
+let module = {};
 
 /**
 * GET method description.  
@@ -91,7 +93,7 @@ module.post = function (request,response) {
         response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
         let content = JSON.stringify(request.body);
-        //console.log('/api/ubd/1/ :', request);
+
         SQL.executeSQL(SQL.getNextTicketID(),
                         "INSERT INTO SMARTUBDLOG (ubdutil, ubdwhs, ubditem, ubdlv, ubddate, ubdaction, ubdcomment, ubddetail, ubddcre, ubddmaj) " +
                         " values (:ubdutil, :ubdwhs, :ubditem, :ubdlv, SYSDATE, :ubdaction, :ubdcomment, :ubddetail, SYSDATE, SYSDATE) returning ubdid into :cursor",
@@ -107,16 +109,15 @@ module.post = function (request,response) {
                          request,
                          response,
                          function (err, data) {
-                             console.log('ubd :' + JSON.stringify(data));
                              if (err) {
-                                response.json({
+                                response.status(200).json({
                                     RESULT: -1,
                                     MESSAGE: JSON.stringify(err)
                                 });  
                              }
                              else {
                                  /** Return the JSON INBOUND id */
-                                response.json({
+                                response.status(200).json({
                                     RESULT: data,
                                     MESSAGE: ''
                                 });  
@@ -132,8 +133,6 @@ module.post = function (request,response) {
             response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
             //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
-
-            //console.log('/api/ubd/1/ :', request);
             SQL.executeSQL(SQL.getNextTicketID(),
                             "UPDATE SMARTUBDLOG SET UBDACTION=to_number(:ubdaction), UBDDMAJ=SYSDATE WHERE UBDID=to_number(:ubdid) returning 1 into :cursor",
                             {ubdaction: request.query.PARAM[1],

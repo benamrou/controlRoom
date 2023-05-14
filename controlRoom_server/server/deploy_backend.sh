@@ -31,5 +31,6 @@ echo -e "${PURPLE}[`date +"%r"`] ${DARK_GRAY} BACKEND ADMIN solution deployment.
 # npm config set prefix ${CONFIG_SERVER}/node_modules
 # export NODE_MODULE_PATH=${CONFIG_SERVER}/node_modules
 
-npm install -g --save 
+npm install -g --save
+npm install -g pm2  
 echo -e "${PURPLE}[`date +"%r"`] ${DARK_GRAY} BACKEND ADMIN solution deployment.... \t\t\t${GREEN} [DEPLOYED]"

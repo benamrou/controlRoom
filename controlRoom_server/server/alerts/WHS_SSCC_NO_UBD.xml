@@ -25,7 +25,7 @@ AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
 
 </QUERY>
  
-  <HEADERIFEMPTY>iNo Warehouse SCCC with no UBD </HEADERIFEMPTY>
+  <HEADERIFEMPTY>No Warehouse SCCC with no UBD </HEADERIFEMPTY>
   <HEADER>Warehouse Warehouse SSCC with no UBD </HEADER>
   
 </ROOT>

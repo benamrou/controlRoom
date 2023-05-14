@@ -15,27 +15,35 @@
 * @author Ahmed Benamrouche
 * Date: February 2017
 */
-var fs = require('fs-extra'); // File management
-var _= require("lodash");
+
+"use strict";
+
+let heap = {
+    fs : require('fs-extra'), // File management
+    _: require("lodash")
+}
+
 
 function timestampLog() {
-    var date = new Date();
+    let date = new Date();
     return (date.getMonth() + 1) + '/' + date.getDate() + '/' +  
                     date.getFullYear() + " " + date.getHours() + ":" + 
                     date.getMinutes() + ":" + date.getSeconds();
 }
 
 function folderDateLog() {
-    var date = new Date();
+    let date = new Date();
     return (date.getMonth() + 1) + '.' + date.getDate() + '.' +  
                     date.getFullYear();;
 }
 
 function buildLogStructure () {
-    var timestamp = folderDateLog();
-    fs.existsSync("logs/") || fs.mkdirSync("logs");
-    fs.existsSync("logs/admin/") || fs.mkdirSync("logs/admin/");
-    fs.existsSync("logs/admin/"+timestamp) || fs.mkdirSync("logs/admin/"+timestamp);
+    let timestamp = folderDateLog();
+    
+    heap.fs.existsSync("logs/") || heap.fs.mkdirSync("logs");
+    heap.fs.existsSync("logs/admin/") || heap.fs.mkdirSync("logs/admin/");
+    heap.fs.existsSync("logs/admin/"+timestamp) || heap.fs.mkdirSync("logs/admin/"+timestamp);
+
 }
 
 
@@ -47,16 +55,17 @@ function logParam (uniqueId, parameters, username) {
 }
 
 function logFile(uniqueId, message, username) {
-    var date = new Date();
-    var timestamp = folderDateLog();
+    let timestamp = folderDateLog();
     buildLogStructure();
 
-    fs.appendFileSync('logs/admin/' + timestamp + "/" + username + ".log", message, 'utf8', function (err) {
+    let logFile  = heap.fs.openSync('logs/admin/' + timestamp + "/" + username + ".log",'a');
+    heap.fs.appendFileSync(logFile, message, 'utf8', function (err) {
         if (err) {
             console.log(err);
         }
+        message =null;
+        heap.fs.close(logFile);
     });
-
 }
 
 
@@ -73,30 +82,34 @@ function logFile(uniqueId, message, username) {
 *
 */
 function log (uniqueId, message, username, level) {
-    var timestamp = timestampLog();
-    var printMessage = timestamp + " [" + username + "] " + uniqueId  + ": " + JSON.stringify(message) + '\n';
+    let timestamp = timestampLog();
+    let printMessage = timestamp + " [" + username + "] " + uniqueId  + ": " + JSON.stringify(message) + '\n';
 
-    if (level) {
-        if (level === 0 ) {
+    if (process.env.ICR_DEBUG ==1) {
+        if (level ) {
+            if (level === 0 ) {
+                console.log(printMessage);
+            }
+            if (level === 1) {
+                console.log(printMessage);
+            }
+            if (level === 2) {
+                // yellow character
+                console.log('\x1b[33m%s\x1b[0m',printMessage);
+            }
+            if (level === 3) {
+                // Red and white character
+                console.log('\x1b[41m%s\x1b[0m', printMessage);
+            }
+        }
+        else {
             console.log(printMessage);
         }
-        if (level === 1) {
-            console.log(printMessage);
-        }
-        if (level === 2) {
-            // yellow character
-            console.log('\x1b[33m%s\x1b[0m',printMessage);
-        }
-        if (level === 3) {
-            // Red and white character
-            console.log('\x1b[41m%s\x1b[0m', printMessage);
-        }
-    }
-    else {
-        console.log(printMessage);
     }
 
     logFile(uniqueId, printMessage, username);
+    printMessage=null;
+    message=null;
 };
 
 module.exports.log = log; 

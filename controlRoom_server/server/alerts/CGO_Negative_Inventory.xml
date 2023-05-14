@@ -61,7 +61,7 @@ FROM    (
                 foucnuf
                 FROM stocouch@Heinens_Custom_Prod  ,  artrac@Heinens_Custom_Prod,
                      (SELECT aracinr ,araseqvl, foucfin, foulibl, foucnuf ,COUNT(arasite)
-                     FROM artuc@Heinens_Custom_Prod , (SELECT foucfin, foulibl, foucnuf FROM foudgene@Heinens_Custom_Prod WHERE ( foucnuf = ''-1'' OR ''-1'' = ''-1'' )),
+                     FROM artuc@Heinens_Custom_Prod , (SELECT foucfin, foulibl, foucnuf FROM foudgene@Heinens_Custom_Prod WHERE ( foucnuf = ''-1'' OR ''-1'' = ''-1'' ) AND NOT EXISTS (SELECT 1 FROM sbt_vendor WHERE foucnuf=vendor_code)),
                          (SELECT objcint
                          FROM strucrel@Heinens_Custom_Prod
                          WHERE TRUNC(SYSDATE) BETWEEN objddeb AND objdfin

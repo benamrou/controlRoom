@@ -20,9 +20,12 @@
 * @author Ahmed Benamrouche
 * Date: March 2017
 */
+
+"use strict";
+
 module.exports = function (app, SQL) {
 
-var module = {};
+let module = {};
 
 /**
 * GET method description.  
@@ -77,7 +80,7 @@ module.post = function (request,response) {
         response.setHeader('Access-Control-Allow-Origin', '*');
         // requestuest methods you wish to allow
         response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        console.log(JSON.stringify(request.header));
+
         SQL.executeLibQueryCallback("ADM0000001", "'{" + 
                             request.header('USER') + "," +
                             request.header('PASSWORD') + "}'", 
@@ -85,13 +88,13 @@ module.post = function (request,response) {
                             "'{}'", "'{}'",
                             request, response, 0, function (err, data) {
             if (data[0]) {
-               response.json({
+               response.status(200).json({
                     type: true,
                     data: data[0].USERID,
                     token: jwt.encode(data[0].USERID, config.secret)
                 }); 
             } else {
-                response.json({
+                response.status(200).json({
                         type: false,
                         data: "Invalid username/password"
                     });    

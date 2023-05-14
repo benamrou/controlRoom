@@ -1,7 +1,11 @@
 
-var logger = require("../utils/logger.js");
-const excel = require('exceljs');
+"use strict";
 
+let heap = {
+    logger: require("../utils/logger.js"),
+    excel : require('exceljs'),
+    TABLE_HEADER : 4
+}
 
 /**
  * Sub-function to autofitColums function
@@ -12,8 +16,7 @@ const excel = require('exceljs');
  */
 function eachColumnInRange(ws, col1, col2, cb){
     for(let c = col1; c <= col2; c++){
-        let col = ws.getColumn(c);
-        cb(col);
+        cb(ws.getColumn(c));
     }
 }
 
@@ -37,9 +40,9 @@ function autofitColumns(ws){ // no good way to get text widths
 
                 // handle new lines -> don't forget to set wrapText: true
                 let values = text.split(/[\n\r]+/);
-                
+                let width;
                 for( let value of values ){
-                    let width = value.length;
+                    width = value.length;
                     
                     if(cell.font && cell.font.bold){
                         width *= 1.08; // bolding increases width
@@ -69,18 +72,15 @@ function setPageBreak(ws, alertData, alert) {
     let rowBreak = 0;
     if (alert.ALTXLSBREAK) {
         let xlsBreak=JSON.parse(alert.ALTXLSBREAK);
-        //console.log(' parsing ALTXLSBREAK : ' + JSON.stringify(xlsBreak));
         for (let i=0; i <  xlsBreak.pageBreak.length ; i ++) {
             if (xlsBreak.pageBreak[i].hasOwnProperty('every')) {
                 for(let j = xlsBreak.pageBreak[i].row; j < alertData.length; j += every) {
                     rowBreak = +xlsBreak.pageBreak[i].row;
-                    //console.log('Adding Page break @ row :' + rowBreak);
                     ws.getRow(rowBreak+j).addPageBreak();
                 }
             }
             else {
                 rowBreak = +xlsBreak.pageBreak[i].row;
-                //console.log('Adding Page break @ row :' + rowBreak);
                 ws.getRow(rowBreak).addPageBreak();
             }
         }
@@ -131,7 +131,7 @@ function setPrintArea(ws, alert) {
 
     if (alert.ALTMARGIN) {
         ws.pageSetup.margins = JSON.parse(alert.ALTMARGIN);
-        //logger.log('alert', 'formatting EXCEL : ' + JSON.stringify(formatRule), 'alert', 1);
+        //heap.logger.log('alert', 'formatting EXCEL : ' + JSON.stringify(formatRule), 'alert', 1);
 
     }
 
@@ -141,8 +141,15 @@ function setPrintArea(ws, alert) {
 
     // Repeat specific rows on every printed page
     // Five first row are reprinted on the next page
+       
+}
 
-    //console.log('setPrintArea : ', ws);                   
+function lettersToNumber(letters){
+    let chrs = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ', mode = chrs.length - 1, number = 0;
+    for(let p = 0; p < letters.length; p++){
+        number = number * mode + chrs.indexOf(letters[p]);
+    }
+    return number;
 }
 /*************************************************(**********************************(***********************************/
 
@@ -151,113 +158,111 @@ function setPrintArea(ws, alert) {
  * @param {*} worksheet 
  * @param {*} formatRule 
  */
- function formatXLS (worksheet, dataRows, formatRule) {
-
+function formatXLS (worksheet, dataRows, formatRule) {
+    heap.logger.log('alert', 'Formatting EXCEL file : ' + formatRule, 'alert', 1);
     if (formatRule) {
-        logger.log('alert', 'formatting EXCEL : ' + JSON.stringify(formatRule), 'alert', 1);
-
-        // preserve newlines, etc - use valid JSON
-        formatRule = formatRule.replace(/\\n/g, "\\n")  
-                                .replace(/\\'/g, "\\'")
-                                .replace(/\\"/g, '\\"')
-                                .replace(/\\&/g, "\\&")
-                                .replace(/\\r/g, "\\r")
-                                .replace(/\\t/g, "\\t")
-                                .replace(/\\b/g, "\\b")
-                                .replace(/\\f/g, "\\f")
-                                .replace(/null/g, "");
-        // remove non-printable and other non-valid JSON chars
-        formatRule = formatRule.replace(/[\u0000-\u0019]+/g,""); 
-
-        let cellRuleXLS=JSON.parse(formatRule);
-        if(cellRuleXLS != null) {
-            //logger.log('alert', 'formatting EXCEL : ' + JSON.stringify(cellRuleXLS), 'alert', 1);
-            for (let i =0; i < cellRuleXLS.conditionalRule.length; i++) {
-                let row = 0;
-                let maxRow = 1;
-                let every = 1;
-                if (cellRuleXLS.conditionalRule[i].easeRule.repeat === '1') {
-                    row = +cellRuleXLS.conditionalRule[i].easeRule.lineStart;
-                    if (cellRuleXLS.conditionalRule[i].easeRule.hasOwnProperty('lineStop')) {
-                        maxRow = +cellRuleXLS.conditionalRule[i].easeRule.lineStop +1;
+        //heap.logger.log('alert', 'formatting EXCEL : ' + JSON.stringify(formatRule), 'alert', 1);
+        try {
+            formatRule = formatRule.replace('}null','}\n');
+            let cellRuleXLS=JSON.parse(formatRule);
+            if(cellRuleXLS != null) {
+                heap.logger.log('alert', 'conditionalRule EXCEL : ' + JSON.stringify(cellRuleXLS.conditionalRule), 'alert', 1);
+                let row , maxRow, every;
+                for (let i =0; i < cellRuleXLS.conditionalRule.length; i++) {
+                    row = 0;
+                    maxRow = 0;
+                    every = 1;
+                    if (cellRuleXLS.conditionalRule[i].easeRule.repeat === '1') {
+                        row = +cellRuleXLS.conditionalRule[i].easeRule.lineStart;
+                        if (cellRuleXLS.conditionalRule[i].easeRule.hasOwnProperty('lineStop')) {
+                            maxRow = +cellRuleXLS.conditionalRule[i].easeRule.lineStop +1;
+                        }
+                        else {
+                            maxRow = dataRows.length + row + 1;
+                        }
+                        every = +cellRuleXLS.conditionalRule[i].easeRule.every;
                     }
                     else {
-                        maxRow = dataRows.length + row + 1;
+                        maxRow = 1;
                     }
-                    every = +cellRuleXLS.conditionalRule[i].easeRule.every;
-                }
-                //worksheet.getRow(32).addPageBreak();
-                for (let k = row; k < maxRow; k += every) {
-                    if(cellRuleXLS.conditionalRule[i].hasOwnProperty('rules')) {
-                        for (let j =0; j < cellRuleXLS.conditionalRule[i].rules.length; j++) {
-                            let reference = cellRuleXLS.conditionalRule[i].easeRule.columnStart + k + ':' + 
-                                            cellRuleXLS.conditionalRule[i].easeRule.columnEnd + k;
-                                if (cellRuleXLS.conditionalRule[i].rules[j].ref.length > 0  && maxRow==1) {
-                                    reference = cellRuleXLS.conditionalRule[i].rules[j].ref;
-                                }
-                                for (let l =0; l < cellRuleXLS.conditionalRule[i].rules[j].rule.length; l++) {
-                                    if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('formulae')) {
-                                        worksheet.addConditionalFormatting({
-                                            ref: reference,
-                                            rules: [{
-                                                type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
-                                                formulae: cellRuleXLS.conditionalRule[i].rules[j].rule[l].formulae,
-                                                style: cellRuleXLS.conditionalRule[i].rules[j].rule[l].style
-                                            }]}); 
-                                        
+                    //worksheet.getRow(32).addPageBreak();
+                    for (let k = row; k < maxRow; k += every) {
+                        if(cellRuleXLS.conditionalRule[i].hasOwnProperty('rules')) {
+                            for (let j =0; j < cellRuleXLS.conditionalRule[i].rules.length; j++) {
+                                let reference = cellRuleXLS.conditionalRule[i].easeRule.columnStart + k + ':' + 
+                                                cellRuleXLS.conditionalRule[i].easeRule.columnEnd + k;
+                                    for (let l =0; l < cellRuleXLS.conditionalRule[i].rules[j].rule.length; l++) {
+                                        if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('formulae')) {
+                                            worksheet.addConditionalFormatting({
+                                                ref: cellRuleXLS.conditionalRule[i].rules[j].ref,
+                                                rules: [{
+                                                    type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
+                                                    formulae: cellRuleXLS.conditionalRule[i].rules[j].rule[l].formulae,
+                                                    style: cellRuleXLS.conditionalRule[i].rules[j].rule[l].style
+                                                }]}); 
+                                            
+                                        }
+                                        if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('style') &&
+                                           ! cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('formulae')) {
+                                            worksheet.addConditionalFormatting({
+                                                ref: reference,
+                                                rules: [{
+                                                    type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
+                                                    operator: cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator,
+                                                    text: cellRuleXLS.conditionalRule[i].rules[j].rule[l].text,
+                                                    style: cellRuleXLS.conditionalRule[i].rules[j].rule[l].style
+                                                }]}); 
+                                        }
+                                        if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('cfvo')) {
+                                            worksheet.addConditionalFormatting({
+                                                ref: reference,
+                                                rules: [{
+                                                    type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
+                                                    operator: cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator,
+                                                    cfvo: cellRuleXLS.conditionalRule[i].rules[j].rule[l].cfvo,
+                                                    color: cellRuleXLS.conditionalRule[i].rules[j].rule[l].color,
+                                                }]}); 
+                                        }
                                     }
+                            }
+                        }
+                        if(cellRuleXLS.conditionalRule[i].hasOwnProperty('style')) {
+                                // Code to parse the first letter column to the end
+                            let cellToFormat;
+                            let rowChange;
+                            let value;
+                            for(let m = lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnStart); 
+                                    m <= lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnEnd); m++) {
 
-                                    if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('operator') && 
-                                       cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('style') ) {
-                                        worksheet.addConditionalFormatting({
-                                            ref: reference,
-                                            rules: [{
-                                                type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
-                                                operator: cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator,
-                                                style: cellRuleXLS.conditionalRule[i].rules[j].rule[l].style
-                                            }]}); 
-                                    }
-                                    if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('cfvo')) {
-                                        worksheet.addConditionalFormatting({
-                                            ref: reference,
-                                            rules: [{
-                                                type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
-                                                operator: cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator,
-                                                cfvo: cellRuleXLS.conditionalRule[i].rules[j].rule[l].cfvo,
-                                                color: cellRuleXLS.conditionalRule[i].rules[j].rule[l].color,
-                                            }]}); 
-                                    }
+                                    cellToFormat = m ;//String.fromCharCode(m) + k + '';
+                                    rowChange = worksheet.getRow(k);
 
-                                        /*console.log('Ref : ' + reference);
-                                        console.log('j : ' + j);*/
-                                        //console.log('rules : ' + JSON.stringify(cellRuleXLS.conditionalRule[i].rules[j]) );
-                                        /*console.log('type : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].type);
-                                        console.log('operator : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator);
-                                        console.log('style : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].style);*/
-                                }
+                                    if(cellRuleXLS.conditionalRule[i].style.hasOwnProperty('alignment')) {
+                                        rowChange.getCell(cellToFormat).alignment = cellRuleXLS.conditionalRule[i].style.alignment;
+                                    }
+                                    else {
+                                        rowChange.getCell(cellToFormat).style = cellRuleXLS.conditionalRule[i].style;
+                                        if(! Number.isNaN(parseFloat(rowChange.getCell(cellToFormat).value))) {
+                                            value = parseFloat(rowChange.getCell(cellToFormat).value);
+
+                                            rowChange.getCell(cellToFormat).value=value/100;
+                                        }
+                                        if (cellRuleXLS.conditionalRule[i].style.numFmt) {
+                                            console.log('Applying Percentage format');
+                                            rowChange.getCell(cellToFormat).numFmt = cellRuleXLS.conditionalRule[i].style.numFmt;
+                                        }
+                                    }
+                                    //worksheet.getCell(cellToFormat).value.result=undefined;
+                                    //worksheet.getCell(cellToFormat).value=parseFloat(worksheet.getCell(cellToFormat).value)/100;
+
+                            }
                         }
                     }
-                    if(cellRuleXLS.conditionalRule[i].hasOwnProperty('style')) {
-                            // Code to parse the first letter column to the end
-                        for(let m = cellRuleXLS.conditionalRule[i].easeRule.columnStart.charCodeAt(0); 
-                                m <= cellRuleXLS.conditionalRule[i].easeRule.columnEnd.charCodeAt(0); m++) {
-                                    //console.log('process...');
-                                    //console.log('Lattre : ' + String.fromCharCode(m));
-                                    let cellToFormat = String.fromCharCode(m) + k + '';
-                                worksheet.getCell(cellToFormat).style = cellRuleXLS.conditionalRule[i].style;
-                                //worksheet.getCell(cellToFormat).value.result=undefined;
-                                if(! Number.isNaN(parseFloat(worksheet.getCell(cellToFormat).value))) {
-                                    let value = parseFloat(worksheet.getCell(cellToFormat).value);
-
-                                    worksheet.getCell(cellToFormat).value=value/100;
-                                }
-                                //worksheet.getCell(cellToFormat).value=parseFloat(worksheet.getCell(cellToFormat).value)/100;
-
-                        }
-                    }
                 }
-
             }
+        }
+        catch (e) {
+            heap.logger.log('alert', "Error format " + formatRule + e, 'alert', 3);
         }
     }
 }
@@ -275,7 +280,7 @@ function setXLSHeader(worksheet, alertData, extensionHeader) {
      *  Starting line 5 the table is deployed
      * 
      */
-    let tableRow = 5;
+    let tableRow = heap.TABLE_HEADER;
 
     worksheet.getCell('B2').value = 'Report Title';
     
@@ -300,7 +305,7 @@ function setXLSHeader(worksheet, alertData, extensionHeader) {
             type: 'pattern',
             pattern:'lightTrellis',
             fgColor:{argb:'FFFFFFFF'},
-            bgColor:{argb:'04225E80'}
+            bgColor:{argb:'FF002060'}
         };
     }
 
@@ -352,25 +357,25 @@ function setXLSProperties(workbook) {
     workbook.calcProperties.fullCalcOnLoad = true;
 }
 
-function json2xls(workbook, worksheet, alertData, detailData, extensionHeader) {
+function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, tableName, formatingRules) {
     let valueColumns = Object.keys(detailData[0]);
     let dataColumns = [];
 
-    //logger.log('alert', 'valueColumns before ' + JSON.stringify(valueColumns), 'alert', 3);
+    //heap.logger.log('alert', 'valueColumns before ' + JSON.stringify(valueColumns), 'alert', 3);
 
     if ( alertData[0].ALTCOLMOVE) {
         let element;
         let colMove=JSON.parse(alertData[0].ALTCOLMOVE);
         for (let j=0; j < colMove.move2end.length ; j++) {
             element = valueColumns[colMove.move2end[j]-j];
-            //logger.log('alert', 'element : ' + JSON.stringify(element), 'alert', 3);
+            //heap.logger.log('alert', 'element : ' + JSON.stringify(element), 'alert', 3);
             valueColumns.splice(colMove.move2end[j]-j,1);
             valueColumns.splice(valueColumns.length,0, element);
         }
     }
 
 
-    //logger.log('alert', 'valueColumns after ' + JSON.stringify(valueColumns), 'alert', 3);
+    //heap.logger.log('alert', 'valueColumns after ' + JSON.stringify(valueColumns), 'alert', 3);
 
     for(let i =0;i < valueColumns.length ; i ++) {
         dataColumns.push (
@@ -381,42 +386,62 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader) {
 
     // Add rows detail
     let dataRows = [];
-
+    let row, element;
+    let colMove;
 
     for (let i = 0; i < detailData.length; i++) {
         dataRows.push (Object.values(detailData[i]));
-
-        //console.log('detailData: ' +JSON.stringify(detailData));
         // If Column move is active - The selected column are moved at the end of the spreadsheet.
         if ( alertData[0].ALTCOLMOVE) {
-            let row, element;
-            let colMove=JSON.parse(alertData[0].ALTCOLMOVE);
-            //logger.log('alert', 'colMove ' + JSON.stringify(colMove), 'alert', 3);
+            colMove=JSON.parse(alertData[0].ALTCOLMOVE);
+            //heap.logger.log('alert', 'colMove ' + JSON.stringify(colMove), 'alert', 3);
             for (let j=0; j < colMove.move2end.length ; j++) {
-                //logger.log('alert', 'colMove .move2end[j]"' + JSON.stringify(colMove.move2end[j]), 'alert', 3);
-                //logger.log('alert', 'detailData[colMove.move2end[j]] ' + JSON.stringify(detailData[colMove.move2end[j]]), 'alert', 3);
+                //heap.logger.log('alert', 'colMove .move2end[j]"' + JSON.stringify(colMove.move2end[j]), 'alert', 3);
+                //heap.logger.log('alert', 'detailData[colMove.move2end[j]] ' + JSON.stringify(detailData[colMove.move2end[j]]), 'alert', 3);
                 row = dataRows[dataRows.length-1];
                 element =row[colMove.move2end[j]-j]; 
-                //logger.log('alert', 'row ' + JSON.stringify(row), 'alert', 3);
+                //heap.logger.log('alert', 'row ' + JSON.stringify(row), 'alert', 3);
                 row.splice(colMove.move2end[j]-j, 1);
                 row.splice(row.length, 0, element);
                 dataRows.splice(dataRows.length-1,1);
                 dataRows.push(row);
-                //logger.log('alert', 'dataRows push additional row.', 'alert', 3);
+                //heap.logger.log('alert', 'dataRows push additional row.', 'alert', 3);
             }
         }
     }
 
-    //logger.log('alert', 'dataColumns :' + JSON.stringify(dataColumns), 'alert', 3);
-    //logger.log('alert', 'dataRows :' + JSON.stringify(dataRows), 'alert', 3);
+    //heap.logger.log('alert', 'dataColumns :' + JSON.stringify(dataColumns), 'alert', 3);
+    //heap.logger.log('alert', 'dataRows :' + JSON.stringify(dataRows), 'alert', 3);
 
 
     setXLSHeader(worksheet, alertData, extensionHeader);
 
+    /* Check if Title to be insert alertData[0].ALTTITLEXLS contains the row number for the title*/
+    try {
+        if (alertData[0].ALTTITLEXLS) {
+            worksheet.getCell('A4').value = Object.values(detailData[alertData[0].ALTTITLEXLS])[0];
+            worksheet.getCell('A4').font = {
+                name: 'Arial',
+                family: 4,
+                color: { argb: alertData[0].ALTTITLEXLSCOLOR },
+                size: 18,
+                underline: false,
+                bold: true
+            };
+            worksheet.mergeCells('A4:J4');
+            worksheet.getCell('A4').alignment = { vertical: 'middle', horizontal: 'left' };
+            // Remove first element
+            dataRows.splice(alertData[0].ALTTITLEXLS, 1);
+        }
+    }
+    catch(e) {
+        heap.logger.log('alert', e, 'alert', 3);
+    }
+
     /**************************************************************************/  
     // Creating the table detail EXCEL (real table)
     worksheet.addTable({
-        name: 'ResultTable',
+        name: tableName,
         ref: 'A5',
         headerRow: true,
         totalsRow: true,
@@ -424,38 +449,64 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader) {
         theme: 'TableStyleLight1',
         showRowStripes: true,
         },
-        columns: dataColumns,
-        rows: dataRows,
+        columns: [...dataColumns],
+        rows: [...dataRows]
     });
-    
+
     try {
-        formatXLS(worksheet,dataRows, alertData[0].ALTFORMATXLS1 + alertData[0].ALTFORMATXLS2);
+        if (formatingRules) {
+            formatXLS(worksheet,dataRows, formatingRules);
+        }
     } catch (err) {
-        logger.log('alert', 'Error formatting XLS ' + JSON.stringify(err.message), 'alert', 3);
+        heap.logger.log('alert', 'Error formatting XLS ' + JSON.stringify(err.message), 'alert', 3);
     }
+
+    if ( alertData[0].ALTBORDER === 1) {
+        worksheet.eachRow(function (row, _rowNumber) {
+            row.eachCell(function (cell, _colNumber) {
+                if (_rowNumber > heap.TABLE_HEADER) {
+                    cell.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' }
+                    };
+                }
+            });
+        });
+    }
+
     try {
         autofitColumns(worksheet);
     } catch (err) {
-        logger.log('alert', 'Error autofitColumns '  + JSON.stringify(err.message), 'alert', 3);
+        heap.logger.log('alert', 'Error autofitColumns '  + JSON.stringify(err.message), 'alert', 3);
     }
     try {
         setPrintArea(worksheet, alertData[0]);
     } catch (err) {
-        logger.log('alert', 'Error setPrintArea ' + JSON.stringify(err.message), 'alert', 3);
+        heap.logger.log('alert', 'Error setPrintArea ' + JSON.stringify(err.message), 'alert', 3);
     }
 
     try {
         setPageBreak(worksheet, dataRows, alertData[0]);
     } catch (err) {
-        logger.log('alert', 'Error setPageBreak ' + JSON.stringify(err), 'alert', 3);
+        heap.logger.log('alert', 'Error setPageBreak ' + JSON.stringify(err), 'alert', 3);
     }
 
     try {
         setXLSProperties(workbook);
     } catch (err) {
-        logger.log('alert', 'Error setXLSProperties ' + JSON.stringify(err), 'alert', 3);
+        heap.logger.log('alert', 'Error setXLSProperties ' + JSON.stringify(err), 'alert', 3);
     }
-    logger.log('alert', 'ws.pageSetup : ' + JSON.stringify(worksheet.pageSetup), 'alert', 1);
+    heap.logger.log('alert', 'ws.pageSetup : ' + JSON.stringify(worksheet.pageSetup), 'alert', 1);
+
+    dataRows.length =0;
+    dataColumns.length = 0;
+    valueColumns.length = 0;
+    dataRows = null;
+    dataColumns = null;
+    valueColumns = null;
+    return {wb: workbook, ws:worksheet};
 
 }
 

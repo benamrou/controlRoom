@@ -20,9 +20,12 @@
 * @author Ahmed Benamrouche
 * Date: March 2018
 */
+
+"use strict";
+
 module.exports = function (app, SQL) {
 
-var module = {};
+let module = {};
 
 /**
 * GET method description.  
@@ -81,7 +84,7 @@ module.get = function (request,response) {
         response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
 
-        var mode =1 ; /* MODE 1 - Refresh with new data */
+        let mode =1 ; /* MODE 1 - Refresh with new data */
 
         if (Boolean(request.query.FILENAME) && request.query.FILENAME !== null && 
                     request.query.FILENAME !== ''  && request.query.FILENAME !== undefined &&

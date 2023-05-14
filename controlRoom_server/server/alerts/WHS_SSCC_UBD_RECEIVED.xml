@@ -3,7 +3,8 @@
 /***********************************************************************/
 /* Query #1 : UBD +/- 20% and shorter UBD                              */
 /***********************************************************************/
-WITH ITEM_RECEIVED AS (SELECT ar_donord, ar_cproin, ar_ilogis, ar_libpro, ul_usscc, ar_fourn, ar_nrsfou, TRUNC(ue_datrec) "Receiving date", to_date(ut_valind,''RRRRMMDD'') ut_valind, TO_DATE(ut_valind,''RRRRMMDD'') -TRUNC(ue_datrec) "How many days", ue_adrums "Address"
+WITH ITEM_RECEIVED AS (SELECT ar_donord, ar_cproin, ar_ilogis, ar_libpro, ul_usscc, ar_fourn, ar_nrsfou, ul_nqteup,
+                   TRUNC(ue_datrec) "Receiving date", to_date(ut_valind,''RRRRMMDD'') ut_valind, TO_DATE(ut_valind,''RRRRMMDD'') -TRUNC(ue_datrec) "How many days", ue_adrums "Address"
 FROM tb_eums@HEINENS_STK_PROD t , tb_lcums@HEINENS_STK_PROD , tb_art@HEINENS_STK_PROD, tb_traums@HEINENS_STK_PROD
 WHERE ue_usscc = ul_usscc
 AND ue_depot = (92 - :param2 ) 
@@ -23,6 +24,7 @@ SELECT ar_donord "Whs", ar_cproin || ''/'' || ar_ilogis || '' '' || ar_libpro "I
        ar_fourn || '' '' ||  ar_nrsfou "Supplier code desc", 
        ul_usscc "SSCC", "Receiving date", 
        ut_valind "UBD entered", "How many days", "Address",
+       ul_nqteup "Qty received",
        ROUND((SELECT AVG(TO_DATE(ht_valind,''RRRRMMDD'') - TRUNC(he_datrec)) FROM tb_heums@HEINENS_STK_PROD t , tb_hlcums@HEINENS_STK_PROD,
                tb_htraums@HEINENS_STK_PROD
         WHERE he_usscc = hl_usscc
@@ -38,6 +40,7 @@ SELECT ar_donord "Whs", ar_cproin || ''/'' || ar_ilogis || '' '' || ar_libpro "I
        ul_usscc "SSCC", "Receiving date", 
        ut_valind "UBD entered", "How many days", 
        "Address",
+       ul_nqteup "Qty received",
        ROUND((SELECT AVG(TO_DATE(ht_valind,''RRRRMMDD'') - TRUNC(he_datrec)) FROM tb_heums@HEINENS_STK_PROD t , tb_hlcums@HEINENS_STK_PROD,
                tb_htraums@HEINENS_STK_PROD
         WHERE he_usscc = hl_usscc
@@ -59,16 +62,18 @@ FROM ITEM_RECEIVED
 --SELECT * FROM IN_STOCK_UBD
 /* AVERAGE UBD */
 SELECT "Whs",  "Supplier code desc",  "Item code desc", 
-       "SSCC","Address", to_char("Receiving date",''MM/DD/RRRR'') "Receiving date", to_char("UBD entered",''MM/DD/RRRR'') "UBD entered", "How many days", to_char("Average UBD") "Average UBD", '''' "Compared UBD", ''SSCC received is +/- 20% than average UBD'' "Comment" 
+       "SSCC","Address", to_char("Receiving date",''MM/DD/RRRR'') "Receiving date", 
+       "Qty received", to_char("UBD entered",''MM/DD/RRRR'') "UBD entered", "How many days", to_char("Average UBD") "Average UBD", '''' "Compared UBD", ''SSCC received is +/- 20% than average UBD'' "Comment" 
 FROM AVERAGE_UBD
 WHERE ABS("How many days"/"Average UBD") > 1.2
 OR 0.8 > ABS("How many days"/"Average UBD")
 UNION
 /* Shorter UBD */
 SELECT "Whs",  "Supplier code desc", "Item code desc", 
-       "SSCC", "Address", to_char("Receiving date",''MM/DD/RRRR'') "Receiving date", to_char("UBD entered",''MM/DD/RRRR'') "UBD entered" , 
-	"How many days", to_char("Average UBD") "Average UBD",
-	to_char("High UBD", ''MM/DD/RRRR'') "Compared UBD", ''SSCC received has shorter UBD than SSCC in inventory'' "Comment" 
+       "SSCC", "Address", to_char("Receiving date",''MM/DD/RRRR'') "Receiving date", 
+       "Qty received", to_char("UBD entered",''MM/DD/RRRR'') "UBD entered" , 
+  "How many days", to_char("Average UBD") "Average UBD",
+  to_char("High UBD", ''MM/DD/RRRR'') "Compared UBD", ''SSCC received has shorter UBD than SSCC in inventory'' "Comment" 
 FROM IN_STOCK_UBD
 WHERE "High UBD" > "UBD entered" 
 ORDER BY "Comment" ASC, "How many days" ASC 

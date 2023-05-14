@@ -1,6 +1,0 @@
-WITH STODETRE_REMOTE AS (SELECT /*+ DRIVING_SITE(rbt) */ * FROM STODETRE@heinens_custom_prod WHERE TRUNC(sdrsdrc)>=to_date('01/01/2019','MM/DD/RRRR')),
-*
-ERROR at line 1:
-ORA-01652: unable to extend temp segment by 128 in tablespace TEMP
-
-

@@ -21,12 +21,13 @@
 * Date: February 2017
 */
 
+"use strict";
 
 module.exports = function (app, SQL) {
-var module = {};
-var logger = require("../utils/logger.js");
-var jwt = require('jwt-simple');        // Manage client request
-var config = require("../../config/" + (process.env.NODE_ENV || "development") + ".js");    // contain the secret token encoding
+let module = {};
+let logger = require("../utils/logger.js");
+let jwt = require('jwt-simple');        // Manage client request
+let config = require("../../config/" + (process.env.NODE_ENV || "development") + ".js");    // contain the secret token encoding
 /**
 * GET method description.  
 * Http Method: GET
@@ -85,7 +86,6 @@ module.post = function (request,response) {
         response.setHeader('Access-Control-Allow-Origin', '*');
         // requestuest methods you wish to allow
         response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        console.log('Header - Post : ' + JSON.stringify(request.header));
         SQL.executeLibQueryCallback(SQL.getNextTicketID(), 
                             "ADM0000001", "'{" + 
                             request.header('USER') + "," +
@@ -94,16 +94,13 @@ module.post = function (request,response) {
                             "'{}'", "'{}'",
                             request, response, 0, function (err, data) {
             if (data[0]) {
-                //console.log('data :' + JSON.stringify(data));
-                //console.log('data[0] :' + JSON.stringify(data[0]));
-                //console.log('data[0].USERID :' + data[0].USERID);
-               response.json({
+               response.status(200).json({
                     TYPE: true,
                     USERID: data[0].USERID,
                     TOKEN: jwt.encode(data[0].USERID, config.secret)
                 }); 
             } else {
-                response.json({
+                response.status(200).json({
                         TYPE: false,
                         USERID: "Invalid username/password"
                     });    

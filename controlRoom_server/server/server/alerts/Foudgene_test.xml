@@ -1,9 +1,0 @@
-<ROOT>
-    <QUERY> SELECT foucnuf, foulibl from foudgene@heinens_custom_prod where foucnuf=''00664''</QUERY>
-  <HEADERIFEMPTY>No EDI ASN with duplicate invoices this week.</HEADERIFEMPTY>
-  <HEADER>EDI ASN with duplicate invoices this week.</HEADER>
-  <COLUMNS>
-    <COL>TOP</COL>
-  </COLUMNS>
-  <PARAMS></PARAMS>
-</ROOT>

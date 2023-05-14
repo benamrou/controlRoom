@@ -11,6 +11,7 @@ SELECT arvcexr,arvcinr, arvcinv, COUNT(DISTINCT dlinlis) CNT FROM (
     SELECT arvcexr,arvcinr, arvcinv, dlinlis 
     FROM artuv@heinens_custom_prod, artdetlist@heinens_custom_prod, artentlist@heinens_custom_prod 
     WHERE elinlis LIKE ''PPG%'' AND dlinlis=elinlis AND dlicinv=arvcinv AND trunc(dlidfin) > trunc(sysdate) 
+    AND TRUNC(SYSDATE+1) BETWEEN dliddeb AND dlidfin 
     AND TRUNC(dliddeb) > to_date(''01/01/01'',''MM/DD/RR''))
     GROUP BY arvcexr, arvcinr, arvcinv
     HAVING COUNT(DISTINCT dlinlis) > 1

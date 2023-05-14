@@ -21,17 +21,19 @@
 * Date: May 2017
 */
 
-var path = require('path');
-var cors= require('cors');
-var formidable = require('formidable');
-var fs = require('fs');
+"use strict";
+
+let path = require('path');
+let cors= require('cors');
+let formidable = require('formidable');
+let fs = require('fs');
 let oracledb = require('oracledb');      // Oracle DB connection
-var logger = require("../utils/logger.js");
+let logger = require("../utils/logger.js");
 let excel = require('exceljs');
 
 module.exports = function (app, SQL) {
 
-var module = {};
+let module = {};
 
 /**
 * GET method description.  
@@ -75,8 +77,11 @@ module.post = function (request,response) {
         response.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
         response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         logger.log('[UPLOAD]', 'request : ' + request, 'upload', 2);
-        console.log(request);
-        var incoming = new formidable.IncomingForm();
+
+        if (process.env.ICR_DEBUG ==1) {
+            logger.log('[UPLOAD]', 'UPLOAD : ' + request, 'upload', 1);
+        }
+        let incoming = new formidable.IncomingForm();
 
         //Formidable uploads to operating systems tmp dir by default
         incoming.uploadDir = "../../uploads";       //set upload directory
@@ -102,25 +107,25 @@ module.post = function (request,response) {
             // requestuest methods you wish to allow
             response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             response.write(JSON.stringify(files));
-            console.log("form.bytesReceived");
-            console.log('Files : ' + JSON.stringify(files));
-            //TESTING
-            console.log("file size: "+JSON.stringify(files.fileUploaded.size));
-            console.log("file path: "+JSON.stringify(files.fileUploaded.path));
-            console.log("file name: "+JSON.stringify(files.fileUploaded.name));
-            console.log("file type: "+JSON.stringify(files.fileUploaded.type));
-            console.log("astModifiedDate: "+JSON.stringify(files.fileUploaded.lastModifiedDate));
+
+
+            logger.log('[UPLOAD]', 'Files : ' + JSON.stringify(files), 'upload', 1);
+            logger.log('[UPLOAD]', "file size: "+JSON.stringify(files.fileUploaded.size), 'upload', 1);
+            logger.log('[UPLOAD]', "file path: "+JSON.stringify(files.fileUploaded.path), 'upload', 1);
+            logger.log('[UPLOAD]', "file name: "+JSON.stringify(files.fileUploaded.name), 'upload', 1);
+            logger.log('[UPLOAD]', "file type: "+JSON.stringify(files.fileUploaded.type), 'upload', 1);
+            logger.log('[UPLOAD]', "astModifiedDate: "+JSON.stringify(files.fileUploaded.lastModifiedDate), 'upload', 1);
+
 
             //Formidable changes the name of the uploaded file 
             //Rename the file to its original name
             fs.rename(files.fileUploaded.path, './uploads/'+files.fileUploaded.name, function(err) {
-            if (err) {
-                console.log(JSON.stringify(err));
-                response.write(JSON.stringify(err));
-                response.end();
-                return;
-            }
-            console.log('renamed complete');  
+                if (err) {
+                    logger.log('[UPLOAD]', JSON.stringify(err), 'upload', 3);
+                    response.write(JSON.stringify(err));
+                    response.end();
+                    return;
+                }
             });
             response.end();
             });
@@ -137,7 +142,8 @@ module.post = function (request,response) {
             //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
             let templateFile;
 
-            console.log('Getting request ' + JSON.stringify(request.query.PARAM))
+            logger.log('[UPLOAD]', 'Getting request ' + JSON.stringify(request.query.PARAM), 'upload', 1);
+
             /**
              * 1 - Item Merhandise Hierarhy template
              * 2 - SV Attribute
@@ -183,7 +189,7 @@ module.post = function (request,response) {
         response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
         logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
-        //console.log('/api/upload/1/ :', request);
+        
         SQL.executeSQL(SQL.getNextTicketID(),
                         "INSERT INTO JSON_CHECK (jsonuserid, jsonfile, jsontool, jsoncontent, jsonparam, jsonsid, jsonlang) " +
                         " values (:jsonuserid, :jsonfile, :jsontool, :jsoncontent, :jsonparam, :jsonsid, :jsonlang) returning jsonid into :cursor",
@@ -199,10 +205,10 @@ module.post = function (request,response) {
                          request,
                          response,
                          function (err, data) {
-                             console.log('Upload :' + JSON.stringify(data));
+                            logger.log('[UPLOAD]', 'Upload :' + JSON.stringify(data), request.header('USER'), 1);
                              if (err) {
                                 logger.log('[UPLOAD]', 'file ' + request.header('FILENAME') + JSON.stringify(err), request.header('USER'), 3);
-                                response.json({
+                                response.status(200).json({
                                     RESULT: -1,
                                     MESSAGE: JSON.stringify(err)
                                 });  
@@ -233,7 +239,6 @@ module.post = function (request,response) {
             response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
             //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
 
-            //console.log('/api/upload/1/ :', request);
             SQL.executeSQL(SQL.getNextTicketID(),
                             "INSERT INTO JSON_INBOUND (jsonuserid, jsonutil, jsonfile, jsontool, jsoncontent, jsonnbrecord, jsonparam, jsonsid, jsonlang, jsonstatus,  " +
                                                       " jsonimmediate, jsondsched, jsontrace, jsonstartdate) " +
@@ -262,14 +267,14 @@ module.post = function (request,response) {
                              function (err, data) {
                                  logger.log('[UPLOAD]', + JSON.stringify(data), 'upload', 3);
                                  if (err) {
-                                    response.json({
+                                    response.status(200).json({
                                         RESULT: -1,
                                         MESSAGE: JSON.stringify(err)
                                     });  
                                  }
                                  else {
                                      /** Return the JSON INBOUND id */
-                                    response.json({
+                                    response.status(200).json({
                                         RESULT: data,
                                         MESSAGE: ''
                                     });    
@@ -343,6 +348,48 @@ module.post = function (request,response) {
                             "'{" + request.header('DATABASE_SID') + "}'", 
                             "'{" +request.header('LANGUAGE') + "}'", 
                             request, response);
+    });
+
+    /**
+     * Get file 
+     */
+        app.get('/api/upload/7/', function (request, response) {
+            "use strict";
+            response.setHeader('Access-Control-Allow-Origin', '*');
+            // requestuest methods you wish to allow
+            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+            let templateFile;
+            let parts, fileName;
+
+            /**
+             * 1 - Item Merhandise Hierarhy template
+             * 2 - SV Attribute
+             */
+            /*if (request.query.PARAM === 'ICR_TEMPLATE001') {
+                templateFile= __dirname + '/../../templates/ICR_CATEGORY_CHANGE_TEMPLATE.xlsx'
+            }*/
+            templateFile= request.query.PARAM;
+            parts = templateFile.split("/");
+            fileName= parts[parts.length-1]; 
+            
+            // Check if file specified by the filePath exists
+            fs.exists(request.query.PARAM , function (exists) {
+            if (exists) {
+
+                // Content-type is very interesting part that guarantee that
+                // Web browser will handle response in an appropriate manner.
+                response.writeHead(200, {
+                    "Content-Type": "application/octet-stream",
+                    "Content-Disposition": "attachment; filename=" + fileName
+                });
+                fs.createReadStream(request.query.PARAM).pipe(response);
+                return;
+            }
+
+            response.writeHead(200, { "Content-Type": "text/plain" });
+            response.end("ERROR File does not exist");
+            });
     });
 
    return module;

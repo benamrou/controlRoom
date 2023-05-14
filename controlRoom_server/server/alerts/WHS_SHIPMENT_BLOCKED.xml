@@ -6,7 +6,7 @@
 
 SELECT me3donord "Whs", me3numcde "PO #", me3codcli "Store", me3codexp "Shipper", 
        me3cproin "Item code", me3sscc "SSCC", to_char(me3datexp,''MM/DD/RRRR HH12:MI'') "Shipping date", to_char(me3datliv,''MM/DD/RRRR HH12:MI'') "Delivery date", me3qteexp "Qty",
-       ''Shipment is blocked, the store PO is cleared/archived - Contact CSO to reinject the customer order'' "Comment"
+       ''Shipment is blocked, the store PO is cleared/archived - Automatic job running every 2 hours will reinject the customer order'' "Comment"
 FROM n3_mvtex@heinens_stk_prod 
 WHERE me3qteexp > 0
 AND NOT EXISTS (SELECT 1 FROM ccldetccl@heinens_custom_prod, artrac@heinens_custom_prod WHERE cclcexcde=me3numcde and artcinr=cclcinrc and me3cproin=artcexr)

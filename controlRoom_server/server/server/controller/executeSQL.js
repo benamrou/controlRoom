@@ -20,9 +20,12 @@
 * @author Ahmed Benamrouche
 * Date: Jan 2022
 */
+
+"use strict";
+
 module.exports = function (app, SQL) {
 
-var module = {};
+let module = {};
 
 /**
 * GET method description.  
@@ -60,15 +63,6 @@ module.post = function (request,response) {
                                         "'{" + request.header('DATABASE_SID') + "}'", 
                                         "'{" +request.header('LANGUAGE') + "}'", 
                                         request,response);
-        //console.log('request.body', request.body, request.body.query);
-       /* SQL.executeSQLQuery(SQL.getNextTicketID(),
-                            request.body.query, // SQL query to execute
-                            request.body.commit, // SQL query to execute
-                            "'{" + request.query.PARAM + "}'",
-                            request.header('USER'),
-                            "'{" + request.header('DATABASE_SID') + "}'", 
-                            "'{" +request.header('LANGUAGE') + "}'", 
-                            request, response);*/
         });
     };
 

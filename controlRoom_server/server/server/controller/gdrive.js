@@ -21,10 +21,12 @@
 * Date: March 2020
 */
 
+"use strict";
+
 const fs = require('fs-extra');
 const {google} = require('googleapis');
 const multer  = require('multer');
-var logger = require("../utils/logger.js");
+let logger = require("../utils/logger.js");
 
 
 const CREDENTIALS_PATH = __dirname + '/../../config/key/google_credentials.json';
@@ -60,7 +62,7 @@ const drive =  google.drive({
 
 module.exports = function (app, SQL) {
 
-    var module = {};
+    let module = {};
 /**
 * GET method description.  
 * Http Method: GET
@@ -118,7 +120,7 @@ module.post = function (request,response) {
         uploadFile(request.file.path, originalname, request.header('USER'))
         .then ( (value) => {
             logger.log('[UPLOAD-GOOGLE]', 'file : ' + request.file.path, 'upload', 2);
-            response.send(`File uploaded`);
+            response.status(200).send(`File uploaded`);
         });
       })
     });
@@ -133,12 +135,12 @@ return module;
  */
 async function uploadFile(fileName, originalname, user) {
     // Obtain user credentials to use for the request
-    var fileMetadata = {
+    let fileMetadata = {
         name: originalname,
         parents: [cred.web.heienens_folder_id],
         'mimeType': 'application/vnd.google-apps.spreadsheet'
     };
-    var media = {
+    let media = {
         mimeType: 'application/vnd.google-apps.spreadsheet',
         body: fs.createReadStream(fileName)
     };

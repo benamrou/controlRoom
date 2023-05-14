@@ -2,13 +2,14 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+export UV_THREADPOOL_SIZE=10
+
 . /home/hntcen/env/envCEN
 . /home/hntcen/env/envICR
 
-#CONTROLROOM_SERVER=/opt/apps/controlRoom/controlRoom_server/server
-CONTROLROOM_SERVER=/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server
+CONTROLROOM_SERVER=/opt/apps/controlRoom/controlRoom_server/server
 #CONFIG_SERVER=${CONTROLROOM_SERVER}/config/admin/server
-BIN=/usr/local/bin/
+NODE_BIN=/usr/local/bin
 
 cd ${CONTROLROOM_SERVER}
 # export NODE_MODULE_PATH=${CONFIG_SERVER}/node_modules/lib/node_modules/ControlRoomAdminServer/node_modules/
@@ -18,17 +19,19 @@ cd ${CONTROLROOM_SERVER}
 
 # DEBUG=express* nodemon server_admin.js package.json
 echo -e "[${GREEN}PRE${NC}]\t Deactivating existing SERVER NODE..... \t[${GREEN}DONE${NC}]"
-kill -9 `ps aux | grep forever | awk '{print $2}'` 
 kill -9 `ps aux | grep server_admin.js | awk '{print $2}'`
-# 2> /dev/null
+
 echo -e "[${GREEN}START${NC}]\t Starting SERVER NODE connecting to DB..... \t[${GREEN}DONE${NC}]"
 echo -e "[${GREEN}LAST${NC}]\t Daemonizing SERVER NODE..... \t\t\t[${GREEN}DONE${NC}]"
 
 echo -e "[${GREEN}LAST${NC}]\t - BATCH EXECUTION SERVER NODE: 8091..... \t[${GREEN}DONE${NC}]"
-nohup forever start -o ./logs/server/out_batch.log -e ./logs/server/err_batch.log -c $BIN/nodemon server_admin.js package.json 8091 --watch ./server server_admin.js --ignore ./repository/  ./alerts/ ./node_modules/ ./scripts/ ./uploads/ ./views/ ./documentation/ ./logs/ --exitcrash &
+nohup ${NODE_BIN}/node --use-strict --expose-gc --optimize-for-size server_admin.js  8091 > ./logs/server/out_batch.log 2> ./logs/server/err_batch.log &
+
 echo -e "[${GREEN}LAST${NC}]\t - ALERTS EXECUTION SERVER NODE: 8092..... \t[${GREEN}DONE${NC}]"
-nohup forever start -o ./logs/alerts/out_crontab.log -e ./logs/alerts/err_crontab.log -c $BIN/nodemon server_admin.js package.json 8092 CRONTAB --watch ./server server_admin.js --ignore ./repository/ ./alerts/ ./node_modules/ ./scripts/ ./uploads/ ./views/ ./documentation/ ./logs/ --exitcrash &
+# nohup ${NODE_BIN}/node --use-strict --expose-gc --no-warnings --max-old-space-size=500 --optimize-for-size --inspect=0.0.0.0:9222 server_admin.js 8092 CRONTAB  > ./logs/server/out_crontab.log 2> ./logs/server/err_crontab.log &
+
+nohup ${NODE_BIN}/node --use-strict --expose-gc --optimize-for-size server_admin.js 8092 CRONTAB  > ./logs/server/out_crontab.log 2> ./logs/server/err_crontab.log &
+
 echo -e "[${GREEN}LAST${NC}]\t - SERVER NODE: 8090..... \t\t\t[${GREEN}DONE${NC}]"
-nohup forever start -o ./logs/server/out_server.log -e ./logs/server/err_server.log -c $BIN/nodemon server_admin.js package.json 8090 --watch ./server server_admin.js --ignore ./repository/  ./alerts/ ./node_modules/ ./scripts/ ./uploads/ ./views/ ./documentation/ ./logs/ --exitcrash &
-# nohup nodemon server_admin.js package.json 8090 --ignore ./repository/ > log_node_server_8090.txt &
+nohup ${NODE_BIN}/node --use-strict --expose-gc --optimize-for-size server_admin.js  8090 > ./logs/server/out_server.log 2> ./logs/server/err_server.log &
 

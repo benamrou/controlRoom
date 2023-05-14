@@ -22,9 +22,16 @@
 * @author Ahmed Benamrouche
 * Date: April 2018
 */
+
+"use strict";
+
 module.exports = function (app, SQL) {
-    const spawn  = require('child_process').execFile;
-    const exec  = require('child_process').execFile;
+
+    let requirement = {
+        spawn: require('child_process').execFile,
+        exec: require('child_process').execFile
+    }
+    
     
     module.post = function (request,response) {
             /* *********************************************************************************** */
@@ -43,7 +50,7 @@ module.exports = function (app, SQL) {
                 //console.log ('1- ' + JSON.parse("[" + request.query.ARGS + "]"));
                 //console.log ('2- ' + JSON.parse(request.query.ARGS));
                 //console.log ('3- ' + request.query.ARGS.split(','));
-                const command = spawn(request.query.PARAM, request.query.ARGS.split(','), (error, stdout, stderr) => {
+                const command = requirement.spawn(request.query.PARAM, request.query.ARGS.split(','), (error, stdout, stderr) => {
                 //const command = spawn('ls', ['-A','/usr'], (error, stdout, stderr) => {
                     if (error) {
                         console.error('stderr', stderr);
@@ -60,7 +67,7 @@ module.exports = function (app, SQL) {
             else {
                 // Command without argument
                 console.log ('Executing ' + request.query.PARAM  + ' ... ');
-                const command = spawn(request.query.PARAM, [], (error, stdout, stderr) => {
+                const command = requirement.spawn(request.query.PARAM, [], (error, stdout, stderr) => {
                     if (error) {
                         console.error('stderr', stderr);
                         throw error;
@@ -92,7 +99,7 @@ module.exports = function (app, SQL) {
     
     
                 //host configuration with connection settings and commands
-               var host = {
+               let host = {
                     server:        {     
                     host:         request.header('ENV_IP'),
                     userName:     request.header('ENV_ID'),
@@ -101,11 +108,97 @@ module.exports = function (app, SQL) {
                     //commands:      [ request.header('ENV_COMMAND') ],
                     verbose:       true,
                     debug:       true,
-                    idleTimeOut:    50000,
-                    dataIdleTimeOut:    50000,
+                    idleTimeOut:    1000000,
+                    dataIdleTimeOut:    1000000,
                     enter:              "\n",
                     streamEncoding:     "utf8",
                     standardPrompt:     ">",
+                    disableASCIIFilter: true,
+                    disableColorFilter: true,
+                    commands:      [ request.body.command ] ,
+                    //commands:      request.body.command.split(';'),
+                    onCommandTimeout: function( command, response, stream, sshObj ) {
+                        emit("msg", this.sshObj.server.host + ": instance.onCommandTimeout");
+                        //confirm it is the root home dir and change to root's .ssh folder
+                        stream.write('y\n');
+                        return true;
+                        //we are listing the dir so output it to the msg handler
+                        //sshObj.exitCommands.pop();
+                        //this.emit("msg", response);
+                       },
+                    onCommandComplete: function( command, response, sshObj ) {
+                        //confirm it is the root home dir and change to root's .ssh folder
+                        this.emit("msg", this.sshObj.server.host + ": host.onCommandComplete event, command: " + command);
+                        this.emit("msg", response);
+                        //we are listing the dir so output it to the msg handler
+                        //sshObj.exitCommands.pop();
+                        //this.emit("msg", response);
+                       },
+                       
+                    onEnd: function( sessionText, sshObj ) {
+                        //email the session text instead of outputting it to the console
+                        this.emit("msg", this.sshObj.server.host + ": host.onEnd event");
+                        
+                        
+                        //this.emit("error", this.sshObj.server.host + ": " + sessionText, null, true);
+                        this.emit("exit");
+                        //sshObj._stream
+                        console.log(this.sshObj.server.host + ": host.onEnd event")
+                        
+                        // if callback is provided, errors will be passed into it
+                        // else errors will be thrown
+                    },
+                    onError:            function( err, type, close = false, callback ) {
+                        console.log('SSH error ' + type + ' ' +  JSON.stringify(err));
+                       },
+                    
+                };
+                    
+                let SSH2Shell = require ('ssh2shell'),
+                    //Create a new instance passing in the host object
+                    SSH = new SSH2Shell([host]),
+                    //Use a callback function to process the full session text
+                    callback = function(sessionText){
+                        response.json({
+                            CMD: request.query.PARAM ,
+                            RESULT: sessionText
+                        });
+                    }
+                    
+                //Start the process
+                SSH.connect(callback);
+                });
+
+             /* *********************************************************************************** */
+            /* Remote Server Batch execution  - GOLD STOCK different shell                          */
+            /* ***********************************************************************************   */
+            app.post('/api/execute/2/', function (request, response) {
+                "use strict";
+                // Domain you wish to allow
+                response.setHeader('Access-Control-Allow-Origin', '*');
+                // requestuest methods you wish to allow
+                response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+         
+                // Command with arguments
+                //console.log ('Executing command on ' + request.header('ENV_IP'),  + ' ' + request.header('ENV_COMMAND') );
+                console.log ('Executing command on ' + request.header('ENV_IP'),  + ' ' + request.body.command);
+    
+    
+                //host configuration with connection settings and commands
+               let host = {
+                    server:        {     
+                    host:         request.header('ENV_IP'),
+                    userName:     request.header('ENV_ID'),
+                    password:     request.header('ENV_PASS'),
+                    },
+                    //commands:      [ request.header('ENV_COMMAND') ],
+                    verbose:       true,
+                    debug:       true,
+                    idleTimeOut:    1000000,
+                    dataIdleTimeOut:    1000000,
+                    //enter:              "\n",
+                    //streamEncoding:     "utf8",
+                    //standardPrompt:     ">",
                     disableASCIIFilter: true,
                     disableColorFilter: true,
                     commands:      [ request.body.command ] ,
@@ -147,7 +240,7 @@ module.exports = function (app, SQL) {
                     
                 };
                     
-                var SSH2Shell = require ('ssh2shell'),
+                let SSH2Shell = require ('ssh2shell'),
                     //Create a new instance passing in the host object
                     SSH = new SSH2Shell([host]),
                     //Use a callback function to process the full session text
@@ -179,7 +272,7 @@ module.exports = function (app, SQL) {
                 //console.log ('1- ' + JSON.parse("[" + request.query.ARGS + "]"));
                 //console.log ('2- ' + JSON.parse(request.query.ARGS));
                 //console.log ('3- ' + request.query.ARGS.split(','));
-                const command = spawn(request.query.PARAM, request.query.ARGS.split(','), (error, stdout, stderr) => {
+                const command = requirement.spawn(request.query.PARAM, request.query.ARGS.split(','), (error, stdout, stderr) => {
                 //const command = spawn('ls', ['-A','/usr'], (error, stdout, stderr) => {
                     if (error) {
                         console.error('stderr', stderr);
@@ -196,7 +289,7 @@ module.exports = function (app, SQL) {
             else {
                 // Command without argument
                 console.log ('Executing ' + request.query.PARAM  + ' ... ');
-                const command = spawn(request.query.PARAM, [], (error, stdout, stderr) => {
+                const command = requirement.spawn(request.query.PARAM, [], (error, stdout, stderr) => {
                     if (error) {
                         console.error('stderr', stderr);
                         throw error;
@@ -227,12 +320,14 @@ module.exports = function (app, SQL) {
     
     
                 //host configuration with connection settings and commands
-               var host = {
+               let host = {
                     server:        {     
                     host:         request.header('ENV_IP'),
                     userName:     request.header('ENV_ID'),
-                    password:     request.header('ENV_PASS'),
+                    password:     request.header('ENV_PASS')
                     },
+                    idleTimeOut: 100000,
+                    debug: true,
                     commands:      [ request.header('ENV_COMMAND') ],
                     onCommandComplete: function( command, response, sshObj ) {
                         //confirm it is the root home dir and change to root's .ssh folder
@@ -262,7 +357,7 @@ module.exports = function (app, SQL) {
                     
                 };
                     
-                var SSH2Shell = require ('ssh2shell'),
+                let SSH2Shell = require ('ssh2shell'),
                     //Create a new instance passing in the host object
                     SSH = new SSH2Shell(host),
                     //Use a callback function to process the full session text

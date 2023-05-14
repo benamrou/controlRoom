@@ -1,9 +1,12 @@
 // Http method: GET
 // URI        : /userprofiles/?username=:USER_NAME
 // Read the profile of user given in :USER_NAME
+
+"use strict";
+
 module.exports = function (app, SQL) {
 
-var module = {};
+let module = {};
 // Http Method: GET
 // URI        : /user_profiles
 // Read all the user profiles
@@ -11,7 +14,6 @@ module.get = function (req,res) {
         app.get('/api/user_profiles/', function (req, res) {
         "use strict";
 
-        console.log("Param:" + req.query);
         SQL.executeLibQuery("'ADM0000001'","{(:USER_NAME:,req.query.USER_NAME)}", //{USER_NAME: req.query.USER_NAME}, 
                             req.header('USER'), req, res);
                             //JSON.stringify(req.header('USER')), req, res);
@@ -70,8 +72,8 @@ module.delete = function (req,res) {
 module.put = function (req,res) {
         app.put('/user_profiles/:USER_NAME', function (req, res) {
         "use strict";
-        var statement = "";
-        var bindValues = {};
+        let statement = "";
+        let bindValues = {};
 
         if (req.body.DISPLAY_NAME) {
             statement += "DISPLAY_NAME = :DISPLAY_NAME";

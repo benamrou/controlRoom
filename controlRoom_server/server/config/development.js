@@ -20,15 +20,16 @@ module.exports = {
           //"connectString": "10.0.2.15/xe",
 
           //"connectString": "10.200.14.230/test",
-          "poolMin": 1,
-          "poolMax": 2000,
-          "poolTimeout": 0,
-          "maxRows": 70000,
+          "poolMin": 2,
+          "poolMax": 4,
+          "poolIncrement": 1,
+          "poolTimeout": 60,
+          "maxRows": 0,
           "autocommit"  : true,   // default is false
           "_enableStats"  : false,   // default is false
           "queueRequests": false,
-          "queueTimeout": 0, // 60 seconds
-          "stmtCacheSize": 0 // 40 by default
+          "queueTimeout": 3000, // 3 seconds
+          "stmtCacheSize": 100 // 40 by default
         },
     connAttrs_volume: {
       "user": "controlroom",
@@ -37,13 +38,13 @@ module.exports = {
       "connectString": "10.200.14.230/test",
       "poolMin": 1,
       "poolMax": 200,
-      "poolTimeout": 0,
+      "poolTimeout": 60,
       "maxRows": 0, //value is 0, meaning unlimited
       "autocommit"  : true,   // default is false
       "_enableStats"  : false,   // default is false
       "queueRequests": false,
-      "queueTimeout": 0, // 60 seconds
-      "stmtCacheSize": 0 // 40 by default
+      "queueTimeout": 3000, // 60 seconds
+      "stmtCacheSize": 100 // 40 by default
     }
  },
  server : {

@@ -1,31 +1,38 @@
 <ROOT>
     <QUERY> 
-
 SELECT ld_donord as "Whs.",
        ld_numcde as "PO #", cd_refcli as "Store #",
        ld_cproin || ''/'' || to_number(ld_ilogis) || '' '' || ar_libpro as "Item code desc.",
        ld_qtuvcl/ar_nuvcup as "Qty (cases)",
-       (select  pi_postex || ''-'' || pi_libpos  
+       (SELECT ir_clprep FROM tb_inter@HEINENS_STK_PROD WHERE ir_codint=cd_refcli) "Store prep. class",
+       (select  pi_postex || ''-'' || pi_libpos
        from  tb_parl@HEINENS_STK_PROD  where pi_tablex=''SCL'' and   pi_postex=ld_statut AND pi_lang=''HN'') as "Statut",
-       (SELECT rp_adrpic FROM v_pick_2@HEINENS_STK_PROD 
+       (SELECT rp_adrpic FROM v_pick_2@HEINENS_STK_PROD
         WHERE rp_donord=ld_donord AND rp_cproin=ar_cproin AND rp_ilogis=ar_ilogis AND rp_arprom=ar_arprom AND ROWNUM=1) as "Picking addr.",
-       (SELECT pc_zprepi || '' on '' || to_char(pc_datmod,''MM/DD/RRRR HH12:MI'') || '' by ''  || AUSDESC
+       (SELECT listagg( ''['' || pc_zprepi || ''/'' || pc_clprep || '']'') WITHIN GROUP (ORDER BY pc_clprep)
+        FROM v_pick_2@HEINENS_STK_PROD, tb_picch@HEINENS_STK_PROD
+        WHERE rp_donord=ld_donord AND rp_cproin=ar_cproin
+        AND rp_ilogis=ar_ilogis AND rp_arprom=ar_arprom
+        AND pc_adrpic=rp_adrpic
+        AND ROWNUM=1) as "Prep. area/Class",
+      (SELECT to_char(pc_datmod,''MM/DD/RRRR HH12:MI'') || '' by ''  || AUSDESC
         FROM v_pick_2@HEINENS_STK_PROD, tb_picch@HEINENS_STK_PROD, adm_users@HEINENS_STK_PROD
-        WHERE rp_donord=ld_donord AND rp_cproin=ar_cproin 
-        AND rp_ilogis=ar_ilogis AND rp_arprom=ar_arprom 
-        AND pc_adrpic=rp_adrpic 
+        WHERE rp_donord=ld_donord AND rp_cproin=ar_cproin
+        AND rp_ilogis=ar_ilogis AND rp_arprom=ar_arprom
+        AND pc_adrpic=rp_adrpic
         AND pc_usermod=ausextuser
         AND ausappli=''ESTOCK''
-        AND ROWNUM=1) as "Prep. zone last update",
+        AND ROWNUM=1) as "Area last update",
        ''Item preparation is in faulty status and will not be prepared. Check the picking address, preparation area'' as "Comment"
-FROM tb_lcde@HEINENS_STK_PROD, tb_ecde@HEINENS_STK_PROD, tb_art@HEINENS_STK_PROD 
-WHERE cd_numorl=ld_numorl 
+FROM tb_lcde@HEINENS_STK_PROD, tb_ecde@HEINENS_STK_PROD, tb_art@HEINENS_STK_PROD
+WHERE cd_numorl=ld_numorl
 AND ld_cproin=ar_cproin
 AND ld_arprom=ar_arprom
 AND ld_ilogis=ar_ilogis
 AND ld_donord=ar_donord
 -- Faulty item SCL
 AND ld_statut=''1''
+
 </QUERY>
  
   <HEADERIFEMPTY>No Warehouse Faulty delivery order line </HEADERIFEMPTY>

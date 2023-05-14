@@ -11,6 +11,9 @@ ITEM_INV AS (
   WHERE UL_USSCC  = UE_USSCC
   AND UE_INDFIC = ''1''
   AND UL_DONORD = NUM_PARAM2
+  AND EXISTS (SELECT 1 FROM artuc@HEINENS_CUSTOM_PROD WHERE arasite=UL_DONORD AND aracexr=ul_cproin
+                 AND aracexvl=to_number(ul_ilogis) AND aratcde=1 AND aratfou=1
+                 AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin)
   GROUP BY ul_donord, ul_cproin, ul_ilogis),
 ITEM_LIST AS (
   SELECT ul_donord WHS_CODE,

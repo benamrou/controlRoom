@@ -18,9 +18,12 @@
 * @class TEMPLATE
 * 
 */
+
+"use strict";
+
 module.exports = function (app, SQL) {
 
-var module = {};
+let module = {};
 
 /**
 * GET method description.  

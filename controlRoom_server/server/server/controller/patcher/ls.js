@@ -1,4 +1,7 @@
 
+
+"use strict";
+
 module.exports = function (app, SQL) {
 const spawn  = require('child_process').execFile;
 const ls = spawn('ls', ['-lh', '/usr']);
