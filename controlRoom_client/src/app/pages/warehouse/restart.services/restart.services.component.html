@@ -1,0 +1,59 @@
+<app-page-header [heading]="'Restart services'" [icon]="'pi pi-refresh'" [screenID]="screenID" [headcolor]="'gold'"
+  [linkcolor]="'chocolate'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+  <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+<div class="content-section implementation" style="padding: 5px;">
+  <p-toast [style]="{marginTop: '80px'}" position="top-right" [sticky]="true"></p-toast>
+</div>
+
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+<p-dialog header="Process restart completed" [visible]="displayProcessCompleted" [modal]="true" width="500" [responsive]="true" [maximizable]="false">
+  <span>{{msgDisplayed}}</span>
+      <p-footer>
+          <button style="float: right; margin-bottom:0.5em" 
+                  type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
+                  label="Ok">
+          </button>
+      </p-footer>
+</p-dialog>
+
+<div>
+  <div role="alert" class="alert alert-warning"
+    style="width: 100%; float: left; font-size: small; border: black 1px solid;">
+    <i class="fas fa-exclamation-circle"></i>
+    <span style="margin-left: 1em;"> Use this functionnality on business request. The action will stop and restart the
+      warehouse services. On-going operations will be disturbed.
+    </span>
+    <br>
+    <br>
+    <span style="margin-left: 2.2em; font-weight: bold;"> Make sure warehouse is aware about the warehouse processes restart.
+    </span>
+  </div>
+</div>
+
+
+<p-fieldset legend="Warehouse processes restart" [toggleable]="false" >
+  <div class="row" style="padding-left: 0.75em;">
+    The following warehouse services are going to be restarted: 
+    <ul style="padding-left: 2em;">
+      <li><b>GOLD Vocal (VDW)</b> : this service is used for pickers to prepare and load the pallet using their Vocal
+        devices.</li>
+      <li><b>Warehouse printers (Samba)</b>: this service is used during reception and preparation to print logistics
+        document.</li>
+      <li><b>GOLD Radio</b> : this service is used during reception and internal pallet movement by the fork lift.</li>
+      <li><b>GOLD Stock</b> : this service is used by all the warehouse associates. </li>
+      <li><b>GOLD GWVO</b> : this service is used by prep. managers and leads to track the workload and define voice
+        devices for picking/preparation. </li>
+    </ul>
+    <br> The restart process is usually taking <b>between 5 and 7 minutes</b>. 
+  <div style="text-align: center; margin-top: 2em;">
+    <button type="submit" pButton (click)="restartServices()" icon="fas fa-dot-circle" label="Restart" 
+            [style]="{'height': '35px'}" style="margin-right: 15px"></button>
+    </div>
+  </div>
+
+
+</p-fieldset>

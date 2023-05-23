@@ -172,6 +172,62 @@ export class ProcessService {
     
   }
 
+  executeScriptStock(script: string) {
+    this.request = this.executeBatch;
+    let headersSearch = new HttpHeaders();
+    this.params= new HttpParams();
+    let dateNow = new Date();
+    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
+                          'export GOLD_DEBUG=1; ' +
+                          // Batch to execute
+                          ' ';
+                          
+                          //script ;
+    
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    /*headersSearch = headersSearch.set('ENV_COMMAND', 
+        // Initialization
+        this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
+        'export GOLD_DEBUG=1; ' +
+        // Batch to execute
+        script);*/
+
+    console.log('Executing script : ' ,headersSearch);
+    return this.http.executeStock(this.request, this.params, headersSearch, scriptToExecute).pipe(map(response => {
+            let data = <any> response;
+            return data;
+    }));
+    
+  }
+
+  executeScriptMobility(script: string) {
+    this.request = this.executeBatch;
+    let headersSearch = new HttpHeaders();
+    this.params= new HttpParams();
+    let dateNow = new Date();
+    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
+                          'export GOLD_DEBUG=1; ' +
+                          // Batch to execute
+                          script ;
+    
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    /*headersSearch = headersSearch.set('ENV_COMMAND', 
+        // Initialization
+        this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
+        'export GOLD_DEBUG=1; ' +
+        // Batch to execute
+        script);*/
+
+    console.log('Executing script : ' ,headersSearch);
+    return this.http.executeMobility(this.request, this.params, headersSearch, scriptToExecute).pipe(map(response => {
+            let data = <any> response;
+            return data;
+    }));
+    
+  }
+
   /**
    * Get the list of distinct job executed at a given date
    * @param batchId 

@@ -39,6 +39,8 @@ import { AuthentificationGuard } from './shared/services/authentification/authen
 import { SmartUBDComponent } from './pages/reporting/smartUBD/smart.ubd.component';
 import { GenerateScheduleComponent } from './pages/schedule/generate.schedule/generate.schedule.component';
 import { RobotComponent } from './pages/robot/robot.component';
+import { WarehouseRestartServicesComponent } from './pages/warehouse/restart.services/restart.services.component';
+import { ServicesCenterComponent } from './pages/helpdesk/services.center/services.center.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -63,11 +65,15 @@ const routes: Routes = [
   /* WAREHOUSE */
   { path: 'warehouse', component: WarehouseComponent, canActivate: [AuthentificationGuard] },
   { path: 'fixpickingunit', component: FixPickingUnitComponent, canActivate: [AuthentificationGuard] },
+  { path: 'whsrestartservices', component: WarehouseRestartServicesComponent, canActivate: [AuthentificationGuard] },
+
   /* IT */
   { path: 'batchschedule', component: BatchScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'batchlist', component: MyBatchListComponent, canActivate: [AuthentificationGuard] },
-  /* ROBOT */
+  /* HELPDESK */
   { path: 'robot', component: RobotComponent, canActivate: [AuthentificationGuard] },
+  { path: 'servicescenter', component: ServicesCenterComponent, canActivate: [AuthentificationGuard] },
+  
   /* MASS_CHANGE */
   { path: 'massjournal', component: MassJournalComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemattribute', component: ItemAttributeComponent, canActivate: [AuthentificationGuard] },

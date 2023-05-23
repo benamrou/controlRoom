@@ -97,6 +97,8 @@ import { SupplierScheduleServiceContractModule } from './pages/schedule/service.
 import { SearchModule } from './pages/search/search.module';
 import { SVInfoModule } from './pages/mass.update/sv.info/sv.info.module';
 import { GenerateScheduleModule } from './pages/schedule/generate.schedule/generate.schedule.module';
+import { WarehouseRestartServicesModule } from './pages/warehouse/restart.services/restart.services.module';
+import { ServicesCenterModule } from './pages/helpdesk/services.center/services.center.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -178,7 +180,9 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     SVAttributeModule,
     SmartUBDModule,
     GenerateScheduleModule,
-    RobotModule
+    RobotModule,
+    WarehouseRestartServicesModule,
+    ServicesCenterModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

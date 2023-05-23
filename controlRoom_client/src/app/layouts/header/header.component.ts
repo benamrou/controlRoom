@@ -43,16 +43,20 @@ export class HeaderComponent implements OnInit {
 		//console.log("this._userService.userInfo: " + JSON.stringify(this._userService.userInfo));
 		if (this._userService.userInfo.envUserAccess.length > 0) {
 			for (let i = 0; i < this._userService.userInfo.envUserAccess.length; i ++) {
-				this.environments.push({label: this._userService.userInfo.envUserAccess[i].shortDescription!,
-										value: {id: this._userService.userInfo.envUserAccess[i].id!, 
-												name: this._userService.userInfo.envUserAccess[i].shortDescription!}! });
-				this.envTypeConnected = this._userService.userInfo.envUserAccess[i].type;
+				if (this._userService.userInfo.envUserAccess[i].domain == '1') {
+					this.environments.push({label: this._userService.userInfo.envUserAccess[i].shortDescription!,
+											value: {type: this._userService.userInfo.envUserAccess[i].type!, 
+													name: this._userService.userInfo.envUserAccess[i].shortDescription!}! });
+					this.envTypeConnected = this._userService.userInfo.envUserAccess[i].type;
+				}
 			}
 		} else {
 			for (let i = 0; i < this._userService.userInfo.envCorporateAccess.length; i ++) {
+				if (this._userService.userInfo.envUserAccess[i].domain == '1') {
 				this.environments.push({label: this._userService.userInfo.envCorporateAccess[i].shortDescription!,
-										value: {id: this._userService.userInfo.envCorporateAccess[i].id!, 
+										value: {type: this._userService.userInfo.envCorporateAccess[i].type!, 
 												name: this._userService.userInfo.envCorporateAccess[i].shortDescription!}! });
+				}
 			}
 		}
 		//console.log("HEADER - Environments: " + this.environments.length);
@@ -90,7 +94,7 @@ export class HeaderComponent implements OnInit {
 		
 		this.envTypeConnected = envType;
 		this._userService.setMainEnvironment(envType);
-		//console.log('User env' + JSON.stringify(this._userService.userInfo));
+		console.log('User env' + JSON.stringify(this._userService.userInfo));
 		this.displaySwitch = true;
 		this.setTopBarDisplay();
 	}

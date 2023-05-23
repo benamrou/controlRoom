@@ -42,7 +42,7 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
                                         <a *ngFor="let environment of environments" class="dropdown-item" 
-                                            (click)="environmentChange(environment.label, environment.value.id)">{{environment.label}}
+                                            (click)="environmentChange(environment.label, environment.value.type)">{{environment.label}}
                                         </a>
                                 </div>
                         </li>

@@ -1,0 +1,117 @@
+<app-page-header [heading]="'Restart services'" [icon]="'pi pi-refresh'" [screenID]="screenID" [headcolor]="'gold'"
+  [linkcolor]="'chocolate'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+  <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+<div>
+  <div class="alert alert-warning"
+    style="width: 100%; float: left; font-size: small; border: black 1px solid;">
+    <i class="fas fa-exclamation-circle"></i>
+    <span style="margin-left: 1em;"> Use this functionnality on business request. The action will stop and restart the
+      applications services. On-going operations will be disturbed.
+    </span>
+    <br>
+    <br>
+    <span style="margin-left: 2.2em; font-weight: bold;"> Make sure Make sure associates are aware about the restart process.
+    </span>
+  </div>
+</div>
+
+<div table-layout="fixed" style="margin-top: 7em;">
+  <p-tabView>
+    <p-tabPanel header="Warehouse">
+      <p-fieldset legend="Warehouse processes restart" [toggleable]="true">
+        <div >
+          The warehouse associates will be impacted by the restart of one of these services:
+          <div style="margin-top: 1em;">
+            <table style="width: 100%;">
+              <tr style="background-color: #eaf6fe; border-width: 1px 0px 1px 0px;">
+                <td class="col-9" style="align-self: center;">
+                  <b>GOLD Vocal (VDW)</b> : this service is used for pickers to prepare and load the pallet using their Vocal devices.
+                </td>
+                <td class="col-3" style="text-align: center;">
+                    <button type="submit" pButton (click)="restartVocal()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart Vocal"></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="col-9" style="align-self: center;"><b>Warehouse printers (Samba)</b>: this service is used during reception and preparation to print logistics document.
+                </td>
+                <td class="col-3" style="text-align: center;">
+                  <button type="submit" pButton (click)="restartPrinter()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart Printer services"></button>
+              </td>
+              </tr>
+              <tr style="background-color: #eaf6fe; border-width: 1px 0px 1px 0px;">
+                <td class="col-9" style="align-self: center;"><b>GOLD Radio</b> : this service is used during reception and internal pallet movement by the fork lift.</td>
+                <td class="col-3" style="text-align: center;">
+                  <button type="submit" pButton (click)="restartRadio()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart RADIO"></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="col-9" style="align-self: center;"><b>GOLD Stock</b> : this service is used by all the warehouse associates.</td>
+                <td class="col-3" style="text-align: center;">
+                  <button type="submit" pButton (click)="restartStock()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart Stock"></button>
+                </td>
+              </tr>
+              <tr style="background-color: #eaf6fe; border-width: 1px 0px 1px 0px;">
+                <td class="col-9" style="align-self: center;"><b>GOLD GWVO</b> : this service is used by prep. managers and
+                  leads to track the workload and define voice devices for picking/preparation.</td>
+                <td class="col-3" style="text-align: center;">
+                  <button type="submit" pButton (click)="restartGWVO()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart GWVO"></button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </p-fieldset>
+
+    </p-tabPanel>
+    <p-tabPanel header="Headquarter & Stores">
+      <p-fieldset legend="Headquarter & stores processes restart" [toggleable]="true">
+
+        <div >
+          The associates in heaquarter and stores will be impacted by the restart of one of these services:
+          <div style="margin-top: 1em;">
+            <table style="width: 100%;">
+              <tr style="background-color: #ebfeea; border-width: 1px 0px 1px 0px;">
+                <td class="col-9" style="align-self: center;">
+                  <b>GOLD CENTRAL/SHOP</b> : this service is used by all the employees in the headquarter and stores.
+                </td>
+                <td class="col-3" style="text-align: center;">
+                    <button type="submit" pButton (click)="restartCentral()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart Central/Shop"></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="col-9" style="align-self: center;"><b>GOLD Mobility</b>: this service is used by the store associates and restart the GOLD handheld solution.
+                </td>
+                <td class="col-3" style="text-align: center;">
+                  <button type="submit" pButton (click)="restartMobility()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart Mobility"></button>
+              </td>
+              </tr>
+              <tr style="background-color: #ebfeea; border-width: 1px 0px 1px 0px;">
+                <td class="col-9" style="align-self: center;"><b>GOLD GFA</b> : this service is used by Helpdesk to setup users.</td>
+                <td class="col-3" style="text-align: center;">
+                  <button type="submit" pButton (click)="restartGFA()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart GFA"></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="col-9" style="align-self: center;"><b>GOLD GWR/TOPASE</b> : this service is used by buyers to forecast and process their supplier orders.</td>
+                <td class="col-3" style="text-align: center;">
+                  <button type="submit" pButton (click)="restartGWR()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart Stock"></button>
+                </td>
+              </tr>
+              <tr style="background-color: #ebfeea; border-width: 1px 0px 1px 0px;">
+                <td class="col-9" style="align-self: center;"><b>GOLD XML</b> : this service is used by the downstream systems and generate the data change in XML format.</td>
+                <td class="col-3" style="text-align: center;">
+                  <button type="submit" pButton (click)="restartXML()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart XML"></button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        
+      </p-fieldset>
+    </p-tabPanel>
+  </p-tabView>
+</div>

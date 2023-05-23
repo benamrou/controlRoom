@@ -30,6 +30,7 @@ export class User {
     public mainEnvironment: Environment[] = []; // Can be multiple such as GOLD CEMTRAL and GOLD STOCK , main is by env type
     public sid: String [] = [];
     public envDefaultLanguage: string;
+    
  
     /********************************************************/
     /* Data Storage to refrain regular search - Static Info */
@@ -58,6 +59,17 @@ export class User {
     public titleColor: string;
     public title: string;
     public picture: string;
+    public domain: string;
+    public restartallstock: string;
+    public restartstock: string;
+    public restartcentral: string;
+    public restartgfa: string;
+    public restartgwr: string;
+    public restartgwvo: string;
+    public restartradio: string;
+    public restartprint: string;
+    public restartmob: string;
+    public restartxml: string;
  }
  
  @Injectable()
@@ -173,6 +185,17 @@ export class User {
                      env.titleColor = data[i].ENVTITLECOLOR;
                      env.title = data[i].ENVTITLE;
                      env.picture = data[i].CORPPIC;
+                     env.domain = data[i].ENVDOMAIN;
+                     env.restartcentral = data[i].ENVCENTRALRESTART;
+                     env.restartstock = data[i].ENVSTOCKRESTART;
+                     env.restartallstock = data[i].ENVALLSTOCKRESTART;
+                     env.restartmob = data[i].ENVMOBRESTART;
+                     env.restartgfa = data[i].ENVGFARESTART;
+                     env.restartgwvo = data[i].ENVGWVORESTART;
+                     env.restartgwr = data[i].ENVGWRRESTART;
+                     env.restartprint = data[i].ENVPRINTERRESTART;
+                     env.restartradio = data[i].ENVRADIORESTART;
+                     env.restartxml = data[i].ENVXMLRESTART;
  
                      this.userInfo.envDefaultLanguage = env.defaultLanguage;
                  
@@ -180,22 +203,19 @@ export class User {
                      if (env.level === 'CORPORATE') { this.userInfo.envCorporateAccess.push(env); }
  
                      if (env.default === 1) {
-                         if ((env.level === 'USER') || 
-                             (env.level === 'CORPORATE' && this.userInfo.mainEnvironment.length === 0)) {
-                            //console.log('MAIN ' + JSON.stringify(env));
- 
-                             localStorage.setItem('ENV_IP',env.ipAddress);
-                             localStorage.setItem('ENV_ID',env.connectionID);
-                             localStorage.setItem('ENV_PASS',env.connectionPassword);
-                             this.userInfo.mainEnvironment.push(env);
-                             this.userInfo.envDefaultLanguage = env.defaultLanguage;
-                             if ( ! this.userInfo.sid.includes(env.dbLink)) {
-                                 this.userInfo.sid.push(env.dbLink);
-                             }
-                         } 
+                        // console.log('MAIN ' + JSON.stringify(env));
+                        // Set cookies for environment access information
+                        this.setCookiesEnvironment(env);
+
+                            this.userInfo.mainEnvironment.push(env);
+                            this.userInfo.envDefaultLanguage = env.defaultLanguage;
+                            if ( ! this.userInfo.sid.includes(env.dbLink)) {
+                                this.userInfo.sid.push(env.dbLink);
+                            }
                      }
  
                  }
+                 console.log('ICRSID', this.userInfo);
                  localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
                  localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
                  
@@ -209,33 +229,31 @@ export class User {
       * @method setMainEnvironmentUsingType
       * @param envID envrionment type  
       */
-     setMainEnvironment(envID: string) {
+     setMainEnvironment(envType: string) {
          this.userInfo.mainEnvironment = [];
          this.userInfo.sid = [];
  
+         this.unsetCookiesEnvironment();
          // Two information - 
          // INFO 1 - Redefine the main environment using the type
          // INFO 2 - Redefine the SIDs environment using the type
+         console.log('Sitching to tyoe: ',envType, this.userInfo.envUserAccess);
          if (this.userInfo.envUserAccess.length > 0) {
              for (let i = 0; i < this.userInfo.envUserAccess.length; i ++) {
-                 if (this.userInfo.envUserAccess[i].id === envID) {
+                 if (this.userInfo.envUserAccess[i].type === envType) {
                      this.userInfo.mainEnvironment.push(this.userInfo.envUserAccess[i]);
                      this.userInfo.sid.push(this.userInfo.envUserAccess[i].dbLink);
  
-                     localStorage.setItem('ENV_IP',this.userInfo.envUserAccess[i].ipAddress);
-                     localStorage.setItem('ENV_ID',this.userInfo.envUserAccess[i].connectionID);
-                     localStorage.setItem('ENV_PASS',this.userInfo.envUserAccess[i].connectionPassword);
+                     this.setCookiesEnvironment(this.userInfo.envUserAccess[i]);
                  }
              }
          } else {
              for (let i = 0; i < this.userInfo.envCorporateAccess.length; i ++) {
-                 if (this.userInfo.envUserAccess[i].id === envID) {
+                 if (this.userInfo.envUserAccess[i].type === envType) {
                      this.userInfo.mainEnvironment.push(this.userInfo.envCorporateAccess[i]);
                      this.userInfo.sid.push(this.userInfo.envUserAccess[i].dbLink);
- 
-                     localStorage.setItem('ENV_IP',this.userInfo.envUserAccess[i].ipAddress);
-                     localStorage.setItem('ENV_ID',this.userInfo.envUserAccess[i].connectionID);
-                     localStorage.setItem('ENV_PASS',this.userInfo.envUserAccess[i].connectionPassword);
+                    
+                     this.setCookiesEnvironment(this.userInfo.envUserAccess[i]);
                  }
              }
          }
@@ -254,6 +272,60 @@ export class User {
      setStructure(in_structure, in_structureTree) {
          this.structure= in_structure;
          this.structureTree = in_structureTree;
+     }
+
+     setCookiesEnvironment (env) {
+        console.log('Set cookies: ', env);
+        switch(env.domain) {
+            case 1 /*CENTRAL*/: 
+                localStorage.setItem('ENV_IP',env.ipAddress);
+                localStorage.setItem('ENV_ID',env.connectionID);
+                localStorage.setItem('ENV_PASS',env.connectionPassword);
+                break;
+            case 2 /*STOCK*/: 
+                localStorage.setItem('ENV_IP_STOCK',env.ipAddress);
+                localStorage.setItem('ENV_ID_STOCK',env.connectionID);
+                localStorage.setItem('ENV_PASS_STOCK',env.connectionPassword);
+                break;
+            case 3 /*GWR*/:
+                localStorage.setItem('ENV_IP_GWR',env.ipAddress);
+                localStorage.setItem('ENV_ID_GWR',env.connectionID);
+                localStorage.setItem('ENV_PASS_GWR',env.connectionPassword);
+                break;
+            case 4 /*MOBILITY*/:
+                localStorage.setItem('ENV_IP_MOB',env.ipAddress);
+                localStorage.setItem('ENV_ID_MOB',env.connectionID);
+                localStorage.setItem('ENV_PASS_MOB',env.connectionPassword);
+                break;
+            case 5 /*GFA*/:
+                localStorage.setItem('ENV_IP_GFA',env.ipAddress);
+                localStorage.setItem('ENV_ID_GFA',env.connectionID);
+                localStorage.setItem('ENV_PASS_GFA',env.connectionPassword);
+                break;
+            default:
+                localStorage.setItem('ENV_IP',env.ipAddress);
+                localStorage.setItem('ENV_ID',env.connectionID);
+                localStorage.setItem('ENV_PASS',env.connectionPassword);
+                break;
+         }   
+     }
+
+     unsetCookiesEnvironment() {
+        localStorage.removeItem('ENV_IP');
+        localStorage.removeItem('ENV_ID');
+        localStorage.removeItem('ENV_PASS');
+        localStorage.removeItem('ENV_IP_STOCK');
+        localStorage.removeItem('ENV_ID_STOCK');
+        localStorage.removeItem('ENV_PASS_STOCK');
+        localStorage.removeItem('ENV_IP_MOB');
+        localStorage.removeItem('ENV_ID_MOB');
+        localStorage.removeItem('ENV_PASS_MOB');
+        localStorage.removeItem('ENV_IP_GWR');
+        localStorage.removeItem('ENV_ID_GWR');
+        localStorage.removeItem('ENV_PASS_GWR');
+        localStorage.removeItem('ENV_IP_GFA');
+        localStorage.removeItem('ENV_ID_GFA');
+        localStorage.removeItem('ENV_PASS_GFA');
      }
  
  } 
