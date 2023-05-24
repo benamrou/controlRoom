@@ -4,6 +4,17 @@
 <div class="content-section implementation" style="padding: 5px;">
   <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+<p-dialog header="Processes restarted" [visible]="displayProcessCompleted" [modal]="true" width="500" [responsive]="true" [maximizable]="false">
+  <span>{{msgDisplayed}}</span>
+      <p-footer>
+          <button style="float: right; margin-bottom:0.5em" 
+                  type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
+                  label="Ok">
+          </button>
+      </p-footer>
+</p-dialog>
 
 <div>
   <div class="alert alert-warning"
@@ -19,7 +30,7 @@
   </div>
 </div>
 
-<div table-layout="fixed" style="margin-top: 7em;">
+<div table-layout="fixed" >
   <p-tabView>
     <p-tabPanel header="Warehouse">
       <p-fieldset legend="Warehouse processes restart" [toggleable]="true">

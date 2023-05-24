@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ScreenService } from '../../services/'
+import { HttpService, ScreenService } from '../../services/'
 
 @Component({
     selector: 'app-page-header',
@@ -12,12 +12,10 @@ export class PageHeaderComponent implements OnInit {
     @Input() icon: string;
 
     screenInfo: any;
-    constructor(private _screenInfo: ScreenService) {
-        console.log('Loading header page', this._screenInfo);
+    constructor(private _screenInfo: ScreenService, private _httpService: HttpService) {
     }
 
     ngOnInit() {
-        console.log('ngOninit header page', this._screenInfo);
         this._screenInfo.getScreenInfo(this.screenID).subscribe(
             data  => {  
                 if (data.length > 0) { this.screenInfo = data[0].SCREENINFO;  }

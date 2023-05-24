@@ -4,9 +4,10 @@ import { RouterModule } from '@angular/router';
 import { FormsModule }  from '@angular/forms';
 import { PageHeaderComponent } from './page-header.component';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @NgModule({
-    imports: [CommonModule, RouterModule, FormsModule, OverlayPanelModule],
+    imports: [CommonModule, RouterModule, FormsModule, OverlayPanelModule, ProgressBarModule],
     declarations: [PageHeaderComponent],
     exports: [PageHeaderComponent],
     bootstrap: [PageHeaderComponent],

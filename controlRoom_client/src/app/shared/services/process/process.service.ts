@@ -56,6 +56,7 @@ export class Job {
 export class ProcessService {
 
   private executeBatch: string = '/api/execute/1/';
+  private executeBatchStock: string = '/api/execute/2/';
 
   private baseProcess: string = '/api/process/1/';
   private batchExecuted: string = '/api/process/2/';
@@ -173,17 +174,23 @@ export class ProcessService {
   }
 
   executeScriptStock(script: string) {
-    this.request = this.executeBatch;
+    this.request = this.executeBatchStock;
     let headersSearch = new HttpHeaders();
     this.params= new HttpParams();
     let dateNow = new Date();
-    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
-                          'export GOLD_DEBUG=1; ' +
-                          // Batch to execute
-                          ' ';
-                          
-                          //script ;
-    
+    let scriptToExecute;
+    for(let i=0; i < this._userService.userInfo.mainEnvironment.length; i++) {
+      /* Pick STOCK environment */
+      if (this._userService.userInfo.mainEnvironment[i].domain == '2') {
+        scriptToExecute = this._userService.userInfo.mainEnvironment[i].initSH + '; ';
+      }
+    }
+    scriptToExecute = scriptToExecute +
+                      'export GOLD_DEBUG=1; ' +
+                      // Batch to execute
+                      script ;
+
+    this.params = this.params.set('PARAM', scriptToExecute);
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     /*headersSearch = headersSearch.set('ENV_COMMAND', 

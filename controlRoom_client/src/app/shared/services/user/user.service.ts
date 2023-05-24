@@ -70,6 +70,7 @@ export class User {
     public restartprint: string;
     public restartmob: string;
     public restartxml: string;
+    public restartvocal: string;
  }
  
  @Injectable()
@@ -196,6 +197,7 @@ export class User {
                      env.restartprint = data[i].ENVPRINTERRESTART;
                      env.restartradio = data[i].ENVRADIORESTART;
                      env.restartxml = data[i].ENVXMLRESTART;
+                     env.restartvocal = data[i].ENVVOCALRESTART;
  
                      this.userInfo.envDefaultLanguage = env.defaultLanguage;
                  

@@ -25,6 +25,7 @@
 
 "use strict";
 
+let logger = require("../../utils/logger.js");
 module.exports = function (app, SQL) {
 
     let requirement = {
@@ -32,7 +33,7 @@ module.exports = function (app, SQL) {
         exec: require('child_process').execFile
     }
     
-    
+    // app.post('/api/execute/
     module.post = function (request,response) {
             /* *********************************************************************************** */
             /* Local Server Batch execution                                                       */
@@ -53,10 +54,10 @@ module.exports = function (app, SQL) {
                 const command = requirement.spawn(request.query.PARAM, request.query.ARGS.split(','), (error, stdout, stderr) => {
                 //const command = spawn('ls', ['-A','/usr'], (error, stdout, stderr) => {
                     if (error) {
-                        console.error('stderr', stderr);
+                        logger.log('batch', 'Execution error ' + stderr, 'batch', 3);
                         throw error;
                     }
-                    console.log('stdout', stdout);
+                    logger.log('batch', stdout, 'batch', 1);
                     response.json({
                                 CMD: request.query.PARAM + ' ' + request.query.ARGS ,
                                 RESULT: stdout,
@@ -66,13 +67,13 @@ module.exports = function (app, SQL) {
             }
             else {
                 // Command without argument
-                console.log ('Executing ' + request.query.PARAM  + ' ... ');
+                logger.log('batch', 'Executing ' + request.query.PARAM  + ' ... ', 'batch', 1);
                 const command = requirement.spawn(request.query.PARAM, [], (error, stdout, stderr) => {
                     if (error) {
-                        console.error('stderr', stderr);
+                        logger.log('batch', 'Execution error ' + stderr, 'batch', 3);
                         throw error;
                     }
-                    console.log('stdout', stdout);
+                    logger.log('batch', stdout, 'batch', 1);
                     response.json({
                                 CMD: request.query.PARAM ,
                                 RESULT: stdout,
@@ -95,11 +96,14 @@ module.exports = function (app, SQL) {
          
                 // Command with arguments
                 //console.log ('Executing command on ' + request.header('ENV_IP'),  + ' ' + request.header('ENV_COMMAND') );
-                console.log ('Executing command on ' + request.header('ENV_IP'),  + ' ' + request.body.command);
+                logger.log('batch', 'Executing command on ' + request.header('ENV_IP')  + ' ' + 
+                                     request.header('ENV_ID') + ' ' + 
+                                     request.header('ENV_PASS') + ' ' + 
+                                     request.body.command, 'batch', 1);
     
     
                 //host configuration with connection settings and commands
-               let host = {
+               var host = {
                     server:        {     
                     host:         request.header('ENV_IP'),
                     userName:     request.header('ENV_ID'),
@@ -108,8 +112,8 @@ module.exports = function (app, SQL) {
                     //commands:      [ request.header('ENV_COMMAND') ],
                     verbose:       true,
                     debug:       true,
-                    idleTimeOut:    1000000,
-                    dataIdleTimeOut:    1000000,
+                    idleTimeOut:    50000,
+                    dataIdleTimeOut:    50000,
                     enter:              "\n",
                     streamEncoding:     "utf8",
                     standardPrompt:     ">",
@@ -118,7 +122,7 @@ module.exports = function (app, SQL) {
                     commands:      [ request.body.command ] ,
                     //commands:      request.body.command.split(';'),
                     onCommandTimeout: function( command, response, stream, sshObj ) {
-                        emit("msg", this.sshObj.server.host + ": instance.onCommandTimeout");
+                        this.emit("msg", this.sshObj.server.host + ": instance.onCommandTimeout");
                         //confirm it is the root home dir and change to root's .ssh folder
                         stream.write('y\n');
                         return true;
@@ -127,47 +131,48 @@ module.exports = function (app, SQL) {
                         //this.emit("msg", response);
                        },
                     onCommandComplete: function( command, response, sshObj ) {
-                        //confirm it is the root home dir and change to root's .ssh folder
-                        this.emit("msg", this.sshObj.server.host + ": host.onCommandComplete event, command: " + command);
-                        this.emit("msg", response);
-                        //we are listing the dir so output it to the msg handler
-                        //sshObj.exitCommands.pop();
-                        //this.emit("msg", response);
-                       },
-                       
-                    onEnd: function( sessionText, sshObj ) {
-                        //email the session text instead of outputting it to the console
-                        this.emit("msg", this.sshObj.server.host + ": host.onEnd event");
+                            //confirm it is the root home dir and change to root's .ssh folder
+                            this.emit("msg", this.sshObj.server.host + ": host.onCommandComplete event, command: " + command);
+                            this.emit("msg", response);
+                            //we are listing the dir so output it to the msg handler
+                            //sshObj.exitCommands.pop();
+                            //this.emit("msg", response);
+                        },
                         
+                        onEnd: function( sessionText, sshObj ) {
+                            //email the session text instead of outputting it to the console
+                            this.emit("msg", this.sshObj.server.host + ": host.onEnd event");
+                            
+                            
+                            //this.emit("error", this.sshObj.server.host + ": " + sessionText, null, true);
+                            this.emit("exit");
+                            //sshObj._stream
+                            logger.log('batch', this.sshObj.server.host + ": host.onEnd event", 'batch', 1);
+                            
+                            // if callback is provided, errors will be passed into it
+                            // else errors will be thrown
+                        },
+                        onError:            function( err, type, close = false, callback ) { 
+                            logger.log('batch', 'SSH error ' + type + ' ' +  JSON.stringify(err), 'batch', 1);
+    
+                        },
                         
-                        //this.emit("error", this.sshObj.server.host + ": " + sessionText, null, true);
-                        this.emit("exit");
-                        //sshObj._stream
-                        console.log(this.sshObj.server.host + ": host.onEnd event")
+                    };
                         
-                        // if callback is provided, errors will be passed into it
-                        // else errors will be thrown
-                    },
-                    onError:            function( err, type, close = false, callback ) {
-                        console.log('SSH error ' + type + ' ' +  JSON.stringify(err));
-                       },
-                    
-                };
-                    
-                let SSH2Shell = require ('ssh2shell'),
-                    //Create a new instance passing in the host object
-                    SSH = new SSH2Shell([host]),
-                    //Use a callback function to process the full session text
-                    callback = function(sessionText){
-                        response.json({
-                            CMD: request.query.PARAM ,
-                            RESULT: sessionText
-                        });
-                    }
-                    
-                //Start the process
-                SSH.connect(callback);
-                });
+                    var SSH2Shell = require ('ssh2shell'),
+                        //Create a new instance passing in the host object
+                        SSH = new SSH2Shell([host]),
+                        //Use a callback function to process the full session text
+                        callback = function(sessionText){
+                            response.json({
+                                CMD: request.query.PARAM ,
+                                RESULT: sessionText
+                            });
+                        }
+                        
+                    //Start the process
+                    SSH.connect(callback);
+                    });
 
              /* *********************************************************************************** */
             /* Remote Server Batch execution  - GOLD STOCK different shell                          */
@@ -180,9 +185,8 @@ module.exports = function (app, SQL) {
                 response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
          
                 // Command with arguments
-                //console.log ('Executing command on ' + request.header('ENV_IP'),  + ' ' + request.header('ENV_COMMAND') );
-                console.log ('Executing command on ' + request.header('ENV_IP'),  + ' ' + request.body.command);
-    
+                //console.log ('Executing command on ' + request.header('ENV_IP')  + ' ' + request.header('ENV_COMMAND') );
+                logger.log('batch', 'Executing command on ' + request.header('ENV_IP')  + ' ' + request.body.command, 'batch', 1);
     
                 //host configuration with connection settings and commands
                let host = {
@@ -229,13 +233,13 @@ module.exports = function (app, SQL) {
                         //this.emit("error", this.sshObj.server.host + ": " + sessionText, null, true);
                         this.emit("exit");
                         //sshObj._stream
-                        console.log(this.sshObj.server.host + ": host.onEnd event")
+                        logger.log('batch', this.sshObj.server.host + ": host.onEnd event", 'batch', 1);
                         
                         // if callback is provided, errors will be passed into it
                         // else errors will be thrown
                     },
                     onError:            function( err, type, close = false, callback ) {
-                        console.log('SSH error ' + type + ' ' +  JSON.stringify(err));
+                        logger.log('batch', 'SSH error ' + type + ' ' +  JSON.stringify(err), 'batch', 3);
                        },
                     
                 };
@@ -275,10 +279,10 @@ module.exports = function (app, SQL) {
                 const command = requirement.spawn(request.query.PARAM, request.query.ARGS.split(','), (error, stdout, stderr) => {
                 //const command = spawn('ls', ['-A','/usr'], (error, stdout, stderr) => {
                     if (error) {
-                        console.error('stderr', stderr);
+                        logger.log('batch', 'Execution error ' + stderr, 'batch', 3);
                         throw error;
                     }
-                    console.log('stdout', stdout);
+                    logger.log('batch', stdout, 'batch', 1);
                     response.json({
                                 CMD: request.query.PARAM + ' ' + request.query.ARGS ,
                                 RESULT: stdout,
@@ -288,13 +292,13 @@ module.exports = function (app, SQL) {
             }
             else {
                 // Command without argument
-                console.log ('Executing ' + request.query.PARAM  + ' ... ');
+                logger.log('batch', 'Executing ' + request.query.PARAM  + ' ... ', 'batch', 1);
                 const command = requirement.spawn(request.query.PARAM, [], (error, stdout, stderr) => {
                     if (error) {
-                        console.error('stderr', stderr);
+                        logger.log('batch', 'Execution error ' + stderr, 'batch', 3);
                         throw error;
                     }
-                    console.log('stdout', stdout);
+                    logger.log('batch', stdout, 'batch', 1);
                     response.json({
                                 CMD: request.query.PARAM ,
                                 RESULT: stdout,
@@ -316,8 +320,7 @@ module.exports = function (app, SQL) {
                 response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
          
                 // Command with arguments
-                console.log ('Executing command on ' + request.header('ENV_IP'),  + ' ' + request.header('ENV_COMMAND') );
-    
+                logger.log('batch', 'Executing command on ' + request.header('ENV_IP')  + ' ' + request.body.command, 'batch', 1);
     
                 //host configuration with connection settings and commands
                let host = {
@@ -345,14 +348,14 @@ module.exports = function (app, SQL) {
                     
                     //this.emit("error", this.sshObj.server.host + ": " + sessionText, null, true);
                     this.emit("exit");
-                    //sshObj._stream
-                    console.log(this.sshObj.server.host + ": host.onEnd event")
+                    //sshObj._stream    
+                    logger.log('batch', this.sshObj.server.host + ": host.onEnd event", 'batch', 1);
                     
                     // if callback is provided, errors will be passed into it
                     // else errors will be thrown
                     },
                     onError:            function( err, type, close = false, callback ) {
-                        console.log('SSH error ' + type + ' ' +  JSON.stringify(err));
+                        logger.log('batch', 'SSH error ' + type + ' ' +  JSON.stringify(err), 'batch', 3);
                        },
                     
                 };

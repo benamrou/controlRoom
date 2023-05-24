@@ -5,7 +5,7 @@ import { Router } from "@angular/router";
 //        RequestOptionsArgs, Response, Headers, ResponseOptionsArgs, ResponseType, ResponseContentType} from '@angular/http';
 
 import {Observable, ObservableInput, throwError} from 'rxjs';
-import {catchError } from 'rxjs/operators';
+import {catchError, tap } from 'rxjs/operators';
 import {environment} from '../../../../environments/environment';
 
 @Injectable()
@@ -14,27 +14,38 @@ export class HttpService  {
   environment_mode: string;
   baseUrl: string = environment.serverURL;
   baseBatchUrl: string = environment.serverBatchURL;
+  transactionsId: any[];
+  sequenceId: number;
+  isLoading : boolean = false;
+
 
   constructor(private httpClient: HttpClient, private _router: Router) {
-    // super(backend,option);
-
-    console.log('BASEURL : ' + this.baseUrl);
-    console.log('BASE_BATCH_URL : ' + this.baseBatchUrl);
+    this.resetTransaction();
   }
-  
-  //constructor(mockbackend: MockBackend, backend: XHRBackend, option: BaseRequestOptions) {
-  //  super(backend,option);
-  //  console.log('BASEURL : ' + this.baseUrl);
-  //}
 
- // constructor(backend: XHRBackend, browser: BrowserXhr, option: RequestOptions, responses?: ResponseOptionsArgs) {
- //   super(backend,option);
- //   console.log('BASEURL : ' + this.baseUrl);
-//  }
+  resetTransaction() {
+    this.sequenceId = 0;
+    this.transactionsId = [];
+    this.isLoading = this.transactionsId.length >0;
+  }
+  addTransaction() {
+    this.sequenceId = this.sequenceId + 1;
+    this.transactionsId.push(this.sequenceId);
+    this.isLoading = this.transactionsId.length >0;
+    return this.sequenceId;
+  }
+
+  endTransaction(id) {
+    let index = this.transactionsId.findIndex((x => x == id))
+    this.transactionsId.splice(index,1);
+    this.isLoading = this.transactionsId.length >0;
+  }
 
   getMock(url: string, paramOtions?: HttpParams, headersOption?:HttpHeaders, responseType?): Observable<Response> {
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
+    let myTransaction = this.addTransaction();
+    
     //url = 'http://localhost:5555/' + url;
     console.log ('Get MOCK data : ' + url);
     if (!headersOption) {
@@ -52,21 +63,24 @@ export class HttpService  {
                                       params: paramOtions, 
                                       responseType: responseType? responseType: 'json'
                                     })
-            .pipe(catchError((error: Response, caught) => {
+            .pipe(
+              tap(data => this.endTransaction(myTransaction)),
+              catchError((error: Response, caught) => {
             //console.log('Error : ' + JSON.stringify(error));
-            if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
-                console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                window.location.href = window.location.href + '?' + new Date().getMilliseconds();
-            }
-            return throwError(() => new Error(error.toString()));
-            //return Observable.throw(error);
-        }) as any);
+                  if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
+                      console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
+                      window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                  }
+                  return throwError(() => new Error(error.toString()));
+                  //return Observable.throw(error);
+              }) as any);
   }
 
 
   getLocalFile(url: string,  responseType): Observable<Response> {
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
+    let myTransaction = this.addTransaction();
     //url = 'http://localhost:5555/' + url;
     console.log ('Get MOCK data : ' + url);
 
@@ -74,15 +88,16 @@ export class HttpService  {
     //console.log('headers '  + JSON.stringify(options.headers));
     //console.log('params '  + JSON.stringify(options.search));
     return this.httpClient.get(url, { responseType: responseType})
-            .pipe(catchError((error: Response, caught) => {
-            //console.log('Error : ' + JSON.stringify(error));
-            if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
-                console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                window.location.href = window.location.href + '?' + new Date().getMilliseconds();
-            }
-            return throwError(() => new Error(error.toString()));
-            //return Observable.throw(error);
-        }) as any);
+            .pipe(
+              tap(data => this.endTransaction(myTransaction)),
+              catchError((error: Response, caught) => {
+                  if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
+                      console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
+                      window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                  }
+                  return throwError(() => new Error(error.toString()));
+                  //return Observable.throw(error);
+              }) as any);
   }
 
   get(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders): Observable<Response> {
@@ -90,6 +105,8 @@ export class HttpService  {
 
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
+    let myTransaction = this.addTransaction();
+    
     url = this.baseUrl + url;
     if (!headersOption) {
       // let's make option object
@@ -109,7 +126,9 @@ export class HttpService  {
                                       params: paramOptions,
                                       responseType: 'json'
                                     }
-        ).pipe(catchError((error: Response, caught) => {
+        ).pipe(
+          tap(data => this.endTransaction(myTransaction)),
+          catchError((error: Response, caught) => {
             console.log('Error : ' + JSON.stringify(error));
             if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                 console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
@@ -126,6 +145,7 @@ export class HttpService  {
 
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
+    let myTransaction = this.addTransaction();
     url = this.baseUrl + url;
     if (!headersOption) {
       // let's make option object
@@ -146,7 +166,10 @@ export class HttpService  {
                                       params: paramOptions,
                                       responseType: 'blob' as 'blob'
                                     }
-        ).pipe(catchError((error: Response, caught) => {
+        )
+        .pipe(
+            tap(data => this.endTransaction(myTransaction)),
+            catchError((error: Response, caught) => {
             console.log('Error : ' + JSON.stringify(error));
             if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                 console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
@@ -161,6 +184,7 @@ export class HttpService  {
     //console.log('POST : URL => ' + JSON.stringify(url));
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
+    let myTransaction = this.addTransaction();
     let body = {}
     if (typeof url === 'string') { // meaning we have to add the token to the options, not in url
       url = this.baseUrl + url;
@@ -183,20 +207,24 @@ export class HttpService  {
     return this.httpClient.post(url, body, {  headers:headersOption,
                                               params: paramOptions, 
                                               responseType: 'json'
-                                            }).pipe(catchError((error: Response, caught) => {
-            if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
-                console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                window.location.href = window.location.href + '?' + new Date().getMilliseconds();
-            }
+                                            })
+            .pipe(
+              tap(data => this.endTransaction(myTransaction)),
+              catchError((error: Response, caught) => {
+                  if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
+                      console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
+                      window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                  }
 
-            return this.handleError(url,error);
-        }) as any);
+                  return this.handleError(url,error);
+              }) as any);
   }
 
   postFile(url: string,  paramOptions?: HttpParams, headersOption?:HttpHeaders, bodyOptions?: any ): Observable<Response> {
     //console.log('POST : URL => ' + JSON.stringify(url));
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
+    let myTransaction = this.addTransaction();
     let body = {}
     if (typeof url === 'string') { // meaning we have to add the token to the options, not in url
       url = this.baseUrl + url;
@@ -219,14 +247,17 @@ export class HttpService  {
     return this.httpClient.post(url, body, {  headers:headersOption,
                                               params: paramOptions, 
                                               responseType: 'json'
-                                            }).pipe(catchError((error: Response, caught) => {
-            if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
-                console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                window.location.href = window.location.href + '?' + new Date().getMilliseconds();
-            }
+                                            })
+            .pipe(
+              tap(data => this.endTransaction(myTransaction)),
+              catchError((error: Response, caught) => {
+                  if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
+                      console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
+                      window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                  }
 
-            return this.handleError(url,error);
-        }) as any);
+                  return this.handleError(url,error);
+              }) as any);
   }
   
   execute(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders, bodyOptions?): Observable<Response> {
@@ -234,6 +265,7 @@ export class HttpService  {
 
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
+    let myTransaction = this.addTransaction();
     let body = {command: ''}
     url = this.baseBatchUrl + url;
     if (!headersOption) {
@@ -261,15 +293,17 @@ export class HttpService  {
                                       params: paramOptions,
                                       responseType: 'json'
                                     }
-        ).pipe(catchError((error: Response, caught) => {
-            //console.log('Error : ' + JSON.stringify(error));
-            if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
-                console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                window.location.href = window.location.href + '?' + new Date().getMilliseconds();
-            }
-            
-            return this.handleError(url,error);
-        }) as any);
+        ).pipe(
+          tap(data => this.endTransaction(myTransaction)),
+          catchError((error: Response, caught) => {
+                  //console.log('Error : ' + JSON.stringify(error));
+                  if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
+                      console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
+                      window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                  }
+                  
+                  return this.handleError(url,error);
+              }) as any);
   }
 
   executeStock(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders, bodyOptions?): Observable<Response> {
@@ -277,6 +311,7 @@ export class HttpService  {
 
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
+    let myTransaction = this.addTransaction();
     let body = {command: ''}
     url = this.baseBatchUrl + url;
     if (!headersOption) {
@@ -298,21 +333,24 @@ export class HttpService  {
     }
 
     console.log ('Request : ' + url + ' / ' + JSON.stringify(headersOption));
+    console.log ('Request body : ',body);
     //console.log('headers '  + JSON.stringify(headersOption));
     //console.log('params '  + JSON.stringify(paramOptions));
     return this.httpClient.post(url, body, { headers: headersOption,
                                       params: paramOptions,
                                       responseType: 'json'
                                     }
-        ).pipe(catchError((error: Response, caught) => {
-            //console.log('Error : ' + JSON.stringify(error));
-            if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
-                console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                window.location.href = window.location.href + '?' + new Date().getMilliseconds();
-            }
-            
-            return this.handleError(url,error);
-        }) as any);
+        ).pipe(
+          tap(data => this.endTransaction(myTransaction)),
+          catchError((error: Response, caught) => {
+                //console.log('Error : ' + JSON.stringify(error));
+                if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
+                    console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
+                    window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                }
+                
+                return this.handleError(url,error);
+            }) as any);
   }
 
   executeMobility(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders, bodyOptions?): Observable<Response> {
@@ -321,6 +359,7 @@ export class HttpService  {
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
     let body = {command: ''}
+    let myTransaction = this.addTransaction();
     url = this.baseBatchUrl + url;
     if (!headersOption) {
       // let's make option object
@@ -347,28 +386,34 @@ export class HttpService  {
                                       params: paramOptions,
                                       responseType: 'json'
                                     }
-        ).pipe(catchError((error: Response, caught) => {
-            //console.log('Error : ' + JSON.stringify(error));
-            if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
-                console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                window.location.href = window.location.href + '?' + new Date().getMilliseconds();
-            }
-            
-            return this.handleError(url,error);
-        }) as any);
+        ).pipe(
+          tap(data => this.endTransaction(myTransaction)),
+          catchError((error: Response, caught) => {
+                //console.log('Error : ' + JSON.stringify(error));
+                if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
+                    console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
+                    window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                }
+                
+                return this.handleError(url,error);
+            }) as any);
   }
 
   authentification(url: string, headersOption?:HttpHeaders, paramOtions?: HttpParams): Observable<Response> {
     //console.log('***** authentification ****');
     //console.log('Authentification - base URL : ' + JSON.stringify(this.baseUrl));
     let content = { body: "" };
+    let myTransaction = this.addTransaction();
     url = this.baseUrl + url;
     headersOption = headersOption.set('Content-Type', 'application/json');
 
     //console.log('Authentification - httpOptions : ' + JSON.stringify(this.httpOptions));
-    return this.httpClient.post(url, content, {headers: headersOption}).pipe(catchError((error: Response, caught) => {
-            return this.handleError(url,error);
-        }) as any);
+    return this.httpClient.post(url, content, {headers: headersOption})
+          .pipe(
+            tap(data => this.endTransaction(myTransaction)),
+            catchError((error: Response, caught) => {
+                return this.handleError(url,error);
+            }) as any);
   }
 
   handleError(url: string, error: Response) : ObservableInput<Response> {

@@ -80,7 +80,7 @@ export class WarehouseRestartServicesComponent implements OnDestroy {
               },
               () => { 
                     this._messageService.add({severity:'success', summary:'Completed', detail: 'Warehouse services have been restarted...' });
-                    this.msgDisplayed = '';
+                    this.msgDisplayed = 'Warehouse processes have been successfully restarted.';
                     this.displayProcessCompleted = true;
               }
           ));

@@ -16,6 +16,8 @@ import { MessageModule } from 'primeng/message';
 import { BadgeModule} from 'primeng/badge';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FieldsetModule } from 'primeng/fieldset';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { InputTextareaModule} from 'primeng/inputtextarea';
 
 @NgModule({
     imports: [ RouterModule, CommonModule,FormsModule,
@@ -26,6 +28,8 @@ import { FieldsetModule } from 'primeng/fieldset';
                TooltipModule, 
                ToastModule,TabViewModule,
                FieldsetModule,
+               ConfirmDialogModule,
+               InputTextareaModule,
                PageHeaderModule ],
     declarations: [ServicesCenterComponent],
     exports: [ServicesCenterComponent],
