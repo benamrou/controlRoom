@@ -41,6 +41,7 @@ export class SupplierScheduleComponent {
    trackIndex: number = 0;
 
    screenID;
+    waitMessage: string = '';
 
   // Search result 
    searchResult : any [] = [];

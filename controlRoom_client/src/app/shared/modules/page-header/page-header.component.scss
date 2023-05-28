@@ -16,3 +16,24 @@
     background-color: rgb(233, 236, 239);
     padding: .75rem 1rem;
 }
+
+.block_ui_div {
+    width: 100%;
+    border-style: double;
+    min-height: 20%;
+    overflow: hidden;
+    background-color: black;
+    border-width: 5px 0px 5px 0px;
+    border-color: yellow;
+    opacity: 0.75;
+    z-index: 99;
+    font-size: inherit;
+    text-align: center;
+    color: white;
+    padding-top: 2em;
+}
+
+:host ::ng-deep .p-blockui-document.p-component-overlay {
+    position: fixed;
+    z-index: 99 !important;
+}

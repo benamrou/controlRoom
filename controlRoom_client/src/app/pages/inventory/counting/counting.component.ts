@@ -23,6 +23,7 @@ import { MessageService } from 'primeng/api';
 export class CountingComponent implements OnDestroy {
    
    screenID;
+    waitMessage: string = '';
    columnOptions!: SelectItem[];
 
   // Search result 

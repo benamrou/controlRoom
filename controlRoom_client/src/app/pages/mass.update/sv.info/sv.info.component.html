@@ -1,6 +1,6 @@
 <div>
     <app-page-header #pageHeader [heading]="'Item/SV information change'" [icon]="'fa-info-circle'"
-        [screenID]="screenID">
+        [waitMessage]="waitMessage" [screenID]="screenID">
     </app-page-header>
 </div>
 
@@ -12,7 +12,7 @@
     </p-steps>
 </div>
 
-<p-dialog header="Update completed" [(visible)]="displayUpdateCompleted" [modal]="true" width="500" 
+<p-dialog header="Update completed" [(visible)]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" 
     [maximizable]="false">
     <span>{{msgFinalDisplayed}}</span>
     <p-footer>

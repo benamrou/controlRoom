@@ -45,6 +45,7 @@ export class DashboardSupplierComponent {
    trackIndex: number = 0;
 
    screenID;
+    waitMessage: string = '';
 
    // top badges
    selectedVendorCode: any;

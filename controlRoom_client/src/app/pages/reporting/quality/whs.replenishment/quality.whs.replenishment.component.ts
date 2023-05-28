@@ -38,6 +38,7 @@ export class QualityWhsReplenishmentComponent implements OnDestroy {
    trackIndex: number = 0;
 
    screenID;
+    waitMessage: string = '';
 
    selectedFilter: any;
   // Search result 

@@ -77,6 +77,7 @@ export class DashboardCycleComponent {
   data_covered: any;
 
   screenID: any;
+  waitMessage: string = '';
 
   buttonEffect = {
     NEG_DISPLAY: true,

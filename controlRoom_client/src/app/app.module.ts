@@ -76,6 +76,8 @@ import { CountingModule } from './pages/inventory/counting/counting.module';
 import { StockModule } from './pages/inventory/stock/stock.module';
 import { CategoryManagerModule } from './pages/mass.update/category.manager/category.manager.module';
 import { RobotModule } from './pages/robot/robot.module';
+import { SyndigoDownloadModule } from './pages/syndigo/download/syndigo.download.module';
+import { SyndigoProductModule } from './pages/syndigo/product/syndigo.product.module';
 
 import { DashboardModule } from './pages/dashboard/dashboard.module';
 import { EDIInvoiceModule } from './pages/finance/edi/ediinvoice.module';
@@ -99,6 +101,7 @@ import { SVInfoModule } from './pages/mass.update/sv.info/sv.info.module';
 import { GenerateScheduleModule } from './pages/schedule/generate.schedule/generate.schedule.module';
 import { WarehouseRestartServicesModule } from './pages/warehouse/restart.services/restart.services.module';
 import { ServicesCenterModule } from './pages/helpdesk/services.center/services.center.module';
+import { SyndigoService } from './shared/services/syndigo/syndigo.service';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -182,7 +185,9 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     GenerateScheduleModule,
     RobotModule,
     WarehouseRestartServicesModule,
-    ServicesCenterModule
+    ServicesCenterModule,
+    SyndigoProductModule,
+    SyndigoDownloadModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,
@@ -199,6 +204,7 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
               ExportService, ImportService, ItemService,SupplierScheduleService,SupplierContractScheduleService,
               SearchService, FinanceService, ProcessService, InventoryService,
               CountingService, TreeDragDropService, ConfirmationService,ParamService,
+              SyndigoService,
               DatePipe],
 
   bootstrap: [AppComponent],

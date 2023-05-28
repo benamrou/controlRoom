@@ -1,5 +1,5 @@
 <app-page-header [heading]="'Supplier schedule by calendar schedule'" [icon]="'fa-calendar'"
-                 [screenID]="screenID"></app-page-header>
+                 [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
                  
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
@@ -44,7 +44,7 @@
 </div>
 <p></p>
 
-<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" width="500" [responsive]="true" [maximizable]="false">
+<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 

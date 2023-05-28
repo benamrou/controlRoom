@@ -15,8 +15,8 @@ export class HttpService  {
   baseUrl: string = environment.serverURL;
   baseBatchUrl: string = environment.serverBatchURL;
   transactionsId: any[];
-  sequenceId: number;
-  isLoading : boolean = false;
+  sequenceId: number = 0;
+  public isLoading : boolean = false;
 
 
   constructor(private httpClient: HttpClient, private _router: Router) {
@@ -24,7 +24,6 @@ export class HttpService  {
   }
 
   resetTransaction() {
-    this.sequenceId = 0;
     this.transactionsId = [];
     this.isLoading = this.transactionsId.length >0;
   }
@@ -32,6 +31,7 @@ export class HttpService  {
     this.sequenceId = this.sequenceId + 1;
     this.transactionsId.push(this.sequenceId);
     this.isLoading = this.transactionsId.length >0;
+    console.log('addTransaction', this.sequenceId, this.transactionsId);
     return this.sequenceId;
   }
 
@@ -39,6 +39,7 @@ export class HttpService  {
     let index = this.transactionsId.findIndex((x => x == id))
     this.transactionsId.splice(index,1);
     this.isLoading = this.transactionsId.length >0;
+    console.log('endTransaction', id, this.transactionsId);
   }
 
   getMock(url: string, paramOtions?: HttpParams, headersOption?:HttpHeaders, responseType?): Observable<Response> {
@@ -66,6 +67,7 @@ export class HttpService  {
             .pipe(
               tap(data => this.endTransaction(myTransaction)),
               catchError((error: Response, caught) => {
+                  this.endTransaction(myTransaction)
             //console.log('Error : ' + JSON.stringify(error));
                   if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                       console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
@@ -91,6 +93,7 @@ export class HttpService  {
             .pipe(
               tap(data => this.endTransaction(myTransaction)),
               catchError((error: Response, caught) => {
+                  this.endTransaction(myTransaction)
                   if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                       console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
                       window.location.href = window.location.href + '?' + new Date().getMilliseconds();
@@ -129,6 +132,7 @@ export class HttpService  {
         ).pipe(
           tap(data => this.endTransaction(myTransaction)),
           catchError((error: Response, caught) => {
+            this.endTransaction(myTransaction)
             console.log('Error : ' + JSON.stringify(error));
             if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                 console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
@@ -170,6 +174,7 @@ export class HttpService  {
         .pipe(
             tap(data => this.endTransaction(myTransaction)),
             catchError((error: Response, caught) => {
+            this.endTransaction(myTransaction)
             console.log('Error : ' + JSON.stringify(error));
             if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                 console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
@@ -211,6 +216,7 @@ export class HttpService  {
             .pipe(
               tap(data => this.endTransaction(myTransaction)),
               catchError((error: Response, caught) => {
+                  this.endTransaction(myTransaction)
                   if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                       console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
                       window.location.href = window.location.href + '?' + new Date().getMilliseconds();
@@ -251,6 +257,7 @@ export class HttpService  {
             .pipe(
               tap(data => this.endTransaction(myTransaction)),
               catchError((error: Response, caught) => {
+                  this.endTransaction(myTransaction)
                   if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                       console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
                       window.location.href = window.location.href + '?' + new Date().getMilliseconds();
@@ -296,6 +303,7 @@ export class HttpService  {
         ).pipe(
           tap(data => this.endTransaction(myTransaction)),
           catchError((error: Response, caught) => {
+                  this.endTransaction(myTransaction)
                   //console.log('Error : ' + JSON.stringify(error));
                   if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                       console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
@@ -343,6 +351,7 @@ export class HttpService  {
         ).pipe(
           tap(data => this.endTransaction(myTransaction)),
           catchError((error: Response, caught) => {
+                this.endTransaction(myTransaction)
                 //console.log('Error : ' + JSON.stringify(error));
                 if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                     console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
@@ -389,6 +398,7 @@ export class HttpService  {
         ).pipe(
           tap(data => this.endTransaction(myTransaction)),
           catchError((error: Response, caught) => {
+                this.endTransaction(myTransaction)
                 //console.log('Error : ' + JSON.stringify(error));
                 if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                     console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
@@ -412,17 +422,18 @@ export class HttpService  {
           .pipe(
             tap(data => this.endTransaction(myTransaction)),
             catchError((error: Response, caught) => {
+                this.endTransaction(myTransaction)
                 return this.handleError(url,error);
             }) as any);
   }
 
   handleError(url: string, error: Response) : ObservableInput<Response> {
     console.error('Error error: ' + JSON.stringify(error));
-    this._router.navigate(['not-accessible'], {
+    /*this._router.navigate(['not-accessible'], {
             queryParams: {
               message : JSON.stringify(error)
             }
-          });
+          }); */
     return throwError(error);;
   }
 }

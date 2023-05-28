@@ -69,6 +69,7 @@ export class MissingCAOComponent {
  
   msgs: Message[] = [];
   screenID;
+    waitMessage: string = '';
 
   constructor( private _messageService: MessageService, private _processService: ProcessService, private _caoService: CaoService) {
     this.screenID =  'SCR0000000005';

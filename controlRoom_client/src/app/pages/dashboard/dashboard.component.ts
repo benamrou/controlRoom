@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     columns: any [] = [];
 
     screenID;
+    waitMessage: string = '';
     screenInfo;
     widgetFocus: Widget;
 

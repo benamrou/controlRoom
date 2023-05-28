@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Restart services'" [icon]="'pi pi-refresh'" [screenID]="screenID" [headcolor]="'gold'"
+<app-page-header [heading]="'Restart services'" [icon]="'pi pi-refresh'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"
   [linkcolor]="'chocolate'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -6,7 +6,7 @@
 </div>
 <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
-<p-dialog header="Processes restarted" [visible]="displayProcessCompleted" [modal]="true" width="500" [responsive]="true" [maximizable]="false">
+<p-dialog header="Processes restarted" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
   <span>{{msgDisplayed}}</span>
       <p-footer>
           <button style="float: right; margin-bottom:0.5em" 
@@ -25,12 +25,12 @@
     </span>
     <br>
     <br>
-    <span style="margin-left: 2.2em; font-weight: bold;"> Make sure Make sure associates are aware about the restart process.
+    <span style="margin-left: 2.2em; font-weight: bold;"> Make sure associates are aware about the restart process.
     </span>
   </div>
 </div>
 
-<div table-layout="fixed" >
+<div table-layout="fixed" style="padding-top: 7em" >
   <p-tabView>
     <p-tabPanel header="Warehouse">
       <p-fieldset legend="Warehouse processes restart" [toggleable]="true">
@@ -66,8 +66,7 @@
                 </td>
               </tr>
               <tr style="background-color: #eaf6fe; border-width: 1px 0px 1px 0px;">
-                <td class="col-9" style="align-self: center;"><b>GOLD GWVO</b> : this service is used by prep. managers and
-                  leads to track the workload and define voice devices for picking/preparation.</td>
+                <td class="col-9" style="align-self: center;"><b>GOLD GWVO</b> : this service is used by prep. managers, used to track the workload and activity progress and define voice devices for picking/preparation.</td>
                 <td class="col-3" style="text-align: center;">
                   <button type="submit" pButton (click)="restartGWVO()" icon="fas fa-dot-circle" label="Restart" pTooltip="Restart GWVO"></button>
                 </td>

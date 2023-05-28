@@ -15,7 +15,6 @@ import {ConfirmationService, ConfirmEventType} from 'primeng/api';
     encapsulation: ViewEncapsulation.None
 })
 
-
 export class WarehouseRestartServicesComponent implements OnDestroy {
   
   // WarehouseRestartServices action
@@ -25,6 +24,7 @@ export class WarehouseRestartServicesComponent implements OnDestroy {
    displayProcessCompleted: boolean;
 
    screenID;
+   waitMessage: string = '';
 
   // WarehouseRestartServices result 
    searchResult : any [] = [];
@@ -68,7 +68,9 @@ export class WarehouseRestartServicesComponent implements OnDestroy {
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-          this._messageService.add({severity:'info', summary:'Info Message', detail: 'Restarting the all warehouse services...' });
+          this._messageService.add({severity:'info', summary:'Info Message', detail: 'Restarting all warehouse services...' });
+          this.waitMessage ='Restarting all warehouse services...<br>' + 
+                            '<br> The restart process is usually taking <b>between 5 and 7 minutes</b>'
           this.subscription.push( this._processService.executeScriptStock(this._userService.userInfo.mainEnvironment[0].restartallstock)
           .subscribe( 
               data => { this.searchResult = data; // put the data returned from the server in our variable
@@ -77,10 +79,12 @@ export class WarehouseRestartServicesComponent implements OnDestroy {
               error => {
                     // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
                     this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+                    this.waitMessage ='';
               },
               () => { 
                     this._messageService.add({severity:'success', summary:'Completed', detail: 'Warehouse services have been restarted...' });
                     this.msgDisplayed = 'Warehouse processes have been successfully restarted.';
+                    this.waitMessage ='';
                     this.displayProcessCompleted = true;
               }
           ));
@@ -88,7 +92,7 @@ export class WarehouseRestartServicesComponent implements OnDestroy {
       reject: (type) => {
           switch(type) {
               case ConfirmEventType.REJECT:
-                  this._messageService.add({severity:'error', summary:'Rejected', detail:'Processes restart cancelled'});
+                  this._messageService.add({severity:'error', summary:'Cancelled', detail:'Processes restart cancelled'});
               break;
               case ConfirmEventType.CANCEL:
                   this._messageService.add({severity:'warn', summary:'Cancelled', detail:'Processes restart cancelled'});

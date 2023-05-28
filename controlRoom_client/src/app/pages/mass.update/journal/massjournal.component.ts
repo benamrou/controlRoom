@@ -86,7 +86,9 @@ export class MassJournalComponent {
    msgDisplayed!: String;
  
   msgs: Message[] = [];
-  screenID
+  
+  screenID;
+  waitMessage: string;
 
   constructor( private _messageService: MessageService, private _processService: ProcessService, 
                private _exportService: ExportService,

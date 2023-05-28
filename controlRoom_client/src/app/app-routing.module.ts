@@ -41,6 +41,8 @@ import { GenerateScheduleComponent } from './pages/schedule/generate.schedule/ge
 import { RobotComponent } from './pages/robot/robot.component';
 import { WarehouseRestartServicesComponent } from './pages/warehouse/restart.services/restart.services.component';
 import { ServicesCenterComponent } from './pages/helpdesk/services.center/services.center.component';
+import { SyndigoDownloadComponent } from './pages/syndigo/download/syndigo.download.component';
+import { SyndigoProductComponent } from './pages/syndigo/product/syndigo.product.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -66,6 +68,10 @@ const routes: Routes = [
   { path: 'warehouse', component: WarehouseComponent, canActivate: [AuthentificationGuard] },
   { path: 'fixpickingunit', component: FixPickingUnitComponent, canActivate: [AuthentificationGuard] },
   { path: 'whsrestartservices', component: WarehouseRestartServicesComponent, canActivate: [AuthentificationGuard] },
+
+  /* Syndigo */
+  { path: 'syndigosearch', component: SyndigoProductComponent, canActivate: [AuthentificationGuard] },
+  { path: 'syndigocollect', component: SyndigoDownloadComponent, canActivate: [AuthentificationGuard] },
 
   /* IT */
   { path: 'batchschedule', component: BatchScheduleComponent, canActivate: [AuthentificationGuard] },

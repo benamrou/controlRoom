@@ -58,6 +58,7 @@ export class SVInfoComponent implements OnInit {
     missingData;
 
     screenID;
+    waitMessage: string = '';
     searchButtonEnable: boolean = true; // Disable the search button when clicking on search in order to not overload queries
 
     // Search action

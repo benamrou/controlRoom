@@ -41,6 +41,7 @@ export class GenerateScheduleComponent implements OnDestroy{
    trackIndex: number = 0;
 
    screenID;
+    waitMessage: string = '';
 
   // Search result 
    searchResult : any [] = [];

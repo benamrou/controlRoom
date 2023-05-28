@@ -87,6 +87,25 @@
             <a routerLink="/search" [routerLinkActive]="['router-link-active']" class="list-group-item">
                 <i class="fa fa-fw fa-search"></i> &nbsp; {{ 'Search' }}
             </a>
+            <div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('syndigo')" >
+                    <span><i class="fas fa-barcode"></i> &nbsp; {{ 'Syndigo' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'syndigo' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/syndigosearch" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-search"></i> {{ 'Search' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/syndigocollect" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-camera"></i> {{ 'Collect' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
 
             <div class="nested-menu">
                 <a class="list-group-item" (click)="addExpandClass('warehouse')" >

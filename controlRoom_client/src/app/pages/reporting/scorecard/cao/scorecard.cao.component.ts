@@ -27,6 +27,7 @@ export class ScorecardCAOComponent {
   @ViewChild('fc') fc!: FullCalendar;
 
    screenID;
+    waitMessage: string = '';
    columnOptions!: SelectItem[];
    trackIndex: number = 0;
 

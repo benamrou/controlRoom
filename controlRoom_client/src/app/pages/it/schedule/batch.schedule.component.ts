@@ -70,6 +70,7 @@ export class BatchScheduleComponent {
   msgs: Message[] = [];
 
   screenID;
+    waitMessage: string = '';
 
   constructor( private _messageService: MessageService, private _processService: ProcessService) {
     this.screenID =  'SCR0000000006';

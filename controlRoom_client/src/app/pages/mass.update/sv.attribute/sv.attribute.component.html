@@ -1,6 +1,6 @@
 <div>
     <app-page-header #pageHeader [heading]="'Item/SV attribute change'" [icon]="'fa-code-branch'"
-                     [screenID]="screenID">
+                     [waitMessage]="waitMessage" [screenID]="screenID">
     </app-page-header>
 </div>
 
@@ -13,7 +13,7 @@
     </p-steps>
 </div>
 
-<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" width="500" [responsive]="true" [maximizable]="false">
+<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgFinalDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 

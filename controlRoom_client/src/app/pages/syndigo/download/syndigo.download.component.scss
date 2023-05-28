@@ -1,0 +1,65 @@
+::ng-deep .ui-helper-clearfix {
+    color: white;
+    background: #555;
+}
+
+.header_cell {
+    background-color: lightblue;
+    text-align: center;
+    border: 1px solid black;
+    font-weight: bolder;
+    font-size: smaller;
+}
+
+.line_cell {
+    background-color: #F8F8FF;
+    text-align: center;
+    border: 1px solid black;
+    font-size: smaller;
+}
+
+
+.header_table {
+    background-color: steelblue;
+    border: 1px solid black;
+    font-weight: bolder;
+    color: white;
+    font-size: smaller;
+}
+
+.subheader_table {
+    background-color: lightseagreen;
+    border: 1px solid black;
+    font-weight: bolder;
+    color: white;
+    font-size: smaller;
+}
+
+.line_center_table {
+    background-color: lightgray;
+    text-align: center;
+    border: 1px solid black;
+    font-size: smaller;
+}
+
+.line_table {
+    background-color: lightgray;
+    border: 1px solid black;
+    font-size: smaller;
+}
+
+/** styling nav button **/
+.topRightDiv {
+    position: fixed;
+    top: 5em;
+    right: 20px;
+    padding: 5px;
+    color: white;
+    background-color: #d81b60;
+    text-align: center;
+    border-top-right-radius:15px;
+    border-top-left-radius:15px;
+    border-bottom-right-radius:15px;
+    border-bottom-left-radius:15px;
+}
+  

@@ -24,6 +24,7 @@ export class RobotComponent {
    //msgs: Message[] = [];
 
    screenID;
+    waitMessage: string = '';
 
   // Robot result 
    searchResult : any [] = [];

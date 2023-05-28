@@ -5,9 +5,16 @@ import { FormsModule }  from '@angular/forms';
 import { PageHeaderComponent } from './page-header.component';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { BlockUIModule } from 'primeng/blockui';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 
 @NgModule({
-    imports: [CommonModule, RouterModule, FormsModule, OverlayPanelModule, ProgressBarModule],
+    imports: [CommonModule, RouterModule, FormsModule, 
+              OverlayPanelModule, 
+              ProgressBarModule,
+              ScrollPanelModule,
+              BlockUIModule
+            ],
     declarations: [PageHeaderComponent],
     exports: [PageHeaderComponent],
     bootstrap: [PageHeaderComponent],
