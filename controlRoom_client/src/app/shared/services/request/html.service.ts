@@ -31,7 +31,7 @@ export class HttpService  {
     this.sequenceId = this.sequenceId + 1;
     this.transactionsId.push(this.sequenceId);
     this.isLoading = this.transactionsId.length >0;
-    console.log('addTransaction', this.sequenceId, this.transactionsId);
+    //console.log('addTransaction', this.sequenceId, this.transactionsId);
     return this.sequenceId;
   }
 
@@ -39,7 +39,7 @@ export class HttpService  {
     let index = this.transactionsId.findIndex((x => x == id))
     this.transactionsId.splice(index,1);
     this.isLoading = this.transactionsId.length >0;
-    console.log('endTransaction', id, this.transactionsId);
+    //console.log('endTransaction', id, this.transactionsId);
   }
 
   getMock(url: string, paramOtions?: HttpParams, headersOption?:HttpHeaders, responseType?): Observable<Response> {
@@ -71,7 +71,7 @@ export class HttpService  {
             //console.log('Error : ' + JSON.stringify(error));
                   if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                       console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                      window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                      //window.location.href = window.location.href + '?' + new Date().getMilliseconds();
                   }
                   return throwError(() => new Error(error.toString()));
                   //return Observable.throw(error);
@@ -96,21 +96,24 @@ export class HttpService  {
                   this.endTransaction(myTransaction)
                   if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                       console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                      window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                      //window.location.href = window.location.href + '?' + new Date().getMilliseconds();
                   }
                   return throwError(() => new Error(error.toString()));
                   //return Observable.throw(error);
               }) as any);
   }
 
-  get(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders): Observable<Response> {
+  get(url: string, paramOptions?: HttpParams, headersOption?:HttpHeaders, externalUrl?: boolean): Observable<Response> {
     //console.log('***** Get HTML ****');
 
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
     let myTransaction = this.addTransaction();
     
-    url = this.baseUrl + url;
+    if (!externalUrl) {
+      url = this.baseUrl + url;
+    }
+    
     if (!headersOption) {
       // let's make option object
       headersOption = new HttpHeaders();
@@ -122,9 +125,7 @@ export class HttpService  {
     headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
     headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
 
-    console.log ('Request : ' + url + ' / ' + JSON.stringify(headersOption));
-    //console.log('headers '  + JSON.stringify(headersOption));
-    //console.log('params '  + JSON.stringify(paramOptions));
+    console.log('HTTP GET:', url, headersOption, paramOptions);
     return this.httpClient.get(url, { headers: headersOption,
                                       params: paramOptions,
                                       responseType: 'json'
@@ -136,7 +137,7 @@ export class HttpService  {
             console.log('Error : ' + JSON.stringify(error));
             if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                 console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                //window.location.href = window.location.href + '?' + new Date().getMilliseconds();
             }
             
             return this.handleError(url,error);
@@ -163,7 +164,7 @@ export class HttpService  {
     headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
     headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
 
-    console.log ('Request : ' + url + ' / ' + JSON.stringify(headersOption));
+    console.log('HTTP GET FILE:', url, headersOption, paramOptions);
     //console.log('headers '  + JSON.stringify(headersOption));
     //console.log('params '  + JSON.stringify(paramOptions));
     return this.httpClient.get(url, { headers: headersOption,
@@ -178,36 +179,41 @@ export class HttpService  {
             console.log('Error : ' + JSON.stringify(error));
             if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                 console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                //window.location.href = window.location.href + '?' + new Date().getMilliseconds();
             }
             
             return this.handleError(url,error);
         }) as any);
   }
 
-  post(url: string,  paramOptions?: HttpParams, headersOption?:HttpHeaders, bodyOptions?: any ): Observable<Response> {
+  post(url: string,  paramOptions?: HttpParams, headersOption?:HttpHeaders, bodyOptions?: any,externalUrl?: boolean): Observable<Response> {
     //console.log('POST : URL => ' + JSON.stringify(url));
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
     let myTransaction = this.addTransaction();
     let body = {}
-    if (typeof url === 'string') { // meaning we have to add the token to the options, not in url
-      url = this.baseUrl + url;
-    }
+
     if (!headersOption) {
       // let's make option object
       headersOption = new HttpHeaders();
     }
+
     headersOption = headersOption.set('Content-Type', 'application/json');
 
-    headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
-    headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
-    headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
-    headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+    if (!externalUrl) {
+      url = this.baseUrl + url;
+  
+      headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
+      headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
+      headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
+      headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+    }
 
     if (bodyOptions) {
       body = bodyOptions;
     }
+
+    console.log('HTTP POST:', url, headersOption, body, paramOptions);
     //console.log('Http post:', paramOptions, headersOption, body, bodyOptions);
     return this.httpClient.post(url, body, {  headers:headersOption,
                                               params: paramOptions, 
@@ -216,10 +222,11 @@ export class HttpService  {
             .pipe(
               tap(data => this.endTransaction(myTransaction)),
               catchError((error: Response, caught) => {
+                console.log('error POST', error);
                   this.endTransaction(myTransaction)
                   if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                       console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                      window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                      //window.location.href = window.location.href + '?' + new Date().getMilliseconds();
                   }
 
                   return this.handleError(url,error);
@@ -249,7 +256,8 @@ export class HttpService  {
     if (bodyOptions) {
       body = bodyOptions;
     }
-    console.log('Http post:', paramOptions, headersOption, body, bodyOptions);
+
+    console.log('HTTP POST FILE:', url, headersOption, body, paramOptions);
     return this.httpClient.post(url, body, {  headers:headersOption,
                                               params: paramOptions, 
                                               responseType: 'json'
@@ -260,7 +268,7 @@ export class HttpService  {
                   this.endTransaction(myTransaction)
                   if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                       console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                      window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                      //window.location.href = window.location.href + '?' + new Date().getMilliseconds();
                   }
 
                   return this.handleError(url,error);
@@ -293,7 +301,7 @@ export class HttpService  {
       body.command = bodyOptions;
     }
 
-    console.log ('Request : ' + url + ' / ' + JSON.stringify(headersOption));
+    console.log('HTTP EXECUTE:', url, headersOption, body, paramOptions);
     //console.log('headers '  + JSON.stringify(headersOption));
     //console.log('params '  + JSON.stringify(paramOptions));
     return this.httpClient.post(url, body, { headers: headersOption,
@@ -307,7 +315,7 @@ export class HttpService  {
                   //console.log('Error : ' + JSON.stringify(error));
                   if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                       console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                      window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                      //window.location.href = window.location.href + '?' + new Date().getMilliseconds();
                   }
                   
                   return this.handleError(url,error);
@@ -340,8 +348,7 @@ export class HttpService  {
       body.command = bodyOptions;
     }
 
-    console.log ('Request : ' + url + ' / ' + JSON.stringify(headersOption));
-    console.log ('Request body : ',body);
+    console.log('HTTP EXECUTE STOCK:', url, headersOption, body, paramOptions);
     //console.log('headers '  + JSON.stringify(headersOption));
     //console.log('params '  + JSON.stringify(paramOptions));
     return this.httpClient.post(url, body, { headers: headersOption,
@@ -355,7 +362,7 @@ export class HttpService  {
                 //console.log('Error : ' + JSON.stringify(error));
                 if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                     console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                    window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                    //window.location.href = window.location.href + '?' + new Date().getMilliseconds();
                 }
                 
                 return this.handleError(url,error);
@@ -388,9 +395,8 @@ export class HttpService  {
       body.command = bodyOptions;
     }
 
-    console.log ('Request : ' + url + ' / ' + JSON.stringify(headersOption));
-    //console.log('headers '  + JSON.stringify(headersOption));
-    //console.log('params '  + JSON.stringify(paramOptions));
+    console.log('HTTP EXECUTE MOBILITY:', url, headersOption, body, paramOptions);
+    
     return this.httpClient.post(url, body, { headers: headersOption,
                                       params: paramOptions,
                                       responseType: 'json'
@@ -402,7 +408,7 @@ export class HttpService  {
                 //console.log('Error : ' + JSON.stringify(error));
                 if ((error.status === 401 || error.status === 403) && (window.location.href.match(/\?/g) || []).length < 2) {
                     console.log('The authentication session expires or the user is not authorised. Force refresh of the current page.');
-                    window.location.href = window.location.href + '?' + new Date().getMilliseconds();
+                    //window.location.href = window.location.href + '?' + new Date().getMilliseconds();
                 }
                 
                 return this.handleError(url,error);
@@ -410,14 +416,11 @@ export class HttpService  {
   }
 
   authentification(url: string, headersOption?:HttpHeaders, paramOtions?: HttpParams): Observable<Response> {
-    //console.log('***** authentification ****');
-    //console.log('Authentification - base URL : ' + JSON.stringify(this.baseUrl));
     let content = { body: "" };
     let myTransaction = this.addTransaction();
     url = this.baseUrl + url;
     headersOption = headersOption.set('Content-Type', 'application/json');
 
-    //console.log('Authentification - httpOptions : ' + JSON.stringify(this.httpOptions));
     return this.httpClient.post(url, content, {headers: headersOption})
           .pipe(
             tap(data => this.endTransaction(myTransaction)),

@@ -91,6 +91,8 @@ export class SmartUBDComponent implements OnDestroy {
   searchVendorCode: string = '';
   searchinStoreDays: string = '45';
   searchUBDend: string = '120';
+  searchClosedUBD: string = '60';
+
    msgs: Message[] = [];
 
    recapButtonTooltip: string ='';
@@ -134,11 +136,11 @@ export class SmartUBDComponent implements OnDestroy {
       {header: 'ITEM', colspan: 1, expand: 0, colspan_original: 1},
       {header: '', colspan: 1, expand: 0, colspan_original: 1},
       {header: '', colspan: 1, expand: 0, colspan_original: 1},
-      {header: 'INFO', colspan: 1, expand: 1, colspan_original: 5},
-      {header: 'PUSH', colspan: 1, expand: 0, colspan_original: 1},
-      {header: 'UBD', colspan: 1, expand: 1, colspan_original: 2},
+      {header: 'INFO', colspan: 1, expand: 1, colspan_original: 6},
+      {header: 'PUSH', colspan: 1, expand: 1, colspan_original: 3},
+      {header: 'UBD', colspan: 1, expand: 1, colspan_original: 4},
       {header: 'TREND', colspan: 1, expand: 1, colspan_original: 4},
-      {header: 'RETAIL', colspan: 1, expand: 1, colspan_original: 2},
+      {header: 'RETAIL', colspan: 1, expand: 1, colspan_original: 3},
       {header: 'COST', colspan: 1, expand: 1, colspan_original: 3},
       {header: 'INVENTORY', colspan: 1, expand: 1, colspan_original: 2},
       {header: 'ANALYTICS', colspan: 1, expand: 1, colspan_original: 3},
@@ -154,19 +156,28 @@ export class SmartUBDComponent implements OnDestroy {
       //{ field: 'Description', header: 'Item desc.' , placeholder: 'Search by description', align:'left', type: 'input', options: [] ,expand: 0, format: false, display: true, main: false  },
       { field: 'Item code desc', header: 'Item code desc' , placeholder: 'Item code', type: 'input', align:'left', options: [],expand: -1, format: false, display: true, main: true  },
       // Status 
-      { field: 'Status', header: 'Attention' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: true, display: true, main: true, tooltip: '<b>High:</b> projection covering less than 80% inventory ,<br><b>Medium:</b> Between 80% and 100%, <br><b>Low:</b> Between 100% and 120% '  },
+      { field: 'Status', header: 'Attention' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: true, display: true, main: true, 
+            tooltip: '<b>High:</b> projection covering less than 80% inventory ,<br><b>Medium:</b> Between 80% and 100%, <br>' +
+                     '<b>Low:</b> Between 100% and 120% <br>'+
+                     '<b>Closed:</b> UBDwithin the next ' + this.searchClosedUBD + ' days<br>' + 
+                     '<b>Linked</b> SSCC is linked to other pallet with Hypothetical push<br>'  },
       // CM 
       { field: 'Categ', header: 'Categroy Mgr' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: true, main: true },
       // Item info 
       { field: 'Case Pack', header: 'Case Pack' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: true, main: true },
       { field: 'Active since', header: 'Active since' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: false, main: false },
+      { field: 'Whs. discontinued on', header: 'Whs. discontinued on' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: false, main: false },
       { field: 'Seasonal', header: 'Seasonality' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: false, main: false },
       { field: 'In Store', header: 'In store/consumer' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: true, display: false, main: false,  tooltip: 'Store plus consumer shelf life' },
       { field: 'Shipping unit', header: 'Shipping unit' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: true, display: false, main: false },
       //Hypothetical push
-      { field: 'Hypothetical push', header: 'Hypothetical push' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: true, display: true, main: true },
+      { field: 'Hypothetical push', header: 'Hypothetical push' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 1, format: true, display: true, main: true },
+      { field: 'Days to push', header: 'Days to push' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: false, main: false },
+      { field: 'Trend Hyp. push', header: 'Trend Hyp. push' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: false, main: false },
       // UBD info
       { field: 'UBD', header: 'UBD' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 1, format: true, display: true, main: true },
+      { field: 'Average UBD', header: 'Average UBD' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: false, main: false },
+      { field: 'Received on', header: 'Received on' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: false, main: false },
       { field: 'SSCC_ADDRESS', header: 'SSCC' , placeholder: '' , align:'left', type: 'input', options: [] ,expand: 0, format: false, display: false, main: false },
       // Sales trend
       { field: 'SKU sold trend_1', header: 'Trend' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 1, format: true, display: true, main: true },
@@ -174,19 +185,20 @@ export class SmartUBDComponent implements OnDestroy {
       { field: 'SKU sold trend_3', header: 'Week-3' , placeholder: '' , align:'left', type: 'input', options: [] ,expand: 0, format: true, display: false, main: false },
       { field: 'SKU sold trend_4', header: 'Week-4' , placeholder: '' , align:'left', type: 'input', options: [] ,expand: 0, format: true, display: false, main: false },
       // Retail
-      { field: 'CLE retail', header: 'CLE retail' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: true, display: true, main: true },
+      { field: 'CLE retail', header: 'CLE retail' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 1, format: true, display: true, main: true },
       { field: 'On Promo', header: 'On Promo' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: false, main: false },
+      { field: 'Nb Promo past 13 weeks', header: 'Promo past 13 weeks' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: false, display: false, main: false },
       // Cost
-      { field: 'Case cost', header: 'Case cost' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: true, display: true, main: true },
+      { field: 'Case cost', header: 'Case cost' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 1, format: true, display: true, main: true },
       { field: 'Unit cost', header: 'Unit cost' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: true, display: false, main: false },
       { field: 'Total cost', header: 'Total cost' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: true, display: false, main: false },
       // Inventory
-      { field: 'Inventory (Case)', header: 'Inventory (Case)' , placeholder: '', align:'center', type: 'input', options: [],expand: 0, format: false, display: true, main: true  },
+      { field: 'Inventory (Ship. unit)', header: 'Inventory (Ship. unit)' , placeholder: '', align:'center', type: 'input', options: [],expand: 1, format: false, display: true, main: true  },
       { field: 'WEEKS OF INVENTORY', header: 'Weeks of inv.' , placeholder: '', align:'center', type: 'input', options: [],expand: 0, format: false, display: false, main: false, tooltip: 'Calculation based on the projection'   },
       // Analytics
       { field: 'Shipped per week', header: 'Shipped per week' , placeholder: '', align:'center', type: 'input', options: [] ,expand: -1, format: true, display: true, main: true, tooltip: 'Calculation on last 4 weeks'},
       { field: 'Sold per week', header: 'Sold per week' , placeholder: '', align:'center', type: 'input', options: [] ,expand: -1, format: true, display: false, main: false, tooltip: 'Calculation on last 4 weeks'  },
-      { field: 'Projection case per week', header: 'Projection per week' , placeholder: '', align:'center', type: 'input', options: [] ,expand: -1, format: true, display: false, main: false, tooltip: 'Calculation on last 4 weeks'   },
+      { field: 'Projection per week', header: 'Projection per week' , placeholder: '', align:'center', type: 'input', options: [] ,expand: -1, format: true, display: false, main: false, tooltip: 'Calculation on last 4 weeks'   },
     ];
 
     this.columnsCommentResult = [
@@ -207,7 +219,10 @@ export class SmartUBDComponent implements OnDestroy {
     this.displayResult = false;
 
     this.recapButtonTooltip = "Generate recap' for Category Mgrs/Buyers. This will export to excel, products with: <br> " +
-                              "<ul><li> High and Medium status (Hypothetical push)</li><li>Item with double negative trends</li><ul>";
+                              "<ul><li> High and Medium status (Hypothetical push)</li>" +
+                              "<li>Item with quadruple negative trends</li>" +
+                              "<li>Item with UBD within " + this.searchClosedUBD + " days</li>" +
+                              "<li>SSCC linked to other pallet with Hypothetical push</li></ul>" ;
     this.csvButtonTooltip = "This is reporting all the information in the table below for detailed analyze."
   }
 
@@ -217,17 +232,24 @@ export class SmartUBDComponent implements OnDestroy {
     let inStoreDaysCodeSearch;
     let ubdEndCodeSearch;
     let warehouseCodeSearch;
+    let closedUbdCodeSearch;
     this.razSearch();
     this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for the warehouse UBD items... ' });
 
     if (! this.searchVendorCode) { vendorCodeSearch = '-1' }  else { vendorCodeSearch=this.searchVendorCode }
     if (! this.searchinStoreDays) { inStoreDaysCodeSearch = '-1' }  else { inStoreDaysCodeSearch=this.searchinStoreDays }
     if (! this.searchUBDend) { ubdEndCodeSearch = '-1' }  else { ubdEndCodeSearch=this.searchUBDend }
+    if (! this.searchClosedUBD) { closedUbdCodeSearch = '0' }  else { closedUbdCodeSearch=this.searchClosedUBD }
     if (! this.selectedWarehouse) { warehouseCodeSearch= '-1' }  else { 
       warehouseCodeSearch=this.selectedWarehouse.join('/'); 
     }
 
-    this.subscription.push(this._reporting.getReportingWarehouseUBD(warehouseCodeSearch,vendorCodeSearch, ubdEndCodeSearch)
+    this.waitMessage = 'Looking for the warehouse UBD items from whs # ' + warehouseCodeSearch + ' with the following parameters:<br>' +
+                        'Supplier code: ' + vendorCodeSearch + ' <br>' +
+                        'UBD ended within: ' + ubdEndCodeSearch + ' days <br>' +
+                        'Closed UBD are within: ' + closedUbdCodeSearch + ' days <br>' +
+                        '<br> The request is usually taking <b>between 1 to 3 minutes</b>';
+    this.subscription.push(this._reporting.getReportingWarehouseUBD(warehouseCodeSearch,vendorCodeSearch, ubdEndCodeSearch, closedUbdCodeSearch)
             .subscribe( 
                 data => { this.searchResult = data; // put the data returned from the server in our variable
                           if (data.length >0) {
@@ -241,6 +263,7 @@ export class SmartUBDComponent implements OnDestroy {
                 },
                 () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Retrieved ' + 
                                      this.searchResult.length + ' reference(s).'});
+                       this.waitMessage = '';
                 }
             ));
 
@@ -594,29 +617,43 @@ export class SmartUBDComponent implements OnDestroy {
 
   exportExcelRecap() {
     let recapReport : any [] = [];
+    let searchResultSorted =  this.searchResult.sort((a, b) => a['Days to push'] - b['Days to push']);
     this.searchResult
     .filter(item => item["Status"] == 'High' || item["Status"] == 'Medium' ||
-                    (item["SKU sold trend_1"] < 0 && item["SKU sold trend_2"] < 0))
+                    item["Status"] == 'Closed' || 
+                    (item["Status"] == 'Linked' &&  this.searchResult.findIndex(function (value) {
+                            return value['Item code desc'] == item['Item code desc'] && 
+                                  (value['Status'] == 'High' || value['Status'] == 'Medium') &&
+                                  value['UBD'] != item['UBD'] }) >= 0) ||
+                    (item["SKU sold trend_1"] < 0 && item["SKU sold trend_2"] < 0 &&
+                     item["SKU sold trend_3"] < 0 && item["SKU sold trend_4"] < 0 ))
     .map(item => recapReport.push ({
       "Item code desc": item["Item code desc"],
-      "Supplier code desc": item["Supplier code desc"],
-      "Category Mgr": item["Categ"],
       "UBD": this.datePipe.transform(item["UBD"], 'MM/dd/yy'),
       "Status": item['Status'],
       "Hypothetical push": item["Hypothetical push"],
+      "Days to push": item["Days to push"],
+      "Average UBD": item["Average UBD"],
+      "Received on": item["Received on"],
       "Shelf life (store/consumer)": item["In Store"],
-      "Inventory (Case)": item["Inventory (Case)"],
+      "Inventory (Ship. unit)": item["Inventory (Ship. unit)"],
+      "Projection per week": item["Projection per week"],
       "Case Pack": item["Case Pack"],
-      "CLE retail": '$ ' + item["CLE retail"].trim(),
-      "Case cost": item["Case cost"]*100,
-      "Total cost": item["Total cost"]*100,
+      "CLE retail": item["CLE retail"],
+      "Unit cost": item["Unit cost"],
+      "Case cost": item["Case cost"],
+      "Total cost": item["Total cost"],
       "Weeks of inventory": item["WEEKS OF INVENTORY"],
       "Nb Promo": item["Nb Promo"],
+      "Nb Promo past 13 weeks": item["Nb Promo past 13 weeks"],
       "Active since": item["Active since"],
+      "Whs. discontinued on": item["Whs. discontinued on"],
       "Shipping unit": item["Shipping unit"],
       "Shipped per week": item["Shipped per week"],
       "Sold per week": item["Sold per week"],
-      "Projection per week": item["Projection case per week"],
+      "Hyp. push Week-1": item["Hyp. push Week-1"],
+      "Hyp. push Week-2": item["Hyp. push Week-2"],
+      "Hyp. push Week-3": item["Hyp. push Week-3"],
       "Trend sales Week-1 (%)": item["SKU sold trend_1"] * 100,
       "Trend sales Week-2 (%)" : item["SKU sold trend_2"] * 100,
       "Trend sales Week-3 (%)": item["SKU sold trend_3"] * 100,
@@ -624,190 +661,319 @@ export class SmartUBDComponent implements OnDestroy {
       "Qty sold Week-1 (sku)": item["SKU sold week_1"],
       "Qty sold Week-2 (sku)": item["SKU sold week_2"],
       "Qty sold Week-3 (sku)": item["SKU sold week_3"],
-      "Qty sold Week-4 (sku)": item["SKU sold week_4"]
+      "Qty sold Week-4 (sku)": item["SKU sold week_4"],
+      "New in report item": item["New in report item"],
+      "Trend Hyp. push": item["Trend Hyp. push"],
+
+      "Whs": item["Whs"],
+      "Supplier code desc": item["Supplier code desc"],
+      "Category Mgr": item["Categ"],
     }))
    console.log ('Export :', this.searchResult,  recapReport);
     ;
 
     let formatXLS = {
-      "conditionalRule": [{
-        "easeRule": {
-          "repeat": "1",
-          "lineStart": "6",
-          "columnStart": "T",
-          "every": "1",
-          "columnEnd": "W"
-        },
-        "style": {
-          "numFmt": "0.00%"
-        }
-      },{
-        "easeRule": {
-          "repeat": "1",
-          "lineStart": "6",
-          "columnStart": "K",
-          "every": "1",
-          "columnEnd": "L"
-        },
-        "style": {
-          "numFmt" : "$#,##0.00;[Red]\-$#,##0.00"
-        }
-      },{
-        "easeRule": {
-          "repeat": "1",
-          "lineStart": "5",
-          "columnStart": "E",
-          "every": "1",
-          "columnEnd": "AA"
-        },
-        "style": {
-          "alignment": {
-            "horizontal": "center"
-          }
-        }
-      },{
-        "easeRule": {
-          "repeat": "1",
-          "lineStart": "5",
-          "columnStart": "C",
-          "every": "1",
-          "columnEnd": "C"
-        },
-        "style": {
-          "alignment": {
-            "horizontal": "center"
-          }
-        }
-      },
-        {"easeRule": {
+      "conditionalRule": [
+        {
+          "easeRule": {
             "repeat": "1",
             "lineStart": "6",
-            "columnStart": "T",
+            "columnStart": "AA",
             "every": "1",
-            "columnEnd": "W"
+            "columnEnd": "AD"
           },
-
-          "rules": [{
-            "ref": "",
-            "rule": [{
-              "priority":"1", 
-              "type": "containsText",
-              "operator": "containsText",
-              "text": '-',
-              "style": {
-                "fill": {
-                  "type": "pattern",
-                  "pattern": "solid",
-                  "bgColor": {
-                    "argb": "fff44336"
+          "style": {
+            "numFmt": "0.00%"
+          }
+        },
+        {
+          "easeRule": {
+            "repeat": "1",
+            "lineStart": "5",
+            "columnStart": "B",
+            "every": "1",
+            "columnEnd": "AJ"
+          },
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        },
+        {
+          "easeRule": {
+            "repeat": "1",
+            "lineStart": "6",
+            "columnStart": "AA",
+            "every": "1",
+            "columnEnd": "AD"
+          },
+          "rules": [
+            {
+              "ref": "",
+              "rule": [
+                {
+                  "priority": "1",
+                  "type": "containsText",
+                  "operator": "containsText",
+                  "text": "-",
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "fff44336"
+                      }
+                    }
+                  }
+                },
+                {
+                  "priority": "2",
+                  "type": "containsText",
+                  "operator": "notContainsBlanks",
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "ffa4ffa4"
+                      }
+                    }
                   }
                 }
-              }
-            },{
-              "priority":"2", 
-              "type": "containsText",
-              "operator": "notContainsBlanks",
-              "style": {
-                "fill": {
-                  "type": "pattern",
-                  "pattern": "solid",
-                  "bgColor": {
-                    "argb": "ffa4ffa4"
-                  }
-                }
-              }
+              ]
             }
           ]
-          }]
         },
-        {"easeRule": {
-          "repeat": "1",
-          "lineStart": "6",
-          "columnStart": "E",
-          "every": 1,
-          "columnEnd": "E"
+        {
+          "easeRule": {
+            "repeat": "1",
+            "lineStart": "6",
+            "columnStart": "C",
+            "every": 1,
+            "columnEnd": "C"
+          },
+          "rules": [
+            {
+              "ref": "",
+              "rule": [
+                {
+                  "priority": "1",
+                  "type": "containsText",
+                  "operator": "containsText",
+                  "text": "High",
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "fff44336"
+                      }
+                    }
+                  }
+                },
+                {
+                  "priority": "2",
+                  "type": "containsText",
+                  "operator": "containsText",
+                  "text": "Medium",
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "ffffcc00"
+                      }
+                    }
+                  }
+                },
+                {
+                  "priority": "3",
+                  "type": "containsText",
+                  "operator": "containsText",
+                  "text": "Low",
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "ff949494"
+                      }
+                    }
+                  }
+                },
+                {
+                  "priority": "4",
+                  "type": "containsText",
+                  "operator": "containsText",
+                  "text": "Closed",
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "FF91D2FF"
+                      }
+                    }
+                  }
+                },
+                {
+                  "priority": "5",
+                  "type": "containsText",
+                  "operator": "containsText",
+                  "text": "Linked",
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "ffa4ff00"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
         },
-
-        "rules": [{
-          "ref": "",
-          "rule": [{
-            "priority":"1", 
-            "type": "containsText",
-            "operator": "containsText",
-            "text": 'High',
-            "style": {
-              "fill": {
-                "type": "pattern",
-                "pattern": "solid",
-                "bgColor": {
-                  "argb": "fff44336"
+        {
+          "easeRule": {
+            "repeat": "1",
+            "lineStart": "6",
+            "columnStart": "U",
+            "every": 1,
+            "columnEnd": "U"
+          },
+          "rules": [
+            {
+              "ref": "",
+              "rule": [
+                {
+                  "priority": "1",
+                  "type": "containsText",
+                  "operator": "containsText",
+                  "text": "Inner pack",
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "ffffcc00"
+                      }
+                    }
+                  }
                 }
-              }
+              ]
             }
-          },{
-            "priority":"2", 
-            "type": "containsText",
-            "operator": "containsText",
-            "text": 'Medium',
-            "style": {
-              "fill": {
-                "type": "pattern",
-                "pattern": "solid",
-                "bgColor": {
-                  "argb": "ffffcc00"
+          ]
+        },
+        {
+          "easeRule": {
+            "repeat": "1",
+            "lineStart": "5",
+            "every": "1",
+            "columnStart": "A",
+            "columnEnd": "A"
+          },
+          "rules": [
+            {
+              "ref": "A5:A99999",
+              "rule": [
+                {
+                  "type": "expression",
+                  "formulae": [
+                    "$AI5=1"
+                  ],
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "fgColor": {
+                        "argb": "ffffffff"
+                      },
+                      "bgColor": {
+                        "argb": "ffD2C863"
+                      }
+                    }
+                  }
                 }
-              }
+              ]
             }
-          },{
-            "priority":"3", 
-            "type": "containsText",
-            "operator": "containsText",
-            "text": 'Low',
-            "style": {
-              "fill": {
-                "type": "pattern",
-                "pattern": "solid",
-                "bgColor": {
-                  "argb": "ff949494"
+          ]
+        },
+        {
+          "easeRule": {
+            "repeat": "1",
+            "lineStart": "6",
+            "every": "1",
+            "columnStart": "D",
+            "columnEnd": "D"
+          },
+          "rules": [
+            {
+              "ref": "D6:D99999",
+              "rule": [
+                {
+                  "type": "expression",
+                  "formulae": [
+                    "$AJ6>0"
+                  ],
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "ffff0000"
+                      }
+                    }
+                  }
                 }
-              }
+              ]
             }
-          }
-        ]
-        }]
-      },
-      {"easeRule": {
-        "repeat": "1",
-        "lineStart": "6",
-        "columnStart": "P",
-        "every": 1,
-        "columnEnd": "P"
-      },
-      "rules": [{
-        "ref": "",
-        "rule": [{
-          "priority":"1", 
-          "type": "containsText",
-          "operator": "containsText",
-          "text": 'Inner pack',
-          "style": {
-            "fill": {
-              "type": "pattern",
-              "pattern": "solid",
-              "bgColor": {
-                "argb": "ffffcc00"
-              }
+          ]
+        },
+        {
+          "easeRule": {
+            "repeat": "1",
+            "lineStart": "6",
+            "every": "1",
+            "columnStart": "D",
+            "columnEnd": "D"
+          },
+          "rules": [
+            {
+              "ref": "D6:D99999",
+              "rule": [
+                {
+                  "type": "expression",
+                  "formulae": [
+                    "$AJ6<0"
+                  ],
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "ffa4ff00"
+                      }
+                    }
+                  }
+                }
+              ]
             }
-          }
+          ]
         }
       ]
-      }]
     }
-      ]
-    }
+
+    let freezePanel = {"ALTFREEZECOLUMN" : 1, 
+                        "ALTROWCOLUMN" : 4
+                      }
     this._exportService.saveCSV(recapReport, null, null, null, "UBD000000001", "UBD items recap'  Category Mgrs/Buyers",
                                 //this.recapButtonTooltip
-                                '', formatXLS);
+                                '', formatXLS, true, 
+                                freezePanel
+                                );
   }
 
 }

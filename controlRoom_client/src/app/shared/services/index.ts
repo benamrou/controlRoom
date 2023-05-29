@@ -29,4 +29,5 @@ export * from './reporting/replenishment.service';
 export * from './authentification/version.check.service';
 export * from './comment/comment.service';
 export * from './robot/robot.service';
+export * from './syndigo/syndigo.service';
 

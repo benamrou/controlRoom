@@ -14,7 +14,7 @@ import * as fs from 'file-saver';
 export class ExportService{
 
 
-    tableRow: number = 5;
+    public static tableRow: number = 5;
     constructor(private http : HttpService){ }
     
     /**
@@ -186,15 +186,25 @@ export class ExportService{
                             }
                             every = +cellRuleXLS.conditionalRule[i].easeRule.every;
                         }
-                        //worksheet.getRow(32).addPageBreak();
+
                         for (let k = row; k < maxRow; k += every) {
                             if(cellRuleXLS.conditionalRule[i].hasOwnProperty('rules')) {
                                 for (let j =0; j < cellRuleXLS.conditionalRule[i].rules.length; j++) {
                                     let reference = cellRuleXLS.conditionalRule[i].easeRule.columnStart + k + ':' + 
                                                     cellRuleXLS.conditionalRule[i].easeRule.columnEnd + k;
                                         for (let l =0; l < cellRuleXLS.conditionalRule[i].rules[j].rule.length; l++) {
-                                            
-                                            if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('style')) {
+                                            if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('formulae')) {
+                                                worksheet.addConditionalFormatting({
+                                                    ref: cellRuleXLS.conditionalRule[i].rules[j].ref,
+                                                    rules: [{
+                                                        type: cellRuleXLS.conditionalRule[i].rules[j].rule[l].type,
+                                                        formulae: cellRuleXLS.conditionalRule[i].rules[j].rule[l].formulae,
+                                                        style: cellRuleXLS.conditionalRule[i].rules[j].rule[l].style
+                                                    }]}); 
+                                                
+                                            }
+                                            if(cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('style') &&
+                                                ! cellRuleXLS.conditionalRule[i].rules[j].rule[l].hasOwnProperty('formulae')) {
                                                 worksheet.addConditionalFormatting({
                                                     ref: reference,
                                                     rules: [{
@@ -212,43 +222,36 @@ export class ExportService{
                                                         operator: cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator,
                                                         cfvo: cellRuleXLS.conditionalRule[i].rules[j].rule[l].cfvo,
                                                         color: cellRuleXLS.conditionalRule[i].rules[j].rule[l].color,
-                                                    }]}); 
-                                            }
+                                                }]}
+                                            )};
 
-                                                /*console.log('Ref : ' + reference);
-                                                console.log('j : ' + j);*/
-                                                //console.log('rules : ' + JSON.stringify(cellRuleXLS.conditionalRule[i].rules[j]) );
-                                                /*console.log('type : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].type);
-                                                console.log('operator : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].operator);
-                                                console.log('style : ' + cellRuleXLS.conditionalRule[i].rules[j].rule[l].style);*/
                                         }
                                 }
                             }
                             if(cellRuleXLS.conditionalRule[i].hasOwnProperty('style')) {
                                     // Code to parse the first letter column to the end
                                 for(let m = this.lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnStart); 
-                                        m <= this.lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnEnd); m++) {
-                                            //console.log('process...');
-                                        //console.log('Lettre : ' + String.fromCharCode(m));
+                                m <= this.lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnEnd); m++) {
 
-                                        //console.log("Style ", m, this.lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnStart), 
-                                        //                         this.lettersToNumber(cellRuleXLS.conditionalRule[i].easeRule.columnEnd))
-                                        let cellToFormat = m ;//String.fromCharCode(m) + k + '';
-                                        let rowChange = worksheet.getRow(k);
+                                let cellToFormat = m ;//String.fromCharCode(m) + k + '';
+                                let rowChange = worksheet.getRow(k);
 
-                                        if(cellRuleXLS.conditionalRule[i].style.hasOwnProperty('alignment')) {
-                                            rowChange.getCell(cellToFormat).alignment = cellRuleXLS.conditionalRule[i].style.alignment;
-                                        }
-                                        else {
-                                            rowChange.getCell(cellToFormat).style = cellRuleXLS.conditionalRule[i].style;
-                                            if(! Number.isNaN(parseFloat(rowChange.getCell(cellToFormat).value))) {
-                                                let value = parseFloat(rowChange.getCell(cellToFormat).value);
+                                if(cellRuleXLS.conditionalRule[i].style.hasOwnProperty('alignment')) {
+                                    rowChange.getCell(cellToFormat).alignment = cellRuleXLS.conditionalRule[i].style.alignment;
+                                }
+                                else {
+                                    rowChange.getCell(cellToFormat).style = cellRuleXLS.conditionalRule[i].style;
+                                    if(! Number.isNaN(parseFloat(rowChange.getCell(cellToFormat).value))) {
+                                        let value = parseFloat(rowChange.getCell(cellToFormat).value);
 
-                                                rowChange.getCell(cellToFormat).value=value/100;
-                                            }
-                                        }
-                                        //worksheet.getCell(cellToFormat).value.result=undefined;
-                                        //worksheet.getCell(cellToFormat).value=parseFloat(worksheet.getCell(cellToFormat).value)/100;
+                                        rowChange.getCell(cellToFormat).value=value/100;
+                                    }
+                                    if (cellRuleXLS.conditionalRule[i].style.numFmt) {
+                                        rowChange.getCell(cellToFormat).numFmt = cellRuleXLS.conditionalRule[i].style.numFmt;
+                                    }
+                                }
+                                //worksheet.getCell(cellToFormat).value.result=undefined;
+                                //worksheet.getCell(cellToFormat).value=parseFloat(worksheet.getCell(cellToFormat).value)/100;
 
                                 }
                             }
@@ -301,7 +304,7 @@ export class ExportService{
         worksheet.getCell('H3').alignment = { vertical: 'top', horizontal: 'left' };
 
         
-        for (let i = 0; i< this.tableRow; i ++) {
+        for (let i = 0; i< ExportService.tableRow; i ++) {
             worksheet.getRow(i).fill = {
                 type: 'pattern',
                 pattern:'lightTrellis',
@@ -358,7 +361,7 @@ export class ExportService{
         workbook.calcProperties.fullCalcOnLoad = true;
     }
 
-    json2xls(workbook, worksheet, reportid, subject, content, rawData, formatStructure) {
+    json2xls(workbook, worksheet, reportid, subject, content, rawData, formatStructure, border ?, freeze?) {
 
         let valueColumns = Object.keys(rawData[0]);
         let dataColumns = [];
@@ -378,6 +381,10 @@ export class ExportService{
 
         this.setXLSHeader(worksheet, reportid, subject , content);
 
+        if (freeze) {
+            worksheet.views = [{state: 'frozen', xSplit: freeze.ALTFREEZECOLUMN, ySplit: freeze.ALTROWCOLUMN+1}];
+        }
+
         /**************************************************************************/  
         // Creating the table detail EXCEL (real table)
         worksheet.addTable({
@@ -393,18 +400,35 @@ export class ExportService{
             rows: dataRows,
         });
         
+
+
         this.formatXLS(worksheet,dataRows, formatStructure);
+
+        if (border) {
+            worksheet.eachRow(function (row, _rowNumber) {
+                row.eachCell(function (cell, _colNumber) {
+                    if (_rowNumber > ExportService.tableRow) {
+                        cell.border = {
+                            top: { style: 'thin' },
+                            left: { style: 'thin' },
+                            bottom: { style: 'thin' },
+                            right: { style: 'thin' }
+                        };
+                    }
+                });
+            });
+        }
         this.autofitColumns(worksheet);
         //this.setPrintArea(worksheet, null);
         //this.setPageBreak(worksheet, dataRows, null);
         this.setXLSProperties(workbook);
     }
 
-    saveCSV(rawData, image, imageWidth, imageHeight,reportId, reportTitle, reportContent, formatStructure ?: any) {
+    saveCSV(rawData, image, imageWidth, imageHeight,reportId, reportTitle, reportContent, formatStructure ?: any, border?, freeze?) {
         let workbook = new excel.Workbook();
         let ws = workbook.addWorksheet('result');
         
-        this.json2xls(workbook, ws, reportId, reportTitle, reportContent,rawData, formatStructure);
+        this.json2xls(workbook, ws, reportId, reportTitle, reportContent,rawData, formatStructure, border, freeze);
   
         if (!!image) {
             //console.log('image :',image);

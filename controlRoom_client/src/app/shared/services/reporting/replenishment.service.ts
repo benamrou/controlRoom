@@ -205,7 +205,7 @@ export class ReportingReplenishmentService {
      * @param ubdEnd number of days before ubd end
      * @returns JSON User information object
      */
-         getReportingWarehouseUBD (warehouseCode: string, vendorCode:string, ubdEnd: string) {
+         getReportingWarehouseUBD (warehouseCode: string, vendorCode:string, ubdEnd: string, closedUBD: string) {
           this.request = this.baseReportingWhUBDUrl;
           let headersSearch = new HttpHeaders();
           let options = new HttpHeaders();
@@ -213,6 +213,7 @@ export class ReportingReplenishmentService {
           this.params = this.params.set('PARAM', vendorCode);
           this.params = this.params.append('PARAM', warehouseCode);
           this.params = this.params.append('PARAM', ubdEnd);
+          this.params = this.params.append('PARAM', closedUBD);
           headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
           headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     

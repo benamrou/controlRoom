@@ -20,29 +20,29 @@
     <div class="formgrid grid">
         <div class="field col-6 ">
             <label for="envid">Environment</label>
-            <input id="envid" pInputText type="text" value="John" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            <input id="envid" pInputText type="text" disabled value="{{_syndigoService.syndigoEnv[0].SYNURL}}" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
         </div>
         <div class="field col-6 ">
             <label for="assets">Assets</label>
-            <input id="assets" pInputText type="text" value="John" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            <input id="assets" pInputText type="text" disabled value="{{_syndigoService.syndigoEnv[0].SYNASSETS}}" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
         </div>
         <div class="field col-6">
             <label for="usernameSyndigo">Username</label>
-            <input id="usernameSyndigo" pInputText type="text" rows="4" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            <input id="usernameSyndigo" pInputText type="text" disabled value="{{_syndigoService.syndigoEnv[0].SYNUSER}}" rows="4" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
         </div>
         <div class="field col-6">
             <label for="passSyndigo">Secret</label>
-            <textarea id="passSyndigo" pInputTextarea type="text" rows="4" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            <textarea id="passSyndigo" pInputTextarea disabled value="{{_syndigoService.syndigoEnv[0].SYNSECRET}}" type="text" rows="4" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
 
             </textarea>
         </div>
         <div class="field col-6 ">
             <label for="companyid">CompanyId</label>
-            <input id="companyid" pInputText type="text" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            <input id="companyid" pInputText disabled value="{{_syndigoService.syndigoEnv[0].SYNCOMPANYID}}" type="text" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
         </div>
         <div class="field col-6 ">
             <label for="vocabularyid">VocabularyId</label>
-            <input id="vocabularyid" pInputText type="text" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            <input id="vocabularyid" pInputText disabled value="{{_syndigoService.syndigoEnv[0].SYNVOCID}}" type="text" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
         </div>
     </div>
     <ng-template pTemplate="footer">

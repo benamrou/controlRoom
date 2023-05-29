@@ -49,6 +49,12 @@
                     [size]="3"  [max]="300" [maxlength]="3">
     </p-inputNumber>
 
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Nb days "Closed" UBD: </span>
+    <p-inputNumber inputId="integeronly" [(ngModel)]="searchClosedUBD" style="height: 35px;"
+                    [size]="3"  [max]="300" [maxlength]="3">
+    </p-inputNumber>
+
+
 </div>
 
 <!--  panel result -->
@@ -146,21 +152,23 @@
             
         <!-- BODY -->
         <ng-template pTemplate="body" let-rowData let-columns="columnsResult" let-globalIndice="rowIndex">
-            <tr [pSelectableRow]="rowData" >
+            <tr [pSelectableRow]="rowData" [style.background-color]="(rowData['New in report item'] == 1) ? 'lightyellow' : 'unset'">
                 <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column"  >
                     <td *ngIf="col.display " class="ui-resizable-column" [style.text-align]="col.align" >
-                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'High'" class="badge bg-danger" pTooltip="{{col.tooltip}}" [escape]="false">{{rowData[col.field] }}</span>
-                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'Medium'" class="badge bg-warning" pTooltip="{{col.tooltip}}" [escape]="false">{{rowData[col.field] }}</span>
-                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'Low'" class="badge bg-light text-dark" pTooltip="{{col.tooltip}}" [escape]="false">{{rowData[col.field] }}</span>
+                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'High'" class="badge bg-danger" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
+                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'Medium'" class="badge bg-warning" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
+                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'Low'" class="badge bg-light text-dark" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
+                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'Closed'" class="badge bg-primary text-dark" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
+                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'Linked'" class="badge bg-success text-dark" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
                         <div  *ngIf="col.field==='CLE retail' && rowData['Nb Promo'] > 0">
-                            <span>$ {{rowData[col.field]}}</span>
+                            <span>{{rowData[col.field]}}</span>
                             <span class="badge bg-primary" style="margin-left:5px" pTooltip="Nb. coming promotions" tooltipPosition="right" [escape]="false">{{rowData['Nb Promo']}}</span>
                         </div>
-                        <span *ngIf="col.field==='CLE retail' && rowData['Nb Promo'] == 0">$ {{rowData[col.field]}}</span>
+                        <span *ngIf="col.field==='CLE retail' && rowData['Nb Promo'] == 0">{{rowData[col.field]}}</span>
                         <!--span *ngIf="col.field==='CLE multiple'">{{rowData[col.field] | number : '1.0-0' }}</span-->
-                        <span *ngIf="col.field==='Case cost'">$ {{rowData[col.field] | number : '1.2-2'}}</span>
-                        <span *ngIf="col.field==='Unit cost'">$ {{rowData[col.field] | number : '1.2-2'}}</span>
-                        <span *ngIf="col.field==='Total cost'">$ {{rowData[col.field] | number : '1.2-2'}}</span>
+                        <span *ngIf="col.field==='Case cost'">{{rowData[col.field]}}</span>
+                        <span *ngIf="col.field==='Unit cost'">{{rowData[col.field]}}</span>
+                        <span *ngIf="col.field==='Total cost'">{{rowData[col.field]}}</span>
                         <span *ngIf="col.field==='Shipped per week'">{{rowData[col.field] | number : '1.2-2'}}</span>
                         <span *ngIf="col.field==='Sold per week'">{{rowData[col.field] | number : '1.2-2'}}</span>
                         <span *ngIf="col.field==='Projection case per week'">{{rowData[col.field] | number : '1.2-2'}}</span>

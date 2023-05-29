@@ -1,8 +1,7 @@
 import { Component, ViewChild, OnDestroy, HostListener } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
-import { SearchService } from '../../../shared/services/index';
+import { SearchService, SyndigoEnvironment, SyndigoService } from '../../../shared/services/index';
 import { MessageService } from 'primeng/api';
-import { FullCalendar } from 'primeng/fullcalendar';
 
 export class SearchResultFormat {
   COL1: any;
@@ -40,6 +39,7 @@ export class SyndigoProductComponent implements OnDestroy {
    tabSelect: number = 0;
    displayOverlayInfo: boolean = false;
    displaySetting: boolean= false;
+   syndigoInfo : SyndigoEnvironment;
 
    // Selected element
    selectedElement: any = {};
@@ -48,7 +48,16 @@ export class SyndigoProductComponent implements OnDestroy {
   // Request subscription
   subscription: any[] = [];
 
-  constructor(private _searchService: SearchService, private _messageService: MessageService) {
+  constructor(private _searchService: SearchService, private _messageService: MessageService,
+              public _syndigoService: SyndigoService) {
+      this.subscription.push(this._syndigoService.getSyndigoInfo().subscribe( 
+        data => { }, // put the data returned from the server in our variable
+        error => {
+              console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
+              this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+        },
+        () => { }
+      ));
   }
   
 
@@ -56,19 +65,29 @@ export class SyndigoProductComponent implements OnDestroy {
     this.razSearch();
     this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for the elements : ' + JSON.stringify(this.values)});
     this.searchButtonEnable = false; 
-    this.subscription.push(this._searchService.getSearchResult(this.values)
+
+    this.subscription.push(this._syndigoService.getAuthToken()
             .subscribe( 
-                data => { this.searchResult = data;}, // put the data returned from the server in our variable
+                data => { }, // put the data returned from the server in our variable
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
                       this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                 },
                 () => { 
-                      this._messageService.add({severity:'success', summary:'Info Message', detail: 'Retrieved ' + 
-                                     this.searchResult.length + ' reference(s).'});
+                      this._messageService.add({severity:'success', summary:'Syndigo authorization', detail: 'Retrieved ' + 
+                                                ' Syndigo authorization request validated.'});
 
-                      this.searchButtonEnable = true;
-
+                      this.subscription.push(this._syndigoService.searchUPCMarketplace(this.values,0, this.values.length*5) .subscribe( 
+                        data => { }, // put the data returned from the server in our variable
+                        error => {
+                              console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
+                              this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+                        },
+                        () => { 
+                              this._messageService.add({severity:'success', summary:'Syndigo references', detail: 'Retrieved ' + 
+                                                        ' Syndigo product information captured.'});
+                        }
+                    ));
                 }
             ));
   }
