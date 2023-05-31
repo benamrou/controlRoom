@@ -43,6 +43,7 @@ import { WarehouseRestartServicesComponent } from './pages/warehouse/restart.ser
 import { ServicesCenterComponent } from './pages/helpdesk/services.center/services.center.component';
 import { SyndigoDownloadComponent } from './pages/syndigo/download/syndigo.download.component';
 import { SyndigoProductComponent } from './pages/syndigo/product/syndigo.product.component';
+import { AlertsICRComponent } from './pages/alerts/alerts.icr.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -95,6 +96,9 @@ const routes: Routes = [
   { path: 'qualitywhsreplenishment', component: QualityWhsReplenishmentComponent, canActivate: [AuthentificationGuard] },
   { path: 'smartubd', component: SmartUBDComponent, canActivate: [AuthentificationGuard] },
   { path: 'reporting', component: ReportingComponent, canActivate: [AuthentificationGuard] },
+
+  /** ALERT */
+  { path: 'alerts-icr', component: AlertsICRComponent, canActivate: [AuthentificationGuard] },
 
   /** ERROR */
   { path: 'server-error', component: ServerErrorComponent, canActivate: [AuthentificationGuard] },

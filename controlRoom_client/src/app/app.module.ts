@@ -41,6 +41,8 @@ import { QueryService } from './shared/services';
 import { AuthentificationGuard } from './shared/services';
 import { CommentService } from './shared/services';
 import { RobotService } from './shared/services';
+import { AlertsICRService } from './shared/services';
+import { SyndigoService } from './shared/services/syndigo/syndigo.service';
 
 /** Component */
 import { HeaderComponent } from './layouts/header/header.component';
@@ -101,7 +103,7 @@ import { SVInfoModule } from './pages/mass.update/sv.info/sv.info.module';
 import { GenerateScheduleModule } from './pages/schedule/generate.schedule/generate.schedule.module';
 import { WarehouseRestartServicesModule } from './pages/warehouse/restart.services/restart.services.module';
 import { ServicesCenterModule } from './pages/helpdesk/services.center/services.center.module';
-import { SyndigoService } from './shared/services/syndigo/syndigo.service';
+import { AlertsICRModule } from './pages/alerts/alerts.icr.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -187,7 +189,8 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     WarehouseRestartServicesModule,
     ServicesCenterModule,
     SyndigoProductModule,
-    SyndigoDownloadModule
+    SyndigoDownloadModule,
+    AlertsICRModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,
@@ -205,6 +208,7 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
               SearchService, FinanceService, ProcessService, InventoryService,
               CountingService, TreeDragDropService, ConfirmationService,ParamService,
               SyndigoService,
+              AlertsICRService,
               DatePipe],
 
   bootstrap: [AppComponent],

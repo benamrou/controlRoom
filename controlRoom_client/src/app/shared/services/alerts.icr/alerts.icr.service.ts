@@ -1,0 +1,82 @@
+import {Injectable } from '@angular/core';
+import {HttpService} from '../request/html.service';
+import {UserService} from '../user/user.service';
+import {HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+
+
+@Injectable()
+export class AlertsICRService {
+
+    // Using generic request API - No middleware data mgt
+    private baseQuery: string = '/api/request/';
+    private getAlertsQuery: string = '/api/alerts/1/';
+    private getAlertsDistributionQuery: string = '/api/alerts/2/';
+    private getAlertsScheduleQuery: string = '/api/alerts/3/';
+    private executeLocalQuery: string = '/api/notification/1'
+
+    private querySyndigoEnv = 'SYN0000000';
+    private querySyndigoUPCCategoryLookUp = 'SYN0000001';
+    
+    private request: string;
+    private params: HttpParams;
+
+    private authToken;
+  
+    constructor(private http : HttpService, private _userService: UserService){ }
+
+
+    getAlerts(altid, altdesc, email) {
+        this.request = this.getAlertsQuery;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.set('PARAM', altid);
+        this.params = this.params.append('PARAM', altdesc);
+        this.params = this.params.append('PARAM', email);
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+            let data = <any> response;
+            return data;
+        }));
+    }
+
+    getAlertsDistribution(altid) {
+        this.request = this.getAlertsDistributionQuery;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.set('PARAM', altid);
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+            let data = <any> response;
+            return data;
+        }));
+    }
+
+    getAlertsSchedule() {
+        this.request = this.getAlertsScheduleQuery;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+            let data = <any> response;
+            return data;
+        }));
+    }
+
+    executeQuery(altid, paramsAlert) {
+        this.request = this.executeLocalQuery;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params= this.params.append('PARAM',altid);
+        for (let i=0;i < paramsAlert.length; i++) {
+            this.params = this.params.append('PARAM', paramsAlert[i]);
+        }
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+            let data = <any> response;
+            return data;
+        }));
+    }
+
+
+} 

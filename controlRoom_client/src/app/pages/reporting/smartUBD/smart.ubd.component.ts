@@ -47,7 +47,7 @@ export class SmartUBDComponent implements OnDestroy {
    trackIndex: number = 0;
 
    screenID;
-    waitMessage: string = '';
+   waitMessage: string = '';
 
    // top badges
    selectedVendorCode: any;

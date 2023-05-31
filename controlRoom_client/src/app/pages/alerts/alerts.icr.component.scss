@@ -1,0 +1,17 @@
+.CREATE_Button {
+    border-radius:20px;
+    border:0; 
+    font-size:xx-small;
+    float: left;
+    border-color: white !important; 
+    color: white !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-header {
+    background: darkcyan;
+}
+
+
+:host ::ng-deep .field > label {
+    font-weight: 700 !important;
+}

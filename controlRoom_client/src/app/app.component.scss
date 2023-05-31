@@ -298,7 +298,7 @@ font-size:  smaller;
 
 
 .p-dialog .p-dialog-header {
-    background: lightblue;
+    background: darkcyan !important;
     height: 20px;
   }
   
@@ -312,5 +312,9 @@ font-size:  smaller;
 
 .p-dialog .p-dialog-header .p-dialog-title {
     font-size: medium;
+    color: white;
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon {
     color: white;
 }
