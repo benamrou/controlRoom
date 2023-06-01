@@ -13,15 +13,12 @@ export class AlertsICRService {
     private getAlertsQuery: string = '/api/alerts/1/';
     private getAlertsDistributionQuery: string = '/api/alerts/2/';
     private getAlertsScheduleQuery: string = '/api/alerts/3/';
-    private executeLocalQuery: string = '/api/notification/1'
 
-    private querySyndigoEnv = 'SYN0000000';
-    private querySyndigoUPCCategoryLookUp = 'SYN0000001';
+    private runReportQuery: string = '/api/notification/';
+    private executeLocalQuery: string = '/api/notification/1';
     
     private request: string;
     private params: HttpParams;
-
-    private authToken;
   
     constructor(private http : HttpService, private _userService: UserService){ }
 
@@ -65,6 +62,21 @@ export class AlertsICRService {
 
     executeQuery(altid, paramsAlert) {
         this.request = this.executeLocalQuery;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params= this.params.append('PARAM',altid);
+        for (let i=0;i < paramsAlert.length; i++) {
+            this.params = this.params.append('PARAM', paramsAlert[i]);
+        }
+
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+            let data = <any> response;
+            return data;
+        }));
+    }
+
+    runReport(altid, paramsAlert) {
+        this.request = this.runReportQuery;
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
         this.params= this.params.append('PARAM',altid);

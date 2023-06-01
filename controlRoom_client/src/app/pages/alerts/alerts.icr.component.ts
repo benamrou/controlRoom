@@ -1,9 +1,7 @@
 import { Component, ViewChild, OnDestroy, HostListener } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
-import { SearchService } from '../../shared/services/index';
-import { AlertsICRService } from '../../shared/services/index';
+import { ImportService,  AlertsICRService } from '../../shared/services/index';
 import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
-import { FullCalendar } from 'primeng/fullcalendar';
 import { Dialog } from 'primeng/dialog';
 
 @Component({
@@ -34,8 +32,15 @@ export class AlertsICRComponent implements OnDestroy {
    /** Local execution and data capture/display */
    executionDataResult;
    executionAlertIndex;
+   executionAlertParamDesc = [];
+   executionAlertParam = [];
+   runReportDialog = 2; /* 1-Execute report, 2- Run local query */
+   captureParamDialog = false;
    executionDataResultDisplay;
    columnsResultExecution;
+
+   alertSQLFileContent;
+   alertSQLFileDisplay;
 
    /** Alert focus */
    alertDisplay;
@@ -54,6 +59,7 @@ export class AlertsICRComponent implements OnDestroy {
 
   constructor(private _alertsICRService: AlertsICRService, 
               private _confrmation: ConfirmationService,
+              private _uploadService: ImportService,
               private _messageService: MessageService) {
     this.screenID =  'SCR0000000019';
     this.columnsResult = [
@@ -176,9 +182,8 @@ export class AlertsICRComponent implements OnDestroy {
     this.displayAlert = true
   }
 
-  executeLocalQuery(alertId) {
-    this.executionDataResult=[];
-    this.columnsResultExecution = [];
+  confirmExecutionLocalQuery(alertId) {
+    this.runReportDialog = 2;
     this.executionAlertIndex = this.searchResult.findIndex(x => x.ALTID == alertId);
     this._confrmation.confirm({
       message: 'Are you sure that you want to run this report? ' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT,
@@ -188,29 +193,17 @@ export class AlertsICRComponent implements OnDestroy {
           this._messageService.add({severity:'info', summary:'Info Message', detail: 'Executing alerts/reports ...' });
           this.waitMessage='Running <b>' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT + '</b> report...<br>' + 
                            '<br> The report usually taking <b>between 1 to 3 minutes</b>. An automatic result pop-up will be opened shortly.';
-          this.subscription.push( this._alertsICRService.executeQuery(this.searchResult[this.executionAlertIndex].ALTID, [])
-          .subscribe( 
-              data => { this.executionDataResult = data;
-                        if(this.executionDataResult.length > 0) {
-                        let columns =Object.keys(this.executionDataResult[0]);
-                            for(let i =0; i < columns.length; i++) {
-                              this.columnsResultExecution.push({ field: columns[i], header: columns[i]});
-                            }
-                            console.log('Columns:', columns, this.columnsResultExecution)
-                        }
-                      },
-              error => {
-                    // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                    this.waitMessage='';
-                    this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
-              },
-              () => { 
-                    this.waitMessage='';
-                    console.log('Report result', this.executionDataResult);
-                    this._messageService.add({severity:'success', summary:'Completed', detail: 'Alerts/reports execution completed...' });
-                    this.executionDataResultDisplay=true;
-              }
-          ));
+          this.executionAlertParam = [];
+          if(this.searchResult[this.executionAlertIndex].ALTNBPARAM > 0) {
+            this.executionAlertParamDesc = this.searchResult[this.executionAlertIndex].ALTPARAMDESC.split(',');
+            for(let i=0; i < this.executionAlertParamDesc.length; i++) {
+              this.executionAlertParam.push('-1');
+            }
+            this.captureParamDialog = true;
+          }
+          else {
+            this.executeLocalQuery(this.executionAlertParam);
+          }
       },
       reject: (type) => {
           switch(type) {
@@ -226,8 +219,132 @@ export class AlertsICRComponent implements OnDestroy {
     });
   }
 
+  executeLocalQuery(params){
+    this.runReportDialog = 1; /* Mode 1 - Execute local */
+    this.executionDataResult=[];
+    this.columnsResultExecution = [];
+    this.subscription.push( this._alertsICRService.executeQuery(this.searchResult[this.executionAlertIndex].ALTID, params)
+    .subscribe( 
+        data => { this.executionDataResult = data;
+                  if(this.executionDataResult.length > 0) {
+                  let columns =Object.keys(this.executionDataResult[0]);
+                      for(let i =0; i < columns.length; i++) {
+                        this.columnsResultExecution.push({ field: columns[i], header: columns[i]});
+                      }
+                  }
+                },
+        error => {
+              // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
+              this.waitMessage='';
+              this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+        },
+        () => { 
+              this.waitMessage='';
+              console.log('Report result', this.executionDataResult);
+              this._messageService.add({severity:'success', summary:'Completed', detail: 'Alerts/reports execution completed...' });
+              this.executionDataResultDisplay=true;
+        }));
+  }
+
+  confirmRunReport(alertId) {
+    this.executionAlertIndex = this.searchResult.findIndex(x => x.ALTID == alertId);
+    this._confrmation.confirm({
+      message: 'Are you sure that you want to <b>execute</b> this report? <b>' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT + 
+               '</b><br><br>This will send the email notification to the distribution list.',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+          this._messageService.add({severity:'info', summary:'Info Message', detail: 'Executing alerts/reports ...' });
+          this.waitMessage='Running <b>' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT + '</b> report...<br>' + 
+                           '<br> The report usually taking <b>between 1 to 3 minutes</b>. An automatic result pop-up will be opened shortly.';
+          this.executionAlertParam = [];
+          if(this.searchResult[this.executionAlertIndex].ALTNBPARAM > 0) {
+            this.executionAlertParamDesc = this.searchResult[this.executionAlertIndex].ALTPARAMDESC.split(',');
+            for(let i=0; i < this.executionAlertParamDesc.length; i++) {
+              this.executionAlertParam.push('-1');
+            }
+            this.captureParamDialog = true;
+          }
+          else {
+            this.runReport(this.executionAlertParam);
+          }
+      },
+      reject: (type) => {
+          switch(type) {
+              case ConfirmEventType.REJECT:
+                  this._messageService.add({severity:'error', summary:'Cancelled', detail:'Alerts/reports execution cancelled'});
+              break;
+              case ConfirmEventType.CANCEL:
+                  this._messageService.add({severity:'warn', summary:'Cancelled', detail:'Alerts/reports execution cancelled'});
+              break;
+          }
+          this.waitMessage='';
+      }
+    });
+  }
+
+  runReport(params){
+    this.subscription.push( this._alertsICRService.runReport(this.searchResult[this.executionAlertIndex].ALTID, params)
+    .subscribe( 
+        data => { this.executionDataResult = data;
+                },
+        error => {
+              // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
+              this.waitMessage='';
+              this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+        },
+        () => { 
+              this.waitMessage='';
+              this._messageService.add({severity:'success', summary:'Completed', detail: 'Alerts/reports execution completed...' });
+        }));
+  }
+
+  removeReport(alertId) {
+    this.executionAlertIndex = this.searchResult.findIndex(x => x.ALTID == alertId);
+    this._confrmation.confirm({
+      message: 'Are you sure that you want to <b>REMOVE</b> this report? <b>' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT ,
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+          this._messageService.add({severity:'info', summary:'Info Message', detail: 'Alerts/reports removal completed...' });
+          this.searchResult.splice(this.executionAlertIndex,1);
+      },
+      reject: (type) => {
+          switch(type) {
+              case ConfirmEventType.REJECT:
+                  this._messageService.add({severity:'error', summary:'Cancelled', detail:'Alerts/reports removal cancelled'});
+              break;
+              case ConfirmEventType.CANCEL:
+                  this._messageService.add({severity:'warn', summary:'Cancelled', detail:'Alerts/reports removal cancelled'});
+              break;
+          }
+          this.waitMessage='';
+      }
+    });
+    
+  }
+
   showDialogMaximized(event, dialog: Dialog) {
       dialog.maximized = false;
       dialog.maximize();
+  }
+
+  getFile(alertId, alertFile){
+    this._messageService.add({severity:'info', summary:'Completed', detail: 'Downloading file for alert ' + alertId +  '...' });
+    this.subscription.push( this._uploadService.getFile(alertFile)
+    .subscribe( 
+        async data => { this.alertSQLFileContent = await data.text();
+                  console.log('Get File result', this.alertSQLFileContent);},
+        error => {
+              // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
+              this.waitMessage='';
+              this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+        },
+        () => { 
+              this.waitMessage='';
+              this.alertSQLFileDisplay = true;
+              this._messageService.add({severity:'success', summary:'Completed', detail: 'Alerts/reports download completed...' });
+        }));
+
   }
 }

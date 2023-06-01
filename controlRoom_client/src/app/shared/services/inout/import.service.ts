@@ -60,6 +60,7 @@ export class ImportService{
     private getJournalJSONUrl: string = '/api/upload/4/'; // Journal
     private collectResultUrl: string = '/api/upload/5/'; // Collect result
     private updateJournalUrl: string = '/api/upload/6/'; // Update Journal
+    private getFileUrl: string = '/api/upload/7/'; // Get file
     private executeJobURL: string = '/api/execute/1/';
     
     private request: string;
@@ -221,7 +222,6 @@ export class ImportService{
     
     }
 
-
     executePlan (userID: any, toolId: any) {
         /* Execute the batch  integration */
         //console.log ('Update request');
@@ -262,7 +262,6 @@ export class ImportService{
         }));
     
     }
-
 
     checkFile (filename: any,toolId: any, json: any) {
         //console.log('checkFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
@@ -410,6 +409,20 @@ export class ImportService{
         }));
 
     }
+
+    getFile (filePath: any) {
+        this.request = this.getFileUrl;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.append('PARAM',filePath);
+    
+        return this._http.getFile(this.request, this.params, headersSearch).pipe(map(response => {
+                let data = <any> response;
+                return data;
+        }));
+
+    }
+    
 }
 
 

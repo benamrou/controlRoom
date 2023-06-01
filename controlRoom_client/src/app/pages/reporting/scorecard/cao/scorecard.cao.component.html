@@ -29,13 +29,13 @@
 <div style="margin-top:2em" *ngIf="searchLaunched && reportCycleCountActivity && reportCycleCountDetail && reportCaoActivity && dataAvailable">
     <div>
       <div class=" btn-group btn-group-toggle" data-toggle="buttons" style="float: right">
-        <label class=" btn btn-sm btn-danger btn-simple" (click)="clickedDairy=true;clickedGrocery=false;selectedDeptLabel=departmentLabel[0];updateDepartment(departmentCode[0]);" [ngClass]="{'active':clickedDairy===true}">
+        <label class="font-bold" class=" btn btn-sm btn-danger btn-simple" (click)="clickedDairy=true;clickedGrocery=false;selectedDeptLabel=departmentLabel[0];updateDepartment(departmentCode[0]);" [ngClass]="{'active':clickedDairy===true}">
           <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block">Dairy</span>
           <span class=" d-block d-sm-none">
             <i class=" tim-icons icon-single-02"> </i>
           </span>
         </label>
-        <label class=" btn btn-sm btn-danger btn-simple" (click)="clickedDairy=false;clickedGrocery=true;selectedDeptLabel=departmentLabel[1];updateDepartment(departmentCode[1])" [ngClass]="{'active':clickedGrocery===true}">
+        <label class="font-bold" class=" btn btn-sm btn-danger btn-simple" (click)="clickedDairy=false;clickedGrocery=true;selectedDeptLabel=departmentLabel[1];updateDepartment(departmentCode[1])" [ngClass]="{'active':clickedGrocery===true}">
           <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block" > Grocery </span>
           <span class=" d-block d-sm-none"> <i class=" tim-icons icon-gift-2"> </i> </span>
         </label>
@@ -124,13 +124,13 @@
               </div>
               <div class=" col-sm-6">
                 <div class=" btn-group btn-group-toggle" data-toggle="buttons" style="float: right">
-                  <label class=" btn btn-sm btn-danger btn-simple" (click)="data=datasets[1];label='Zero inventory';updateOptions();clickedNegZero=true;clickedOthers=false;" [ngClass]="{'active':clickedNegZero===true}">
+                  <label class="font-bold" class=" btn btn-sm btn-danger btn-simple" (click)="data=datasets[1];label='Zero inventory';updateOptions();clickedNegZero=true;clickedOthers=false;" [ngClass]="{'active':clickedNegZero===true}">
                     <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block">Negative & Zero</span>
                     <span class=" d-block d-sm-none">
                       <i class=" tim-icons icon-single-02"> </i>
                     </span>
                   </label>
-                  <label class=" btn btn-sm btn-danger btn-simple" (click)="data=datasets[2];label='Other reviewed';updateOptions();clickedNegZero=false;clickedOthers=true;" [ngClass]="{'active':clickedOthers===true}">
+                  <label class="font-bold" class=" btn btn-sm btn-danger btn-simple" (click)="data=datasets[2];label='Other reviewed';updateOptions();clickedNegZero=false;clickedOthers=true;" [ngClass]="{'active':clickedOthers===true}">
                     <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block" > Others </span>
                     <span class=" d-block d-sm-none"> <i class=" tim-icons icon-gift-2"> </i> </span>
                   </label>
@@ -155,7 +155,7 @@
               </div>
               <div class=" col-sm-6">
                 <div  class=" btn-group btn-group-toggle" data-toggle="buttons" style="float: right">
-                  <label class=" btn btn-sm btn-danger btn-simple" (click)="clicked2=true" [ngClass]="{'active':clicked2===true}">
+                  <label class="font-bold" class=" btn btn-sm btn-danger btn-simple" (click)="clicked2=true" [ngClass]="{'active':clicked2===true}">
                        <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block" > Activity </span>
                        <span class=" d-block d-sm-none"> <i class=" tim-icons icon-tap-02"> </i> </span>
                   </label>
@@ -229,13 +229,13 @@
           </div>
           <div class=" col-sm-6">
             <div class=" btn-group btn-group-toggle" data-toggle="buttons" style="float: right">
-              <label class=" btn btn-sm btn-danger btn-simple" (click)="cao_data_graph1=cao_datasets[0];cao_data_graph2=cao_datasets[1];cao_label_graph1='Nb. total line';cao_label_graph2='Nb. line changed';updateCaoOptions();clickedCaoLine=true;clickedCaoVolume=false;" [ngClass]="{'active':clickedCaoLine===true}">
+              <label class="font-bold" class=" btn btn-sm btn-danger btn-simple" (click)="cao_data_graph1=cao_datasets[0];cao_data_graph2=cao_datasets[1];cao_label_graph1='Nb. total line';cao_label_graph2='Nb. line changed';updateCaoOptions();clickedCaoLine=true;clickedCaoVolume=false;" [ngClass]="{'active':clickedCaoLine===true}">
                 <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block">Nb. Line</span>
                 <span class=" d-block d-sm-none">
                   <i class=" tim-icons icon-single-02"> </i>
                 </span>
               </label>
-              <label class=" btn btn-sm btn-danger btn-simple" (click)="cao_data_graph1=cao_datasets[2];cao_data_graph2=cao_datasets[3];cao_label_graph1='Total # Cases';cao_label_graph2='Cases adjusted';updateCaoOptions();clickedCaoLine=false;clickedCaoVolume=true;" [ngClass]="{'active':clickedCaoVolume===true}">
+              <label class="font-bold" class=" btn btn-sm btn-danger btn-simple" (click)="cao_data_graph1=cao_datasets[2];cao_data_graph2=cao_datasets[3];cao_label_graph1='Total # Cases';cao_label_graph2='Cases adjusted';updateCaoOptions();clickedCaoLine=false;clickedCaoVolume=true;" [ngClass]="{'active':clickedCaoVolume===true}">
                 <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block" > Volume </span>
                 <span class=" d-block d-sm-none"> <i class=" tim-icons icon-gift-2"> </i> </span>
               </label>
@@ -263,7 +263,7 @@
           </div>
           <div class=" col-sm-6">
             <div  class=" btn-group btn-group-toggle"  data-toggle="buttons" style="float: right">
-              <label class=" btn btn-sm btn-danger btn-simple" (click)="clickedCaoPerformance=true" [ngClass]="{'active':clickedCaoPerformance===true}">
+              <label class="font-bold" class=" btn btn-sm btn-danger btn-simple" (click)="clickedCaoPerformance=true" [ngClass]="{'active':clickedCaoPerformance===true}">
                    <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block" > Activity </span>
                    <span class=" d-block d-sm-none"> <i class=" tim-icons icon-tap-02"> </i> </span>
               </label>

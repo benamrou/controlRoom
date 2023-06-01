@@ -439,35 +439,35 @@
                     [style]="{'overflow':'visible'}" [resizable]="true" [width]="500">
                     <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="retailSelected">
                         <div class="ui-grid-row">
-                            <div class="ui-grid-col-4"><label for="vin">Code</label></div>
+                            <div class="ui-grid-col-4"><label class="font-bold" for="vin">Code</label></div>
                             <div class="ui-grid-col-8"><input id="code" [(ngModel)]="retailSelected.pricelist" disabled/></div>
                         </div>
                         <div class="ui-grid-row">
-                            <div class="ui-grid-col-4"><label for="vin">Price List</label></div>
+                            <div class="ui-grid-col-4"><label class="font-bold" for="vin">Price List</label></div>
                             <div class="ui-grid-col-8"><input id="title" [(ngModel)]="retailSelected.pricelistdescription" disabled size="50"/></div>
                         </div>
                         <div class="ui-grid-row">
-                            <div class="ui-grid-col-4"><label for="vin">Priority</label></div>
+                            <div class="ui-grid-col-4"><label class="font-bold" for="vin">Priority</label></div>
                             <div class="ui-grid-col-8"><input id="title" [(ngModel)]="retailSelected.priority" disabled/></div>
                         </div>
                         <div class="ui-grid-row">
-                            <div class="ui-grid-col-4"><label for="vin">Item</label></div>
+                            <div class="ui-grid-col-4"><label class="font-bold" for="vin">Item</label></div>
                             <div class="ui-grid-col-8"><input id="title" [(ngModel)]="retailSelected.itemfulldescription" disabled size="50"/></div>
                         </div>
                         <div class="ui-grid-row">
-                            <div class="ui-grid-col-4"><label for="start">Start</label></div>
+                            <div class="ui-grid-col-4"><label class="font-bold" for="start">Start</label></div>
                             <div class="ui-grid-col-8"><p-calendar [(ngModel)]="retailSelected.start" dateFormat="yy-mm-dd" dataType="string"></p-calendar></div>
                         </div>
                         <div class="ui-grid-row">
-                            <div class="ui-grid-col-4"><label for="end">End</label></div>
+                            <div class="ui-grid-col-4"><label class="font-bold" for="end">End</label></div>
                             <div class="ui-grid-col-8"><p-calendar [(ngModel)]="retailSelected.end" dateFormat="yy-mm-dd" dataType="string"></p-calendar></div>
                         </div>
                         <div class="ui-grid-row">
-                            <div class="ui-grid-col-4"><label>Retail</label></div>
+                            <div class="ui-grid-col-4"><label class="font-bold">Retail</label></div>
                             <div class="ui-grid-col-8"><input [(ngModel)]="retailSelected.retail" disabled></div>
                         </div>
                         <div class="ui-grid-row">
-                            <div class="ui-grid-col-4"><label>Multi</label></div>
+                            <div class="ui-grid-col-4"><label class="font-bold">Multi</label></div>
                             <div class="ui-grid-col-8"><input [(ngModel)]="retailSelected.multi" disabled></div>
                         </div>
                     </div>

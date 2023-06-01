@@ -35,7 +35,7 @@
               <ng-container *ngFor="let category of AllCategories; let catIndex=index">
                 <div style="padding-left: 1em;">
                   <p-checkbox (click)= "deactivateCategorySelection(catIndex)" value="category" [value]="category"  [(ngModel)]="selectedCategories" [inputId]="selectedCategories[catIndex]" [disabled]="category.key === 'R'"></p-checkbox>
-                  <label [for]="AllCategories[catIndex]">{{AllCategories[catIndex].entryDesc}}</label>
+                  <label class="font-bold" [for]="AllCategories[catIndex]">{{AllCategories[catIndex].entryDesc}}</label>
                 </div>
               </ng-container>
               <div style="padding-left: 3em;">

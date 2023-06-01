@@ -5,9 +5,11 @@
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
 
+<!-- Confirmation when executing, removing alert -->
 <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
 
+<!-- Dialog for launching report TEST -->
 <p-dialog *ngIf="executionDataResultDisplay" header="{{searchResult[executionAlertIndex].ALTID}} - {{searchResult[executionAlertIndex].ALTSUBJECT}}" 
             [(visible)]="executionDataResultDisplay"
             (onShow)="showDialogMaximized($event,alertDetailResult)" [maximizable]="true" #alertDetailResult>
@@ -91,6 +93,39 @@
 </div>
 </p-dialog>
 
+<!-- Dialog for capturing the parameter -->
+<p-dialog *ngIf="captureParamDialog" header="{{searchResult[executionAlertIndex].ALTID}} - {{searchResult[executionAlertIndex].ALTSUBJECT}} parameters" 
+            [(visible)]="captureParamDialog"  #alertParam>
+    <div class="formgrid grid">
+        <ng-container *ngFor="let param of executionAlertParamDesc; let indice=index" class="ui-resizable-column">
+            <div class="field col-6">
+                <label class="font-bold" for="param{{indice}}">{{param}}</label>
+                        <input id="param{{indice}}" pInputText [(ngModel)]="executionAlertParam[indice]"
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
+            </div>
+        </ng-container>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" *ngIf="runReportDialog == 2" (click)="captureParamDialog = false; executeLocalQuery(executionAlertParam)" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" *ngIf="runReportDialog == 1" (click)="captureParamDialog = false; runReport(executionAlertParam)" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Dialog for XML file content -->
+<p-dialog *ngIf="alertSQLFileDisplay" header="{{alertDisplay.ALTID}} - {{alertDisplay.ALTSUBJECT}}"  [style]="{width: '50vw'}"
+            [(visible)]="alertSQLFileDisplay"  #alertParam>
+    <div class="formgrid grid" style="border: 1px solid black;">
+        <label class="font-bold" for="fileContent" style="font-weight: bold">{{alertDisplay.ALTFILE}}</label>
+        <textarea id="fileContent" pInputText rows="20" [(ngModel)]="alertSQLFileContent" disabled
+                 class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
+        </textarea>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="alertSQLFileDisplay = false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Dialog for edit alert -->
 <p-dialog *ngIf="alertDisplay" header="{{alertDisplay.ALTSUBJECT}}" [(visible)]="displayAlert"
     (onShow)="showDialogMaximized($event,alertDetail)" [maximizable]="true" #alertDetail>
 
@@ -106,32 +141,33 @@
             <p-tabPanel header="General" lefticon="fas fa-file-invoice">
                 <div class="formgrid grid">
                     <div class="field col-6">
-                        <label for="alertid">ID</label>
-                        <input id="alertid" pInputText value="{{alertDisplay.ALTID}}"
+                        <label class="font-bold" for="alertid">ID</label>
+                        <input id="alertid" pInputText value="{{alertDisplay.ALTID}}" disabled
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-6">
-                        <label for="altsubject">Title/Subject</label>
-                        <input id="altsubject" pInputText value="{{alertDisplay.ALTSUBJECT}}"
+                        <label class="font-bold" for="altsubject">Title/Subject</label>
+                        <input id="altsubject" pInputText [(ngModel)]="alertDisplay.ALTSUBJECT"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-12">
-                        <label for="altcontent">Detail description in attachement(EXCEL)</label>
-                        <textarea id="altcontent" pInputText rows="4" value="{{alertDisplay.ALTCONTENT}}"
+                        <label class="font-bold" for="altcontent">Detail description in attachement(EXCEL)</label>
+                        <textarea id="altcontent" pInputText rows="4" [(ngModel)]="alertDisplay.ALTCONTENT"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid"></textarea>
                     </div>
                     <div class="field col-12">
-                        <label for="altcontenthtml">Detail description (EMAIL)</label>
-                        <textarea id="altcontenthtml" pInputText rows="4" value="{{alertDisplay.ALTCONTENTHTML}}"
+                        <label class="font-bold" for="altcontenthtml">Detail description (EMAIL)</label>
+                        <textarea id="altcontenthtml" pInputText rows="4" [(ngModel)]="alertDisplay.ALTCONTENTHTML"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid"></textarea>
                     </div>
-                    <div class="field col-8"><label for="altfile">Query location (XML)</label>
-                        <input id="altfile" pInputText value="{{alertDisplay.ALTFILE}}"
+                    <div class="field col-8"><label class="font-bold" for="altfile">Query location (XML)</label>
+                        <input id="altfile" pInputText [(ngModel)]="alertDisplay.ALTFILE"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-1" style="width: 4%; text-align: -webkit-center;">
-                        <label for="altopen">File</label>
+                        <label class="font-bold" for="altopen">File</label>
                         <button id="altopen" pButton icon="fas fa-file-code"
+                            (click)="getFile(alertDisplay.ALTID, alertDisplay.ALTFILE)"
                             class="p-element p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full p-button p-button-icon-only"
                             style="margin-top: 5px;">
                         </button>
@@ -141,17 +177,17 @@
             <p-tabPanel header="Distribution list" lefticon="fas fa-envelope-open">
                 <div class="formgrid grid">
                     <div class="field col-3">
-                        <label for="daltemail">Email sent to:</label>
+                        <label class="font-bold" for="daltemail">Email sent to:</label>
                         <p-chips id="daltemail" [(ngModel)]="alertSheduleDisplay_DALTEMAIL">
                         </p-chips>
                     </div>
                     <div class="field col-3">
-                        <label for="daltemailcc">Copy :</label>
+                        <label class="font-bold" for="daltemailcc">Copy :</label>
                         <p-chips id="daltemailcc" [(ngModel)]="alertSheduleDisplay_DALTEMAILCC">
                         </p-chips>
                     </div>
                     <div class="field col-3">
-                        <label for="daltemailbcc">Hidden copy :</label>
+                        <label class="font-bold" for="daltemailbcc">Hidden copy :</label>
                         <p-chips id="daltemailbcc" [(ngModel)]="alertSheduleDisplay_DALTEMAILBCC">
                         </p-chips>
                     </div>
@@ -160,87 +196,87 @@
             <p-tabPanel header="Printing" lefticon="fas fa-print">
                 <div class="formgrid grid">
                     <div class="field col-6">
-                        <label for="alertorientation">Orientation</label>
+                        <label class="font-bold" for="alertorientation">Orientation</label>
                         <p-dropdown id="alertorientation" [options]="['landscape', 'portrait']" [(ngModel)]="alertDisplay.ALTORIENTATION">
                         </p-dropdown>
                     </div>
                     <div class="field col-6">
-                        <label for="altmargin">Margin</label>
-                        <input id="altmargin" pInputText value="{{alertDisplay.ALTMARGIN}}"
+                        <label class="font-bold" for="altmargin">Margin</label>
+                        <input id="altmargin" pInputText [(ngModel)]="alertDisplay.ALTMARGIN"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-6">
-                        <label for="alertprintarea">Print area</label>
-                        <input id="alertprintarea" pInputText value="{{alertDisplay.ALTPRINTAREA}}"
+                        <label class="font-bold" for="alertprintarea">Print area</label>
+                        <input id="alertprintarea" pInputText [(ngModel)]="alertDisplay.ALTPRINTAREA"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-2">
-                        <label for="alertfitpage">Fit page</label>
+                        <label class="font-bold" for="alertfitpage">Fit page</label>
                         <p-checkbox id="alertfitpage" [(ngModel)]="alertDisplay.ALTFITPAGEBOOLEAN" [binary]="true"
                             class="p-element text-base text-color surface-overlay p-2 surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                         </p-checkbox>
                     </div>
                     <div class="field col-2">
-                        <label for="alertfreezeheader">Freeze header</label>
+                        <label class="font-bold" for="alertfreezeheader">Freeze header</label>
                         <p-checkbox id="alertfreezeheader" [(ngModel)]="alertDisplay.ALTFREEZEHEADERBOOLEAN" [binary]="true"
                             class="p-element text-base text-color surface-overlay p-2 surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                         </p-checkbox>
                     </div>
                     <div class="field col-2">
-                        <label for="alertborder">Border</label>
+                        <label class="font-bold" for="alertborder">Border</label>
                         <p-checkbox id="alertborder" [(ngModel)]="alertDisplay.ALTBORDERBOOLEAN" [binary]="true"
                             class="p-element text-base text-color surface-overlay p-2 surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                         </p-checkbox>
                     </div>
                     <div class="field col-3">
-                        <label for="altfitheight">Nb rows/page</label>
-                        <input id="altfitheight" pInputText value="{{alertDisplay.ALTHEIGHT}}"
+                        <label class="font-bold" for="altfitheight">Nb rows/page</label>
+                        <input id="altfitheight" pInputText [(ngModel)]="alertDisplay.ALTHEIGHT"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid ng-star-inserted"><!----><!---->
                     </div>
                     <div class="field col-3">
-                        <label for="altfitwidth">Nb columns/page</label>
-                        <input id="altfitwidth" pInputText value="{{alertDisplay.ALTFITWIDTH}}"
+                        <label class="font-bold" for="altfitwidth">Nb columns/page</label>
+                        <input id="altfitwidth" pInputText [(ngModel)]="alertDisplay.ALTFITWIDTH"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid ng-star-inserted"><!----><!---->
                     </div>
-                    <div class="field col-3"><label for="alttitlerepeat">Header</label>
-                        <input id="alttitlerepeat" pInputText value="{{alertDisplay.ALTTITLEREPEAT}}"
+                    <div class="field col-3"><label class="font-bold" for="alttitlerepeat">Header</label>
+                        <input id="alttitlerepeat" pInputText [(ngModel)]="alertDisplay.ALTTITLEREPEAT"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-3">
-                        <label for="altfooter">Footer</label>
-                        <input id="altfooter" pInputText value="{{alertDisplay.ALTFOOTER}}"
+                        <label class="font-bold" for="altfooter">Footer</label>
+                        <input id="altfooter" pInputText [(ngModel)]="alertDisplay.ALTFOOTER"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-3">
-                        <label for="altxlsbreak">Row break</label>
-                        <input id="altxlsbreak" pInputText value="{{alertDisplay.ALTXLSBREAK}}"
+                        <label class="font-bold" for="altxlsbreak">Row break</label>
+                        <input id="altxlsbreak" pInputText [(ngModel)]="alertDisplay.ALTXLSBREAK"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-3">
-                        <label for="altscale">Scale</label>
-                        <input id="altscale" pInputText value="{{alertDisplay.ALTSCALE}}"
+                        <label class="font-bold" for="altscale">Scale</label>
+                        <input id="altscale" pInputText [(ngModel)]="alertDisplay.ALTSCALE"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-6">
-                        <label for="altcolmove">Move columns</label>
-                        <input id="altcolmove"  pInputText value="{{alertDisplay.ALTCOLMOVE}}"
+                        <label class="font-bold" for="altcolmove">Move columns</label>
+                        <input id="altcolmove"  pInputText [(ngModel)]="alertDisplay.ALTCOLMOVE"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-6">
-                        <label for="altformat">Format HTML</label>
-                        <textarea id="altformat" pInputText value="{{alertDisplay.ALTFORMAT}}" rows="8"
+                        <label class="font-bold" for="altformat">Format HTML</label>
+                        <textarea id="altformat" pInputText [(ngModel)]="alertDisplay.ALTFORMAT" rows="8"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid"></textarea>
                     </div>
                     <div class="field col-6">
-                        <label for="altformatxls">Format EXCEL</label>
+                        <label class="font-bold" for="altformatxls">Format EXCEL</label>
                         <textarea
-                            id="altformatxls" pInputText value="{{alertDisplay.ALTFORMATXLS}}" rows="8"
+                            id="altformatxls" pInputText [(ngModel)]="alertDisplay.ALTFORMATXLS" rows="8"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid"></textarea>
                     </div>
                     <div class="field col-6">
-                        <label for="altformatxls">Format EXCEL (second tab)</label>
+                        <label class="font-bold" for="altformatxls">Format EXCEL (second tab)</label>
                         <textarea
-                            id="altformattab2xls" pInputText value="{{alertDisplay.ALTFORMATTAB2XLS}}" rows="8"
+                            id="altformattab2xls" pInputText [(ngModel)]="alertDisplay.ALTFORMATTAB2XLS" rows="8"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid"></textarea>
                     </div>
                 </div>
@@ -253,6 +289,7 @@
 
 
 </p-dialog>
+
 <!-- Search Panel -->
 <div class="bbs_search_panel">
     <span style="margin-right: 2.2em; padding-left: 15px; font-weight: bolder;">Alert :</span>
@@ -279,6 +316,7 @@
     </span>
 </div>
 
+<!-- Result search panel -->
 <div item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
     <p-table #result [value]="searchResult" sortMode="multiple" [rows]="20" [rowsPerPageOptions]="[20,50,100]"
         [paginator]="true" [pageLinks]="3" [columns]="columnsResult" selectionMode="single"
@@ -370,17 +408,19 @@
                             </button>
                             <button pButton pRipple tooltipPosition="bottom" icon="pi pi-play"
                                 pTooltip="[Test alert]  will show alert result only"
-                                (click)="executeLocalQuery(rowData['ALTID'])"
+                                (click)="confirmExecutionLocalQuery(rowData['ALTID'])"
                                 class="p-button-rounded p-button-sm p-button-secondary"
                                 style="height: 3em; width: 3em; border-color: white !important; color: white !important;">
                             </button>
                             <button pButton pRipple tooltipPosition="bottom" icon="pi pi-forward"
                                 pTooltip="[Run alert]  will send email to distribution list"
+                                (click)="confirmRunReport(rowData['ALTID'])"
                                 class="p-button-rounded p-button-sm p-button-secondary"
                                 style="height: 3em; width: 3em; border-color: white !important; color: white !important;">
                             </button>
                             <button pButton pRipple tooltipPosition="bottom" icon="pi pi-minus"
                                 pTooltip="[Remove alert]" class="p-button-rounded p-button-sm p-button-secondary"
+                                (click)="removeReport(rowData['ALTID'])"
                                 style="height: 3em; width: 3em; border-color: white !important; color: white !important;">
                             </button>
                         </span>
