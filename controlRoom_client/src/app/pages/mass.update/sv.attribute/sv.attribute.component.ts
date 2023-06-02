@@ -75,7 +75,7 @@ export class SVAttributeComponent implements OnInit{
     this.startDate = new Date(this.dateNow.setDate(this.dateNow.getDate() -2));
 
     this.scheduleDate = new Date();
-    this.itemTrace = true;
+    this.itemTrace = false;
     this.scheduleFlag = false;
     this.screenID = 'SCR0000000012';
     this.activeIndex = 0;

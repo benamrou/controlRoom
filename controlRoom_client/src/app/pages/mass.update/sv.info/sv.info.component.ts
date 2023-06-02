@@ -86,7 +86,7 @@ export class SVInfoComponent implements OnInit {
         console.log('this.startDate :', this.startDate);
 
         this.scheduleDate = new Date();
-        this.itemTrace = true;
+        this.itemTrace = false;
         this.scheduleFlag = false;
         this.screenID = 'SCR0000000015';
         this.activeIndex = 0;
