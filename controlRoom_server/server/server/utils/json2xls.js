@@ -242,13 +242,12 @@ function formatXLS (worksheet, dataRows, formatRule) {
                                     }
                                     else {
                                         rowChange.getCell(cellToFormat).style = cellRuleXLS.conditionalRule[i].style;
-                                        if(! Number.isNaN(parseFloat(rowChange.getCell(cellToFormat).value))) {
+                                        /*if(! Number.isNaN(parseFloat(rowChange.getCell(cellToFormat).value))) {
                                             value = parseFloat(rowChange.getCell(cellToFormat).value);
 
                                             rowChange.getCell(cellToFormat).value=value/100;
-                                        }
+                                        }*/
                                         if (cellRuleXLS.conditionalRule[i].style.numFmt) {
-                                            console.log('Applying Percentage format');
                                             rowChange.getCell(cellToFormat).numFmt = cellRuleXLS.conditionalRule[i].style.numFmt;
                                         }
                                     }
