@@ -2,6 +2,7 @@ import {Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import {HttpHeaders, HttpParams } from '@angular/common/http';
+import { SyndigoResult } from './syndigo.result';
 import { Observable, map } from 'rxjs';
 
 
@@ -29,6 +30,7 @@ export class SyndigoService {
     private params: HttpParams;
 
     public syndigoEnv: SyndigoEnvironment[];
+    public syndigoResult: SyndigoResult[];
     private authToken;
   
     constructor(private http : HttpService, private _userService: UserService){ }
@@ -64,6 +66,24 @@ export class SyndigoService {
         }));
     }
 
+
+    testConnection() {
+        let headersSearch = new HttpHeaders();
+        this.request= this.syndigoEnv[0].SYNURL + 'auth/test';
+        this.params= new HttpParams();
+
+
+        headersSearch = headersSearch.set('Authorization', 'EN ' + this.authToken);
+        this.params=null;
+
+        return this.http.get(this.request, this.params,headersSearch, true /*external url*/).pipe(map(response => {
+            let data = response;
+            console.log('Connection test', response);
+            return  this.authToken;
+        }));
+        
+    }
+    
     searchUPCMarketplace(upcs: any, skipCount?, takeCount?) {
         // https://api.syndigo.com/api/importexport/marketplace/search?
         //      VocabularyId=2c07d3d9-f004-444e-b808-f64c9dbffc6a&
@@ -75,21 +95,22 @@ export class SyndigoService {
         let headersSearch = new HttpHeaders();
         this.request = this.syndigoEnv[0].SYNURL + 'importexport/marketplace/search?' ;
         this.params= new HttpParams();
-        this.params = this.params.set('VocabularyId', this.syndigoEnv[0].SYNVOCID);
-        this.params = this.params.set('CompanyId', this.syndigoEnv[0].SYNCOMPANYID);
-        this.params = this.params.set('skipCount', skipCount? skipCount: 0);
-        this.params = this.params.set('takeCount', takeCount? takeCount: upcs.length * 3);
-        this.params = this.params.set('shouldIncludeMissingVocabularyAttributes', true);
+        this.params = this.params.append('VocabularyId', this.syndigoEnv[0].SYNVOCID);
+        this.params = this.params.append('CompanyId', this.syndigoEnv[0].SYNCOMPANYID);
+        this.params = this.params.append('skipCount', skipCount? skipCount: 0);
+        this.params = this.params.append('takeCount', takeCount? takeCount: upcs.length * 3);
+        this.params = this.params.append('shouldIncludeMissingVocabularyAttributes', true);
 
-        headersSearch = headersSearch.set('Authorization', 'EN ' + this.authToken);
+        headersSearch = headersSearch.append('Authorization', 'EN ' + this.authToken);
 
         let upcBodyResearch = new bodySyndigoRequest();
-        upcBodyResearch.AttributeFilters.Values = upcs;
+        upcBodyResearch.AttributeFilters.push(new bodyFilterSyndigoRequest());
+        upcBodyResearch.AttributeFilters[0].Values = upcs;
 
-        return this.http.post(this.request, this.params, headersSearch,  JSON.stringify(upcBodyResearch), true /*external url*/).pipe(map(response => {
-            let data = response;
-            console.log('searchUPCMarketplace', response);
-            return  this.authToken;
+        return this.http.post(this.request, this.params, headersSearch,  upcBodyResearch, true /*external url*/).pipe(map(response => {
+            this.syndigoResult=<any>response;
+            console.log('searchUPCMarketplace',  this.syndigoResult);
+            return  this.syndigoResult;
         }));
         
     }
@@ -103,7 +124,7 @@ export class bodySyndigoRequest {
    public OnHold = false;
    public Archived = false;
    public AttributeFilterOperator = 'And';
-   public AttributeFilters: bodyFilterSyndigoRequest = new bodyFilterSyndigoRequest();
+   public AttributeFilters: bodyFilterSyndigoRequest[] =[];
 }
 
 export class bodyFilterSyndigoRequest {
@@ -119,3 +140,4 @@ export class bodyFilterSyndigoRequest {
        Fuzzy,   - Similar match (fuzzy, a char might be missing in search value for example)
        Search   - exact match for search value */
 }
+

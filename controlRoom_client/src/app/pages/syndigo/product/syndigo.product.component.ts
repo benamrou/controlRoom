@@ -78,7 +78,8 @@ export class SyndigoProductComponent implements OnDestroy {
                                                 ' Syndigo authorization request validated.'});
 
                       this.subscription.push(this._syndigoService.searchUPCMarketplace(this.values,0, this.values.length*5) .subscribe( 
-                        data => { }, // put the data returned from the server in our variable
+                      //this.subscription.push(this._syndigoService.testConnection().subscribe(  
+                      data => { }, // put the data returned from the server in our variable
                         error => {
                               console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
                               this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });

@@ -110,20 +110,20 @@ export class HttpService  {
     let user = localStorage.getItem('ICRUser');
     let myTransaction = this.addTransaction();
     
-    if (!externalUrl) {
-      url = this.baseUrl + url;
-    }
-    
     if (!headersOption) {
       // let's make option object
       headersOption = new HttpHeaders();
     }
     headersOption = headersOption.set('Content-Type', 'application/json');
-    headersOption = headersOption.set('Content-type', 'Application/json; charset=UTF-8');
-    headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
-    headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
-    headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
-    headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+
+    if (!externalUrl) {
+      url = this.baseUrl + url;
+      headersOption = headersOption.set('Content-type', 'Application/json; charset=UTF-8');
+      headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
+      headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
+      headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
+      headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+    }
 
     console.log('HTTP GET:', url, headersOption, paramOptions);
     return this.httpClient.get(url, { headers: headersOption,
@@ -198,7 +198,7 @@ export class HttpService  {
       headersOption = new HttpHeaders();
     }
 
-    headersOption = headersOption.set('Content-Type', 'application/json');
+    headersOption = headersOption.set('Content-type', 'Application/json; charset=UTF-8');
 
     if (!externalUrl) {
       url = this.baseUrl + url;
