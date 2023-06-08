@@ -2,6 +2,7 @@ import { Component, ViewChild, OnDestroy, HostListener } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
 import { SearchService, SyndigoEnvironment, SyndigoService } from '../../../shared/services/index';
 import { MessageService } from 'primeng/api';
+import { SyndigoResult, SyndigoData } from 'src/app/shared/services/syndigo/syndigo.result';
 
 export class SearchResultFormat {
   COL1: any;
@@ -35,11 +36,14 @@ export class SyndigoProductComponent implements OnDestroy {
    //msgs: Message[] = [];
 
   // Search result 
-   searchResult : any [] = [];
+   searchResult : any[] = [];
    tabSelect: number = 0;
    displayOverlayInfo: boolean = false;
    displaySetting: boolean= false;
+   displaySettingOption: boolean= false;
    syndigoInfo : SyndigoEnvironment;
+
+   separatorChips: string = ' ';
 
    // Selected element
    selectedElement: any = {};
@@ -51,7 +55,7 @@ export class SyndigoProductComponent implements OnDestroy {
   constructor(private _searchService: SearchService, private _messageService: MessageService,
               public _syndigoService: SyndigoService) {
       this.subscription.push(this._syndigoService.getSyndigoInfo().subscribe( 
-        data => { }, // put the data returned from the server in our variable
+        data => { this.displaySettingOption = true}, // put the data returned from the server in our variable
         error => {
               console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
               this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
@@ -68,7 +72,7 @@ export class SyndigoProductComponent implements OnDestroy {
 
     this.subscription.push(this._syndigoService.getAuthToken()
             .subscribe( 
-                data => { }, // put the data returned from the server in our variable
+                data => {  }, // put the data returned from the server in our variable
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
                       this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
@@ -79,12 +83,15 @@ export class SyndigoProductComponent implements OnDestroy {
 
                       this.subscription.push(this._syndigoService.searchUPCMarketplace(this.values,0, this.values.length*5) .subscribe( 
                       //this.subscription.push(this._syndigoService.testConnection().subscribe(  
-                      data => { }, // put the data returned from the server in our variable
+                      data => { this.searchResult = data;
+                                console.log('searchResult:', this.searchResult.length, this.searchResult);}, // put the data returned from the server in our variable
                         error => {
+                              this.searchButtonEnable = true;
                               console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
                               this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                         },
-                        () => { 
+                        () => {
+                              this.searchButtonEnable = true;
                               this._messageService.add({severity:'success', summary:'Syndigo references', detail: 'Retrieved ' + 
                                                         ' Syndigo product information captured.'});
                         }
@@ -113,5 +120,12 @@ export class SyndigoProductComponent implements OnDestroy {
   tabSelection(e) {
     this.tabSelect = e.index;
     console.log('onScroll: ', e)
+  }
+
+  saveJson(){
+    var a = document.createElement('a');
+    a.setAttribute('href', 'data:text/plain;charset=utf-u,'+encodeURIComponent(JSON.stringify(this.searchResult)));
+    a.setAttribute('download', 'SYNDIGOLlookUp_' + this.values.join('_') + '.json');
+    a.click()
   }
 }

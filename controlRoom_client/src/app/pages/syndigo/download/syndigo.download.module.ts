@@ -10,10 +10,17 @@ import { ChipsModule } from 'primeng/chips';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { TabViewModule } from 'primeng/tabview';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, TableModule, ButtonModule, PageHeaderModule,
-               ChipsModule, TooltipModule, ToastModule, TabViewModule ],
+               ChipsModule, TooltipModule, ToastModule, TabViewModule,
+               InputTextareaModule,
+               InputTextModule,
+               DialogModule 
+            ],
     declarations: [SyndigoDownloadComponent],
     exports: [SyndigoDownloadComponent],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]

@@ -2,10 +2,10 @@ import {Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import {HttpHeaders, HttpParams } from '@angular/common/http';
-import { SyndigoResult } from './syndigo.result';
+import { HeinensSyndigo, SyndigoResult } from './syndigo.result';
 import { Observable, map } from 'rxjs';
 
-
+/* Syndigo information element from database query result */
 export class SyndigoEnvironment {
     public SYNCORPID; 
     public SYNTYPE;
@@ -30,7 +30,7 @@ export class SyndigoService {
     private params: HttpParams;
 
     public syndigoEnv: SyndigoEnvironment[];
-    public syndigoResult: SyndigoResult[];
+    public syndigoResult: any[] = [];
     private authToken;
   
     constructor(private http : HttpService, private _userService: UserService){ }
@@ -98,7 +98,7 @@ export class SyndigoService {
         this.params = this.params.append('VocabularyId', this.syndigoEnv[0].SYNVOCID);
         this.params = this.params.append('CompanyId', this.syndigoEnv[0].SYNCOMPANYID);
         this.params = this.params.append('skipCount', skipCount? skipCount: 0);
-        this.params = this.params.append('takeCount', takeCount? takeCount: upcs.length * 3);
+        this.params = this.params.append('takeCount', takeCount? takeCount: upcs.length + 300);
         this.params = this.params.append('shouldIncludeMissingVocabularyAttributes', true);
 
         headersSearch = headersSearch.append('Authorization', 'EN ' + this.authToken);
@@ -108,8 +108,93 @@ export class SyndigoService {
         upcBodyResearch.AttributeFilters[0].Values = upcs;
 
         return this.http.post(this.request, this.params, headersSearch,  upcBodyResearch, true /*external url*/).pipe(map(response => {
-            this.syndigoResult=<any>response;
-            console.log('searchUPCMarketplace',  this.syndigoResult);
+            this.syndigoResult = [];
+            let data = <any> response;
+            /* Process only if we have data from Syndigo - Format easyWay */
+            if(data){
+                if(data.MarketplaceProductImportData) {
+                    this.syndigoResult.push(new SyndigoResult());
+                    this.syndigoResult[0].syndigoData = <any>response;
+        
+                    let heinensFormatArray = [];
+                    for(let i=0; i< data.MarketplaceProductImportData.length; i++) {
+                        let heinensFormat = new HeinensSyndigo();
+
+                        heinensFormat.indexSyndigo = i;
+                        heinensFormat.source = data.MarketplaceProductImportData[i].SourceParties;
+
+                        let index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'UPC');
+                        if (index >=0 ) {
+                            heinensFormat.UPC = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        } 
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Product Name');
+                        if (index >=0 ) {
+                            heinensFormat.productName = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Package Height UOM');
+                        if (index >=0 ) {
+                            heinensFormat.heightUOM = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Package Width UOM');
+                        if (index >=0 ) {
+                            heinensFormat.widthUOM = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Package Weight UOM');
+                        if (index >=0 ) {
+                            heinensFormat.weightUOM = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Package Depth UOM');
+                        if (index >=0 ) {
+                            heinensFormat.depthUOM = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Package Height');
+                        if (index >=0 ) {
+                            heinensFormat.height = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Package Width');
+                        if (index >=0 ) {
+                            heinensFormat.width = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Package Weight');
+                        if (index >=0 ) {
+                            heinensFormat.weight = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Package Depth');
+                        if (index >=0 ) {
+                            heinensFormat.depth = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        /** Pictures URL in Values using id and HTTP Asset configuration URL - Syndigo env*/
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Planogram Straight on Front Shot Image');
+                        if (index >=0 ) {
+                            heinensFormat.frontImageURL = this.syndigoEnv[0].SYNASSETS + data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Planogram Straight on Left View Image');
+                        if (index >=0 ) {
+                            heinensFormat.leftImageURL = this.syndigoEnv[0].SYNASSETS + data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Planogram Straight on Right View Image');
+                        if (index >=0 ) {
+                            heinensFormat.rightImageURL = this.syndigoEnv[0].SYNASSETS + data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Planogram Straight on Top View Image');
+                        if (index >=0 ) {
+                            heinensFormat.topImageURL = this.syndigoEnv[0].SYNASSETS + data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Planogram Straight on Back Shot Image');
+                        if (index >=0 ) {
+                            heinensFormat.backImageURL = this.syndigoEnv[0].SYNASSETS + data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+                        index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Planogram Straight on Bottom View Image');
+                        if (index >=0 ) {
+                            heinensFormat.bottomImageURL = this.syndigoEnv[0].SYNASSETS + data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
+                        }
+
+                        heinensFormatArray.push(heinensFormat);
+                        
+                    }
+                    this.syndigoResult[0].syndigoData.heinensLayout =heinensFormatArray;
+                }
+            }
             return  this.syndigoResult;
         }));
         

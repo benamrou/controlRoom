@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Corporate Inquiry'" [icon]="'fa-search'"></app-page-header>
+<app-page-header [heading]="'Syndigo collect images'" [icon]="'fa-camera'"></app-page-header>
 
 <br>
 <div class="content-section implementation">
@@ -6,393 +6,118 @@
 </div>
 <br>
 
-<div id="wrapper" class="center" style="text-align: center">
-    <div style="width:70%; display: inline-block; text-align: left; box-shadow:1px 1px 1px 2px darkgrey" ui-grid-responsive ui-fluid ui-grid-pad>
-        <p-chips [(ngModel)]="values" pTooltip="Enter elements to look for, add the keywords @item, @ean, @supplier, @order, @invoice to precise your lookup" 
-                 tooltipPosition="right"> </p-chips>
+<div style="width: 100%; background-color: green;">
+    <span style="padding-left: 2em;">
+        <img itemprop="image" src="https://syndigo.com/wp-content/uploads/2022/01/syndigo-logo-tagline-min.png" width="20%" alt="logo syndigo">
+        <button class="btn btn-secondary topmenubutton"  type="text" 
+                (click)="setting()" pTooltip="Settings" tooltipPosition="top" >
+                <span class="fa fa-bars"></span>
+        </button>
+    </span>
+</div>
+
+<p-dialog *ngIf="displaySettingOption" [(visible)]="displaySetting" header="Syndigo account information" width="100%">
+    <div class="formgrid grid">
+        <div class="field col-6 ">
+            <label class="font-bold" for="envid">Environment</label>
+            <input id="envid" pInputText type="text" disabled value="{{_syndigoService.syndigoEnv[0].SYNURL}}" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+        <div class="field col-6 ">
+            <label class="font-bold" for="assets">Assets</label>
+            <input id="assets" pInputText type="text" disabled value="{{_syndigoService.syndigoEnv[0].SYNASSETS}}" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+        <div class="field col-6">
+            <label class="font-bold" for="usernameSyndigo">Username</label>
+            <input id="usernameSyndigo" pInputText type="text" disabled value="{{_syndigoService.syndigoEnv[0].SYNUSER}}" rows="4" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+        <div class="field col-6">
+            <label class="font-bold" for="passSyndigo">Secret</label>
+            <textarea id="passSyndigo" pInputTextarea disabled value="{{_syndigoService.syndigoEnv[0].SYNSECRET}}" type="text" rows="4" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+
+            </textarea>
+        </div>
+        <div class="field col-6 ">
+            <label class="font-bold" for="companyid">CompanyId</label>
+            <input id="companyid" pInputText disabled value="{{_syndigoService.syndigoEnv[0].SYNCOMPANYID}}" type="text" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+        <div class="field col-6 ">
+            <label class="font-bold" for="vocabularyid">VocabularyId</label>
+            <input id="vocabularyid" pInputText disabled value="{{_syndigoService.syndigoEnv[0].SYNVOCID}}" type="text" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
     </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="displaySetting = false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+<div id="wrapper" class="center" style="text-align: center; margin-top: 5em;">
+    <div style="width:70%; display: inline-block; text-align: left; box-shadow:1px 1px 1px 2px darkgrey" ui-grid-responsive ui-fluid ui-grid-pad>
+        <p-chips [(ngModel)]="values"
+                 separator=" "> 
+        </p-chips>
+    </div>
+    <button *ngIf="searchResult.length > 0" style="left:2em" type="text" pButton (click)="saveJson()" label="JSON" pTooltip="Save Syndigo" tooltipPosition="top" >
+    </button>
 </div>
 <br>
 <div style="text-align: center;" >
-    <button type="text" pButton (click)="search()" label="Search" [disabled]="!searchButtonEnable"></button>
+    <button type="text" pButton (click)="search()" label="search" [disabled]="!searchButtonEnable"></button>
     <p></p>
 </div>
 
-<!-- Business rules -->
-<!-- ITEM/ARTICLE:  If selection in the panel of result then display -->
-<!-- ITEM > Product information -->
-<!-- ORDER > Order information -->
-<!-- INVOICE > Invoice information -->
-
 <div *ngIf="searchResult.length > 0 && displayOverlayInfo" class="topRightDiv">
-    {{searchResult[tabSelect].ARTCEXR}}<br>
+    {{searchResult[0].syndigoData.heinensLayout[tabSelect].UPC}}<br>
     <div style="font-size: small;">
-        {{searchResult[tabSelect].ITEM_DESC}}
+        {{searchResult[0].syndigoData.heinensLayout[tabSelect].productName}}
     </div>
 </div>
 
-<p-tabView  *ngIf="searchResult.length > 0" (onChange)="tabSelection($event)">
-    <p-tabPanel *ngFor="let result of searchResult" [header]="result['ARTCEXR']" >
+<p-tabView  *ngIf="searchResult.length > 0 " (onChange)="tabSelection($event)">
+    <p-tabPanel *ngFor="let result of searchResult[0].syndigoData.heinensLayout" [header]="result['UPC']" >
         <h4 style="color: white;border-radius: 5px;background-color: #d81b60;left:0;right:0;padding: 10px 10px 10px 10px;font-size: large;margin-left: -0.4em;">
-            {{result["ITEM_CODE_DESC"]}}
+            {{result.UPC}} {{result["productName"]}}
         </h4>
         <div class="grid">
-            <div class="col-2 header_cell">Department</div>
-            <div class="col-2 header_cell">Sub-department</div>
-            <div class="col-2 header_cell">Category</div>
-            <div class="col-2 header_cell">Sub-Category</div>
-            <div class="col-2 header_cell">Category Mgr</div>
-            <div class="col-2 header_cell">Status</div>
-            <div class="col-2 line_cell">{{result["Dep"]}}</div>
-            <div class="col-2 line_cell">{{result["Sdep"]}}</div>
-            <div class="col-2 line_cell">{{result["Cat"]}}</div>
-            <div class="col-2 line_cell">{{result["Sub-Cat"]}}</div>
-            <div class="col-2 line_cell">{{result["ARTGEST"]}}</div>
-            <div class="col-2 line_cell">{{result["ARTETAT"]}}</div>
-
-            <div class="col-2 header_cell">Brand</div>
-            <div class="col-2 header_cell">Seasonality</div>
-            <div class="col-2 header_cell">Promo</div>
-            <div class="col-2 header_cell">Club FX</div>
-            <div class="col-2 header_cell">Gluten free</div>
-            <div class="col-2 header_cell">Non GMO</div>
-            <div class="col-2 line_cell">{{result["BRND"]}}</div>
-            <div class="col-2 line_cell">{{result["SSNL"]}}</div>
-            <div class="col-2 line_cell">{{result["PROMO"]}}</div>
-            <div class="col-2 line_cell">{{result["CBFX"]}}</div>
-            <div class="col-2 line_cell">{{result["GLFR"]}}</div>
-            <div class="col-2 line_cell">{{result["PRCL"]}}</div>
-
-            <div class="col-2 header_cell">Stock Unit</div>
-            <div class="col-2 header_cell">Billing unit</div>
-            <div class="col-2 header_cell">Organic</div>
-            <div class="col-2 header_cell">Wellness</div>
-            <div class="col-2 header_cell">Private label</div>
-            <div class="col-2 header_cell">Plant based</div>
-            <div class="col-2 line_cell">{{result["ARTUSTK"]}}</div>
-            <div class="col-2 line_cell">{{result["ARTUFAC"]}}</div>
-            <div class="col-2 line_cell">{{result["ORGC"]}}</div>
-            <div class="col-2 line_cell">{{result["WELL"]}}</div>
-            <div class="col-2 line_cell">{{result["PVLB"]}}</div>
-            <div class="col-2 line_cell">{{result["PLTB"]}}</div>
-
-            <div class="col-12 header_table">Shelf life</div>
-            <div class="col-3 header_cell">Item life span (days)</div>
-            <div class="col-3 header_cell">Supplier</div>
-            <div class="col-2 header_cell">Warehouse</div>
-            <div class="col-2 header_cell">Store</div>
-            <div class="col-2 header_cell">Consumer</div>
-            <div class="col-3 line_cell">{{result["ARTDLIM"]}}</div>
-            <div class="col-3 line_cell">{{result["ARTPOF"]}}</div>
-            <div class="col-2 line_cell">{{result["ARTPOE"]}}</div>
-            <div class="col-2 line_cell">{{result["ARTPOV"]}}</div>
-            <div class="col-2 line_cell">{{result["ARTPOC"]}}</div>
-
-            <!-- Sale Variant-->
-            <div class="col-12 header_table">Sale Variant</div>
-            <div class="col-1 header_cell">SV #</div>
-            <div class="col-2 header_cell">Long description</div>
-            <div class="col-2 header_cell">POS description</div>
-            <div class="col-2 header_cell">E-commerce description</div>
-            <div class="col-2 header_cell">Sellable UPC</div>
-            <div class="col-1 header_cell">Size</div>
-            <div class="col-1 header_cell">By Pounds</div>
-            <div class="col-1 header_cell">Food Stamps</div>
-
-
-            <ng-container *ngFor="let sale of result.salesvariants; let indice=index" >
-                <div class="col-1 line_cell">{{sale.ARVCEXV}}</div>
-                <div class="col-2 line_cell">{{sale.LONG_DESC}}</div>
-                <div class="col-2 line_cell">{{sale.SHORT_DESC}}</div>
-                <div class="col-2 line_cell">{{sale.ECOMM_DESC}}</div>
-                <div class="col-2 line_cell">{{sale.ARCCODE}}</div>
-                <div class="col-1 line_cell">{{sale.ARVPUVC}}</div>
-                <div class="col-1 line_cell">{{sale.BYLB}}</div>
-                <div class="col-1 line_cell">{{sale.FSDN}}</div>
-            </ng-container>
-
-            <ng-container *ngIf="result.salesvariants.length === 0" >
-                <div class="col-1 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-            </ng-container>
-
-
-            <div class="col-12 header_table">Logistic Variant</div>
-            <div class="col-1 header_cell">LV #</div>
-            <div class="col-3 header_cell">Description</div>
-            <div class="col-1 header_cell">LU</div>
-            <div class="col-1 header_cell">SV</div>
-            <div class="col-1 header_cell">Coefficient</div>
-            <div class="col-1 header_cell">SKU qty</div>
-            <div class="col-2 header_cell">Weight (lbs)</div>
-            <div class="col-2 header_cell">LxWxH (inches)</div>
-
-            <!-- LOGISTICS -->
-            <ng-container *ngFor="let log of result.logisticsvariants; let indice=index" >
-                <div class="col-1 line_cell">{{log.ARLCEXVL}}</div>
-                <div class="col-3 line_cell">{{log.LV_DESC}}</div>
-                <div class="col-1 line_cell">{{log.ARUTYPUL}}</div>
-                <div class="col-1 line_cell">{{log.ARVCEXV}}</div>
-                <div class="col-1 line_cell">{{log.ALLCOEFF}}</div>
-                <div class="col-1 line_cell">{{log.SKUQTY}}</div>
-                <div class="col-2 line_cell">{{log.ARUPBRU | number : '1.2-2'}}</div>
-                <div class="col-2 line_cell">{{log.DIMENSION}}</div>
-            </ng-container>
-
-            <ng-container *ngIf="result.logisticsvariants.length === 0" >
-                <div class="col-1 line_cell">---</div>
-                <div class="col-3 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-            </ng-container>
-
-            <!-- SUBSTITUTION -->
-            <div class="col-12 header_table">Active substitution/replacement</div>
-            <div class="col-2 header_cell">Location</div>
-            <div class="col-3 header_cell">Item/LV description replaced</div>
-            <div class="col-3 header_cell">Item/LV description replacing</div>
-            <div class="col-1 header_cell">Type</div>
-            <div class="col-1 header_cell">Rank</div>
-            <div class="col-1 header_cell">Start</div>
-            <div class="col-1 header_cell">End</div>
-
-            <ng-container *ngFor="let sub of result.substitutions; let indice=index" >
-                <div class="col-2 line_cell">{{sub.ARRSITE}}</div>
-                <div class="col-3 line_cell">{{sub.ARRITEMO}}</div>
-                <div class="col-3 line_cell">{{sub.ARRITEMR}}</div>
-                <div class="col-1 line_cell">{{sub.ARRTYRE}}</div>
-                <div class="col-1 line_cell">{{sub.ARRRANG}}</div>
-                <div class="col-1 line_cell">{{sub.ARRDDEB}}</div>
-                <div class="col-1 line_cell">{{sub.ARRDFIN}}</div>
-            </ng-container>
-
-            <ng-container *ngIf="result.substitutions.length === 0" >
-                <div class="col-2 line_cell">---</div>
-                <div class="col-3 line_cell">---</div>
-                <div class="col-3 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-            </ng-container>
-
-            <!-- ORDERABLE -->
-            <div class="col-12 header_table">Orderable logistic unit</div>
-            <div class="col-1 header_cell">LV</div>
-            <div class="col-1 header_cell">Location</div>
-            <div class="col-2 header_cell">Vendor</div>
-            <div class="col-1 header_cell">Commercial agreement</div>
-            <div class="col-1 header_cell">LU</div>
-            <div class="col-1 header_cell">Start</div>
-            <div class="col-1 header_cell">End</div>
-            <div class="col-1 header_cell">Primary</div>
-            <div class="col-1 header_cell">Orderable flag</div>
-            <div class="col-1 header_cell">Orderable UPC</div>
-            <div class="col-1 header_cell">Vendor reference</div>
-
-            <ng-container *ngFor="let ord of result.orderables; let indice=index" >
-                <div class="col-1 line_cell">{{ord.ARACEXVL}}</div>
-                <div class="col-1 line_cell">{{ord.ARASITE}}</div>
-                <div class="col-2 line_cell">{{ord.SUPPLIER}}</div>
-                <div class="col-1 line_cell">{{ord.FCCNUM}}</div>
-                <div class="col-1 line_cell">{{ord.ARUTYPUL}}</div>
-                <div class="col-1 line_cell">{{ord.ARADDEB | date: "MM/dd/yy"}}</div>
-                <div class="col-1 line_cell">{{ord.ARADFIN | date: "MM/dd/yy"}}</div>
-                <div class="col-1 line_cell">{{ord.ARATFOU}}</div>
-                <div class="col-1 line_cell">{{ord.ARATCDE}}</div>
-                <div class="col-1 line_cell">{{ord.ARACEAN}}</div>
-                <div class="col-1 line_cell">{{ord.ARAREFC}}</div>
-            </ng-container>
-
-            <ng-container *ngIf="result.orderables.length === 0" >
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-            </ng-container>
-
-            <!-- DELIVERABLE -->
-            <div class="col-12 header_table">Deliverable logistic unit</div>
-            <div class="col-2 header_cell">LV</div>
-            <div class="col-2 header_cell">Supplier</div>
-            <div class="col-2 header_cell">Warehouse</div>
-            <div class="col-2 header_cell">Store</div>
-            <div class="col-1 header_cell">Mode</div>
-            <div class="col-1 header_cell">LU</div>
-            <div class="col-1 header_cell">Start</div>
-            <div class="col-1 header_cell">End</div>
-
-            <ng-container *ngFor="let del of result.deliverables; let indice=index" >
-                <div class="col-2 line_cell">{{del.ARLCEXVL}}</div>
-                <div class="col-2 line_cell">{{del.SUPPLIER}}</div>
-                <div class="col-2 line_cell">{{del.ALOSITE}}</div>
-                <div class="col-2 line_cell">{{del.ALOSMAG}}</div>
-                <div class="col-1 line_cell">{{del.ALOCOMM}}</div>
-                <div class="col-1 line_cell">{{del.ARUTYPUL}}</div>
-                <div class="col-1 line_cell">{{del.ALODDEB | date: "MM/dd/yy"}}</div>
-                <div class="col-1 line_cell">{{del.ALODFIN | date: "MM/dd/yy"}}</div>
-            </ng-container>
-
-            <ng-container *ngIf="result.deliverables.length === 0" >
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-            </ng-container>
-
-
-            <!-- RETAIL -->
-            <div class="col-12 header_table">Retail</div>
-            <div class="col-1 header_cell">SV</div>
-            <div class="col-1 header_cell">Location</div>
-            <div class="col-2 header_cell">UPC</div>
-            <div class="col-2 header_cell">Reg./Promo.</div>
-            <div class="col-2 header_cell">Retail</div>
-            <div class="col-2 header_cell">Multiple</div>
-            <div class="col-1 header_cell">Start</div>
-            <div class="col-1 header_cell">End</div>
-
-            <ng-container *ngFor="let retail of result.retails; let indice=index" >
-                <div class="col-1 line_cell">{{retail.ARVCEXV}}</div>
-                <div class="col-1 line_cell">{{retail.AVORESCINT}}</div>
-                <div class="col-2 line_cell">{{retail.ARCCODE}}</div>
-                <div class="col-2 line_cell">{{retail.PROMOPERM}}</div>
-                <div class="col-2 line_cell">{{retail.AVIPRIX | currency}}</div>
-                <div class="col-2 line_cell">{{retail.AVIMULTI}}</div>
-                <div class="col-1 line_cell">{{retail.AVIDDEB | date: "MM/dd/yy"}}</div>
-                <div class="col-1 line_cell">{{retail.AVIDFIN | date: "MM/dd/yy"}}</div>
-            </ng-container>
-
-            <ng-container *ngIf="result.retails.length === 0" >
-                    <div class="col-1 line_cell">---</div>
-                    <div class="col-1 line_cell">---</div>
-                    <div class="col-2 line_cell">---</div>
-                    <div class="col-2 line_cell">---</div>
-                    <div class="col-2 line_cell">---</div>
-                    <div class="col-2 line_cell">---</div>
-                    <div class="col-1 line_cell">---</div>
-                    <div class="col-1 line_cell">---</div>
-            </ng-container>
-
-            <!-- PURCHASE PRICE -->
-            <div class="col-12 header_table">Purchase price</div>
-            <div class="col-1 header_cell">LV</div>
-            <div class="col-1 header_cell">Location</div>
-            <div class="col-2 header_cell">Supplier</div>
-            <div class="col-2 header_cell">Commercial agreement</div>
-            <div class="col-2 header_cell">LU</div>
-            <div class="col-2 header_cell">Purchase price</div>
-            <div class="col-1 header_cell">Start</div>
-            <div class="col-1 header_cell">End</div>
-            <ng-container *ngFor="let cost of result.costs; let indice=index" >
-                <div class="col-1 line_cell">{{cost.ARLCEXVL}}</div>
-                <div class="col-1 line_cell">{{cost.TAPSITE}}</div>
-                <div class="col-2 line_cell">{{cost.SUPPLIER}}</div>
-                <div class="col-2 line_cell">{{cost.FCCNUM}}</div>
-                <div class="col-2 line_cell">{{cost.TAPUAPP}}</div>
-                <div class="col-2 line_cell">{{cost.TAPPBRUT | currency}}</div>
-                <div class="col-1 line_cell">{{cost.TAPDDEB | date: "MM/dd/yy"}}</div>
-                <div class="col-1 line_cell">{{cost.TAPDFIN | date: "MM/dd/yy"}}</div>
-            </ng-container>
-            <ng-container *ngIf="result.costs.length === 0" >
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-            </ng-container>
+            <div class="col-12 header_cell">Source parties</div>
+            <div class="col-12 line_cell" style="font-weight: bold;">{{result["source"].join(' / ')}}</div>
             
-            <!-- DEALS -->
-            <div class="col-12 header_table">Deal</div>
-            <div class="col-1 header_cell">LV</div>
-            <div class="col-1 header_cell">Location</div>
-            <div class="col-2 header_cell">Supplier</div>
-            <div class="col-2 header_cell">Commercial agreement</div>
-            <div class="col-1 header_cell">Item group</div>
-            <div class="col-2 header_cell">Deal type</div>
-            <div class="col-1 header_cell">Deal</div>
-            <div class="col-1 header_cell">Start</div>
-            <div class="col-1 header_cell">End</div>
+            <div class="col-2 header_cell">UPC</div>
+            <div class="col-2 header_cell">Description</div>
+            <div class="col-2 header_cell">Weight</div>
+            <div class="col-2 header_cell">Height</div>
+            <div class="col-2 header_cell">Width</div>
+            <div class="col-2 header_cell">Depth</div>
+            <div class="col-2 line_cell">{{result["UPC"]}}</div>
+            <div class="col-2 line_cell">{{result["productName"]}}</div>
+            <div class="col-2 line_cell">{{result["weight"]}} {{result["weightUOM"]}}</div>
+            <div class="col-2 line_cell">{{result["height"]}} {{result["heightUOM"]}}</div>
+            <div class="col-2 line_cell">{{result["width"]}} {{result["widthUOM"]}}</div>
+            <div class="col-2 line_cell">{{result["depth"]}} {{result["depthUOM"]}}</div>
 
-            <ng-container *ngFor="let deal of result.deals; let indice=index" >
-                <div class="col-1 line_cell">{{deal.ARLCEXVL}}</div>
-                <div class="col-1 line_cell">{{deal.TRXSITE}}</div>
-                <div class="col-2 line_cell">{{deal.SUPPLIER_DESC}}</div>
-                <div class="col-2 line_cell">{{deal.FCCNUM}}</div>
-                <div class="col-1 line_cell">{{deal.TGACEXGAT}}</div>
-                <div class="col-2 line_cell">{{deal.DEAL_TYPE}}</div>
-                <div class="col-1 line_cell">{{deal.TRXREPA | currency}}</div>
-                <div class="col-1 line_cell">{{deal.TRXDDEB | date: "MM/dd/yy"}}</div>
-                <div class="col-1 line_cell">{{deal.TRXDFIN | date: "MM/dd/yy"}}</div>
-            </ng-container>
-            <ng-container *ngIf="result.deals.length === 0" >
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-            </ng-container>
+            <div class="col-4 header_cell">Front</div>
+            <div class="col-4 header_cell">Back</div>
+            <div class="col-4 header_cell">Top</div>
+            <div class="col-4 line_cell">
+                <img alt="Image front" src="{{result['frontImageURL']}}?size=300&amp;fileType=png">
+            </div>
+            <div class="col-4 line_cell">
+                <img alt="Image front" src="{{result['backImageURL']}}?size=300&amp;fileType=png">
+            </div>
+            <div class="col-4 line_cell">
+                <img alt="Image front" src="{{result['topImageURL']}}?size=300&amp;fileType=png">
+            </div>
 
-            <!-- PALLET -->
-            <div class="col-12 header_table">Warehouse pallets</div>
-            <div class="col-1 header_cell">Warehouse</div>
-            <div class="col-1 header_cell">LV</div>
-            <div class="col-2 header_cell">LV description</div>
-            <div class="col-1 header_cell">Receiving date</div>
-            <div class="col-2 header_cell">SSCC</div>
-            <div class="col-1 header_cell">UBD</div>
-            <div class="col-2 header_cell">Address</div>
-            <div class="col-2 header_cell">Qty (Preparation unit)</div>
-
-            <ng-container *ngFor="let pallet of result.pallets; let indice=index" >
-                <div class="col-1 line_cell">{{pallet.AR_DONORD}}</div>
-                <div class="col-1 line_cell">{{pallet.AR_ILOGIS}}</div>
-                <div class="col-2 line_cell">{{pallet.AR_LIBPRO}}</div>
-                <div class="col-1 line_cell">{{pallet.UE_DATREC | date: "MM/dd/yyyy"}}</div>
-                <div class="col-2 line_cell">{{pallet.UL_USSCC}}</div>
-                <div class="col-1 line_cell">{{pallet.UT_VALIND | date: "MM/dd/yyyy"}}</div>
-                <div class="col-2 line_cell">{{pallet.UE_ADRUMS}}</div>
-                <div class="col-2 line_cell">{{pallet.UL_NQTEUP}}</div>
-            </ng-container>
-
-            <ng-container *ngIf="result.pallets.length === 0" >
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-            </ng-container>
+            <div class="col-4 header_cell">Right</div>
+            <div class="col-4 header_cell">Left</div>
+            <div class="col-4 header_cell">Bottom</div>
+            <div class="col-4 line_cell">
+                <img alt="Image front" src="{{result['rightImageURL']}}?size=300&amp;fileType=png">
+            </div>
+            <div class="col-4 line_cell">
+                <img alt="Image front" src="{{result['leftImageURL']}}?size=300&amp;fileType=png">
+            </div>
+            <div class="col-4 line_cell">
+                <img alt="Image front" src="{{result['bottomImageURL']}}?size=300&amp;fileType=png">
+            </div>
 
         </div>
     </p-tabPanel>

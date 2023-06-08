@@ -1,8 +1,20 @@
-export interface SyndigoResult {
-    syndigoData: SyndigoData[];
+export class SyndigoResult {
+    syndigoData: SyndigoData = new SyndigoData(); 
 }
 
-export interface SyndigoData {
+export class SyndigoData {
+    DefaultLocale:                string;
+    ErrorMode:                    string;
+    MarketplaceProductImportData: MarketplaceProductImportData;
+    heinensLayout:                     HeinensSyndigo[]; 
+}
+
+export class ProducingOperationDetails {
+    ResultCount:                  number;
+    TotalHitCount:                number;
+}
+
+export class MarketplaceProductImportData {
     ImportMode:                        string;
     ProductIdentifierPropertyOverride: string;
     ProductIdentifierValue:            string;
@@ -27,7 +39,28 @@ export interface SyndigoData {
     IsExplicitNullValue:               boolean;
 }
 
-export interface AssetValue {
+export class HeinensSyndigo {
+    indexSyndigo:       number;
+    productName:        string= 'no data';
+    height:             string= 'no data';
+    depth:              string= 'no data';
+    weight:             string= 'no data';
+    width:              string= 'no data';
+    heightUOM:          string= 'no data';
+    depthUOM:           string= 'no data';
+    weightUOM:          string= 'no data';
+    widthUOM:           string= 'no data';
+    UPC:                string;
+    frontImageURL:      string;
+    backImageURL:       string;
+    topImageURL:        string;
+    leftImageURL:       string;
+    rightImageURL:      string;
+    bottomImageURL:     string;
+    source: any[] = [];
+}
+
+export class AssetValue {
     Name:                string;
     ValuesByLocale:      AssetValueValuesByLocale;
     SourceParty:         string;
@@ -36,37 +69,37 @@ export interface AssetValue {
     IsExplicitNullValue: boolean;
 }
 
-export interface AssetValueValuesByLocale {
+export class AssetValueValuesByLocale {
     "en-US": EnUS;
 }
 
-export interface EnUS {
+export class EnUS {
     Name:      string;
     Url:       string;
     SourceUrl: string;
     Format:    string;
 }
 
-export interface AuditInfo {
+export class AuditInfo {
     CreatedDate:      Date;
     LastModifiedDate: Date;
 }
 
-export interface ImmediateParentDetails {
+export class ImmediateParentDetails {
 }
 
-export interface LifeCycle {
+export class LifeCycle {
     CreatedDate:     CreatedDate;
     DiscontinueDate: null;
     DeleteDate:      null;
 }
 
-export interface CreatedDate {
+export class CreatedDate {
     Value:  Date;
     Delete: boolean;
 }
 
-export interface NutritionalInformationModule {
+export class NutritionalInformationModule {
     Values:              any[];
     MultiValues:         any[];
     ContainerValues:     any[];
@@ -75,7 +108,7 @@ export interface NutritionalInformationModule {
     IsExplicitNullValue: boolean;
 }
 
-export interface Value {
+export class Value {
     Name:                string;
     ValuesByLocale:      string;
     SourceParty:         string;
