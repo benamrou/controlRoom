@@ -7,12 +7,14 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { BlockUIModule } from 'primeng/blockui';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
     imports: [CommonModule, RouterModule, FormsModule, 
               OverlayPanelModule, 
               ProgressBarModule,
               ScrollPanelModule,
+              ButtonModule,
               BlockUIModule
             ],
     declarations: [PageHeaderComponent],

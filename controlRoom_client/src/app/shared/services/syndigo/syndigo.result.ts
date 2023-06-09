@@ -7,6 +7,8 @@ export class SyndigoData {
     ErrorMode:                    string;
     MarketplaceProductImportData: MarketplaceProductImportData;
     heinensLayout:                     HeinensSyndigo[]; 
+    imageURLs: any = [];
+    imageFilenames: any = [];
 }
 
 export class ProducingOperationDetails {

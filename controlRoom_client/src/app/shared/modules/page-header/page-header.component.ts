@@ -11,6 +11,7 @@ export class PageHeaderComponent implements OnInit {
     @Input() heading: string;
     @Input() icon: string;
     @Input() waitMessage: string;
+    @Input() okExit: boolean;
 
     screenInfo: any;
     constructor(private _screenInfo: ScreenService, public _httpService: HttpService) {

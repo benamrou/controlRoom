@@ -13,12 +13,14 @@ import { TabViewModule } from 'primeng/tabview';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputTextModule } from 'primeng/inputtext';
+import { BadgeModule } from 'primeng/badge';
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, TableModule, ButtonModule, PageHeaderModule,
                ChipsModule, TooltipModule, ToastModule, TabViewModule,
                InputTextareaModule,
                InputTextModule,
+               BadgeModule,
                DialogModule 
             ],
     declarations: [SyndigoDownloadComponent],

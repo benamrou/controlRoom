@@ -3,6 +3,7 @@ import { ViewEncapsulation } from '@angular/core';
 import { SearchService, SyndigoEnvironment, SyndigoService } from '../../../shared/services/index';
 import { MessageService } from 'primeng/api';
 import { SyndigoResult, SyndigoData } from 'src/app/shared/services/syndigo/syndigo.result';
+import { Chips } from 'primeng/chips';
 
 export class SearchResultFormat {
   COL1: any;
@@ -22,15 +23,16 @@ export class SearchResultFormat {
 })
 
 export class SyndigoProductComponent implements OnDestroy {
+  @ViewChild(Chips) chips: Chips;
   
-@HostListener('window:scroll', ['$event']) getScrollHeight(event) {
-  if (window.pageYOffset >= 400) {
-    this.displayOverlayInfo = true;
+  @HostListener('window:scroll', ['$event']) getScrollHeight(event) {
+    if (window.pageYOffset >= 400) {
+      this.displayOverlayInfo = true;
+    }
+    else {
+      this.displayOverlayInfo = false;
+    }
   }
-  else {
-    this.displayOverlayInfo = false;
-  }
-}
   // Search action
    values: string [] = [];
    //msgs: Message[] = [];
@@ -107,7 +109,6 @@ export class SyndigoProductComponent implements OnDestroy {
   }
 
   setting(){
-    console.log('displaySetting', this.displaySetting);
     this.displaySetting =true;
   }
 
@@ -127,5 +128,32 @@ export class SyndigoProductComponent implements OnDestroy {
     a.setAttribute('href', 'data:text/plain;charset=utf-u,'+encodeURIComponent(JSON.stringify(this.searchResult)));
     a.setAttribute('download', 'SYNDIGOLlookUp_' + this.values.join('_') + '.json');
     a.click()
+  }
+
+  onKeyDown(event) {
+    if (event.key === " ") {
+    // use the internal method to set the new value
+        this.chips.writeValue([...this.chips.value, event.target.value]) // don't push the new value inside the array, create a new reference
+        this.chips.cd.detectChanges(); // use internal change detection
+        event.preventDefault();    //prevent ';' to be written
+        event.target.value ="";
+    }
+  }
+
+  onPaste(event) {
+    /* ClipboardEvent */
+    let splitPaste = event.clipboardData.getData('text').split(' ');
+    if(event.clipboardData.getData('text').includes(' ')) {
+       this.chips.writeValue([...this.chips.value, ...splitPaste]) // don't push the new value inside the array, create a new reference
+       this.chips.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes('\r\n')) {
+       this.chips.writeValue([...this.chips.value, ...splitPaste[0].split('\r\n')]) // don't push the new value inside the array, create a new reference
+       this.chips.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
   }
 }
