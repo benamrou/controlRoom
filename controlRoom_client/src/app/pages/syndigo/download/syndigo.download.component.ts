@@ -3,6 +3,7 @@ import { ViewEncapsulation } from '@angular/core';
 import { SyndigoEnvironment, SyndigoService, ExportService } from '../../../shared/services/index';
 import { MessageService } from 'primeng/api';
 import { Chips } from 'primeng/chips';
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'syndigo-download-cmp',
@@ -42,7 +43,13 @@ export class SyndigoDownloadComponent implements OnDestroy {
    syndigoInfo : SyndigoEnvironment;
    recapButtonTooltip = 'Recap images collection result';
 
+   imageFilenames; imageURLs;
+
    separatorChips: string = ' ';
+
+   private sizeImage = '300';
+   private typeImage = 'png';
+   private imageParameter;
 
    // Selected element
    selectedElement: any = {};
@@ -54,6 +61,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
   constructor(private _exportService: ExportService, 
               private _messageService: MessageService,
               public _syndigoService: SyndigoService) {
+      this.imageParameter = '?size=' + this.sizeImage + '&fileType=' + this.typeImage;
+      this.datePipe = new DatePipe('en-US');
+
       this.subscription.push(this._syndigoService.getSyndigoInfo().subscribe( 
         data => { this.displaySettingOption = true}, // put the data returned from the server in our variable
         error => {
@@ -173,10 +183,11 @@ export class SyndigoDownloadComponent implements OnDestroy {
                                           '<br><br>'+
                                           '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number or UPCs and pictures to download</b>';
                       
+                              this.imageURLs = [];
+                              this.imageFilenames = [];
                               for(let i=0; i < this.searchResult.length;i++) {
                                 let indexFound = this.searchResultSyndigo[0].syndigoData.heinensLayout.findIndex((item) => <string>(item.UPC).includes(this.searchResult[i].UPC));
                                 if (indexFound >=0 ) {
-                                  console.log('UPC found', this.searchResult[i].UPC);
                                   this.searchResult[i].statusSyndigo = 'Collected'; /* Collected */
                                   this.searchResult[i].Status = 1; /* Collected */
                                   this.searchResult[i]['Syndigo description'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].productName;
@@ -188,12 +199,37 @@ export class SyndigoDownloadComponent implements OnDestroy {
                                   this.searchResult[i]['Width (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].widthUOM;
                                   this.searchResult[i]['Depth'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].depth;
                                   this.searchResult[i]['Depth (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].depthUOM;
-                                  this.searchResult[i]['Image top'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].topImageURL;
-                                  this.searchResult[i]['Image front'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].frontImageURL;
-                                  this.searchResult[i]['Image back'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].backImageURL;
-                                  this.searchResult[i]['Image left'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].leftImageURL;
-                                  this.searchResult[i]['Image right'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].rightImageURL;
-                                  this.searchResult[i]['Image bottom'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].bottomImageURL;
+
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].frontImageURL && this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_1.png') <0) {
+                                    this.searchResult[i]['Image front'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].frontImageURL + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[i]['Image front']);
+                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_1.png');  
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].topImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_3.png') <0) {
+                                    this.searchResult[i]['Image top'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].topImageURL + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[i]['Image top']);
+                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_3.png');  
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].backImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_7.png') <0) {
+                                    this.searchResult[i]['Image back'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].backImageURL + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[i]['Image back']);
+                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_7.png');  
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].leftImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_2.png') <0) {
+                                    this.searchResult[i]['Image left'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].leftImageURL  + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[i]['Image left']);
+                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_2.png');  
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].rightImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_8.png') <0) {
+                                    this.searchResult[i]['Image right'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].rightImageURL  + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[i]['Image right']);
+                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_8.png');  
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].bottomImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_9.png') <0) {
+                                    this.searchResult[i]['Image bottom'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].bottomImageURL  + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[i]['Image bottom']);
+                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_9.png');  
+                                  }
                                 } else {
                                   this.searchResult[i].statusSyndigo = 'No data'; /* No data */
                                   this.searchResult[i].Status = 2; /* No data */
@@ -203,11 +239,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
                               this._messageService.add({severity:'success', summary:'Syndigo references', detail: 'Retrieved ' + 
                                                         ' Syndigo product information captured.'});
                               
-                              let filenameZIP = this.datePipe.transform(new Date(), 'ddMMYYYY_syndigo');
-                              
-                              await this._syndigoService.downloadPicture
-                                                    (this._syndigoService.syndigoResult[0].syndigoData.imageURLs, 
-                                                      this._syndigoService.syndigoResult[0].syndigoData.imageFilenames, filenameZIP);
+                              let filenameZIP = this.datePipe.transform(new Date(), 'ddMMYYYY') + '_syndigo';
+
+                              await this._syndigoService.downloadPicture(this.imageURLs, this.imageFilenames, filenameZIP);
 
                               this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
                                                   'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
@@ -228,7 +262,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
     this.searchResult = [];
     this.selectedElement = {};
     this.okExit = false;
-    this.waitMessage = ''
+    this.waitMessage = '';
+    this.imageFilenames = [];
+    this.imageURLs = [];
   }
 
   setting(){

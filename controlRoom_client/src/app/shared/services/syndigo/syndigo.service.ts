@@ -148,7 +148,6 @@ export class SyndigoService {
 
                         let index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'UPC');
                         if (index >=0 ) {
-                            /* If UPC already found we skip the other version */
                             heinensFormat.UPC = data.MarketplaceProductImportData[i].Values[index].ValuesByLocale['en-US'];
                         } 
                         index=data.MarketplaceProductImportData[i].Values.findIndex(x=> x['Name'] == 'Product Name');
