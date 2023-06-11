@@ -106,7 +106,20 @@
                     </ul>
                 </li>
             </div>
-
+            <div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('spaceplanning')" >
+                    <span><i class="fas fa-ruler-horizontal"></i> &nbsp; {{ 'Space Planning' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'spaceplanning' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/ecommercepicture" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-camera"></i> {{ 'E-commerce picture' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
             <div class="nested-menu">
                 <a class="list-group-item" (click)="addExpandClass('warehouse')" >
                     <span><i class="fas fa-warehouse"></i> &nbsp; {{ 'Warehouse box' }} </span>

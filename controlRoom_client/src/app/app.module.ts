@@ -103,6 +103,7 @@ import { SVInfoModule } from './pages/mass.update/sv.info/sv.info.module';
 import { GenerateScheduleModule } from './pages/schedule/generate.schedule/generate.schedule.module';
 import { WarehouseRestartServicesModule } from './pages/warehouse/restart.services/restart.services.module';
 import { ServicesCenterModule } from './pages/helpdesk/services.center/services.center.module';
+import { EcommercePictureModule } from './pages/space.planning/pictures/ecommerce.picture.module';
 import { AlertsICRModule } from './pages/alerts/alerts.icr.module';
 
 /* Prime NG */
@@ -190,6 +191,7 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     ServicesCenterModule,
     SyndigoProductModule,
     SyndigoDownloadModule,
+    EcommercePictureModule,
     AlertsICRModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,

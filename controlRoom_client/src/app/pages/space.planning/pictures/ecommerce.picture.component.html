@@ -1,0 +1,73 @@
+<app-page-header [heading]="'Ecommerce picture'" [icon]="'fa-camera'"></app-page-header>
+
+<br>
+<div class="content-section implementation">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right" sticky="false"></p-toast>
+</div>
+
+<div>
+    <div class="alert alert-warning"
+      style="width: 100%; float: left; font-size: small; border: black 1px solid;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span style="margin-left: 1em;"> Use this functionnality to readjust E-commerce pictures for Space Planning. E-commerce pictures must be named withe the item/commodidty number. A look up to retrieve the main active UPC is performed to renamed the final picture file. 
+      </span>
+      <br>
+      <br>
+      <span style="margin-left: 2.2em; font-weight: bold;"> Entry e-commerce file example:</span> 109420.png
+      <br>
+      <span style="margin-left: 2.2em; font-weight: bold;"> Oup Space planning picture: 020601408173_1.png</span>(_1 for front pictures)
+    </div>
+  </div>
+
+<p-dialog *ngIf="displaySettingOption" [(visible)]="displaySetting" header="Syndigo account information" width="100%">
+    <div class="formgrid grid">
+        <div class="field col-6 ">
+            <label class="font-bold" for="envid">Environment</label>
+            <input id="envid" pInputText type="text" disabled value="{{_syndigoService.syndigoEnv[0].SYNURL}}" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+        <div class="field col-6 ">
+            <label class="font-bold" for="assets">Assets</label>
+            <input id="assets" pInputText type="text" disabled value="{{_syndigoService.syndigoEnv[0].SYNASSETS}}" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+        <div class="field col-6">
+            <label class="font-bold" for="usernameSyndigo">Username</label>
+            <input id="usernameSyndigo" pInputText type="text" disabled value="{{_syndigoService.syndigoEnv[0].SYNUSER}}" rows="4" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+        <div class="field col-6">
+            <label class="font-bold" for="passSyndigo">Secret</label>
+            <textarea id="passSyndigo" pInputTextarea disabled value="{{_syndigoService.syndigoEnv[0].SYNSECRET}}" type="text" rows="4" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+
+            </textarea>
+        </div>
+        <div class="field col-6 ">
+            <label class="font-bold" for="companyid">CompanyId</label>
+            <input id="companyid" pInputText disabled value="{{_syndigoService.syndigoEnv[0].SYNCOMPANYID}}" type="text" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+        <div class="field col-6 ">
+            <label class="font-bold" for="vocabularyid">VocabularyId</label>
+            <input id="vocabularyid" pInputText disabled value="{{_syndigoService.syndigoEnv[0].SYNVOCID}}" type="text" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="displaySetting = false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<br>
+<p-fileUpload   name="uploadImage" 
+                [files]="externalFiles" 
+                #uploader 
+                [multiple]="true" 
+                accept="image/*" 
+                [showUploadButton]="true"
+                [showCancelButton]="false" 
+                uploadLabel="Convert to Space Planning"
+                (onSelect)="onSelectImage($event.files)" 
+                (onUpload)="onUpload($event)"
+                (onRemove)="onRemoveImage($event)">
+    <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+            <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
+        </ul>
+    </ng-template>
+</p-fileUpload>

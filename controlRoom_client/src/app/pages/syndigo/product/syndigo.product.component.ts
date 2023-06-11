@@ -5,16 +5,6 @@ import { MessageService } from 'primeng/api';
 import { SyndigoResult, SyndigoData } from 'src/app/shared/services/syndigo/syndigo.result';
 import { Chips } from 'primeng/chips';
 
-export class SearchResultFormat {
-  COL1: any;
-  COL2: any;
-  COL3: any;
-  COL4: any;
-  COL5: any;
-  COL6: any;
-}
-
-
 @Component({
     selector: 'syndigo-product-cmp',
     templateUrl: './syndigo.product.component.html',

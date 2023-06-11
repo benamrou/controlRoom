@@ -185,57 +185,89 @@ export class SyndigoDownloadComponent implements OnDestroy {
                       
                               this.imageURLs = [];
                               this.imageFilenames = [];
-                              for(let i=0; i < this.searchResult.length;i++) {
-                                let indexFound = this.searchResultSyndigo[0].syndigoData.heinensLayout.findIndex((item) => <string>(item.UPC).includes(this.searchResult[i].UPC));
-                                if (indexFound >=0 ) {
-                                  this.searchResult[i].statusSyndigo = 'Collected'; /* Collected */
-                                  this.searchResult[i].Status = 1; /* Collected */
-                                  this.searchResult[i]['Syndigo description'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].productName;
-                                  this.searchResult[i]['Weight'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].weight;
-                                  this.searchResult[i]['Weight (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].weightUOM;
-                                  this.searchResult[i]['Height'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].height;
-                                  this.searchResult[i]['Height (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].heightUOM;
-                                  this.searchResult[i]['Width'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].width;
-                                  this.searchResult[i]['Width (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].widthUOM;
-                                  this.searchResult[i]['Depth'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].depth;
-                                  this.searchResult[i]['Depth (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].depthUOM;
+                              console.log('Parsing', this.searchResultSyndigo[0].syndigoData.heinensLayout)
+                              for(let i=0; i < this.searchResultSyndigo[0].syndigoData.heinensLayout.length;i++) {
+                                let indexFound = -1;
+                                for(let j=0; j < this.searchResult.length; j++){
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].UPC.includes(this.searchResult[j].UPC)) {
+                                    indexFound=j
+                                  }
+                                }
 
-                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].frontImageURL && this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_1.png') <0) {
-                                    this.searchResult[i]['Image front'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].frontImageURL + this.imageParameter;
-                                    this.imageURLs.push(this.searchResult[i]['Image front']);
-                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_1.png');  
+                                if (indexFound >=0 ) {
+                                  this.searchResult[indexFound].statusSyndigo = 'Collected'; /* Collected */
+                                  this.searchResult[indexFound].Status = 1; /* Collected */
+                                  
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].productName && this.searchResult[indexFound]['Syndigo description'].length == 0 ) {
+                                    this.searchResult[indexFound]['Syndigo description'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].productName;
                                   }
-                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].topImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_3.png') <0) {
-                                    this.searchResult[i]['Image top'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].topImageURL + this.imageParameter;
-                                    this.imageURLs.push(this.searchResult[i]['Image top']);
-                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_3.png');  
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].weight != 'no data' && this.searchResult[indexFound]['Weight'].length == 0 ) {
+                                    this.searchResult[indexFound]['Weight'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].weight;
+                                    console.log('Weight found', this.searchResultSyndigo[0].syndigoData.heinensLayout[i])
                                   }
-                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].backImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_7.png') <0) {
-                                    this.searchResult[i]['Image back'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].backImageURL + this.imageParameter;
-                                    this.imageURLs.push(this.searchResult[i]['Image back']);
-                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_7.png');  
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].weightUOM != 'no data' && this.searchResult[indexFound]['Weight (UOM)'].length == 0 ) {
+                                    this.searchResult[indexFound]['Weight (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].weightUOM;
                                   }
-                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].leftImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_2.png') <0) {
-                                    this.searchResult[i]['Image left'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].leftImageURL  + this.imageParameter;
-                                    this.imageURLs.push(this.searchResult[i]['Image left']);
-                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_2.png');  
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].height != 'no data' && this.searchResult[indexFound]['Height'].length == 0 ) {
+                                    this.searchResult[indexFound]['Height'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].height;
                                   }
-                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].rightImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_8.png') <0) {
-                                    this.searchResult[i]['Image right'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].rightImageURL  + this.imageParameter;
-                                    this.imageURLs.push(this.searchResult[i]['Image right']);
-                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_8.png');  
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].heightUOM != 'no data' && this.searchResult[indexFound]['Height (UOM)'].length == 0 ) {
+                                    this.searchResult[indexFound]['Height (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].heightUOM;
                                   }
-                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].bottomImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[i]['UPC'] + '_9.png') <0) {
-                                    this.searchResult[i]['Image bottom'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].bottomImageURL  + this.imageParameter;
-                                    this.imageURLs.push(this.searchResult[i]['Image bottom']);
-                                    this.imageFilenames.push(this.searchResult[i]['UPC'] + '_9.png');  
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].width != 'no data' && this.searchResult[indexFound]['Width'].length == 0 ) {
+                                    this.searchResult[indexFound]['Width'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].width;
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].widthUOM != 'no data' && this.searchResult[indexFound]['Width (UOM)'].length == 0 ) {
+                                    this.searchResult[indexFound]['Width (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].widthUOM;
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].depth != 'no data' && this.searchResult[indexFound]['Depth'].length == 0 ) {
+                                    this.searchResult[indexFound]['Depth'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].depth;
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].depthUOM != 'no data' && this.searchResult[indexFound]['Depth (UOM)'].length == 0 ) {
+                                    this.searchResult[indexFound]['Depth (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].depthUOM;
+                                  }
+                                  
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].frontImageURL && this.imageFilenames.findIndex((item) =>  item == this.searchResult[indexFound]['UPC'] + '_1.png') <0) {
+                                    this.searchResult[indexFound]['Image front'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].frontImageURL + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[indexFound]['Image front']);
+                                    this.imageFilenames.push(this.searchResult[indexFound]['UPC'] + '_1.png');  
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].topImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[indexFound]['UPC'] + '_3.png') <0) {
+                                    this.searchResult[indexFound]['Image top'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].topImageURL + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[indexFound]['Image top']);
+                                    this.imageFilenames.push(this.searchResult[indexFound]['UPC'] + '_3.png');  
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].backImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[indexFound]['UPC'] + '_7.png') <0) {
+                                    this.searchResult[indexFound]['Image back'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].backImageURL + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[indexFound]['Image back']);
+                                    this.imageFilenames.push(this.searchResult[indexFound]['UPC'] + '_7.png');  
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].leftImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[indexFound]['UPC'] + '_2.png') <0) {
+                                    this.searchResult[indexFound]['Image left'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].leftImageURL  + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[indexFound]['Image left']);
+                                    this.imageFilenames.push(this.searchResult[indexFound]['UPC'] + '_2.png');  
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].rightImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[indexFound]['UPC'] + '_8.png') <0) {
+                                    this.searchResult[indexFound]['Image right'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].rightImageURL  + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[indexFound]['Image right']);
+                                    this.imageFilenames.push(this.searchResult[indexFound]['UPC'] + '_8.png');  
+                                  }
+                                  if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].bottomImageURL&& this.imageFilenames.findIndex((item) =>  item == this.searchResult[indexFound]['UPC'] + '_9.png') <0) {
+                                    this.searchResult[indexFound]['Image bottom'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].bottomImageURL  + this.imageParameter;
+                                    this.imageURLs.push(this.searchResult[indexFound]['Image bottom']);
+                                    this.imageFilenames.push(this.searchResult[indexFound]['UPC'] + '_9.png');  
                                   }
                                 } else {
-                                  this.searchResult[i].statusSyndigo = 'No data'; /* No data */
-                                  this.searchResult[i].Status = 2; /* No data */
                                 }
 
                               }
+                              for (let i=0; i < this.searchResult.length; i++){
+                                if (this.searchResult[i] == 0) {
+                                  this.searchResult[i].statusSyndigo = 'No data'; /* No data */
+                                  this.searchResult[i].Status = 2; /* No data */
+                                }
+                              }
+
                               this._messageService.add({severity:'success', summary:'Syndigo references', detail: 'Retrieved ' + 
                                                         ' Syndigo product information captured.'});
                               

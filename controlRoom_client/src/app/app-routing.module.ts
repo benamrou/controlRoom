@@ -43,7 +43,9 @@ import { WarehouseRestartServicesComponent } from './pages/warehouse/restart.ser
 import { ServicesCenterComponent } from './pages/helpdesk/services.center/services.center.component';
 import { SyndigoDownloadComponent } from './pages/syndigo/download/syndigo.download.component';
 import { SyndigoProductComponent } from './pages/syndigo/product/syndigo.product.component';
+import { EcommercePictureComponent } from './pages/space.planning/pictures/ecommerce.picture.component';
 import { AlertsICRComponent } from './pages/alerts/alerts.icr.component';
+
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -73,6 +75,9 @@ const routes: Routes = [
   /* Syndigo */
   { path: 'syndigosearch', component: SyndigoProductComponent, canActivate: [AuthentificationGuard] },
   { path: 'syndigocollect', component: SyndigoDownloadComponent, canActivate: [AuthentificationGuard] },
+
+  /* E-commerce */
+  { path: 'ecommercepicture', component: EcommercePictureComponent, canActivate: [AuthentificationGuard] },
 
   /* IT */
   { path: 'batchschedule', component: BatchScheduleComponent, canActivate: [AuthentificationGuard] },
