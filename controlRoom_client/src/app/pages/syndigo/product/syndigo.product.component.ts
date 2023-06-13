@@ -37,6 +37,8 @@ export class SyndigoProductComponent implements OnDestroy {
 
    separatorChips: string = ' ';
 
+   screenID;
+
    // Selected element
    selectedElement: any = {};
    searchButtonEnable: boolean = true; // Disable the search button when clicking on search in order to not overload queries
@@ -46,6 +48,7 @@ export class SyndigoProductComponent implements OnDestroy {
 
   constructor(private _searchService: SearchService, private _messageService: MessageService,
               public _syndigoService: SyndigoService) {
+      this.screenID = 'SCR0000000021';
       this.subscription.push(this._syndigoService.getSyndigoInfo().subscribe( 
         data => { this.displaySettingOption = true}, // put the data returned from the server in our variable
         error => {
