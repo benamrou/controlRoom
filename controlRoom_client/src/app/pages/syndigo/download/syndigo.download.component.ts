@@ -4,6 +4,8 @@ import { SyndigoEnvironment, SyndigoService, ExportService } from '../../../shar
 import { MessageService } from 'primeng/api';
 import { Chips } from 'primeng/chips';
 import { DatePipe } from '@angular/common';
+import * as JSZip from 'jszip';
+import * as FileSaver from 'file-saver';
 
 @Component({
     selector: 'syndigo-download-cmp',
@@ -96,8 +98,8 @@ export class SyndigoDownloadComponent implements OnDestroy {
       itemSearch=itemSearch+'/'+this.values[i];
     }
     this.waitMessage = 'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)...<br><br>'+
-                       '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number or UPCs and pictures to download</b>';
-    this.subscription.push(this._syndigoService.getItemByCategory(itemSearch)
+                       '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
+    this.subscription.push(this._syndigoService.getItemByCategory(this.values)
             .subscribe( 
                 data => {  this.searchResult =data
                           console.log('Category request result', this.searchResult);
@@ -112,7 +114,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
 
                       this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
                                           'Captured ' + this.searchResult.length + ' active UPCS within the provided information.<br>'
-                                          '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number or UPCs and pictures to download</b>';
+                                          '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
                       
                       for(let i=0; i < this.searchResult.length; i++) {
                         this.searchResult[i].statusSyndigo = 'In Queue'; /* In Queue */
@@ -150,7 +152,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
     this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
     'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...' + 
     '<br><br>'+
-    '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number or UPCs and pictures to download</b>';
+    '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
 
     this.subscription.push(this._syndigoService.getAuthToken()
             .subscribe( 
@@ -163,9 +165,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
                       this._messageService.add({severity:'success', summary:'Syndigo authorization', detail: 'Syndigo authorization request validated.'});
 
                       this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
-                                          'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
+                                          'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...<br>'+ 
                                           '<br><br>'+
-                                          '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number or UPCs and pictures to download</b>';
+                                          '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
 
                       this.subscription.push(this._syndigoService.searchUPCMarketplace(UPCs,0, UPCs.length*5) .subscribe( 
                       //this.subscription.push(this._syndigoService.testConnection().subscribe(  
@@ -181,7 +183,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
                                           'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
                                           'Downloading the pictures and preparing the zip container...<br>' +
                                           '<br><br>'+
-                                          '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number or UPCs and pictures to download</b>';
+                                          '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
                       
                               this.imageURLs = [];
                               this.imageFilenames = [];
@@ -203,7 +205,6 @@ export class SyndigoDownloadComponent implements OnDestroy {
                                   }
                                   if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].weight != 'no data' && this.searchResult[indexFound]['Weight'].length == 0 ) {
                                     this.searchResult[indexFound]['Weight'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].weight;
-                                    console.log('Weight found', this.searchResultSyndigo[0].syndigoData.heinensLayout[i])
                                   }
                                   if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].weightUOM != 'no data' && this.searchResult[indexFound]['Weight (UOM)'].length == 0 ) {
                                     this.searchResult[indexFound]['Weight (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].weightUOM;
@@ -273,13 +274,13 @@ export class SyndigoDownloadComponent implements OnDestroy {
                               
                               let filenameZIP = this.datePipe.transform(new Date(), 'ddMMYYYY') + '_syndigo';
 
-                              await this._syndigoService.downloadPicture(this.imageURLs, this.imageFilenames, filenameZIP);
+                              await this.downloadPicture(this.imageURLs, this.imageFilenames, filenameZIP);
 
                               this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
                                                   'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
                                                   'Downloading the pictures and preparing the zip container...&emsp;<b>COMPLETED<br>' +
                                                   '<br><br>'+
-                                                  '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number or UPCs and pictures to download</b>';
+                                                  '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
                               this.searchButtonEnable = true;
 
                               this.waitMessage='';
@@ -495,4 +496,23 @@ export class SyndigoDownloadComponent implements OnDestroy {
                                 freezePanel
                                 );
   }
+
+  async downloadPicture (urls: any[], filenames: any[], zipName: string) {  
+    if(!urls) return;
+    let zip = new JSZip();
+    //const folder = zip.folder("images"); // folder name where all files will be placed in 
+    for(let i=0; i < urls.length; i++) {
+        this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
+                                                  'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
+                                                  'Downloading the pictures and preparing the zip container... <b>' + i + ' out of ' +urls.length + ' pictures collected <br>' +
+                                                  '<br><br>'+
+                                                  '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
+        await fetch(urls[i]).then(async (r) => {
+            await zip.file(filenames[i], r.blob());
+        });
+        if(i >= urls.length-1) {
+            zip.generateAsync({ type: "blob" }).then((blob) => FileSaver.saveAs(blob, zipName));
+        }
+    }
+};
 }

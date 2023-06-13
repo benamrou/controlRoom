@@ -331,6 +331,11 @@ export class SupplierScheduleComponent {
   validationSchedule() {
     let buildValidePlanning;
     this.validateSchedule = [];
+
+    this.waitMessage =  'Preparing the schedule change... <br>'+ 
+                        '<br><br>'+
+                        '<b>Supplier schedule change is usually taking less than a minute</b>';
+
     for (let i =0; i < this.temporarySchedule.length; i++) {
       if (this.temporarySchedule[i].temporary) {
           for (let j =0; j < this.temporarySchedule[i].orderActive.length; j++) {
@@ -381,12 +386,22 @@ export class SupplierScheduleComponent {
                 err => {},
                 () => { //console.log('Ok creation conpleted');
                   // Step 3 - execute job
-                  console.log('run job ');
+                  
+                  this.waitMessage =  'Preparing the schedule change... &emsp;<b>COMPLETED</b><br>'+ 
+                                      'Updating the schedule... <br>'+ 
+                                      '<br><br>'+
+                                      '<b>Supplier schedule change is usually taking less than a minute</b>';
+
                   this.updateSchedule().subscribe (
                     data => {},
                     err => {},
                     () => { //console.log('Ok update conpleted');
                     // Step 3 - execute job
+
+                    this.waitMessage =  'Preparing the schedule change... &emsp;<b>COMPLETED</b><br>'+ 
+                                        'Updating the schedule... &emsp;<b>COMPLETED</b><br>'+ 
+                                        '<br><br>'+
+                                        '<b>Supplier schedule change is usually taking less than a minute</b>';
                     this._messageService.add({severity:'success', summary:'Info Message', detail: 'Supplier schedule has been updated'});
                     
                     if (this.validateSchedule.length === 0 ) {
@@ -394,6 +409,8 @@ export class SupplierScheduleComponent {
                       this.displayUpdateCompleted = true;
                     }
                     else {
+                      
+                      this.waitMessage = '';
                       this.msgDisplayed = 'Vendor schedule ' + this.validateSchedule[0].suppliercode + ' - ' + 
                                           this.validateSchedule[0].supplierdescription + ' has been successfully updated.';
                       this.displayUpdateCompleted = true;

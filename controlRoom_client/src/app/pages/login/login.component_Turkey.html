@@ -1,0 +1,235 @@
+<!-- div class="login-page" [@routerTransition] style="background-color: steelblue; color: black" -->
+<div class="login-page" [@routerTransition] style="background: linear-gradient(to right, rgba(151, 180, 67, 1) 0%, rgba(0, 0, 13, 1) 100%); color: black">
+	<div  class="pull-right" font-size="small" ><span #versionDiv style="visibility: hidden;font-size: small">vers. 6.0.1b0.10</span></div>
+    <div class="row justify-content-md-center" >
+		<!-- Snow effect -->
+		<!--div *ngFor="let dummy of ' '.repeat(100).split('')" class="snowflake">*</div-->
+
+        <div class="col-md-4">
+            <img src="./assets/images/logo.png" width="150px" class="user-avatar" (click)="showHideVersion()" />
+			<h1 style="color: white">Inventory Control Room</h1>  
+			<p-toast></p-toast>
+            <form role="form" (ngSubmit)="onLoggedin()" style="z-index: 99; position: relative;">
+                <div class="form-content">
+                    <div class="form-group">
+                        <input type="text" name="username" [(ngModel)]="authentification.username"  
+							   class="form-control input-underline input-lg" id="" placeholder="Username"
+							   style="border-radius: 10px">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" [(ngModel)]="authentification.password"  name="password"
+                               class="form-control input-underline input-lg" id="" placeholder="Password"
+							   style="border-radius: 10px">
+                    </div>
+                </div>
+                <button class="btn rounded-btn" type="submit" [disabled]="authentification.username.length === 0 " > Log in </button>
+            </form>
+
+&nbsp;
+<br>
+<br>
+<br>
+		<div *ngIf="canConnect" style="text-align: left; width: 500px; font-size: smaller; line-height: 1">
+				<div class="ui-grid-row">
+					<div class="col-md-12" style="font-weight: bolder" >User authentification validation</div>
+					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="userInfoGathered"></i>
+					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!userInfoGathered"></i>
+				</div>
+				<div class="ui-grid-row">
+					<div class="col-md-12" style="font-weight: bolder" >Gathering user information and authorization profiles</div>
+					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="userInfoGathered"></i>
+					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!userInfoGathered"></i>
+				</div>
+				<div class="ui-grid-row">
+					<div class="col-md-12" style="font-weight: bolder" >Gathering user Menu access </div>
+					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="userInfoGathered"></i>
+					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!userInfoGathered"></i>
+				</div>
+				<div class="ui-grid-row">
+					<div class="col-md-12" style="font-weight: bolder" >Gathering user Environment access </div>
+					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="environmentGathered"></i>
+					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!environmentGathered"></i>
+				</div>
+				<div class="ui-grid-row">
+					<div class="col-md-12" style="font-weight: bolder" >Gathering parameter list  </div>
+					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="parameterGathered"></i>
+					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!parameterGathered"></i>
+				</div>
+				<div class="ui-grid-row">
+					<div class="col-md-12" style="font-weight: bolder" >Gathering labels in your language </div>
+					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="labelsGathered"></i>
+					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!labelsGathered"></i>
+				</div>
+				<div class="ui-grid-row">
+					<div class="col-md-12" style="font-weight: bolder" >Refreshing your workspace with your preference </div>
+					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="labelsGathered"></i>
+					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!labelsGathered"></i>
+				</div>
+			</div>
+        </div>
+	</div>
+</div>
+
+<!-- farm -->
+<div class="sky">
+	<div class="sun"></div>
+	<div class="cloud cloud1">
+	  <div class="cloud-left"></div>
+	  <div class="cloud-right"></div>
+	  <div class="cloud-bottom"></div>
+	</div>
+	<div class="cloud cloud2">
+	  <div class="cloud-left"></div>
+	  <div class="cloud-right"></div>
+	  <div class="cloud-bottom"></div>
+	</div>
+	<div class="cloud cloud3">
+	  <div class="cloud-left"></div>
+	  <div class="cloud-right"></div>
+	  <div class="cloud-bottom"></div>
+	</div>
+	<div class="cloud cloud4">
+	  <div class="cloud-left"></div>
+	  <div class="cloud-right"></div>
+	  <div class="cloud-bottom"></div>
+	</div>
+  </div>
+  <div class="land">
+	<div class="fence-far">
+	  <div class="hbox">
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+	  </div>
+	  <div class="hbox"></div>
+	</div>
+	<div class="fence-near">
+	  <div class="hbox">
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+		<div class="vbox"></div>
+	  </div>
+	  <div class="hbox"></div>
+	
+	</div>
+	
+   
+  </div>
+
+ <!-- Turkey -->
+<div class="JT">
+	<div class="JT-leg JT-leg_left">
+	  <div class="JT-leg-shin"></div>
+	  <div class="JT-leg-foot JT-leg-foot-left"></div>
+	</div>
+	<div class="JT-leg JT-leg_right">
+	  <div class="JT-leg-shin"></div>
+	  <div class="JT-leg-foot JT-leg-foot-right"></div>
+	</div>
+	<div class="JT-bounce">
+	  <div class="JT-rock">
+	  <div class="JT-shake">
+		<div class="JT-feathers">
+		  <div class="JT-feather JT-feather-0"></div>
+		  <div class="JT-feather JT-feather-1"></div>
+		  <div class="JT-feather JT-feather-2"></div>
+		  <div class="JT-feather JT-feather-3"></div>
+		  <div class="JT-feather JT-feather-4"></div>
+		  <div class="JT-feather JT-feather-9"></div>
+		  <div class="JT-feather JT-feather-8"></div>
+		  <div class="JT-feather JT-feather-7"></div>
+		  <div class="JT-feather JT-feather-6"></div>
+		  <div class="JT-feather JT-feather-5"></div>
+		</div>
+		<div class="JT-bod"></div>
+		<div class="JT-sign">VEGGIES ?</div>
+	  </div>
+	  <div class="JT-head"></div>
+	  <div class="JT-eye JT-eye-right">
+		<div class="JT-eye-iris"></div>
+	  </div>
+	  <div class="JT-eye JT-eye-left">
+		<div class="JT-eye-iris"></div>
+	  </div>
+	  <div class="JT-beak"></div>
+	  <div class="JT-hat">
+		<div class="JT-hat-brim"></div>
+		<div class="JT-hat-pipe"></div>
+	  </div>
+	</div>
+	</div>
+</div>
+
+<!-- Happy ThanksGiving -->
+<!--div class="wrapperTurkey">
+	<h1>
+		<span class="happyTurkey">Happy THANKSGIVING</span>
+	</h1> 
+		<div class="bodyTurkey"></div>
+		<div class="headTurkey"></div>
+		<div class="beakTurkey"></div>
+		<div class="gTurkey"></div>
+		<div class="bf1Turkey"></div>
+		<div class="bf2Turkey"></div>
+		<div class="bf3Turkey"></div>
+		<div class="sf1Turkey"></div>
+		<div class="sf2Turkey"></div>
+		<div class="legTurkey"></div>
+</div-->
+
+<div class="HappyText">
+	<h1>Happy Thanksgiving
+	</h1> 
+</div>
+
+<div class="wrapperTurkey">
+		<div class="bodyTurkey"></div>
+		<div class="headTurkey"></div>
+		<div class="beakTurkey"></div>
+		<div class="gTurkey"></div>
+		<div class="bf1Turkey"></div>
+		<div class="bf2Turkey"></div>
+		<div class="bf3Turkey"></div>
+		<div class="sf1Turkey"></div>
+		<div class="sf2Turkey"></div>
+		<div class="legTurkey"></div>
+</div>

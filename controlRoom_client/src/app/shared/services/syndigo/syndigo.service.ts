@@ -1,9 +1,9 @@
 import {Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
-import {HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import {HttpHeaders, HttpParams } from '@angular/common/http';
 import { HeinensSyndigo, SyndigoResult } from './syndigo.result';
-import { Observable, map } from 'rxjs';
+import { map } from 'rxjs';
 import * as JSZip from 'jszip';
 import * as FileSaver from 'file-saver';
 
@@ -24,6 +24,7 @@ export class SyndigoService {
 
     // Using generic request API - No middleware data mgt
     private baseQuery: string = '/api/request/';
+    private basePostQuery: string = '/api/request/';
 
     private querySyndigoEnv = 'SYN0000000';
     private querySyndigoUPCCategoryLookUp = 'SYN0000001';
@@ -60,12 +61,22 @@ export class SyndigoService {
     }
 
     getItemByCategory(categories) {
-        this.request = this.baseQuery;
+        this.request = this.basePostQuery;
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
         this.params = this.params.set('PARAM', categories);
-        headersSearch = headersSearch.set('QUERY_ID', this.querySyndigoUPCCategoryLookUp);
 
+        let body = {values : []};
+        body.values = categories;
+
+        headersSearch = headersSearch.set('QUERY_ID', this.querySyndigoUPCCategoryLookUp);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+        return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
+                let data = <any> response;
+                return data;
+        }));
+        
         return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data=<any> response;
             return data;
@@ -247,16 +258,17 @@ export class SyndigoService {
     }
 
     async downloadPicture (urls: any[], filenames: any[], zipName: string) {  
+        console.log('download Pictures', urls, filenames, zipName)
         if(!urls) return;
         let zip = new JSZip();
         //const folder = zip.folder("images"); // folder name where all files will be placed in 
         for(let i=0; i < urls.length; i++) {
             await fetch(urls[i]).then(async (r) => {
                 await zip.file(filenames[i], r.blob());
-                if(i == urls.length-1) {
-                    zip.generateAsync({ type: "blob" }).then((blob) => FileSaver.saveAs(blob, zipName));
-                }
             });
+            if(i >= urls.length-1) {
+                zip.generateAsync({ type: "blob" }).then((blob) => FileSaver.saveAs(blob, zipName));
+            }
         }
     };
 } 

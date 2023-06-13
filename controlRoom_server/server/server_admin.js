@@ -158,6 +158,7 @@ warehouse.get(app, oracledb);
 scorecard.get(app, oracledb);
 dashboard.get(app, oracledb);
 query.get(app, oracledb);
+query.post(app, oracledb);
 supplier.get(app, oracledb);
 reporting.get(app, oracledb);
 //gdrive.post(app, oracledb);

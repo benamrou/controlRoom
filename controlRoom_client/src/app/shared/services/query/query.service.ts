@@ -19,6 +19,7 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
 export class QueryService {
 
   private baseQueryUrl: string = '/api/request/';
+  private basePostQueryUrl: string = '/api/request/';
   private executeQueryUrl: string = '/api/executeSQL/';
   
   private request: string;
@@ -47,6 +48,29 @@ export class QueryService {
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+            let data = <any> response;
+            return data;
+    }));
+  }
+
+
+  /**
+   * POST query to execute in header and detail in body 
+   * @param queryId 
+   */
+  postQueryResult(queryId: string, param?: any[]) {
+    this.request = this.basePostQueryUrl;
+    let headersSearch = new HttpHeaders();
+    let options = new HttpHeaders();
+    this.params= new HttpParams();
+
+    let body = {values : []};
+    body.values = param;
+
+    headersSearch = headersSearch.set('QUERY_ID', queryId);
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
             let data = <any> response;
             return data;
     }));
