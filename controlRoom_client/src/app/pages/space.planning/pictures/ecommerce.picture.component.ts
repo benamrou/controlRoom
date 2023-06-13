@@ -54,6 +54,7 @@ export class EcommercePictureComponent implements OnDestroy {
   subscription: any[] = [];
 
   constructor(private _queryService: QueryService, private _messageService: MessageService) {
+    this.screenID = 'SCR0000000023';
     this.datePipe = new DatePipe('en-US');
   }
   

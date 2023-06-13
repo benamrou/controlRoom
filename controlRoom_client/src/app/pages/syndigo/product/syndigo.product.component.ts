@@ -65,6 +65,7 @@ export class SyndigoProductComponent implements OnDestroy {
     this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for the elements : ' + JSON.stringify(this.values)});
     this.searchButtonEnable = false; 
 
+    console.log('this.values', this.values)
     this.subscription.push(this._syndigoService.getAuthToken()
             .subscribe( 
                 data => {  }, // put the data returned from the server in our variable
@@ -75,7 +76,6 @@ export class SyndigoProductComponent implements OnDestroy {
                 () => { 
                       this._messageService.add({severity:'success', summary:'Syndigo authorization', detail: 'Retrieved ' + 
                                                 ' Syndigo authorization request validated.'});
-
                       this.subscription.push(this._syndigoService.searchUPCMarketplace(this.values,0, this.values.length*5) .subscribe( 
                       //this.subscription.push(this._syndigoService.testConnection().subscribe(  
                       data => { this.searchResult = data;
@@ -126,7 +126,7 @@ export class SyndigoProductComponent implements OnDestroy {
   onKeyDown(event) {
     if (event.key === " ") {
     // use the internal method to set the new value
-        this.chips.writeValue([...this.chips.value, event.target.value]) // don't push the new value inside the array, create a new reference
+       this.values=[...this.values, ...event.target.value];  // don't push the new value inside the array, create a new reference
         this.chips.cd.detectChanges(); // use internal change detection
         event.preventDefault();    //prevent ';' to be written
         event.target.value ="";
@@ -137,13 +137,13 @@ export class SyndigoProductComponent implements OnDestroy {
     /* ClipboardEvent */
     let splitPaste = event.clipboardData.getData('text').split(' ');
     if(event.clipboardData.getData('text').includes(' ')) {
-       this.chips.writeValue([...this.chips.value, ...splitPaste]) // don't push the new value inside the array, create a new reference
+       this.values=[...this.values, ...splitPaste]; // don't push the new value inside the array, create a new reference
        this.chips.cd.detectChanges(); // use internal change detection
        event.preventDefault();    //prevent ';' to be written
        event.target.value ="";
     } 
     if(splitPaste[0].includes('\r\n')) {
-       this.chips.writeValue([...this.chips.value, ...splitPaste[0].split('\r\n')]) // don't push the new value inside the array, create a new reference
+      this.values=[...this.values, ...splitPaste[0].split('\r\n')]; // don't push the new value inside the array, create a new reference
        this.chips.cd.detectChanges(); // use internal change detection
        event.preventDefault();    //prevent ';' to be written
        event.target.value ="";

@@ -65,6 +65,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
               public _syndigoService: SyndigoService) {
       this.imageParameter = '?size=' + this.sizeImage + '&fileType=' + this.typeImage;
       this.datePipe = new DatePipe('en-US');
+      this.screenID = 'SCR0000000022';
 
       this.subscription.push(this._syndigoService.getSyndigoInfo().subscribe( 
         data => { this.displaySettingOption = true}, // put the data returned from the server in our variable
