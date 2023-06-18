@@ -14,12 +14,15 @@ import { CalendarModule } from 'primeng/calendar';
 import { TabViewModule } from 'primeng/tabview';
 import {StepsModule} from 'primeng/steps';
 import {ToggleButtonModule} from 'primeng/togglebutton';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputTextModule } from 'primeng/inputtext';
 
 
 @NgModule({
     imports: [RouterModule, CommonModule, FormsModule, TableModule, ButtonModule, PageHeaderModule,
               CalendarModule, FileUploadModule, TabViewModule, DialogModule, ToastModule, FieldsetModule,
-              StepsModule, ToggleButtonModule ],
+              InputTextModule,
+              StepsModule, ToggleButtonModule,CheckboxModule ],
     declarations: [ItemAttributeComponent],
     exports: [ItemAttributeComponent],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]

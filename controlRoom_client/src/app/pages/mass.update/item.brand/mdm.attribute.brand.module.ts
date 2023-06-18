@@ -14,11 +14,13 @@ import { CalendarModule } from 'primeng/calendar';
 import { TabViewModule } from 'primeng/tabview';
 import {StepsModule} from 'primeng/steps';
 import {ToggleButtonModule} from 'primeng/togglebutton';
+import { InputTextModule } from 'primeng/inputtext';
 
 
 @NgModule({
     imports: [RouterModule, CommonModule, FormsModule, TableModule, ButtonModule, PageHeaderModule,
               CalendarModule, FileUploadModule, TabViewModule, DialogModule, ToastModule, FieldsetModule,
+              InputTextModule,
               StepsModule, ToggleButtonModule ],
     declarations: [MdmAttributeBrandComponent],
     exports: [MdmAttributeBrandComponent],

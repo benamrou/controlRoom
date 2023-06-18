@@ -46,6 +46,21 @@
             <label class="font-bold" for="vocabularyid">VocabularyId</label>
             <input id="vocabularyid" pInputText disabled value="{{_syndigoService.syndigoEnv[0].SYNVOCID}}" type="text" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
         </div>
+        <div class="field col-4 ">
+            <label class="font-bold" for="sizeid">Picture size</label>
+            <p-inputNumber  id="sizeid"   [(ngModel)]="_syndigoService.sizeImage"  class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            </p-inputNumber>
+        </div>
+        <div class="field col-4 ">
+            <label class="font-bold" for="skipid">Skip</label>
+            <p-inputNumber  id="skipid"   [(ngModel)]="skip" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            </p-inputNumber>
+        </div>
+        <div class="field col-4 ">
+            <label class="font-bold" for="takeid">Additonnal take</label>
+            <p-inputNumber  id="takeid"   [(ngModel)]="take" class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            </p-inputNumber>
+        </div>
     </div>
     <ng-template pTemplate="footer">
         <p-button icon="pi pi-check" (click)="displaySetting = false" label="Ok" styleClass="p-button-text"></p-button>

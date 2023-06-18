@@ -193,6 +193,9 @@ export class ProcessService {
     this.params = this.params.set('PARAM', scriptToExecute);
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+
+
+    console.log('scriptToExecute', scriptToExecute, this._userService.userInfo.mainEnvironment);
     /*headersSearch = headersSearch.set('ENV_COMMAND', 
         // Initialization
         this._userService.userInfo.mainEnvironment[0].initSH + '; ' +

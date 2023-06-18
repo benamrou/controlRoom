@@ -109,15 +109,20 @@
             
             <!-- FILTER -->
             <ng-template pTemplate="caption">
-                <div class="table-header">
-                    <div class="pull-right p-input-icon-right FILTER_Right_Table">
-                        <i class="pi pi-search"></i>
-                        <input pInputText class="FILTER_Button_Table" type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
-                    </div>
-                    <div >
-                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                <div class="table-header grid">
+                    <div class="col-3">
+                        <span>
+                            <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
-                                label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                            </button>
+                        </span>
+                    </div>
+                    <div class="col-9" style="text-align: right;">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        </span>
                     </div>
                 </div>
             </ng-template>
@@ -178,7 +183,7 @@
             </div>
 
             <div style="width: 50%;">
-                <p-checkbox [(ngModel)]="itemTrace" binary="true"></p-checkbox>
+                <p-checkbox [(ngModel)]="itemTrace" [binary]="true"></p-checkbox>
                 <span style="margin-top: 5px; padding-left: 15px;">Item trace generation </span>
             </div>
             

@@ -36,7 +36,7 @@ export class SyndigoService {
     public syndigoResult: any[] = [];
     private authToken;
 
-    private sizeImage = '300';
+    public sizeImage = '300';
     private typeImage = 'png';
     private imageParameter;
   
@@ -75,11 +75,6 @@ export class SyndigoService {
         return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
                 let data = <any> response;
                 return data;
-        }));
-        
-        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
-            let data=<any> response;
-            return data;
         }));
     }
 

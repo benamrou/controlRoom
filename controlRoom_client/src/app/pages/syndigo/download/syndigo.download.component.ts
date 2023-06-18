@@ -49,7 +49,8 @@ export class SyndigoDownloadComponent implements OnDestroy {
 
    separatorChips: string = ' ';
 
-   private sizeImage = '300';
+   public skip = 0;
+   public take = 1000;
    private typeImage = 'png';
    private imageParameter;
 
@@ -63,7 +64,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
   constructor(private _exportService: ExportService, 
               private _messageService: MessageService,
               public _syndigoService: SyndigoService) {
-      this.imageParameter = '?size=' + this.sizeImage + '&fileType=' + this.typeImage;
+      this.imageParameter = '?size=' + this._syndigoService.sizeImage + '&fileType=' + this.typeImage;
       this.datePipe = new DatePipe('en-US');
       this.screenID = 'SCR0000000022';
 
@@ -170,7 +171,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
                                           '<br><br>'+
                                           '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
 
-                      this.subscription.push(this._syndigoService.searchUPCMarketplace(UPCs,0, UPCs.length*5) .subscribe( 
+                      this.subscription.push(this._syndigoService.searchUPCMarketplace(UPCs,this.skip, UPCs.length*5+this.take) .subscribe( 
                       //this.subscription.push(this._syndigoService.testConnection().subscribe(  
                       data => { this.searchResultSyndigo = data;}, 
                         error => {

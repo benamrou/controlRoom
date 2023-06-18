@@ -9,12 +9,14 @@ import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { CheckboxModule } from 'primeng/checkbox';
 
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, 
                CalendarModule,DropdownModule,
                InputTextModule,
+               CheckboxModule,
                TableModule, ButtonModule, PageHeaderModule ],
     declarations: [MassJournalComponent],
     exports: [MassJournalComponent],

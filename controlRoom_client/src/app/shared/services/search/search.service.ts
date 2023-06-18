@@ -8,6 +8,9 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
 @Injectable()
 export class SearchService {
     private baseUrl: string = '/api/search/';
+    private basePostQuery: string = '/api/request/';
+    private baseItemQueryID: string = 'SEA0000001';
+
     private baseSearchItemUrl: string = '/api/search/1';
     private baseSearchItemRetailUrl: string = '/api/search/2';
     private baseSearchItemCostUrl: string = '/api/search/3';
@@ -21,6 +24,9 @@ export class SearchService {
     private params: HttpParams = new HttpParams;
     private paramsSearch: URLSearchParams;
     private options: HttpHeaders = new HttpHeaders;
+
+
+    private request: string;
     
     constructor(private http : HttpService,private _userService: UserService){
   }
@@ -67,6 +73,21 @@ export class SearchService {
      * @returns JSON User information object
      */
      getSearchResult (searchElement: any) {
+        this.request = this.basePostQuery;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+
+        let body = {values : []};
+        body.values = searchElement;
+
+        headersSearch = headersSearch.set('QUERY_ID', this.baseItemQueryID);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+        return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
+                let data = <any> response;
+                return data;
+        }));
+/*
         let request = this.baseSearchItemUrl;
         let headersSearch = new HttpHeaders();
         let options = new HttpHeaders();
@@ -88,7 +109,7 @@ export class SearchService {
         return this.http.get(request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
                 return data;
-            }));
+            }));*/
       }
 
     /**

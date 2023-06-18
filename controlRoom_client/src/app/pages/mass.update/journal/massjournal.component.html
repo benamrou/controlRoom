@@ -119,7 +119,7 @@
 
     <div class="row"  style=" margin-right: 2em;font-size: smaller ">
         <div class="col">
-            <p-checkbox [(ngModel)]="searchResult[indexEdit].JSONTRACE" binary="true"></p-checkbox>
+            <p-checkbox [(ngModel)]="searchResult[indexEdit].JSONTRACE" [binary]="true"></p-checkbox>
             <span style="margin-top: 5px; padding-left: 15px;">Item trace generation </span>
         </div>
     </div>
@@ -228,7 +228,7 @@
                         <td *ngIf="col.display &&  col.field === 'JSONDPROCESS'"> {{rowData[col.field] | date:'MM/dd/yy HH:mm'}} </td>
                         <td *ngIf="col.display &&  col.field === 'JSONSTARTDATE'"> {{rowData[col.field] | date:'MM/dd/yy'}} </td>
                         <td *ngIf="col.display &&  col.field === 'JSONTRACE'" style="text-align: center;">
-                            <p-checkbox [(ngModel)]="rowData[col.field]" binary="true" disabled="rowData['JSONIMMEDIATECODE']=== 1 || rowData['JSONSTATUSCODE']=== 1 "></p-checkbox>
+                            <p-checkbox [(ngModel)]="rowData[col.field]" [binary]="true" [disabled]="rowData['JSONIMMEDIATECODE']=== 1 || rowData['JSONSTATUSCODE']=== 1 "></p-checkbox>
                         </td>
                     </ng-container>
                         <td> <!-- Download button -->

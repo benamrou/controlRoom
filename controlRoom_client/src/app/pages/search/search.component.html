@@ -9,7 +9,9 @@
 <div id="wrapper" class="center" style="text-align: center">
     <div style="width:70%; display: inline-block; text-align: left; box-shadow:1px 1px 1px 2px darkgrey" ui-grid-responsive ui-fluid ui-grid-pad>
         <p-chips [(ngModel)]="values" pTooltip="Enter elements to look for, add the keywords @item, @ean, @supplier, @order, @invoice to precise your lookup" 
-                 tooltipPosition="right"> </p-chips>
+                 tooltipPosition="right"
+                 (keydown)="onKeyDown($event)"
+                 (paste)="onPaste($event)"> </p-chips>
     </div>
 </div>
 <br>
@@ -376,7 +378,7 @@
                 <div class="col-1 line_cell">{{pallet.AR_DONORD}}</div>
                 <div class="col-1 line_cell">{{pallet.AR_ILOGIS}}</div>
                 <div class="col-2 line_cell">{{pallet.AR_LIBPRO}}</div>
-                <div class="col-1 line_cell">{{pallet.UE_DATREC | date: "MM/dd/yyyy"}}</div>
+                <div class="col-1 line_cell">{{pallet.UE_DATREC}}</div>
                 <div class="col-2 line_cell">{{pallet.UL_USSCC}}</div>
                 <div class="col-1 line_cell">{{pallet.UT_VALIND | date: "MM/dd/yyyy"}}</div>
                 <div class="col-2 line_cell">{{pallet.UE_ADRUMS}}</div>

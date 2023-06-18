@@ -3,6 +3,7 @@ import { ViewEncapsulation } from '@angular/core';
 import { SearchService } from '../../shared/services/index';
 import { MessageService } from 'primeng/api';
 import { FullCalendar } from 'primeng/fullcalendar';
+import { Chips } from 'primeng/chips';
 
 export class SearchResultFormat {
   COL1: any;
@@ -22,6 +23,7 @@ export class SearchResultFormat {
 })
 
 export class SearchComponent implements OnDestroy {
+  @ViewChild(Chips) chips: Chips;
   
 @HostListener('window:scroll', ['$event']) getScrollHeight(event) {
   if (window.pageYOffset >= 400) {
@@ -226,6 +228,33 @@ export class SearchComponent implements OnDestroy {
   tabSelection(e) {
     this.tabSelect = e.index;
     console.log('onScroll: ', e)
+  }
+
+  onKeyDown(event) {
+    if (event.key === " ") {
+    // use the internal method to set the new value
+       this.values=[...this.values, ...event.target.value];  // don't push the new value inside the array, create a new reference
+        this.chips.cd.detectChanges(); // use internal change detection
+        event.preventDefault();    //prevent ';' to be written
+        event.target.value ="";
+    }
+  }
+
+  onPaste(event) {
+    /* ClipboardEvent */
+    let splitPaste = event.clipboardData.getData('text').split(' ');
+    if(event.clipboardData.getData('text').includes(' ')) {
+       this.values=[...this.values, ...splitPaste]; // don't push the new value inside the array, create a new reference
+       this.chips.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes('\r\n')) {
+      this.values=[...this.values, ...splitPaste[0].split('\r\n')]; // don't push the new value inside the array, create a new reference
+       this.chips.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
   }
 
 }

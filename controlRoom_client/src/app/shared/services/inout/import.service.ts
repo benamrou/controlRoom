@@ -227,6 +227,10 @@ export class ImportService{
         //console.log ('Update request');
         let pt33_1_MERCHHIERARCHY = 1;
         let pt33_5_ITEMSVATTRIBUTE = 5;
+        let pt33_3_ITEMATTRIBUTE = 3;
+        let pt33_4_ITEMCATMANAGER = 4;
+        let pt33_6_ITEMSVINFO = 6;
+
         this.request = this.executeJobURL;
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
@@ -242,6 +246,14 @@ export class ImportService{
             case pt33_5_ITEMSVATTRIBUTE: /* Item/SV attribute - psifa122p */
                 command = command + 'psifa122p psifa122p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
                 break;
+            case pt33_3_ITEMATTRIBUTE: /* Item attribute - psifa55p */
+                command = command + 'psifa55p psifa55p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                break;
+            case pt33_4_ITEMCATMANAGER: /* Item - Category Manager Package update */
+                break;
+            case pt33_6_ITEMSVINFO: /* Item SV Info - psifa166p */ 
+                command = command + 'psifa166p psifa166p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ';
+                break;
             default:
                 console.log ('Unknown mass tool id : ', toolId);
         }
@@ -256,9 +268,9 @@ export class ImportService{
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         headersSearch = headersSearch.set('ENV_COMMAND', command);
 
-        return this._http.execute(this.request, this.params, headersSearch).pipe(map(response => {
-                let data = <any> response;
-                return data;
+        return this._http.execute(this.request, this.params, headersSearch, command).pipe(map(response => {
+            let data = <any> response;
+            return data;
         }));
     
     }
