@@ -247,6 +247,7 @@ export class SyndigoService {
                     this.syndigoResult[0].syndigoData.heinensLayout =heinensFormatArray;
                 }
             }
+            console.log('this.syndigoResult[0].syndigoData', this.syndigoResult[0].syndigoData);
             return  this.syndigoResult;
         }));
         

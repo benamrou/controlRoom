@@ -224,7 +224,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
                                     this.searchResult[indexFound]['Width (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].widthUOM;
                                   }
                                   if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].depth != 'no data' && this.searchResult[indexFound]['Depth'].length == 0 ) {
-                                    this.searchResult[indexFound]['Depth'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[indexFound].depth;
+                                    this.searchResult[indexFound]['Depth'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].depth;
                                   }
                                   if(this.searchResultSyndigo[0].syndigoData.heinensLayout[i].depthUOM != 'no data' && this.searchResult[indexFound]['Depth (UOM)'].length == 0 ) {
                                     this.searchResult[indexFound]['Depth (UOM)'] = this.searchResultSyndigo[0].syndigoData.heinensLayout[i].depthUOM;
@@ -260,12 +260,11 @@ export class SyndigoDownloadComponent implements OnDestroy {
                                     this.imageURLs.push(this.searchResult[indexFound]['Image bottom']);
                                     this.imageFilenames.push(this.searchResult[indexFound]['UPC'] + '_9.png');  
                                   }
-                                } else {
-                                }
+                                } 
 
                               }
                               for (let i=0; i < this.searchResult.length; i++){
-                                if (this.searchResult[i] == 0) {
+                                if (this.searchResult[i].Status == 0) {
                                   this.searchResult[i].statusSyndigo = 'No data'; /* No data */
                                   this.searchResult[i].Status = 2; /* No data */
                                 }

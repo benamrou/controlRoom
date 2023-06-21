@@ -211,6 +211,10 @@ export class ItemHierarchyComponent implements OnInit{
     let userID: any;
     this.displayUpdateCompleted = false;
     if (this.checkGlobal()) {
+
+        this.waitMessage =  'Step 1/4: Posting the execution plan... <br>'+ 
+                            '<br><br>'+
+                            '<b>Item hierarchy change is usually taking between 1 and 2 minutes</b>';
         this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
         this._importService.postExecution(this.uploadedFiles[0].name, this.toolID,
                             this.datePipe.transform(this.startDate,'MM/dd/yy'), 
@@ -236,6 +240,10 @@ export class ItemHierarchyComponent implements OnInit{
                             return;
                         }
                         /** Run the job integration */
+                        this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
+                                            'Step 2/4: Executing item hierarchy mapping change... <br>'+ 
+                                            '<br><br>'+
+                                            '<b>Item hierarchy change is usually taking between 1 and 2 minutes</b>';
                         this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
@@ -246,10 +254,24 @@ export class ItemHierarchyComponent implements OnInit{
                                 () =>    {  
                                             
                                     this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
+
+                                    this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
+                                                        'Step 2/4: Executing item hierarchy mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                        'Step 3/4: Running integration job... <br>'+ 
+                                                        '<br><br>'+
+                                                        '<b>Item hierarchy change is usually taking between 1 and 2 minutes</b>';
                                     this._importService.executePlan(userID, this.toolID).subscribe( 
                                             data => {  },
                                             error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution issue', detail: error }); },
-                                            () => {  this._importService.collectResult(executionId.RESULT[0]).subscribe (
+                                            () => {  
+                                                this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                    'Step 2/4: Executing item hierarchy mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                    'Step 3/4: Running integration job... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                    'Step 4/4: Collecting integration result... <br>'+ 
+                                                                    '<br><br>'+
+                                                                    '<b>Item hierarchy change is usually taking between 1 and 2 minutes</b>';
+                                                
+                                                    this._importService.collectResult(executionId.RESULT[0]).subscribe (
                                                     data => { },
                                                     error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                                     () => { 
@@ -257,6 +279,15 @@ export class ItemHierarchyComponent implements OnInit{
                                                         this.msgFinalDisplayed = 'Item - Merchandise  ' + this.uploadedFiles[0].name + ' - ' + 
                                                                                 ' has been successfully processed.';
                                                         this.displayUpdateCompleted = true;
+
+
+                                                        this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                            'Step 2/4: Executing item hierarchy mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                            'Step 3/4: Running integration job... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                            'Step 4/4: Collecting integration result... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                            '<br><br>'+
+                                                                            '<b>Item hierarchy change is usually taking between 1 and 2 minutes</b>';
+                                                        this.waitMessage = '';
                                                     });
                                                 });
                                         });                     

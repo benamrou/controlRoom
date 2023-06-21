@@ -52,7 +52,7 @@ export class CategoryManagerComponent implements OnInit{
    missingData;
 
    screenID;
-    waitMessage: string = '';
+   waitMessage: string = '';
    searchButtonEnable: boolean = true; // Disable the search button when clicking on search in order to not overload queries
 
   // Search action
@@ -203,6 +203,9 @@ export class CategoryManagerComponent implements OnInit{
     let userID;
     this.displayUpdateCompleted = false;
     if (this.checkGlobal()) {
+        this.waitMessage =  'Step 1/4: Posting the execution plan...<br>'+ 
+                            '<br><br>'+
+                            '<b>Category manager change is usually taking between 1 and 2 minutes</b>';
         this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
         this._importService.postExecution(this.uploadedFiles[0].name, this.toolID,
                             this.datePipe.transform(this.startDate,'MM/dd/yy'), 
@@ -217,6 +220,10 @@ export class CategoryManagerComponent implements OnInit{
                         },
                         error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                         () => { 
+
+                            this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
+                                                '<br><br>'+
+                                                '<b>Category manager change is usually taking between 1 and 2 minutes</b>';
                     if (this.scheduleFlag) {
                         this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Step 2/2: Data file execution plan', detail:  
                                                     '"' + this.uploadedFiles[0].name + '" worksheet loaded for scheduled execution.' }); 
@@ -228,6 +235,11 @@ export class CategoryManagerComponent implements OnInit{
                             return;
                         }
                         /** Run the job integration */
+
+                        this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
+                                            'Step 2/4: Executing category manager mapping change...<br>'+ 
+                                            '<br><br>'+
+                                            '<b>Category manager change is usually taking between 1 and 2 minutes</b>';
                         this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 2/4: Executing integration job', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
@@ -236,19 +248,42 @@ export class CategoryManagerComponent implements OnInit{
                                 },
                                 error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                 () =>    {  
+
+                                    this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
+                                                        'Step 2/4: Executing category manager mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                        'Step 3/4: Running integration job...<br>'+ 
+                                                        '<br><br>'+
+                                                        '<b>Category manager change is usually taking between 1 and 2 minutes</b>';
                                             
                                     this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
                                     this._importService.executePlan(userID, this.toolID).subscribe( 
                                             data => {  },
                                             error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution issue', detail: error }); },
-                                            () => {  this._importService.collectResult(executionId.RESULT[0]).subscribe (
+                                            () => {  
+                                                
+                                                    this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                        'Step 2/4: Executing category manager mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                        'Step 3/4: Running integration job... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                        'Step 4/4: Collecting integration result... <br>'+ 
+                                                                        '<br><br>'+
+                                                                        '<b>Category manager change is usually taking between 1 and 2 minutes</b>';
+                                                    this._importService.collectResult(executionId.RESULT[0]).subscribe (
                                                     data => { },
                                                     error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                                     () => { 
                                                         this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
                                                         this.msgFinalDisplayed = 'Item - Category Manager  ' + this.uploadedFiles[0].name + ' - ' + 
                                                                                 ' has been successfully processed.';
+
+                                                        this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                            'Step 2/4: Executing category manager mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                            'Step 3/4: Running integration job... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                            'Step 4/4: Collecting integration result... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                            '<br><br>'+
+                                                                            '<b>Category manager change is usually taking between 1 and 2 minutes</b>';
                                                         this.displayUpdateCompleted = true;
+
+                                                        this.waitMessage ='';
                                                     });
                                                 });
                                         });                     
