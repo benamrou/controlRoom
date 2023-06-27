@@ -105,6 +105,7 @@ import { WarehouseRestartServicesModule } from './pages/warehouse/restart.servic
 import { ServicesCenterModule } from './pages/helpdesk/services.center/services.center.module';
 import { EcommercePictureModule } from './pages/space.planning/pictures/ecommerce.picture.module';
 import { AlertsICRModule } from './pages/alerts/alerts.icr.module';
+import { SKUDimensionModule } from './pages/mass.update/sku.dimension/sku.dimension.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -192,7 +193,8 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     SyndigoProductModule,
     SyndigoDownloadModule,
     EcommercePictureModule,
-    AlertsICRModule
+    AlertsICRModule,
+    SKUDimensionModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

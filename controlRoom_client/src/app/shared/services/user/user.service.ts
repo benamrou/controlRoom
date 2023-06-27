@@ -24,6 +24,10 @@ export class User {
     public updatedOn: string;
     public lastUserUpdate: string;
     public type: string;
+    public dataIntegrity: number;
+    public it: number;
+    public buyer: number;
+    public helpDesk: number;
  
     public envCorporateAccess: Environment[] = [];
     public envUserAccess: Environment[] = [];
@@ -124,6 +128,10 @@ export class User {
                  this.userInfo.email = data[0].USEREMAIL;
                  this.userInfo.mobile = data[0].USERMOBILE;
                  this.userInfo.team = data[0].USERTEAM;
+                 this.userInfo.dataIntegrity = data[0].USERDATAINTEGRITY;
+                 this.userInfo.it = data[0].USERIT;
+                 this.userInfo.buyer = data[0].USERBUYER;
+                 this.userInfo.helpDesk = data[0].USERHELPDESK;
                  this.userInfo.status = data[0].USERACTIVE;
                  this.userInfo.createdOn = data[0].USERDCRE;
                  this.userInfo.updatedOn = data[0].USERDMAJ;

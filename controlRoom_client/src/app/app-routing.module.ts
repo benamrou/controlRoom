@@ -45,6 +45,7 @@ import { SyndigoDownloadComponent } from './pages/syndigo/download/syndigo.downl
 import { SyndigoProductComponent } from './pages/syndigo/product/syndigo.product.component';
 import { EcommercePictureComponent } from './pages/space.planning/pictures/ecommerce.picture.component';
 import { AlertsICRComponent } from './pages/alerts/alerts.icr.component';
+import { SKUDimensionComponent } from './pages/mass.update/sku.dimension/sku.dimension.component';
 
 
 const routes: Routes = [
@@ -93,6 +94,8 @@ const routes: Routes = [
   { path: 'svinfo', component: SVInfoComponent, canActivate: [AuthentificationGuard] },
   { path: 'categorymanager', component: CategoryManagerComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemhierarchy', component: ItemHierarchyComponent, canActivate: [AuthentificationGuard] },
+  { path: 'skudimension', component: SKUDimensionComponent, canActivate: [AuthentificationGuard] },
+  
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },
   { path: 'dashboardcao', component: DashboardCAOComponent, canActivate: [AuthentificationGuard] },
