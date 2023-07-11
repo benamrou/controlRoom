@@ -77,9 +77,8 @@ const routes: Routes = [
   { path: 'syndigosearch', component: SyndigoProductComponent, canActivate: [AuthentificationGuard] },
   { path: 'syndigocollect', component: SyndigoDownloadComponent, canActivate: [AuthentificationGuard] },
 
-  /* E-commerce */
+  /* E-commerce/Space Planning */
   { path: 'ecommercepicture', component: EcommercePictureComponent, canActivate: [AuthentificationGuard] },
-
   /* IT */
   { path: 'batchschedule', component: BatchScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'batchlist', component: MyBatchListComponent, canActivate: [AuthentificationGuard] },

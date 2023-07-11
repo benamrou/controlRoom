@@ -159,7 +159,7 @@
                         <span *ngIf="col.field==='Status' && rowData[col.field] === 'Medium'" class="badge bg-warning" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
                         <span *ngIf="col.field==='Status' && rowData[col.field] === 'Low'" class="badge bg-light text-dark" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
                         <span *ngIf="col.field==='Status' && rowData[col.field] === 'Closed'" class="badge bg-primary text-dark" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
-                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'Linked'" class="badge bg-success text-dark" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
+                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'Linked'" class="badge bg-success text-dark" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false" style="color: white !important">{{rowData[col.field] }}</span>
                         <div  *ngIf="col.field==='CLE retail' && rowData['Nb Promo'] > 0">
                             <span>{{rowData[col.field]}}</span>
                             <span class="badge bg-primary" style="margin-left:5px" pTooltip="Nb. coming promotions" tooltipPosition="right" [escape]="false">{{rowData['Nb Promo']}}</span>

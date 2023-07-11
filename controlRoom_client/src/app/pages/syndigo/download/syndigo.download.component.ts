@@ -48,6 +48,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
    imageFilenames; imageURLs;
 
    separatorChips: string = ' ';
+   collectPicture: boolean = true;
 
    public skip = 0;
    public take = 1000;
@@ -67,7 +68,8 @@ export class SyndigoDownloadComponent implements OnDestroy {
       this.imageParameter = '?size=' + this._syndigoService.sizeImage + '&fileType=' + this.typeImage;
       this.datePipe = new DatePipe('en-US');
       this.screenID = 'SCR0000000022';
-
+      this.collectPicture = true;
+      
       this.subscription.push(this._syndigoService.getSyndigoInfo().subscribe( 
         data => { this.displaySettingOption = true}, // put the data returned from the server in our variable
         error => {
@@ -86,6 +88,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
       { field: 'Item description', header: 'Item description', placeholder: '', align:'left', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
       { field: 'UPC', header: 'UPC', placeholder: '', align:'center', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
       { field: 'statusSyndigo', header: 'Status', placeholder: '', align:'center', type: 'input', options: [],expand: 0, format: true, display: true, main: true },
+      { field: 'Flow', header: 'Flow', placeholder: '', align:'center', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
       // Supplier
       ];
   }
@@ -181,12 +184,6 @@ export class SyndigoDownloadComponent implements OnDestroy {
                         },
                         async () => {
 
-                      this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
-                                          'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
-                                          'Downloading the pictures and preparing the zip container...<br>' +
-                                          '<br><br>'+
-                                          '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
-                      
                               this.imageURLs = [];
                               this.imageFilenames = [];
                               console.log('Parsing', this.searchResultSyndigo[0].syndigoData.heinensLayout)
@@ -270,19 +267,33 @@ export class SyndigoDownloadComponent implements OnDestroy {
                                 }
                               }
 
-                              this._messageService.add({severity:'success', summary:'Syndigo references', detail: 'Retrieved ' + 
-                                                        ' Syndigo product information captured.'});
-                              
-                              let filenameZIP = this.datePipe.transform(new Date(), 'ddMMYYYY') + '_syndigo';
-
-                              await this.downloadPicture(this.imageURLs, this.imageFilenames, filenameZIP);
-
-                              this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
-                                                  'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
-                                                  'Downloading the pictures and preparing the zip container...&emsp;<b>COMPLETED<br>' +
-                                                  '<br><br>'+
-                                                  '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
-                              this.searchButtonEnable = true;
+                              if (this.collectPicture) {
+                                this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
+                                            'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
+                                            'Downloading the pictures and preparing the zip container...<br>' +
+                                            '<br><br>'+
+                                            '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
+                        
+                                this._messageService.add({severity:'success', summary:'Syndigo references', detail: 'Retrieved ' + 
+                                                          ' Syndigo product information captured.'});
+                                
+                                let filenameZIP = this.datePipe.transform(new Date(), 'ddMMYYYY') + '_syndigo';
+  
+                                await this.downloadPicture(this.imageURLs, this.imageFilenames, filenameZIP);
+  
+                                this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
+                                                    'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
+                                                    'Downloading the pictures and preparing the zip container...&emsp;<b>COMPLETED<br>' +
+                                                    '<br><br>'+
+                                                    '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
+                                this.searchButtonEnable = true;
+                              }
+                              else {
+                                this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
+                                                    'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
+                                                    '<br><br>'+
+                                                    '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
+                              }
 
                               this.waitMessage='';
                       
@@ -361,6 +372,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
       "SV": item["SV"],
       "Item description": item['Item description'],
       "UPC": item["UPC"],
+      "Flow": item["Flow"],
       "Private label": item["PrivateLabel"],
       "Status": item["statusSyndigo"],
       "Syndigo description": item["Syndigo description"],
@@ -404,7 +416,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
             "lineStart": "5",
             "columnStart": "F",
             "every": "1",
-            "columnEnd": "H"
+            "columnEnd": "I"
           },
           "style": {
             "alignment": {
@@ -416,9 +428,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
           "easeRule": {
             "repeat": "1",
             "lineStart": "5",
-            "columnStart": "J",
+            "columnStart": "K",
             "every": "1",
-            "columnEnd": "Q"
+            "columnEnd": "R"
           },
           "style": {
             "alignment": {
@@ -430,9 +442,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
           "easeRule": {
             "repeat": "1",
             "lineStart": "6",
-            "columnStart": "H",
+            "columnStart": "I",
             "every": "1",
-            "columnEnd": "H"
+            "columnEnd": "I"
           },
           "rules": [
             {

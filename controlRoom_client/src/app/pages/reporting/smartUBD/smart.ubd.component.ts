@@ -136,6 +136,7 @@ export class SmartUBDComponent implements OnDestroy {
       {header: 'ITEM', colspan: 1, expand: 0, colspan_original: 1},
       {header: '', colspan: 1, expand: 0, colspan_original: 1},
       {header: '', colspan: 1, expand: 0, colspan_original: 1},
+      {header: '', colspan: 1, expand: 0, colspan_original: 1},
       {header: 'INFO', colspan: 1, expand: 1, colspan_original: 6},
       {header: 'PUSH', colspan: 1, expand: 1, colspan_original: 3},
       {header: 'UBD', colspan: 1, expand: 1, colspan_original: 4},
@@ -155,6 +156,7 @@ export class SmartUBDComponent implements OnDestroy {
       //{ field: 'LV', header: 'LV #' , placeholder: 'LV#', type: 'input', align:'left', options: [],expand: 1, format: false, display: true, main: false  },
       //{ field: 'Description', header: 'Item desc.' , placeholder: 'Search by description', align:'left', type: 'input', options: [] ,expand: 0, format: false, display: true, main: false  },
       { field: 'Item code desc', header: 'Item code desc' , placeholder: 'Item code', type: 'input', align:'left', options: [],expand: -1, format: false, display: true, main: true  },
+      { field: 'UPC', header: 'UPC' , placeholder: 'UPC', type: 'input', align:'center', options: [],expand: 0, format: false, display: true, main: true  },
       // Status 
       { field: 'Status', header: 'Attention' , placeholder: '' , align:'center', type: 'input', options: [] ,expand: 0, format: true, display: true, main: true, 
             tooltip: '<b>High:</b> projection covering less than 80% inventory ,<br><b>Medium:</b> Between 80% and 100%, <br>' +
@@ -629,6 +631,7 @@ export class SmartUBDComponent implements OnDestroy {
                      item["SKU sold trend_3"] < 0 && item["SKU sold trend_4"] < 0 ))
     .map(item => recapReport.push ({
       "Item code desc": item["Item code desc"],
+      "UPC": item["UPC"],
       "UBD": this.datePipe.transform(item["UBD"], 'MM/dd/yy'),
       "Status": item['Status'],
       "Hypothetical push": item["Hypothetical push"],
@@ -678,9 +681,9 @@ export class SmartUBDComponent implements OnDestroy {
           "easeRule": {
             "repeat": "1",
             "lineStart": "6",
-            "columnStart": "AA",
+            "columnStart": "AB",
             "every": "1",
-            "columnEnd": "AD"
+            "columnEnd": "AE"
           },
           "style": {
             "numFmt": "0.00%"
@@ -692,7 +695,7 @@ export class SmartUBDComponent implements OnDestroy {
             "lineStart": "5",
             "columnStart": "B",
             "every": "1",
-            "columnEnd": "AJ"
+            "columnEnd": "AK"
           },
           "style": {
             "alignment": {
@@ -704,9 +707,9 @@ export class SmartUBDComponent implements OnDestroy {
           "easeRule": {
             "repeat": "1",
             "lineStart": "6",
-            "columnStart": "AA",
+            "columnStart": "AB",
             "every": "1",
-            "columnEnd": "AD"
+            "columnEnd": "AE"
           },
           "rules": [
             {
@@ -749,9 +752,9 @@ export class SmartUBDComponent implements OnDestroy {
           "easeRule": {
             "repeat": "1",
             "lineStart": "6",
-            "columnStart": "C",
+            "columnStart": "D",
             "every": 1,
-            "columnEnd": "C"
+            "columnEnd": "D"
           },
           "rules": [
             {
@@ -840,9 +843,9 @@ export class SmartUBDComponent implements OnDestroy {
           "easeRule": {
             "repeat": "1",
             "lineStart": "6",
-            "columnStart": "U",
+            "columnStart": "V",
             "every": 1,
-            "columnEnd": "U"
+            "columnEnd": "V"
           },
           "rules": [
             {
@@ -882,7 +885,7 @@ export class SmartUBDComponent implements OnDestroy {
                 {
                   "type": "expression",
                   "formulae": [
-                    "$AI5=1"
+                    "$AJ5=1"
                   ],
                   "style": {
                     "fill": {
@@ -906,17 +909,17 @@ export class SmartUBDComponent implements OnDestroy {
             "repeat": "1",
             "lineStart": "6",
             "every": "1",
-            "columnStart": "D",
-            "columnEnd": "D"
+            "columnStart": "E",
+            "columnEnd": "E"
           },
           "rules": [
             {
-              "ref": "D6:D99999",
+              "ref": "E6:E99999",
               "rule": [
                 {
                   "type": "expression",
                   "formulae": [
-                    "$AJ6>0"
+                    "$AK6>0"
                   ],
                   "style": {
                     "fill": {
@@ -937,17 +940,17 @@ export class SmartUBDComponent implements OnDestroy {
             "repeat": "1",
             "lineStart": "6",
             "every": "1",
-            "columnStart": "D",
-            "columnEnd": "D"
+            "columnStart": "E",
+            "columnEnd": "E"
           },
           "rules": [
             {
-              "ref": "D6:D99999",
+              "ref": "E6:E99999",
               "rule": [
                 {
                   "type": "expression",
                   "formulae": [
-                    "$AJ6<0"
+                    "$AK6<0"
                   ],
                   "style": {
                     "fill": {

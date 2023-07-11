@@ -15,6 +15,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputTextModule } from 'primeng/inputtext';
 import { BadgeModule } from 'primeng/badge';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, TableModule, ButtonModule, PageHeaderModule,
@@ -23,6 +24,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
                InputTextModule,
                InputNumberModule,
                BadgeModule,
+               CheckboxModule,
                DialogModule 
             ],
     declarations: [SyndigoDownloadComponent],
