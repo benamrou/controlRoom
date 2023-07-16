@@ -60,11 +60,12 @@ export class SyndigoService {
         }));
     }
 
-    getItemByCategory(categories) {
+    getItemByCategory(categories, upcAlso?) {
         this.request = this.basePostQuery;
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
-        this.params = this.params.set('PARAM', categories);
+        
+        this.params = this.params.set('PARAM', upcAlso? 1:0);
 
         let body = {values : []};
         body.values = categories;

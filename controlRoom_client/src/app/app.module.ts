@@ -106,6 +106,7 @@ import { ServicesCenterModule } from './pages/helpdesk/services.center/services.
 import { EcommercePictureModule } from './pages/space.planning/pictures/ecommerce.picture.module';
 import { AlertsICRModule } from './pages/alerts/alerts.icr.module';
 import { SKUDimensionModule } from './pages/mass.update/sku.dimension/sku.dimension.module';
+import { HolidayScheduleModule } from './pages/schedule/holiday.schedule/holiday.schedule.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -194,7 +195,8 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     SyndigoDownloadModule,
     EcommercePictureModule,
     AlertsICRModule,
-    SKUDimensionModule
+    SKUDimensionModule,
+    HolidayScheduleModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

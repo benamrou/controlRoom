@@ -46,6 +46,7 @@ import { SyndigoProductComponent } from './pages/syndigo/product/syndigo.product
 import { EcommercePictureComponent } from './pages/space.planning/pictures/ecommerce.picture.component';
 import { AlertsICRComponent } from './pages/alerts/alerts.icr.component';
 import { SKUDimensionComponent } from './pages/mass.update/sku.dimension/sku.dimension.component';
+import { HolidayScheduleComponent } from './pages/schedule/holiday.schedule/holiday.schedule.component';
 
 
 const routes: Routes = [
@@ -68,6 +69,8 @@ const routes: Routes = [
   { path: 'schedule', component: SupplierScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'generateschedule', component: GenerateScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'service', component: SupplierScheduleServiceContractComponent, canActivate: [AuthentificationGuard] },
+  { path: 'holiday', component: HolidayScheduleComponent, canActivate: [AuthentificationGuard] },
+  
   /* WAREHOUSE */
   { path: 'warehouse', component: WarehouseComponent, canActivate: [AuthentificationGuard] },
   { path: 'fixpickingunit', component: FixPickingUnitComponent, canActivate: [AuthentificationGuard] },

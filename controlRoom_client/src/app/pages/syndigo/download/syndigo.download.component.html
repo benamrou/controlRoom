@@ -80,12 +80,20 @@
             </button>
         </div>
         <br>
-        <div style="text-align: center;" >
-            <button type="text" pButton (click)="search()" label="search" [disabled]="!searchButtonEnable"></button>
-            <p-checkbox style="vertical-align: middle;float: right;margin-right: 15em;" 
-                        [(ngModel)]="collectPicture" [binary]="true"></p-checkbox>
-            <span style="margin-right: 1em;float:right">Picture download </span>
-            <p></p>
+        <div class="row" style="text-align: center;" >
+            <div class="col-8" style="padding-left: 30em">
+                <button type="text" pButton (click)="search()" label="search" [disabled]="!searchButtonEnable"></button>
+            </div>
+            <div class="col-4">
+                <p-checkbox style="vertical-align: middle;float: right;margin-right: 15em;" 
+                            [(ngModel)]="upcAlso" [binary]="true"></p-checkbox>
+                <span style="margin-right: 1em;float:right">has UPC ? </span>
+                <p></p>
+                <p-checkbox style="vertical-align: middle;float: right;margin-right: 15em;" 
+                            [(ngModel)]="collectPicture" [binary]="true"></p-checkbox>
+                <span style="margin-right: 1em;float:right">Picture download </span>
+                <p></p>
+            </div>
         </div>
 
 

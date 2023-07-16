@@ -26,6 +26,7 @@
 "use strict";
 
 let oracledb = require('oracledb');      // Oracle DB connection
+let logger = require("../utils/logger.js");
 
 module.exports = function (app, SQL) {
 
@@ -151,9 +152,10 @@ module.exports = function (app, SQL) {
                             response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
 
+                            logger.log('[POST]', 'RESQUEST ' + request.header('QUERY_ID') + ' ' + "'{" + data + "," + request.query.PARAM + "}'", 3);
                             SQL.executeLibQuery(SQL.getNextTicketID(),
                                     request.header('QUERY_ID'),
-                                    "'{" + data + "}'",
+                                    "'{" + data + "," + request.query.PARAM + "}'",
                                     request.header('USER'),
                                     "'{" + request.header('DATABASE_SID') + "}'", 
                                     "'{" +request.header('LANGUAGE') + "}'", 

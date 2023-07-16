@@ -49,6 +49,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
 
    separatorChips: string = ' ';
    collectPicture: boolean = true;
+   upcAlso: boolean = false
 
    public skip = 0;
    public take = 1000;
@@ -104,14 +105,16 @@ export class SyndigoDownloadComponent implements OnDestroy {
     }
     this.waitMessage = 'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)...<br><br>'+
                        '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
-    this.subscription.push(this._syndigoService.getItemByCategory(this.values)
+    this.subscription.push(this._syndigoService.getItemByCategory(this.values, this.upcAlso)
             .subscribe( 
                 data => {  this.searchResult =data
                           console.log('Category request result', this.searchResult);
                 }, // put the data returned from the server in our variable
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                      this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+                      this._messageService.add({severity:'error', sticky:true, summary:'ERROR Message', detail: JSON.stringify(error) });
+                      this.waitMessage='';
+                      this.searchButtonEnable = true; 
                 },
                 () => { 
                       this._messageService.add({severity:'success', summary:'GOLD items', detail: 'Retrieved ' + 
@@ -164,7 +167,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
                 data => {   }, // put the data returned from the server in our variable
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                      this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+                      this._messageService.add({severity:'error', sticky:true, summary:'ERROR Message', detail: JSON.stringify(error) });
+                      this.waitMessage='';
+                      this.searchButtonEnable = true; 
                 },
                 () => { 
                       this._messageService.add({severity:'success', summary:'Syndigo authorization', detail: 'Syndigo authorization request validated.'});
@@ -180,7 +185,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
                         error => {
                               this.searchButtonEnable = true;
                               console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                              this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+                              this._messageService.add({severity:'error', sticky:true, summary:'ERROR Message', detail: JSON.stringify(error) });
+                              this.waitMessage='';
+                              this.searchButtonEnable = true; 
                         },
                         async () => {
 
@@ -294,9 +301,8 @@ export class SyndigoDownloadComponent implements OnDestroy {
                                                     '<br><br>'+
                                                     '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
                               }
-
                               this.waitMessage='';
-                      
+                              this.searchButtonEnable = true; 
                         }
                     ));
                 }
@@ -368,6 +374,8 @@ export class SyndigoDownloadComponent implements OnDestroy {
     .map(item => recapReport.push ({
       "Merch. hierarchy code": item["Cat code"],
       "Merch. description": item["Category"],
+      "Sub-cat. code": item["Sub-cat code"],
+      "Sub-cat. description": item["Sub-cat desc"],
       "Item code": item["Item code"],
       "SV": item["SV"],
       "Item description": item['Item description'],
@@ -389,7 +397,11 @@ export class SyndigoDownloadComponent implements OnDestroy {
       "Image back": item["Image back"],
       "Image left": item["Image left"],
       "Image right": item["Image right"],
-      "Image bottom": item["Image bottom"]
+      "Image bottom": item["Image bottom"],
+      "GOLD Height": item["GOLD Height"],
+      "GOLD Width": item["GOLD Width"],
+      "GOLD Depth": item["GOLD Depth"],
+      "GOLD Weight": item["GOLD Weight"]
     }))
    console.log ('Export :', this.searchResult,  recapReport);
     ;
@@ -400,23 +412,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
           "easeRule": {
             "repeat": "1",
             "lineStart": "5",
-            "columnStart": "D",
-            "every": "1",
-            "columnEnd": "D"
-          },
-          "style": {
-            "alignment": {
-              "horizontal": "center"
-            }
-          }
-        },
-        {
-          "easeRule": {
-            "repeat": "1",
-            "lineStart": "5",
             "columnStart": "F",
             "every": "1",
-            "columnEnd": "I"
+            "columnEnd": "F"
           },
           "style": {
             "alignment": {
@@ -428,9 +426,23 @@ export class SyndigoDownloadComponent implements OnDestroy {
           "easeRule": {
             "repeat": "1",
             "lineStart": "5",
-            "columnStart": "K",
+            "columnStart": "H",
             "every": "1",
-            "columnEnd": "R"
+            "columnEnd": "K"
+          },
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        },
+        {
+          "easeRule": {
+            "repeat": "1",
+            "lineStart": "5",
+            "columnStart": "M",
+            "every": "1",
+            "columnEnd": "T"
           },
           "style": {
             "alignment": {
@@ -442,9 +454,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
           "easeRule": {
             "repeat": "1",
             "lineStart": "6",
-            "columnStart": "I",
+            "columnStart": "K",
             "every": "1",
-            "columnEnd": "I"
+            "columnEnd": "K"
           },
           "rules": [
             {
