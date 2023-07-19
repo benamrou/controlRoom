@@ -15,8 +15,10 @@
     </span>
 
     <span style="font-weight: bolder; margin-top: 5px; padding-left: 15px;padding-right: 15px;">Not urgent only : </span>
-
     <p-checkbox [(ngModel)]="notUrgentOnly" [binary]="true"></p-checkbox>
+
+    <span style="font-weight: bolder; margin-top: 5px; padding-left: 15px;padding-right: 15px;">Store only : </span>
+    <p-checkbox [(ngModel)]="storeOnly" [binary]="true"></p-checkbox>
     
     <span class="pull-right" style="padding-right: 20px">
         <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
@@ -28,7 +30,15 @@
     </span>
 </div>
 <div class="bbs_search_sub_panel"  >
-    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Period start : </span>
+
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Status : </span>
+    <bbs-multiselect [options]="listOrderStatus" 
+                    (shareCheckedList)="shareCheckedList($any($event))" 
+                    (shareCheckedCodeList)="shareCheckedCodeList($any($event))" 
+                    (shareIndividualCheckedList)="shareIndividualCheckedList($event)">
+    </bbs-multiselect>
+
+    <span style="margin-left:1em; margin-right:1.3em; padding-left: 5px; font-weight: bolder">Period start : </span>
     <p-calendar [(ngModel)]="periodStart"  
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
@@ -36,7 +46,7 @@
                 name="scheduleStart" [showIcon]="true" 
                 [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
-    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Period end : </span>
+    <span style="margin-left:1em; padding-left: 5px; font-weight: bolder">Period end : </span>
     <p-calendar [(ngModel)]="periodEnd"  
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
@@ -93,18 +103,18 @@
                         </button>
                         <button type="button" pButton iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            pTooltip="Remove a holiday schedule" [escape]="false"
-                            label="REMOVE" (click)="result.exportCSV()" style="float:left">
+                            pTooltip="Flag all as urgent" [escape]="false"
+                            label="Set urgent" (click)="result.exportCSV()" style="float:left">
                         </button>
                         <button type="button" pButton iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            pTooltip="Add a holiday schedule" [escape]="false"
-                            label="ADD" (click)="result.exportCSV()" style="float:left">
+                            pTooltip="Change delivery date" [escape]="false"
+                            label="Change delivery date" (click)="result.exportCSV()" style="float:left">
                         </button>
                         <button type="button" pButton iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            pTooltip="Validate a holiday schedule" [escape]="false"
-                            label="VALIDATE" (click)="result.exportCSV()" style="float:left">
+                            pTooltip="Change sending date" [escape]="false"
+                            label="Change collection date" (click)="result.exportCSV()" style="float:left">
                         </button>
                     </span>
                 </div>
@@ -157,11 +167,6 @@
 <!--div *ngIf="!selectedElement" style="text-align:center">
     <button  disabled type="button" pButton icon="fa-file-o"  label="Review schedules" (click)="reviewSchedule()"></button>
 </div-->
-
-<div *ngIf="selectedElement" style="text-align:center">
-    <button  type="button" pButton icon="fas fa-file"  label="Review schedules" (click)="reviewSchedule()"></button>
-</div>
-
 
 <br>
 <!-- Validation -->

@@ -1,5 +1,5 @@
 import {Component, ViewEncapsulation, ViewChild} from '@angular/core';
-import { SupplierScheduleService, Supplier,  SupplierPlanning, ValidePlanning, SupplierPlannings } from '../../../shared/services';
+import { OrderService, Supplier,  SupplierPlanning, ValidePlanning, SupplierPlannings } from '../../../shared/services';
 import {DatePipe} from '@angular/common';
 import { Observable } from 'rxjs';
 
@@ -28,7 +28,7 @@ import { SelectItem } from 'primeng/api';
 	moduleId: module.id,
     selector: 'orderUrgent',
     templateUrl: './order.urgent.component.html',
-    providers: [SupplierScheduleService, MessageService],
+    providers: [OrderService, MessageService],
     styleUrls: ['./order.urgent.component.scss', '../../../app.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
@@ -46,7 +46,7 @@ export class OrderUrgentComponent {
 
   // Search result 
    searchResult : any [] = [];
-   selectedElement: SupplierPlannings;
+   selectedElement: any;
    columnsResult: any [] = [];
    columnsSchedule: any [] = [];
   
@@ -56,7 +56,12 @@ export class OrderUrgentComponent {
    searchCode: string = '';
    periodStart: string = '';
    periodEnd: string = '';
-   notUrgentOnly: string = ''
+   notUrgentOnly: string = '';
+   storeOnly: string = '';
+   listOrderStatus: any;
+
+   selectedOrderStatus: any; selectedIndividualStatus: any;
+
    msgs: Message[] = [];
 
    msgDisplayed: string;
@@ -65,7 +70,7 @@ export class OrderUrgentComponent {
   dateNow: Date;
   dateTomorrow : Date;
 
-  constructor(private _scheduleService: SupplierScheduleService, private datePipe: DatePipe,
+  constructor(private _orderService: OrderService, private datePipe: DatePipe,
               private _messageService: MessageService) {
     this.screenID =  'SCR0000000003';
     datePipe     = new DatePipe('en-US');
@@ -73,23 +78,52 @@ export class OrderUrgentComponent {
     this.dateTomorrow =  new Date(this.dateNow.setDate(this.dateNow.getDate() + 1));
 
     this.columnsResult = [
-      { field: 'suppliercode', header: 'Supplier code' },
-      { field: 'servicecontract', header: 'Service contract code' },
-      { field: 'commercialcontract', header: 'Commercial contract code' },
-      { field: 'addresschain', header: 'Address chain' },
-      { field: 'supplierdescription', header: 'Description' },
-      { field: 'activeschedules', header: 'Number of schedules' }
+      { field: 'PO #', header: 'PO #' },
+      { field: 'Location.', header: 'Location' },
+      { field: 'Supplier code', header: 'Supplier code' },
+      { field: 'Supplier desc.', header: 'Supplier desc' },
+      { field: 'Order date', header: 'Order date' },
+      { field: 'Delivery date', header: 'Delivery date' },
+      { field: 'Sending date', header: 'Sending date' },
+      { field: 'Urgent', header: 'Urgent' }
+    ];
+
+    this.listOrderStatus = [
+      {label:'2- Blocked', name: 'Blocked', code: '2', checked: false},
+      {label:'3- Valued', name: 'Valued', code: '3', checked: false},
+      {label:'5- Awaiting del.',  name: 'Awaiting', code: '5', checked: true},
     ];
 
   }
 
   search() {
+    let vendorCodeSearch;
+    let urgentSearch;
+    let storeSearch;
+    let periodStartSearch;
+    let periodEndSearch;
+    let orderStatusSearch;
+    this.razSearch();
+
+    this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for the warehouse UBD items... ' });
+
+    if (! this.searchCode) { vendorCodeSearch = '-1' }  else { vendorCodeSearch=this.searchCode }
+    if (! this.notUrgentOnly) { urgentSearch = '0' }  else { urgentSearch='-1' }
+    if (! this.storeOnly) { storeSearch = '1' }  else { storeSearch='-1' }
+    if (! this.periodStart) { periodStartSearch = '-1' }  else { periodStartSearch=this.periodStart }
+    if (! this.periodEnd) { periodEndSearch = '-1' }  else { periodEndSearch=this.periodEnd }
+    if (! this.selectedOrderStatus) { this.listOrderStatus= '-1' }  else { 
+      orderStatusSearch=this.selectedOrderStatus.join('/'); 
+    }
+
     //this.searchCode = searchCode;
     this.razSearch();
-    this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for the supplier schedule : ' + JSON.stringify(this.searchCode)});
-    this._scheduleService.getSupplierScheduleInfo(this.searchCode, 
-                                                  this.datePipe.transform(this.periodStart, 'MM/dd/yyyy'),
-                                                  this.datePipe.transform(this.periodEnd, 'MM/dd/yyyy'))
+    this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for the orders...'});
+    this._orderService.getOrderInfo(vendorCodeSearch, urgentSearch,
+                                                     this.storeOnly,
+                                                     orderStatusSearch,
+                                                     periodStartSearch,
+                                                     periodEndSearch)
             .subscribe( 
                 data => { this.searchResult = data; // put the data returned from the server in our variable
                 //console.log(JSON.stringify(this.searchResult));  
@@ -117,39 +151,20 @@ export class OrderUrgentComponent {
   onRowSelect(event) {
   }
 
-  reviewSchedule() {
+  shareCheckedList(item:any[]){
+    //console.log(item);
+  }
+
+  shareCheckedCodeList(item:any[]){
+    this.listOrderStatus = item;
+    console.log('shareCheckedCodeList : ', this.selectedOrderStatus)
+  }
+
+  shareIndividualCheckedList(item:{}){
+    //console.log(item);
   }
 
   trackByIdx(index: number, obj: any): any {
     return index;
   }
 }
-
-
-export class TemporarySchedule {
-  public schedule: SupplierPlanning;
-  public temporary: boolean = false;
-  public numberWeekDays : number = 1;
-  public start: Date;
-  public end: Date;
-  public columnSchedule = [];
-  public columnName = [];
-  public columnDate = [];
-  public columnDateMMDDYYYY = [];
-  public numberWeekDaysArray = []; // Sequence number used for LOOP in HTML
-  // Used for HTML easy displays
-  public orderActiveOriginal = [];
-  public leadTimeOriginal = [];
-  public collectionTimeOriginal = [];
-  public deliveryTimeOriginal = [];
-
-  public orderActive = [];
-  public orderDate = [];
-  public leadTime = [];
-  public collectionTime = [];
-  public deliveryTime = [];
-  public widthTable = 700;
-
-}
-
-

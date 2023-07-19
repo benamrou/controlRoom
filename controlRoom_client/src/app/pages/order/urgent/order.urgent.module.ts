@@ -13,11 +13,13 @@ import { PanelModule } from 'primeng/panel';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
+import { MultiSelectDropdownModule } from 'src/app/shared/components.bbs';
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, TableModule, DialogModule, 
                ButtonModule, PageHeaderModule, 
                CalendarModule, ToastModule,
+               MultiSelectDropdownModule,
                InputTextModule,
                TooltipModule,
                CheckboxModule,

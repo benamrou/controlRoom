@@ -31,4 +31,6 @@ export * from './comment/comment.service';
 export * from './robot/robot.service';
 export * from './syndigo/syndigo.service';
 export * from './alerts.icr/alerts.icr.service';
+export * from './order/order.service';
+
 
