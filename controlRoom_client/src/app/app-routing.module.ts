@@ -47,6 +47,7 @@ import { EcommercePictureComponent } from './pages/space.planning/pictures/ecomm
 import { AlertsICRComponent } from './pages/alerts/alerts.icr.component';
 import { SKUDimensionComponent } from './pages/mass.update/sku.dimension/sku.dimension.component';
 import { HolidayScheduleComponent } from './pages/schedule/holiday.schedule/holiday.schedule.component';
+import { OrderUrgentComponent } from './pages/order/urgent/order.urgent.component';
 
 
 const routes: Routes = [
@@ -88,6 +89,7 @@ const routes: Routes = [
   /* HELPDESK */
   { path: 'robot', component: RobotComponent, canActivate: [AuthentificationGuard] },
   { path: 'servicescenter', component: ServicesCenterComponent, canActivate: [AuthentificationGuard] },
+  { path: 'orderurgent', component: OrderUrgentComponent, canActivate: [AuthentificationGuard] },
   
   /* MASS_CHANGE */
   { path: 'massjournal', component: MassJournalComponent, canActivate: [AuthentificationGuard] },

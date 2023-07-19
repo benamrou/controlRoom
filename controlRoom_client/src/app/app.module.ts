@@ -107,6 +107,7 @@ import { EcommercePictureModule } from './pages/space.planning/pictures/ecommerc
 import { AlertsICRModule } from './pages/alerts/alerts.icr.module';
 import { SKUDimensionModule } from './pages/mass.update/sku.dimension/sku.dimension.module';
 import { HolidayScheduleModule } from './pages/schedule/holiday.schedule/holiday.schedule.module';
+import { OrderUrgentModule } from './pages/order/urgent/order.urgent.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -196,7 +197,8 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     EcommercePictureModule,
     AlertsICRModule,
     SKUDimensionModule,
-    HolidayScheduleModule
+    HolidayScheduleModule,
+    OrderUrgentModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

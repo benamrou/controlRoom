@@ -1,0 +1,173 @@
+<app-page-header [heading]="'Order Urgency'" [icon]="'fa-sun'"
+                 [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
+                 
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+
+<!-- Search Panel -->
+<div class="bbs_search_panel"  >
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder; margin-top: 5px; ">Supplier : </span>
+    <span style="overflow: hidden;width: 28%;line-height: 25px;align-self: center;">
+        <input type="text"  [(ngModel)]="searchCode" placeholder="  Enter a supplier code" 
+               style="width: 90%;margin-left: 10px;"/>     
+    </span>
+
+    <span style="font-weight: bolder; margin-top: 5px; padding-left: 15px;padding-right: 15px;">Not urgent only : </span>
+
+    <p-checkbox [(ngModel)]="notUrgentOnly" [binary]="true"></p-checkbox>
+    
+    <span class="pull-right" style="padding-right: 20px">
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+                [disabled]="searchCode === '' || periodStart === '' || periodEnd === ''" 
+                [style]="{'height': '35px'}"
+                style="margin-right: 15px"></button>
+        <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" 
+                [style]="{'height': '35px'}"[disabled]="true"></button>
+    </span>
+</div>
+<div class="bbs_search_sub_panel"  >
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Period start : </span>
+    <p-calendar [(ngModel)]="periodStart"  
+                [readonlyInput]="true"
+                dateFormat="mm/dd/yy"
+                [style]="{'height': '35px'}"
+                name="scheduleStart" [showIcon]="true" 
+                [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
+
+    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Period end : </span>
+    <p-calendar [(ngModel)]="periodEnd"  
+                [readonlyInput]="true"
+                dateFormat="mm/dd/yy"
+                [style]="{'height': '35px'}"
+                name="scheduleEnd" [showIcon]="true" 
+                [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+</div>
+<p></p>
+
+<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    <span>{{msgDisplayed}}</span>
+        <p-footer>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
+                    label="Ok">
+            </button>
+        </p-footer>
+</p-dialog>
+
+<!-- Panel resul -->
+<!-- Result panel of the resarch --> 
+<!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
+<div  item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
+
+        <p-table #result [value]="searchResult" sortMode="multiple" 
+        [rows]="5"  [rowsPerPageOptions]="[5,10,50]"
+        [paginator]="true" [pageLinks]="3" 
+        [columns]="columnsResult"
+        selectionMode="single" [(selection)]="selectedElement" 
+        [resizableColumns]="true" columnResizeMode="expand"
+        [responsive]="true" [totalRecords]="searchResult.length"
+        [reorderableColumns]="true" scrollHeight="400px"
+        (onRowSelect)="onRowSelect($event)"
+        [globalFilterFields]="['suppliercode', 'supplierdescription']"
+        [autoLayout]="true" tableStyleClass="table-layout: auto;">
+        
+       
+        <!-- FILTER -->
+        <ng-template pTemplate="caption">
+            <div class="table-header grid">
+                <div class="col-6">
+                    <span>
+                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            pTooltip="Export to EXCEL" [escape]="false"
+                            *ngIf="searchResult.length>0"
+                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                        </button>
+                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            pTooltip="Export to EXCEL" [escape]="false"
+                            disabled *ngIf="searchResult.length==0"
+                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                        </button>
+                        <button type="button" pButton iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            pTooltip="Remove a holiday schedule" [escape]="false"
+                            label="REMOVE" (click)="result.exportCSV()" style="float:left">
+                        </button>
+                        <button type="button" pButton iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            pTooltip="Add a holiday schedule" [escape]="false"
+                            label="ADD" (click)="result.exportCSV()" style="float:left">
+                        </button>
+                        <button type="button" pButton iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            pTooltip="Validate a holiday schedule" [escape]="false"
+                            label="VALIDATE" (click)="result.exportCSV()" style="float:left">
+                        </button>
+                    </span>
+                </div>
+                <!--div class="col-2">
+                    <span >
+                            <button type="button" pButton icon="pi pi-user" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="{{recapButtonTooltip}}" [escape]="false"
+                                disabled *ngIf="searchResult.length==0"
+                                label="Recap" (click)="exportExcelRecap()" style="float:left">
+                            </button>
+                            <button type="button" pButton icon="pi pi-user" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="{{recapButtonTooltip}}" [escape]="false"
+                                *ngIf="searchResult.length>0"
+                                label="Recap" (click)="exportExcelRecap()" style="float:left">
+                            </button>
+                    </span>
+                </div-->
+                <div class="col-6" style="text-align: right;">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+        <!-- HEADER -->
+            <ng-template pTemplate="header">            
+                <tr>
+                    <th *ngFor="let col of columnsResult" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                        {{col.header}}
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+        <!-- BODY -->
+            <ng-template pTemplate="body" let-rowData let-columns="columnsResult">
+                <tr [pSelectableRow]="rowData">
+                    <td *ngFor="let col of columnsResult" class="ui-resizable-column">
+                            {{rowData[col.field]}}
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <i class="FOOTER_Table" >{{searchResult.length}} references</i>
+</div>
+<!-- List of Schedules -->
+<br>
+<!--div *ngIf="!selectedElement" style="text-align:center">
+    <button  disabled type="button" pButton icon="fa-file-o"  label="Review schedules" (click)="reviewSchedule()"></button>
+</div-->
+
+<div *ngIf="selectedElement" style="text-align:center">
+    <button  type="button" pButton icon="fas fa-file"  label="Review schedules" (click)="reviewSchedule()"></button>
+</div>
+
+
+<br>
+<!-- Validation -->
+<p></p>
+<p style='border-style: solid; border: black'></p>
+<div style="text-align:center" >
+    <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" ></button>
+</div>
+<br>

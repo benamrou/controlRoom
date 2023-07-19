@@ -319,6 +319,14 @@ export class SKUDimensionComponent implements OnInit{
                                     /* Check data in weight unit and measure unit */
                                     console.log('row' + i, isNaN(parseFloat(this._importService.wb.sheets[0].worksheet.rows[i].DEPTH.toString())),
                                             parseFloat(this._importService.wb.sheets[0].worksheet.rows[i].DEPTH.toString()).toFixed(2));
+                                    if((this._importService.wb.sheets[0].worksheet.rows[i].WEIGHT == null) &&
+                                        (this._importService.wb.sheets[0].worksheet.rows[i].WEIGHT_UNIT != null)) {
+                                        this._importService.wb.sheets[0].worksheet.rows[i].COMMENTS ='Weight is mandatory when weight unit is set.'; 
+                                    }
+                                    if((this._importService.wb.sheets[0].worksheet.rows[i].WEIGHT_UNIT == null) &&
+                                        (this._importService.wb.sheets[0].worksheet.rows[i].WEIGHT != null)) {
+                                        this._importService.wb.sheets[0].worksheet.rows[i].COMMENTS ='Weight unit is mandatory when weight is set.'; 
+                                    }
                                     if((this._importService.wb.sheets[0].worksheet.rows[i].WEIGHT != null) &&
                                         isNaN(parseFloat(this._importService.wb.sheets[0].worksheet.rows[i].WEIGHT.toString()))) {
                                         this._importService.wb.sheets[0].worksheet.rows[i].COMMENTS ='Weight must be positive number.'; 

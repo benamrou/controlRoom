@@ -111,9 +111,10 @@ export class SyndigoDownloadComponent implements OnDestroy {
                           console.log('Category request result', this.searchResult);
                 }, // put the data returned from the server in our variable
                 error => {
+                      this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b style="color:red">FAILED</b><br>'+ 
+                                     '<b>Syndigo picture collection is taking between 1 and 3 minutes depending the number of UPCs and pictures to download</b>';
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                      this._messageService.add({severity:'error', sticky:true, summary:'ERROR Message', detail: JSON.stringify(error) });
-                      this.waitMessage='';
+                      this.okExit=true;
                       this.searchButtonEnable = true; 
                 },
                 () => { 
@@ -185,8 +186,13 @@ export class SyndigoDownloadComponent implements OnDestroy {
                         error => {
                               this.searchButtonEnable = true;
                               console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-                              this._messageService.add({severity:'error', sticky:true, summary:'ERROR Message', detail: JSON.stringify(error) });
-                              this.waitMessage='';
+
+                              this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
+                                                  'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b style="color: red">FAILED</b><br>'+ 
+                                                  '<br><br>'+
+                                                  '<b>Syndigo picture collection process failed, try with less categories in the request (Syndigo server rejection).</b>';
+                              
+                              this.okExit = true;
                               this.searchButtonEnable = true; 
                         },
                         async () => {
