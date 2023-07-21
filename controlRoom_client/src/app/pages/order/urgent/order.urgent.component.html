@@ -1,9 +1,12 @@
 <app-page-header [heading]="'Order Urgency'" [icon]="'fa-sun'"
-                 [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
+                 [waitMessage]="waitMessage" [okExit]="okExit" [screenID]="screenID"></app-page-header>
                  
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
+
+
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
 
 <!-- Search Panel -->
@@ -22,7 +25,6 @@
     
     <span class="pull-right" style="padding-right: 20px">
         <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
-                [disabled]="searchCode === '' || periodStart === '' || periodEnd === ''" 
                 [style]="{'height': '35px'}"
                 style="margin-right: 15px"></button>
         <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" 
@@ -66,21 +68,124 @@
         </p-footer>
 </p-dialog>
 
+<p-dialog header="PO send completed" [visible]="displaySendCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    <span>{{msgDisplayed}}</span>
+        <p-footer>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displaySendCompleted=false; okExit=false" 
+                    label="Ok">
+            </button>
+        </p-footer>
+</p-dialog>
+
+<p-dialog header="Set delivery date and time" [visible]="displayChangeDeliveryDate" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    
+    <form [formGroup]="deliveryDateForm" (ngSubmit)="updateDeliveryDate()">
+        <div class="row">
+            <div class="col-6 form-group">
+                <span class="p-inputgroup-addon">
+                    Delivery date
+                    <p-calendar [(ngModel)]="newDeliveryDate"  
+                            class="form-control"
+                            dateFormat="mm/dd/yy"
+                            [style]="{'height': '35px', 'padding-left' : '5px'}"
+                            [showIcon]="true" 
+                            appendTo="body" 
+                            formControlName="deliveryDate_field"
+                            [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+                </span>
+            </div>
+            <div class="col-6 form-group">
+                <span class="p-inputgroup-addon">
+                    Delivery time
+                    <i class="pi pi-clock" style="padding-left: 5px; padding-right:10px" ></i>
+                    <input  type="text" style="text-align: center; width: 20%; padding-left: 5px" 
+                            pTooltip="Delivery time respect format HHMM (24 hours)." [escape]="false"
+                            tooltipPosition="top"
+                            [(ngModel)]="newDeliveryTime"
+                            pattern="[0-9]{4}" max="2359" 
+                            id="deliveryTime_field" formControlName="deliveryTime_field"
+                            class="form-control"
+                            title="Delivery time respect format HHMM (24 hours)."/>
+                </span>
+            </div> 
+        </div>
+        <p-footer>
+            <button  style="float: right; margin-bottom:0.5em" 
+                    pButton icon="fas fa-check" iconPos="right"
+                    [disabled]="!deliveryDateForm.valid"
+                    type="submit"
+                    label="Ok">
+            </button>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayChangeDeliveryDate=false" 
+                    label="Cancel">
+            </button>
+        </p-footer>
+    </form>
+</p-dialog>
+
+<p-dialog header="Set sending date and time" [visible]="displayChangeSendingDate" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    
+    <form [formGroup]="sendingDateForm" (ngSubmit)="updateSendingDate()">
+        <div class="row">
+            <div class="col-6 form-group">
+                <span class="p-inputgroup-addon">
+                    Sending date
+                    <p-calendar [(ngModel)]="newSendingDate"  
+                            class="form-control"
+                            dateFormat="mm/dd/yy"
+                            [style]="{'height': '35px', 'padding-left' : '5px'}"
+                            [showIcon]="true" 
+                            appendTo="body" 
+                            formControlName="sendingDate_field"
+                            [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+                </span>
+            </div>
+            <div class="col-6 form-group">
+                <span class="p-inputgroup-addon">
+                    Sending time
+                    <i class="pi pi-clock" style="padding-left: 5px; padding-right:10px" ></i>
+                    <input  type="text" style="text-align: center; width: 20%; padding-left: 5px" 
+                            pTooltip="Sending time respect format HHMM (24 hours)." [escape]="false"
+                            tooltipPosition="top"
+                            [(ngModel)]="newSendingTime"
+                            pattern="[0-9]{4}" max="2359" 
+                            id="sendingTime_field" formControlName="sendingTime_field"
+                            class="form-control"
+                            title="Sending time respect format HHMM (24 hours)."/>
+                </span>
+            </div> 
+        </div>
+        <p-footer>
+            <button  style="float: right; margin-bottom:0.5em" 
+                    pButton icon="fas fa-check" iconPos="right"
+                    [disabled]="!sendingDateForm.valid"
+                    type="submit"
+                    label="Ok">
+            </button>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayChangeSendingDate=false" 
+                    label="Cancel">
+            </button>
+        </p-footer>
+    </form>
+</p-dialog>
 <!-- Panel resul -->
 <!-- Result panel of the resarch --> 
 <!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
 <div  item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
 
         <p-table #result [value]="searchResult" sortMode="multiple" 
-        [rows]="5"  [rowsPerPageOptions]="[5,10,50]"
+        [rows]="25"  [rowsPerPageOptions]="[25,50,75]"
         [paginator]="true" [pageLinks]="3" 
         [columns]="columnsResult"
+        [scrollable]="true"
         selectionMode="single" [(selection)]="selectedElement" 
         [resizableColumns]="true" columnResizeMode="expand"
         [responsive]="true" [totalRecords]="searchResult.length"
         [reorderableColumns]="true" scrollHeight="400px"
         (onRowSelect)="onRowSelect($event)"
-        [globalFilterFields]="['suppliercode', 'supplierdescription']"
         [autoLayout]="true" tableStyleClass="table-layout: auto;">
         
        
@@ -103,37 +208,32 @@
                         </button>
                         <button type="button" pButton iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            pTooltip="Flag all as urgent" [escape]="false"
-                            label="Set urgent" (click)="result.exportCSV()" style="float:left">
+                            pTooltip="Unselect all" [escape]="false" tooltipPosition="bottom"
+                            label="Unselect all" (click)="unselectAll()" style="float:left">
                         </button>
                         <button type="button" pButton iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            pTooltip="Change delivery date" [escape]="false"
-                            label="Change delivery date" (click)="result.exportCSV()" style="float:left">
+                            pTooltip="Flag all as urgent" [escape]="false" tooltipPosition="top"
+                            label="Set urgent" (click)="setSelectionAsUgent()" style="float:left">
                         </button>
                         <button type="button" pButton iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            pTooltip="Change sending date" [escape]="false"
-                            label="Change collection date" (click)="result.exportCSV()" style="float:left">
+                            pTooltip="Change delivery date" [escape]="false" tooltipPosition="bottom"
+                            label="Change delivery date" (click)="changeDeliveryDate()" style="float:left">
+                        </button>
+                        <button type="button" pButton iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            pTooltip="Change sending date" [escape]="false" tooltipPosition="top"
+                            label="Change collection date" (click)="changeSendingDate()" style="float:left">
+                        </button>
+
+                        <button type="button" pButton iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            pTooltip="Send valued status PO with passed collection date/time" [escape]="false" tooltipPosition="top"
+                            label="Send" (click)="sendPO()" style="float: right;background: tomato;color: white !important;">
                         </button>
                     </span>
                 </div>
-                <!--div class="col-2">
-                    <span >
-                            <button type="button" pButton icon="pi pi-user" iconPos="left" 
-                                class="CSV_Button p-input-icon-left ml-auto"
-                                pTooltip="{{recapButtonTooltip}}" [escape]="false"
-                                disabled *ngIf="searchResult.length==0"
-                                label="Recap" (click)="exportExcelRecap()" style="float:left">
-                            </button>
-                            <button type="button" pButton icon="pi pi-user" iconPos="left" 
-                                class="CSV_Button p-input-icon-left ml-auto"
-                                pTooltip="{{recapButtonTooltip}}" [escape]="false"
-                                *ngIf="searchResult.length>0"
-                                label="Recap" (click)="exportExcelRecap()" style="float:left">
-                            </button>
-                    </span>
-                </div-->
                 <div class="col-6" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
@@ -143,20 +243,33 @@
             </div>
         </ng-template>
         <!-- HEADER -->
-            <ng-template pTemplate="header">            
-                <tr>
-                    <th *ngFor="let col of columnsResult" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
-                        {{col.header}}
+            <ng-template pTemplate="header"> 
+                <tr style="background: lightyellow;">
+                    <ng-container *ngFor="let col of columnsResult">
+                        <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.justify-content]="col.align">
+                                {{col.header}}
+                        <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
                         <p-sortIcon [field]="col.field"></p-sortIcon>
-                    </th>
+                        </th>
+                    </ng-container>
                 </tr>
             </ng-template>
         <!-- BODY -->
             <ng-template pTemplate="body" let-rowData let-columns="columnsResult">
-                <tr [pSelectableRow]="rowData">
-                    <td *ngFor="let col of columnsResult" class="ui-resizable-column">
-                            {{rowData[col.field]}}
-                    </td>
+                <tr [pSelectableRow]="rowData" [style.background-color]="(rowData['Selected']) ? 'lightyellow' : 'unset'">
+                    <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column"  >
+                        <td *ngIf="col.display " class="ui-resizable-column" [style.justify-content]="col.align" >
+                            <span *ngIf="col.field==='X'" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">
+                                <p-checkbox [(ngModel)]="rowData['Selected']" [binary]="true"></p-checkbox>
+                            </span>
+                            <span *ngIf="col.field==='Urgent'" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">
+                                <p-checkbox [(ngModel)]="rowData['Urgent enable']" [binary]="true"></p-checkbox>
+                            </span>
+                            <span *ngIf="col.field!='X' && col.field!='Urgent'" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">
+                                {{rowData[col.field]}}
+                            </span>
+                        </td>
+                    </ng-container>
                 </tr>
             </ng-template>
         </p-table>
@@ -173,6 +286,6 @@
 <p></p>
 <p style='border-style: solid; border: black'></p>
 <div style="text-align:center" >
-    <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" ></button>
+    <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" (click)="validateChanges()" ></button>
 </div>
 <br>

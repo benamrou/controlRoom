@@ -210,7 +210,7 @@
             </tr>
             <tr style="background: lightyellow;">
                 <ng-container *ngFor="let col of columnsResult">
-                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.text-align]="col.align">
+                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.justify-content]="col.align">
                             {{col.header}}
                     <p-sortIcon [field]="col.field"></p-sortIcon>
                     </th>
@@ -224,7 +224,7 @@
                         <input *ngIf="col.type === 'input'"
                                 pInputText type="text" (input)="result.filter($any($event.target).value, col.field, 'contains')" 
                                 [placeholder]=col.placeholder class="p-column-filter" 
-                                [style.text-align]="col.align"
+                                [style.justify-content]="col.align"
                                 style="border-radius:0px !important; border-width: 1px;">
                     </th>
                 </ng-container>
@@ -235,7 +235,7 @@
         <ng-template pTemplate="body" let-rowData let-columns="columnsResult" let-globalIndice="rowIndex">
             <tr [pSelectableRow]="rowData"  >
                 <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column"  >
-                    <td *ngIf="col.display " class="ui-resizable-column" [style.text-align]="col.align" 
+                    <td *ngIf="col.display " class="ui-resizable-column" [style.justify-content]="col.align" 
                                 [ngStyle]="{'background-color': (0 >= rowData[col.field] && (col.field == 'INV_CASE' ||  col.field == 'LD_SERVICE_RATE')) ||  
                                                                 (0 >= rowData[col.field] && col.field ==  'LO_FILL_RATE_CCL' && rowData['LO_FILL_RATE_CCL'] != null ) || 
                                                                 (col.field ==  'LO_FILL_RATE_CCL' && rowData['LO_FILL_RATE_CCL'] == null && 0 >= rowData['LO_FILL_RATE_HCCL'] )  ? 'red' : 'unset', 

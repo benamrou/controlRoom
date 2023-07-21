@@ -100,7 +100,7 @@
     <!-- HEADER -->
         <ng-template pTemplate="header">            
             <tr>
-            <th *ngFor="let col of columnsResult" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.text-align]="col.align">
+            <th *ngFor="let col of columnsResult" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.justify-content]="col.align">
                     {{col.header}}
                     <p-sortIcon [field]="col.field"></p-sortIcon>
                 </th>
@@ -111,7 +111,7 @@
                     <input *ngIf="col.type === 'input'"
                             pInputText type="text" (input)="result.filter($any($event.target).value, col.field, 'contains')" 
                             [placeholder]=col.placeholder class="p-column-filter" 
-                            [style.text-align]="col.align"
+                            [style.justify-content]="col.align"
                             style="border-radius:0px !important; border-width: 1px;">
                 </th>
             </tr>
@@ -123,7 +123,7 @@
                             'color' : rowData['COVERAGE'] >= (inventoryCoverage /100) ? 'black': 'white',
                             'font-weight' : rowData['COVERAGE'] >= (inventoryCoverage /100) ?'normal': 'bold'}">
                 
-                <td *ngFor="let col of columnsResult" class="ui-resizable-column" [style.text-align]="col.align">
+                <td *ngFor="let col of columnsResult" class="ui-resizable-column" [style.justify-content]="col.align">
                     <span *ngIf="col.field==='STORE_ORDERABLE' && rowData[col.field]==='Orderable'" 
                           class="badge badge-success">
                         {{rowData[col.field]}}

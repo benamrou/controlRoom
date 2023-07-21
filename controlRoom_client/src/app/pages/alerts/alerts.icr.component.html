@@ -51,7 +51,7 @@
             <tr style="background: lightyellow;">
                 <ng-container *ngFor="let col of columnsResultExecution">
                     <th [pSortableColumn]="col.field" pReorderableColumn pResizableColumn
-                        [style.text-align]="col.align">
+                        [style.justify-content]="col.align">
                         {{col.header}}
                         <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
                         <p-sortIcon [field]="col.field"></p-sortIcon>
@@ -82,7 +82,7 @@
         <ng-template pTemplate="body" let-rowDataExecution let-columns="columnsResultExecution" let-globalIndice="rowIndexExecution">
             <tr [pSelectableRow]="rowDataExecution">
                 <ng-container *ngFor="let col of columnsResultExecution; let indice=index" class="ui-resizable-column">
-                    <td class="ui-resizable-column" [style.text-align]="col.align">
+                    <td class="ui-resizable-column" [style.justify-content]="col.align">
                         <span pTooltip="{{col.tooltip}}">{{rowDataExecution[col.field]}}</span>
                     </td>
                 </ng-container>
@@ -362,7 +362,7 @@
             <tr style="background: lightyellow;">
                 <ng-container *ngFor="let col of columnsResult">
                     <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn
-                        [style.text-align]="col.align">
+                        [style.justify-content]="col.align">
                         {{col.header}}
                         <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
                         <p-sortIcon [field]="col.field"></p-sortIcon>
@@ -393,7 +393,7 @@
         <ng-template pTemplate="body" let-rowData let-columns="columnsResult" let-globalIndice="rowIndex">
             <tr [pSelectableRow]="rowData">
                 <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column">
-                    <td class="ui-resizable-column" [style.text-align]="col.align">
+                    <td class="ui-resizable-column" [style.justify-content]="col.align">
                         <span *ngIf="col.field!='ACTION'" pTooltip="{{col.tooltip}}">{{rowData[col.field]}}</span>
 
                         <span *ngIf="col.field=='ACTION'" style="text-align: center;">

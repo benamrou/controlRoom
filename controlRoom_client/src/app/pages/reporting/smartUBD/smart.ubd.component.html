@@ -68,6 +68,7 @@
     [responsive]="true" [totalRecords]="searchResult.length"
     [reorderableColumns]="true" scrollHeight="400px"
     (onRowSelect)="onRowSelect($event)"
+    [scrollable]="true"
     [autoLayout]="true" tableStyleClass="table-layout: auto;">
     
         <!-- FILTER -->
@@ -125,7 +126,7 @@
             </tr>
             <tr style="background: lightyellow;">
                 <ng-container *ngFor="let col of columnsResult">
-                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.text-align]="col.align">
+                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.justify-content]="col.align">
                             {{col.header}}
                     <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
                     <p-sortIcon [field]="col.field"></p-sortIcon>
@@ -154,7 +155,7 @@
         <ng-template pTemplate="body" let-rowData let-columns="columnsResult" let-globalIndice="rowIndex">
             <tr [pSelectableRow]="rowData" [style.background-color]="(rowData['New in report item'] == 1) ? 'lightyellow' : 'unset'">
                 <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column"  >
-                    <td *ngIf="col.display " class="ui-resizable-column" [style.text-align]="col.align" >
+                    <td *ngIf="col.display " class="ui-resizable-column" [style.justify-content]="col.align" >
                         <span *ngIf="col.field==='Status' && rowData[col.field] === 'High'" class="badge bg-danger" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
                         <span *ngIf="col.field==='Status' && rowData[col.field] === 'Medium'" class="badge bg-warning" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
                         <span *ngIf="col.field==='Status' && rowData[col.field] === 'Low'" class="badge bg-light text-dark" pTooltip="{{col.tooltip}}" tooltipPosition="top" [escape]="false">{{rowData[col.field] }}</span>
@@ -302,7 +303,7 @@
                 <ng-template pTemplate="header">             
                     <tr style="background: lightyellow;">
                         <ng-container *ngFor="let col of columnsCommentResult">
-                            <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.text-align]="col.align">
+                            <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.justify-content]="col.align">
                                     {{col.header}}
                             <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
                             <p-sortIcon [field]="col.field"></p-sortIcon>

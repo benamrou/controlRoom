@@ -75,7 +75,7 @@
         <!-- HEADER -->
             <ng-template pTemplate="header">            
                 <tr>
-                    <th *ngFor="let col of columnsResult" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.text-align]="col.align">
+                    <th *ngFor="let col of columnsResult" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.justify-content]="col.align">
                         {{col.header}}
                         <p-sortIcon [field]="col.field"></p-sortIcon>
                     </th>
@@ -84,7 +84,7 @@
         <!-- BODY -->
             <ng-template pTemplate="body" let-rowData let-columns="columnsResult">
                 <tr [pSelectableRow]="rowData">
-                    <td *ngFor="let col of columnsResult" class="ui-resizable-column" [style.text-align]="col.align">
+                    <td *ngFor="let col of columnsResult" class="ui-resizable-column" [style.justify-content]="col.align">
                         <span *ngIf="col.field==='Year1'"  pTooltip="{{col.tooltip}}" [escape]="false">
                             <button pButton type="button"  label="GENERATE" (click)="generateSchedule(currentYear, rowData['FOUCNUF'])" icon="fa fa-wrench" iconPos="left">
                             </button>

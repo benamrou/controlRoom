@@ -14,14 +14,18 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MultiSelectDropdownModule } from 'src/app/shared/components.bbs';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, TableModule, DialogModule, 
                ButtonModule, PageHeaderModule, 
                CalendarModule, ToastModule,
                MultiSelectDropdownModule,
+               ReactiveFormsModule,
                InputTextModule,
                TooltipModule,
+               ConfirmDialogModule,
                CheckboxModule,
                PanelModule ],
     declarations: [OrderUrgentComponent],

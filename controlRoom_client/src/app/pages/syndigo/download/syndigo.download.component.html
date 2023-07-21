@@ -140,7 +140,7 @@
         <ng-template pTemplate="header">
             <tr style="background: lightyellow;">
                 <ng-container *ngFor="let col of columnsResult">
-                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.text-align]="col.align">
+                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.justify-content]="col.align">
                             {{col.header}}
                     <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
                     <p-sortIcon [field]="col.field"></p-sortIcon>
@@ -169,7 +169,7 @@
         <ng-template pTemplate="body" let-rowData let-columns="columnsResult" let-globalIndice="rowIndex">
             <tr [pSelectableRow]="rowData">
                 <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column"  >
-                    <td *ngIf="col.display " class="ui-resizable-column" [style.text-align]="col.align" >
+                    <td *ngIf="col.display " class="ui-resizable-column" [style.justify-content]="col.align" >
                         <span *ngIf="col.field==='statusSyndigo' && rowData['Status']==0">
                             <p-badge [value]="rowData[col.field]" severity="danger"></p-badge>
                         </span>  
