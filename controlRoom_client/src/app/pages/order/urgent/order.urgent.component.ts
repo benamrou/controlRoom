@@ -187,7 +187,7 @@ export class OrderUrgentComponent implements OnDestroy {
             .subscribe( 
                 data => {
                   console.log('order update: ', data);  
-                  this.msgDisplayed = 'All the selected orders have been updated.'
+                  this.msgDisplayed = 'All the selected purchase orders have been updated.<br><br>Play safe, please review in GOLD the updated PO.'
                   this.displayUpdateCompleted=true;
 
               },
@@ -351,6 +351,7 @@ export class OrderUrgentComponent implements OnDestroy {
                                                                                 '<b>This process is usually taking between 1 and 3 minutes</b>';
                                                             this.msgDisplayed = 'Sending PO process has completed. Refresh and check your orders.'
                                                             this.okExit =true;
+                                                            this.waitMessage = '';
                                                             this.displaySendCompleted =true;
 
                                                             this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Orders sending process completed.'});
