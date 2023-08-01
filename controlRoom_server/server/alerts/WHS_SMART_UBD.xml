@@ -223,14 +223,15 @@ UBD_ITEMS_WITH_PROJECTION AS
              AND SMSNPOS = 0
              AND SMSCINL = ARLCINLUVC
              AND 50 > SMSSITE) "SKU sold week_5",
-         (SELECT ROUND(TAPPBRUT, 2) * 1
-            FROM TARPRIX@HEINENS_CEN_PROD, FOUDGENE@HEINENS_CEN_PROD
-           WHERE FOUCFIN = TAPCFIN
-             AND TAPSITE = UL_DONORD
-             AND TAPSEQVL = ARLSEQVL
-             AND TRUNC(SYSDATE) BETWEEN TAPDDEB AND TAPDFIN
+         (SELECT APRFAPN
+            FROM AREPRIX@HEINENS_CEN_PROD, FOUDGENE@HEINENS_CEN_PROD
+           WHERE FOUCFIN = APRCFIN
+             AND APRSITE = UL_DONORD
+             AND APRSEQVL = ARLSEQVL
+             AND TRUNC(SYSDATE) BETWEEN APRDDEB AND APRDFIN
              AND FOUCNUF = AR_FOURN
-             AND ROWNUM = 1) "Case cost",
+             AND ROWNUM = 1) "Net cost",
+	
          (SELECT DECODE(TAPUAPP,
                         1,
                         1,
@@ -342,9 +343,9 @@ UBD_ITEMS_DATA_PREP AS
          "Shipping qty" "Case Pack",
          ROUND("Projection" / "Shipping qty") "Projection per week",
          DECODE(AR_CODEUP, 2, ''Inner pack'', 3, ''Pck'', AR_CODEUP) "Shipping unit",
-         ''$ '' || to_char(ROUND("Case cost", 2), ''FM99999.00'') "Case cost",
-         ''$ '' || to_char(ROUND("Case cost" / "Cost unit", 2), ''FM99999.00'') "Unit cost",
-         ''$ '' || to_char(ROUND(INV_SKU * "Case cost" / "Cost unit", 2), ''FM99999.00'') "Total cost",
+         ''$ '' || to_char(ROUND("Net cost" * "Cost unit", 2), ''FM99999.00'') "Case cost",
+         ''$ '' || to_char(ROUND("Net cost", 2), ''FM99999.00'') "Unit cost",
+         ''$ '' || to_char(ROUND(INV_SKU * "Net cost", 2), ''FM99999.00'') "Total cost",
          ROUND(CEIL(INV_SKU / DECODE("SKU shipped per week",
                                      0,
                                      "SKU sold per week",
@@ -390,6 +391,7 @@ UBD_ITEMS_DATA_PREP AS
          ARLCINLUVC,
          ARLSEQVL,
          SSCC_ADDRESS,
+         (SELECT ARCCODE FROM ARTCOCA@HEINENS_CEN_PROD WHERE ARCCINV=ARLCINLUVC AND TRUNC(SYSDATE) BETWEEN ARCDDEB AND ARCDFIN AND ROWNUM=1) "UPC",
          GREATEST(CEIL((INV_SKU - "Projection SKU") / "Shipping qty"), 0) "Hypothetical push",
          ARTPOVARTPOC "In Store",
          "SKU sold week_5",
@@ -412,6 +414,7 @@ UBD_ITEMS_DATA_PREP AS
     FROM UBD_ITEMS_WITH_PROJECTION),
 PRE_FORMAT AS (
 SELECT "Item code desc",
+       "UPC",
        "UBD",
        NVL((SELECT ''Linked''
              FROM UBD_ITEMS_DATA_PREP OTH
@@ -451,10 +454,10 @@ SELECT "Item code desc",
           (SELECT his."Hypothetical push" FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
           AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-3)  and rownum=1) "Hyp. push Week-3",
 
-           "SKU sold trend_1"*100 "Trend sales Week-1 (%)",  
-           "SKU sold trend_2"*100 "Trend sales Week-2 (%)",  
-           "SKU sold trend_3"*100 "Trend sales Week-3 (%)",  
-           "SKU sold trend_4"*100 "Trend sales Week-4 (%)",  
+           "SKU sold trend_1" "Trend sales Week-1 (%)",  
+           "SKU sold trend_2" "Trend sales Week-2 (%)",  
+           "SKU sold trend_3" "Trend sales Week-3 (%)",  
+           "SKU sold trend_4" "Trend sales Week-4 (%)",  
            "SKU sold week_1" "Qty sold Week-1 (sku)", 
            "SKU sold week_2" "Qty sold Week-2 (sku)", 
            "SKU sold week_3" "Qty sold Week-3 (sku)",

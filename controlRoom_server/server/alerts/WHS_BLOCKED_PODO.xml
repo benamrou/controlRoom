@@ -1,0 +1,29 @@
+<ROOT>
+    <QUERY> 
+
+SELECT cd_donord "Whs #", ''Delivery order'' "Type", cd_numcde "PO/DO #",  cd_libliv || '' | '' || cd_libliv "Store/Supplier code desc.", 
+       cd_statut "Status",
+       to_char(cd_datcde, ''MM/DD/RRRR'') "Order/Reception date", to_char(cd_datpre, ''MM/DD/RRRR'') "Delivery/Prep date",
+       ''These DOs are in blocked status and need to be released by warehouse leads.'' "Comments"
+FROM tb_ecde@heinens_stk_prod
+WHERE cd_statut=''M''
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                          where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''WHS0000000005''
+                          AND LALTMESS LIKE ''%'' || cd_numcde || ''%'')      /* No reported yet */
+UNION 
+SELECT oe_donord "Whs #", ''AGRN'' "Type", oe_ncdefo "PO/DO #", oe_fourn || '' | '' || oe_librs "Store/Supplier code desc.", 
+       oe_statut "Status",
+       to_char(oe_datrec, ''MM/DD/RRRR'') "Order/Reception date", to_char(oe_dtlivp, ''MM/DD/RRRR'') "Delivery/Prep date",
+       ''These AGRNs are in blocked status and need to be released by warehouse leads.'' "Comments"
+FROM tb_erec@heinens_stk_prod
+WHERE oe_statut=''M''
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                          where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''WHS0000000005''
+                          AND LALTMESS LIKE ''%'' || oe_ncdefo || ''%'')      /* No reported yet */
+
+  </QUERY>
+  <HEADERIFEMPTY>No warehouse blocked PO/DO</HEADERIFEMPTY>
+  <HEADER>Warehouse blocked PO/DO</HEADER>
+  
+</ROOT>
+

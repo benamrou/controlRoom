@@ -143,6 +143,7 @@ itemSubstitution.get(app,oracledb);
 itemInventory.get(app,oracledb);
 itemCAO.get(app,oracledb);
 supplierSchedule.get(app,oracledb);
+supplierSchedule.post(app,oracledb);
 counting.get(app,oracledb);
 batchprocess.get(app,oracledb);
 order.get(app,oracledb);

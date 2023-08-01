@@ -354,7 +354,7 @@ export class SVAttributeComponent implements OnInit{
     this.globalError=[];
     let result = true;    
     if(this._importService.wb.sheets[0].worksheet.columns.length < 5) {
-        this.globalError.push('Item/SV attribute file must contains the following headders: ITEM_CODE, SV_CODE, ATTRIBUTE_CLASS, ATTRIBUTE_CODE, ATTRIBUTE_VALUE'); 
+        this.globalError.push('Item/SV attribute file must contains the following headers: ITEM_CODE, SV_CODE, ATTRIBUTE_CLASS, ATTRIBUTE_CODE, ATTRIBUTE_VALUE'); 
         return false;
     }
     if (this._importService.wb.sheets[0].worksheet.columns[0].field.toUpperCase() !== 'ITEM_CODE') {

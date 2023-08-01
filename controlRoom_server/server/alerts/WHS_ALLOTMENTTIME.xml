@@ -1,0 +1,30 @@
+<ROOT>
+    <QUERY> 
+
+/* Collect PO with invalid sending time */
+SELECT ecdcexglo "Global PO@", ecdcexcde "Store PO#", ecdsite "Store #", 
+       foucnuf || '' | '' || foulibl "Supplier code desc", 
+       ecdetat "Order status", 
+       to_char(ecddcom,''MM/DD/RR'') "Order date", 
+       to_char(ecddliv,''MM/DD/RR'') "Delivery date", 
+       to_char(ecddenvoi,''MM/DD/RR HH:MI'') "Sending date and time" 
+FROM cdeentcde@heinens_custom_prod, sitdgene@heinens_custom_prod, foudgene@heinens_custom_prod 
+WHERE ecdcexglo IS NOT NULL 
+AND ecdetat=5 /* Awaiting delivery */
+AND ecdurg=0 /* Not urgent */
+AND to_char(ecddenvoi,''HH:MI'') != ''10:10''
+AND ecdsite=socsite
+AND ecdcfin=foucfin
+AND soccmag=10
+AND foutype=3 /* Allotment vendor */
+AND foucnuf LIKE ''AO%''
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''WHS0000000008''
+                                AND LALTMESS LIKE ''%'' || ecdcexglo || ''%'')
+</QUERY>
+ 
+  <HEADERIFEMPTY>No invalid sending time PO issue</HEADERIFEMPTY>
+  <HEADER>Store allotment PO with invalid sending time</HEADER>
+  
+</ROOT>
+

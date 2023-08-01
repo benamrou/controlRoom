@@ -2,9 +2,176 @@
                  [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
                  
 <div class="content-section implementation" style="padding: 5px;">
-    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+    <p-toast key="top" [style]="{marginTop: '80px'}" [sticky]=true position="top-right"></p-toast>
 </div>
 
+
+<!-- Panel add new holiday schedule -->
+<p-dialog header="Add new holiday schedule" [visible]="displayAddHoliday" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    <form [formGroup]="newHolidayForm" (ngSubmit)="addHoliday()">
+        <div class="row">
+            <div class="form-group row">
+                <span class="p-inputgroup-addon col-2" style="justify-content: left;">
+                    Holiday date
+                </span>
+                <p-calendar [(ngModel)]="newHolidayDate"  
+                            class="form-control col-10"
+                            dateFormat="mm/dd/yy"
+                            [style]="{'height': '35px', 'padding-left' : '5px', 'width' : '30%'}"
+                            [showIcon]="true" 
+                            appendTo="body" 
+                            formControlName="holidayDate_field"
+                            [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-6 row">
+                <span class="p-inputgroup-addon col-4" style="justify-content: left;">Period start
+                </span>
+                <p-calendar [(ngModel)]="newHolidayStart"  
+                            class="form-control col-7"
+                            dateFormat="mm/dd/yy"
+                            [style]="{'height': '35px', 'padding-left' : '5px', 'width' : '100%'}"
+                            [showIcon]="true" 
+                            appendTo="body" 
+                            formControlName="holidayStart_field"
+                            [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+            </div>
+
+            <div class="form-group col-6 row">
+                <span class="p-inputgroup-addon col-4" style="justify-content: left;">Period end
+                </span>
+                <p-calendar [(ngModel)]="newHolidayEnd"  
+                            class="form-control col-8"
+                            dateFormat="mm/dd/yy"
+                            [style]="{'height': '35px', 'padding-left' : '5px', 'width' : '100%'}"
+                            [showIcon]="true" 
+                            appendTo="body" 
+                            formControlName="holidayEnd_field"
+                            [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+            </div>
+        </div>
+        <p-footer>
+            <button  style="float: left; margin-bottom:0.5em; margin-top:1em" 
+                    pButton iconPos="right" type="button" 
+                    (click)="getTemplate()" icon="fas fa-file-excel-o" label="TEMPLATE" 
+                    label="TEMPLATE">
+            </button>
+            <div class="col" style="margin-right: 15px; text-align: right;">
+                <p-fileUpload #fileUpload mode="basic"  name="file" 
+                            style="margin-top: 0.3em; float: left"
+                            accept=".xlsx" 
+                            [showUploadButton]="true"
+                            chooseLabel="Browse"
+                            [auto]="true"
+                            [style]="{'font-size':'smaller', 'float':'left'}"
+                            (onSelect)="onSelect($event)"
+                            (onBeforeUpload)="onBeforeUpload($event)"
+                            (onUpload)="onUploadCompleted($event)"></p-fileUpload>
+            </div>
+            <button  style="float: right; margin-bottom:0.5em" 
+                    pButton icon="fas fa-check" iconPos="right"
+                    [disabled]="!newHolidayForm.valid || globalError.length !=0 || !_importService.wb"
+                    type="submit"
+                    label="LOAD">
+            </button>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-times" iconPos="right" (click)="cancelNewHoliday()" 
+                    label="Cancel">
+            </button>
+            <span *ngIf="uploadedFiles.length > 0" style="margin-top: 1em;margin-left: 1em;font-weight: bold;color: crimson;">{{uploadedFiles[0].name}} </span>
+        </p-footer>
+    </form>
+    <div style="margin-top: 5em" *ngIf="displayErrorAddHoliday">
+        <p-table  #validateError [value]="globalError" sortMode="multiple" 
+                [rows]="5"  [rowsPerPageOptions]="[5,10,50]"
+                [paginator]="true" [pageLinks]="3" 
+                [columns]="['Holiday file verification result']"
+                selectionMode="single" 
+                [resizableColumns]="true" columnResizeMode="expand"
+                [responsive]="true" [totalRecords]="globalError.length"
+                [reorderableColumns]="true" scrollHeight="200px"
+                [autoLayout]="true" tableStyleClass="table-layout: auto;">
+            <!-- HEADER -->
+                <ng-template pTemplate="header">            
+                    <tr>
+                        <th pReorderableColumn pResizableColumn  style="background-color: deeppink;color: white;">
+                        Verification result
+                        </th>
+                    </tr>
+                </ng-template>
+            <!-- BODY -->
+                <ng-template pTemplate="body" let-rowData>
+                    <tr [pSelectableRow]="rowData">
+                        <td class="ui-resizable-column" [innerHTML]="rowData">
+                        </td>
+                    </tr>
+                </ng-template>
+        </p-table>
+        <i  class="FOOTER_Table" >{{globalError.length}} issues</i>
+    </div>
+</p-dialog>
+
+<!-- Panel REMOVE new holiday schedule -->
+<p-dialog header="Remove holiday schedule" [visible]="displayRemoveHoliday" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    <form [formGroup]="removeHolidayForm" (ngSubmit)="removeHoliday()">
+        <div class="row">
+            <div class="form-group row">
+                <span class="p-inputgroup-addon col-2" style="justify-content: left;">
+                    Holiday date
+                </span>
+                <p-calendar [(ngModel)]="removeHolidayDate"  
+                            class="form-control col-10"
+                            dateFormat="mm/dd/yy"
+                            [style]="{'height': '35px', 'padding-left' : '5px', 'width' : '30%'}"
+                            [showIcon]="true" 
+                            appendTo="body" 
+                            formControlName="holidayDate_field"
+                            [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+            </div>
+        </div>
+        <p-footer>
+            <button  style="float: right; margin-top:3em" 
+                    pButton icon="fas fa-check" iconPos="right"
+                    [disabled]="!removeHolidayForm.valid"
+                    type="submit"
+                    label="Remove">
+            </button>
+            <button style="float: right; margin-top:3em" 
+                    type="button" pButton icon="fas fa-times" iconPos="right" (click)="canceRemoveHoliday()" 
+                    label="Cancel">
+            </button>
+        </p-footer>
+    </form>
+    <div style="margin-top: 5em" *ngIf="displayErrorAddHoliday">
+        <p-table  #validateError [value]="globalError" sortMode="multiple" 
+                [rows]="5"  [rowsPerPageOptions]="[5,10,50]"
+                [paginator]="true" [pageLinks]="3" 
+                [columns]="['Holiday file verification result']"
+                selectionMode="single" 
+                [resizableColumns]="true" columnResizeMode="expand"
+                [responsive]="true" [totalRecords]="globalError.length"
+                [reorderableColumns]="true" scrollHeight="200px"
+                [autoLayout]="true" tableStyleClass="table-layout: auto;">
+            <!-- HEADER -->
+                <ng-template pTemplate="header">            
+                    <tr>
+                        <th pReorderableColumn pResizableColumn  style="background-color: deeppink;color: white;">
+                        Verification result
+                        </th>
+                    </tr>
+                </ng-template>
+            <!-- BODY -->
+                <ng-template pTemplate="body" let-rowData>
+                    <tr [pSelectableRow]="rowData">
+                        <td class="ui-resizable-column" [innerHTML]="rowData">
+                        </td>
+                    </tr>
+                </ng-template>
+        </p-table>
+        <i  class="FOOTER_Table" >{{globalError.length}} issues</i>
+    </div>
+</p-dialog>
 
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >
@@ -97,39 +264,21 @@
                             disabled *ngIf="searchResult.length==0"
                             label="CSV" (click)="result.exportCSV()" style="float:left">
                         </button>
-                        <button type="button" pButton iconPos="left" 
+                        <button type="button" pButton  iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
                             pTooltip="Remove a holiday schedule" [escape]="false"
-                            label="REMOVE" (click)="result.exportCSV()" style="float:left">
+                            tooltipPosition="top"
+                            label="REMOVE" (click)=" displayRemoveHoliday=true" style="float:left">
                         </button>
                         <button type="button" pButton iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
                             pTooltip="Add a holiday schedule" [escape]="false"
-                            label="ADD" (click)="result.exportCSV()" style="float:left">
-                        </button>
-                        <button type="button" pButton iconPos="left" 
-                            class="CSV_Button p-input-icon-left ml-auto"
-                            pTooltip="Validate a holiday schedule" [escape]="false"
-                            label="VALIDATE" (click)="result.exportCSV()" style="float:left">
+                            tooltipPosition="bottom"
+                            label="ADD" (click)="globalError=[]; displayErrorAddHoliday= false; displayAddHoliday=true" 
+                            style="float:left">
                         </button>
                     </span>
                 </div>
-                <!--div class="col-2">
-                    <span >
-                            <button type="button" pButton icon="pi pi-user" iconPos="left" 
-                                class="CSV_Button p-input-icon-left ml-auto"
-                                pTooltip="{{recapButtonTooltip}}" [escape]="false"
-                                disabled *ngIf="searchResult.length==0"
-                                label="Recap" (click)="exportExcelRecap()" style="float:left">
-                            </button>
-                            <button type="button" pButton icon="pi pi-user" iconPos="left" 
-                                class="CSV_Button p-input-icon-left ml-auto"
-                                pTooltip="{{recapButtonTooltip}}" [escape]="false"
-                                *ngIf="searchResult.length>0"
-                                label="Recap" (click)="exportExcelRecap()" style="float:left">
-                            </button>
-                    </span>
-                </div-->
                 <div class="col-6" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
@@ -164,195 +313,10 @@
     <button  disabled type="button" pButton icon="fa-file-o"  label="Review schedules" (click)="reviewSchedule()"></button>
 </div-->
 
-<div *ngIf="selectedElement" style="text-align:center">
-    <button  type="button" pButton icon="fas fa-file"  label="Review schedules" (click)="reviewSchedule()"></button>
-</div>
-
-<!--div *ngIf="selectedElement"-->
-<div *ngIf="processReviewSchedule">
-    <p></p>
-    <div *ngFor="let schedule of selectedElement.schedules; let indice=index">
-        <!--p>{{indice}}</p-->
-        <form ngNativeValidate>
-        <div class="ui-g-12" > 
-                <p-panel id="Schedule#{{indice}}" header="Schedule#{{indice}} {{periodStart | date:'MM/dd/yyyy' }} - {{periodEnd | date:'MM/dd/yyyy' }}" 
-                         [toggleable]="true" [collapsed]="true">
-                    <!-- Panel for the list of sites -->    
-                    <div class="row">
-                        <div class="ui-g-9"> 
-                            <p-panel id="Schedule#{{indice}}_1" [toggleable]="true" [collapsed]="true" 
-                                     header="Schedule applied on {{schedule.sites.length}} sites">
-                                <div class="alternateColor">
-                                    <ng-container *ngFor="let siteSchedule of schedule.sites">
-                                        <div>
-                                            <input type="checkbox" [(ngModel)]="siteSchedule.applyChanges" [ngModelOptions]="{standalone: true}"/>
-                                            {{ siteSchedule.code }}  {{siteSchedule.description}} 
-                                        </div>
-                                    </ng-container>
-                                </div>
-                            </p-panel>
-                        </div>
-                    </div>
-                    <div id="tableContainer">
-                        <table class="all-table" [style.width]="temporarySchedule[indice].widthTable+'px'">
-                            <colgroup>
-                                <col style="width:200px;" />
-                                <col style="width:200px;" />
-                                <col style="width:100px;" ng-repeat="i in temporarySchedule[indice].numberWeekDaysArray"/>
-                            </colgroup>
-                                <thead>
-                                    <!-- Day of the week  -->
-                                        <tr>
-                                                <th> </th>
-                                                <th> </th>
-                                                <ng-container *ngFor="let j of temporarySchedule[indice].numberWeekDaysArray">
-                                                    <th [ngClass]="{'isNotInPeriod': isNotTempPeriod(indice,j)}" style="text-align:center; background-color:lightgray" >{{temporarySchedule[indice].columnName[j]}}</th>
-                                                </ng-container>
-                                        </tr>
-                                        <tr>
-                                            <th class="newScheduleData">
-                                                    <p-calendar 
-                                                    [(ngModel)]="temporarySchedule[indice].start"  
-                                                    [minDate]="dateTomorrow"
-                                                    [readonlyInput]="true"
-                                                    dateFormat="mm/dd/yy"
-                                                    [appendTo]="'body'"
-                                                    name="scheduleStart{{indice}}" [showIcon]="true" 
-                                                    [showOnFocus]="true" [showOtherMonths]="true"
-                                                    [style]="{'height': '10px'}"
-                                                    (onSelect)="refreshTimeline(temporarySchedule[indice])" ></p-calendar>
-                                        </th>
-                                            <th class="newScheduleData">
-                                                    <p-calendar 
-                                                    [(ngModel)]="temporarySchedule[indice].end"  
-                                                    [readonlyInput]="true"
-                                                    [minDate]="dateTomorrow"
-                                                    dateFormat="mm/dd/yy"
-                                                    [appendTo]="'body'"
-                                                    [style]="{'height': '10px'}"
-                                                    name="scheduleEnd{{indice}}" [showIcon]="true" 
-                                                    [showOnFocus]="true" [showOtherMonths]="true"
-                                                    (onSelect)="refreshTimeline(temporarySchedule[indice])" ></p-calendar>
-                                        </th>
-                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray; let ind = index;trackBy:trackByIdx">
-                                            <th style="text-align:center;" [ngClass]="{'isNotInPeriod': isNotTempPeriod(indice,ind)}">{{temporarySchedule[indice].columnSchedule[i]}}</th>
-                                        </ng-container>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                     <!-- Order day -->
-                                    <tr class="rowcolorgray">
-                                        <td>Order day</td>
-                                        <td></td>
-                                        <ng-container *ngFor="let i of temporarySchedule[indice].numberWeekDaysArray; let ind = index;trackBy:trackByIdx">  
-                                            <td [ngClass]="{'isOrderDay': temporarySchedule[indice].orderActiveOriginal[ind], 'isNotInPeriod': isNotTempPeriod(indice,ind)}">
-                                                    <i class="fas fa-check-circle" *ngIf="isOrderDay(indice,ind)" ></i>
-                                            </td>
-                                        </ng-container>
-                                    </tr>
-                                    <tr class="newScheduleData">
-                                        <td>Order day</td>
-                                        <td></td>      
-                                        <ng-container *ngFor="let oActive of temporarySchedule[indice].orderActive; let ind = index;trackBy:trackByIdx">
-                                            <td [ngClass]="{'isNotInPeriod': isNotTempPeriod(indice,ind)}">
-                                                <input type="checkbox" [disabled]="isNotTempPeriod(indice,ind)" style="text-align: center" 
-                                                      name="orderSunday_{{indice}}_{{ind}}" 
-                                                      [(ngModel)]="temporarySchedule[indice].orderActive[ind]"
-                                                      (change)="activateDay(indice,ind)"/>
-                                            </td>     
-                                        </ng-container>
-                                    </tr>
-                                    <!--  Lead Time -->
-                                    <tr class="rowcolorgray" >
-                                        <td class="">Lead time</td>
-                                        <td class="">(days)</td>    
-                                        <ng-container *ngFor="let i of temporarySchedule[indice].orderActive; let ind = index;trackBy:trackByIdx">
-                                            <td [ngClass]="{'isOrderDay': temporarySchedule[indice].orderActive[ind], 
-                                                            'isNotInPeriod': isNotTempPeriod(indice,ind)}">
-                                                {{temporarySchedule[indice].leadTimeOriginal[ind]}}
-                                            </td>
-                                        </ng-container>
-                                    </tr>
-                                    <tr class="newScheduleData">
-                                        <td class="">Lead time</td>
-                                        <td class="">(days)</td>  
-                                        <ng-container *ngFor="let ltime of temporarySchedule[indice].leadTime; let ind = index;trackBy:trackByIdx">
-                                            <td [ngClass]="{'isNotInPeriod': isNotTempPeriod(indice,ind)}">
-                                                <input *ngIf="temporarySchedule[indice].orderActive[ind]" 
-                                                      [disabled]="!temporarySchedule[indice].orderActive[ind]" 
-                                                      type="text" style="text-align: center; width: 50%" 
-                                                      [(ngModel)]="temporarySchedule[indice].leadTime[ind]"
-                                                      (change)="changeMade(indice,ind)"
-                                                       name="leadTime_{{indice}}_{{ind}}" pattern="[0-9]{0,3}" 
-                                                      title="Lead time is max on 3 decimals."/>
-                                            </td>
-                                        </ng-container>
-                                    </tr>
-                                    <!-- Collection Time -->
-                                    <tr class="rowcolorgray">
-                                        <td class="">Collection time</td>
-                                        <td class="">(Time)</td>
-                                        <ng-container *ngFor="let i of temporarySchedule[indice].orderActive;let ind = index;trackBy:trackByIdx">
-                                            <td [ngClass]="{'isOrderDay': temporarySchedule[indice].orderActive[ind],'isNotInPeriod': isNotTempPeriod(indice,ind)}">
-                                                    {{temporarySchedule[indice].collectionTimeOriginal[ind]}}
-                                            </td>                                        
-                                        </ng-container>
-                                    </tr>
-                                    <tr class="newScheduleData">
-                                        <td>Collection time</td>
-                                        <td>(Time)</td>
-                                        <ng-container *ngFor="let ctime of temporarySchedule[indice].collectionTime;  let ind = index;trackBy:trackByIdx">
-                                            <td [ngClass]="{'isNotInPeriod': isNotTempPeriod(indice,ind)}">
-                                                <input *ngIf="temporarySchedule[indice].orderActive[ind]" 
-                                                [disabled]="!temporarySchedule[indice].orderActive[ind]" type="text" 
-                                                style="text-align: center; width: 50%" 
-                                                [(ngModel)]="temporarySchedule[indice].collectionTime[ind]"
-                                                (change)="changeMade(indice,ind)"
-                                                name="collectionTime_{{indice}}_{{ind}}" pattern="[0-9]{4}" max="2359" 
-                                                title="Collection time respect format HHMM (24 hours)." />
-                                            </td>
-                                        </ng-container>
-                                    </tr>
-                                    <!-- Delivery Time -->
-                                    <tr class="rowcolorgray">
-                                        <td>Delivery time</td>
-                                        <td>(Time)</td>
-                                        <ng-container *ngFor="let i of temporarySchedule[indice].orderActive;   let ind = index;trackBy:trackByIdx">
-                                            <td  [ngClass]="{'isOrderDay': temporarySchedule[indice].orderActive[ind],'isNotInPeriod': isNotTempPeriod(indice,ind)}">
-                                                {{temporarySchedule[indice].deliveryTimeOriginal[ind]}}
-                                            </td>
-                                        </ng-container>
-                                    </tr>
-                                    <tr class="newScheduleData">
-                                        <td>Delivery time</td>
-                                        <td>(Time)</td>
-                                        <ng-container *ngFor="let dtime of temporarySchedule[indice].deliveryTime; let ind = index;trackBy:trackByIdx">
-                                            <td [ngClass]="{'isNotInPeriod': isNotTempPeriod(indice,ind)}">
-                                                <input *ngIf="temporarySchedule[indice].orderActive[ind]" 
-                                                [disabled]="!temporarySchedule[indice].orderActive[ind]" type="text" 
-                                                 style="text-align: center; width: 50%" 
-                                                 [(ngModel)]="temporarySchedule[indice].deliveryTime[ind]"
-                                                 (change)="changeMade(indice,ind)"
-                                                 name="deliveryTime_{{indice}}_{{ind}}"  pattern="[0-9]{4}" max="2359" 
-                                                title="Delivery time respect format HHMM (24 hours)."/>
-                                            </td>
-                                        </ng-container>
-                                    </tr>
-                                </tbody>
-                        </table>
-                    </div>
-
-                </p-panel>
-        </div>
-        </form>
-    </div>
-</div>
-
-<br>
 <!-- Validation -->
 <p></p>
 <p style='border-style: solid; border: black'></p>
 <div style="text-align:center" *ngIf="activeValidateButton">
-    <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" (click)="validationSchedule()"></button>
+    <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" ></button>
 </div>
 <br>

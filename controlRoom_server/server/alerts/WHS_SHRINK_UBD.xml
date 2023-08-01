@@ -1,0 +1,75 @@
+<ROOT>
+    <NAME>Whs Shrink by Month</NAME>
+    <QUERY> 
+
+/***********************************************************************/
+/* Query : Warehouse shrink by month                                   */
+/***********************************************************************/
+   
+WITH ITEMS_DATA AS (
+SELECT stmsite, stmmotf, to_number(to_char(TRUNC(stmdmvt), ''RRRRMM'')) "Shrink date", stmval, stmcrea, 
+       pkartstock.RecupCoeffUVC@heinens_cen_prod(1, arucinl) uauvc
+FROM STOMVT@heinens_cen_prod, artvl@heinens_cen_prod, artrac@heinens_cen_prod, artul@heinens_cen_prod
+WHERE stmtmvt=101
+AND stmseqvl=arlseqvl
+AND arlcinr=artcinr
+AND aruseqvl=stmseqvl AND arutypul=41
+--AND artdlim IS NOT NULL
+--AND stmmotf =800
+AND stmmotf NOT IN (704 /* Excude Return to Vendor */, 864 /* Recall */, 600 /* STK Recnciliation */)
+AND stmsite=:param2
+AND TRUNC(stmdmvt) BETWEEN to_date(:param3, ''MM/DD/RR'')-2*365 and to_date(:param4, ''MM/DD/RR'')
+),
+SHRINK_DATA AS (
+SELECT stmsite "Whs #",
+       stmmotf || ''-'' || pkparpostes.get_postlibl@heinens_cen_prod(1,0, 506, stmmotf, ''HN'') "Reason code",
+       "Shrink date" ,
+       SUM(stmval/uauvc) "Nb Case", SUM(stmcrea) "Total amount"
+FROM ITEMS_DATA
+GROUP BY stmsite, stmmotf, "Shrink date")
+SELECT "Whs #", "Reason code", "Shrink date" "Shrink month", CEIL("Nb Case") "Nb Case", "Total amount",
+       (SELECT CEIL(x."Nb Case") FROM SHRINK_DATA x WHERE x."Whs #"=s."Whs #" AND x."Reason code"=s."Reason code" AND x."Shrink date"=s."Shrink date"-100) "YTD Nb Case",
+       (SELECT x."Total amount" FROM SHRINK_DATA x WHERE x."Whs #"=s."Whs #" AND x."Reason code"=s."Reason code" AND x."Shrink date"=s."Shrink date"-100) "YTD Total amount",
+       (SELECT CEIL(x."Nb Case") FROM SHRINK_DATA x WHERE x."Whs #"=s."Whs #" AND x."Reason code"=s."Reason code" AND x."Shrink date"=s."Shrink date"-200) "Y2TD Nb Case",
+       (SELECT x."Total amount" FROM SHRINK_DATA x WHERE x."Whs #"=s."Whs #" AND x."Reason code"=s."Reason code" AND x."Shrink date"=s."Shrink date"-200) "Y2TD Total amount"
+FROM SHRINK_DATA s
+WHERE "Shrink date" BETWEEN to_number(to_char(to_date(:param3,''MM/DD/RR''), ''RRRRMM'')) and
+                            to_number(to_char(to_date(:param4,''MM/DD/RR''), ''RRRRMM''))
+ORDER BY  "Reason code" DESC, "Shrink month" DESC
+
+
+</QUERY>
+<NAME2>Whs shrink detail by item</NAME2>
+<QUERY2> 
+  
+/***********************************************************************/
+/* Query : Warehouse Shrink detail by item                             */
+/***********************************************************************/
+  
+SELECT stmsite "Whs #",
+       arlcexr || ''/'' || arlcexvl || '' '' || pkartvl.get_vldesc@heinens_cen_prod(1, arlseqvl, ''HN'') "Item/LV code desc", 
+       stmmotf || ''-'' || pkparpostes.get_postlibl@heinens_cen_prod(1,0, 506, stmmotf, ''HN'') "Reason code",
+       TRUNC(stmdmvt) "Shrink date",
+       SUM(stmval) "Nb SKU", SUM(stmcrea) "Total amount"
+FROM stomvt@heinens_cen_prod, sitdgene@heinens_cen_prod, artvl@heinens_cen_prod, artrac@heinens_cen_prod
+WHERE stmtmvt=101 
+AND stmsite=socsite
+AND soccmag=0
+AND stmseqvl=arlseqvl
+AND stmcinl=arlcinluvc
+AND arlcinr=artcinr 
+AND artdlim IS NOT NULL
+-- AND stmmotf=800
+AND stmmotf NOT IN (704 /* Excude Return to Vendor */, 864 /* Recall */, 600 /* STK Recnciliation */)
+AND stmsite=:param2
+AND TRUNC(stmdmvt) BETWEEN to_date(:param3, ''MM/DD/RR'')-2*365 and to_date(:param4, ''MM/DD/RR'')
+GROUP BY stmsite, stmmotf, TRUNC(stmdmvt), arlcexr,arlcexvl, arlseqvl
+ORDER BY  "Shrink date" DESC
+
+
+</QUERY2>
+  <HEADERIFEMPTY>No Warehouse fill rate by cat</HEADERIFEMPTY>
+  <HEADER>Warehouse fill rate by cat</HEADER>
+  
+</ROOT>
+

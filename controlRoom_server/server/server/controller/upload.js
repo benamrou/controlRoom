@@ -24,7 +24,6 @@
 "use strict";
 
 let path = require('path');
-let cors= require('cors');
 let formidable = require('formidable');
 let fs = require('fs');
 let oracledb = require('oracledb');      // Oracle DB connection
@@ -181,7 +180,7 @@ module.post = function (request,response) {
     });
         
     // Check 
-    app.post('/api/upload/1/', cors(), function (request, response) {
+    app.post('/api/upload/1/', function (request, response) {
         logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
 
         response.header('Access-Control-Allow-Origin', '*');

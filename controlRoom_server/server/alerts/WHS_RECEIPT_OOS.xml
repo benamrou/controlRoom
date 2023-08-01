@@ -19,7 +19,9 @@ AND ecdsite=oe_donord
 AND ecdsite IN (91070,91071, 90061)
 AND ecdcincde=oe_cincde
 AND TRUNC(sysdate+1) >= TRUNC(oe_datrec) 
-
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''WHS0000000002''
+                                AND LALTMESS LIKE ''%'' || ecdcexcde || ''%'')
 </QUERY>
  
   <HEADERIFEMPTY>No Warehouse receipt OOS</HEADERIFEMPTY>

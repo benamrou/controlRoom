@@ -4,10 +4,10 @@ NC='\033[0m' # No Color
 
 export UV_THREADPOOL_SIZE=10
 
-. /home/hntcen/env/envCEN
-. /home/hntcen/env/envICR
+. $HOME/env/envCEN
+. $HOME/env/envICR
 
-CONTROLROOM_SERVER=/opt/apps/controlRoom/controlRoom_server/server
+CONTROLROOM_SERVER=${ICR_SERVER}
 #CONFIG_SERVER=${CONTROLROOM_SERVER}/config/admin/server
 NODE_BIN=/usr/local/bin
 
@@ -32,6 +32,6 @@ echo -e "[${GREEN}LAST${NC}]\t - ALERTS EXECUTION SERVER NODE: 8092..... \t[${GR
 
 nohup ${NODE_BIN}/node --use-strict --expose-gc --optimize-for-size server_admin.js 8092 CRONTAB  > ./logs/server/out_crontab.log 2> ./logs/server/err_crontab.log &
 
-echo -e "[${GREEN}LAST${NC}]\t - SERVER NODE: 8090..... \t\t\t[${GREEN}DONE${NC}]"
-nohup ${NODE_BIN}/node --use-strict --expose-gc --optimize-for-size server_admin.js  8090 > ./logs/server/out_server.log 2> ./logs/server/err_server.log &
+echo -e "[${GREEN}LAST${NC}]\t - SERVER NODE: 8093..... \t\t\t[${GREEN}DONE${NC}]"
+nohup ${NODE_BIN}/node --use-strict --expose-gc --optimize-for-size server_admin.js  8093 > ./logs/server/out_server.log 2> ./logs/server/err_server.log &
 

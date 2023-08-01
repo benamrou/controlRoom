@@ -110,5 +110,49 @@ module.get = function (request,response) {
 
     };
 
+    module.post = function (request,response) {
+        app.post('/api/supplierschedule/4/', function (request, response) {
+                logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
+
+                response.header('Access-Control-Allow-Origin', '*');
+                response.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+                response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+                logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
+                
+                SQL.executeSQL(SQL.getNextTicketID(),
+                                "INSERT INTO HOLIDAY_SCHEDULE (holsupplier, holdate, holdstart, holdend, holschedule, holutil, holfile) " +
+                                " values (:holsupplier, :holdate, :holdstart, :holdend, :holschedule, :holutil, :holfile) returning holid into :cursor",
+                                {holsupplier: request.query.PARAM[1],
+                                holdate: request.query.PARAM[2], 
+                                holdstart: request.query.PARAM[3],
+                                holdend: request.query.PARAM[4],
+                                holschedule: JSON.stringify(request.body), 
+                                holutil: request.header('USER'), 
+                                holfile: request.query.PARAM[5],
+                                cursor: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT } },
+                                request.header('USER'),
+                                request,
+                                response,
+                                function (err, data) {
+                                logger.log('[UPLOAD]', 'Upload :' + JSON.stringify(data), request.header('USER'), 1);
+                                if (err) {
+                                        logger.log('[UPLOAD]', 'file ' + request.header('FILENAME') + JSON.stringify(err), request.header('USER'), 3);
+                                        response.status(200).json({
+                                        RESULT: -1,
+                                        MESSAGE: JSON.stringify(err)
+                                        });  
+                                }
+                                else {
+                                        logger.log('[UPLOAD]', 'file ' + request.header('FILENAME') + JSON.stringify(err), request.header('USER'), 3);
+                                        response.status(200).json({
+                                        RESULT: data,
+                                        MESSAGE: 'Holiday schedule loaded with id ' + data
+                                        });  
+
+                                }
+                });
+        });
+    }
    return module;
 }

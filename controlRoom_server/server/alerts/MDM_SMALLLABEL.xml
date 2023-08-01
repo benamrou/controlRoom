@@ -1,0 +1,20 @@
+<ROOT>
+    <QUERY> 
+
+SELECT alosite "Whs #", 
+       arlcexr || ''/'' || arlcexvl "Item code/LV", 
+       pkartvl.get_vldesc@heinens_custom_prod(1,arlseqvl, ''HN'') "Item desc.", 
+       pkparpostes.get_postlibl@heinens_custom_prod(1,10,601, alotmar,''HN'') "Label type",
+       aloutil "Created by", 
+       to_char(TRUNC(alodcre), ''MM/DD/RR'') "Created on"
+FROM artasent@heinens_custom_prod, artvl@HEINENS_CUSTOM_PROD 
+WHERE alotmar=2 AND TRUNC(SYSDATE) BETWEEN aloddeb AND alodfin
+AND aloseqvl=arlseqvl
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No invalid label type deliverable assortment</HEADERIFEMPTY>
+  <HEADER>Invalid label type for deliverable assortment</HEADER>
+  
+</ROOT>
+

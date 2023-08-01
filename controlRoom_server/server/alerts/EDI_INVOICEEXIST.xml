@@ -1,0 +1,26 @@
+<ROOT>
+    <QUERY> 
+SELECT status_no "Status #", status_description "Error message", 
+       foucnuf || '' | '' || foulibl "Supplier code desc.",
+       invoicenumber "Invoice #",
+       to_char(invoicedate,''MM/DD/RRRR'') "Invoce date",
+       shiptoduns "Shipped to DUNS",
+       totalinvoiceamount "Invoice amount",
+       unitsshipped "Units shipped",
+       ''Invoices FROM this vendor to be archived and new one to be reprocessed'' "Comment"
+FROM im_edi_invoice_header@heinens_custom_prod t, foudgene@heinens_custom_prod, fouadres@heinens_custom_prod
+--SELECT * FROM fouadres WHERE fadacci IS NOT NULL
+WHERE  status_no=3
+AND fadacci=vendordunsnumber
+AND fadcfin=foucfin
+AND TRUNC(invoicedate)=TRUNC(SYSDATE)
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                          where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''EDI0000000003''
+                          AND LALTMESS LIKE ''%'' || invoicenumber || ''%'')  
+
+  </QUERY>
+  <HEADERIFEMPTY>No invoice issues</HEADERIFEMPTY>
+  <HEADER>EDI invoices with existing invoice number</HEADER>
+  
+</ROOT>
+

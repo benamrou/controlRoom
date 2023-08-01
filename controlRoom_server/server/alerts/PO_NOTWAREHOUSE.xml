@@ -1,0 +1,28 @@
+<ROOT>
+    <QUERY> 
+SELECT  (SELECT sapcexap || '' | '' || saplibl FROM liensecappro@heinens_custom_prod, secappro@heinens_custom_prod
+                    WHERE liacinap=sapcinap
+                    AND liasite=ecdsite
+                    AND liacfin=ecdcfin
+                    AND liaccin=ecdccin) "Buyer",
+         ecdcexcde "PO#", ecdsite "Whs", foucnuf || '' | '' || foulibl "Supplier code desc.", 
+         to_char(ecddcom,''MM/DD/RRRR'') "Order date", 
+         to_char(ecddliv,''MM/DD/RRRR'') "Delivery date", 
+         to_char(ecddenvoi,''MM/DD/RRRR'') "Sending date",
+         pkparpostes.get_postvan1@heinens_custom_prod(1,10,917, 12) || '' days prior delivery'' "To  warehouse" 
+FROM cdeentcde@heinens_custom_prod, sitdgene@heinens_custom_prod, foudgene@heinens_custom_prod 
+WHERE ecdetat=5 AND NOT EXISTS (SELECT * FROM tb_erec@heinens_custom_prod WHERE oe_ncdefo=ecdcexcde) 
+AND ecdsite =socsite AND soccmag=0
+AND foucfin=ecdcfin
+AND EXISTS (SELECT 1 FROM artasent@heinens_custom_prod, cdedetcde@heinens_custom_prod WHERE dcdcincde=ecdcincde 
+            AND dcdseqvl=aloseqvl AND alosite=ecdsite
+            AND TRUNC(SYSDATE) BETWEEN aloddeb AND alodfin)
+AND TRUNC(SYSDATE) > TRUNC(ecddenvoi)
+AND TRUNC(SYSDATE+pkparpostes.get_postvan1@heinens_custom_prod(1,10,917, 12)) >= ecddliv
+AND TRUNC(ecddliv)>=TRUNC(SYSDATE)
+  </QUERY>
+  <HEADERIFEMPTY>No PO not sent to warehouse</HEADERIFEMPTY>
+  <HEADER>PO not sent to warehouse</HEADER>
+  
+</ROOT>
+

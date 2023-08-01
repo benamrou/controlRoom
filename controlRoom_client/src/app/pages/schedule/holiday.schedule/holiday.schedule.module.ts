@@ -12,6 +12,9 @@ import { ToastModule } from 'primeng/toast';
 import { PanelModule } from 'primeng/panel';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { FileUploadModule} from 'primeng/fileupload';
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, TableModule, DialogModule, 
@@ -19,6 +22,9 @@ import { TooltipModule } from 'primeng/tooltip';
                CalendarModule, ToastModule,
                InputTextModule,
                TooltipModule,
+               FileUploadModule,
+               ConfirmDialogModule,
+               ReactiveFormsModule,
                PanelModule ],
     declarations: [HolidayScheduleComponent],
     exports: [HolidayScheduleComponent],

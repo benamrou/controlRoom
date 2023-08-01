@@ -1,0 +1,78 @@
+<ROOT>
+    <NAME>Summary PPG</NAME>
+    <QUERY> 
+
+/***********************************************************************/
+/* Query : Items with multiple sub-cat same PPG                        */
+/***********************************************************************/
+
+SELECT DISTINCT l1.dlinlis "PPG #", 
+       SUBSTR(pkstrucobj.get_cext@heinens_custom_prod(1,l1pere.objpere),10,12) || '' | '' || pkstrucobj.get_desc@heinens_custom_prod(1,l1pere.objpere,''HN'')  || '' ('' ||
+       (SELECT COUNT(1) FROM artdetlist@heinens_custom_prod l3, strucrel@heinens_custom_prod l3pere, artuv@heinens_custom_prod uv3  
+        WHERE l3.dlinlis=l1.dlinlis AND TRUNC(SYSDATE) BETWEEN l3.dliddeb AND l3.dlidfin
+        AND uv3.arvcinv=l3.dlicinv AND uv3.arvcinr=l3pere.objcint 
+        AND TRUNC(SYSDATE) BETWEEN l3pere.objddeb AND l3pere.objdfin
+        AND l3pere.objpere=l1pere.objpere) || '' items) ''  "Sub-cat code desc.",
+       SUBSTR(pkstrucobj.get_cext@heinens_custom_prod(1,l2pere.objpere),10,12) || '' | '' || pkstrucobj.get_desc@heinens_custom_prod(1,l2pere.objpere,''HN'') || '' (''  || 
+       (SELECT COUNT(1) FROM artdetlist@heinens_custom_prod l3, strucrel@heinens_custom_prod l3pere, artuv@heinens_custom_prod uv3  
+        WHERE l3.dlinlis=l2.dlinlis AND TRUNC(SYSDATE) BETWEEN l3.dliddeb AND l3.dlidfin
+        AND uv3.arvcinv=l3.dlicinv AND uv3.arvcinr=l3pere.objcint 
+        AND TRUNC(SYSDATE) BETWEEN l3pere.objddeb AND l3pere.objdfin
+        AND l3pere.objpere=l2pere.objpere) || '' items) ''  "Other sub-cat code desc.",
+       ''Items within a PPG must belong to the same sub-category'' "Comments"
+FROM artdetlist@heinens_custom_prod l1, 
+     artuv@heinens_custom_prod uv1, 
+     artuv@heinens_custom_prod uv2,
+     artdetlist@heinens_custom_prod l2, 
+     strucrel@heinens_custom_prod l1pere,
+     strucrel@heinens_custom_prod l2pere
+WHERE TRUNC(SYSDATE) BETWEEN l1.dliddeb AND l1.dlidfin
+AND TRUNC(SYSDATE) BETWEEN l2.dliddeb AND l2.dlidfin
+AND l1.dlicinv=uv1.arvcinv
+AND l2.dlicinv=uv2.arvcinv
+AND l1.dlinlis=l2.dlinlis
+AND l1.dlinlis LIKE ''PPG%''
+AND l1pere.objcint=uv1.arvcinr
+AND l2pere.objcint=uv2.arvcinr
+AND TRUNC(SYSDATE) BETWEEN l1pere.objddeb AND l1pere.objdfin
+AND TRUNC(SYSDATE) BETWEEN l2pere.objddeb AND l2pere.objdfin
+AND l1pere.objpere != l2pere.objpere
+ORDER BY l1.dlinlis ASC
+
+</QUERY>
+<NAME2>Item details</NAME2>
+<QUERY2> 
+
+SELECT DISTINCT l1.dlinlis "PPG list", 
+       uv1.arvcexr "Item code", 
+       uv1.arvcexv "SV", 
+       pkartcoca.Get_Arccode@heinens_custom_prod(1,uv1.arvcinv) "UPC", 
+       pkstrucobj.get_desc@heinens_custom_prod(1,uv1.arvcinr, ''HN''), 
+       SUBSTR(pkstrucobj.get_cext@heinens_custom_prod(1,l1pere.objpere),10,12) || '' | '' || pkstrucobj.get_desc@heinens_custom_prod(1,l1pere.objpere,''HN'') "Sub-cat code desc.",
+       ''Items within a PPG must belong to the same sub-category'' "Comments"
+FROM artdetlist@heinens_custom_prod l1, 
+     artuv@heinens_custom_prod uv1, 
+     artuv@heinens_custom_prod uv2,
+     artdetlist@heinens_custom_prod l2, 
+     strucrel@heinens_custom_prod l1pere,
+     strucrel@heinens_custom_prod l2pere
+WHERE TRUNC(SYSDATE) BETWEEN l1.dliddeb AND l1.dlidfin
+AND TRUNC(SYSDATE) BETWEEN l2.dliddeb AND l2.dlidfin
+AND l1.dlicinv=uv1.arvcinv
+AND l2.dlicinv=uv2.arvcinv
+AND l1.dlinlis=l2.dlinlis
+AND l1.dlinlis LIKE ''PPG%''
+AND l1pere.objcint=uv1.arvcinr
+AND l2pere.objcint=uv2.arvcinr
+AND TRUNC(SYSDATE) BETWEEN l1pere.objddeb AND l1pere.objdfin
+AND TRUNC(SYSDATE) BETWEEN l2pere.objddeb AND l2pere.objdfin
+AND l1pere.objpere != l2pere.objpere
+ORDER BY l1.dlinlis ASC
+
+</QUERY2>
+ 
+  <HEADERIFEMPTY>No PPG sub-categories issue</HEADERIFEMPTY>
+  <HEADER>PPG with different sub-cat.</HEADER>
+  
+</ROOT>
+

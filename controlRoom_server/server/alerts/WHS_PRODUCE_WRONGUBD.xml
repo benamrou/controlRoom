@@ -1,0 +1,41 @@
+<ROOT>
+    <QUERY> 
+
+/* PRODUCE warehouse only: Detect new receipt with newer UBD than previous receipt */	
+WITH ITEM_RECEIVED AS (SELECT ar_donord, ar_cproin, ar_ilogis, ar_libpro, ul_usscc, ar_fourn, ar_nrsfou, ul_nqteup,
+                   TRUNC(ue_datrec) "Receiving date", to_date(ut_valind,''RRRRMMDD'') ut_valind, 
+                   ue_adrums "Address"
+FROM tb_eums@HEINENS_STK_PROD t , tb_lcums@HEINENS_STK_PROD , tb_art@HEINENS_STK_PROD, tb_traums@HEINENS_STK_PROD
+WHERE ue_usscc = ul_usscc
+AND ue_depot = 95
+AND ul_donord=95073 /* Produce only */
+AND ue_codtsu = ''1''
+AND ar_cproin=ul_cproin
+AND ar_ilogis=ul_ilogis
+AND ar_dlc >0
+and (ue_stapre is null or (ue_stapre in (0, 50)
+and ue_staums = 1
+AND ue_typpre in (''P'',''R'') and ue_typums = ''0'' ))
+and  NVL(ue_indfic,''1'') != ''0''
+AND ut_usscc=ul_usscc AND ut_typind=''DLC'')
+SELECT DISTINCT newrec.ar_fourn "Supplier code", 
+                newrec.ar_nrsfou "Supplier desc.",
+		newrec.ar_cproin || ''/'' || newrec.ar_ilogis "Item code/LV",
+	        newrec.ar_libpro "Item desc.",
+                to_char(newrec."Receiving date",''MM/DD/RR'') "Received on",
+                to_char(newrec.ut_valind,''MM/DD/RR'') "UBD entered",
+                to_char(oldrec."Receiving date",''MM/DD/RR'') "Previous receipt on",
+                to_char(oldrec.ut_valind,''MM/DD/RR'') "Previous pallet UBD"
+                
+FROM ITEM_RECEIVED newrec, ITEM_RECEIVED oldrec 
+WHERE newrec.ar_cproin=oldrec.ar_cproin 
+AND newrec."Receiving date" > oldrec."Receiving date"
+AND newrec.ut_valind < oldrec.ut_valind
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No Produce UBD entered issue</HEADERIFEMPTY>
+  <HEADER>Produce UBD entered is newer than previous receipt</HEADER>
+  
+</ROOT>
+

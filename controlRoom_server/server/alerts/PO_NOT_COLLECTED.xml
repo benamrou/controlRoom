@@ -17,7 +17,7 @@ AND EXISTS (SELECT 1 FROM erreurprg@heinens_custom_prod WHERE errprog=''pscde45p
             AND (sysdate-errdcre)* 24 * 60  > 5 /*  ran at least 5 minutes ago */)
 AND EXISTS (SELECT 1 FROM erreurprg@heinens_custom_prod WHERE errprog=''pscde45p'' AND TRUNC(errdcre)=TRUNC(ecddenvoi) AND errstat=8 AND ecddcre > ecddenvoi )
 AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
-                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''''
+                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''COL0000000002''
                                 AND LALTMESS LIKE ''%'' || ecdcexcde || ''%'')      /* No reported yet */
   </QUERY>
   <HEADERIFEMPTY>No purchase orders missing cut-off time</HEADERIFEMPTY>

@@ -130,7 +130,6 @@ export class ImportService{
         });
 
         this.wb.sheets[0].worksheet.columns.push( {field: columnName, header:columnName});
-        console.log('adding column', );
     }
 
     /**
