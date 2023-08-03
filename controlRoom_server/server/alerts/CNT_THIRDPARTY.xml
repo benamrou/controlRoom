@@ -1,0 +1,19 @@
+<ROOT>
+    <QUERY> 
+
+SELECT cntcompany "Company", cntloc "Store #", 
+	to_char(trunc(cntdcre)-1,''MM/DD/RR'') "Inventory date",	
+	COUNT(1) "Nb ref. reported", ''$ '' || SUM(cntextcost) "Extended cost", 
+       (SELECT COUNT(1) FROM invdetinv@heinens_custom_prod WHERE dinsite=cntloc AND TRUNC(dindinv)=TRUNC(cntdcre)) "Nb ref loaded",
+       ''There should be more ref. loaded due to zeroing out inventory for not reported UPC.'' "Comment"
+ FROM thirdparty_counting@heinens_custom_prod
+WHERE TRUNC(cntdcre)=TRUNC(SYSDATE)
+GROUP BY cntcompany, cntloc, TRUNC(cntdcre)
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No counting PICS/RGIS </HEADERIFEMPTY>
+  <HEADER>RGIS/PICS counting loaded</HEADER>
+  
+</ROOT>
+

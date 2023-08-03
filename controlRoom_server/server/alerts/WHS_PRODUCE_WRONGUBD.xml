@@ -30,7 +30,7 @@ SELECT DISTINCT newrec.ar_fourn "Supplier code",
 FROM ITEM_RECEIVED newrec, ITEM_RECEIVED oldrec 
 WHERE newrec.ar_cproin=oldrec.ar_cproin 
 AND newrec."Receiving date" > oldrec."Receiving date"
-AND newrec.ut_valind < oldrec.ut_valind
+AND oldrec.ut_valind > newrec.ut_valind 
 
 </QUERY>
  

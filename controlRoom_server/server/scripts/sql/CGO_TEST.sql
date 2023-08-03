@@ -3,7 +3,7 @@ set feed off
 set head off
 set echo off
 
-spool /opt/apps/controlRoom/controlRoom_server/server/scripts/sql/CGO_TEST.txt
+spool /home/hnpcen/heinensapps/controlRoom_server/scripts/sql/CGO_TEST.txt
 
 SELECT "SiteCode" 
 FROM tbl_REF_HEINENS_SiteAttribute@Heinens_Custom_Prod

@@ -5,12 +5,18 @@
 
 export const environment = {
   production: true,
-  //Heinen's
-  hostURL           : "http://10.200.14.231:9086",
+  //Heinen's PROD
+  /* hostURL           : "http://10.200.14.231:9086",
   serverURL_local   : "http://10.200.14.231:8093",
   serverURL         : "http://10.200.14.231:8093",
   serverBatchURL    : "http://10.200.14.231:8091",
-  baseURL           : "http://10.200.14.231:9086/icr",
+  baseURL           : "http://10.200.14.231:9086/icr",*/
+  //Heinen's TEST
+  hostURL           : "http://10.200.14.232:9086",
+  serverURL_local   : "http://10.200.14.232:8093",
+  serverURL         : "http://10.200.14.232:8093",
+  serverBatchURL    : "http://10.200.14.232:8091",
+  baseURL           : "http://10.200.14.232:9086/icr",
   //message: "",
   // @HOME
   //hostURL           : "http://locahost:9086",

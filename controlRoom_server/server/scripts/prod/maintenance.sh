@@ -1,8 +1,8 @@
-. /home/hntcen/env/envCEN
+. /home/hnpcen/env/envCEN
 date_today=`date +"%Y%m%d"`
 
 # RUN PROD DB Maintenance
-sqlplus controlroom/controlroom @/opt/apps/controlRoom/controlRoom_server/server/scripts/prod/sql/maintenance.sql
+sqlplus hncustom2/hncustom2@central /home/hnpcen/heinensapps/controlRoom_server/scripts/prod/sql/maintenance.sql
 
 # Save crontab
-/usr/bin/crontab -l > /opt/apps/controlRoom/controlRoom_server/server/scripts/prod/crontab_$date_today.log
+/usr/bin/crontab -l > /home/hnpcen/heinensapps/controlRoom_server/scripts/prod/crontab_$date_today.log

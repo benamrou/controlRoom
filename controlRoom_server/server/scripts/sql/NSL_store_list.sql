@@ -3,7 +3,7 @@ set feed off
 set head off
 set echo off
 
-spool /opt/apps/controlRoom/controlRoom_server/server/scripts/sql/NSL_store_list.txt
+spool /home/hnpcen/heinensapps/controlRoom_server/scripts/sql/NSL_store_list.txt
 
 SELECT socsite "SiteCode", DEPT
 FROM sitdgene@Heinens_Custom_Prod, (SELECT '102' DEPT FROM dual UNION SELECT '103' DEPT FROM dual)

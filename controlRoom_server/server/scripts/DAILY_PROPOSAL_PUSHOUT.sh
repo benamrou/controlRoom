@@ -1,3 +1,3 @@
-. /home/hntcen/env/envICR
+. /home/hnpcen/env/envICR
 
-sqlplus $USERID @/opt/apps/controlRoom/controlRoom_server/server/scripts/insert/DAILY_PROPOSAL_PUSHOUT.sql
+sqlplus $USERID @/home/hnpcen/heinensapps/controlRoom_server/scripts/insert/DAILY_PROPOSAL_PUSHOUT.sql

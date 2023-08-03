@@ -81,6 +81,12 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
    private deleteSupplierScheduleURL: string = '/api/supplierschedule/1/';
    private createSupplierScheduleURL: string = '/api/supplierschedule/2/';
    private executeSupplierScheduleURL: string = '/api/execute/1/';
+
+   private loadScheduleURL: string = '/api/supplierschedule/4/';
+
+   private baseQuery: string = '/api/request/';
+   private queryRemoveHoliday :  string = 'SCH0000004';
+   private queryListHoliday :  string = 'SCH0000003';
    
    private request: string;
    private params: HttpParams;
@@ -418,6 +424,62 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
              let data = <any> response;
      }));
    }
+
+
+   loadSchedule (suppliercode, holidayDate, periodStart, periodEnd, schedule, filename) {
+    /* 2. Insert into FOUPLAN - Creation schedule for the data during the period */
+    // {AO1468572,AO14685C,0,AO14685S,05/22/2018,1010,06/01/2018,0600,lnevels,1,4,5,6,7,8}
+    //console.log ('Create request');
+    this.request = this.loadScheduleURL;
+    let headersSearch = new HttpHeaders();
+
+    let options = new HttpHeaders();
+    this.params= new HttpParams();
+    this.params = this.params.set('PARAM', suppliercode);
+    this.params = this.params.append('PARAM', holidayDate);
+    this.params = this.params.append('PARAM', periodStart);
+    this.params = this.params.append('PARAM',periodEnd);    
+
+    let body = schedule;
+
+    headersSearch = headersSearch.set('QUERY_ID', this.request );
+    headersSearch = headersSearch.set('FILENAME', filename );
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    return this.http.post(this.request, this.params, headersSearch, body).pipe(map(response => {
+            let data = <any> response;
+            return data;
+    }));
+  }
+
+  removeHoliday (holidayDate) {
+    this.request = this.baseQuery;
+    let headersSearch = new HttpHeaders();
+    this.params= new HttpParams();
+    this.params = this.params.set('PARAM', holidayDate);
+    headersSearch = headersSearch.set('QUERY_ID', this.queryRemoveHoliday);
+
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+        let data = <any> response;
+        return data;
+    }));
+  }
+
+  listHoliday (supplierCode, holidayDate, periodStart, periodEnd) {
+    this.request = this.baseQuery;
+    let headersSearch = new HttpHeaders();
+    this.params= new HttpParams();
+    this.params = this.params.set('PARAM', supplierCode);
+    this.params = this.params.append('PARAM', holidayDate);
+    this.params = this.params.append('PARAM', periodStart);
+    this.params = this.params.append('PARAM',periodEnd);   
+    headersSearch = headersSearch.set('QUERY_ID', this.queryListHoliday);
+
+    return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+        let data = <any> response;
+        return data;
+    }));
+  }
  
  
  }

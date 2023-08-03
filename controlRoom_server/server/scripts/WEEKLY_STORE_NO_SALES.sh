@@ -1,12 +1,12 @@
 
-. /home/hntcen/env/envICR
+. /home/hnpcen/env/envICR
 
-sqlplus -s controlroom/controlroom @/opt/apps/controlRoom/controlRoom_server/server/scripts/sql/NSL_store_list.sql
+sqlplus -s hncustom2/hncustom2 @/home/hnpcen/heinensapps/controlRoom_server/scripts/sql/NSL_store_list.sql
 
-chmod 777 /opt/apps/controlRoom/controlRoom_server/server/scripts/sql/NSL_store_list.txt
-sed '/^$/d' /opt/apps/controlRoom/controlRoom_server/server/scripts/sql/NSL_store_list.txt > /opt/apps/controlRoom/controlRoom_server/server/scripts/sql/NSL_store_list.out
+chmod 777 /home/hnpcen/heinensapps/controlRoom_server/scripts/sql/NSL_store_list.txt
+sed '/^$/d' /home/hnpcen/heinensapps/controlRoom_server/scripts/sql/NSL_store_list.txt > /home/hnpcen/heinensapps/controlRoom_server/scripts/sql/NSL_store_list.out
   
-mylist="/opt/apps/controlRoom/controlRoom_server/server/scripts/sql/NSL_store_list.out"
+mylist="/home/hnpcen/heinensapps/controlRoom_server/scripts/sql/NSL_store_list.out"
 
 while read line;
 do
@@ -18,5 +18,5 @@ do
  fi;
 done <"$mylist"
 
-rm -f $mylist /opt/apps/controlRoom/controlRoom_server/server/scripts/sql/NSL_store_list.txt
+rm -f $mylist /home/hnpcen/heinensapps/controlRoom_server/scripts/sql/NSL_store_list.txt
 

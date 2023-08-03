@@ -73,6 +73,7 @@
                     pButton icon="fas fa-check" iconPos="right"
                     [disabled]="!newHolidayForm.valid || globalError.length !=0 || !_importService.wb"
                     type="submit"
+                    (click)="loadHolidaySchedule()"
                     label="LOAD">
             </button>
             <button style="float: right; margin-bottom:0.5em" 
@@ -82,7 +83,8 @@
             <span *ngIf="uploadedFiles.length > 0" style="margin-top: 1em;margin-left: 1em;font-weight: bold;color: crimson;">{{uploadedFiles[0].name}} </span>
         </p-footer>
     </form>
-    <div style="margin-top: 5em" *ngIf="displayErrorAddHoliday">
+    <div style="margin-top: 2em; background-color: gray" *ngIf="displayErrorAddHoliday">
+        <span style= "font-weight: bold; color: white; padding-left: 0.5em">Schedule file does not meet requirements:</span>
         <p-table  #validateError [value]="globalError" sortMode="multiple" 
                 [rows]="5"  [rowsPerPageOptions]="[5,10,50]"
                 [paginator]="true" [pageLinks]="3" 
@@ -135,10 +137,11 @@
                     pButton icon="fas fa-check" iconPos="right"
                     [disabled]="!removeHolidayForm.valid"
                     type="submit"
+                    (click)="executeRemoveHoliday()" 
                     label="Remove">
             </button>
             <button style="float: right; margin-top:3em" 
-                    type="button" pButton icon="fas fa-times" iconPos="right" (click)="canceRemoveHoliday()" 
+                    type="button" pButton icon="fas fa-times" iconPos="right" (click)="cancelRemoveHoliday()" 
                     label="Cancel">
             </button>
         </p-footer>
@@ -191,7 +194,6 @@
 
     <span class="pull-right" style="padding-right: 20px">
         <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
-                [disabled]="searchCode === '' || periodStart === '' || periodEnd === ''" 
                 [style]="{'height': '35px'}"
                 style="margin-right: 15px"></button>
         <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" 
@@ -268,13 +270,13 @@
                             class="CSV_Button p-input-icon-left ml-auto"
                             pTooltip="Remove a holiday schedule" [escape]="false"
                             tooltipPosition="top"
-                            label="REMOVE" (click)=" displayRemoveHoliday=true" style="float:left">
+                            label="REMOVE" (click)="removeHoliday()" style="float:left">
                         </button>
                         <button type="button" pButton iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
                             pTooltip="Add a holiday schedule" [escape]="false"
                             tooltipPosition="bottom"
-                            label="ADD" (click)="globalError=[]; displayErrorAddHoliday= false; displayAddHoliday=true" 
+                            label="ADD" (click)="addHoliday()" 
                             style="float:left">
                         </button>
                     </span>

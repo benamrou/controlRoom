@@ -23,6 +23,9 @@
 
 "use strict";
 
+let logger = require("../utils/logger.js");
+let oracledb = require('oracledb');      // Oracle DB connection
+
 module.exports = function (app, SQL) {
 
 let module = {};
@@ -42,117 +45,117 @@ let module = {};
 *
 * sub-module calls LIBQUERY entry SUP0000001
 */
-module.get = function (request,response) {
+        module.get = function (request,response) {
 
-        // Look for Supplier Planning using Service contract
-        app.get('/api/supplierschedule/', function (request, response) {
-        "use strict";
-        response.setHeader('Access-Control-Allow-Origin', '*');
-        // requestuest methods you wish to allow
-        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
-        SQL.executeLibQuery(SQL.getNextTicketID(),
-                           "SUP0000001", 
-                            "'{" + request.query.PARAM + "}'",
-                            request.header('USER'),
-                            "'{" + request.header('DATABASE_SID') + "}'", 
-                            "'{" +request.header('LANGUAGE') + "}'", 
-                            request, response);
-        });
-
-        // Deelte Supplier Planning by interface
-        app.get('/api/supplierschedule/1/', function (request, response) {
-            "use strict";
-            response.setHeader('Access-Control-Allow-Origin', '*');
-            // requestuest methods you wish to allow
-            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
-            SQL.executeLibQuery(SQL.getNextTicketID(),
-                               "SCH0000001", 
-                                "'{" + request.query.PARAM + "}'",
-                                request.header('USER'),
-                                "'{" + request.header('DATABASE_SID') + "}'", 
-                                "'{" +request.header('LANGUAGE') + "}'", 
-                                request, response);
-            });
-
-        // Create Supplier Planning by interface
-        app.get('/api/supplierschedule/2/', function (request, response) {
+                // Look for Supplier Planning using Service contract
+                app.get('/api/supplierschedule/', function (request, response) {
                 "use strict";
                 response.setHeader('Access-Control-Allow-Origin', '*');
                 // requestuest methods you wish to allow
                 response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
                 //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
                 SQL.executeLibQuery(SQL.getNextTicketID(),
-                                   "SCH0000002", 
-                                    "'{" + request.query.PARAM + "}'",
-                                    request.header('USER'),
-                                    "'{" + request.header('DATABASE_SID') + "}'", 
-                                    "'{" +request.header('LANGUAGE') + "}'", 
-                                    request, response);
-                });
-    
-        // Look for Supplier Planning using Supplier schedule
-        app.get('/api/supplierschedule/3/', function (request, response) {
-            "use strict";
-            response.setHeader('Access-Control-Allow-Origin', '*');
-            // requestuest methods you wish to allow
-            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
-            SQL.executeLibQuery(SQL.getNextTicketID(),
-                               "SUP0000002", 
+                                "SUP0000001", 
                                 "'{" + request.query.PARAM + "}'",
                                 request.header('USER'),
                                 "'{" + request.header('DATABASE_SID') + "}'", 
                                 "'{" +request.header('LANGUAGE') + "}'", 
                                 request, response);
-            });
-
-    };
-
-    module.post = function (request,response) {
-        app.post('/api/supplierschedule/4/', function (request, response) {
-                logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
-
-                response.header('Access-Control-Allow-Origin', '*');
-                response.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-                response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-                logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
-                
-                SQL.executeSQL(SQL.getNextTicketID(),
-                                "INSERT INTO HOLIDAY_SCHEDULE (holsupplier, holdate, holdstart, holdend, holschedule, holutil, holfile) " +
-                                " values (:holsupplier, :holdate, :holdstart, :holdend, :holschedule, :holutil, :holfile) returning holid into :cursor",
-                                {holsupplier: request.query.PARAM[1],
-                                holdate: request.query.PARAM[2], 
-                                holdstart: request.query.PARAM[3],
-                                holdend: request.query.PARAM[4],
-                                holschedule: JSON.stringify(request.body), 
-                                holutil: request.header('USER'), 
-                                holfile: request.query.PARAM[5],
-                                cursor: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT } },
-                                request.header('USER'),
-                                request,
-                                response,
-                                function (err, data) {
-                                logger.log('[UPLOAD]', 'Upload :' + JSON.stringify(data), request.header('USER'), 1);
-                                if (err) {
-                                        logger.log('[UPLOAD]', 'file ' + request.header('FILENAME') + JSON.stringify(err), request.header('USER'), 3);
-                                        response.status(200).json({
-                                        RESULT: -1,
-                                        MESSAGE: JSON.stringify(err)
-                                        });  
-                                }
-                                else {
-                                        logger.log('[UPLOAD]', 'file ' + request.header('FILENAME') + JSON.stringify(err), request.header('USER'), 3);
-                                        response.status(200).json({
-                                        RESULT: data,
-                                        MESSAGE: 'Holiday schedule loaded with id ' + data
-                                        });  
-
-                                }
                 });
-        });
-    }
-   return module;
+
+                // Deelte Supplier Planning by interface
+                app.get('/api/supplierschedule/1/', function (request, response) {
+                "use strict";
+                response.setHeader('Access-Control-Allow-Origin', '*');
+                // requestuest methods you wish to allow
+                response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                SQL.executeLibQuery(SQL.getNextTicketID(),
+                                "SCH0000001", 
+                                        "'{" + request.query.PARAM + "}'",
+                                        request.header('USER'),
+                                        "'{" + request.header('DATABASE_SID') + "}'", 
+                                        "'{" +request.header('LANGUAGE') + "}'", 
+                                        request, response);
+                });
+
+                // Create Supplier Planning by interface
+                app.get('/api/supplierschedule/2/', function (request, response) {
+                        "use strict";
+                        response.setHeader('Access-Control-Allow-Origin', '*');
+                        // requestuest methods you wish to allow
+                        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                        SQL.executeLibQuery(SQL.getNextTicketID(),
+                                        "SCH0000002", 
+                                        "'{" + request.query.PARAM + "}'",
+                                        request.header('USER'),
+                                        "'{" + request.header('DATABASE_SID') + "}'", 
+                                        "'{" +request.header('LANGUAGE') + "}'", 
+                                        request, response);
+                        });
+        
+                // Look for Supplier Planning using Supplier schedule
+                app.get('/api/supplierschedule/3/', function (request, response) {
+                "use strict";
+                response.setHeader('Access-Control-Allow-Origin', '*');
+                // requestuest methods you wish to allow
+                response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+                SQL.executeLibQuery(SQL.getNextTicketID(),
+                                "SUP0000002", 
+                                        "'{" + request.query.PARAM + "}'",
+                                        request.header('USER'),
+                                        "'{" + request.header('DATABASE_SID') + "}'", 
+                                        "'{" +request.header('LANGUAGE') + "}'", 
+                                        request, response);
+                });
+
+        };
+
+        module.post = function (request,response) {
+                app.post('/api/supplierschedule/4/', function (request, response) {
+                        logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
+
+                        response.header('Access-Control-Allow-Origin', '*');
+                        response.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+                        response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+                        logger.log('[UPLOAD]', 'file ' + request.header('FILENAME'), request.header('USER'), 1);
+                        
+                        SQL.executeSQL(SQL.getNextTicketID(),
+                                        "INSERT INTO HOLIDAY_SCHEDULE (holsupplier, holdate, holdstart, holdend, holschedule, holutil, holfile) " +
+                                        " values (:holsupplier, to_date(:holdate,'MM/DD/RRRR'), to_date(:holdstart,'MM/DD/RRRR'), to_date(:holdend,'MM/DD/RRRR'), :holschedule, :holutil, :holfile) returning holid into :cursor",
+                                        {holsupplier: request.query.PARAM[0],
+                                        holdate: request.query.PARAM[1], 
+                                        holdstart: request.query.PARAM[2],
+                                        holdend: request.query.PARAM[3],
+                                        holschedule: JSON.stringify(request.body), 
+                                        holutil: request.header('USER'), 
+                                        holfile: request.header('FILENAME'),
+                                        cursor: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT } },
+                                        request.header('USER'),
+                                        request,
+                                        response,
+                                        function (err, data) {
+                                        logger.log('[UPLOAD]', 'Upload :' + JSON.stringify(data), request.header('USER'), 1);
+                                        if (err) {
+                                                logger.log('[UPLOAD]', 'file ' + request.header('FILENAME') + JSON.stringify(err), request.header('USER'), 3);
+                                                response.status(200).json({
+                                                RESULT: -1,
+                                                MESSAGE: JSON.stringify(err)
+                                                });  
+                                        }
+                                        else {
+                                                logger.log('[UPLOAD]', 'file ' + request.header('FILENAME') + JSON.stringify(err), request.header('USER'), 3);
+                                                response.status(200).json({
+                                                RESULT: data,
+                                                MESSAGE: 'Holiday schedule loaded with id ' + data
+                                                });  
+
+                                        }
+                        });
+                });
+        }
+        return module;
 }

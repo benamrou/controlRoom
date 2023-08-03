@@ -15,9 +15,9 @@ AND nvl(pkstock.getStockDispoEnQte@heinens_custom_prod(1,socsite, arlcinluvc),0)
 )
 SELECT "Store", "Item", "Item" || ''/'' || "LV" || '' '' || pkstrucobj.get_desc@heinens_custom_prod(1,arlcinr, ''HN'') "Item code desc.",
        "Cost price", "Transfer cost",
-       (SELECT MIN (araddeb) FROM artuc@heinens_custom_prod WHERE araseqvl=arlseqvl 
+       (SELECT to_char(MIN (araddeb),''MM/DD/RR'') FROM artuc@heinens_custom_prod WHERE araseqvl=arlseqvl 
         AND EXISTS (SELECT * FROM reseau@heinens_custom_prod WHERE ressite="Store" AND respere=arasite AND TRUNC(SYSDATE) BETWEEN resddeb AND resdfin)) "Orderable since",
-       (SELECT MAX (aradfin) FROM artuc@heinens_custom_prod WHERE araseqvl=arlseqvl 
+       (SELECT to_char(MAX (aradfin),''MM/DD/RR'') FROM artuc@heinens_custom_prod WHERE araseqvl=arlseqvl 
         AND EXISTS (SELECT * FROM reseau@heinens_custom_prod WHERE ressite="Store" AND respere=arasite AND TRUNC(SYSDATE) BETWEEN resddeb AND resdfin)) "Orderable end",
         pkartcoca.Get_Arccode@heinens_custom_prod(1,arlcinluvc) "UPC"
 FROM data_store_item

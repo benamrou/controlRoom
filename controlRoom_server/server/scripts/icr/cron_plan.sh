@@ -1,4 +1,4 @@
-. /home/hntcen/env/envCEN
+. /home/hnpcen/env/envCEN
 date_today=`date +"%Y%m%d"`
 
 # **********************************************************************
@@ -17,11 +17,11 @@ date_today=`date +"%Y%m%d"`
 # Check if crte +"%Y%m%d"`on is already running
 for pid in $(pgrep -f ${CRON}); do
     if [ $pid != $$ ]; then
-        echo "[`date +%D`] : my_script.sh : Process is already running with PID $pid" >> /opt/apps/controlRoom/controlRoom_server/server/scripts/icr/logs/controlroom_$date_today.log
+        echo "[`date +%D`] : my_script.sh : Process is already running with PID $pid" >> /home/hnpcen/heinensapps/controlRoom_server/scripts/icr/logs/controlroom_$date_today.log
         exit 1
     fi
 done
-echo "[`date +%D`] : Running with PID $pid" >> /opt/apps/controlRoom/controlRoom_server/server/scripts/icr/logs/controlroom_$date_today.log
+echo "[`date +%D`] : Running with PID $pid" >> /home/hnpcen/heinensapps/controlRoom_server/scripts/icr/logs/controlroom_$date_today.log
 
 # **********************************************************************
 # STEP 1:. Reads the execution plan to be executed.
@@ -33,10 +33,10 @@ SELECT jsonid  || ',' || jsonuserid FROM json_inbound WHERE jsondsched-5 <= SYSD
 EXIT;
 EOF`
 if [ -z "$JSONIDS" ]; then
-  echo "[`date +%D`] : No scheduled plan to be executed " >> /opt/apps/controlRoom/controlRoom_server/server/scripts/icr/logs/controlroom_$date_today.log
+  echo "[`date +%D`] : No scheduled plan to be executed " >> /home/hnpcen/heinensapps/controlRoom_server/scripts/icr/logs/controlroom_$date_today.log
   exit 0
 else
-  echo "[`date +%D`] : Retrieved scheduled plan JSONID: $JSONIDS" >> /opt/apps/controlRoom/controlRoom_server/server/scripts/icr/logs/controlroom_$date_today.log
+  echo "[`date +%D`] : Retrieved scheduled plan JSONID: $JSONIDS" >> /home/hnpcen/heinensapps/controlRoom_server/scripts/icr/logs/controlroom_$date_today.log
 fi
 
 # **********************************************************************
@@ -44,7 +44,7 @@ fi
 # **********************************************************************
 for JSONID in $JSONIDS
 do
-  echo "[`date +%D`] : Executing scheduled plan JSONID: $JSONID" >> /opt/apps/controlRoom/controlRoom_server/server/scripts/icr/logs/controlroom_$date_today.log
+  echo "[`date +%D`] : Executing scheduled plan JSONID: $JSONID" >> /home/hnpcen/heinensapps/controlRoom_server/scripts/icr/logs/controlroom_$date_today.log
 done
 
 # curl -v -H ": " -H "cache-control: no-cache" -H "Connection: keep-alive" -H "Content-Type: application/x-www-form-urlencoded" -H "DATABASE_SID: HEINENS_CUSTOM_PROD" -H "LANGUAGE: HN" -H "USER: alert" "http://localhost:8092/api/upload/3/?PARAM=$JSONID&PARAM=cron" -L &

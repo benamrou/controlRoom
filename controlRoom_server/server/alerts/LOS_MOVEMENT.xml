@@ -1,10 +1,20 @@
 <ROOT>
+    <BANNER>
+        SELECT DECODE(casvrec, 0, ''WARNING'', ''NORMAL'')  as CRITICALITY,
+                DECODE(casvrec, 0, ''Sales load FAILED - The extract will re-run automatically tomorrow.'', ''Sales loaded successfully '')  as MESSAGE
+        FROM (SELECT casvrec FROM calsite@Heinens_Custom_Prod
+              WHERE TRUNC(casdate)=TRUNC(SYSDATE-1)
+              AND 50 > cassite
+	      order by casvrec asc)
+        WHERE rownum=1
+    </BANNER>
     <QUERY> 
 
 /* Loss and prevention - Stock movement information for a period */
 WITH strucode AS (SELECT DISTINCT objcint cinrStr, pkstrucobj.get_cext@heinens_custom_prod(1,objpere) cextStr  FROM strucrel@heinens_custom_prod, STRUCTURE@heinens_custom_prod, strucobj@heinens_custom_prod
                WHERE TRUNC(CURRENT_DATE) BETWEEN  strddeb AND strdfin
-               AND objpere=strcint
+               AND TRUNC(CURRENT_DATE) BETWEEN objddeb and objdfin
+	       AND objpere=strcint
                AND strpere=sobcint
                AND sobcext=:param2
 )

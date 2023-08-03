@@ -4,12 +4,12 @@
 # ICR is deployed on Apahe Tomee apoplication using port number 8090                                                                    *
 #=======================================================================================================================================*
 
-. /home/hntcen/env/envCEN
+. /home/hnpcen/env/envCEN
 
-# Logs are in /data/hntcen/icr/restart/restart.log
+# Logs are in /data/hnpcen/heinensapps/restart/restart.log
 
-IP_ADDRESS=10.200.14.232
-PORT=8090
+IP_ADDRESS=10.200.14.231
+PORT=8093
 PORT_ALERT=8091
 PORT_CRON=8092
 
@@ -18,7 +18,7 @@ HTTP_FAILED_CONNECTION="Failed"
 
 # ICR SERVER
 
-cd /opt/apps/controlRoom/controlRoom_server/server/scripts/icr/restart
+cd /home/hnpcen/heinensapps/controlRoom_server/scripts/icr/restart
 response=$(curl -s --write-out "%{http_code}\n" --location --request GET "http://${IP_ADDRESS}:${PORT}/api/item/?PARAM=33777" \
 --header "Content-type: Application/json; charset=UTF-8" \
 --header "USER: alert" \
@@ -31,10 +31,9 @@ ERROR_NUM="errorNum"
 # echo $response
 
 if [[ "$response" != *"$HTTP_REQUEST_OK"*  ||  "$response" =~ ${ERROR_NUM} ]]; then
-	echo "Server down: " ${PORT} `date` >> /data/hntcen/icr/restart/restart_icr.log
-        echo $response `date` >> /data/hntcen/icr/restart/restart_icr.log
-	# /opt/apps/controlRoom/controlRoom_server/server/bin/restart_backend_8090.sh
-        /opt/apps/controlRoom/controlRoom_server/server/start_backend.sh
+	echo "Server down: " ${PORT} `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
+        echo $response `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
+	/home/hnpcen/heinensapps/controlRoom_server/start_backend.sh
 	exit 1
 fi
 
@@ -49,10 +48,9 @@ wait $!
 # echo $response
 
 if [[ "$response" != *"$HTTP_REQUEST_OK"* ||  "$response" =~ ${ERROR_NUM} ]]; then
-	echo "Server down: " ${PORT_CRON} `date` >> /data/hntcen/icr/restart/restart_icr.log
-        echo $response `date` >> /data/hntcen/icr/restart/restart_icr.log
-	#/opt/apps/controlRoom/controlRoom_server/server/bin/restart_backend_8092.sh
-        /opt/apps/controlRoom/controlRoom_server/server/start_backend.sh
+	echo "Server down: " ${PORT_CRON} `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
+        echo $response `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
+        /home/hnpcen/heinensapps/controlRoom_server/start_backend.sh
 	exit 1
 fi
 
@@ -67,12 +65,11 @@ wait $!
 # echo $response
 
 if [[ "$response" != *"$HTTP_REQUEST_OK"* ||  "$response" =~ ${ERROR_NUM} ]]; then
-	echo "Server down: " ${PORT_ALERT} `date` >> /data/hntcen/icr/restart/restart_icr.log
-        echo $response `date` >> /data/hntcen/icr/restart/restart_icr.log
-        # /opt/apps/controlRoom/controlRoom_server/server/bin/restart_backend_8091.sh
-        /opt/apps/controlRoom/controlRoom_server/server/start_backend.sh
+	echo "Server down: " ${PORT_ALERT} `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
+        echo $response `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
+        /home/hnpcen/heinensapps/controlRoom_server/start_backend.sh
 	exit 1
 fi
 
-echo "Server up .... " `date` >> /data/hntcen/icr/restart/restart_icr.log
+echo "Server up .... " `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
 exit 0
