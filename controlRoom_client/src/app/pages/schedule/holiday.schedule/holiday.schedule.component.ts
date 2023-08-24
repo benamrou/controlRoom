@@ -6,7 +6,6 @@ import {DatePipe} from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { Message } from 'primeng/api';
 import { FullCalendar } from 'primeng/fullcalendar';
-import { SelectItem } from 'primeng/api';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 /**
@@ -38,7 +37,6 @@ export class HolidayScheduleComponent {
   @ViewChild('fc') fc: FullCalendar;
   @ViewChild('fileUpload',{static:false}) fileUpload: any;
 
-   columnOptions: SelectItem[];
    trackIndex: number = 0;
 
   screenID;
@@ -115,14 +113,13 @@ export class HolidayScheduleComponent {
     this.dateTomorrow =  new Date(this.dateNow.setDate(this.dateNow.getDate() + 1));
 
     this.columnsResult = [
-      { field: 'FOUCNUF', header: 'Supplier code' },
+      { field: 'Supplier code', header: 'Supplier code' },
       { field: 'FOULIBL', header: 'Supplier desc' },
       { field: 'HOLDATE', header: 'Holiday date' },
       { field: 'Order day', header: 'Order day' },
       { field: 'Order date', header: 'Order date' },
       { field: 'Network', header: 'Network' },
-      { field: 'Delivery day', header: 'Delivery day'},
-      { field: 'Status', header: 'Status'}
+      { field: 'Delivery day', header: 'Delivery day'}
     ];
     this.displayUpdateCompleted = false;
   }
@@ -330,6 +327,7 @@ export class HolidayScheduleComponent {
                 },
                 () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'New holiday schedule loaded '});
                        this.waitMessage = '';
+                       this.displayAddHoliday = false;
                 }
             ));
 
@@ -344,8 +342,9 @@ export class HolidayScheduleComponent {
                                 // Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
                                 this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                           },
-                          () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'New holiday schedule loaded '});
+                          () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Holiday schedule removed '});
                                 this.waitMessage = '';
+                                this.displayRemoveHoliday = false;
                           }
                       ));
   }

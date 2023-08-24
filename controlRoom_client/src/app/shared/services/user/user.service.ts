@@ -28,6 +28,8 @@ export class User {
     public it: number;
     public buyer: number;
     public helpDesk: number;
+    public warehouse: number;
+    public spaceplanning: number;
  
     public envCorporateAccess: Environment[] = [];
     public envUserAccess: Environment[] = [];
@@ -81,6 +83,11 @@ export class User {
  export class UserService {
  
    public userInfo : User;
+
+   public ICRAuthToken: string;
+   public ICRUser: string;
+   public ICRSID: string;
+   public ICRLanguage: string;
  
    /** Gathered data @login */
    public network; // Whole network location
@@ -132,6 +139,8 @@ export class User {
                  this.userInfo.it = data[0].USERIT;
                  this.userInfo.buyer = data[0].USERBUYER;
                  this.userInfo.helpDesk = data[0].USERHELPDESK;
+                 this.userInfo.warehouse = data[0].USERWAREHOUSE;
+                 this.userInfo.spaceplanning = data[0].USERSPACEPLANNING;
                  this.userInfo.status = data[0].USERACTIVE;
                  this.userInfo.createdOn = data[0].USERDCRE;
                  this.userInfo.updatedOn = data[0].USERDMAJ;
@@ -228,6 +237,8 @@ export class User {
                  console.log('ICRSID', this.userInfo);
                  localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
                  localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
+                 this.ICRSID = this.userInfo.sid[0].toString();
+                 this.ICRLanguage= this.userInfo.envDefaultLanguage;
                  
                  //console.log('Env: ' + JSON.stringify (this.userInfo));
          }));
@@ -267,12 +278,15 @@ export class User {
                  }
              }
          }
-         localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
+         this.ICRSID =this.userInfo.sid.toString();
+         localStorage.setItem('ICRSID', this.userInfo.sid.toString());
+         this.ICRSID = this.userInfo.sid.toString();
      }
  
      setMainLanguage (newLanguage: string) {
          this.userInfo.envDefaultLanguage =newLanguage;
          localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
+         this.ICRLanguage = this.userInfo.envDefaultLanguage;
      }
    
      setNetwork(in_network, in_networkTree) {

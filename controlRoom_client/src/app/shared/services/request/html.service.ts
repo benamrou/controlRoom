@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
 //import {Http, XHRBackend, RequestOptions, , BrowserXhr,BaseRequestOptions,
@@ -7,6 +7,7 @@ import { Router } from "@angular/router";
 import {Observable, ObservableInput, throwError} from 'rxjs';
 import {catchError, tap } from 'rxjs/operators';
 import {environment} from '../../../../environments/environment';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class HttpService  {
@@ -19,7 +20,7 @@ export class HttpService  {
   public isLoading : boolean = false;
 
 
-  constructor(private httpClient: HttpClient, private _router: Router) {
+  constructor(private httpClient: HttpClient, private _router: Router, private _userService: UserService) {
     this.resetTransaction();
   }
 

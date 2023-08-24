@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import { map } from 'rxjs/operators';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class LogginService{
@@ -11,7 +12,8 @@ export class LogginService{
     private baseEnvironmentUrl: string = '/api/user/';
     public token: string;
 
-    constructor(private _http: HttpService) {
+
+    constructor(private _http: HttpService, private _userService: UserService) {
         // set token if saved in local storage
     }
 
@@ -55,6 +57,11 @@ export class LogginService{
                 let token = (data && data.TOKEN) as string;
                 if (token) {
                     // store username and jwt token in local storage to keep user logged in between page refreshes
+                    this._userService.ICRAuthToken = token;
+                    this._userService.ICRUser = data.USERID;
+                    this._userService.ICRSID = '';
+                    this._userService.ICRLanguage = ''
+                    ;
                     localStorage.setItem('ICRAuthToken', token);
                     localStorage.setItem('ICRUser', data.USERID);
                     localStorage.setItem('ICRSID', '');

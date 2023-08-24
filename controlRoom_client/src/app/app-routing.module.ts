@@ -48,6 +48,7 @@ import { AlertsICRComponent } from './pages/alerts/alerts.icr.component';
 import { SKUDimensionComponent } from './pages/mass.update/sku.dimension/sku.dimension.component';
 import { HolidayScheduleComponent } from './pages/schedule/holiday.schedule/holiday.schedule.component';
 import { OrderUrgentComponent } from './pages/order/urgent/order.urgent.component';
+import { ItemCharacteristicComponent } from './pages/mass.update/item.characteristic/item.characteristic.component';
 
 
 const routes: Routes = [
@@ -99,6 +100,7 @@ const routes: Routes = [
   { path: 'categorymanager', component: CategoryManagerComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemhierarchy', component: ItemHierarchyComponent, canActivate: [AuthentificationGuard] },
   { path: 'skudimension', component: SKUDimensionComponent, canActivate: [AuthentificationGuard] },
+  { path: 'itemcharacteristic', component: ItemCharacteristicComponent, canActivate: [AuthentificationGuard] },
   
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },

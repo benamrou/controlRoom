@@ -4,7 +4,7 @@
                 <i class="fas fa-tachometer-alt"></i>&nbsp; {{ 'Dashboard' }}
             </a>
 
-            <div class="nested-menu" *ngIf="_userService.userInfo.buyer ==1">
+            <div class="nested-menu" *ngIf="_userService.userInfo.buyer ==1 || _userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1">
                 <a class="list-group-item" (click)="addExpandClass('inventory')">
                     <span><i class="fas fa-cubes"></i> &nbsp; {{ 'Inventory' }} </span>
                 </a>
@@ -23,7 +23,7 @@
                     </ul>
                 </li>
             </div>
-            <div class="nested-menu">
+            <div class="nested-menu" *ngIf="_userService.userInfo.buyer ==1 || _userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1">
                 <a class="list-group-item" (click)="addExpandClass('caoconfig')">
                     <span><i class="fas fa-robot"></i> &nbsp; {{ 'Computer Ordering' }} </span>
                 </a>
@@ -92,7 +92,7 @@
             <a routerLink="/search" [routerLinkActive]="['router-link-active']" class="list-group-item">
                 <i class="fa fa-fw fa-search"></i> &nbsp; {{ 'Search' }}
             </a>
-            <div class="nested-menu">
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1">
                 <a class="list-group-item" (click)="addExpandClass('syndigo')" >
                     <span><i class="fas fa-barcode"></i> &nbsp; {{ 'Syndigo' }} </span>
                 </a>
@@ -111,7 +111,7 @@
                     </ul>
                 </li>
             </div>
-            <div class="nested-menu">
+            <div class="nested-menu" *ngIf="_userService.userInfo.spaceplanning ==1">
                 <a class="list-group-item" (click)="addExpandClass('spaceplanning')" >
                     <span><i class="fas fa-ruler-horizontal"></i> &nbsp; {{ 'Space Planning' }} </span>
                 </a>
@@ -126,7 +126,7 @@
                 </li>
             </div>
 
-            <div class="nested-menu" *ngIf="_userService.userInfo.it ==1">
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1">
                 <a class="list-group-item" (click)="addExpandClass('warehouse')" >
                     <span><i class="fas fa-warehouse"></i> &nbsp; {{ 'Warehouse box' }} </span>
                 </a>
@@ -140,7 +140,7 @@
                     </ul>
                 </li>
             </div>
-            <div class="nested-menu" *ngIf="_userService.userInfo.it ==1">
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.it ==1">
                 <a class="list-group-item" (click)="addExpandClass('batchschedule')" >
                     <span><i class="fas fa-chalkboard-teacher"></i> &nbsp; {{ 'I.T.' }} </span>
                 </a>
@@ -185,7 +185,7 @@
                 </li>
             </div>
             
-            <div class="nested-menu" *ngIf="_userService.userInfo.dataIntegrity ==1">
+            <div class="nested-menu" *ngIf="_userService.userInfo.dataIntegrity ==1 || _userService.userInfo.warehouse ==1">
                 <a class="list-group-item" (click)="addExpandClass('massupdate')" >
                     <span><i class="fas fa-chalkboard-teacher"></i> &nbsp; {{ 'Mass-change box' }} </span>
                 </a>
@@ -196,42 +196,47 @@
                                 [routerLinkActive]="['router-link-active']"><span><i class="fas fa-clipboard-check"></i> {{
                                     'Journal'}}</span></a>
                         </li>
-                        <li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/itemhierarchy"
                                 [routerLinkActive]="['router-link-active']">
                                 <span><i class="fas fa-sitemap"></i> {{ 'Item Hierarchy'}}</span>
                             </a>
                         </li>
-                        <li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/categorymanager"
                                 [routerLinkActive]="['router-link-active']">
                                 <span><i class="fas fa-user"></i> {{ 'Category Mgr'}}</span>
                             </a>
                         </li>
-                        <li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/itemattribute" [routerLinkActive]="['router-link-active']">
                                 <span><i class="fas fa-list-ul"></i> {{ 'Item Attribute'}}</span>
                             </a>
                         </li>
-                        <li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/svattribute" [routerLinkActive]="['router-link-active']">
                                 <span><i class="fas fa-code-branch"></i> {{ 'SV Attribute'}}</span>
                             </a>
                         </li>
-                        <li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/svinfo" [routerLinkActive]="['router-link-active']">
                                 <span><i class="fa fa-info-circle"></i> {{ 'SV Info.'}}</span>
                             </a>
                         </li>
-                        <li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/skudimension" [routerLinkActive]="['router-link-active']">
                                 <span><i class="fa fa-ruler"></i> {{ 'SKU dimension'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.warehouse ==1 || _userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemcharacteristic" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-tags"></i> {{ 'Whs. item desc'}}</span>
                             </a>
                         </li>
                     </ul>
                 </li>
             </div>
-            <div class="nested-menu">
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.buyer ==1">
                 <a class="list-group-item" (click)="addExpandClass('reporting')" >
                     <span><i class="fas fa-bar-chart"></i> &nbsp; {{ 'Reporting box' }} </span>
                 </a>
@@ -287,7 +292,7 @@
                 </li>
             </div>
 
-            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1">
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.buyer || _userService.userInfo.dataIntegrity ==1">
                 <a class="list-group-item" (click)="addExpandClass('alertsicr')" >
                     <span><i class="fas fa-bell"></i> &nbsp; {{ 'Alerts' }} </span>
                 </a>

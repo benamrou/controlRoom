@@ -39,11 +39,11 @@ function folderDateLog() {
 
 function buildLogStructure () {
     let timestamp = folderDateLog();
-    
+
     heap.fs.existsSync("logs/") || heap.fs.mkdirSync("logs");
     heap.fs.existsSync("logs/admin/") || heap.fs.mkdirSync("logs/admin/");
+    heap.fs.existsSync("logs/server/") || heap.fs.mkdirSync("logs/server/");
     heap.fs.existsSync("logs/admin/"+timestamp) || heap.fs.mkdirSync("logs/admin/"+timestamp);
-
 }
 
 

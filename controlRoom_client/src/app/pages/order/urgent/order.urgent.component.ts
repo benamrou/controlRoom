@@ -182,6 +182,12 @@ export class OrderUrgentComponent implements OnDestroy {
     this.searchResult.filter(item => item["Selected"] == true)
                      .map(item => ordersToChange.push (item));
 
+
+    for (let i=0; i < this.searchResult.length; i++) {
+      if (this.searchResult[i]['Selected'] && this.searchResult[i]['Urgent enable']) {
+        this.searchResult[i]['Urgent'] = 1;
+      }
+    }
     this._messageService.add({severity:'info', summary:'Info Message', detail: 'Updating orders...'});
     this.subscription.push(this._orderService.updateOrder(ordersToChange)
             .subscribe( 
@@ -314,7 +320,7 @@ export class OrderUrgentComponent implements OnDestroy {
         this.waitMessage =  'Executing the validation PO for central vendor (store to warehouse PO)... <br>'+
                             '<br><br>'+
                             '<b>This process is usually taking between 1 and 3 minutes</b>';
-                            this.subscription.push(this._processService.executeJob('pscde45p', '10 -1 3 -1 -1 0')
+                            this.subscription.push(this._processService.executeJob('pscde45p', '10 -1 3 -1 -1 0 HN 1')
                             .subscribe( 
                               data => { },
                               error => {
@@ -331,7 +337,7 @@ export class OrderUrgentComponent implements OnDestroy {
                                                     '<br><br>'+
                                                     '<b>This process is usually taking between 1 and 3 minutes</b>';
 
-                                                    this.subscription.push(this._processService.executeJob('pscde45p', '10 -1 1 -1 -1 0')
+                                                    this.subscription.push(this._processService.executeJob('pscde45p', '10 -1 1 -1 -1 0 HN 1')
                                                     .subscribe( 
                                                       data => { },
                                                       error => {
@@ -353,6 +359,7 @@ export class OrderUrgentComponent implements OnDestroy {
                                                             this.okExit =true;
                                                             this.waitMessage = '';
                                                             this.displaySendCompleted =true;
+                                                            this.search();
 
                                                             this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Orders sending process completed.'});
                                                         
