@@ -37,7 +37,6 @@ export class LoginComponent implements OnInit {
                 private _structureService: StructureService) { 
         this.canConnect = false;
         this.authentification.username = '';
-        this._messageService.add({severity:'success', summary: 'Success Message', detail:'Order submitted'});
     
     }
 
@@ -64,9 +63,8 @@ export class LoginComponent implements OnInit {
     }
 
     showInvalidCredential() {
-        console.log('Showing issue');
 		this.connectionMessage = [];
-        this._messageService.add({severity:'error', summary:'Invalid credentials', detail:'Use your GOLD user/password'});
+        this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid credentials', detail: 'Use your GOLD user/password or contact HelpDesk'});
 	}
 
     async fetchUserConfiguration() {
