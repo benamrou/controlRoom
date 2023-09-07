@@ -99,7 +99,7 @@ export class ItemCharacteristicComponent implements OnInit{
               title: 'Pick your Warehouse item description file',
               command: (event: any) => {
                   this.activeIndex = 0;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Pick your data file item-characteristic', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Pick your data file item-characteristic', detail: event.item.label});
               }
           },
           {
@@ -108,7 +108,7 @@ export class ItemCharacteristicComponent implements OnInit{
               title: 'Define changes parameter',
               command: (event: any) => {
                 this.activeIndex = 1;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Specify change configuration', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Specify change configuration', detail: event.item.label});
               }
           },
           {
@@ -117,7 +117,7 @@ export class ItemCharacteristicComponent implements OnInit{
               title: 'Execute now or schedule the change',
               command: (event: any) => {
                   this.activeIndex = 2;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Execute or Schedule change', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Execute or Schedule change', detail: event.item.label});
               }
           },
           {
@@ -126,7 +126,7 @@ export class ItemCharacteristicComponent implements OnInit{
               title: 'Confirmation for execution/planification',
               command: (event: any) => {
                   this.activeIndex = 3;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Wrap up', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Wrap up', detail: event.item.label});
               }
           }
       ];
@@ -164,10 +164,10 @@ export class ItemCharacteristicComponent implements OnInit{
             this._importService.getExcelFile(this.uploadedFiles[0])
                     .subscribe ((data: any) => {  
                                 },
-                                (error: any) => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during loading', detail: error }); },
+                                (error: any) => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during loading', detail: error }); },
                                 () => { 
                                         this.indicatorXLSfileLoaded = true;
-                                        this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Data file loaded', detail:  
+                                        this._messageService.add({key:'top', sticky:false, severity:'success', summary:'Data file loaded', detail:  
                                                                 '"' + this.uploadedFiles[0].name + '" worksheet loaded.' }); 
 
                                         // add comments field
@@ -179,7 +179,7 @@ export class ItemCharacteristicComponent implements OnInit{
                             );
 
         } catch (error: any) {
-            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'ERROR file loading message', detail: error }); 
+            this._messageService.add({key:'top', sticky:false, severity:'error', summary:'ERROR file loading message', detail: error }); 
         }
     }
 
@@ -190,13 +190,13 @@ export class ItemCharacteristicComponent implements OnInit{
                 existTemplate = data !== -1;
                 console.log('data getTemplate :', data);
                 },
-                error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Template error', detail: error }); },
+                error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Template error', detail: error }); },
                 () => { 
                         if (existTemplate) {
-                            this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Template file', detail:  
+                            this._messageService.add({key:'top', sticky:false, severity:'success', summary:'Template file', detail:  
                                                     'File Warehouse item description downloaded.' }); 
                         } else {
-                            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
+                            this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
                         }
                 }
             );
@@ -215,7 +215,7 @@ export class ItemCharacteristicComponent implements OnInit{
         this.waitMessage =  'Step 1/4: Posting the execution plan... <br>'+ 
                             '<br><br>'+
                             '<b>Warehouse item description change is usually taking between 1 and 2 minutes</b>';
-        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
+        this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
         this._importService.postExecution(this.uploadedFiles[0].name, this.toolID,
                             this.datePipe.transform(this.startDate,'MM/dd/yy'), 
                             +this.itemTrace, // Implicit cast to have 1: True, 0: False
@@ -227,16 +227,16 @@ export class ItemCharacteristicComponent implements OnInit{
                             executionId = data;
                             console.log('executionId : ', executionId);
                         },
-                        error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                        error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                         () => { 
                     if (this.scheduleFlag) {
-                        this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Step 2/2: Data file execution plan', detail:  
+                        this._messageService.add({key:'top', sticky:false, severity:'success', summary:'Step 2/2: Data file execution plan', detail:  
                                                     '"' + this.uploadedFiles[0].name + '" worksheet loaded for scheduled execution.' }); 
                     }
                     else {
                         // Execute the file
                         if(executionId.RESULT[0] < 0 ) {
-                            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution failure', detail: executionId.MESSAGE[0] }); 
+                            this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Execution failure', detail: executionId.MESSAGE[0] }); 
                             return;
                         }
                         /** Run the job integration */
@@ -244,16 +244,16 @@ export class ItemCharacteristicComponent implements OnInit{
                                             'Step 2/4: Executing Warehouse item description mapping change... <br>'+ 
                                             '<br><br>'+
                                             '<b>Warehouse item description change is usually taking between 1 and 2 minutes</b>';
-                        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
+                        this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
                                     //console.log('data userID : ', data);
                                     userID = data[0].RESULT;
                                 },
-                                error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                                error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                 () =>    {  
                                             
-                                    this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
+                                    this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
 
                                     this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
                                                         'Step 2/4: Executing Warehouse item description mapping change... &emsp;<b>COMPLETED</b><br>'+ 
@@ -262,7 +262,7 @@ export class ItemCharacteristicComponent implements OnInit{
                                                         '<b>Warehouse item description change is usually taking between 1 and 2 minutes</b>';
                                     this._importService.executePlan(userID, this.toolID).subscribe( 
                                             data => {  },
-                                            error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution issue', detail: error }); },
+                                            error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Execution issue', detail: error }); },
                                             () => {  
                                                 this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
                                                                     'Step 2/4: Executing Warehouse item description mapping change... &emsp;<b>COMPLETED</b><br>'+ 
@@ -273,9 +273,9 @@ export class ItemCharacteristicComponent implements OnInit{
                                                 
                                                     this._importService.collectResult(executionId.RESULT[0]).subscribe (
                                                     data => { },
-                                                    error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                                                    error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                                     () => { 
-                                                        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
+                                                        this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
                                                         this.msgFinalDisplayed = 'Warehouse item description ' + this.uploadedFiles[0].name + ' - ' + 
                                                                                 ' has been successfully processed.';
                                                         this.displayUpdateCompleted = true;
@@ -295,7 +295,7 @@ export class ItemCharacteristicComponent implements OnInit{
                         });
                     } 
         else {
-                this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Required data missing', detail: this.missingData }); 
+                this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Required data missing', detail: this.missingData }); 
         }
     }
 
@@ -313,10 +313,10 @@ export class ItemCharacteristicComponent implements OnInit{
                         //console.log('data: ', data, this._importService.wb.sheets[0].worksheet.rows);
                             this._importService.wb.sheets[0].worksheet.rows = data;
                         },
-                        error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during check', detail: error }); },
+                        error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during check', detail: error }); },
                         () => { 
 
-                                this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Content verification', detail:  
+                                this._messageService.add({key:'top', sticky:false, severity:'success', summary:'Content verification', detail:  
                                                             this.uploadedFiles[0].name + ' data file content check completed.' }); 
                                 //console.log('sheets :', this._importService.wb.sheets);
                                 let rowsWithError = this._importService.wb.sheets[0].worksheet.rows.filter((item: { COMMENTS: string | null; }) => item.COMMENTS !== '' && item.COMMENTS !== null);
@@ -345,7 +345,7 @@ export class ItemCharacteristicComponent implements OnInit{
                     );
         }
         else {
-                this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Required data missing', detail: this.missingData }); 
+                this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Required data missing', detail: this.missingData }); 
         }
     }
 

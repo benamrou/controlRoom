@@ -92,7 +92,7 @@
             <a routerLink="/search" [routerLinkActive]="['router-link-active']" class="list-group-item">
                 <i class="fa fa-fw fa-search"></i> &nbsp; {{ 'Search' }}
             </a>
-            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1">
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1 || _userService.userInfo.spaceplanning ==1">
                 <a class="list-group-item" (click)="addExpandClass('syndigo')" >
                     <span><i class="fas fa-barcode"></i> &nbsp; {{ 'Syndigo' }} </span>
                 </a>
