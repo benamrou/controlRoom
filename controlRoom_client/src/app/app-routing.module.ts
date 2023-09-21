@@ -49,7 +49,7 @@ import { SKUDimensionComponent } from './pages/mass.update/sku.dimension/sku.dim
 import { HolidayScheduleComponent } from './pages/schedule/holiday.schedule/holiday.schedule.component';
 import { OrderUrgentComponent } from './pages/order/urgent/order.urgent.component';
 import { ItemCharacteristicComponent } from './pages/mass.update/item.characteristic/item.characteristic.component';
-
+import { VariableWeightComponent } from './pages/mass.update/variable.weight/variable.weight.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -101,6 +101,7 @@ const routes: Routes = [
   { path: 'itemhierarchy', component: ItemHierarchyComponent, canActivate: [AuthentificationGuard] },
   { path: 'skudimension', component: SKUDimensionComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemcharacteristic', component: ItemCharacteristicComponent, canActivate: [AuthentificationGuard] },
+  { path: 'variableweight', component: VariableWeightComponent, canActivate: [AuthentificationGuard] },
   
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },

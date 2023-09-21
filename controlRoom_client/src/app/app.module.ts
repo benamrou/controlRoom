@@ -109,6 +109,7 @@ import { SKUDimensionModule } from './pages/mass.update/sku.dimension/sku.dimens
 import { HolidayScheduleModule } from './pages/schedule/holiday.schedule/holiday.schedule.module';
 import { OrderUrgentModule } from './pages/order/urgent/order.urgent.module';
 import { ItemCharacteristicModule } from './pages/mass.update/item.characteristic/item.characteristic.module';
+import { VariableWeightModule } from './pages/mass.update/variable.weight/variable.weight.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -200,7 +201,8 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     SKUDimensionModule,
     HolidayScheduleModule,
     OrderUrgentModule,
-    ItemCharacteristicModule
+    ItemCharacteristicModule,
+    VariableWeightModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

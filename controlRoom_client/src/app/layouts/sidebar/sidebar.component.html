@@ -233,6 +233,11 @@
                                 <span><i class="fa fa-tags"></i> {{ 'Whs. item desc'}}</span>
                             </a>
                         </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/variableweight" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-balance-scale"></i> {{ 'Variable weight'}}</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </div>
