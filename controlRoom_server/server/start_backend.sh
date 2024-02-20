@@ -30,7 +30,7 @@ nohup ${NODE_BIN}/node --use-strict --expose-gc --optimize-for-size server_admin
 echo -e "[${GREEN}LAST${NC}]\t - ALERTS EXECUTION SERVER NODE: 8092..... \t[${GREEN}DONE${NC}]"
 # nohup ${NODE_BIN}/node --use-strict --expose-gc --no-warnings --max-old-space-size=500 --optimize-for-size --inspect=0.0.0.0:9222 server_admin.js 8092 CRONTAB  > ./logs/server/out_crontab.log 2> ./logs/server/err_crontab.log &
 
-nohup ${NODE_BIN}/node --use-strict --expose-gc --optimize-for-size server_admin.js 8092 CRONTAB  > ./logs/server/out_crontab.log 2> ./logs/server/err_crontab.log &
+# nohup ${NODE_BIN}/node --use-strict --expose-gc --optimize-for-size server_admin.js 8092 CRONTAB  > ./logs/server/out_crontab.log 2> ./logs/server/err_crontab.log &
 
 echo -e "[${GREEN}LAST${NC}]\t - SERVER NODE: 8093..... \t\t\t[${GREEN}DONE${NC}]"
 nohup ${NODE_BIN}/node --use-strict --expose-gc --optimize-for-size server_admin.js  8093 > ./logs/server/out_server.log 2> ./logs/server/err_server.log &

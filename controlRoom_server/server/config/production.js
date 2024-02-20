@@ -4,14 +4,17 @@ module.exports = {
     url: process.env.REDIS_URL
   },
    db: {
-    maxRows: 70000,
+    maxRows: 0,
     provider: "oracledb",
     connAttrs: {
-          "user": "controlroom",
-          "password": "controlroom",
+          //"user": "controlroom",
+          //"password": "controlroom",
+          //"connectString": "10.200.14.230/test",
           // HEINEN'S
-          "connectString": "10.200.14.230/test",
-          // B&B SYMPHONY
+          "user": "hncustom2",
+          "password": "hncustom2",
+          "connectString": "10.200.14.230/central",
+	  // B&B SYMPHONY
           //"connectString": "vps145391.vps.ovh.ca/croom.vps.ovh.ca",
           // S&F PERF
           //"connectString": "10.1.23.13/xe",
@@ -31,10 +34,13 @@ module.exports = {
           "stmtCacheSize": 0 // 40 by default
         },
     connAttrs_volume: {
-      "user": "controlroom",
-      "password": "controlroom",
+      //"user": "controlroom",
+      //"password": "controlroom",
+      //"connectString": "10.200.14.230/test",
       // HEINEN'S
-      "connectString": "10.200.14.230/test",
+      "user": "hncustom2",
+      "password": "hncustom2",
+      "connectString": "10.200.14.230/central",
       "poolMin": 1,
       "poolMax": 200,
       "poolTimeout": 0,
@@ -48,7 +54,7 @@ module.exports = {
  },
  server : {
    timeout: 8800000
- },
+ },/*
  notification: {
   email_service:  'heinens.com',
   email_host:  'smtp.heinens.com',
@@ -56,8 +62,19 @@ module.exports = {
   email_secure:  false,
   email_user: 'inventorycontrol@heinens.com',
   email_password: 'Warrensville4540!',
-  email_private_key: '/opt/apps/controlRoom/controlRoom_server/server/config/private_key.pem',
+  email_private_key: '/home/hnpcen/heinensapps/controlRoom_server/config/private_key.pem',
+  email_cache_dir: '/home/hnpcen/heinensapps/controlRoom_server/cache'
+ },*/
+ notification: {
+  email_service:  'bbsymphony.com',
+  email_host:  'ehub66.webhostinghub.com',
+  email_port:  465,
+  email_secure:  true,
+  email_user: 'heinens@bbsymphony.com',
+  email_password: 'bbsymphony1!1!',
+  email_private_key: '/opt/apps/controlRoom/controlRoom_server/server/config/key/private_key.pem',
   email_cache_dir: '/opt/apps/controlRoom/controlRoom_server/server/cache'
  },
  secret: 'bbsymphonysecret',
 };
+

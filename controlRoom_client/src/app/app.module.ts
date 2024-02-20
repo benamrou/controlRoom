@@ -110,6 +110,8 @@ import { HolidayScheduleModule } from './pages/schedule/holiday.schedule/holiday
 import { OrderUrgentModule } from './pages/order/urgent/order.urgent.module';
 import { ItemCharacteristicModule } from './pages/mass.update/item.characteristic/item.characteristic.module';
 import { VariableWeightModule } from './pages/mass.update/variable.weight/variable.weight.module';
+import { ItemLogisticCodeModule } from './pages/mass.update/item.logistic.code/item.logistic.code.module';
+
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -130,6 +132,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
+import { DashboardReceptionModule } from './pages/reporting/account.payable/reception/dashboard.reception.module';
 
 @NgModule({
   declarations: [
@@ -202,7 +205,9 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     HolidayScheduleModule,
     OrderUrgentModule,
     ItemCharacteristicModule,
-    VariableWeightModule
+    VariableWeightModule,
+    ItemLogisticCodeModule,
+    DashboardReceptionModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

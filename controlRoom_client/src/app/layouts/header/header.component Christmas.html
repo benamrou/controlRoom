@@ -1,0 +1,79 @@
+<nav class="navbar navbar-expand-lg fixed-top" 
+     *ngIf="_userService.userInfo">
+    <p-dialog header="Notification" [visible]="displaySwitch"  [style]="{width: '50vw'}"  [maximizable]="false">
+        <span>{{msgDisplayed}}</span>
+            <p-footer>
+                <button style="float: right; margin-bottom:0.5em" 
+                        type="button" pButton icon="fas fa-check" iconPos="right" (click)="displaySwitch=false" 
+                        label="Ok">
+                </button>
+            </p-footer>
+    </p-dialog>
+		<!-- Snow effect START -->
+        <!--div *ngFor="let i of ' '.repeat(100).split('')" class="snowflake">*</div-->
+        <!-- Snow effect END -->
+
+        <div class="pos-f-t fixed-top header" >
+            <!--nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md"-->
+            <nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md"  style="background-image: url('./assets/pictures/decoration/christmas/banner_christmas1.jpg') !important; background-size: contain !important;">
+
+                <!-- Standard headernav class="navbar navbar-inverse bg-inverse navbar-toggleable-md"  style="background-color: steelblue !important" -->
+
+                <!-- Chistmas gif style="background-image: url('./assets/pictures/decoration/christmas/banner_christmas1.jpg'); background-size: contain;" -->
+			
+                <button class="navbar-toggler navbar-toggler-right" (click)="toggleSidebar()" data-bs-toggle="dropdown">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a class="navbar-brand" href="#" [ngStyle]="{'color': appForegroundColorEnvironment}" style="padding-left: 2%">{{appEnvironment}}</a>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02" style="padding-right: 3%">
+                    <ul class="navbar-nav ml-auto mt-2 mt-md-0">
+        
+        <!-- Panel Left/Right -->
+                        <!--li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link mt-1" style="padding: 0.375rem 1rem !important; border-color: #999;" (click)="rltAndLtr()">RTL/LTR</a>
+                        </li> &nbsp; -->
+        
+        <!-- Panel Environment selection -->                
+                        <li *ngIf="environments.length > 1" class="nav-item dropdown"  >
+                            <!--Environment list -->
+                                <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown">
+                                    <i class="fa fa-database" ></i> <b class="caret"></b><span class="sr-only"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                        <a *ngFor="let environment of environments" class="dropdown-item" 
+                                            (click)="environmentChange(environment.label, environment.value.type)">{{environment.label}}
+                                        </a>
+                                </div>
+                        </li>
+        
+        <!-- Panel Language -->    
+                        <li class="nav-item dropdown">
+                            <a href="javascript:void(0)" class="nav-link dropdown-toggle" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}" data-bs-toggle="dropdown">
+                                <i class="fa fa-language"></i>  <b class="caret"></b>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" (click)="changeLang('us_US')">American</a>
+                                <a class="dropdown-item" (click)="changeLang('en_EN')">English</a>
+                                <a class="dropdown-item" (click)="changeLang('fr_FR')">French</a>
+                            </div>
+                        </li>
+        
+        <!-- Panel Profile -->    
+                        <li class="nav-item dropdown">
+                            <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fa fa-user"></i> {{_userService.userInfo.userNameDisplay}} <b class="caret"></b>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" >
+                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-user"></i> Profile</a>
+                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
+                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-gear"></i> Settings</a>
+                                <a class="dropdown-item" href="jvascript:void(0)" (click)="rltAndLtr()"><i class="fa fa-fw fa-bars"></i> Switch Menu</a>
+                                <a class="dropdown-item" [routerLink]="['/login']" (click)="onLoggedout()"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </nav>
+        </div>
+</nav>

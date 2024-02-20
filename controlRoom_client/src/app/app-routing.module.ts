@@ -51,6 +51,8 @@ import { OrderUrgentComponent } from './pages/order/urgent/order.urgent.componen
 import { ItemCharacteristicComponent } from './pages/mass.update/item.characteristic/item.characteristic.component';
 import { VariableWeightComponent } from './pages/mass.update/variable.weight/variable.weight.component';
 
+import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
+
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
   { path: 'login', component: LoginComponent },
@@ -111,6 +113,7 @@ const routes: Routes = [
   { path: 'qualitywhsreplenishment', component: QualityWhsReplenishmentComponent, canActivate: [AuthentificationGuard] },
   { path: 'smartubd', component: SmartUBDComponent, canActivate: [AuthentificationGuard] },
   { path: 'reporting', component: ReportingComponent, canActivate: [AuthentificationGuard] },
+  { path: 'dashboardreception', component: DashboardReceptionComponent, canActivate: [AuthentificationGuard] },
 
   /** ALERT */
   { path: 'alerts-icr', component: AlertsICRComponent, canActivate: [AuthentificationGuard] },

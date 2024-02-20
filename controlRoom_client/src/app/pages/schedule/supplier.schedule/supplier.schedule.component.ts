@@ -69,7 +69,7 @@ export class SupplierScheduleComponent {
 
    // Constante used for date calculation
    oneDay: number = 1000 * 60 * 60 * 24 ;
-   oneWeek: number = 1000 * 60 * 60 * 24 * 7;
+   oneWeek: number = 1000 * 60 * 60 * 24 * 6;
 
    // Calculation Schedule
    colorTemporaryOrder : any = ['#FF8C00','#FF4500','#FF6347','#FF7F50','#FFA500','#DB7093','#FF69B4'];
@@ -239,8 +239,10 @@ export class SupplierScheduleComponent {
         let dateFirst = new Date(new Date(first).setDate(first.getDate() - lessDays));
 
         schedule.numberWeekDays = Math.ceil(Math.abs((dateFirst.getTime() - endDate.getTime()))/this.oneWeek);
-        if (schedule.numberWeekDays < 2) { schedule.numberWeekDays = 1; schedule.widthTable = 1100; }
-        if (schedule.numberWeekDays >=  2) { schedule.widthTable = 1100 + 700 * (<number>schedule.numberWeekDays-1) } // Restrict to two weeks
+        console.log('numberWeekDays:',schedule.numberWeekDays);
+        console.log('numberWeekDays (calc):',Math.abs((dateFirst.getTime() - endDate.getTime()))/this.oneWeek);
+        if (schedule.numberWeekDays < 1) { schedule.numberWeekDays = 1; schedule.widthTable = 1100; }
+        if (schedule.numberWeekDays >=  1) { schedule.widthTable = 1100 + 700 * (<number>schedule.numberWeekDays-1) } // Restrict to two weeks
         
         console.log('schedule.numberWeekDays : ' + schedule.numberWeekDays);
         

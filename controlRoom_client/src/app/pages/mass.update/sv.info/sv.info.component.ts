@@ -361,7 +361,7 @@ export class SVInfoComponent implements OnInit {
             result = false;
         }
         if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'INFO_VALUE') {
-            this.globalError.push('The column Ds header must be named INFO_VALUE');
+            this.globalError.push('The column D header must be named INFO_VALUE');
             result = false;
         }
 

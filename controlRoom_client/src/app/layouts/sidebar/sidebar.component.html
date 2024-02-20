@@ -238,6 +238,11 @@
                                 <span><i class="fa fa-balance-scale"></i> {{ 'Variable weight'}}</span>
                             </a>
                         </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/logisticcode" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-box"></i> {{ 'Logistic code'}}</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </div>
@@ -290,6 +295,13 @@
                             <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'smartubd' }"> 
                                 <a class="bbs_link_menu" routerLink="/smartubd" [routerLinkActive]="['router-link-active']" >
                                     <span><i class="pi pi-clock"></i> &nbsp; {{ 'Smart UBD' }} </span>
+                                </a>
+                            </ul>
+                        </li>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('quality') !== -1 }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'smartubd' }"> 
+                                <a class="bbs_link_menu" routerLink="/dashboardreception" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="pi pi-download"></i> &nbsp; {{ 'AP Receiving' }} </span>
                                 </a>
                             </ul>
                         </li>

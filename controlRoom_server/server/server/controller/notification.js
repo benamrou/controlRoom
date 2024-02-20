@@ -115,8 +115,8 @@ function sendEmail(to, emailcc, emailbcc, subject, message) {
         }
     });
     heap.logger.log('alert', 'Email sent to:' + to + ' cc:' +  emailcc + ' bcc:' + emailbcc + ' subject: ' + subject, 'alert', 1);
-    heap.logger.log('alert', 'Message sent: ' + message, 'alert', 1);
-    heap.logger.log('alert', 'Preview URL: ' + configuration.nodemailer.getTestMessageUrl(infoMessage), 'alert', 1);
+    // heap.logger.log('alert', 'Message sent: ' + message, 'alert', 1);
+    // heap.logger.log('alert', 'Preview URL: ' + configuration.nodemailer.getTestMessageUrl(infoMessage), 'alert', 1);
 
     mailOptions = null;
     infoMessage = null;
@@ -129,7 +129,7 @@ function sendEmail(to, emailcc, emailbcc, subject, message) {
     // Preview only available when sending through an Ethereal account
 }
 
-function sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, forceExit) {
+function sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, forceExit, filenameParam) {
     let mailOptions = {
         from: configuration.config.notification.email_user,
         to,
@@ -138,7 +138,7 @@ function sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, 
         subject,
         html: message,
         attachments: [{
-            filename: 'result.xlsx',
+            filename: filenameParam,
             //content: new Buffer(stream, 'utf-8')
             content: Buffer.from(stream, 'utf-8')
         }]
@@ -157,13 +157,13 @@ function sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, 
                                             preHtml + 
                                             'Refer to the attachment for details. Content can not be displayed in the email body.' , 'alert', 3);
                 message =  'Refer to the attachment for details. Content can not be displayed in the email body.';
-                sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, true);
+                sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, true, FILENAME_EXT);
             }
         }
         else {
             heap.logger.log('alert', 'Email sent to:' + to + ' cc:' +  emailcc + ' bcc:' + emailbcc + ' subject: ' + subject, 'alert', 1);
-            heap.logger.log('alert', 'Message sent: ' + message, 'alert', 1);
-            heap.logger.log('alert', 'Preview URL: ' + configuration.nodemailer.getTestMessageUrl(infoMessage), 'alert', 1);
+            // heap.logger.log('alert', 'Message sent: ' + message, 'alert', 1);
+            // heap.logger.log('alert', 'Preview URL: ' + configuration.nodemailer.getTestMessageUrl(infoMessage), 'alert', 1);
             // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
             // Preview only available when sending through an Ethereal account
         }
@@ -240,8 +240,12 @@ module.get = async function (request,response) {
                         }
                         heap.parseXML2JS(data, function (err, result) {
                             let SUBJECT_EXT ='';
+                            let FILENAME_EXT='result.xlsx';
                             if ( typeof request.header('SUBJECT_EXT') !== 'undefined' )  {
                                 SUBJECT_EXT = request.header('SUBJECT_EXT');
+                            }
+                            if ( typeof request.header('FILENAME_EXT') !== 'undefined' )  {
+                                FILENAME_EXT = request.header('FILENAME_EXT');
                             }
                             let bannerAdjusted, queryAdjusted;
                             try {
@@ -370,7 +374,7 @@ module.get = async function (request,response) {
                                                                                     if (html.indexOf('ERRORDIAGNOSED') < 1) {
                                                                                         workbook.xlsx.writeBuffer()
                                                                                         .then(function(buffer) {
-                                                                                            sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false);
+                                                                                            sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
                                                                                             buffer=null;
                                                                                         });
                                                                                     }
@@ -380,7 +384,7 @@ module.get = async function (request,response) {
                                                             if (html.indexOf('ERRORDIAGNOSED') < 1) {
                                                                 workbook.xlsx.writeBuffer()
                                                                 .then(function(buffer) {
-                                                                    sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false);
+                                                                    sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
                                                                     buffer=null;
                                                                 });
                                                             }
@@ -395,14 +399,25 @@ module.get = async function (request,response) {
                                                                     '<b>Distribution list : </b> ' + alertData[0].ALTEMAIL) ;  /* Content */
                                                 }
                                             }   
-                                            SQL.executeQuery(SQL.getNextTicketID(),
-                                                    "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
-                                                    JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
-                                                    "'{" + request.query.PARAM + "}'",
-                                                    request.header('USER'),
-                                                    "'{" + request.header('DATABASE_SID') + "}'", 
-                                                    "'{" +request.header('LANGUAGE') + "}'", 
-                                                    request,response);
+                                            if (detailData.length > 500) {
+                                                SQL.executeQuery(SQL.getNextTicketID(),
+                                                        "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(''{big data}''), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
+                                                        "'{" + request.query.PARAM + "}'",
+                                                        request.header('USER'),
+                                                        "'{" + request.header('DATABASE_SID') + "}'", 
+                                                        "'{" +request.header('LANGUAGE') + "}'", 
+                                                        request,response);
+                                            }
+                                            else {
+                                                SQL.executeQuery(SQL.getNextTicketID(),
+                                                        "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
+                                                        JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
+                                                        "'{" + request.query.PARAM + "}'",
+                                                        request.header('USER'),
+                                                        "'{" + request.header('DATABASE_SID') + "}'", 
+                                                        "'{" +request.header('LANGUAGE') + "}'", 
+                                                        request,response);
+                                            }
 
                                             //sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT, 'body')  
                                             //response.send(detailData);
@@ -504,7 +519,7 @@ module.get = async function (request,response) {
                                                                     if (html.indexOf('ERRORDIAGNOSED') < 1) {
                                                                         workbook.xlsx.writeBuffer()
                                                                         .then(function(buffer) {
-                                                                            sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false);
+                                                                            sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
                                                                             buffer=null;
                                                                         });
                                                                     }
@@ -514,7 +529,7 @@ module.get = async function (request,response) {
                                                 if (html.indexOf('ERRORDIAGNOSED') < 1) {
                                                     workbook.xlsx.writeBuffer()
                                                     .then(function(buffer) {
-                                                        sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false);
+                                                        sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
                                                         buffer=null;
                                                     });
                                                 }
@@ -531,14 +546,25 @@ module.get = async function (request,response) {
                                     }   
 
                                     /** Records trace in ALERTLOG **/
-                                    SQL.executeQuery(SQL.getNextTicketID(),
-                                            "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
-                                            JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
-                                            "'{" + request.query.PARAM + "}'",
-                                            request.header('USER'),
-                                            "'{" + request.header('DATABASE_SID') + "}'", 
-                                            "'{" +request.header('LANGUAGE') + "}'", 
-                                            request,response);
+                                    if (detailData.length > 500) {
+                                        SQL.executeQuery(SQL.getNextTicketID(),
+                                                "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(''{big data}''), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
+                                                "'{" + request.query.PARAM + "}'",
+                                                request.header('USER'),
+                                                "'{" + request.header('DATABASE_SID') + "}'", 
+                                                "'{" +request.header('LANGUAGE') + "}'", 
+                                                request,response);
+                                    }
+                                    else {
+                                        SQL.executeQuery(SQL.getNextTicketID(),
+                                                "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
+                                                JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
+                                                "'{" + request.query.PARAM + "}'",
+                                                request.header('USER'),
+                                                "'{" + request.header('DATABASE_SID') + "}'", 
+                                                "'{" +request.header('LANGUAGE') + "}'", 
+                                                request,response);
+                                    }
 
                                     
                                     result=null;
@@ -599,8 +625,12 @@ module.get = async function (request,response) {
                                 }
                                 
                                 let SUBJECT_EXT ='';
+                                let FILENAME_EXT='result.xlsx';
                                 if ( typeof request.header('SUBJECT_EXT') !== 'undefined' )  {
                                     SUBJECT_EXT = request.header('SUBJECT_EXT');
+                                }
+                                if ( typeof request.header('FILENAME_EXT') !== 'undefined' )  {
+                                    FILENAME_EXT = request.header('FILENAME_EXT');
                                 }
 
                                 let bannerAdjusted, queryAdjusted;

@@ -231,6 +231,8 @@ export class ImportService{
         let pt33_6_ITEMSVINFO = 6;
         let pt33_7_SKUDIMENSION = 7; /* No pro*C to call */
         let pt33_8_ITEMCHARACTERISTIC = 8;
+        let pt33_9_ITEMVARIABLEWEIGHT = 9;
+        let pt33_10_ITEMLOGISTICCODE = 10;
 
         this.request = this.executeJobURL;
         let headersSearch = new HttpHeaders();
@@ -257,6 +259,12 @@ export class ImportService{
                 break;
             case pt33_8_ITEMCHARACTERISTIC: /* Item Characteristic */ 
                 command = command + 'psifa128p psifa128p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ';
+                break;
+            case pt33_9_ITEMVARIABLEWEIGHT: /* Variable weght */ 
+                command = command + 'psifa41p psifa41p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                break;
+            case pt33_10_ITEMLOGISTICCODE: /* Logisitc code */ 
+                command = command + 'psifa41p psifa41p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
                 break;
             default:
                 console.log ('Unknown mass tool id : ', toolId);

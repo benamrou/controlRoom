@@ -1,4 +1,6 @@
 $topnav-background-color: #222;
+// Winter sunset
+$topnav-background-color:linear-gradient(to top,#040308,#AD4A28,#DF723C,#FC7001,#DCB697,#9BA5AE,#3E5879,#020B1A);
 :host {
     display: block;
 }
@@ -39,7 +41,7 @@ $topnav-background-color: #222;
         -webkit-border-radius: 50px;
         border-radius: 50px;
         color: rgba(255, 255, 255, 0.8);
-        background: $topnav-background-color;
+        //background: $topnav-background-color;
         border: 2px solid rgba(255, 255, 255, 0.8);
         font-size: 18px;
         line-height: 40px;

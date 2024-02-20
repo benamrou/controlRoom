@@ -1,0 +1,22 @@
+0 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/gaia_out txt.2* 1
+1 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/gaia_out log 1
+2 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/tomee_log log 14
+3 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/tomee_log txt 14
+4 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/tomee_log gz 14
+5 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/bin_log log 14
+6 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/nmon_files nmon 365
+7 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/nmon_files gz 365
+8 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/ws_log gz 14
+9 1 * * * /home/hntcen/bin/deleteFiles /data/hntcen/ws_log txt 14
+10 1 * * * /home/hntcen/bin/deleteFiles /home/hntcen/bin/shell/logs log 30
+
+# ICR
+0 1 * * * /opt/apps/controlRoom/controlRoom_server/server/start_backend.sh > /opt/apps/controlRoom/controlRoom_server/server/init.log
+30 0 * * * /opt/apps/controlRoom/controlRoom_server/server/scripts/prod/maintenance.sh
+*/31 * * * * /opt/apps/controlRoom/controlRoom_server/server/scripts/icr/restart/check_icr_status.sh
+
+# Supplier schedule
+0 19 * * * /home/hnpcen/bin/shell/supplierSchedule/supplierSchedule.sh
+0 11 * * 0 /home/hnpcen/bin/shell/supplierSchedule/supplierSchedule_Year1.sh
+0 13 * * 0 /home/hnpcen/bin/shell/supplierSchedule/supplierSchedule_Year2.sh
+

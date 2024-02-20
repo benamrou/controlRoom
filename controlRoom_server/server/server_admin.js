@@ -124,6 +124,7 @@ let reporting = require('./server/controller/reporting')(app, SQL);
 let executeSQL = require('./server/controller/executeSQL')(app, SQL);
 let ubd = require('./server/controller/ubd')(app, SQL);
 let alerts = require('./server/controller/alerts')(app, SQL);
+let syndigo = require('./server/controller/syndigo')(app, SQL);
 
 
 //dbConnection.createPool('dd');
@@ -167,6 +168,7 @@ executeSQL.post(app, oracledb);
 ubd.get(app, oracledb);
 ubd.post(app, oracledb);
 alerts.get(app, oracledb);
+syndigo.get(app, oracledb);
 //finance.get(aoo,oracledb);
 
 

@@ -205,12 +205,12 @@ onRemoveImage(event) {
                   height *= maxSize / width;
                   width = maxSize;
               }
-          } /*else {
+          } else {
               if (height > maxSize) {
                   width *= maxSize / height;
                   height = maxSize;
               }
-          }*/
+          }
           canvas.width = width;
           canvas.height = height;
           canvas.getContext('2d').drawImage(image, 0, 0, width, height);

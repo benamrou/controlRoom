@@ -96,7 +96,7 @@ export class VariableWeightComponent implements OnInit{
       this.menuItems = [{
               id: 'step0',
               label: 'Data selection',
-              title: 'Pick your Warehouse item description file',
+              title: 'Pick your variable weight file',
               command: (event: any) => {
                   this.activeIndex = 0;
                   this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Pick your data file item-variable weight', detail: event.item.label});
@@ -194,7 +194,7 @@ export class VariableWeightComponent implements OnInit{
                 () => { 
                         if (existTemplate) {
                             this._messageService.add({key:'top', sticky:false, severity:'success', summary:'Template file', detail:  
-                                                    'File Warehouse item description downloaded.' }); 
+                                                    'File variable weight downloaded.' }); 
                         } else {
                             this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
                         }
@@ -214,7 +214,7 @@ export class VariableWeightComponent implements OnInit{
 
         this.waitMessage =  'Step 1/4: Posting the execution plan... <br>'+ 
                             '<br><br>'+
-                            '<b>Warehouse item description change is usually taking between 1 and 2 minutes</b>';
+                            '<b>Variable weight change is usually taking between 1 and 2 minutes</b>';
         this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
         this._importService.postExecution(this.uploadedFiles[0].name, this.toolID,
                             this.datePipe.transform(this.startDate,'MM/dd/yy'), 
@@ -241,9 +241,9 @@ export class VariableWeightComponent implements OnInit{
                         }
                         /** Run the job integration */
                         this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
-                                            'Step 2/4: Executing Warehouse item description mapping change... <br>'+ 
+                                            'Step 2/4: Executing variable weight mapping change... <br>'+ 
                                             '<br><br>'+
-                                            '<b>Warehouse item description change is usually taking between 1 and 2 minutes</b>';
+                                            '<b>Variable weight change is usually taking between 1 and 2 minutes</b>';
                         this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
@@ -256,37 +256,37 @@ export class VariableWeightComponent implements OnInit{
                                     this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
 
                                     this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
-                                                        'Step 2/4: Executing Warehouse item description mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                        'Step 2/4: Executing variable weight mapping change... &emsp;<b>COMPLETED</b><br>'+ 
                                                         'Step 3/4: Running integration job... <br>'+ 
                                                         '<br><br>'+
-                                                        '<b>Warehouse item description change is usually taking between 1 and 2 minutes</b>';
+                                                        '<b>Variable weight change is usually taking between 1 and 2 minutes</b>';
                                     this._importService.executePlan(userID, this.toolID).subscribe( 
                                             data => {  },
                                             error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Execution issue', detail: error }); },
                                             () => {  
                                                 this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
-                                                                    'Step 2/4: Executing Warehouse item description mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                    'Step 2/4: Executing variable weight mapping change... &emsp;<b>COMPLETED</b><br>'+ 
                                                                     'Step 3/4: Running integration job... &emsp;<b>COMPLETED</b><br>'+ 
                                                                     'Step 4/4: Collecting integration result... <br>'+ 
                                                                     '<br><br>'+
-                                                                    '<b>Warehouse item description change is usually taking between 1 and 2 minutes</b>';
+                                                                    '<b>Variable weight change is usually taking between 1 and 2 minutes</b>';
                                                 
                                                     this._importService.collectResult(executionId.RESULT[0]).subscribe (
                                                     data => { },
                                                     error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                                     () => { 
                                                         this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
-                                                        this.msgFinalDisplayed = 'Warehouse item description ' + this.uploadedFiles[0].name + ' - ' + 
+                                                        this.msgFinalDisplayed = 'variable weight ' + this.uploadedFiles[0].name + ' - ' + 
                                                                                 ' has been successfully processed.';
                                                         this.displayUpdateCompleted = true;
 
 
                                                         this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
-                                                                            'Step 2/4: Executing Warehouse item description mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                            'Step 2/4: Executing variable weight mapping change... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             'Step 3/4: Running integration job... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             'Step 4/4: Collecting integration result... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             '<br><br>'+
-                                                                            '<b>Warehouse item description is usually taking between 1 and 2 minutes</b>';
+                                                                            '<b>Variable weight is usually taking between 1 and 2 minutes</b>';
                                                         this.waitMessage = '';
                                                     });
                                                 });
@@ -364,8 +364,16 @@ export class VariableWeightComponent implements OnInit{
         this.globalError.push('The column B header must be named LV_CODE'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[2].field.toUpperCase() !== 'ITEM_DESC') {
-        this.globalError.push('The column C header must be named ITEM_DESC'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[2].field.toUpperCase() !== 'ITEM_SIZE') {
+        this.globalError.push('The column C header must be named ITEM_SIZE'); 
+      result = false;
+    }
+    if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'PACK') {
+        this.globalError.push('The column D header must be named PACK'); 
+      result = false;
+    }
+    if (this._importService.wb.sheets[0].worksheet.columns[4].field.toUpperCase() !== 'PURCHASE_PRICE') {
+        this.globalError.push('The column E header must be named PURCHASE_PRICE'); 
       result = false;
     }
 

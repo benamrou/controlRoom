@@ -362,15 +362,15 @@ export class ItemAttributeComponent implements OnInit{
       result = false;
     }
     if (this._importService.wb.sheets[0].worksheet.columns[1].field.toUpperCase() !== 'ATTRIBUTE_CLASS') {
-        this.globalError.push('The column C header must be named ATTRIBUTE_CLASS'); 
+        this.globalError.push('The column B header must be named ATTRIBUTE_CLASS'); 
       result = false;
     }
     if (this._importService.wb.sheets[0].worksheet.columns[2].field.toUpperCase() !== 'ATTRIBUTE_CODE') {
-        this.globalError.push('The column D header must be named ATTRIBUTE_CODE'); 
+        this.globalError.push('The column C header must be named ATTRIBUTE_CODE'); 
       result = false;
     }
     if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'ATTRIBUTE_VALUE') {
-        this.globalError.push('The column E header must be named ATTRIBUTE_VALUE'); 
+        this.globalError.push('The column D header must be named ATTRIBUTE_VALUE'); 
       result = false;
     }
 
