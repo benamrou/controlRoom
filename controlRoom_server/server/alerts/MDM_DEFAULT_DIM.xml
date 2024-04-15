@@ -1,0 +1,61 @@
+<ROOT>
+    <QUERY> 
+  SELECT sobcext "Merch. code", 
+       pkstrucobj.get_desc@heinens_custom_prod(1, sobcint,''HN'') "Merch. desc.", 
+       arvcexr "Item code", 
+       arvcexv "SV", 
+       arccode "UPC", 
+NVL((SELECT ''WAREHOUSE'' FROM artuc@heinens_custom_prod ac, foudgene@heinens_custom_prod WHERE  ac.aracinr= arvcinr AND aratfou=1 AND foucfin=aracfin AND foutype=3 AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin AND ROWNUM=1), ''DSD'') "Flow",
+       pkstrucobj.get_desc@heinens_custom_prod(1, arvcinr,''HN'') "Item desc.", 
+       aruhaut "Height", arulong "Width", arularg "Depth",
+       ''Default dimension'' "Comment"
+FROM artcoca@heinens_custom_prod , artuv@heinens_custom_prod , STRUCTURE@heinens_custom_prod , strucobj@heinens_custom_prod son , artul@heinens_custom_prod
+WHERE strcint=pkstrucrel.GET_CINT_PERE@heinens_custom_prod(1,1,arccinr,TRUNC(SYSDATE))
+AND sobcint=strpere
+AND TRUNC(SYSDATE) BETWEEN strddeb AND strdfin
+-- ARTCOCA
+AND TRUNC(SYSDATE) BETWEEN arcddeb AND arcdfin
+AND arccinv = arvcinv
+and arvcinv = arucinl
+AND arulong=10
+AND arularg=10
+AND aruhaut=10
+AND (INSTR(''1010064930000'', sobcext) > 0 OR
+INSTR(''1030010240024'', sobcext) > 0 OR
+INSTR(''1030010840084'', sobcext) > 0 OR
+INSTR(''1030010840351'', sobcext) > 0 OR
+INSTR(''1020113360000'', sobcext) > 0 OR
+INSTR(''1030381490170'', sobcext) > 0 OR
+INSTR(''1030010840350'', sobcext) > 0 OR
+INSTR(''1030010840566'', sobcext) > 0 OR
+INSTR(''1030010110000'', sobcext) > 0 OR
+INSTR(''1030010840567'', sobcext) > 0 OR
+INSTR(''1030011900000'', sobcext) > 0 OR
+INSTR(''1030010240025'', sobcext) > 0 OR
+INSTR(''1030010240242'', sobcext) > 0 OR
+INSTR(''1030010260000'', sobcext) > 0 OR
+INSTR(''1030031740000'', sobcext) > 0 OR
+INSTR(''1030031940000'', sobcext) > 0 OR
+INSTR(''1030010060006'', sobcext) > 0 OR
+INSTR(''1030010060426'', sobcext) > 0 OR
+INSTR(''1030010060508'', sobcext) > 0 OR
+INSTR(''1030010310031'', sobcext) > 0 OR
+INSTR(''1030013710000'', sobcext) > 0 OR
+INSTR(''1030131160000'', sobcext) > 0 OR
+INSTR(''1030020630000'', sobcext) > 0 OR
+INSTR(''1020103730000'', sobcext) > 0 OR
+INSTR(''1020102200000'', sobcext) > 0 OR
+INSTR(''1020102060000'', sobcext) > 0 OR
+INSTR(''1020102080000'', sobcext) > 0 OR
+INSTR(''1020102320289'', sobcext) > 0 )
+AND EXISTS (SELECT 1 FROM artuc@heinens_custom_prod , artvl@heinens_custom_prod
+WHERE araseqvl = arlseqvl
+AND arlcinluvc=arccinv AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin AND ROWNUM=1)
+ORDER BY "Merch. code" ASC
+
+  </QUERY>
+  <HEADERIFEMPTY>No MDM Item with default dimension</HEADERIFEMPTY>
+  <HEADER>MDM Item with default dimension</HEADER>
+  
+</ROOT>
+

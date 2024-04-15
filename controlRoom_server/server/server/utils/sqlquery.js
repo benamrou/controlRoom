@@ -97,7 +97,7 @@ async function executeLibQueryUsingMyCallback (ticketId, queryNum, params, user,
 }
 module.exports.executeLibQueryUsingMyCallback = executeLibQueryUsingMyCallback; 
 
-function executeQuery (ticketId, query, params, user, database_sid, language, request, response) {
+async function executeQuery (ticketId, query, params, user, database_sid, language, request, response) {
     let volume = 0; // No need for big result query
     executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, volume, 
     function (err,data) {

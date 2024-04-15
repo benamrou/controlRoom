@@ -1,0 +1,45 @@
+<ROOT>
+    <QUERY> 
+SELECT DISTINCT ar_donord  "Whs #",
+       ar_cproin || ''/'' || ar_ilogis "Item code/LV",
+       ar_libpro "Item desc.", arccode "UPC", 
+       rp_adrpic "Picking address",
+       (SELECT sum(nvl(rp_nqtuvc,0)) "Inventory" 
+        FROM TB_LCUMS@heinens_custom_prod 
+        WHERE UL_USSCC = RP_USSCC    
+        AND UL_CSSCC = RP_CSSCC    
+        AND UL_NUMLIG = RP_NUMLIG) "Inventory",
+       aruhaut "Height", arulong "Width", arularg "Depth",
+       
+       ''Default dimension'' "Comment"
+FROM artcoca@heinens_custom_prod , artuv@heinens_custom_prod ,
+     artul@heinens_custom_prod, 
+     tb_art@heinens_custom_prod, artvl@heinens_custom_prod, v_pick_3@HEINENS_STK_PROD
+WHERE ar_cproin=arlcexr
+AND to_number(ar_ilogis)=arlcexvl
+AND aruseqvl=arlseqvl
+AND arutypul=1
+AND arlcinluvc=arccinv
+AND ar_donord IN (90061,91070,  91071)
+AND rp_donord = ar_donord    and rp_cproin = ar_cproin  and rp_arprom = ar_arprom    and rp_ilogis = ar_ilogis
+-- ARTCOCA
+AND TRUNC(SYSDATE) BETWEEN arcddeb AND arcdfin
+AND arccinv = arvcinv
+and arvcinv = arucinl
+AND ar_cproin=arvcexr
+and aruseqvl=arlseqvl
+and arlcexvl=to_number(ar_ilogis)
+AND arulong=10
+AND arularg=10
+AND aruhaut=10
+AND EXISTS (SELECT 1 FROM artuc@heinens_custom_prod WHERE TRUNC(SYSDATE) BETWEEN araddeb AND aradfin 
+AND arasite=ar_donord
+AND araseqvl=arlseqvl AND arlcinr=aracinr AND aratcde=1)
+ORDER BY "Whs #" ASC
+
+  </QUERY>
+  <HEADERIFEMPTY>No MDM Item with default dimension</HEADERIFEMPTY>
+  <HEADER>MDM Item with default dimension</HEADER>
+  
+</ROOT>
+

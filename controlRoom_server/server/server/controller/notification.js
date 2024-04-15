@@ -247,10 +247,15 @@ module.get = async function (request,response) {
                             if ( typeof request.header('FILENAME_EXT') !== 'undefined' )  {
                                 FILENAME_EXT = request.header('FILENAME_EXT');
                             }
-                            let bannerAdjusted, queryAdjusted;
+                            let bannerAdjusted, queryAdjusted, renameColumn, query2Adjusted;
                             try {
                                 bannerAdjusted = '' + result.ROOT.BANNER;
                                 queryAdjusted = '' + result.ROOT.QUERY;
+                                query2Adjusted = '' + result.ROOT.QUERY2;
+                                renameColumn = '' + result.ROOT.RENAME;
+                                heap.logger.log('alert', 'result.ROOT.BANNER:' + JSON.stringify(result.ROOT.QUERY2), 'alert', 3);
+                                
+                                
                             } catch (err) {
                                 heap.logger.log('alert', 'Error formatting XML - Query/Banner not found ROOT :' + JSON.stringify(err.message), 'alert', 3);
                                 return;
@@ -334,6 +339,23 @@ module.get = async function (request,response) {
                                                         }
                                                         let worksheet = workbook.addWorksheet(tabName, {properties:{tabColor:{argb:'FFC0000'}}});
 
+                                                        /* RENAME COLUMN */
+                                                        let renameColumn;
+                                                        if (result.ROOT.RENAME) {
+                                                            SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
+                                                            result.ROOT.RENAME, 
+                                                            "'{" + request.query.PARAM + "}'",
+                                                            request.header('USER'),
+                                                            "'{" + request.header('DATABASE_SID') + "}'", 
+                                                            "'{" +request.header('LANGUAGE') + "}'", 
+                                                            request.req_dataRename, request.response_dataRename, 
+                                                            async function (err,dataRename) {
+                                                                renameColumn = dataRename;
+                                                            });
+                                                        }
+                                                        heap.logger.log('alert', 'renameColumn: ' + JSON.stringify(renameColumn), 'alert', 3);
+
+                                                        
                                                         try {
                                                             let wbxls= heap.json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT, 'ResultTable', alertData[0].ALTFORMATXLS1 + alertData[0].ALTFORMATXLS2);
                                                             workbook= wbxls.wb;
@@ -363,6 +385,21 @@ module.get = async function (request,response) {
                                                                                     if (alertData[0].ALTFREEZEHEADER == 1) {
                                                                                         worksheet2.views = [{state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER+1}];
                                                                                     }
+                                                                                    /* RENAME COLUMN */
+                                                                                    let renameColumn;
+                                                                                    if (result.ROOT.RENAME2) {
+                                                                                        SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
+                                                                                        result.ROOT.RENAME, 
+                                                                                        "'{" + request.query.PARAM + "}'",
+                                                                                        request.header('USER'),
+                                                                                        "'{" + request.header('DATABASE_SID') + "}'", 
+                                                                                        "'{" +request.header('LANGUAGE') + "}'", 
+                                                                                        request.req_dataRename, request.response_dataRename, 
+                                                                                        async function (err,dataRename) {
+                                                                                            renameColumn = dataRename;
+                                                                                        });
+                                                                                    }
+                                                                                    heap.logger.log('alert', 'renameColumn: ' + JSON.stringify(renameColumn2), 'alert', 3);
 
                                                                                     try {
                                                                                         let wbxls2= await heap.json2xls.json2xls(workbook, worksheet2, alertData, detailData2, SUBJECT_EXT, 'ResultTable2', alertData[0].ALTFORMATTAB2XLS1 + alertData[0].ALTFORMATTAB2XLS2);
@@ -477,30 +514,48 @@ module.get = async function (request,response) {
                                                 worksheet.views = [{state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER+1}];
                                             }
 
-                                            try {
-                                                let wbxls= heap.json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT, 'ResultTable', alertData[0].ALTFORMATXLS1 + alertData[0].ALTFORMATXLS2);
-                                                workbook= wbxls.wb;
-                                                worksheet= wbxls.ws;
-                                            } catch (err) {
-                                                heap.logger.log('alert', 'Error heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
-                                            }
+                                            /* RENAME COLUMN */
+                                            let renameColumn;
+                                            if (result.ROOT.RENAME) {
+                                                await SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
+                                                result.ROOT.RENAME, 
+                                                "'{" + request.query.PARAM + "}'",
+                                                request.header('USER'),
+                                                "'{" + request.header('DATABASE_SID') + "}'", 
+                                                "'{" +request.header('LANGUAGE') + "}'", 
+                                                request.req_dataRename, request.response_dataRename, 
+                                                async function (err,dataRename) {
+                                                    renameColumn = dataRename;
+                                                    try {
+                                                        let wbxlsa= heap.json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT, 'ResultTable', alertData[0].ALTFORMATXLS1 + alertData[0].ALTFORMATXLS2, renameColumn);
+                                                        workbook= wbxlsa.wb;
+                                                        worksheet= wbxlsa.ws;
+                                                    } catch (err) {
+                                                        heap.logger.log('alert', 'Error heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
+                                                    }
+                                                    try {
+                                                    heap.logger.log('alert', 'Completed JSON2XLS ' + JSON.stringify(query2Adjusted), 'alert', 3);
 
+                                                    } catch (err) {
+                                                        heap.logger.log('alert', 'Error log heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
+                                                    }
 
-                                            /* Check if multiple tab */
-                                            if (result.ROOT.QUERY2) {
-                                                let tabName2 = 'RESULT';
-                                                //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
-                                                if (result.ROOT.NAME2) {
-                                                    tabName2 =  '' + result.ROOT.NAME2
-                                                }
+                                                    /* Check if multiple tab */
+                                                    if (query2Adjusted != 'undefined') {
+                                                        heap.logger.log('alert', 'Query 2 exists ', 'alert', 3);
+                                                        let tabName2 = 'RESULT';
+                                                        //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
+                                                        if (result.ROOT.NAME2) {
+                                                            tabName2 =  '' + result.ROOT.NAME2
+                                                        }
 
-                                              await SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                                                                result.ROOT.QUERY2, 
-                                                                "'{" + request.query.PARAM + "}'",
-                                                                request.header('USER'),
-                                                                "'{" + request.header('DATABASE_SID') + "}'", 
-                                                                "'{" +request.header('LANGUAGE') + "}'", 
-                                                                request.req_datadetail2, request.response_dataDetail2, 
+                                                        await SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
+                                                                            result.ROOT.QUERY2, 
+                                                                            "'{" + request.query.PARAM + "}'",
+                                                                            request.header('USER'),
+                                                                            "'{" + request.header('DATABASE_SID') + "}'", 
+                                                                            "'{" +request.header('LANGUAGE') + "}'", 
+                                                                            request.req_datadetail2, request.response_dataDetail2, 
                                                                 function (err,dataDetail2) {
                                                                     let detailData2 =dataDetail2;
 
@@ -523,15 +578,87 @@ module.get = async function (request,response) {
                                                                             buffer=null;
                                                                         });
                                                                     }
-                                                                });
+                                                            });
+                                                        }
+                                                     else {
+                                                        heap.logger.log('alert', 'Sending email ' + JSON.stringify(alertData[0].ALTEMAIL), 'alert', 3);
+
+                                                        if (html.indexOf('ERRORDIAGNOSED') < 1) {
+                                                            workbook.xlsx.writeBuffer()
+                                                            .then(function(buffer) {
+                                                                sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
+                                                                buffer=null;
+                                                            });
+                                                        }
+                                                    }
+
+                                                    if (alertData[0].ALTSMSCONTENT != '' && html.indexOf('ERRORDIAGNOSED') < 1) {
+                                                        let newLineSMS = '<br>'
+                                                        sendSMS(alertData[0].ALTMOBILE,   /* To */
+                                                                alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT,  /* Subject */
+                                                                alertData[0].ALTSMSCONTENT + ' : ' + detailData.length + newLineSMS +
+                                                                        '<b>Distribution list : </b> ' + alertData[0].ALTEMAIL) ;  /* Content */
+                                                    }
+                                                });
                                             }
-                                            if (! result.ROOT.QUERY2) {
-                                                if (html.indexOf('ERRORDIAGNOSED') < 1) {
-                                                    workbook.xlsx.writeBuffer()
-                                                    .then(function(buffer) {
-                                                        sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
-                                                        buffer=null;
-                                                    });
+                                            else {
+
+                                                try {
+                                                    let wbxls= heap.json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT, 'ResultTable', alertData[0].ALTFORMATXLS1 + alertData[0].ALTFORMATXLS2);
+                                                    workbook= wbxls.wb;
+                                                    worksheet= wbxls.ws;
+                                                } catch (err) {
+                                                    heap.logger.log('alert', 'Error heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
+                                                }
+
+
+                                                /* Check if multiple tab */
+                                                if (result.ROOT.QUERY2) {
+                                                    let tabName2 = 'RESULT';
+                                                    //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
+                                                    if (result.ROOT.NAME2) {
+                                                        tabName2 =  '' + result.ROOT.NAME2
+                                                    }
+
+                                                await SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
+                                                                    result.ROOT.QUERY2, 
+                                                                    "'{" + request.query.PARAM + "}'",
+                                                                    request.header('USER'),
+                                                                    "'{" + request.header('DATABASE_SID') + "}'", 
+                                                                    "'{" +request.header('LANGUAGE') + "}'", 
+                                                                    request.req_datadetail2, request.response_dataDetail2, 
+                                                                    function (err,dataDetail2) {
+                                                                        let detailData2 =dataDetail2;
+
+                                                                        let worksheet2 = workbook.addWorksheet(tabName2, {properties:{tabColor:{argb:'FFB0000'}}});
+                                                                        if (alertData[0].ALTFREEZEHEADER == 1) {
+                                                                            worksheet2.views = [{state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER+1}];
+                                                                        }
+
+                                                                        try {
+                                                                            let wbxls2= heap.json2xls.json2xls(workbook, worksheet2, alertData, detailData2, SUBJECT_EXT, 'ResultTable2', alertData[0].ALTFORMATTAB2XLS1 + alertData[0].ALTFORMATTAB2XLS2);
+                                                                            workbook= wbxls2.wb;
+                                                                        } catch (err) {
+                                                                            heap.logger.log('alert', 'Error query2 heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
+                                                                        }
+
+                                                                        if (html.indexOf('ERRORDIAGNOSED') < 1) {
+                                                                            workbook.xlsx.writeBuffer()
+                                                                            .then(function(buffer) {
+                                                                                sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
+                                                                                buffer=null;
+                                                                            });
+                                                                        }
+                                                                    });
+                                                }
+                                                if (! result.ROOT.QUERY2) {
+                                                    if (html.indexOf('ERRORDIAGNOSED') < 1) {
+                                                        workbook.xlsx.writeBuffer()
+                                                        .then(function(buffer) {
+                                                            sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
+                                                            buffer=null;
+                                                        });
+                                                    }
                                                 }
                                             }
                                         }

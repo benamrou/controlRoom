@@ -58,16 +58,18 @@ module.exports = function (app, SQL) {
                                 cronTab.push (cron.schedule(data[i].SALTCRON,async ()=> {
                                     if (data[i].SALTJOB) {
                                         try {
+                                            if (fs.existsSync(data[i].SALTJOB)) {
                                                 let command = spawn(data[i].SALTJOB, {}, {stdio: ['pipe', process.stdout, process.stderr]}); 
                                                 writeToWritable(command.stdin); // (B)
                                                 await onExit(command);
                                                 command.on('error', err => {
-                                                    if (err) {
-                                                        logger.log('CRON', 'ERROR - Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' ' + stderr + error + stdout, user, 3);
-                                                    } else {
-                                                        logger.log('CRON', 'Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' [COMPLETED]' , user, 2);
-                                                    }
-                                                });
+                                                        if (err) {
+                                                            logger.log('CRON', 'ERROR - Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' ' + stderr + error + stdout, user, 3);
+                                                        } else {
+                                                            logger.log('CRON', 'Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' [COMPLETED]' , user, 2);
+                                                        }
+                                                    });
+                                                }
                                             }
                                         catch (err) {
                                             logger.log('CRON', 'ERROR - Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' ' + err, user, 3);

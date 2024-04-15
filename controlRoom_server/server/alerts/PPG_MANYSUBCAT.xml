@@ -37,6 +37,8 @@ AND l2pere.objcint=uv2.arvcinr
 AND TRUNC(SYSDATE) BETWEEN l1pere.objddeb AND l1pere.objdfin
 AND TRUNC(SYSDATE) BETWEEN l2pere.objddeb AND l2pere.objdfin
 AND l1pere.objpere != l2pere.objpere
+AND EXISTS (SELECT 1 FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod where trunc(sysdate) between araddeb and aradfin and araseqvl=arlseqvl and arlcinluvc=l1.dlicinv)
+AND EXISTS (SELECT 1 FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod where trunc(sysdate) between araddeb and aradfin and araseqvl=arlseqvl and arlcinluvc=l2.dlicinv)
 ORDER BY l1.dlinlis ASC
 
 </QUERY>
@@ -67,6 +69,8 @@ AND l2pere.objcint=uv2.arvcinr
 AND TRUNC(SYSDATE) BETWEEN l1pere.objddeb AND l1pere.objdfin
 AND TRUNC(SYSDATE) BETWEEN l2pere.objddeb AND l2pere.objdfin
 AND l1pere.objpere != l2pere.objpere
+AND EXISTS (SELECT 1 FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod where trunc(sysdate) between araddeb and aradfin and araseqvl=arlseqvl and arlcinluvc=l1.dlicinv)
+AND EXISTS (SELECT 1 FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod where trunc(sysdate) between araddeb and aradfin and araseqvl=arlseqvl and arlcinluvc=l2.dlicinv)
 ORDER BY l1.dlinlis ASC
 
 </QUERY2>

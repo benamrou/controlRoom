@@ -1,0 +1,420 @@
+<ROOT>
+    <QUERY>
+    	with cal as(
+          select  add_months(ADD_MONTHS((LAST_DAY(to_date(''05/01''||to_Char(SYSDATE, ''RR''),''MM/DD/RR'')+1)),-1),level-1) dt
+            from  dual
+            connect by level &lt;= 1
+         ),
+firstMonday AS (select  dt first_of_the_month,
+        trunc(dt + 6,''iw'') first_monday_the_month
+  from  cal),
+FIRSTDAYS AS(
+SELECT first_monday_the_month "Report on",
+       TRUNC(first_of_the_month-1-364) Year2_start,
+       TRUNC(first_of_the_month-1) Year2_end,
+       TRUNC(first_of_the_month-2-2*364) Year1_start,
+       TRUNC(first_of_the_month-1-1-364) Year1_end,
+       ''['' || to_char(first_of_the_month-1-364,''MM/DD/RRRR'') || '' - '' || to_char(first_of_the_month-1,''MM/DD/RRRR'') || '']'' "Year #2",
+       ''['' || to_char(first_of_the_month-2-2*364,''MM/DD/RRRR'') || '' - '' || to_char(first_of_the_month-1-364-1,''MM/DD/RRRR'') || '']'' "Year #1"
+FROM firstMonday),
+/* Select the category - Approach on exclusion */
+MERCH_CAT_SUB AS (SELECT * FROM strucobj@heinens_custom_prod, tra_strucobj@heinens_custom_prod WHERE sobcint=tsobcint AND langue=''HN'' AND sobidniv IN (4,5)
+          /* 11/30/21 : Expand to all dept */
+          AND EXISTS (SELECT 1 FROM strucrel@heinens_custom_prod WHERE objpere=sobcint
+          AND TRUNC(SYSDATE) BETWEEN objddeb AND objdfin)
+          AND (sobcext LIKE ''103%'' OR /* Grocery */
+               sobcext LIKE ''102%'' /* DAIRY - FREEZER */)
+          /* Exclude: Beer, Wine, Spirts, papyrus, root candle, hand rings, general and sintax.*/
+          AND sobcext NOT LIKE ''103030%'' /* Beer */
+          AND sobcext NOT LIKE ''103031%'' /* Wine */
+          AND sobcext NOT LIKE ''103032%'' /* Spirit */
+          AND sobcext NOT LIKE ''103002157%'' /* Greeting cards (Papyrus) */
+          AND sobcext NOT LIKE ''103002187%'' /* Party Supplies (Papyrus) */
+          AND sobcext NOT LIKE ''103002175%'' /* Candle */
+          AND sobcext NOT LIKE ''101006532%'' /* MEAT - SUPPLIES */
+          AND sobcext NOT LIKE ''102010539%'' /* DAIRY - SUPPLIES */
+          AND sobcext NOT LIKE ''103001531%'' /* SUPPLIES - GROCERY */
+          /* Johsen supplier # 06780 check artuc to be exclude */
+          /* SINTAX ???? */
+          ),
+DATE_RANGE_Y1 AS(
+SELECT Year1_start START_Y1, Year1_end END_Y1, "Year #1"
+FROM FIRSTDAYS),
+DATE_RANGE_Y2 AS(
+SELECT Year2_start START_Y2, Year2_end END_Y2, "Year #2"
+FROM FIRSTDAYS),
+ITEM_LIST AS(
+SELECT DISTINCT mcat.sobcext CAT_CODE, SUBSTR(mcat.sobcext,7,3) CAT_CODE_DISPLAYED,
+        mcat.tsobdesc CAT_DESC,
+        SUBSTR(msubcat.sobcext,10,4) SUB_CAT_CODE_DISPLAYED,
+        msubcat.tsobdesc SUB_CAT_DESC,
+       aracexr ITEM_CODE, pkstrucobj.get_desc@heinens_custom_prod(1, aracinr, ''HN'') ITEM_DESC,
+       aracexvl LV_CODE,
+       aracinr, arlcinluvc,
+       NVL((SELECT ''ALLOTMENT'' FROM artuc@heinens_custom_prod ac, foudgene@heinens_custom_prod
+            WHERE 90000> ARASITE AND ac.aracinr= il.aracinr AND aratfou=1 AND aracfin=foucfin AND foucnuf LIKE ''AO%''
+            AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin AND ROWNUM=1),
+            NVL((SELECT ''WAREHOUSE'' FROM artuc@heinens_custom_prod ac
+            WHERE ARASITE BETWEEN 90000 AND 96000 AND ac.aracinr= il.aracinr AND aratfou=1
+            AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin AND ROWNUM=1), ''DSD''))  "Flow",
+       (SELECT MIN(araddeb) FROM artuc@heinens_custom_prod ac, reseau@heinens_custom_prod, sitdgene@heinens_custom_prod
+            WHERE  ac.aracinr= il.aracinr AND aratfou=1
+            AND respere=arasite AND ressite=socsite AND soccmag=10)  STORE_ORD_DDEB,
+       (SELECT MAX(aradfin) FROM artuc@heinens_custom_prod ac, reseau@heinens_custom_prod ac, sitdgene@heinens_custom_prod
+            WHERE  ac.aracinr= il.aracinr AND aratfou=1
+            AND respere=arasite AND ressite=socsite AND soccmag=10)  STORE_ORD_DFIN,
+       (SELECT MIN(araddeb) FROM artuc@heinens_custom_prod ac
+            WHERE  ac.aracinr= il.aracinr AND aratfou=1)  ORD_DDEB,
+       (SELECT MAX(aradfin) FROM artuc@heinens_custom_prod ac
+            WHERE  ac.aracinr= il.aracinr AND aratfou=1)  ORD_DFIN,
+       (select LISTAGG(pckitem , ''/'') within group (order by 1 asc)
+         FROM (select distinct pkartstock.get_skuunits@heinens_custom_prod(1, ac.aracinl) pckitem
+               from artuc@heinens_custom_prod ac where  ac.aracinr= il.aracinr AND aratfou=1
+               AND aradfin > TRUNC(SYSDATE-3*365))) "Pack",
+       (select LISTAGG(arasite , '','') within group (order by 1 asc)
+         from (select distinct arasite from artuc@heinens_custom_prod ac, reseau@heinens_custom_prod ac, sitdgene@heinens_custom_prod
+            WHERE  ac.aracinr= il.aracinr AND aratfou=1
+            AND respere=arasite AND ressite=socsite AND soccmag=10
+         AND aradfin > TRUNC(SYSDATE-3*365))) "Scope"
+FROM MERCH_CAT_SUB mcat, MERCH_CAT_SUB msubcat, artuc@heinens_custom_prod il,  strucrel@heinens_custom_prod scat, strucrel@heinens_custom_prod cat, artvl@heinens_custom_prod, foudgene@heinens_custom_prod
+WHERE  scat.objcint=aracinr AND scat.objpere=cat.objcint AND cat.objpere=mcat.sobcint
+AND cat.objcint=msubcat.sobcint
+AND araseqvl=arlseqvl
+AND TRUNC(SYSDATE) BETWEEN scat.objddeb AND scat.objdfin
+AND TRUNC(SYSDATE) BETWEEN cat.objddeb AND cat.objdfin
+AND aracfin=foucfin
+and foucnuf not like ''H%''
+/* AND aracexr in (''187093'',''193319'', ''189716'') */
+AND aratcde=1 AND aracdble=1 AND aradfin >= TRUNC(SYSDATE-3*365)  and aratfou=1
+AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin)
+SELECT DISTINCT ITEM_CODE || ''/'' || LV_CODE || '' '' || ITEM_DESC "Item code description",  "Flow",
+       STORE_ORD_DDEB "Store order. since",
+       STORE_ORD_DFIN "Store order. end",
+       "Pack",
+       "Scope",
+       /* Year 1 - May to April */
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,0),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_MayY2",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,0),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_MayY2",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,1),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_JunY2",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,1),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_JunY2",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,2),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_JulY2",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,2),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_JulY2",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,3),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_AugY2",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,3),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_AugY2",
+
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,4),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_SepY2",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,4),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_SepY2",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,5),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_OctY2",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,5),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_OctY2",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,6),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_NovY2",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,6),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_NovY2",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,7),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_DecY2",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,7),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_DecY2",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,8),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_JanY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,8),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_JanY1",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,9),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_FebY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,9),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_FebY1",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,10),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_MarY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,10),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_MarY1",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,11),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_AprY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,11),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_AprY1",
+
+       /* Year 2 - May to April */
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,12),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_MayY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,12),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_MayY1",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,13),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_JunY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,13),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_JunY1",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,14),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_JulY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,14),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_JulY1",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,15),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_AugY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,15),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_AugY1",
+
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,16),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_SepY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,16),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_SepY1",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,17),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_OctY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,17),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_OctY1",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,18),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_NovY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,18),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_NovY1",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,19),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_DecY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,19),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_DecY1",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,20),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_JanY0",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,20),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_JanY0",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,21),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_FebY1",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,21),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_FebY0",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,22),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_MarY0",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,22),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_MarY0",
+       NVL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,23),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "Qty_AprY0",
+       NVL((SELECT COUNT(DISTINCT smmsite) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois=to_number(to_char(ADD_MONTHS(START_Y1,23),''RRRRMM''))
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl),0) AS "NbStores_AprY0",
+      NVL(CEIL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
+        WHERE smmcinl=arlcinluvc AND smmmois between to_char(STORE_ORD_DDEB,''RRRRWW'') AND to_char(STORE_ORD_DFIN,''RRRRWW'')
+         AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
+         GROUP BY smmcinl)/DECODE(MONTHS_BETWEEN(LEAST(TRUNC(SYSDATE),STORE_ORD_DFIN),STORE_ORD_DDEB),0,1, MONTHS_BETWEEN(LEAST(TRUNC(SYSDATE),STORE_ORD_DFIN),STORE_ORD_DDEB))),0) "Average"
+FROM item_list il, DATE_RANGE_Y1 
+WHERE STORE_ORD_DDEB >=START_Y1
+AND "Flow" in (''ALLOTMENT'', ''DSD'')
+    </QUERY>
+    <NAME>ALLOTMENT_DSD</NAME>
+    <RENAME>
+    with cal AS(
+          select  add_months(ADD_MONTHS((LAST_DAY(to_date(''05/01''||to_Char(SYSDATE, ''RR''),''MM/DD/RR'')+1)),-1),level-1) dt
+            from  dual
+            connect by level  &lt;= 1
+         ),
+firstMonday AS (select  dt first_of_the_month,
+        trunc(dt + 6,''iw'') first_monday_the_month
+  from  cal),
+FIRSTDAYS AS(
+SELECT first_monday_the_month "Report on",
+       TRUNC(first_of_the_month-1-364) Year2_start,
+       TRUNC(first_of_the_month-1) Year2_end,
+       TRUNC(first_of_the_month-2-2*364) Year1_start,
+       TRUNC(first_of_the_month-1-1-364) Year1_end,
+       ''['' || to_char(first_of_the_month-1-364,''MM/DD/RRRR'') || '' - '' || to_char(first_of_the_month-1,''MM/DD/RRRR'') || '']'' "Year #2",
+       ''['' || to_char(first_of_the_month-2-2*364,''MM/DD/RRRR'') || '' - '' || to_char(first_of_the_month-1-364-1,''MM/DD/RRRR'') || '']'' "Year #1"
+FROM firstMonday)
+SELECT ''Qty ('' || to_char(Year1_start,''MM/RR'')  || '')'' "COLNAME", 1 SortOrder,''G'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(Year1_start,''MM/RR'')  || '')'' "COLNAME", 2 SortOrder,'' H'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,1), ''MM/RR'')  || '')'' "COLNAME", 3 SortOrder,'' I'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,1), ''MM/RR'')  || '')'' "COLNAME", 4 SortOrder,'' J'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,2), ''MM/RR'')  || '')'' "COLNAME", 5 SortOrder,'' K'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,2), ''MM/RR'')  || '')'' "COLNAME", 6 SortOrder,'' L'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,3), ''MM/RR'')  || '')'' "COLNAME", 7 SortOrder,'' M'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,3), ''MM/RR'')  || '')'' "COLNAME", 8 SortOrder,'' N'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,4), ''MM/RR'')  || '')'' "COLNAME", 9 SortOrder,'' O'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,4), ''MM/RR'')  || '')'' "COLNAME", 10 SortOrder,'' P'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,5), ''MM/RR'')  || '')'' "COLNAME", 11 SortOrder,'' Q'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,5), ''MM/RR'')  || '')'' "COLNAME", 12 SortOrder,'' R'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,6), ''MM/RR'')  || '')'' "COLNAME", 13 SortOrder,'' S'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,6), ''MM/RR'')  || '')'' "COLNAME", 14 SortOrder,'' T'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,7), ''MM/RR'')  || '')'' "COLNAME", 15 SortOrder,'' U'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,7), ''MM/RR'')  || '')'' "COLNAME", 16 SortOrder,'' V'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,8), ''MM/RR'')  || '')'' "COLNAME", 17 SortOrder,'' W'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,8), ''MM/RR'')  || '')'' "COLNAME", 18 SortOrder,'' X'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,9), ''MM/RR'')  || '')'' "COLNAME", 19 SortOrder,'' Y'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,9), ''MM/RR'')  || '')'' "COLNAME", 20 SortOrder,'' Z'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,10), ''MM/RR'')  || '')'' "COLNAME", 21 SortOrder,'' AA'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,10), ''MM/RR'')  || '')'' "COLNAME", 22 SortOrder,'' AB'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,11), ''MM/RR'')  || '')'' "COLNAME", 23 SortOrder,'' AC'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,11), ''MM/RR'')  || '')'' "COLNAME", 24 SortOrder,'' AD'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,12), ''MM/RR'')  || '')'' "COLNAME", 25 SortOrder,'' AE'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,12), ''MM/RR'')  || '')'' "COLNAME", 26 SortOrder,'' AF'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,13), ''MM/RR'')  || '')'' "COLNAME", 27 SortOrder,'' AG'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,13), ''MM/RR'')  || '')'' "COLNAME", 28 SortOrder,'' AH'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,14), ''MM/RR'')  || '')'' "COLNAME", 29 SortOrder,'' AI'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,14), ''MM/RR'')  || '')'' "COLNAME", 30 SortOrder,'' AJ'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,15), ''MM/RR'')  || '')'' "COLNAME", 31 SortOrder,'' AK'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,15), ''MM/RR'')  || '')'' "COLNAME", 32 SortOrder,'' AL'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,16), ''MM/RR'')  || '')'' "COLNAME", 33 SortOrder,'' AM'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,16), ''MM/RR'')  || '')'' "COLNAME", 34 SortOrder,'' AN'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,17), ''MM/RR'')  || '')'' "COLNAME", 35 SortOrder,'' AO'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,17), ''MM/RR'')  || '')'' "COLNAME", 36 SortOrder,'' AP'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,18), ''MM/RR'')  || '')'' "COLNAME", 37 SortOrder,'' AQ'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,18), ''MM/RR'')  || '')'' "COLNAME", 38 SortOrder,'' AR'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,19), ''MM/RR'')  || '')'' "COLNAME", 39 SortOrder,'' AS'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,19), ''MM/RR'')  || '')'' "COLNAME", 40 SortOrder,'' AT'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,20), ''MM/RR'')  || '')'' "COLNAME", 41 SortOrder,'' AU'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,20), ''MM/RR'')  || '')'' "COLNAME", 42 SortOrder,'' AV'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,21), ''MM/RR'')  || '')'' "COLNAME", 43 SortOrder,'' AW'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,21), ''MM/RR'')  || '')'' "COLNAME", 44 SortOrder,'' AX'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,22), ''MM/RR'')  || '')'' "COLNAME", 45 SortOrder,'' AY'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,22), ''MM/RR'')  || '')'' "COLNAME", 46 SortOrder,'' AZ'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,23), ''MM/RR'')  || '')'' "COLNAME", 47 SortOrder,'' BA'' "RENAMECOL" FROM FIRSTDAYS
+UNION ALL
+SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,23), ''MM/RR'')  || '')'' "COLNAME", 48 SortOrder,'' BB'' "RENAMECOL" FROM FIRSTDAYS
+ORDER BY SortOrder ASC
+    </RENAME>
+  <HEADERIFEMPTY>No item information 2 years </HEADERIFEMPTY>
+  <HEADER>Item information new 2 years</HEADER>
+
+</ROOT>
+

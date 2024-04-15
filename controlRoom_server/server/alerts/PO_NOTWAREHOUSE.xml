@@ -12,6 +12,7 @@ SELECT  (SELECT sapcexap || '' | '' || saplibl FROM liensecappro@heinens_custom_
          pkparpostes.get_postvan1@heinens_custom_prod(1,10,917, 12) || '' days prior delivery'' "To  warehouse" 
 FROM cdeentcde@heinens_custom_prod, sitdgene@heinens_custom_prod, foudgene@heinens_custom_prod 
 WHERE ecdetat=5 AND NOT EXISTS (SELECT * FROM tb_erec@heinens_custom_prod WHERE oe_ncdefo=ecdcexcde) 
+AND NOT EXISTS (SELECT * FROM tb_herec@heinens_custom_prod WHERE ho_ncdefo=ecdcexcde)
 AND ecdsite =socsite AND soccmag=0
 AND foucfin=ecdcfin
 AND EXISTS (SELECT 1 FROM artasent@heinens_custom_prod, cdedetcde@heinens_custom_prod WHERE dcdcincde=ecdcincde 

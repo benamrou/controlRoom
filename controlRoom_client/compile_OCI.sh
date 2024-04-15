@@ -1,0 +1,1 @@
+npm run prod_oci && npm run post-build

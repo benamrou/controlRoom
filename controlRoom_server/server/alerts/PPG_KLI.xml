@@ -1,0 +1,172 @@
+<ROOT>
+    <NAME>Summary PPG</NAME>
+    <QUERY> 
+
+/***********************************************************************/
+/* Query : PPG list with KLI and not KLI items                         */
+/***********************************************************************/
+WITH KLICLEPPG AS (SELECT l1.dlinlis, elilibl, l1.dlicinv cinvl1, l2.dlicinv cinvl2
+FROM artdetlist@heinens_custom_prod l1, artdetlist@heinens_custom_prod l2, artentlist@heinens_custom_prod
+WHERE l1.dlinlis=elinlis
+AND l2.dlinlis=l1.dlinlis
+AND elinlis LIKE ''PPG%''
+AND TRUNC(SYSDATE+1) BETWEEN l1.dliddeb AND l1.dlidfin
+AND TRUNC(SYSDATE+1) BETWEEN l2.dliddeb AND l2.dlidfin
+AND l1.dlicinv != l2.dlicinv
+/* has a Cleveland KLI set on */
+AND EXISTS (SELECT 1 
+              FROM artuvattri@heinens_custom_prod 
+              WHERE l1.dlicinv=uatcinv 
+              AND TRUNC(SYSDATE+1) BETWEEN uatddeb AND uatdfin 
+              AND uatccla=''CLKL'' 
+              AND uatcatt=''Y'')
+/* has a NO Cleveland KLI set */
+AND NOT EXISTS (SELECT 1 
+              FROM artuvattri@heinens_custom_prod 
+              WHERE l2.dlicinv=uatcinv 
+              AND TRUNC(SYSDATE+1) BETWEEN uatddeb AND uatdfin 
+              AND uatccla=''CLKL'' 
+              AND uatcatt=''Y'')
+/* Active item */
+AND EXISTS (SELECT 1 
+            FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod 
+            WHERE araseqvl=arlseqvl AND arlcinluvc=l1.dlicinv 
+            AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin)
+/* Active item */
+AND EXISTS (SELECT 1 
+            FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod 
+            WHERE araseqvl=arlseqvl AND arlcinluvc=l2.dlicinv 
+            AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin)),
+KLICHIPPG AS (SELECT l1.dlinlis, elilibl, l1.dlicinv cinvl1, l2.dlicinv cinvl2
+FROM artdetlist@heinens_custom_prod l1, artdetlist@heinens_custom_prod l2, artentlist@heinens_custom_prod
+WHERE l1.dlinlis=elinlis
+AND l2.dlinlis=l1.dlinlis
+AND elinlis LIKE ''PPG%''
+AND TRUNC(SYSDATE+1) BETWEEN l1.dliddeb AND l1.dlidfin
+AND TRUNC(SYSDATE+1) BETWEEN l2.dliddeb AND l2.dlidfin
+AND l1.dlicinv != l2.dlicinv
+/* has a Chicago KLI set on */
+AND EXISTS (SELECT 1 
+              FROM artuvattri@heinens_custom_prod 
+              WHERE l1.dlicinv=uatcinv 
+              AND TRUNC(SYSDATE+1) BETWEEN uatddeb AND uatdfin 
+              AND uatccla=''CHKL'' 
+              AND uatcatt=''Y'')
+/* has a NO Chicago KLI set */
+AND NOT EXISTS (SELECT 1 
+              FROM artuvattri@heinens_custom_prod 
+              WHERE l2.dlicinv=uatcinv 
+              AND TRUNC(SYSDATE+1) BETWEEN uatddeb AND uatdfin 
+              AND uatccla=''CHKL'' 
+              AND uatcatt=''Y'')
+/* Active item */
+AND EXISTS (SELECT 1 
+            FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod 
+            WHERE araseqvl=arlseqvl AND arlcinluvc=l1.dlicinv 
+            AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin)
+/* Active item */
+AND EXISTS (SELECT 1 
+            FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod 
+            WHERE araseqvl=arlseqvl AND arlcinluvc=l2.dlicinv 
+            AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin))
+SELECT DISTINCT dlinlis "PPG #", elilibl "PPG desc.", 
+       (SELECT COUNT (DISTINCT pg.cinvl1) FROM KLICLEPPG pg WHERE po.dlinlis=pg.dlinlis) || '' CLE KLI items'' "Active KLI items",
+       (SELECT COUNT (DISTINCT pg.cinvl2) FROM KLICLEPPG pg WHERE po.dlinlis=pg.dlinlis) || '' not CLE KLI items'' "Not active KLI items"
+FROM KLICLEPPG po
+UNION 
+SELECT DISTINCT dlinlis "PPG #", elilibl "PPG desc.", 
+       (SELECT COUNT (DISTINCT pg.cinvl1) FROM KLICHIPPG pg WHERE po.dlinlis=pg.dlinlis) || '' CHI KLI items'' "Active KLI items",
+       (SELECT COUNT (DISTINCT pg.cinvl2) FROM KLICHIPPG pg WHERE po.dlinlis=pg.dlinlis) || '' not CHI KLI items'' "Not active KLI items"
+FROM KLICHIPPG po
+
+    
+
+</QUERY>
+<NAME2>Item details</NAME2>
+<QUERY2> 
+ WITH KLIPPG AS (SELECT DISTINCT dlinlis FROM 
+(SELECT DISTINCT l1.dlinlis
+FROM artdetlist@heinens_custom_prod l1, artdetlist@heinens_custom_prod l2, artentlist@heinens_custom_prod
+WHERE l1.dlinlis=elinlis
+AND l2.dlinlis=l1.dlinlis
+AND elinlis LIKE ''PPG%''
+AND TRUNC(SYSDATE+1) BETWEEN l1.dliddeb AND l1.dlidfin
+AND TRUNC(SYSDATE+1) BETWEEN l2.dliddeb AND l2.dlidfin
+AND l1.dlicinv != l2.dlicinv
+/* has a Cleveland KLI set on */
+AND EXISTS (SELECT 1 
+              FROM artuvattri@heinens_custom_prod 
+              WHERE l1.dlicinv=uatcinv 
+              AND TRUNC(SYSDATE+1) BETWEEN uatddeb AND uatdfin 
+              AND uatccla=''CLKL'' 
+              AND uatcatt=''Y'')
+/* has a NO Cleveland KLI set */
+AND NOT EXISTS (SELECT 1 
+              FROM artuvattri@heinens_custom_prod 
+              WHERE l2.dlicinv=uatcinv 
+              AND TRUNC(SYSDATE+1) BETWEEN uatddeb AND uatdfin 
+              AND uatccla=''CLKL'' 
+              AND uatcatt=''Y'')
+/* Active item */
+AND EXISTS (SELECT 1 
+            FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod 
+            WHERE araseqvl=arlseqvl AND arlcinluvc=l1.dlicinv 
+            AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin)
+/* Active item */
+AND EXISTS (SELECT 1 
+            FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod 
+            WHERE araseqvl=arlseqvl AND arlcinluvc=l2.dlicinv 
+            AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin)
+UNION
+SELECT DISTINCT l1.dlinlis
+FROM artdetlist@heinens_custom_prod l1, artdetlist@heinens_custom_prod l2, 
+     artentlist@heinens_custom_prod
+WHERE l1.dlinlis=elinlis
+AND l2.dlinlis=l1.dlinlis
+AND elinlis LIKE ''PPG%''
+AND TRUNC(SYSDATE+1) BETWEEN l1.dliddeb AND l1.dlidfin
+AND TRUNC(SYSDATE+1) BETWEEN l2.dliddeb AND l2.dlidfin
+AND l1.dlicinv != l2.dlicinv
+/* has a Chicago KLI set on */
+AND EXISTS (SELECT 1 
+              FROM artuvattri@heinens_custom_prod 
+              WHERE l1.dlicinv=uatcinv 
+              AND TRUNC(SYSDATE+1) BETWEEN uatddeb AND uatdfin 
+              AND uatccla=''CHKL'' 
+              AND uatcatt=''Y'')
+/* has a NO Chicago KLI set */
+AND NOT EXISTS (SELECT 1 
+              FROM artuvattri@heinens_custom_prod 
+              WHERE l2.dlicinv=uatcinv 
+              AND TRUNC(SYSDATE+1) BETWEEN uatddeb AND uatdfin 
+              AND uatccla=''CHKL'' 
+              AND uatcatt=''Y'')
+/* Active item */
+AND EXISTS (SELECT 1 
+            FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod 
+            WHERE araseqvl=arlseqvl AND arlcinluvc=l1.dlicinv 
+            AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin)
+/* Active item */
+AND EXISTS (SELECT 1 
+            FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod 
+            WHERE araseqvl=arlseqvl AND arlcinluvc=l2.dlicinv 
+            AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin)))
+SELECT l1.dlinlis "PPG #", arvcexr "Item code", arvcexv "SV", 
+       pkstrucobj.get_desc@heinens_custom_prod(1, arvcinr,''HN'') "Item desc", 
+       dliddeb "PPG list start date", dlidfin "PPG list end date", 
+       dlidcre "Added to PPG list on",
+       (SELECT uatcatt FROM artuvattri@heinens_custom_prod WHERE uatccla=''CLKL'' AND uatcinv=dlicinv AND TRUNC(SYSDATE+1) BETWEEN uatddeb AND uatdfin) "CLKL",
+       (SELECT uatcatt FROM artuvattri@heinens_custom_prod WHERE uatccla=''CHKL'' AND uatcinv=dlicinv AND TRUNC(SYSDATE+1) BETWEEN uatddeb AND uatdfin) "CHKL",
+       dliutil "Change made by"
+FROM KLIPPG l1, artuv@heinens_custom_prod, artdetlist@heinens_custom_prod l2
+WHERE l1.dlinlis=l2.dlinlis
+AND dlicinv=arvcinv
+AND TRUNC(SYSDATE+1) BETWEEN dliddeb AND dlidfin
+ORDER BY l1.dlinlis, dlidcre DESC
+</QUERY2>
+ 
+  <HEADERIFEMPTY>No PPG KLI issue</HEADERIFEMPTY>
+  <HEADER>PPG with different KLI items</HEADER>
+  
+</ROOT>
+

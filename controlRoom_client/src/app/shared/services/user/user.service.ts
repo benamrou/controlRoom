@@ -222,15 +222,15 @@ export class User {
                      if (env.level === 'CORPORATE') { this.userInfo.envCorporateAccess.push(env); }
  
                      if (env.default === 1) {
-                        // console.log('MAIN ' + JSON.stringify(env));
+                        console.log('MAIN ',env);
                         // Set cookies for environment access information
                         this.setCookiesEnvironment(env);
 
-                            this.userInfo.mainEnvironment.push(env);
-                            this.userInfo.envDefaultLanguage = env.defaultLanguage;
-                            if ( ! this.userInfo.sid.includes(env.dbLink)) {
-                                this.userInfo.sid.push(env.dbLink);
-                            }
+                        this.userInfo.mainEnvironment.push(env);
+                        this.userInfo.envDefaultLanguage = env.defaultLanguage;
+                        if ( ! this.userInfo.sid.includes(env.dbLink)) {
+                            this.userInfo.sid.push(env.dbLink);
+                        }
                      }
  
                  }
@@ -258,7 +258,7 @@ export class User {
          // Two information - 
          // INFO 1 - Redefine the main environment using the type
          // INFO 2 - Redefine the SIDs environment using the type
-         console.log('Sitching to tyoe: ',envType, this.userInfo.envUserAccess);
+         console.log('Switching to type: ',envType, this.userInfo.envUserAccess);
          if (this.userInfo.envUserAccess.length > 0) {
              for (let i = 0; i < this.userInfo.envUserAccess.length; i ++) {
                  if (this.userInfo.envUserAccess[i].type === envType) {

@@ -1,0 +1,68 @@
+<ROOT>
+    <QUERY> 
+
+/* Warehouse inative and Store active */ 
+WITH LIST_DATA as (
+        select :param2 WH,
+               pkparpostes.get_postlibl@heinens_custom_prod(1, 10, 1032, artgest, ''HN'') CAT_MANAGER,
+               arlcexr ITEM, 
+               arlcexvl LV, 
+               pkartvl.get_vldesc@heinens_custom_prod(1,arlseqvl,''HN'') ITEM_DESC, 
+               (SELECT rp_adrpic FROM tb_pick@heinens_stk_prod WHERE arlcexr||arlcexvl||:param2 = rp_cproin||to_number(rp_ilogis)||rp_donord
+               AND rownum=1) as "Picking address",
+               (select max(to_char(aradfin, ''MM/DD/RR'')) from artuc@heinens_custom_prod where araseqvl=tmp.lv 
+                       and arasite=:param2 and trunc(sysdate) > aradfin ) WH_END_DATE, 
+                round(pkartstock.ConvertirQteUl@heinens_custom_prod(1,nvl(pkstock.getStockPosDispoVL@heinens_custom_prod(1,:param2, pkartstock.RecupCinlUVCparCINRetSEQVL@heinens_custom_prod(1,arlcinr, arlseqvl), arlseqvl, 0, 2),0), 
+                      pkartstock.RecupCinlUVCparCINRetSEQVL@heinens_custom_prod(1,arlcinr, arlseqvl), arlseqvl,41 ),2) BOH_CASE,
+               (SELECT pkparpostes.get_postlibl@heinens_custom_prod(1,10, 1071, MAX(aratcde), ''HN'')
+                  FROM ARTUC@heinens_custom_prod, foudgene@heinens_custom_prod
+                 WHERE ARASEQVL = TMP.LV
+                   AND ARACFIN=foucfin
+                   AND foutype=3
+                   AND ARADFIN > TRUNC(SYSDATE)) STR_ORD_FLAG,
+              (SELECT NVL(SUM(dcdcoli),0) 
+               FROM cdedetcde@heinens_custom_prod, cdeentcde@heinens_custom_prod 
+               WHERE dcdsite=:param2 AND dcdseqvl=TMP.LV AND dcdetat=5 AND dcdcinr=artcinr and ecdcincde=dcdcincde and ecdetat in (5,6)) ON_ORDER,
+               round((SELECT NVL(SUM(stmval/pkartstock.RecupCoeffParentFils@heinens_custom_prod(1,pkartstock.RecupereCinlDest@heinens_custom_prod(1, stmseqvl, 41),stmcinl)),0)*-1
+                      FROM stomvt@heinens_custom_prod, artuv@heinens_custom_prod WHERE stmsite=:param2 AND stmseqvl=TMP.LV  AND stmtmvt=151 AND arvcinv=stmcinl AND arvcinr=artcinr
+                      AND TRUNC(stmdmvt)>= TRUNC(SYSDATE-7*4))/4,2) AVG_WEEKLY,
+              ROUND((SELECT aprfapn * pkartstock.RecupCoeffParentFils@heinens_custom_prod(1,pkartstock.RecupereCinlDest@heinens_custom_prod(1, tmp.lv, 41),aprcinluvc)
+                     FROM areprix@heinens_custom_prod WHERE aprseqvl=TMP.LV AND aprsite=:param2 AND TRUNC(SYSDATE) BETWEEN aprddeb AND aprdfin AND ROWNUM=1),2) COST_PRICE
+        from (select araseqvl LV from artuc@heinens_custom_prod, clisitel@heinens_custom_prod, foudgene@heinens_custom_prod 
+              where trunc(sysdate) between araddeb and aradfin and clsentl=:param2 and foucfin=clscfin 
+              and foucnuf not like ''CD%'' and foutype=3 and trunc(sysdate) between clsddeb and clsdfin 
+              and aracfin=clscfin and araccin=clsccin and aranfilf=clsnfilf 
+              and arasite not in (select socsite from sitdgene@heinens_custom_prod where soccmag=0) 
+              minus 
+              select araseqvl LV from artuc@heinens_custom_prod where arasite=:param2 and trunc(sysdate) between araddeb and aradfin) tmp,
+              artvl@heinens_custom_prod, artrac@heinens_custom_prod
+where arlseqvl=tmp.lv
+and arlcinr=artcinr)
+SELECT       
+     WH "Warehouse", 
+     CAT_MANAGER "Cat. Mgr", 
+     ITEM "Item #",
+     "Picking address" "Item  Slot",
+     LV, 
+     ITEM_DESC "Item desc.", 
+     WH_END_DATE "Whs end date", 
+     BOH_CASE "BOH in Case", 
+     NULL "NS",
+     STR_ORD_FLAG "STR Orderable flag", 
+     ON_ORDER "Case on order", 
+     AVG_WEEKLY "Avg. wk. ship (4 weeks)", 
+     COST_PRICE "Case cost",
+(BOH_CASE+ON_ORDER)*NVL(COST_PRICE,0) "Cost of inv.",
+DECODE(AVG_WEEKLY,0,0,ROUND((BOH_CASE+ON_ORDER)/AVG_WEEKLY,2)) "Weeks Inv On Hand",
+DECODE(AVG_WEEKLY,0,NULL,DECODE(BOH_CASE,0,null,
+       to_char(NEXT_DAY((TRUNC(SYSDATE)+ ROUND((BOH_CASE+ON_ORDER)/AVG_WEEKLY,2)*7),''Tuesday''),''MM/DD/RRRR''))) "Forecasted BOGO Date (Tuesday)"
+FROM LIST_DATA
+order by "Warehouse" ASC,"BOH in Case" ASC 
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No Warehouse inactive store active items</HEADERIFEMPTY>
+  <HEADER>Warehouse inactive store active items</HEADER>
+  
+</ROOT>
+

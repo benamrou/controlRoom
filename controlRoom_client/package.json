@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "post-build": "node ./src/build/post-build.js",
     "prod_heinens": "ng build --configuration production --base-href /icr/ --configuration=heinens --output-hashing=all",
+    "prod_oci": "ng build --base-href /icr/ --configuration=oci --output-hashing=all",
     "gitbuild": "ng build --configuration production --base-href /ICR/master/dist/ ",
     "test": "ng test"
   },

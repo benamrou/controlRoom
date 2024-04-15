@@ -133,6 +133,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
 import { DashboardReceptionModule } from './pages/reporting/account.payable/reception/dashboard.reception.module';
+import { EdiAsnModule } from './pages/edi/asn/edi.asn.module';
 
 @NgModule({
   declarations: [
@@ -207,7 +208,8 @@ import { DashboardReceptionModule } from './pages/reporting/account.payable/rece
     ItemCharacteristicModule,
     VariableWeightModule,
     ItemLogisticCodeModule,
-    DashboardReceptionModule
+    DashboardReceptionModule,
+    EdiAsnModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

@@ -1,0 +1,26 @@
+<ROOT>
+    <QUERY> 
+
+SELECT ecdcexcde "PO#", ecdsite "Store", foucnuf || '' | '' || foulibl "Supplier code desc.", 
+       ecdetat || '' | '' || pkparpostes.get_postlibl@heinens_custom_prod(1,10,502,ecdetat,''HN'') "Order status", 
+       to_char(ecddcom,''MM/DD/RR'') "Order date", 
+       to_char(ecddenvoi,''MM/DD/RR'') "Sending date",
+       (SELECT COUNT(1) FROM cdedetcde@heinens_custom_prod WHERE ecdcincde=dcdcincde) "Nb. items"
+FROM cdeentcde@heinens_custom_prod, sitdgene@heinens_custom_prod, foudgene@heinens_custom_prod
+WHERE ecdsite=socsite
+AND soccmag=10 /* Stores */
+AND ecddenvoi > TRUNC(SYSDATE)+8
+AND ecdetat=3 /* Valued */
+AND ecdcfin=foucfin
+AND foutype=1 /* DSD vendor */
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''ORD0000000002''
+                                AND LALTMESS LIKE ''%'' || ecdcexcde || ''%'')      /* No reported yet */  
+ORDER BY "Order date" ASC, "Supplier code desc." ASC
+
+</QUERY>
+  <HEADERIFEMPTY>No purchase orders sending date issue</HEADERIFEMPTY>
+  <HEADER>Purchase orders sending date issue</HEADER>
+  
+</ROOT>
+

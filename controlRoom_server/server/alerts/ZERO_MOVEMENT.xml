@@ -1,0 +1,70 @@
+<ROOT>
+    <QUERY> 
+WITH SCOPE_ITEMS AS (SELECT DISTINCT arlcinluvc, aracexr, aracinr, aracexvl 
+FROM artuc@heinens_custom_prod, foudgene@heinens_custom_prod, artvl@heinens_custom_prod, artrac@heinens_custom_prod
+WHERE TRUNC(SYSDATE-90) BETWEEN araddeb AND aradfin /*Active since 90 days */
+AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin      /*Still active         */
+AND aracfin=foucfin
+AND foucnuf=''H0'' || :param2
+AND araseqvl=arlseqvl
+/* AND aracexr =''102815'' */
+/* AND aracexr =''101616'' */
+AND aratfou=1
+AND artcinr=aracinr
+AND arttypp!=11 /* No supply items */ 
+AND aratcde=1
+/* Not PR/TR */
+AND NOT EXISTS (SELECT 1 FROM artrempl WHERE  araseqvl=arrseqvlo AND TRUNC(SYSDATE) BETWEEN arrddeb AND arrdfin)
+),
+SALES_PIVOT AS (
+SELECT * FROM (
+SELECT /*+ NO_MERGE */
+socsite,aracexr, aracexvl, aracexr || '' | '' || pkstrucobj.get_desc@heinens_custom_prod(1,aracinr, ''HN'') "Item code desc.",
+       pkartcoca.Get_Arccode@heinens_custom_prod(1,arlcinluvc) "UPC Number",
+       aracinr,
+       NVL((SELECT SUM(stmval)*-1 "Qty" 
+            FROM stomvt@heinens_custom_prod 
+            WHERE stmsite=socsite AND stmcinl=arlcinluvc AND stmtmvt=150
+            AND TRUNC(stmdmvt) >= TRUNC(SYSDATE-90)),0) "Qty"
+FROM sitdgene@heinens_custom_prod, SCOPE_ITEMS
+WHERE soccmag=10 
+AND 50 > socsite
+AND socsite !=30)
+PIVOT
+(
+  MAX("Qty")
+  FOR socsite IN (1,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,20,21,22,41,42,43,44)
+)
+ORDER BY 1,2)
+SELECT 
+  (SELECT SUBSTR(sobcext,1,3) || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, strpere, ''HN'')
+   FROM STRUCTURE@HEINENS_CUSTOM_PROD, strucobj@heinens_custom_prod
+   WHERE strcint=pkstrucrel.GET_CINT_PERE(1,''1'',aracinr,TRUNC(SYSDATE))
+   AND strlevel=3
+   AND strpere=sobcint
+   AND TRUNC(SYSDATE) BETWEEN strddeb AND strdfin) "Dept. code desc",
+ (SELECT SUBSTR(sobcext,8,3) || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, strpere, ''HN'')
+   FROM STRUCTURE@HEINENS_CUSTOM_PROD, strucobj@heinens_custom_prod
+   WHERE strcint=pkstrucrel.GET_CINT_PERE(1,''1'',aracinr,TRUNC(SYSDATE))
+   AND strlevel=1
+   AND strpere=sobcint
+   AND TRUNC(SYSDATE) BETWEEN strddeb AND strdfin) "Cat. code desc",
+   "Item code desc.", "UPC Number",
+	NVL(ROUND((SELECT SUM(ul_nqtuvc/ (ul_nuvspc*ul_nspcca)) FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+        	WHERE UL_USSCC  = UE_USSCC
+         	AND NVL(UE_INDFIC, ''1'') = ''1''
+        	AND ul_donord=:param2
+        	AND ul_cproin=aracexr
+        	AND ue_staums=0
+        	AND to_number(ul_ilogis)=aracexvl),0),0) "Inventory (case)",
+       "1","4","5","6","7","8","9","10","11","12","14","15","16","17","18","19","20","21","22","41","42","43","44"
+FROM SALES_PIVOT
+WHERE "1"*"4"*"5"*"6"*"7"*"8"*"9"*"10"*"11"*"12"*"14"*"15"*"16"*"17"*"18"*"19"*"20"*"21"*"22"*"41"*"42"*"43"*"44"=0  
+
+
+</QUERY>
+  <HEADERIFEMPTY>No zero sales movement </HEADERIFEMPTY>
+  <HEADER>Zero sales movements</HEADER>
+  
+</ROOT>
+

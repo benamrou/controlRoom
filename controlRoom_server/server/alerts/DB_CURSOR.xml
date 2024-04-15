@@ -1,0 +1,19 @@
+<ROOT>
+    <NAME>High cursor open</NAME>
+    <QUERY> 
+SELECT * 
+FROM(
+select max(a.value) as highest_open_cur, p.value as max_open_cur
+from v$sesstat a, v$statname b, v$parameter p
+where a.statistic# = b.statistic# and b.name = ''opened cursors current''
+and p.name= ''open_cursors''
+group by p.value)
+WHERE highest_open_cur > 10
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No Item rejected to warehouse</HEADERIFEMPTY>
+  <HEADER>Item rejected to warehouse</HEADER>
+  
+</ROOT>
+

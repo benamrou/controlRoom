@@ -28,9 +28,9 @@ export class ItemLogisticCodeComponent implements OnInit{
    menuItems: MenuItem[] = [];
    uploadedFiles: any[] = [];
 
-   templateID = 'ICR_TEMPLATE005';
-   toolID = 3;
-
+   templateID = 'ICR_TEMPLATE010';
+   toolID = 10;
+ 
    indicatorXLSfileLoaded: boolean = false;
 
    workbook;
@@ -77,7 +77,7 @@ export class ItemLogisticCodeComponent implements OnInit{
     this.scheduleDate = new Date();
     this.itemTrace = false;
     this.scheduleFlag = false;
-    this.screenID = 'SCR0000000016';
+    this.screenID = 'SCR0000000028';
     this.activeIndex = 0;
     this.displayConfirm = false;
     this.globalError = [];
@@ -90,10 +90,10 @@ export class ItemLogisticCodeComponent implements OnInit{
       this.menuItems = [{
               id: 'step0',
               label: 'Data selection',
-              title: 'Pick your item attribute file',
+              title: 'Pick your item logistic code file',
               command: (event: any) => {
                   this.activeIndex = 0;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Pick your data file item attribute', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Pick your data file item logistic code', detail: event.item.label});
               }
           },
           {
@@ -102,7 +102,7 @@ export class ItemLogisticCodeComponent implements OnInit{
               title: 'Define changes parameter',
               command: (event: any) => {
                 this.activeIndex = 1;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Specify change configuration', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Specify change configuration', detail: event.item.label});
               }
           },
           {
@@ -111,7 +111,7 @@ export class ItemLogisticCodeComponent implements OnInit{
               title: 'Execute now or schedule the change',
               command: (event: any) => {
                   this.activeIndex = 2;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Execute or Schedule change', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Execute or Schedule change', detail: event.item.label});
               }
           },
           {
@@ -120,7 +120,7 @@ export class ItemLogisticCodeComponent implements OnInit{
               title: 'Confirmation for execution/planification',
               command: (event: any) => {
                   this.activeIndex = 3;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Wrap up', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Wrap up', detail: event.item.label});
               }
           }
       ];
@@ -158,10 +158,10 @@ export class ItemLogisticCodeComponent implements OnInit{
             this._importService.getExcelFile(this.uploadedFiles[0])
                     .subscribe (data => {  
                                 },
-                                error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during loading', detail: error }); },
+                                error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during loading', detail: error }); },
                                 () => { 
                                         this.indicatorXLSfileLoaded = true;
-                                        this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Data file loaded', detail:  
+                                        this._messageService.add({key:'top', sticky:false, severity:'success', summary:'Data file loaded', detail:  
                                                                 '"' + this.uploadedFiles[0].name + '" worksheet loaded.' }); 
 
                                         // add comments field
@@ -173,7 +173,7 @@ export class ItemLogisticCodeComponent implements OnInit{
                             );
 
         } catch (error) {
-            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'ERROR file loading message', detail: error }); 
+            this._messageService.add({key:'top', sticky:false, severity:'error', summary:'ERROR file loading message', detail: error }); 
         }
     }
 
@@ -184,13 +184,13 @@ export class ItemLogisticCodeComponent implements OnInit{
                 existTemplate = data !== -1;
                 //console.log('data getTemplate :', data);
                 },
-                error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Template error', detail: error }); },
+                error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Template error', detail: error }); },
                 () => { 
                         if (existTemplate) {
-                            this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Template file', detail:  
-                                                    'File Item attribute downloaded.' }); 
+                            this._messageService.add({key:'top', sticky:false, severity:'success', summary:'Template file', detail:  
+                                                    'File item logistic code downloaded.' }); 
                         } else {
-                            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
+                            this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
                         }
                 }
             );
@@ -205,7 +205,7 @@ export class ItemLogisticCodeComponent implements OnInit{
     let userID;
     this.displayUpdateCompleted = false;
     if (this.checkGlobal()) {
-        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
+        this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 1/4: Posting the execution plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan is being posted.'});
 
         this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
                             '<br><br>'+
@@ -222,16 +222,16 @@ export class ItemLogisticCodeComponent implements OnInit{
                             executionId = data;
                             console.log('executionId : ', executionId);
                         },
-                        error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                        error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                         () => { 
                     if (this.scheduleFlag) {
-                        this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Step 2/2: Data file execution plan', detail:  
+                        this._messageService.add({key:'top', sticky:false, severity:'success', summary:'Step 2/2: Data file execution plan', detail:  
                                                     '"' + this.uploadedFiles[0].name + '" worksheet loaded for scheduled execution.' }); 
                     }
                     else {
                         // Execute the file
                         if(executionId.RESULT[0] < 0 ) {
-                            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution failure', detail: executionId.MESSAGE[0] }); 
+                            this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Execution failure', detail: executionId.MESSAGE[0] }); 
                             return;
                         }
                         /** Run the job integration */
@@ -239,13 +239,13 @@ export class ItemLogisticCodeComponent implements OnInit{
                                            'Step 2/4: Executing item logistic code mapping change... <br>'+ 
                                             '<br><br>'+
                                             '<b>Item logistic code change is usually taking between 1 and 3 minutes</b>';
-                        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
+                        this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
                                     //console.log('data userID : ', data);
                                     userID = data[0].RESULT;
                                 },
-                                error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                                error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                 () =>    {  
 
                                     this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
@@ -253,11 +253,11 @@ export class ItemLogisticCodeComponent implements OnInit{
                                                         'Step 3/4: Running integration job... <br>'+ 
                                                         '<br><br>'+
                                                         '<b>Item logistic code change is usually taking between 1 and 3 minutes</b>';
-                                    this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
+                                    this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
                                     this._importService.executePlan(userID, this.toolID).subscribe( 
                                             data => {  },
-                                            error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution issue', detail: error }); },
-                                            () => { this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
+                                            error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Execution issue', detail: error }); },
+                                            () => { this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
                                                     this.msgFinalDisplayed = 'Item logistic code  ' + this.uploadedFiles[0].name + ' - ' + 
                                                                             ' has been successfully processed.';
                                                 
@@ -270,7 +270,7 @@ export class ItemLogisticCodeComponent implements OnInit{
                                                     // Collect result in the back
                                                     this._importService.collectResult(executionId.RESULT[0]).subscribe (
                                                     data => { },
-                                                    error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
+                                                    error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                                     () => { 
                                                         this.displayUpdateCompleted = true;
 
@@ -288,7 +288,7 @@ export class ItemLogisticCodeComponent implements OnInit{
                         });
                     } 
         else {
-                this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Required data missing', detail: this.missingData }); 
+                this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Required data missing', detail: this.missingData }); 
         }
     }
 
@@ -300,7 +300,7 @@ export class ItemLogisticCodeComponent implements OnInit{
     this.activeIndex = 0;
     this.globalError = [];
     if (this.checkGlobal()) {
-        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Detail review', detail:  '"' + this.uploadedFiles[0].name + '" is getting reviewed in detail for confirmation.'});
+        this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Detail review', detail:  '"' + this.uploadedFiles[0].name + '" is getting reviewed in detail for confirmation.'});
         this._importService.checkFile(this.uploadedFiles[0].name, 
                                       this.toolID,
                                       JSON.stringify(this._importService.wb.sheets[0].worksheet.rows))
@@ -309,10 +309,10 @@ export class ItemLogisticCodeComponent implements OnInit{
                             this._importService.wb.sheets[0].worksheet.rows = [...data];
                             //console.log('data confirm: ', data, this._importService.wb.sheets[0].worksheet);
                         },
-                        error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during check', detail: error }); },
+                        error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during check', detail: error }); },
                         () => { 
 
-                                this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Content verification', detail:  
+                                this._messageService.add({key:'top', sticky:false, severity:'success', summary:'Content verification', detail:  
                                                             this.uploadedFiles[0].name + ' data file content check completed.' }); 
                                 //console.log('sheets :', this._importService.wb.sheets);
                                 let rowsWithError = this._importService.wb.sheets[0].worksheet.rows.filter(item => item.COMMENTS !== '' && item.COMMENTS !== null);
@@ -342,7 +342,7 @@ export class ItemLogisticCodeComponent implements OnInit{
                     );
         }
         else {
-                this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Required data missing', detail: this.missingData }); 
+                this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Required data missing', detail: this.missingData }); 
         }
     }
 
@@ -354,7 +354,7 @@ export class ItemLogisticCodeComponent implements OnInit{
     this.globalError=[];
     let result = true;    
     if(this._importService.wb.sheets[0].worksheet.columns.length < 5) {
-        this.globalError.push('Item attribute file must contains the following headers: ITEM_CODE, LV_CODE, UNIT_LEVEL, LOGISTIC_TYPE, LOGISTIC_CODE'); 
+        this.globalError.push('item logistic code file must contains the following headers: ITEM_CODE, LV_CODE, UNIT_LEVEL, TYPE_CODE, LOGISTIC_CODE'); 
         return false;
     }
     if (this._importService.wb.sheets[0].worksheet.columns[0].field.toUpperCase() !== 'ITEM_CODE') {
@@ -369,8 +369,8 @@ export class ItemLogisticCodeComponent implements OnInit{
         this.globalError.push('The column C header must be named UNIT_LEVEL'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'LOGISTIC_TYPE') {
-        this.globalError.push('The column D header must be named LOGISTIC_TYPE'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'TYPE_CODE') {
+        this.globalError.push('The column D header must be named TYPE_CODE'); 
       result = false;
     }
     if (this._importService.wb.sheets[0].worksheet.columns[4].field.toUpperCase() !== 'LOGISTIC_CODE') {

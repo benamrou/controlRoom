@@ -356,10 +356,10 @@ function setXLSProperties(workbook) {
     workbook.calcProperties.fullCalcOnLoad = true;
 }
 
-function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, tableName, formatingRules) {
+function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, tableName, formatingRules, renameColumn) {
     let valueColumns = Object.keys(detailData[0]);
     let dataColumns = [];
-
+    renameColumn = renameColumn || [];
     //heap.logger.log('alert', 'valueColumns before ' + JSON.stringify(valueColumns), 'alert', 3);
 
     if ( alertData[0].ALTCOLMOVE) {
@@ -381,6 +381,15 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
             {name: valueColumns[i], filterButton: true}
         )
     }
+    /* Rename columns */
+
+    //heap.logger.log('alert', 'Ready renaming ' + renameColumn.length, 'alert', 3);
+    for (let i=0; i<renameColumn.length; i++) {
+        let k = lettersToNumber(renameColumn[i].RENAMECOL);
+        dataColumns[k-1].name=renameColumn[i].COLNAME;
+        //heap.logger.log('alert', 'Rename: ' + dataColumns[k-1].name + ' => ' + renameColumn[i].COLNAME, 'alert', 3);
+    }
+
 
 
     // Add rows detail

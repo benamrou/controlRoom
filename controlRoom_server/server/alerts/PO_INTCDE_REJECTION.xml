@@ -1,0 +1,24 @@
+<ROOT>
+    <QUERY> 
+
+SELECT intid "PO #", intrefext "Afresh PO #", intsite "Store #",
+       foucnuf || '' | '' || intccom ||  '' | '' || foulibl "Supplier code desc.",
+       intcode || ''/'' || intcexvl || '' '' || pkstrucobj.get_desc@heinens_custom_prod(1, artcinr, ''HN'') "Item code desc.",
+       intnerr "Error code",
+       intmess "Error message" 
+FROM intcde@heinens_custom_prod, foudgene@heinens_custom_prod, artrac@heinens_custom_prod 
+WHERE intstat=2 
+AND TRUNC(intdcre)=TRUNC(SYSDATE)
+AND foucnuf=intcnuf
+AND artcexr=intcode
+AND NVL(intrefext,''0'')!=''0'' 
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''ORD0000000001''
+                                AND TRUNC(laltdcre)=TRUNC(SYSDATE))      /* No reported yet */
+
+</QUERY>
+  <HEADERIFEMPTY>No purchase orders rejection</HEADERIFEMPTY>
+  <HEADER>Purchase orders rejection</HEADER>
+  
+</ROOT>
+

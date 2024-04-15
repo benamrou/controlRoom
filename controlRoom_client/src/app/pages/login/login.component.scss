@@ -1,6 +1,8 @@
 $topnav-background-color: #222;
 // Winter sunset
-$topnav-background-color:linear-gradient(to top,#040308,#AD4A28,#DF723C,#FC7001,#DCB697,#9BA5AE,#3E5879,#020B1A);
+//$topnav-background-color:linear-gradient(to top,#040308,#AD4A28,#DF723C,#FC7001,#DCB697,#9BA5AE,#3E5879,#020B1A);
+// Spring background
+$topnav-background-color: #D0F0C0;
 :host {
     display: block;
 }

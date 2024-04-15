@@ -1,24 +1,52 @@
 <ROOT>
     <QUERY> 
-SELECT ecdsite "Location", ecdcexcde "PO #", 
+  SELECT ecdsite "Location", ecdcexcde "PO #",
        foucnuf || '' | '' || foulibl "Supplier code desc.",
        to_char(ecddcom,''MM/DD/RR HH24:MI:SS'') "Order on",
        ecdetat || '' | '' || pkparpostes.get_postlibl@heinens_custom_prod(1,10,502, ecdetat, ''HN'') "Status",
        to_char(ecddenvoi,''MM/DD/RR HH24:MI:SS'') "Sending date",
        (SELECT COUNT(1) FROM cdedetcde@heinens_custom_prod WHERE ecdcincde=dcdcincde AND ecdcfin=dcdcfin AND ecdsite=dcdsite) "Nb. items",
-       ''The automatic validation process ran and this PO has not been automatically validated.'' "Comment" 
+       ''The automatic validation process ran and this PO has not been automatically validated.'' "Comment"
 FROM cdeentcde@heinens_custom_prod, foudgene@HEINENS_CUSTOM_PROD
 WHERE ecdetat=3
 AND ecdurg=0
 AND SYSDATE > ecddenvoi
 AND ecdcfin=foucfin
 AND ecddenvoi > ecddcom
-AND EXISTS (SELECT 1 FROM erreurprg@heinens_custom_prod WHERE errprog=''pscde45p'' AND TRUNC(errdcre)=TRUNC(ecddenvoi) AND errstat=2 AND sysdate > errdcre and ecddcre > ecddenvoi
+AND TRUNC(ecddcom)=TRUNC(SYSDATE)
+AND EXISTS (SELECT 1 FROM erreurprg@heinens_custom_prod WHERE errprog=''pscde45p'' AND TRUNC(errdcre)=TRUNC(ecddenvoi) AND errstat=2 AND sysdate > errdcre and errdcre > ecddenvoi
             AND (sysdate-errdcre)* 24 * 60  > 5 /*  ran at least 5 minutes ago */)
-AND EXISTS (SELECT 1 FROM erreurprg@heinens_custom_prod WHERE errprog=''pscde45p'' AND TRUNC(errdcre)=TRUNC(ecddenvoi) AND errstat=8 AND ecddcre > ecddenvoi )
+AND EXISTS (SELECT 1 FROM erreurprg@heinens_custom_prod WHERE errprog=''pscde45p'' AND TRUNC(errdcre)=TRUNC(ecddenvoi) AND errstat=8 AND errdcre > ecddenvoi )
 AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
                                 where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''COL0000000002''
                                 AND LALTMESS LIKE ''%'' || ecdcexcde || ''%'')      /* No reported yet */
+UNION
+SELECT ecdsite "Location", ecdcexcde "PO #",
+       foucnuf || '' | '' || foulibl "Supplier code desc.",
+       to_char(ecddcom,''MM/DD/RR HH24:MI:SS'') "Order on",
+       ecdetat || '' | '' || pkparpostes.get_postlibl@heinens_custom_prod(1,10,502, ecdetat, ''HN'') "Status",
+       to_char(ecddenvoi,''MM/DD/RR HH24:MI:SS'') "Sending date",
+       (SELECT COUNT(1) FROM cdedetcde@heinens_custom_prod WHERE ecdcincde=dcdcincde AND ecdcfin=dcdcfin AND ecdsite=dcdsite) "Nb. items",
+       ''The store PO is in awaiting delivery but has not been collected. Main reason is user was on it.'' "Comment"
+FROM cdeentcde@heinens_custom_prod, foudgene@HEINENS_CUSTOM_PROD
+WHERE ecdetat=5
+AND ecdurg=0
+AND foutype=3
+AND SYSDATE > ecddenvoi
+AND ecdcfin=foucfin
+AND ecddenvoi > ecddcom
+AND TRUNC(ecddcom)=TRUNC(SYSDATE)
+AND NOT EXISTS (SELECT 1 FROM ccldetccl@heinens_custom_prod  WHERE cclcexcde=ecdcexcde)
+AND EXISTS (SELECT 1 FROM erreurprg@heinens_custom_prod st, erreurprg@heinens_custom_prod ed WHERE st.errprog=''psccl30p'' AND st.errmess LIKE ''%'' || ecdsitli || ''%'' || to_char(trunc(SYSDATE,''DD/MM/RR'')) || ''%''  AND TRUNC(st.errdcre)=TRUNC(ecddenvoi) AND st.errstat=2 AND sysdate > st.errdcre and st.errdcre > ecddenvoi
+            AND (sysdate-st.errdcre)* 24 * 60  > 5 /*  ran at least 5 minutes ago */
+            AND ed.errprog=st.errprog AND st.errtrid=ed.errtrid
+            AND ed.errstat=8)
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''COL0000000002''
+                                AND LALTMESS LIKE ''%'' || ecdcexcde || ''%'')      /* No reported yet */
+
+
+
   </QUERY>
   <HEADERIFEMPTY>No purchase orders missing cut-off time</HEADERIFEMPTY>
   <HEADER>Purchase orders not automaticallhy validated</HEADER>

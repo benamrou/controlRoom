@@ -1,0 +1,23 @@
+<ROOT>
+    <NAME>Items rejected</NAME>
+    <QUERY> 
+SELECT DISTINCT iarnumano "Error id", iarsite "Whs #", iarcexr "Item code", iarcexvl "LV #", iarliba "Item description", iarean "UPC",  
+       ai_message "Error message"
+FROM tb_anoart@heinens_stk_prod, tb_anoint@heinens_stk_prod, artvl@heinens_custom_prod
+WHERE ai_numano=iarnumano
+AND ai_severe IN (0,1) /* FATAL, BLOCKING */
+AND TRUNC(iardmaj) >= TRUNC(SYSDATE-1)
+AND iarcexr=arlcexr
+AND iarcexvl=arlcexvl
+AND arletat = 1
+AND NOT EXISTS (SELECT 1 FROM tb_art@heinens_stk_prod WHERE ar_cproin=iarcexr AND to_number(ar_ilogis)=iarcexvl AND ar_donord=iarsite)
+AND EXISTS (SELECT 1 FROM artuc@heinens_custom_prod WHERE iarcexr=aracexr AND iarcexvl=iarcexvl 
+	    AND iarsite=arasite AND TRUNC(aradfin) > TRUNC(SYSDATE))
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No Item rejected to warehouse</HEADERIFEMPTY>
+  <HEADER>Item rejected to warehouse</HEADER>
+  
+</ROOT>
+

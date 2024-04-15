@@ -1,0 +1,31 @@
+<ROOT>
+    <QUERY> 
+SELECT ecdsite "Location", ecdcexcde "PO #", 
+       foucnuf || '' | '' || foulibl "Supplier code desc.",
+       to_char(ecddcom,''MM/DD/RR HH24:MI:SS'') "Order on",
+       ecdetat || '' | '' || pkparpostes.get_postlibl@heinens_custom_prod(1,10,502, ecdetat, ''HN'') "Status",
+       to_char(ecddenvoi,''MM/DD/RR HH24:MI:SS'') "Sending date",
+       (SELECT COUNT(1) FROM cdedetcde@heinens_custom_prod WHERE ecdcincde=dcdcincde AND ecdcfin=dcdcfin AND ecdsite=dcdsite) "Nb. items",
+       ''This store PO has not been collected for the warehouse.'' "Comment" 
+FROM cdeentcde@heinens_custom_prod, foudgene@HEINENS_CUSTOM_PROD, sitdgene@heinens_custom_prod
+WHERE ecdetat=3
+AND socsite=ecdsite
+AND soccmag=10
+AND ecdurg=0
+AND SYSDATE > ecddenvoi
+AND ecdcfin=foucfin
+AND ecddenvoi > ecddcom
+AND foutype = 3
+AND EXISTS (SELECT 1 FROM erreurprg@heinens_custom_prod WHERE errprog=''pscde45p'' AND TRUNC(errdcre)=TRUNC(ecddenvoi) AND errstat=2 AND sysdate > errdcre and ecddcre > ecddenvoi
+            AND (sysdate-errdcre)* 24 * 60  > 10 /*  ran at least 10 minutes ago */)
+AND EXISTS (SELECT 1 FROM erreurprg@heinens_custom_prod WHERE errprog=''pscde45p'' AND TRUNC(errdcre)=TRUNC(ecddenvoi) AND errstat=8 AND ecddcre > ecddenvoi )
+AND NOT EXISTS (SELECT 1 from ccldetccl@heinens_custom_prod WHERE cclcexcde=ecdcexcde)
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''COL0000000003''
+                                AND LALTMESS LIKE ''%'' || ecdcexcde || ''%'')      /* No reported yet */
+  </QUERY>
+  <HEADERIFEMPTY>No purchase orders missing cut-off time</HEADERIFEMPTY>
+  <HEADER>Purchase orders not collected</HEADER>
+  
+</ROOT>
+

@@ -1,0 +1,21 @@
+<ROOT>
+    <QUERY> 
+SELECT s.username, s.sid,s.serial#, s.program, 
+       s.sql_exec_start, 
+       CEIL(s.last_call_et/60) mins_running,
+       q.sql_text,sql_fulltext,
+       s.STATE
+FROM v$session s, v$sql q
+WHERE s.sql_id = q.sql_id
+AND status=''ACTIVE''
+AND TYPE NOT IN (''BACKGROUND'')
+AND last_call_et >  60*:param2 /* :param2 minutes */
+ORDER BY SID,serial#
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No long queries running more than X minutes</HEADERIFEMPTY>
+  <HEADER>Long queries running more than X minutes</HEADER>
+  
+</ROOT>
+

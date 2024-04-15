@@ -1,7 +1,7 @@
 <ROOT>
     <BANNER>
         SELECT DECODE(casvrec, 0, ''WARNING'', ''NORMAL'')  as CRITICALITY,
-                DECODE(casvrec, 0, ''Sales load FAILED - The extract will re-run automatically tomorrow.'', ''Sales loaded successfully '')  as MESSAGE
+                DECODE(casvrec, 0, ''Sales load FAILED - Open a Helpdesk ticket, they will generate the report once fixed'', ''Sales loaded successfully '')  as MESSAGE
         FROM (SELECT casvrec FROM calsite@Heinens_Custom_Prod
               WHERE TRUNC(casdate)=TRUNC(SYSDATE-1)
               AND 50 > cassite
@@ -262,7 +262,11 @@ DISTINCT STMSITE "Site",
            AND TRUNC(CURRENT_DATE) BETWEEN gsdddeb AND gsddfin
            AND STMSITE = gsdsite)
    AND STMSEQVL = arlseqvl
-
+AND NOT EXISTS (SELECT 1 FROM calsite@Heinens_Custom_Prod
+                    WHERE TRUNC(casdate) BETWEEN TRUNC(SYSDATE-5) AND TRUNC(SYSDATE-1)
+                    AND 50 > cassite
+                    AND casopen=1
+                    AND casvrec =0)
 
 </QUERY>
  

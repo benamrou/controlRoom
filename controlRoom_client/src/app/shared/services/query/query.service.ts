@@ -34,13 +34,13 @@ export class QueryService {
    * Get Dashboard data using Smart data extract with the dashboard Id
    * @param queryId 
    */
-  getQueryResult(queryId: string, param?: string) {
+  getQueryResult(queryId: string, param?: any[]) {
     this.request = this.baseQueryUrl;
     let headersSearch = new HttpHeaders();
     let options = new HttpHeaders();
     this.params= new HttpParams();
-    if (param) {
-      this.params = this.params.append('PARAM',param);
+    for (let i=0; i < param.length;i++) {
+      this.params = this.params.append('PARAM',param[i]);
     }
     this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
 
@@ -52,6 +52,7 @@ export class QueryService {
             return data;
     }));
   }
+
 
 
   /**

@@ -1,0 +1,7 @@
+{
+    "hostURL"            : "http://heinens-stgapp.symphonygold.com:9086",
+     "serverURL_local"   : "http://heinens-stgapp.symphonygold.com:8090",
+     "serverURL"         : "http://heinens-stgapp.symphonygold.com:8090",
+     "server_batchURL"   : "http://heinens-stgapp.symphonygold.com:8091",
+     "baseURL"           : "http://heinens-stgapp.symphonygold.com:9086/icr"
+ }

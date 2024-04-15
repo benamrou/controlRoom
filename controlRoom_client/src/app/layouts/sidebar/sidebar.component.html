@@ -184,6 +184,21 @@
                     </ul>
                 </li>
             </div>
+
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1">
+                <a class="list-group-item" (click)="addExpandClass('edi')" >
+                    <span><i class="fa fa-wifi"></i> &nbsp; {{ 'EDI' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'edi' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/ediasn" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-truck-fast"></i> {{ 'Store ASN' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
             
             <div class="nested-menu" *ngIf="_userService.userInfo.dataIntegrity ==1 || _userService.userInfo.warehouse ==1">
                 <a class="list-group-item" (click)="addExpandClass('massupdate')" >

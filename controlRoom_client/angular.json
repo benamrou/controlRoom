@@ -93,6 +93,22 @@
                   "with": "src/environments/environment.heinens.ts"
                 }
               ]
+            },
+            "oci": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.oci.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"

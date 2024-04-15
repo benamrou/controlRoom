@@ -11,9 +11,9 @@
 FROM im_edi_invoice_detail@heinens_custom_prod art 
 WHERE TRUNC(invoicedate)=TRUNC(SYSDATE)
 AND status_no=2 
-AND importbatchid > 1
+AND importbatchid > 4946000
 AND NVL(qtyinvoiced,0) > 0
-AND NOT EXISTS (SELECT 1 
+/*AND NOT EXISTS (SELECT 1 
                 FROM artcoca@heinens_custom_prod, artuv@heinens_custom_prod 
                 WHERE arccinv=arvcinv
                 AND (arccode LIKE substr(productid, 2, length(productid) - 1) || ''%'' OR
@@ -25,6 +25,7 @@ AND NOT EXISTS (SELECT 1
                 AND (acucode LIKE substr(productid, 2, length(productid) - 1) || ''%'' OR
 		     acucode LIKE substr(productid, 1, length(productid) - 1))
                 AND TRUNC(SYSDATE+7) BETWEEN acuddeb AND acudfin)
+*/
 </QUERY>
  
   <HEADERIFEMPTY>No Unknown UPC</HEADERIFEMPTY>

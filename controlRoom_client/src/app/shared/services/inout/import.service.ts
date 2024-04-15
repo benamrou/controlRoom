@@ -238,6 +238,8 @@ export class ImportService{
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
         let dateNow = new Date();
+        let datePassed = new Date();
+        datePassed.setDate(datePassed.getDate() - 4); /* INTARTCOUL requirement */
         console.log(' Param :', userID, toolId);
         let command = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
                     'export GOLD_DEBUG=1; ' ;
@@ -264,7 +266,7 @@ export class ImportService{
                 command = command + 'psifa41p psifa41p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
                 break;
             case pt33_10_ITEMLOGISTICCODE: /* Logisitc code */ 
-                command = command + 'psifa41p psifa41p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                command = command + 'psifa50p psifa50p $USERID ' + this.datePipe.transform(datePassed, 'dd/MM/yy') + ' 1 ';
                 break;
             default:
                 console.log ('Unknown mass tool id : ', toolId);

@@ -188,11 +188,14 @@ export class OrderUrgentComponent implements OnDestroy {
         this.searchResult[i]['Urgent'] = 1;
       }
     }
+    this.waitMessage =  '<b>Orders information update is usually taking less than a minute depending on the number of PO to be processed</b>';
+                        
     this._messageService.add({severity:'info', summary:'Info Message', detail: 'Updating orders...'});
     this.subscription.push(this._orderService.updateOrder(ordersToChange)
             .subscribe( 
                 data => {
                   console.log('order update: ', data);  
+                  this.waitMessage = '';
                   this.msgDisplayed = 'All the selected purchase orders have been updated.<br><br>Play safe, please review in GOLD the updated PO.'
                   this.displayUpdateCompleted=true;
 
@@ -202,6 +205,7 @@ export class OrderUrgentComponent implements OnDestroy {
                       this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
                 },
                 () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Orders update completed.'});
+                      this.waitMessage = '';
                 }
             ));
 

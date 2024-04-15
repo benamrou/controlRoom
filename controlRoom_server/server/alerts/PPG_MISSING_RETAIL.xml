@@ -1,0 +1,53 @@
+<ROOT>
+    <NAME>Item exception</NAME>
+    <QUERY> 
+/** ********************************************************** */
+/* Item PPG with missing Ads retail			       */
+/** ********************************************************** */
+WITH ITEM_LIST AS (SELECT * 
+FROM artdetlist@heinens_custom_prod
+WHERE TRUNC(SYSDATE+1) BETWEEN dliddeb AND dlidfin
+AND dlinlis LIKE ''PPG%'')
+SELECT l1.dlinlis || '' | '' || elilibl "PPG # desc", 
+       uv1.arvcexr || ''/'' ||  uv1.arvcexv || '' '' || pkstrucobj.get_desc(1,uv1.arvcinr,''HN'') "Item/SV code desc",
+       pkartcoca.Get_Arccode@heinens_custom_prod(1,l1.dlicinv) "UPC",
+       '' $'' || aviprix || ''/'' || avimulti "Retail",
+       avintar || '' ['' || to_char(aveddeb, ''MM/DD/RR'') || ''-'' || to_char(avedfin, ''MM/DD/RR'') || '']'' "Price list",
+       uv2.arvcexr || ''/'' ||  uv2.arvcexv || '' '' ||  pkstrucobj.get_desc@heinens_custom_prod(1,uv2.arvcinr,''HN'') "Item/SV code desc with no retail",
+       pkartcoca.Get_Arccode@heinens_custom_prod(1,l2.dlicinv) "UPC (no retail)",
+       ''-'' "Retail "
+FROM ITEM_LIST l1, ITEM_LIST l2, aveprix@heinens_custom_prod s1, 
+     avetar@heinens_custom_prod, 
+     artuv@heinens_custom_prod uv1, artuv@heinens_custom_prod uv2, 
+     artentlist@heinens_custom_prod
+WHERE l1.dlinlis=l2.dlinlis
+AND l1.dlicinv != l2.dlicinv
+AND uv1.arvcinv=l1.dlicinv
+AND uv2.arvcinv=l2.dlicinv
+AND s1.avintar=aventar
+AND s1.avicinv=l1.dlicinv
+AND elinlis=l1.dlinlis
+AND avestat=2 /* Promo */
+AND avedfin > TRUNC(SYSDATE+1) 
+AND s1.avidfin  > TRUNC(SYSDATE+1) 
+AND EXISTS (SELECT 1 
+            FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod WHERE araseqvl=arlseqvl AND arlcinluvc=l2.dlicinv 
+            AND avedfin > TRUNC(araddeb) AND TRUNC(aradfin)> aveddeb
+            AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,arasite,''1100'',''1'')=1)
+/* Not an old item */
+AND NOT EXISTS (SELECT 1 
+            FROM artuc@heinens_custom_prod, artvl@heinens_custom_prod WHERE araseqvl=arlseqvl AND arlcinluvc=l2.dlicinv 
+            AND TRUNC(SYSDATE-30) BETWEEN araddeb AND aradfin
+            AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,arasite,''1100'',''1'')=1)
+AND NOT EXISTS (SELECT 1 FROM aveprix@heinens_custom_prod s2
+                WHERE s2.avintar=aventar
+                AND s2.avicinv=l2.dlicinv
+                AND TRUNC(aveddeb+1) BETWEEN s2.aviddeb AND s2.avidfin)
+ ORDER BY avintar ASC
+</QUERY>
+ 
+  <HEADERIFEMPTY>No PPG Item exception retail</HEADERIFEMPTY>
+  <HEADER>PPG with missing retail items</HEADER>
+  
+</ROOT>
+

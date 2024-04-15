@@ -1,0 +1,205 @@
+<ROOT>
+    <QUERY> 
+    /* Tote bags sales report */
+/* Request 2024/01 - from Matt B./Julie K. */
+WITH cal AS(
+          select  add_months(ADD_MONTHS((LAST_DAY(SYSDATE)+1),-1),level-1) dt
+            from  dual
+            connect by 1 >= level 
+         ),
+firstMonday AS (select  dt first_of_the_month,
+        trunc(dt + 6,''iw'') first_monday_the_month
+  from  cal),
+FIRSTDAYS AS(
+SELECT first_monday_the_month "Report on",
+       TRUNC(first_of_the_month-1-364) Year2_start,
+       TRUNC(first_of_the_month-1) Year2_end,
+       TRUNC(first_of_the_month-2-2*364) Year1_start,
+       TRUNC(first_of_the_month-1-1-364) Year1_end,
+       ''['' || to_char(first_of_the_month-1-364,''MM/DD/RRRR'') || '' - '' || to_char(first_of_the_month-1,''MM/DD/RRRR'') || '']'' "Year #2",
+       ''['' || to_char(first_of_the_month-2-2*364,''MM/DD/RRRR'') || '' - '' || to_char(first_of_the_month-1-364-1,''MM/DD/RRRR'') || '']'' "Year #1"
+FROM firstMonday),
+/* Select the category - Approach on exclusion */
+MERCH_CAT_SUB AS (SELECT * FROM strucobj@HEINENS_CUSTOM_PROD, tra_strucobj@HEINENS_CUSTOM_PROD WHERE sobcint=tsobcint AND langue=''HN'' AND sobidniv IN (4,5)
+          AND EXISTS (SELECT 1 FROM strucrel@HEINENS_CUSTOM_PROD WHERE objpere=sobcint 
+          AND TRUNC(SYSDATE) BETWEEN objddeb AND objdfin)
+          ),
+DATE_RANGE_Y1 AS(
+SELECT Year1_start START_Y1, Year1_end END_Y1, "Year #1"
+FROM FIRSTDAYS),
+DATE_RANGE_Y2 AS(
+SELECT Year2_start START_Y2, Year2_end END_Y2, "Year #2"
+FROM FIRSTDAYS),
+ITEM_LIST AS(
+SELECT DISTINCT mcat.sobcext CAT_CODE, SUBSTR(mcat.sobcext,7,3) CAT_CODE_DISPLAYED, 
+        pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, mcat.sobcint, ''HN'') CAT_DESC,
+        SUBSTR(msubcat.sobcext,10,4) SUB_CAT_CODE_DISPLAYED, 
+        pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, msubcat.sobcint, ''HN'') SUB_CAT_DESC, 
+        foucnuf, foulibl,
+        aracfin,
+       aracexr ITEM_CODE, pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, aracinr, ''HN'') ITEM_DESC, aracexvl LV,
+       aracinr, 
+       pkartstock.RecupCinlUVC@HEINENS_CUSTOM_PROD(1,aracinl) cinuvc,
+       artgest CAT_MGR_CODE,
+       pkparpostes.get_postlibl@HEINENS_CUSTOM_PROD(1, 10, 1032, artgest, ''HN'') CAT_MANAGER,
+       (SELECT MIN(araddeb) FROM artuc@HEINENS_CUSTOM_PROD ac
+            WHERE  ac.aracinr= il.aracinr AND aratfou=1)  ORD_DDEB,
+       (SELECT MAX(aradfin) FROM artuc@HEINENS_CUSTOM_PROD ac
+            WHERE  ac.aracinr= il.aracinr AND aratfou=1)  ORD_DFIN,
+        
+       (SELECT tappbrut FROM tarprix@HEINENS_CUSTOM_PROD WHERE tapcfin=aracfin AND tapccin=araccin AND TRUNC(SYSDATE) BETWEEN tapddeb AND tapdfin AND tapseqvl=araseqvl AND ROWNUM=1) "Gross price",
+       (SELECT aprfapn FROM areprix@HEINENS_CUSTOM_PROD WHERE aprcfin=aracfin AND aprccin=araccin AND TRUNC(SYSDATE) BETWEEN aprddeb AND aprdfin AND aprseqvl=araseqvl AND ROWNUM=1) "Net cost",
+       ararefc "Ref. to order",
+       
+       NVL(ROUND((SELECT SUM(ul_nqtuvc/ (ul_nuvspc*ul_nspcca)) FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD
+        WHERE UL_USSCC  = UE_USSCC
+         AND NVL(UE_INDFIC, ''1'') = ''1''
+        AND ul_donord=arasite
+        AND ul_cproin=aracexr
+        AND ue_staums=0
+        AND to_number(ul_ilogis)=aracexvl),0),0) "Inventory (case)",
+       NVL((SELECT sum(dcdcoli) from CDEDETCDE@Heinens_Custom_Prod, CDEENTCDE@Heinens_Custom_Prod
+           where ecdcincde=dcdcincde and ecdetat=5 and dcdetat=5 and dcdcinr=aracinr and ecdsite=arasite ), 0) "On order (case)",
+           
+       NVL((SELECT MAX(serdrec) from STODETRE@Heinens_Custom_Prod, stoentre@Heinens_Custom_Prod
+           where sercinrec=sdrcinrec AND sdrcinr=aracinr and sersite=arasite AND sdrsite=sersite), NULL) "Last delivery",
+           
+       NVL((SELECT sdrpnfa FROM (SELECT sdrpnfa, sdrcinrec from STODETRE@Heinens_Custom_Prod, stoentre@Heinens_Custom_Prod
+           where sercinrec=sdrcinrec AND sdrcinr=aracinr and sersite=arasite AND sdrsite=sersite ORDER BY sercinrec DESC) WHERE ROWNUM=1), NULL) "Last receipt cost"
+FROM strucobj@HEINENS_CUSTOM_PROD mcat, strucobj@HEINENS_CUSTOM_PROD msubcat, 
+     artuc@HEINENS_CUSTOM_PROD il,  
+     foudgene@HEINENS_CUSTOM_PROD, 
+     strucrel@HEINENS_CUSTOM_PROD scat, strucrel@HEINENS_CUSTOM_PROD cat, artrac@HEINENS_CUSTOM_PROD,
+     artdetlist@HEINENS_CUSTOM_PROD, artvl@HEINENS_CUSTOM_PROD
+WHERE  scat.objcint=aracinr AND scat.objpere=cat.objcint AND cat.objpere=mcat.sobcint
+AND cat.objcint=msubcat.sobcint
+AND TRUNC(SYSDATE) BETWEEN scat.objddeb AND scat.objdfin
+AND TRUNC(SYSDATE) BETWEEN cat.objddeb AND cat.objdfin
+and araseqvl=arlseqvl
+and dlinlis=:param2
+and trunc(SYSDATE) between dliddeb and dlidfin
+and arlcinluvc=dlicinv
+and aracinr=artcinr
+AND arlcexr IN (''174493'',''158893'',''164434'',''164435'',''173661'',''184119'',''184125'',''189221'',
+                ''189222'',''189223'',''180858'',''185221'',''189224'')
+AND aratcde=1 AND aracdble=1 AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin AND aracfin=foucfin AND foutype=1 and aratfou=1),
+ITEM_SKU_SALES_INFO AS (
+SELECT 
+    "Year #1", "Year #2",
+    CASE 
+      WHEN cat_code LIKE ''103%'' THEN ''Grocery''
+      WHEN cat_code LIKE ''102010%'' THEN ''Dairy''
+      WHEN cat_code LIKE ''102011%'' THEN ''Frozen''
+      WHEN cat_code LIKE ''102014%'' THEN ''Ice-cream''
+      WHEN cat_code LIKE ''101%'' THEN ''Meat''
+      WHEN cat_code LIKE ''104008%'' THEN ''Fresh Produce''
+      WHEN cat_code LIKE ''104019%'' THEN ''Floral''
+      WHEN cat_code LIKE ''104021%'' THEN ''Salad bar''
+      WHEN cat_code LIKE ''104025%'' THEN ''Bulk Produce''
+      WHEN cat_code LIKE ''105%'' THEN ''Bakery''
+      WHEN cat_code LIKE ''106007%'' THEN ''Deli''
+      WHEN cat_code LIKE ''106015%'' THEN ''PPD''
+      WHEN cat_code LIKE ''106016%'' THEN ''Cafe''
+      WHEN cat_code LIKE ''106022%'' THEN ''Speciality Cheese''
+      WHEN cat_code LIKE ''106033%'' THEN ''Seafood''
+      WHEN cat_code LIKE ''199%'' THEN ''General''
+      ELSE ''Other''
+    END "Dept.",
+       CAT_CODE_DISPLAYED || '' | '' || CAT_DESC "Category code description", 
+       SUB_CAT_CODE_DISPLAYED || '' | '' || SUB_CAT_DESC "Sub-category code description", 
+       foucnuf || '' | '' || foulibl "Supplier code description",
+       ITEM_CODE || '' / '' || LV || '' | '' || ITEM_DESC "Item/LV code description", 
+       "Ref. to order",
+       pkartcoca.Get_Arccode@HEINENS_CUSTOM_PROD(1, cinuvc) "UPC",
+       CAT_MGR_CODE || '' | '' ||  CAT_MANAGER "Category Mgr",
+       to_char(ORD_DDEB,''MM/DD/RRRR'') "Ord. since",
+       to_char(ORD_DFIN,''MM/DD/RRRR'') "Ord. until",
+       "Inventory (case)",
+       "On order (case)",
+       "Last delivery",
+       "Last receipt cost",
+       DECODE(CEIL(END_Y1-ORD_DDEB)/7,0,1, CEIL(END_Y1-ORD_DDEB)/7) "NB_WEEKS_Y1",
+       DECODE(CEIL(END_Y2-ORD_DDEB)/7,0,1,CEIL(END_Y2-ORD_DDEB)/7) "NB_WEEKS_Y2",
+       (select pck from (select ac.araddeb, (pkartstock.get_skuunits@HEINENS_CUSTOM_PROD(1, ac.aracinl)) pck from artuc@HEINENS_CUSTOM_PROD ac where  ac.aracfin=il.aracfin and ac.aracinr= il.aracinr AND aratfou=1 
+            AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin order by ac.araddeb asc) where pck is not null and rownum =1)
+            "PackCalc",
+        (select LISTAGG(pckitem , ''/'') within group (order by 1 asc) 
+         from (select distinct pkartstock.get_skuunits@HEINENS_CUSTOM_PROD(1, ac.aracinl) pckitem from artuc@HEINENS_CUSTOM_PROD ac where  ac.aracfin=il.aracfin and ac.aracinr= il.aracinr AND aratfou=1 
+         AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin)) 
+        "Pack",
+        "Gross price",
+        "Net cost",
+       NVL((SELECT ''WAREHOUSE'' FROM artuc@HEINENS_CUSTOM_PROD ac
+            WHERE ARASITE > 90000 AND ac.aracinr= il.aracinr AND aratfou=1 
+            AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin AND ROWNUM=1), ''DSD'')  "Flow",
+       NVL((SELECT SUM (stmval)*-1 FROM stomvt@HEINENS_CUSTOM_PROD WHERE stmcinl=cinuvc AND stmsite > 90000 AND 
+        stmtmvt=151 AND TRUNC(stmdmvt) BETWEEN START_Y1 AND END_Y1),0) QTY_SHIPPED_Y1,
+       NVL((SELECT SUM (stmval)*-1 FROM stomvt@HEINENS_CUSTOM_PROD WHERE stmcinl=cinuvc AND 50 > stmsite AND 
+        stmtmvt=150 AND TRUNC(stmdmvt)  BETWEEN START_Y1 AND END_Y1),0) QTY_SOLD_Y1,
+       NVL((SELECT SUM (stmval)*-1 FROM stomvt@HEINENS_CUSTOM_PROD WHERE stmcinl=cinuvc AND stmsite > 90000 AND 
+        stmtmvt=151 AND TRUNC(stmdmvt) BETWEEN START_Y2 AND END_Y2),0) QTY_SHIPPED_Y2,
+       NVL((SELECT SUM (stmval)*-1 FROM stomvt@HEINENS_CUSTOM_PROD WHERE stmcinl=cinuvc AND 50 > stmsite AND 
+        stmtmvt=150 AND TRUNC(stmdmvt)  BETWEEN START_Y2 AND END_Y2),0) QTY_SOLD_Y2
+FROM item_list il, DATE_RANGE_Y1, DATE_RANGE_Y2)
+SELECT "Year #1", "Year #2", "Dept.", "Category code description", "Sub-category code description", 
+       "Supplier code description", "Item/LV code description", 
+       "Category Mgr",  
+       "Ord. since",  "Ord. until",  
+       "Ref. to order", "UPC",
+       "Pack", "Flow",  
+       "Inventory (case)",
+       "On order (case)",
+       (CASE
+         WHEN NB_WEEKS_Y2 >= 52 THEN CEIL("Inventory (case)"*QTY_SHIPPED_Y2/(52*"PackCalc"))
+         ELSE CEIL("Inventory (case)"/(QTY_SHIPPED_Y2/(NB_WEEKS_Y2*"PackCalc")))
+        END) "Weeks on hand",
+       "Last delivery",
+        "Gross price",
+        "Net cost" * "Pack" "Case cost",
+       "Last receipt cost",
+       /* Year #1 */
+       (CASE
+         WHEN NB_WEEKS_Y1 >= 52 THEN CEIL(QTY_SHIPPED_Y1/"PackCalc")
+         ELSE CEIL(QTY_SHIPPED_Y1/"PackCalc")
+        END) "Y1 Shipped",
+       (CASE
+         WHEN NB_WEEKS_Y1 >= 52 THEN CEIL(QTY_SOLD_Y1/"PackCalc")
+         ELSE CEIL(QTY_SOLD_Y1/"PackCalc")
+        END) "Y1 Sold",
+       CEIL(QTY_SOLD_Y1) "Y1 Sold (Unit)", 
+       (CASE
+         WHEN NB_WEEKS_Y1 >= 52 THEN CEIL(QTY_SHIPPED_Y1/(52*"PackCalc"))
+         ELSE CEIL(QTY_SHIPPED_Y1/(NB_WEEKS_Y1*"PackCalc"))
+        END) "Average Shipped Y1",
+       (CASE
+         WHEN NB_WEEKS_Y1 >= 52 THEN CEIL(QTY_SOLD_Y1/(52*"PackCalc"))
+         ELSE CEIL(QTY_SOLD_Y1/(NB_WEEKS_Y1*"PackCalc"))
+        END) "Average Sold Y1",
+       /* Year #2 */
+       (CASE
+         WHEN NB_WEEKS_Y2 >= 52 THEN CEIL(QTY_SHIPPED_Y2/"PackCalc")
+         ELSE CEIL(QTY_SHIPPED_Y2/"PackCalc")
+        END) "Y2 Shipped",
+       (CASE
+         WHEN NB_WEEKS_Y2 >= 52 THEN CEIL(QTY_SOLD_Y2/"PackCalc")
+         ELSE CEIL(QTY_SOLD_Y2/"PackCalc")
+        END) "Y2 Sold",
+       QTY_SOLD_Y2 "Y2 Sold (Unit)", 
+       (CASE
+         WHEN NB_WEEKS_Y2 >= 52 THEN CEIL(QTY_SHIPPED_Y2/(52*"PackCalc"))
+         ELSE CEIL(QTY_SHIPPED_Y2/(NB_WEEKS_Y2*"PackCalc"))
+        END) "Average Shipped Y2",
+       (CASE
+         WHEN NB_WEEKS_Y2 >= 52 THEN CEIL(QTY_SOLD_Y2/(52*"PackCalc"))
+         ELSE CEIL(QTY_SOLD_Y2/(NB_WEEKS_Y2*"PackCalc"))
+        END) "Average Sold Y2"
+FROM ITEM_SKU_SALES_INFO
+
+
+	</QUERY>
+ 
+  <HEADERIFEMPTY>No TOTE bags report </HEADERIFEMPTY>
+  <HEADER>TOTE bags report</HEADER>
+  
+</ROOT>
+

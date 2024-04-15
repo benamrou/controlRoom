@@ -50,8 +50,10 @@ import { HolidayScheduleComponent } from './pages/schedule/holiday.schedule/holi
 import { OrderUrgentComponent } from './pages/order/urgent/order.urgent.component';
 import { ItemCharacteristicComponent } from './pages/mass.update/item.characteristic/item.characteristic.component';
 import { VariableWeightComponent } from './pages/mass.update/variable.weight/variable.weight.component';
+import { ItemLogisticCodeComponent } from './pages/mass.update/item.logistic.code/item.logistic.code.component';
 
 import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
+import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -89,6 +91,10 @@ const routes: Routes = [
   /* IT */
   { path: 'batchschedule', component: BatchScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'batchlist', component: MyBatchListComponent, canActivate: [AuthentificationGuard] },
+
+  /* EDI */
+  { path: 'ediasn', component: EdiAsnComponent, canActivate: [AuthentificationGuard] },
+
   /* HELPDESK */
   { path: 'robot', component: RobotComponent, canActivate: [AuthentificationGuard] },
   { path: 'servicescenter', component: ServicesCenterComponent, canActivate: [AuthentificationGuard] },
@@ -104,6 +110,7 @@ const routes: Routes = [
   { path: 'skudimension', component: SKUDimensionComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemcharacteristic', component: ItemCharacteristicComponent, canActivate: [AuthentificationGuard] },
   { path: 'variableweight', component: VariableWeightComponent, canActivate: [AuthentificationGuard] },
+  { path: 'logisticcode', component: ItemLogisticCodeComponent, canActivate: [AuthentificationGuard] },
   
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },

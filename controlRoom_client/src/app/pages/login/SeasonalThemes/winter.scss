@@ -8,6 +8,8 @@ html, body {
   background: linear-gradient(#123, #111);
 }
 
+$topnav-background-color:linear-gradient(to top,#040308,#AD4A28,#DF723C,#FC7001,#DCB697,#9BA5AE,#3E5879,#020B1A);
+
 .snowflake {
   --size: 1vw;
   width: var(--size);
