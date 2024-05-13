@@ -108,6 +108,11 @@
                                 <span><i class="fas fa-camera"></i> {{ 'Collect' }}</span>
                             </a>
                         </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/syndigoupdate" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-wrench"></i> {{ 'Syndigo to MDM' }}</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </div>
@@ -256,6 +261,11 @@
                         <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/logisticcode" [routerLinkActive]="['router-link-active']">
                                 <span><i class="fa fa-box"></i> {{ 'Logistic code'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemimages" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-camera"></i> {{ 'Item images'}}</span>
                             </a>
                         </li>
                     </ul>

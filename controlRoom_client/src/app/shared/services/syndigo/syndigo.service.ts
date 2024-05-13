@@ -16,7 +16,8 @@ export class SyndigoEnvironment {
     public SYNUSER; 
     public SYNSECRET;
     public SYNCOMPANYID;
-     public SYNVOCID;
+    public SYNVOCID;
+    public SYNPIC2GOLD;
 }
 
 @Injectable()

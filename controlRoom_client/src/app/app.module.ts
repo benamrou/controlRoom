@@ -111,7 +111,10 @@ import { OrderUrgentModule } from './pages/order/urgent/order.urgent.module';
 import { ItemCharacteristicModule } from './pages/mass.update/item.characteristic/item.characteristic.module';
 import { VariableWeightModule } from './pages/mass.update/variable.weight/variable.weight.module';
 import { ItemLogisticCodeModule } from './pages/mass.update/item.logistic.code/item.logistic.code.module';
-
+import { SyndigoUpdateModule } from './pages/syndigo/update/syndigo.update.module';
+import { DashboardReceptionModule } from './pages/reporting/account.payable/reception/dashboard.reception.module';
+import { EdiAsnModule } from './pages/edi/asn/edi.asn.module';
+import { ItemImagesModule } from './pages/mass.update/item.images/item.images.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -132,8 +135,6 @@ import { DropdownModule } from 'primeng/dropdown';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
-import { DashboardReceptionModule } from './pages/reporting/account.payable/reception/dashboard.reception.module';
-import { EdiAsnModule } from './pages/edi/asn/edi.asn.module';
 
 @NgModule({
   declarations: [
@@ -209,7 +210,9 @@ import { EdiAsnModule } from './pages/edi/asn/edi.asn.module';
     VariableWeightModule,
     ItemLogisticCodeModule,
     DashboardReceptionModule,
-    EdiAsnModule
+    EdiAsnModule,
+    SyndigoUpdateModule,
+    ItemImagesModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

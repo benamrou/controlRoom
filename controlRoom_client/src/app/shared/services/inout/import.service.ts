@@ -233,6 +233,7 @@ export class ImportService{
         let pt33_8_ITEMCHARACTERISTIC = 8;
         let pt33_9_ITEMVARIABLEWEIGHT = 9;
         let pt33_10_ITEMLOGISTICCODE = 10;
+        let pt33_11_ITEMIMAGES = 11;
 
         this.request = this.executeJobURL;
         let headersSearch = new HttpHeaders();
@@ -267,6 +268,9 @@ export class ImportService{
                 break;
             case pt33_10_ITEMLOGISTICCODE: /* Logisitc code */ 
                 command = command + 'psifa50p psifa50p $USERID ' + this.datePipe.transform(datePassed, 'dd/MM/yy') + ' 1 ';
+                break;
+            case pt33_11_ITEMIMAGES: /* Item images */ 
+                command = command + 'psifa125p psifa125p $USERID ' + this.datePipe.transform(datePassed, 'dd/MM/yy') + ' 1 ';
                 break;
             default:
                 console.log ('Unknown mass tool id : ', toolId);

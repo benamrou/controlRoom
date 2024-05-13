@@ -127,6 +127,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
                       
                       for(let i=0; i < this.searchResult.length; i++) {
                         this.searchResult[i].statusSyndigo = 'In Queue'; /* In Queue */
+                        this.searchResult[i].Status = 0;
                         this.searchResult[i]['Syndigo description'] = '';
                         this.searchResult[i]['Weight'] = '';
                         this.searchResult[i]['Weight (UOM)'] = '';
@@ -199,7 +200,7 @@ export class SyndigoDownloadComponent implements OnDestroy {
 
                               this.imageURLs = [];
                               this.imageFilenames = [];
-                              console.log('Parsing', this.searchResultSyndigo[0].syndigoData.heinensLayout)
+                              console.log('Parsing', this.searchResultSyndigo[0].syndigoData.heinensLayout, this.searchResult )
                               for(let i=0; i < this.searchResultSyndigo[0].syndigoData.heinensLayout.length;i++) {
                                 let indexFound = -1;
                                 for(let j=0; j < this.searchResult.length; j++){
