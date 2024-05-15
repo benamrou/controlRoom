@@ -52,6 +52,7 @@ import { ItemCharacteristicComponent } from './pages/mass.update/item.characteri
 import { VariableWeightComponent } from './pages/mass.update/variable.weight/variable.weight.component';
 import { ItemLogisticCodeComponent } from './pages/mass.update/item.logistic.code/item.logistic.code.component';
 import { ItemImagesComponent } from './pages/mass.update/item.images/item.images.component';
+import { SpaceItemReportingComponent } from './pages/space.planning/item.reporting/space.item.reporting.component';
 
 import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
 import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
@@ -91,6 +92,8 @@ const routes: Routes = [
 
   /* E-commerce/Space Planning */
   { path: 'ecommercepicture', component: EcommercePictureComponent, canActivate: [AuthentificationGuard] },
+  { path: 'spaceitemreporting', component: SpaceItemReportingComponent, canActivate: [AuthentificationGuard] },
+  
   /* IT */
   { path: 'batchschedule', component: BatchScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'batchlist', component: MyBatchListComponent, canActivate: [AuthentificationGuard] },

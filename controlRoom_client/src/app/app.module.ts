@@ -80,6 +80,7 @@ import { CategoryManagerModule } from './pages/mass.update/category.manager/cate
 import { RobotModule } from './pages/robot/robot.module';
 import { SyndigoDownloadModule } from './pages/syndigo/download/syndigo.download.module';
 import { SyndigoProductModule } from './pages/syndigo/product/syndigo.product.module';
+import { SpaceItemReportingModule } from './pages/space.planning/item.reporting/space.item.reporting.module';
 
 import { DashboardModule } from './pages/dashboard/dashboard.module';
 import { EDIInvoiceModule } from './pages/finance/edi/ediinvoice.module';
@@ -212,7 +213,8 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     DashboardReceptionModule,
     EdiAsnModule,
     SyndigoUpdateModule,
-    ItemImagesModule
+    ItemImagesModule,
+    SpaceItemReportingModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

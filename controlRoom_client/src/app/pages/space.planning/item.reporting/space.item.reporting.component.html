@@ -1,0 +1,210 @@
+<app-page-header [heading]="'Item history '" [icon]="'fas fa-timeline'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"
+  [linkcolor]="'chocolate'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+  <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+<p-dialog header="Updates completed" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+  <span>{{msgDisplayed}}</span>
+      <p-footer>
+          <button style="float: right; margin-bottom:0.5em" 
+                  type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
+                  label="Ok">
+          </button>
+      </p-footer>
+</p-dialog>
+
+
+<!-- Search Panel -->
+<div class="bbs_search_panel"  >
+ <div style="width: 40%">
+  <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Department : </span>
+  <span style="line-height: 15px;align-self: center;">
+    <p-multiSelect 
+            [options]="deptList" 
+            [(ngModel)]="searchDept"
+            [checkmark]="true" 
+            [showClear]="true" 
+            optionLabel="name"
+            display="chip" 
+            [overlayVisible]="true"
+            [style]="{'width':'60%'}"
+            [panelStyle]="{'width':'60%'}"
+            placeholder="Select depts">
+    </p-multiSelect>
+  </span>
+ </div>
+
+  <span style="font-weight: bolder">Sub-Dept. : </span>
+  <span style="width: 40%;line-height: 15px;align-self: center;">
+    <p-multiSelect 
+            [options]="subDeptList" 
+            [(ngModel)]="searchSubDept"
+            [checkmark]="true" 
+            [showClear]="true" 
+            optionLabel="name"
+            display="chip" 
+            [style]="{'width':'60%'}"
+            [panelStyle]="{'width':'60%'}"
+            placeholder="Select sub-depts">
+    </p-multiSelect>
+  </span>
+
+  <span class="pull-right" style="padding-right: 20px">
+      <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+              [style]="{'height': '35px'}"
+              [disabled]="periodStart > periodEnd || periodStart === '' || periodEnd === ''" 
+              pTooltip="Period start must be greater than period end"
+              style="margin-right: 15px"></button>
+      <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" 
+              [style]="{'height': '35px'}"[disabled]="true"></button>
+  </span>
+</div>
+
+
+<div class="bbs_search_sub_panel"  >
+    <div style="width: 40%; float: left">
+        <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Category : </span>
+        <span style="line-height: 15px;align-self: center; margin-left: 1em;">
+            <p-multiSelect 
+                    [options]="catList" 
+                    [(ngModel)]="searchCat"
+                    [checkmark]="true" 
+                    [showClear]="true" 
+                    optionLabel="name"
+                    display="chip" 
+                    [style]="{'width':'60%'}"
+                    [panelStyle]="{'width':'60%'}"
+                    placeholder="Select categories">
+            </p-multiSelect>
+        </span>
+    </div>
+
+    <div style="width: 60%; float: right">
+        <span style="font-weight: bolder; ">Sub-Cat. : </span>
+        <span style="line-height: 15px;align-self: center;">
+        <p-multiSelect 
+                [options]="subCatList" 
+                [(ngModel)]="searchSubCat"
+                [checkmark]="true" 
+                [showClear]="true" 
+                optionLabel="name"
+                display="chip" 
+                [style]="{'width':'60%'}"
+                [panelStyle]="{'width':'60%'}"
+                placeholder="Select sub-categories">
+        </p-multiSelect>
+        </span>
+    </div>
+</div>
+
+<div class="bbs_search_sub_panel"  >
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Period start : </span>
+    <p-calendar [(ngModel)]="periodStart"  
+                [minDate]="dateTomorrow"
+                [readonlyInput]="true"
+                dateFormat="mm/dd/yy"
+                [style]="{'height': '35px'}"
+                name="scheduleStart" [showIcon]="true" 
+                [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
+
+    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Period end : </span>
+    <p-calendar [(ngModel)]="periodEnd"  
+                [minDate]="dateTomorrow"
+                [readonlyInput]="true"
+                dateFormat="mm/dd/yy"
+                [style]="{'height': '35px'}"
+                name="scheduleEnd" [showIcon]="true" 
+                [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+</div>
+
+
+<p></p>
+
+<p-dialog header="Schedule generated" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+  <span>{{msgDisplayed}}</span>
+      <p-footer>
+          <button style="float: right; margin-bottom:0.5em" 
+                  type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
+                  label="Ok">
+          </button>
+      </p-footer>
+</p-dialog>
+
+<!-- Panel resul -->
+<!-- Result panel of the resarch --> 
+<!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
+<div  table-layout="fixed" *ngIf="searchResult !== null">
+
+      <p-table #result [value]="searchResult" sortMode="multiple" 
+              [rows]="5"  [rowsPerPageOptions]="[5,10,50]"
+              [paginator]="true" [pageLinks]="3" 
+              [columns]="columnsResult"
+              selectionMode="single" [(selection)]="selectedElement" 
+              [resizableColumns]="true" columnResizeMode="expand"
+              [responsive]="true" [totalRecords]="searchResult.length"
+              [reorderableColumns]="true" scrollHeight="400px"
+              (onRowSelect)="onRowSelect($event)"
+              [globalFilterFields]="['sippliercode', 'supplierdescription']"
+              [autoLayout]="true" tableStyleClass="table-layout: auto;">
+      
+      <!-- FILTER -->
+      <ng-template pTemplate="caption">
+        <div class="table-header grid">
+            <div class="col-6">
+                <span>
+                    <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                        class="CSV_Button p-input-icon-left ml-auto"
+                        pTooltip="Export to EXCEL" [escape]="false"
+                        *ngIf="searchResult.length>0"
+                        label="CSV" (click)="exportExcelRecap()" style="float:left">
+                    </button>
+                    <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                        class="CSV_Button p-input-icon-left ml-auto"
+                        pTooltip="Export to EXCEL" [escape]="false"
+                        disabled *ngIf="searchResult.length==0"
+                        label="CSV" (click)="exportExcelRecap()" style="float:left">
+                    </button>
+                </span>
+            </div>
+            <div class="col-6" style="text-align: right;">
+                <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                </span>
+            </div>
+        </div>
+    </ng-template>
+      <!-- HEADER -->
+          <ng-template pTemplate="header">            
+              <tr>
+                <ng-container *ngFor="let col of columnsResult">
+                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.justify-content]="col.align"  [style.text-align]="col.align">
+                        {{col.header}}
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </ng-container>
+              </tr>
+          </ng-template>
+      <!-- BODY -->
+          <ng-template pTemplate="body" let-rowData let-columns="columnsResult">
+              <tr [pSelectableRow]="rowData">
+                <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column"  >
+                  <td class="ui-resizable-column" [style.justify-content]="col.align" [style.text-align]="col.align">
+                       <span *ngIf="col.field==='Status' && rowData[col.field] === 'NEW'" class="badge bg-success text-dark" tooltipPosition="top"  style="color: white !important">{{rowData[col.field] }}</span>
+                       <span *ngIf="col.field==='Status' && rowData[col.field] === 'DISCONTINUED'" class="badge bg-danger text-dark" tooltipPosition="top"  style="color: white !important">{{rowData[col.field] }}</span>
+                      <span *ngIf="col.field!='Status'" [style.text-align]="col.align">
+                          {{rowData[col.field]}}
+                      </span>
+                  </td>
+                </ng-container>
+              </tr>
+          </ng-template>
+      </p-table>
+      <i class="FOOTER_Table" >{{searchResult.length}} references</i>
+</div>
+<br>
+<p style='border-style: solid; border: black'></p>
+<br>
