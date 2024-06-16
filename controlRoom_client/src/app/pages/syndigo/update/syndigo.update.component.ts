@@ -561,12 +561,14 @@ export class SyndigoUpdateComponent implements OnDestroy {
     /* Prepare the mass SKU dimension update file */
     this.massUpdateSKUDimension = [];
     this.massUpdateSKUImages = [];
+    
+    this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
+    'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
+    'Preparing data for MDM synchronization...<br>' +
+    '<br><br>'+
+    '<b>Syndigo MDM synchronisation is taking between 1 and 3 minutes depending the number of UPCs inside the category</b>';
+
     for(let i=0; i < this.searchResult.length; i++) {
-        this.waitMessage =  'Collecting the UPCs associated to those ' + this.values.length + ' categorie(s)... &emsp;<b>COMPLETED</b><br>'+ 
-                            'Requesting to Syndigo the ' + this.searchResult.length + ' UPCs information...&emsp;<b>COMPLETED</b><br>'+ 
-                            'Preparing data for MDM synchronization...<br>' +
-                            '<br><br>'+
-                            '<b>Syndigo MDM synchronisation is taking between 1 and 3 minutes depending the number of UPCs inside the category</b>';
         /* For the collected Syndigo data Status = 1 / StatusSyndigo is Collected */
         if(this.searchResult[i].Status == 1) {
           this.massUpdateSKUDimension.push(

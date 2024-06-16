@@ -93,6 +93,25 @@
                 <i class="fa fa-fw fa-search"></i> &nbsp; {{ 'Search' }}
             </a>
             <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1 || _userService.userInfo.spaceplanning ==1">
+                <a class="list-group-item" (click)="addExpandClass('masterdata')" >
+                    <span><i class="fas fa-brain"></i> &nbsp; {{ 'Master data' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'masterdata' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/ppgretail" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-money-check-dollar"></i> {{ 'Retail by PPG' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/nextppg" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-list-ol"></i> {{ 'Next PPG' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1 || _userService.userInfo.spaceplanning ==1">
                 <a class="list-group-item" (click)="addExpandClass('syndigo')" >
                     <span><i class="fas fa-barcode"></i> &nbsp; {{ 'Syndigo' }} </span>
                 </a>

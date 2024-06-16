@@ -5,12 +5,24 @@
 
 export const environment = {
   production: true,
+  //Heinen's PROD OCI
+  hostURL           : "http://10.227.100.75:8090",
+  serverURL_local   : "http://10.227.100.75:8093",
+  serverURL         : "http://10.227.100.75:8093",
+  serverBatchURL    : "http://10.227.100.75:8091",
+  baseURL           : "http://10.227.100.75:8090/icr",
+ 
+   //hostURL           : "http://heinens-prdapp.srai.heinens.com:8090",
+   //serverURL_local   : "http://heinens-prdapp.srai.heinens.com:8093",
+   //serverURL         : "http://heinens-prdapp.srai.heinens.com:8093",
+   //serverBatchURL    : "http://heinens-prdapp.srai.heinens.com:8091",
+   //baseURL           : "http://heinens-prdapp.srai.heinens.com:8090/icr",
   //Heinen's PROD
-   hostURL           : "http://10.200.14.231:9086",
-  serverURL_local   : "http://10.200.14.231:8093",
-  serverURL         : "http://10.200.14.231:8093",
-  serverBatchURL    : "http://10.200.14.231:8091",
-  baseURL           : "http://10.200.14.231:9086/icr",
+   //hostURL           : "http://10.200.14.231:9086",
+  //serverURL_local   : "http://10.200.14.231:8093",
+  //serverURL         : "http://10.200.14.231:8093",
+  //serverBatchURL    : "http://10.200.14.231:8091",
+  //baseURL           : "http://10.200.14.231:9086/icr",
   //Heinen's TEST
   //hostURL           : "http://10.200.14.232:9086",
   //serverURL_local   : "http://10.200.14.232:8093",

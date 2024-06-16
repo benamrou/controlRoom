@@ -116,6 +116,7 @@ import { SyndigoUpdateModule } from './pages/syndigo/update/syndigo.update.modul
 import { DashboardReceptionModule } from './pages/reporting/account.payable/reception/dashboard.reception.module';
 import { EdiAsnModule } from './pages/edi/asn/edi.asn.module';
 import { ItemImagesModule } from './pages/mass.update/item.images/item.images.module';
+import { NextPPGModule } from './pages/mdm/next.ppg/next.ppg.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -136,6 +137,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
+import { PPGRetailModule } from './pages/mdm/ppg.retail/ppg.retail.module';
 
 @NgModule({
   declarations: [
@@ -214,7 +216,9 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
     EdiAsnModule,
     SyndigoUpdateModule,
     ItemImagesModule,
-    SpaceItemReportingModule
+    SpaceItemReportingModule,
+    PPGRetailModule,
+    NextPPGModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

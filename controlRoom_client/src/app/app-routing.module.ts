@@ -53,27 +53,36 @@ import { VariableWeightComponent } from './pages/mass.update/variable.weight/var
 import { ItemLogisticCodeComponent } from './pages/mass.update/item.logistic.code/item.logistic.code.component';
 import { ItemImagesComponent } from './pages/mass.update/item.images/item.images.component';
 import { SpaceItemReportingComponent } from './pages/space.planning/item.reporting/space.item.reporting.component';
+import { NextPPGComponent } from './pages/mdm/next.ppg/next.ppg.component';
 
 import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
 import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
 import { SyndigoUpdateComponent } from './pages/syndigo/update/syndigo.update.component';
+import { PPGRetailComponent } from './pages/mdm/ppg.retail/ppg.retail.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthentificationGuard] },
+
   /* Cycle count / Inventory */
   { path: 'counting', component: CountingComponent, loadChildren: () => import('./pages/inventory/counting/counting.module').then(module => module.CountingModule) , canActivate: [AuthentificationGuard] },
   { path: 'inventory', component: StockComponent, canActivate: [AuthentificationGuard] },
+
   /* MDM */
   { path: 'search', component: SearchComponent, canActivate: [AuthentificationGuard] },
   { path: 'inquiry', component: InquiryComponent, canActivate: [AuthentificationGuard] },
   { path: 'mdmbrand', component: MdmAttributeBrandComponent, canActivate: [AuthentificationGuard] },
+  { path: 'ppgretail', component: PPGRetailComponent, canActivate: [AuthentificationGuard] },
+  { path: 'nextppg', component: NextPPGComponent, canActivate: [AuthentificationGuard] },
+
   /* CAO */
   { path: 'caoconfig', component: CaoConfigComponent, canActivate: [AuthentificationGuard] },
   { path: 'caomissing', component: MissingCAOComponent, canActivate: [AuthentificationGuard] },
+
   /* FINANCE */
   { path: 'ediinvoice', component: EDIInvoiceComponent, canActivate: [AuthentificationGuard] },
+
   /* VENDOR SCHEDULE */
   { path: 'schedule', component: SupplierScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'generateschedule', component: GenerateScheduleComponent, canActivate: [AuthentificationGuard] },
