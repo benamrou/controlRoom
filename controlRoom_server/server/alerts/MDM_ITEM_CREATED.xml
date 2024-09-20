@@ -1,0 +1,32 @@
+<ROOT>
+    <QUERY> 
+WITH ITEM_CREATION AS (
+SELECT artcexr,
+       NVL((SELECT ''ALLOTMENT'' FROM artuc@heinens_custom_prod ac, foudgene@heinens_custom_prod
+            WHERE 90000> ARASITE AND ac.aracinr= artcinr AND aratfou=1 AND aracfin=foucfin AND foucnuf LIKE ''AO%''
+            AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin AND ROWNUM=1),
+            NVL((SELECT ''WAREHOUSE''  FROM artuc@heinens_custom_prod ac
+            WHERE ARASITE BETWEEN 90000 AND 96000 AND ac.aracinr= artcinr AND aratfou=1
+            AND TRUNC(SYSDATE) BETWEEN araddeb AND aradfin AND ROWNUM=1), ''DSD''))  "Flow",
+        to_char(artdcre,''RRRR/MM'') "Creation Date"
+FROM artrac@heinens_custom_prod
+WHERE TRUNC(artdcre) >= TRUNC(SYSDATE-365*2)
+AND NOT EXISTS (SELECT 1 from artattri@heinens_custom_prod WHERE aatcinr=artcinr and trunc(SYSDATE+1) between aatddeb and aatdfin 
+and aatccla=''SSNL'' and aatcatt !=''0'')
+AND EXISTS (SELECT 1 FROM artuc@heinens_custom_prod WHERE aracinr=artcinr AND aratfou=1 AND TRUNC(aradfin)>TRUNC(artdcre)))
+SELECT "Creation Date",
+       (SELECT COUNT(1) FROM ITEM_CREATION u2 WHERE u2."Flow"=''WAREHOUSE'' AND  u1."Creation Date"=u2."Creation Date") "Warehouse",
+       (SELECT COUNT(1) FROM ITEM_CREATION u2 WHERE u2."Flow"=''DSD'' AND  u1."Creation Date"=u2."Creation Date") "DSD",
+       (SELECT COUNT(1) FROM ITEM_CREATION u2 WHERE u2."Flow"=''ALLOTMENT'' AND  u1."Creation Date"=u2."Creation Date") "Allotment",
+       (SELECT COUNT(1) FROM ITEM_CREATION u2 WHERE u1."Creation Date"=u2."Creation Date") "Total"
+FROM (SELECT DISTINCT "Creation Date" FROM ITEM_CREATION) u1
+ORDER BY "Creation Date" DESC
+
+
+    </QUERY>
+ 
+  <HEADERIFEMPTY>No Volume item</HEADERIFEMPTY>
+  <HEADER>Item created during the last two years</HEADER>
+  
+</ROOT>
+

@@ -1,0 +1,68 @@
+<ROOT>
+    <QUERY> 
+WITH WELLNESS_YESTERDAY AS (select distinct
+       (select substr(sobcext,7,3) || '' | '' || pkstrucobj.get_desc@heinens_custom_prod(1, sobcint, ''HN'')
+        from strucobj@heinens_custom_prod, strucrel@heinens_custom_prod rel1, strucrel@heinens_custom_prod rel2
+        where rel1.objcint=aracinr
+        and trunc(sysdate) between rel1.objddeb and rel1.objdfin
+        and trunc(sysdate) between rel2.objddeb and rel2.objdfin
+        and rel1.objpere=rel2.objcint
+        and rel2.objpere=sobcint) "Category code desc.",
+        aracexr "Item code", pkstrucobj.get_desc@heinens_custom_prod(1,aracinr,''HN'') "Item description",
+       pkartcoca.Get_Arccode@heinens_custom_prod(1, arlcinluvc) "Barcode",
+        pkartstock.RecupCoeffUVC@heinens_custom_prod(1,aracinl) "Pack size"
+from artuc@heinens_custom_prod,
+     foudgene@heinens_custom_prod,
+     fouccom@heinens_custom_prod,
+     artvl@heinens_custom_prod
+where trunc(sysdate-1) between araddeb and aradfin
+and aracfin=foucfin
+and araccin=fccccin
+and aranfilf=1
+and foucnuf=''08531''
+and fccnum=''08531CCW''
+and arlseqvl=araseqvl
+order by "Category code desc.", "Item code" asc),
+WELLNESS_TODAY AS (select distinct
+       (select substr(sobcext,7,3) || '' | '' || pkstrucobj.get_desc@heinens_custom_prod(1, sobcint, ''HN'')
+        from strucobj@heinens_custom_prod, strucrel@heinens_custom_prod rel1, strucrel@heinens_custom_prod rel2
+        where rel1.objcint=aracinr
+        and trunc(sysdate) between rel1.objddeb and rel1.objdfin
+        and trunc(sysdate) between rel2.objddeb and rel2.objdfin
+        and rel1.objpere=rel2.objcint
+        and rel2.objpere=sobcint) "Category code desc.",
+        aracexr "Item code", pkstrucobj.get_desc@heinens_custom_prod(1,aracinr,''HN'') "Item description",
+       pkartcoca.Get_Arccode@heinens_custom_prod(1, arlcinluvc) "Barcode",
+        pkartstock.RecupCoeffUVC@heinens_custom_prod(1,aracinl) "Pack size"
+from artuc@heinens_custom_prod,
+     foudgene@heinens_custom_prod,
+     fouccom@heinens_custom_prod,
+     artvl@heinens_custom_prod
+where trunc(sysdate) between araddeb and aradfin
+and aracfin=foucfin
+and araccin=fccccin
+and aranfilf=1
+and foucnuf=''08531''
+and fccnum=''08531CCW''
+and arlseqvl=araseqvl
+order by "Category code desc.", "Item code" asc),
+FINAL_REPORT AS (
+select "Category code desc.",  "Item code", "Item description", "Barcode", "Pack size", ''NEW REFERENCE'' "Comment"
+from WELLNESS_TODAY td
+where not exists (select 1 from WELLNESS_YESTERDAY yst where yst."Item code"=td."Item code" and yst."Barcode"=td."Barcode")
+union 
+select "Category code desc.",  "Item code", "Item description", "Barcode", "Pack size", ''REMOVED'' "Comment"
+from WELLNESS_YESTERDAY yst
+where not exists (select 1 from WELLNESS_TODAY td where yst."Item code"=td."Item code" and yst."Barcode"=td."Barcode")
+union 
+select "Category code desc.",  "Item code", "Item description", "Barcode", "Pack size", '''' "Comment"
+from WELLNESS_YESTERDAY yst
+where exists (select 1 from WELLNESS_TODAY td where yst."Item code"=td."Item code" and yst."Barcode"=td."Barcode")
+order by "Comment" asc, "Category code desc.", "Item code" asc)
+SELECT * FROM FINAL_REPORT f1 where exists (select 1 from FINAL_REPORT f2 where f2."Comment" is not null)
+
+  </QUERY>
+  <HEADERIFEMPTY>No WELLNESS listing</HEADERIFEMPTY>
+  <HEADER>Wellness Product listing</HEADER>
+  <PARAMS></PARAMS>
+</ROOT>

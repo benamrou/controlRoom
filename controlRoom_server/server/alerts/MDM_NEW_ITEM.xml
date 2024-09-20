@@ -1,0 +1,46 @@
+<ROOT>
+    <QUERY> 
+
+SELECT (SELECT SUBSTR(sobcext,1,3) || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, sdept.strpere, ''HN'')
+         FROM STRUCTURE@HEINENS_CUSTOM_PROD sdept
+         WHERE sdept.strcint=scat.strcint
+         AND strlevel=2
+         AND TRUNC(SYSDATE) BETWEEN sdept.strddeb AND sdept.strdfin) "Sub dept. code desc",
+       (SELECT SUBSTR(sobcext,8,3) || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, strpere, ''HN'')
+         FROM STRUCTURE@HEINENS_CUSTOM_PROD cat
+         WHERE cat.strcint=scat.strcint
+         AND cat.strlevel=1
+         AND TRUNC(SYSDATE) BETWEEN cat.strddeb AND cat.strdfin) "Cat. code desc", 
+       SUBSTR(sobcext,8,3) || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, scat.strpere, ''HN'') "Sub-cat. code desc",
+       arlcexr || ''/'' || arlcexvl ||  '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, aracinr,''HN'') "Item/LV code desc.",
+       pkartcoca.Get_Arccode(1,arlcinluvc) "UPC",
+       ''NEW ITEM'' "Status",
+       to_char(araddeb,''MM/DD/RR'') "Active on",
+       to_char(aradfin,''MM/DD/RR'') "Active until",
+       arupbru || '' '' || pkparpostes.get_postlibl@HEINENS_CUSTOM_PROD(1,10,806,aruupds,''HN'') "Weight",
+       aruhaut || '' '' || pkparpostes.get_postlibl@HEINENS_CUSTOM_PROD(1,10,806,aruumes,''HN'') "Height",
+       arulong || '' '' || pkparpostes.get_postlibl@HEINENS_CUSTOM_PROD(1,10,806,aruumes,''HN'') "Width",
+       arularg || '' '' || pkparpostes.get_postlibl@HEINENS_CUSTOM_PROD(1,10,806,aruumes,''HN'') "Depth"
+FROM artuc@heinens_custom_prod ac, artvl@heinens_custom_prod vc,
+     strucobj@heinens_custom_prod,
+     STRUCTURE@HEINENS_CUSTOM_PROD scat,
+     artul@HEINENS_CUSTOM_PROD
+WHERE TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin 
+AND arlcinluvc=arucinl
+AND ac.araseqvl=vc.arlseqvl
+AND scat.strcint=pkstrucrel.GET_CINT_PERE(1,''1'',aracinr,TRUNC(SYSDATE))
+AND TRUNC(araddeb+1) >= TRUNC(SYSDATE)
+AND scat.strpere=sobcint
+AND scat.strlevel =0
+/* No previous orderable */
+AND NOT EXISTS (SELECT 1 
+                FROM artuc@heinens_custom_prod ad, artvl@heinens_custom_prod vd 
+                WHERE ad.araseqvl=vd.arlseqvl 
+                AND vd.arlcinluvc=vc.arlcinluvc 
+                AND TRUNC(SYSDATE-1) > aradfin)
+</QUERY>
+  <HEADERIFEMPTY>No new Item</HEADERIFEMPTY>
+  <HEADER>New active items</HEADER>
+  
+</ROOT>
+

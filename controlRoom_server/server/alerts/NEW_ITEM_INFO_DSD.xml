@@ -290,7 +290,7 @@ SELECT DISTINCT ITEM_CODE || ''/'' || LV_CODE || '' '' || ITEM_DESC "Item code d
          AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
          GROUP BY smmcinl),0) AS "NbStores_AprY0",
       NVL(CEIL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
-        WHERE smmcinl=arlcinluvc AND smmmois between to_char(STORE_ORD_DDEB,''RRRRWW'') AND to_char(STORE_ORD_DFIN,''RRRRWW'')
+        WHERE smmcinl=arlcinluvc AND smmmois between to_char(STORE_ORD_DDEB,''RRRRMM'') AND to_char(STORE_ORD_DFIN,''RRRRMM'')
          AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
          GROUP BY smmcinl)/DECODE(MONTHS_BETWEEN(LEAST(TRUNC(SYSDATE),STORE_ORD_DFIN),STORE_ORD_DDEB),0,1, MONTHS_BETWEEN(LEAST(TRUNC(SYSDATE),STORE_ORD_DFIN),STORE_ORD_DDEB))),0) "Average"
 FROM item_list il, DATE_RANGE_Y1 
@@ -298,121 +298,6 @@ WHERE STORE_ORD_DDEB >=START_Y1
 AND "Flow" in (''ALLOTMENT'', ''DSD'')
     </QUERY>
     <NAME>ALLOTMENT_DSD</NAME>
-    <RENAME>
-    with cal AS(
-          select  add_months(ADD_MONTHS((LAST_DAY(to_date(''05/01''||to_Char(SYSDATE, ''RR''),''MM/DD/RR'')+1)),-1),level-1) dt
-            from  dual
-            connect by level  &lt;= 1
-         ),
-firstMonday AS (select  dt first_of_the_month,
-        trunc(dt + 6,''iw'') first_monday_the_month
-  from  cal),
-FIRSTDAYS AS(
-SELECT first_monday_the_month "Report on",
-       TRUNC(first_of_the_month-1-364) Year2_start,
-       TRUNC(first_of_the_month-1) Year2_end,
-       TRUNC(first_of_the_month-2-2*364) Year1_start,
-       TRUNC(first_of_the_month-1-1-364) Year1_end,
-       ''['' || to_char(first_of_the_month-1-364,''MM/DD/RRRR'') || '' - '' || to_char(first_of_the_month-1,''MM/DD/RRRR'') || '']'' "Year #2",
-       ''['' || to_char(first_of_the_month-2-2*364,''MM/DD/RRRR'') || '' - '' || to_char(first_of_the_month-1-364-1,''MM/DD/RRRR'') || '']'' "Year #1"
-FROM firstMonday)
-SELECT ''Qty ('' || to_char(Year1_start,''MM/RR'')  || '')'' "COLNAME", 1 SortOrder,''G'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(Year1_start,''MM/RR'')  || '')'' "COLNAME", 2 SortOrder,'' H'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,1), ''MM/RR'')  || '')'' "COLNAME", 3 SortOrder,'' I'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,1), ''MM/RR'')  || '')'' "COLNAME", 4 SortOrder,'' J'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,2), ''MM/RR'')  || '')'' "COLNAME", 5 SortOrder,'' K'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,2), ''MM/RR'')  || '')'' "COLNAME", 6 SortOrder,'' L'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,3), ''MM/RR'')  || '')'' "COLNAME", 7 SortOrder,'' M'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,3), ''MM/RR'')  || '')'' "COLNAME", 8 SortOrder,'' N'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,4), ''MM/RR'')  || '')'' "COLNAME", 9 SortOrder,'' O'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,4), ''MM/RR'')  || '')'' "COLNAME", 10 SortOrder,'' P'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,5), ''MM/RR'')  || '')'' "COLNAME", 11 SortOrder,'' Q'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,5), ''MM/RR'')  || '')'' "COLNAME", 12 SortOrder,'' R'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,6), ''MM/RR'')  || '')'' "COLNAME", 13 SortOrder,'' S'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,6), ''MM/RR'')  || '')'' "COLNAME", 14 SortOrder,'' T'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,7), ''MM/RR'')  || '')'' "COLNAME", 15 SortOrder,'' U'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,7), ''MM/RR'')  || '')'' "COLNAME", 16 SortOrder,'' V'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,8), ''MM/RR'')  || '')'' "COLNAME", 17 SortOrder,'' W'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,8), ''MM/RR'')  || '')'' "COLNAME", 18 SortOrder,'' X'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,9), ''MM/RR'')  || '')'' "COLNAME", 19 SortOrder,'' Y'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,9), ''MM/RR'')  || '')'' "COLNAME", 20 SortOrder,'' Z'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,10), ''MM/RR'')  || '')'' "COLNAME", 21 SortOrder,'' AA'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,10), ''MM/RR'')  || '')'' "COLNAME", 22 SortOrder,'' AB'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,11), ''MM/RR'')  || '')'' "COLNAME", 23 SortOrder,'' AC'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,11), ''MM/RR'')  || '')'' "COLNAME", 24 SortOrder,'' AD'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,12), ''MM/RR'')  || '')'' "COLNAME", 25 SortOrder,'' AE'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,12), ''MM/RR'')  || '')'' "COLNAME", 26 SortOrder,'' AF'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,13), ''MM/RR'')  || '')'' "COLNAME", 27 SortOrder,'' AG'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,13), ''MM/RR'')  || '')'' "COLNAME", 28 SortOrder,'' AH'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,14), ''MM/RR'')  || '')'' "COLNAME", 29 SortOrder,'' AI'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,14), ''MM/RR'')  || '')'' "COLNAME", 30 SortOrder,'' AJ'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,15), ''MM/RR'')  || '')'' "COLNAME", 31 SortOrder,'' AK'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,15), ''MM/RR'')  || '')'' "COLNAME", 32 SortOrder,'' AL'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,16), ''MM/RR'')  || '')'' "COLNAME", 33 SortOrder,'' AM'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,16), ''MM/RR'')  || '')'' "COLNAME", 34 SortOrder,'' AN'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,17), ''MM/RR'')  || '')'' "COLNAME", 35 SortOrder,'' AO'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,17), ''MM/RR'')  || '')'' "COLNAME", 36 SortOrder,'' AP'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,18), ''MM/RR'')  || '')'' "COLNAME", 37 SortOrder,'' AQ'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,18), ''MM/RR'')  || '')'' "COLNAME", 38 SortOrder,'' AR'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,19), ''MM/RR'')  || '')'' "COLNAME", 39 SortOrder,'' AS'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,19), ''MM/RR'')  || '')'' "COLNAME", 40 SortOrder,'' AT'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,20), ''MM/RR'')  || '')'' "COLNAME", 41 SortOrder,'' AU'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,20), ''MM/RR'')  || '')'' "COLNAME", 42 SortOrder,'' AV'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,21), ''MM/RR'')  || '')'' "COLNAME", 43 SortOrder,'' AW'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,21), ''MM/RR'')  || '')'' "COLNAME", 44 SortOrder,'' AX'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,22), ''MM/RR'')  || '')'' "COLNAME", 45 SortOrder,'' AY'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,22), ''MM/RR'')  || '')'' "COLNAME", 46 SortOrder,'' AZ'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Qty ('' || to_char(ADD_MONTHS(Year1_start,23), ''MM/RR'')  || '')'' "COLNAME", 47 SortOrder,'' BA'' "RENAMECOL" FROM FIRSTDAYS
-UNION ALL
-SELECT ''Nb Stores ('' || to_char(ADD_MONTHS(Year1_start,23), ''MM/RR'')  || '')'' "COLNAME", 48 SortOrder,'' BB'' "RENAMECOL" FROM FIRSTDAYS
-ORDER BY SortOrder ASC
-    </RENAME>
   <HEADERIFEMPTY>No item information 2 years </HEADERIFEMPTY>
   <HEADER>Item information new 2 years</HEADER>
 

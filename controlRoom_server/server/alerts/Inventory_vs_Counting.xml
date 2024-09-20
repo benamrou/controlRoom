@@ -1,112 +1,102 @@
 <ROOT>
     <QUERY>
-	WITH COUNTING AS
+WITH COUNTING AS
  (SELECT DINSITE,
+         EINCEXINV,
          DINCININV,
          DINCODE,
          EINDINV,
          EINLIBL,
          DINCINR,
+         ARTCEXR,
          DINCINL,
+         DINSEQVL,
          DINSTRCINT,
+         sobcext merch,
          DINQTIN    QTY_REPORTED,
-         DINSINF    THEO_QTY
-    FROM INVDETINV@HEINENS_CUSTOM_PROD, INVENTINV@HEINENS_CUSTOM_PROD
+         DINSINF    THEO_QTY,
+         decode(dinprev,0,
+          ROUND(NVL(NVL((SELECT aprfapn
+                     FROM areprix@heinens_custom_prod
+                     WHERE aprseqvl=dinseqvl AND TRUNC(SYSDATE) BETWEEN aprddeb AND aprdfin AND ROWNUM=1),
+                     (SELECT aprfapn
+                     FROM areprix@heinens_custom_prod
+                     WHERE aprcinr=dincinr AND TRUNC(SYSDATE) BETWEEN aprddeb AND aprdfin AND aprfapn>0 AND ROWNUM=1))
+                     ,dinpach),2), 
+                dinprev) COST_PRICE,
+          (select max(dl.dincininv) || '' '' || to_char(max(el.eindinv),''MM/DD/RR'') || '' '' from INVDETINV@HEINENS_CUSTOM_PROD dl, INVENTINV@HEINENS_CUSTOM_PROD el
+           /*where el.eintinv=42*/
+           WHERE dl.DINCININV = el.EINCININV
+           and el.EINCININV !=e.EINCININV
+           AND el.einsite=e.einsite
+           and dl.dincinl=d.dincinl
+           and dinqtin is not null
+           and el.eindinv!=e.eindinv) LAST_COUNT
+    FROM INVDETINV@HEINENS_CUSTOM_PROD d, INVENTINV@HEINENS_CUSTOM_PROD e, strucobj@HEINENS_CUSTOM_PROD, artrac@HEINENS_CUSTOM_PROD
    WHERE EINTINV = 42
-     AND EINDINV >= TRUNC(SYSDATE - 2)
+     AND EINDINV >= TRUNC(SYSDATE-5)
+     AND dinstrcint=sobcint
      AND DINCININV = EINCININV
-     AND DINSINF != DINQTIN
+     AND dincinr=artcinr
+     /* AND DINSINF != DINQTIN*/
      AND DINQTIN IS NOT NULL
-     AND DINSITE = :param2 )
-SELECT DINSITE STORE_NUM,
-       EINLIBL COUNTING_DESC,
-       EINDINV COUNTING_DATE,
-       DINCODE CODE_SCANNED,
-       PKARTUV.GET_LIBELLE_LONG@HEINENS_CUSTOM_PROD(1, DINCINL, ''HN'') ITEM_DESC,
-       (SELECT FOUCNUF
-          FROM ARTUC@HEINENS_CUSTOM_PROD,
-               RESEAU@HEINENS_CUSTOM_PROD,
-               FOUDGENE@HEINENS_CUSTOM_PROD
-         WHERE TRUNC(SYSDATE + 1) BETWEEN ARADDEB AND ARADFIN
-           AND ARACINR = DINCINR
-           AND RESSITE = DINSITE
-           AND RESPERE = ARASITE
-           AND TRUNC(SYSDATE + 1) BETWEEN RESDDEB AND RESDFIN
-           AND ARACFIN = FOUCFIN
-           AND ROWNUM = 1) SUPPLIER_CODE,
-       (SELECT FOULIBL
-          FROM ARTUC@HEINENS_CUSTOM_PROD,
-               RESEAU@HEINENS_CUSTOM_PROD,
-               FOUDGENE@HEINENS_CUSTOM_PROD
-         WHERE TRUNC(SYSDATE + 1) BETWEEN ARADDEB AND ARADFIN
-           AND ARACINR = DINCINR
-           AND RESSITE = DINSITE
-           AND RESPERE = ARASITE
-           AND TRUNC(SYSDATE + 1) BETWEEN RESDDEB AND RESDFIN
-           AND ARACFIN = FOUCFIN
-           AND ROWNUM = 1) SUPPLIER_DESC,
-       (SELECT SOBCEXT
-          FROM STRUCOBJ@HEINENS_CUSTOM_PROD, STRUCTURE@HEINENS_CUSTOM_PROD
-         WHERE STRCINT = DINSTRCINT
-           AND SOBCINT = STRPERE
-           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
-           AND STRLEVEL = 3) DEPT_CODE,
-       (SELECT PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1, STRPERE, ''HN'')
-          FROM STRUCTURE@HEINENS_CUSTOM_PROD
-         WHERE STRCINT = DINSTRCINT
-           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
-           AND STRLEVEL = 3) DEPT_DESC,
-       (SELECT SOBCEXT
-          FROM STRUCOBJ@HEINENS_CUSTOM_PROD, STRUCTURE@HEINENS_CUSTOM_PROD
-         WHERE SOBCINT = STRPERE
-           AND STRCINT = DINSTRCINT
-           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
-           AND STRLEVEL = 2) SDEPT_CODE,
-       (SELECT PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1, STRPERE, ''HN'')
-          FROM STRUCTURE@HEINENS_CUSTOM_PROD
-         WHERE STRCINT = DINSTRCINT
-           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
-           AND STRLEVEL = 2) SDEPT_DESC,
-       (SELECT SOBCEXT
-          FROM STRUCOBJ@HEINENS_CUSTOM_PROD, STRUCTURE@HEINENS_CUSTOM_PROD
-         WHERE SOBCINT = STRPERE
-           AND STRCINT = DINSTRCINT
-           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
-           AND STRLEVEL = 1) CAT_CODE,
-       (SELECT PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1, STRPERE, ''HN'')
-          FROM STRUCTURE@HEINENS_CUSTOM_PROD
-         WHERE STRCINT = DINSTRCINT
-           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
-           AND STRLEVEL = 1) CAT_DESC,
-       (SELECT SOBCEXT
-          FROM STRUCOBJ@HEINENS_CUSTOM_PROD, STRUCTURE@HEINENS_CUSTOM_PROD
-         WHERE SOBCINT = STRPERE
-           AND STRCINT = DINSTRCINT
-           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
-           AND STRLEVEL = 0) SCAT_CODE,
-       (SELECT PKSTRUCOBJ.GET_DESC@HEINENS_CUSTOM_PROD(1, STRPERE, ''HN'')
-          FROM STRUCTURE@HEINENS_CUSTOM_PROD
-         WHERE STRCINT = DINSTRCINT
-           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
-           AND STRLEVEL = 0) SCAT_DESC,
-       QTY_REPORTED,
-       THEO_QTY,
-       (SELECT ''YES''
-          FROM ARTREAP@HEINENS_CUSTOM_PROD, RESEAU@HEINENS_CUSTOM_PROD
-         WHERE TRUNC(SYSDATE + 1) BETWEEN AREDDEB AND AREDFIN
-           AND ARECINL = DINCINL
-           AND RESSITE = DINSITE
-           AND RESPERE = ARESITE
-           AND TRUNC(SYSDATE + 1) BETWEEN RESDDEB AND RESDFIN
-	   AND ROWNUM=1) CGO,
-       (SELECT MAX(STMDMVT)
-          FROM STOMVT@HEINENS_CUSTOM_PROD
-         WHERE STMSITE = DINSITE
-           AND STMTMVT = 150
-           AND STMCINL = DINCINL) LAST_SALE
+     AND DINSITE = :param2
+     AND EINLIBL NOT LIKE ''%COUNTER%''
+     /*AND artcexr=''109888''*/
+     AND EXISTS (SELECT 1 FROM thirdparty_counting@heinens_custom_prod WHERE cntloc=einsite
+                 AND TRUNC(cntdcre) BETWEEN TRUNC(eindinv-3) AND TRUNC(eindinv)
+                 AND cntupc IS NOT NULL
+                 AND cntcode1=artcexr))
+SELECT DINSITE "Store #",EINCEXINV "Inventory #",
+       EINLIBL "Counting desc.",
+       EINDINV "Counting date",
+        CASE
+          WHEN merch LIKE ''103030%'' THEN ''Beer''
+          WHEN merch LIKE ''103031%'' THEN ''Wine''
+          WHEN merch LIKE ''103%'' THEN ''Grocery''
+          WHEN merch LIKE ''102010%'' THEN ''Dairy''
+          WHEN merch LIKE ''102011%'' THEN ''Frozen''
+          WHEN merch LIKE ''102014%'' THEN ''Ice-cream''
+          WHEN merch LIKE ''101%'' THEN ''Meat''
+          WHEN merch LIKE ''104008%'' THEN ''Fresh Produce''
+          WHEN merch LIKE ''104019%'' THEN ''Floral''
+          WHEN merch LIKE ''104021%'' THEN ''Salad bar''
+          WHEN merch LIKE ''104025%'' THEN ''Bulk Produce''
+          /* WHEN merch LIKE ''105%'' THEN ''Bakery'' */
+          WHEN merch LIKE ''106007%'' THEN ''Deli''
+          WHEN merch LIKE ''106015%'' THEN ''PPD''
+          WHEN merch LIKE ''106016%'' THEN ''Cafe''
+          WHEN merch LIKE ''106022%'' THEN ''Speciality Cheese''
+          WHEN merch LIKE ''106033%'' THEN ''Seafood''
+          WHEN merch LIKE ''199%'' THEN ''General''
+          ELSE ''Other''
+        END "Dept.",
+       ARTCEXR "Item #",
+       PKARTUV.GET_LIBELLE_LONG@HEINENS_CUSTOM_PROD(1, DINCINL, ''HN'') "Item desc",
+       QTY_REPORTED "Qty counted",
+       THEO_QTY "Theoritical qty",
+       (QTY_REPORTED - greatest(THEO_QTY,0)) "Variance",
+       COST_PRICE "Unit cost",
+       round(QTY_REPORTED*COST_PRICE,2) "Inventory cost",
+       round((QTY_REPORTED - greatest(THEO_QTY,0))*COST_PRICE,2) "Shrink (-)/Pickup (+)",
+       REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2) "Previous inventory",
+       --LAST_COUNT_DATE "Previous count",
+          (select (DINQTIN - greatest(DINSINF,0)) from INVDETINV@HEINENS_CUSTOM_PROD dl
+           where dl.DINCININV =trim(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 1))
+           and dl.dincinl=T.dincinl
+           and dl.dincinr=T.dincinr
+	   and dinqtin is not null
+           and rownum=1) "Previous variance",
+          (select round((DINQTIN - greatest(DINSINF,0))*COST_PRICE,2) from INVDETINV@HEINENS_CUSTOM_PROD dl
+           where dl.DINCININV =trim(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 1))
+           and dl.dincinl=T.dincinl
+           and dinqtin is not null
+           and dl.dincinr=T.dincinr
+           and rownum=1) "Previous Shrink (-)/Pickup (+)"
+       
   FROM COUNTING T
- WHERE QTY_REPORTED != THEO_QTY
- ORDER BY STORE_NUM, CGO ASC
+ORDER BY "Variance" ASC
+
     </QUERY>
   <HEADERIFEMPTY>No discrepancy inventoryi vs. counting</HEADERIFEMPTY>
   <HEADER>Counted items with inventory discrepancies</HEADER>

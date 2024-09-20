@@ -1,0 +1,111 @@
+<ROOT>
+    <QUERY>
+WITH COUNTING AS
+ (SELECT DINSITE,
+         EINCEXINV,
+         DINCININV,
+         DINCODE,
+         EINDINV,
+         EINLIBL,
+         DINCINR,
+         ARTCEXR,
+         DINCINL,
+         DINSEQVL,
+         DINSTRCINT,
+         sobcext merch,
+         DINQTIN    QTY_REPORTED,
+         DINSINF    THEO_QTY,
+         decode(dinprev,0, 
+          ROUND((SELECT aprfapn
+                     FROM areprix@heinens_custom_prod, artvl@heinens_custom_prod 
+                     WHERE aprseqvl=arlseqvl and arlcinluvc=dincinl AND TRUNC(SYSDATE) BETWEEN aprddeb AND aprdfin AND ROWNUM=1),2), 
+                dinprev) COST_PRICE,
+          (select max(dl.dincininv) || '' '' || to_char(max(el.eindinv),''MM/DD/RR'') || '' '' from INVDETINV@HEINENS_CUSTOM_PROD dl, INVENTINV@HEINENS_CUSTOM_PROD el
+           where 
+           dl.DINCININV = el.EINCININV
+           and el.EINCININV !=e.EINCININV
+           and dl.dincinl=d.dincinl
+           and el.einsite=e.einsite
+           and el.eindinv!=e.eindinv
+	   and dl.dinqtin is not null
+	   and e.eindinv > el.eindinv) LAST_COUNT
+    FROM INVDETINV@HEINENS_CUSTOM_PROD d, INVENTINV@HEINENS_CUSTOM_PROD e, strucobj@HEINENS_CUSTOM_PROD, artrac@HEINENS_CUSTOM_PROD
+   WHERE EINTINV = 42
+     AND EINDINV = TRUNC(SYSDATE)
+     /* AND EINDINV>=to_date(''01/01/24'',''MM/DD/RR'') */
+     AND dinstrcint=sobcint
+     AND DINCININV = EINCININV
+     AND dincinr=artcinr
+     /* AND DINSINF != DINQTIN*/
+     AND DINQTIN IS NOT NULL
+     AND DINSITE = :param2
+     AND EINLIBL NOT LIKE ''%COUNTER%''
+     AND SOBCEXT LIKE :param3 || ''%''
+     --and artcexr=''984357''
+     --and artcexr in (''197914'',''191228'')
+     AND EXISTS (SELECT 1 FROM thirdparty_counting@heinens_custom_prod WHERE cntloc=einsite
+                 AND TRUNC(cntdcre) BETWEEN TRUNC(eindinv-5) AND TRUNC(eindinv)
+                 AND cntupc IS NOT NULL
+                 AND cntcode1=artcexr))
+SELECT DINSITE "Store #",EINCEXINV "Inventory #",
+       EINLIBL "Counting desc.",
+        CASE
+          WHEN merch LIKE ''103030%'' THEN ''Beer''
+          WHEN merch LIKE ''103031%'' THEN ''Wine''
+          WHEN merch LIKE ''103%'' THEN ''Grocery''
+          WHEN merch LIKE ''102010%'' THEN ''Dairy''
+          WHEN merch LIKE ''102011%'' THEN ''Frozen''
+          WHEN merch LIKE ''102014%'' THEN ''Ice-cream''
+          WHEN merch LIKE ''101%'' THEN ''Meat''
+          WHEN merch LIKE ''104008%'' THEN ''Fresh Produce''
+          WHEN merch LIKE ''104019%'' THEN ''Floral''
+          WHEN merch LIKE ''104021%'' THEN ''Salad bar''
+          WHEN merch LIKE ''104025%'' THEN ''Bulk Produce''
+          /* WHEN merch LIKE ''105%'' THEN ''Bakery'' */
+          WHEN merch LIKE ''106007%'' THEN ''Deli''
+          WHEN merch LIKE ''106015%'' THEN ''PPD''
+          WHEN merch LIKE ''106016%'' THEN ''Cafe''
+          WHEN merch LIKE ''106022%'' THEN ''Speciality Cheese''
+          WHEN merch LIKE ''106033%'' THEN ''Seafood''
+          WHEN merch LIKE ''199%'' THEN ''General''
+          ELSE ''Other''
+        END "Dept.",
+       ARTCEXR "Item #",
+       PKARTUV.GET_LIBELLE_LONG@HEINENS_CUSTOM_PROD(1, DINCINL, ''HN'') "Item desc",
+       REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2) "Previous counting",
+          (select sum(DINQTIN) from INVDETINV@HEINENS_CUSTOM_PROD dl
+           where dl.DINCININV =trim(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 1))
+           and dl.dincinl=T.dincinl
+           and dl.dinseqvl=T.dinseqvl
+           and dl.dincinr=T.dincinr
+           ) "Qty reported prev." ,
+        NVL((select sum(stmval) from stomvt where stmsite=:param2 and stmtmvt in (1,2) and stmcinl=dincinl
+        and trunc(stmdmvt) between nvl(trunc(to_date(trim(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2)),''MM/DD/RR'')), trunc(sysdate-20*360))
+        and trunc(EINDINV-1)),0) "Received",
+        NVL((select sum(stmval) from stomvt where stmsite=:param2 and stmtmvt in (150,25,113) and stmcinl=dincinl
+        and trunc(stmdmvt) between nvl(trunc(to_date(trim(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2)),''MM/DD/RR'')), trunc(sysdate-20*360))
+        and trunc(EINDINV-1)),0) "Sales",
+        NVL((select sum(stmval) from stomvt where stmsite=:param2 and stmtmvt=101 and stmcinl=dincinl
+        and trunc(stmdmvt) between nvl(trunc(to_date(trim(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2)),''MM/DD/RR'')), trunc(sysdate-20*360))
+        and trunc(EINDINV-1)),0) "Breakage/Donation",
+        NVL((select sum(stmval) from stomvt where stmsite=:param2 and stmtmvt in (51,201) and stmcinl=dincinl
+        and stmtpos=0 and trunc(stmdmvt) between nvl(trunc(to_date(trim(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2)),''MM/DD/RR'')), trunc(sysdate-20*360))
+        and trunc(EINDINV-1)),0) "Inter dept. transfer",
+        NVL((select sum(stmval) from stomvt where stmsite=:param2 and stmtmvt in (175) and stmcinl=dincinl
+        and trunc(stmdmvt) between nvl(trunc(to_date(trim(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2)),''MM/DD/RR'')), trunc(sysdate-20*360))
+        and trunc(EINDINV-1)),0) "Return",
+       
+       EINDINV "Counting date",
+       THEO_QTY "Theo. inventory",
+       QTY_REPORTED "Qty counted",
+       (QTY_REPORTED - greatest(THEO_QTY,0)) "Shrink/Pickup",
+       COST_PRICE "Unit cost",
+       round((QTY_REPORTED - greatest(THEO_QTY,0))*COST_PRICE,2) "Shrink/Pickup cost"
+  FROM COUNTING T
+
+    </QUERY>
+  <HEADERIFEMPTY>No inventory analysis</HEADERIFEMPTY>
+  <HEADER>Counted items inventory analysis</HEADER>
+  
+</ROOT>
+

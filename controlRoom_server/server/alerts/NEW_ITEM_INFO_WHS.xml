@@ -87,7 +87,10 @@ AND aracfin=foucfin
 and foucnuf like ''H%''
 /* AND aracexr=''186370'' */
 AND aratcde=1 AND aracdble=1 AND aradfin >= TRUNC(SYSDATE-3*365)  and aratfou=1
-AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin)
+AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin
+/* Exclude seasonal items and Joshen items */
+
+)
 SELECT DISTINCT ITEM_CODE || ''/'' || LV_CODE || '' '' || ITEM_DESC "Item code description",  "Flow",
        "Shipped from",
        STORE_ORD_DDEB "Store order. since",
@@ -292,7 +295,7 @@ SELECT DISTINCT ITEM_CODE || ''/'' || LV_CODE || '' '' || ITEM_DESC "Item code d
          AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
          GROUP BY smmcinl),0) AS "NbStores_AprY0",
       NVL(CEIL((SELECT SUM(smmcriu+smmsaiu) FROM stomvmois@heinens_custom_prod
-        WHERE smmcinl=arlcinluvc AND smmmois between to_char(STORE_ORD_DDEB,''RRRRWW'') AND to_char(STORE_ORD_DFIN,''RRRRWW'')
+        WHERE smmcinl=arlcinluvc AND smmmois between to_char(STORE_ORD_DDEB,''RRRRMM'') AND to_char(STORE_ORD_DFIN,''RRRRMM'')
          AND smmnpos=0 AND smmtpos=0 AND smmsite>0 AND smmttva=0
          GROUP BY smmcinl)/DECODE(MONTHS_BETWEEN(LEAST(TRUNC(SYSDATE),STORE_ORD_DFIN),STORE_ORD_DDEB),0,1, MONTHS_BETWEEN(LEAST(TRUNC(SYSDATE),STORE_ORD_DFIN),STORE_ORD_DDEB))),0) "Average"
 FROM item_list il, DATE_RANGE_Y1 

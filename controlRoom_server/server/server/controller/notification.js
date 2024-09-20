@@ -381,7 +381,7 @@ module.get = async function (request,response) {
                                                                                 async function (err,dataDetail2) {
                                                                                     let detailData2 =dataDetail2;
 
-                                                                                    let worksheet2 = workbook.addWorksheet(tabName2, {properties:{tabColor:{argb:'FFB0000'}}});
+                                                                                    let worksheet2 = workbook.addWorksheet(tabName2, {properties:{tabColor:{argb:'E7EBFF0'}}});
                                                                                     if (alertData[0].ALTFREEZEHEADER == 1) {
                                                                                         worksheet2.views = [{state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER+1}];
                                                                                     }
@@ -543,7 +543,7 @@ module.get = async function (request,response) {
                                                     /* Check if multiple tab */
                                                     if (query2Adjusted != 'undefined') {
                                                         heap.logger.log('alert', 'Query 2 exists ', 'alert', 3);
-                                                        let tabName2 = 'RESULT';
+                                                        let tabName2 = 'RESULT2';
                                                         //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
                                                         if (result.ROOT.NAME2) {
                                                             tabName2 =  '' + result.ROOT.NAME2
@@ -559,7 +559,7 @@ module.get = async function (request,response) {
                                                                 function (err,dataDetail2) {
                                                                     let detailData2 =dataDetail2;
 
-                                                                    let worksheet2 = workbook.addWorksheet(tabName2, {properties:{tabColor:{argb:'FFB0000'}}});
+                                                                    let worksheet2 = workbook.addWorksheet(tabName2, {properties:{tabColor:{argb:'E7EBFF0'}}});
                                                                     if (alertData[0].ALTFREEZEHEADER == 1) {
                                                                         worksheet2.views = [{state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER+1}];
                                                                     }
@@ -614,7 +614,7 @@ module.get = async function (request,response) {
 
                                                 /* Check if multiple tab */
                                                 if (result.ROOT.QUERY2) {
-                                                    let tabName2 = 'RESULT';
+                                                    let tabName2 = 'RESULT2';
                                                     //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
                                                     if (result.ROOT.NAME2) {
                                                         tabName2 =  '' + result.ROOT.NAME2
@@ -630,7 +630,7 @@ module.get = async function (request,response) {
                                                                     function (err,dataDetail2) {
                                                                         let detailData2 =dataDetail2;
 
-                                                                        let worksheet2 = workbook.addWorksheet(tabName2, {properties:{tabColor:{argb:'FFB0000'}}});
+                                                                        let worksheet2 = workbook.addWorksheet(tabName2, {properties:{tabColor:{argb:'E7EBFF0'}}});
                                                                         if (alertData[0].ALTFREEZEHEADER == 1) {
                                                                             worksheet2.views = [{state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER+1}];
                                                                         }

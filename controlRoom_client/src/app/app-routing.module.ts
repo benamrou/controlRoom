@@ -59,6 +59,7 @@ import { DashboardReceptionComponent } from './pages/reporting/account.payable/r
 import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
 import { SyndigoUpdateComponent } from './pages/syndigo/update/syndigo.update.component';
 import { PPGRetailComponent } from './pages/mdm/ppg.retail/ppg.retail.component';
+import { SpaceItemDimReportingComponent } from './pages/space.planning/item.dimension.reporting/space.item.dimension.reporting.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -102,6 +103,7 @@ const routes: Routes = [
   /* E-commerce/Space Planning */
   { path: 'ecommercepicture', component: EcommercePictureComponent, canActivate: [AuthentificationGuard] },
   { path: 'spaceitemreporting', component: SpaceItemReportingComponent, canActivate: [AuthentificationGuard] },
+  { path: 'spaceitemdimreporting', component: SpaceItemDimReportingComponent, canActivate: [AuthentificationGuard] },
   
   /* IT */
   { path: 'batchschedule', component: BatchScheduleComponent, canActivate: [AuthentificationGuard] },

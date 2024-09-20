@@ -1,0 +1,28 @@
+<ROOT>
+    <QUERY> 
+
+select importbatchid "Import BatchID", 
+       invoicenumber "Invoice #", 
+       foucnuf || '' | '' || foulibl "Supplier code desc", 
+       to_char(invoicedate,''MM/DD/RR'') "Invoice date", 
+       shiptoduns, 
+       totalinvoiceamount, 
+       unitsshipped, filename, status_no || '' | '' || status_description "Status",
+       ''UPDATE im_edi_invoice_header set status_no=1 where invoicenumber='''''' || invoicenumber || '''''' and filename='''''' || filename || '''''';'' 
+       "SQL command to be executed"
+from im_edi_invoice_header@heinens_custom_prod t, foudgene@heinens_custom_prod, fouadres@heinens_custom_prod
+WHERE  status_no=2
+AND fadacci=vendordunsnumber
+AND fadcfin=foucfin
+AND TRUNC(invoicedate)=TRUNC(SYSDATE)
+and not exists (select 1 from intcfinv@heinens_custom_prod invoiceIntHeader where filename like cfifich || ''%'' and cfiinvid=invoicenumber)
+and importbatchid>''5156834''
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                          where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''EDI0000000006''
+                          AND LALTMESS LIKE ''%'' || invoicenumber || ''%'')
+  </QUERY>
+  <HEADERIFEMPTY>No invoice issues</HEADERIFEMPTY>
+  <HEADER>EDI invoices in STAGE table not loaded</HEADER>
+  
+</ROOT>
+

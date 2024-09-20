@@ -1,0 +1,32 @@
+<ROOT>
+    <QUERY> 
+select sersite "Whs #",
+       foucnuf || '' | '' || foulibl "Vendor code desc.",
+       sercexcde "PO #",
+       sernusr "Receipt #",
+       to_char(serdrec,''MM/DD/YYYY'') "Reception date",
+       to_char(stmdmvt,''MM/DD/YYYY'') "Qty adj. date",
+       SUM(pkartstock.ConvertirQteUl@heinens_custom_prod(1,stmval,stmcinl,stmseqvl,41)) "Qty adj (case)",
+       SUM(stmvpr) "Amount adj"
+  from stomvt@heinens_custom_prod,
+       stoentre@heinens_custom_prod,
+       foudgene@heinens_custom_prod,
+       sitdgene@heinens_custom_prod
+ where stmtmvt in (2,9)
+   and stmsite = socsite
+   AND soccmag=0
+   and stmsite = sersite
+   and sercfin = foucfin
+   and trunc(stmdmvt) =TRUNC(SYSDATE-1)
+   and stmcexmvt = sernusr
+   and stmval != 0
+   and trunc(serdrec) != trunc(stmdmvt)
+ GROUP BY sersite, foucnuf, foulibl, sernusr, sercexcde, to_char(serdrec,''MM/DD/YYYY''), to_char(stmdmvt,''MM/DD/YYYY'')
+ order by 2, 3, 5
+
+</QUERY>
+  <HEADERIFEMPTY>No whs adjustment</HEADERIFEMPTY>
+  <HEADER>Warehouse adjustment</HEADER>
+  
+</ROOT>
+

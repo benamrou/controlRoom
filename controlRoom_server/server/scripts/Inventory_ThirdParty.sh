@@ -1,0 +1,20 @@
+
+. $HOME/env/envICR
+
+sqlplus -s $ICRUSERID @$HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.sql
+
+chmod 777 $HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.txt
+sed '/^$/d' $HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.txt > $HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.out
+
+mylist="$HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.out"
+
+while read line;
+do
+  	nohup curl -v -H ": " -H "cache-control: no-cache" -H "Connection: keep-alive" -H "Content-Type: application/x-www-form-urlencoded" -H "DATABASE_SID: HEINENS_CUSTOM_PROD" -H "LANGUAGE: HN" -H "USER: alert" -H "SUBJECT_EXT: WINE items for STORE #$line" "http://localhost:8092/api/notification/?PARAM=CNT0000000003&PARAM=$line&PARAM=103031" -L &
+
+        nohup curl -v -H ": " -H "cache-control: no-cache" -H "Connection: keep-alive" -H "Content-Type: application/x-www-form-urlencoded" -H "DATABASE_SID: HEINENS_CUSTOM_PROD" -H "LANGUAGE: HN" -H "USER: alert" -H "SUBJECT_EXT: BEER items for STORE #$line" "http://localhost:8092/api/notification/?PARAM=CNT0000000003&PARAM=$line&PARAM=103030" -L &
+
+done <"$mylist"
+
+rm -f $mylist $HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.txt
+

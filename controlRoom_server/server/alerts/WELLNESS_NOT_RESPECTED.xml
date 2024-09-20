@@ -1,0 +1,25 @@
+<ROOT>
+    <QUERY> 
+with store_missing_total as(
+select ecdsite "Store", foucnuf || '' | '' || foulibl "Vendor code desc", 
+       ecdnfilf "Address chain", fccnum || '' | '' || fcclib "Commercial #", 
+       to_char(ecddenvoi,''MM/DD/RR'') "Sending date",
+       sum(pcdmont) "Total amount"
+from cdeentcde@HEINENS_CUSTOM_PROD, foudgene@HEINENS_CUSTOM_PROD, cdepied@HEINENS_CUSTOM_PROD, fouccom@HEINENS_CUSTOM_PROD
+where ecdcfin=foucfin
+and ecdccin=fccccin
+and foucnuf=''08531''
+and ecdnfilf=1
+and ecdcincde=pcdcincde
+and trunc(ecddenvoi)=trunc(sysdate-1)
+and pcdrubr=1
+and ecdetat =5
+group by ecdsite, foucnuf, foulibl, ecdnfilf, fccnum, fcclib, ecddenvoi
+having 150 > sum(pcdmont))
+select * from store_missing_total
+
+  </QUERY>
+  <HEADERIFEMPTY>No WELLNESS minimum not respected.</HEADERIFEMPTY>
+  <HEADER>Wellness minimum not respected</HEADER>
+  <PARAMS></PARAMS>
+</ROOT>

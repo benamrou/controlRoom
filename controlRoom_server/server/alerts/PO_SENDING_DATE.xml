@@ -13,6 +13,8 @@ AND ecddenvoi > TRUNC(SYSDATE)+8
 AND ecdetat=3 /* Valued */
 AND ecdcfin=foucfin
 AND foutype=1 /* DSD vendor */
+AND trunc(ecddcre) >= trunc(sysdate-7)
+AND ecdintf != 3 /* Fax */
 AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
                                 where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''ORD0000000002''
                                 AND LALTMESS LIKE ''%'' || ecdcexcde || ''%'')      /* No reported yet */  

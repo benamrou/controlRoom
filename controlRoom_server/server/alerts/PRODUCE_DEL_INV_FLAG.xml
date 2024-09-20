@@ -1,0 +1,47 @@
+<ROOT>
+    <QUERY> 
+ SELECT SUBSTR(sobcext,10,4) || '' | '' || pkstrucobj.get_desc@heinens_custom_prod(1,sobcint, ''HN'') "Sub. cat code desc",
+        aracexr || '' '' || pkstrucobj.get_desc@heinens_custom_prod(1,aracinr, ''HN'') "Item code desc.", 
+        to_char(MIN(araddeb),''MM/DD/RR'') "Order. since", to_char(MAX(aradfin),''MM/DD/RR'') "Order until",
+        ''Item NOT orderable more than 21 days but with inventory flag on INV/PRO'' "Comment"
+ FROM artuc@heinens_custom_prod ac, 
+      strucrel@heinens_custom_prod, 
+      strucobj@heinens_custom_prod,
+      artrac@heinens_custom_prod
+ WHERE aracinr=objcint
+ AND objpere=sobcint
+ AND arttypp != 11 /* exclude supply/ingredient */
+ AND sobcext LIKE ''104008%'' /* Fresh-Produce */
+ AND 1100 >= arasite
+ AND TRUNC(SYSDATE-21) > aradfin
+ AND NOT EXISTS (SELECT 1 
+                 FROM artuc@heinens_custom_prod ad, reseau@heinens_custom_prod 
+                 WHERE ac.aracinr=ad.aracinr AND ressite=ad.arasite 
+                 AND respere=1100 AND TRUNC(SYSDATE) BETWEEN resddeb AND resdfin
+                 AND aratcde=1 
+                 AND ad.aradfin > TRUNC(SYSDATE+1)
+                 UNION 
+                 SELECT 1 
+                 FROM artuc@heinens_custom_prod ad
+                 WHERE ac.aracinr=ad.aracinr AND ad.arasite=1100
+                 AND aratcde=1 
+                 AND ad.aradfin > TRUNC(SYSDATE+1))
+ AND aratcde=1
+ AND aratfou=1
+ AND  EXISTS (SELECT 1 
+               FROM artattri@heinens_custom_prod 
+               WHERE aatcinr=aracinr 
+               AND TRUNC(SYSDATE+1) BETWEEN aatddeb AND aatdfin 
+               AND aatccla=''INV'' 
+               AND aatcatt=''PRO'')
+  GROUP BY aracexr, aracinr, sobcint, sobcext
+  ORDER BY sobcext ASC
+  
+ 
+</QUERY>
+ 
+  <HEADERIFEMPTY>No issue in deactivated Produce inventory flag ON</HEADERIFEMPTY>
+  <HEADER>Produce deac. inventory flag ON</HEADER>
+  
+</ROOT>
+

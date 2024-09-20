@@ -1,0 +1,39 @@
+<ROOT>
+    <QUERY> 
+
+select ecdsite "Whs #", ecdcexcde "PO #", foucnuf || '' | '' || foulibl "Supplier code desc", 
+       ecdetat || '' | '' || pkparpostes.get_postlibl@heinens_custom_prod(1,10,502, ecdetat,''HN'') "Status", 
+       to_char(ecddcom,''MM/DD/RR'') "Order date", to_char(ecddliv,''MM/DD/RR'') "Expected delivery date", 
+       (select count(1) from cdedetcde@heinens_custom_prod where dcdcincde=ecdcincde and ecdsite=dcdsite and ecdcfin=dcdcfin) "Nb items",
+       ''Allotment order not received'' "Comment" 
+from cdeentcde@heinens_custom_prod, foudgene@heinens_custom_prod
+where not exists (select 1 from stoentre@heinens_custom_prod 
+                  where sercincde=ecdcincde and sersite=ecdsite and sercfin=ecdcfin and serccin=ecdccin)
+and trunc(sysdate-1)= trunc(ecddliv)
+and ecdsite in (91072, 95073, 95074)
+and foucfin=ecdcfin
+and ecdtype=9
+/* and trunc(ecddcom)>trunc(sysdate-30) */
+and ecdetat in (5,6,7)
+union 
+select ecdsite "Whs #", ecdcexcde "PO #", foucnuf || '' | '' || foulibl "Supplier code desc", 
+       ecdetat || '' | '' || pkparpostes.get_postlibl@heinens_custom_prod(1,10,502, ecdetat,''HN'') "Status", 
+       to_char(ecddcom,''MM/DD/RR'') "Order date", to_char(ecddliv,''MM/DD/RR'') "Expected delivery date", 
+       (select count(1) from cdedetcde@heinens_custom_prod where dcdcincde=ecdcincde and ecdsite=dcdsite and ecdcfin=dcdcfin) "Nb items",
+       ''Closed without delivery'' "Comment" 
+from cdeentcde@heinens_custom_prod, foudgene@heinens_custom_prod
+where not exists (select 1 from stoentre@heinens_custom_prod 
+                  where sercincde=ecdcincde and sersite=ecdsite and sercfin=ecdcfin and serccin=ecdccin)
+and trunc(sysdate)>trunc(ecddliv)
+and ecdsite in (91072, 95073, 95074)
+and foucfin=ecdcfin
+and ecdtype=9 
+and trunc(ecddliv)>trunc(sysdate-14) */
+and ecdetat=7
+and ecdmotif=903
+
+  </QUERY>
+  <HEADERIFEMPTY>No Allotment order not delivered</HEADERIFEMPTY>
+  <HEADER>Allotment order not delivered</HEADER>
+  <PARAMS></PARAMS>
+</ROOT>

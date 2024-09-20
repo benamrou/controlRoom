@@ -1,0 +1,99 @@
+<ROOT>
+    <QUERY>
+WITH COUNTING AS
+ (SELECT DINSITE,
+         DINCININV,
+         DINCODE,
+         EINDINV,
+         EINLIBL,
+         DINCINR,
+	 ARTCEXR,
+         DINCINL,
+         DINSTRCINT,
+         sobcext merch,
+         DINQTIN    QTY_REPORTED,
+         DINSINF    THEO_QTY
+    FROM INVDETINV@HEINENS_CUSTOM_PROD, INVENTINV@HEINENS_CUSTOM_PROD, strucobj@HEINENS_CUSTOM_PROD, artrac@HEINENS_CUSTOM_PROD
+   WHERE EINTINV = 42
+     AND EINDINV = TRUNC(SYSDATE)
+     AND dinstrcint=sobcint
+     AND DINCININV = EINCININV
+     AND dincinr=artcinr
+     /* AND DINSINF != DINQTIN*/
+     AND DINQTIN IS NOT NULL
+     AND DINSITE = :param2
+     AND EINLIBL NOT LIKE ''%COUNTER%''
+     AND EXISTS (SELECT 1 FROM thirdparty_counting@heinens_custom_prod WHERE cntloc=einsite 
+                 AND TRUNC(cntdcre) BETWEEN TRUNC(eindinv-3) AND TRUNC(eindinv)
+		 AND cntupc IS NOT NULL
+                 AND cntcode1=artcexr))
+SELECT DINSITE "Store #",
+       EINLIBL "Counting desc.",
+       EINDINV "Counting date",
+        CASE 
+          WHEN merch LIKE ''103030%'' THEN ''Beer''
+          WHEN merch LIKE ''103031%'' THEN ''Wine''
+          WHEN merch LIKE ''103%'' THEN ''Grocery''
+          WHEN merch LIKE ''102010%'' THEN ''Dairy''
+          WHEN merch LIKE ''102011%'' THEN ''Frozen''
+          WHEN merch LIKE ''102014%'' THEN ''Ice-cream''
+          WHEN merch LIKE ''101%'' THEN ''Meat''
+          WHEN merch LIKE ''104008%'' THEN ''Fresh Produce''
+          WHEN merch LIKE ''104019%'' THEN ''Floral''
+          WHEN merch LIKE ''104021%'' THEN ''Salad bar''
+          WHEN merch LIKE ''104025%'' THEN ''Bulk Produce''
+          /* WHEN merch LIKE ''105%'' THEN ''Bakery'' */
+          WHEN merch LIKE ''106007%'' THEN ''Deli''
+          WHEN merch LIKE ''106015%'' THEN ''PPD''
+          WHEN merch LIKE ''106016%'' THEN ''Cafe''
+          WHEN merch LIKE ''106022%'' THEN ''Speciality Cheese''
+          WHEN merch LIKE ''106033%'' THEN ''Seafood''
+          WHEN merch LIKE ''199%'' THEN ''General''
+          ELSE ''Other''
+        END "Dept.",
+       ARTCEXR "Item #",
+       PKARTUV.GET_LIBELLE_LONG@HEINENS_CUSTOM_PROD(1, DINCINL, ''HN'') "Item desc",
+       QTY_REPORTED "Qty counted",
+       THEO_QTY "Theoritical qty",
+       (QTY_REPORTED - greatest(THEO_QTY,0)) "Variance"
+	/*,
+       (SELECT FOUCNUF || '' | '' || foulibl
+          FROM ARTUC@HEINENS_CUSTOM_PROD,
+               RESEAU@HEINENS_CUSTOM_PROD,
+               FOUDGENE@HEINENS_CUSTOM_PROD
+         WHERE TRUNC(SYSDATE + 1) BETWEEN ARADDEB AND ARADFIN
+           AND ARACINR = DINCINR
+           AND RESSITE = DINSITE
+           AND RESPERE = ARASITE
+           AND TRUNC(SYSDATE + 1) BETWEEN RESDDEB AND RESDFIN
+           AND ARACFIN = FOUCFIN
+           AND ROWNUM = 1) "Supplier code desc.",
+       (SELECT SUBSTR(merch,1,3) || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, strpere, ''HN'')
+          FROM STRUCOBJ@HEINENS_CUSTOM_PROD, STRUCTURE@HEINENS_CUSTOM_PROD
+         WHERE STRCINT = DINSTRCINT
+           AND SOBCINT = STRPERE
+           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
+           AND STRLEVEL = 3) "Dept code desc.",
+       (SELECT SUBSTR(merch,4,3) || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, strpere, ''HN'')
+          FROM STRUCTURE@HEINENS_CUSTOM_PROD
+         WHERE STRCINT = DINSTRCINT
+           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
+           AND STRLEVEL = 2) "Sub-dept code desc.",
+       (SELECT SUBSTR(merch,8,3) || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, strpere, ''HN'')
+          FROM STRUCTURE@HEINENS_CUSTOM_PROD
+         WHERE STRCINT = DINSTRCINT
+           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
+           AND STRLEVEL = 1) "Cat code desc.",
+       (SELECT SUBSTR(merch,11,4) || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, strpere, ''HN'')
+          FROM STRUCTURE@HEINENS_CUSTOM_PROD
+         WHERE STRCINT = DINSTRCINT
+           AND TRUNC(SYSDATE + 1) BETWEEN STRDDEB AND STRDFIN
+           AND STRLEVEL = 0) "Sub-cat code desc" */
+  FROM COUNTING T
+ORDER BY "Variance" ASC
+    </QUERY>
+  <HEADERIFEMPTY>No discrepancy inventoryi vs. counting</HEADERIFEMPTY>
+  <HEADER>Counted items with inventory discrepancies</HEADER>
+  
+</ROOT>
+

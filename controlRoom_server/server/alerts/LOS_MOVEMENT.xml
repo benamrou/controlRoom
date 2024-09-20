@@ -5,6 +5,7 @@
         FROM (SELECT casvrec FROM calsite@Heinens_Custom_Prod
               WHERE TRUNC(casdate)=TRUNC(SYSDATE-1)
               AND 50 > cassite
+	      AND casopen=1
 	      order by casvrec asc)
         WHERE rownum=1
     </BANNER>

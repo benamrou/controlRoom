@@ -1,31 +1,95 @@
 <ROOT>
     <QUERY> 
-	SELECT invoicenumber "Invoice #", 
-	to_char(invoicedate,''MM/DD/RR'')  "Invoice date", 
+WITH INVOICE_REJECT AS (
+SELECT invoicenumber "Invoice #", 
+  to_char(invoicedate,''MM/DD/RR'')  "Invoice date", 
        (SELECT foucnuf || '' | '' ||  foulibl 
         FROM foudgene@heinens_custom_prod, fouadres@heinens_custom_prod 
         WHERE foucfin=fadcfin AND FADACCI=vendordunsnumber AND ROWNUM=1) "Supplier code desc.",
+       (SELECT foucfin 
+        FROM foudgene@heinens_custom_prod, fouadres@heinens_custom_prod 
+        WHERE foucfin=fadcfin AND FADACCI=vendordunsnumber AND ROWNUM=1) foucfin,
        productid "UPC", 
+       productid,
        itemdescription "Item desc.", 
-       qtyinvoiced "Qty invoiced", unitprice "Gross", ''Unknown UPC in GOLD'' "Comment"
+       qtyinvoiced "Qty invoiced", unitprice "Gross",
+       status_description "Comment"
 FROM im_edi_invoice_detail@heinens_custom_prod art 
 WHERE TRUNC(invoicedate)=TRUNC(SYSDATE)
-AND status_no=2 
+AND status_no in (-1,3)
 AND importbatchid > 4946000
-AND NVL(qtyinvoiced,0) > 0
-/*AND NOT EXISTS (SELECT 1 
-                FROM artcoca@heinens_custom_prod, artuv@heinens_custom_prod 
-                WHERE arccinv=arvcinv
-                AND (arccode LIKE substr(productid, 2, length(productid) - 1) || ''%'' OR
-		     arccode LIKE substr(productid, 1, length(productid) - 1))
-                AND TRUNC(SYSDATE+7) BETWEEN arcddeb AND arcdfin
-                UNION SELECT 1 
-                FROM artcoul@heinens_custom_prod, artrac@heinens_custom_prod 
-                WHERE acucinr=artcinr
-                AND (acucode LIKE substr(productid, 2, length(productid) - 1) || ''%'' OR
-		     acucode LIKE substr(productid, 1, length(productid) - 1))
-                AND TRUNC(SYSDATE+7) BETWEEN acuddeb AND acudfin)
-*/
+AND NVL(qtyinvoiced,0) > 0),
+POTENTIAL_UPC AS (
+SELECT aracexr, aracexvl, productid
+      FROM artuc@heinens_custom_prod, INVOICE_REJECT 
+     WHERE ararefc = productid
+       AND TRUNC(SYSDATE) > aradfin
+       AND aracfin=foucfin
+    UNION
+    SELECT aracexr, aracexvl, productid
+      FROM artuc@heinens_custom_prod, INVOICE_REJECT 
+     WHERE aracean = productid
+       AND TRUNC(SYSDATE) > aradfin
+       AND aracfin=foucfin
+    UNION
+    SELECT aracexr, aracexvl, productid
+      FROM artcoul@heinens_custom_prod, artuc@heinens_custom_prod, INVOICE_REJECT
+     WHERE acucode = productid
+       AND aracinl = acucinl
+       AND aracfin=foucfin
+       AND TRUNC(SYSDATE) BETWEEN acuddeb AND acudfin
+       AND TRUNC(SYSDATE) > aradfin
+    UNION
+    SELECT aracexr, aracexvl, productid
+      FROM artcoul@heinens_custom_prod, artuc@heinens_custom_prod, INVOICE_REJECT
+     WHERE acucode like
+           ''%'' || trim(leading ''0'' from productid) || ''%''
+       AND aracinl = acucinl
+       AND aracfin=foucfin
+       AND TRUNC(SYSDATE) BETWEEN acuddeb AND acudfin
+       AND TRUNC(SYSDATE) > aradfin
+    UNION
+    SELECT aracexr, aracexvl, productid
+      FROM artcoul@heinens_custom_prod, artuc@heinens_custom_prod, INVOICE_REJECT
+     WHERE acucode like ''%'' || productid || ''%''
+       AND aracinl = acucinl
+       AND aracfin=foucfin
+       AND TRUNC(SYSDATE) BETWEEN acuddeb AND acudfin
+       AND TRUNC(SYSDATE) > aradfin
+    UNION
+    SELECT aracexr, aracexvl, productid
+      FROM artcoca@heinens_custom_prod va, artuc@heinens_custom_prod,INVOICE_REJECT
+     WHERE va.arccode LIKE
+           substr(productid, 2, length(productid) - 1) || ''%''
+       AND aracinr = arccinr
+       AND aracfin=foucfin
+       AND va.arccinv = pkartstock.RecupCinlUVC@heinens_custom_prod(1, aracinl)
+       AND TRUNC(SYSDATE) BETWEEN arcddeb AND arcdfin
+       AND TRUNC(SYSDATE) > aradfin
+    UNION
+    SELECT aracexr, aracexvl, productid
+      FROM artcoca@heinens_custom_prod va, artuc@heinens_custom_prod,INVOICE_REJECT
+     WHERE va.arccode LIKE ''%'' || productid || ''%''
+       AND aracinr = arccinr
+       AND aracfin=foucfin
+       AND va.arccinv = pkartstock.RecupCinlUVC@heinens_custom_prod(1, aracinl)
+       AND TRUNC(SYSDATE) BETWEEN arcddeb AND arcdfin
+       AND TRUNC(SYSDATE) > aradfin
+    UNION
+    SELECT aracexr, aracexvl,productid
+      FROM artrac@heinens_custom_prod va, artuc@heinens_custom_prod,INVOICE_REJECT
+     WHERE va.artcexr = productid
+       AND aracfin=foucfin
+       AND aracinr = artcinr
+       AND TRUNC(SYSDATE) > aradfin
+)
+SELECT "Invoice #", "Invoice date", "Supplier code desc.", "UPC", "Item desc.", 
+       "Qty invoiced", "Gross", 
+       (SELECT LISTAGG(aracexr || ''/'' || aracexvl, ''; '' ON OVERFLOW TRUNCATE) WITHIN GROUP (ORDER BY aracexr ASC)  
+        FROM POTENTIAL_UPC pot
+        WHERE pot.productid=rej.productid) "Inactive item/LV ref",
+       "Comment"
+FROM INVOICE_REJECT rej
 </QUERY>
  
   <HEADERIFEMPTY>No Unknown UPC</HEADERIFEMPTY>

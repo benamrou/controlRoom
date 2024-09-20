@@ -1,0 +1,29 @@
+<ROOT>
+    <QUERY> 
+ SELECT DISTINCT foucnuf || '' | '' || foulibl "Supplier code desc.",
+                           aracexr "Item code",
+                           aracexvl "LV code",
+			   pkstrucobj.get_desc@heinens_custom_prod(1,aracinr,''HN'') "Item desc.",
+			   pkartcoca.get_arccode@heinens_custom_prod(1,arlcinluvc) "UPC",
+			   ararefc "Supplier reference",
+                           ''Missing DUNS14/GTIN code'' "Case code",
+                           ''This impact EDI invoice GENERIC item going to the default Grocery dept'' "Comment"
+           FROM artuc@heinens_custom_prod, foudgene@heinens_custom_prod, artvl@heinens_custom_prod
+           WHERE TRUNC(SYSDATE) BETWEEN araddeb AND aradfin
+           AND aratfou=1
+           AND aratcde=1
+           AND aracfin=foucfin 
+           /* GERBER */
+           AND foucnuf in (''06373'', ''17068'', ''17244'') 
+           AND arlseqvl=araseqvl
+           AND NOT EXISTS (SELECT 1 FROM artcoul@heinens_custom_prod WHERE acucinl=aracinl 
+           AND TRUNC(SYSDATE+1) BETWEEN acuddeb AND acudfin AND acutcod in (10,9))
+           ORDER BY 1, 2 ASC
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No missing EDI case code</HEADERIFEMPTY>
+  <HEADER>EDI missing case code</HEADER>
+  
+</ROOT>
+

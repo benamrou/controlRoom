@@ -1,0 +1,30 @@
+<ROOT>
+    <QUERY> 
+SELECT foucnuf || '' | '' || foulibl "Supplier code desc.", 
+	vendordunsnumber "Duns #",
+       invoicenumber "Invoice #", 
+       to_char(invoicedate,''MM/DD/RR'') "Invoice date",
+       receiverslocation, 
+       shiptoduns, status_no, status_description,
+       ''Last two digits of the receiver location must be equal to a store #'' "Comment" 
+FROM im_edi_invoice_header@heinens_custom_prod, fouadres@heinens_custom_prod, foudgene@heinens_custom_prod
+WHERE  vendordunsnumber=fadacci 
+AND fadcfin=foucfin 
+/* Last two digits of receiver location is a store number */
+AND receiverslocation IS NOT NULL
+AND substr(receiverslocation,length(receiverslocation) - 1, length(receiverslocation)) NOT BETWEEN ''01'' AND ''50''
+AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''EDI0000000005''
+                                AND LALTMESS LIKE ''%'' || invoicenumber || ''%'')
+/*AND NOT exists (SELECT 1 FROM sitdgene@heinens_custom_prod 
+                WHERE substr(receiverslocation,length(receiverslocation) - 1, length(receiverslocation))=socsite 
+                AND soccmag=10)*/
+/*AND fadacci=943556183 UNFI */
+AND TRUNC(invoicedate)=TRUNC(SYSDATE) 
+</QUERY>
+ 
+  <HEADERIFEMPTY>No EDI receiver location issue</HEADERIFEMPTY>
+  <HEADER>EDI receiver location error</HEADER>
+  
+</ROOT>
+

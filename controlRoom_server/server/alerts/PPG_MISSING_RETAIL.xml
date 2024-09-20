@@ -10,7 +10,7 @@ WHERE TRUNC(SYSDATE+1) BETWEEN dliddeb AND dlidfin
 AND dlinlis LIKE ''PPG%'')
 SELECT l1.dlinlis || '' | '' || elilibl "PPG # desc", 
        uv1.arvcexr || ''/'' ||  uv1.arvcexv || '' '' || pkstrucobj.get_desc(1,uv1.arvcinr,''HN'') "Item/SV code desc",
-       pkartcoca.Get_Arccode@heinens_custom_prod(1,l1.dlicinv) "UPC",
+       pkartcoca.Get_Arccode@heinens_custom_prod(1,l1.dlicinv) "UPC", 
        '' $'' || aviprix || ''/'' || avimulti "Retail",
        avintar || '' ['' || to_char(aveddeb, ''MM/DD/RR'') || ''-'' || to_char(avedfin, ''MM/DD/RR'') || '']'' "Price list",
        uv2.arvcexr || ''/'' ||  uv2.arvcexv || '' '' ||  pkstrucobj.get_desc@heinens_custom_prod(1,uv2.arvcinr,''HN'') "Item/SV code desc with no retail",
@@ -18,7 +18,8 @@ SELECT l1.dlinlis || '' | '' || elilibl "PPG # desc",
        ''-'' "Retail "
 FROM ITEM_LIST l1, ITEM_LIST l2, aveprix@heinens_custom_prod s1, 
      avetar@heinens_custom_prod, 
-     artuv@heinens_custom_prod uv1, artuv@heinens_custom_prod uv2, 
+     artuv@heinens_custom_prod uv1, 
+     artuv@heinens_custom_prod uv2, 
      artentlist@heinens_custom_prod
 WHERE l1.dlinlis=l2.dlinlis
 AND l1.dlicinv != l2.dlicinv
@@ -43,7 +44,7 @@ AND NOT EXISTS (SELECT 1 FROM aveprix@heinens_custom_prod s2
                 WHERE s2.avintar=aventar
                 AND s2.avicinv=l2.dlicinv
                 AND TRUNC(aveddeb+1) BETWEEN s2.aviddeb AND s2.avidfin)
- ORDER BY avintar ASC
+ ORDER BY 1 ASC
 </QUERY>
  
   <HEADERIFEMPTY>No PPG Item exception retail</HEADERIFEMPTY>

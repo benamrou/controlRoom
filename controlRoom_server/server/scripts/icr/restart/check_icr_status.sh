@@ -8,7 +8,7 @@
 
 # Logs are in /data/hnpcen/heinensapps/restart/restart.log
 
-IP_ADDRESS=10.200.14.231
+IP_ADDRESS=localhost
 PORT=8093
 PORT_ALERT=8091
 PORT_CRON=8092
@@ -22,7 +22,7 @@ cd $HOME/heinensapps/controlRoom_server/scripts/icr/restart
 response=$(curl -s --write-out "%{http_code}\n" --location --request GET "http://${IP_ADDRESS}:${PORT}/api/item/?PARAM=33777" \
 --header "Content-type: Application/json; charset=UTF-8" \
 --header "USER: alert" \
---header "DATABASE_SID: HEINENS_CEN_UAT, HEINENS_STK_UAT" \
+--header "DATABASE_SID: HEINENS_CUSTOM_PROD" \
 --header "LANGUAGE: HN") 
 
 wait $!
@@ -40,7 +40,7 @@ fi
 response=$(curl -s --write-out "%{http_code}\n" --location --request GET "http://${IP_ADDRESS}:${PORT_CRON}/api/item/?PARAM=33777" \
 --header "Content-type: Application/json; charset=UTF-8" \
 --header "USER: alert" \
---header "DATABASE_SID: HEINENS_CEN_UAT, HEINENS_STK_UAT" \
+--header "DATABASE_SID: HEINENS_CUSTOM_PROD" \
 --header "LANGUAGE: HN")
 
 wait $!
@@ -57,7 +57,7 @@ fi
 response=$(curl -s --write-out "%{http_code}\n" --location --request GET "http://${IP_ADDRESS}:${PORT_ALERT}/api/item/?PARAM=33777" \
 --header "Content-type: Application/json; charset=UTF-8" \
 --header "USER: alert" \
---header "DATABASE_SID: HEINENS_CEN_UAT, HEINENS_STK_UAT" \
+--header "DATABASE_SID: HEINENS_CUSTOM_PROD" \
 --header "LANGUAGE: HN")
 
 wait $!

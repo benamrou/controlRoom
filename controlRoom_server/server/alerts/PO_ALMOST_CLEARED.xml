@@ -1,0 +1,22 @@
+<ROOT>
+    <QUERY> 
+SELECT ecdsite "Whs #", ecdcexcde "PO #", 
+       foucnuf || '' | '' || foulibl "Supplier code desc.", 
+       ecdetat "Order status", 
+       to_char(ecddlim ,''MM/DD/RR'') "Del. date", 
+       (SELECT COUNT(1) FROM cdedetcde@heinens_custom_prod WHERE ecdcincde=dcdcincde) "Nb items",
+       ''PO is going to be automatically cleared.''  "Comment"
+FROM cdeentcde@heinens_custom_prod, foudgene@heinens_custom_prod, sitdgene@heinens_custom_prod
+WHERE ecdsite=socsite
+AND soccmag=0
+AND ecdetat=5
+AND ecdcfin=foucfin
+/* PO are cleared 15 days after no delivery */
+AND TRUNC(SYSDATE) >= TRUNC(ecddlim+13)
+ORDER BY ecddlim ASC
+</QUERY>
+  <HEADERIFEMPTY>No almost PO cleared</HEADERIFEMPTY>
+  <HEADER>Purchase orders almost cleared</HEADER>
+  
+</ROOT>
+

@@ -11,7 +11,7 @@
                 FROM vw_EDI894_HeaderInfo@Heinens_Custom_Prod
             WHERE "VendorDunsNumber" != ''''
                 AND "InvoiceNumber" != ''''
-                AND trunc("InvoiceDate") = trunc(sysdate)
+                AND trunc("InvoiceDate") >= trunc(sysdate-1)
                 AND NOT EXISTS (SELECT 1 FROM intcfinv@Heinens_Custom_Prod WHERE cfiinvid="InvoiceNumber" AND cfidate="InvoiceDate")
                 AND NOT EXISTS (SELECT 1 FROM alertlog, alerts 
                                 where LALTID=ALTID AND ALTREALTIME=1 

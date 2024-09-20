@@ -1,0 +1,300 @@
+<ROOT>
+    <QUERY> 
+WITH LIST_VENDOR AS (
+select lissite "Location",
+       foucnuf || '' | '' || foulibl "Supplier code desc.",
+       fccnum "Contract #",
+       lisnfilf "Addr. chain#",
+       ''Every '' || lisreap || '' days'' "Frequency",
+       ''Missing '' || to_char(trunc(sysdate, ''iw''), ''MM/DD/RR'') ||
+       '' supplier schedule.'' "Comment"
+  from lienserv@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+ where lisreap = 7
+   and lisureap = 0
+   and liscfin = foucfin
+   and lisccin = fccccin
+   and (liscdlu + liscdma + liscdme + liscdje + liscdve + liscdsa + liscddi) = 1
+   and trunc(sysdate) between lisddeb and lisdfin
+   and trunc(sysdate, ''iw'') between lisddeb and lisdfin
+   and (liscdlu = 1 and not exists
+        (select 1
+           from fouplan@heinens_custom_prod
+          where lissite = fplsite
+            and liscfin = fplcfin
+            and lisccin = fplccin
+            and lisnfilf = fplnfilf
+            and trunc(fpldram) = trunc(sysdate, ''iw'')))
+   and exists
+ (select 1
+          from fouplan@heinens_custom_prod
+         where lissite = fplsite
+           and liscfin = fplcfin
+           and lisccin = fplccin
+           and lisnfilf = fplnfilf
+           and trunc(fpldram) != to_date(''12/31/49'', ''MM/DD/RR''))
+   and exists
+ (select 1
+          from artuc@heinens_custom_prod
+         where liscfin = aracfin
+           and lisccin = araccin
+           and lisnfilf = aranfilf
+           and trunc(sysdate) between araddeb and aradfin
+           and arasite != 1900
+           and pkresrel.isSiteBelongToNode@heinens_custom_prod(1, lissite, arasite, ''1'') = 1)
+union
+select lissite "Location",
+       foucnuf || '' | '' || foulibl "Supplier code desc.",
+       fccnum "Contract #",
+       lisnfilf "Addr. chain#",
+       ''Every '' || lisreap || '' days'' "Frequency",
+       ''Missing '' || to_char(trunc(sysdate, ''iw'') + 1, ''MM/DD/RR'') ||
+       '' supplier schedule.'' "Comment"
+  from lienserv@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+ where lisreap = 7
+   and lisureap = 0
+   and liscfin = foucfin
+   and lisccin = fccccin
+   and (liscdlu + liscdma + liscdme + liscdje + liscdve + liscdsa + liscddi) = 1
+   and trunc(sysdate) between lisddeb and lisdfin
+   and (trunc(sysdate, ''iw'') + 1) between lisddeb and lisdfin
+   and (liscdma = 1 and not exists
+        (select 1
+           from fouplan@heinens_custom_prod
+          where lissite = fplsite
+            and liscfin = fplcfin
+            and lisccin = fplccin
+            and lisnfilf = fplnfilf
+            and trunc(fpldram) = trunc(sysdate, ''iw'') + 1))
+   and exists
+ (select 1
+          from fouplan@heinens_custom_prod
+         where lissite = fplsite
+           and liscfin = fplcfin
+           and lisccin = fplccin
+           and lisnfilf = fplnfilf
+           and trunc(fpldram) != to_date(''12/31/49'', ''MM/DD/RR''))
+   and exists
+ (select 1
+          from artuc@heinens_custom_prod
+         where liscfin = aracfin
+           and lisccin = araccin
+           and lisnfilf = aranfilf
+           and trunc(sysdate) between araddeb and aradfin
+           and arasite != 1900
+           and pkresrel.isSiteBelongToNode@heinens_custom_prod(1, lissite, arasite, ''1'') = 1)
+union
+select lissite "Location",
+       foucnuf || '' | '' || foulibl "Supplier code desc.",
+       fccnum "Contract #",
+       lisnfilf "Addr. chain#",
+       ''Every '' || lisreap || '' days'' "Frequency",
+       ''Missing '' || to_char(trunc(sysdate, ''iw'') + 2, ''MM/DD/RR'') ||
+       '' supplier schedule.'' "Comment"
+  from lienserv@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+ where lisreap = 7
+   and lisureap = 0
+   and liscfin = foucfin
+   and lisccin = fccccin
+   and (liscdlu + liscdma + liscdme + liscdje + liscdve + liscdsa + liscddi) = 1
+   and trunc(sysdate) between lisddeb and lisdfin
+   and (trunc(sysdate, ''iw'') + 2) between lisddeb and lisdfin
+   and (liscdme = 1 and not exists
+        (select 1
+           from fouplan@heinens_custom_prod
+          where lissite = fplsite
+            and liscfin = fplcfin
+            and lisccin = fplccin
+            and lisnfilf = fplnfilf
+            and trunc(fpldram) = trunc(sysdate, ''iw'') + 2))
+   and exists
+ (select 1
+          from fouplan@heinens_custom_prod
+         where lissite = fplsite
+           and liscfin = fplcfin
+           and lisccin = fplccin
+           and lisnfilf = fplnfilf
+           and trunc(fpldram) != to_date(''12/31/49'', ''MM/DD/RR''))
+   and exists
+ (select 1
+          from artuc@heinens_custom_prod
+         where liscfin = aracfin
+           and lisccin = araccin
+           and lisnfilf = aranfilf
+           and trunc(sysdate) between araddeb and aradfin
+           and arasite != 1900
+           and pkresrel.isSiteBelongToNode@heinens_custom_prod(1, lissite, arasite, ''1'') = 1)
+union
+select lissite "Location",
+       foucnuf || '' | '' || foulibl "Supplier code desc.",
+       fccnum "Contract #",
+       lisnfilf "Addr. chain#",
+       ''Every '' || lisreap || '' days'' "Frequency",
+       ''Missing '' || to_char(trunc(sysdate, ''iw'') + 3, ''MM/DD/RR'') ||
+       '' supplier schedule.'' "Comment"
+  from lienserv@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+ where lisreap = 7
+   and lisureap = 0
+   and liscfin = foucfin
+   and lisccin = fccccin
+   and (liscdlu + liscdma + liscdme + liscdje + liscdve + liscdsa + liscddi) = 1
+   and trunc(sysdate) between lisddeb and lisdfin
+   and (trunc(sysdate, ''iw'') + 3) between lisddeb and lisdfin
+   and (liscdje = 1 and not exists
+        (select 1
+           from fouplan@heinens_custom_prod
+          where lissite = fplsite
+            and liscfin = fplcfin
+            and lisccin = fplccin
+            and lisnfilf = fplnfilf
+            and trunc(fpldram) = trunc(sysdate, ''iw'') + 3))
+   and exists
+ (select 1
+          from fouplan@heinens_custom_prod
+         where lissite = fplsite
+           and liscfin = fplcfin
+           and lisccin = fplccin
+           and lisnfilf = fplnfilf
+           and trunc(fpldram) != to_date(''12/31/49'', ''MM/DD/RR''))
+   and exists
+ (select 1
+          from artuc@heinens_custom_prod
+         where liscfin = aracfin
+           and lisccin = araccin
+           and lisnfilf = aranfilf
+           and trunc(sysdate) between araddeb and aradfin
+           and arasite != 1900
+           and pkresrel.isSiteBelongToNode@heinens_custom_prod(1, lissite, arasite, ''1'') = 1)
+union
+select lissite "Location",
+       foucnuf || '' | '' || foulibl "Supplier code desc.",
+       fccnum "Contract #",
+       lisnfilf "Addr. chain#",
+       ''Every '' || lisreap || '' days'' "Frequency",
+       ''Missing '' || to_char(trunc(sysdate, ''iw'') + 4, ''MM/DD/RR'') ||
+       '' supplier schedule.'' "Comment"
+  from lienserv@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+ where lisreap = 7
+   and lisureap = 0
+   and liscfin = foucfin
+   and lisccin = fccccin
+   and (liscdlu + liscdma + liscdme + liscdje + liscdve + liscdsa + liscddi) = 1
+   and trunc(sysdate) between lisddeb and lisdfin
+   and (trunc(sysdate, ''iw'') + 4) between lisddeb and lisdfin
+   and (liscdve = 1 and not exists
+        (select 1
+           from fouplan@heinens_custom_prod
+          where lissite = fplsite
+            and liscfin = fplcfin
+            and lisccin = fplccin
+            and lisnfilf = fplnfilf
+            and trunc(fpldram) = trunc(sysdate, ''iw'') + 4))
+   and exists
+ (select 1
+          from fouplan@heinens_custom_prod
+         where lissite = fplsite
+           and liscfin = fplcfin
+           and lisccin = fplccin
+           and lisnfilf = fplnfilf
+           and trunc(fpldram) != to_date(''12/31/49'', ''MM/DD/RR''))
+   and exists
+ (select 1
+          from artuc@heinens_custom_prod
+         where liscfin = aracfin
+           and lisccin = araccin
+           and lisnfilf = aranfilf
+           and trunc(sysdate) between araddeb and aradfin
+           and arasite != 1900
+           and pkresrel.isSiteBelongToNode@heinens_custom_prod(1, lissite, arasite, ''1'') = 1)
+union
+select lissite "Location",
+       foucnuf || '' | '' || foulibl "Supplier code desc.",
+       fccnum "Contract #",
+       lisnfilf "Addr. chain#",
+       ''Every '' || lisreap || '' days'' "Frequency",
+       ''Missing '' || to_char(trunc(sysdate, ''iw'') + 5, ''MM/DD/RR'') ||
+       '' supplier schedule.'' "Comment"
+  from lienserv@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+ where lisreap = 7
+   and lisureap = 0
+   and liscfin = foucfin
+   and lisccin = fccccin
+   and (liscdlu + liscdma + liscdme + liscdje + liscdve + liscdsa + liscddi) = 1
+   and trunc(sysdate) between lisddeb and lisdfin
+   and (trunc(sysdate, ''iw'') + 5) between lisddeb and lisdfin
+   and (liscdsa = 1 and not exists
+        (select 1
+           from fouplan@heinens_custom_prod
+          where lissite = fplsite
+            and liscfin = fplcfin
+            and lisccin = fplccin
+            and lisnfilf = fplnfilf
+            and trunc(fpldram) = trunc(sysdate, ''iw'') + 5))
+   and exists
+ (select 1
+          from fouplan@heinens_custom_prod
+         where lissite = fplsite
+           and liscfin = fplcfin
+           and lisccin = fplccin
+           and lisnfilf = fplnfilf
+           and trunc(fpldram) != to_date(''12/31/49'', ''MM/DD/RR''))
+   and exists
+ (select 1
+          from artuc@heinens_custom_prod
+         where liscfin = aracfin
+           and lisccin = araccin
+           and lisnfilf = aranfilf
+           and trunc(sysdate) between araddeb and aradfin
+           and arasite != 1900
+           and pkresrel.isSiteBelongToNode@heinens_custom_prod(1, lissite, arasite, ''1'') = 1)
+union
+select lissite "Location",
+       foucnuf || '' | '' || foulibl "Supplier code desc.",
+       fccnum "Contract #",
+       lisnfilf "Addr. chain#",
+       ''Every '' || lisreap || '' days'' "Frequency",
+       ''Missing '' || to_char(trunc(sysdate, ''iw'') + 6, ''MM/DD/RR'') ||
+       '' supplier schedule.'' "Comment"
+  from lienserv@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+ where lisreap = 7
+   and lisureap = 0
+   and liscfin = foucfin
+   and lisccin = fccccin
+   and (liscdlu + liscdma + liscdme + liscdje + liscdve + liscdsa + liscddi) = 1
+   and trunc(sysdate) between lisddeb and lisdfin
+   and (trunc(sysdate, ''iw'') + 6) between lisddeb and lisdfin
+   and (liscddi = 1 and not exists
+        (select 1
+           from fouplan@heinens_custom_prod
+          where lissite = fplsite
+            and liscfin = fplcfin
+            and lisccin = fplccin
+            and lisnfilf = fplnfilf
+            and trunc(fpldram) = trunc(sysdate, ''iw'') + 6))
+   and exists
+ (select 1
+          from fouplan@heinens_custom_prod
+         where lissite = fplsite
+           and liscfin = fplcfin
+           and lisccin = fplccin
+           and lisnfilf = fplnfilf
+           and trunc(fpldram) != to_date(''12/31/49'', ''MM/DD/RR''))
+   and exists
+ (select 1
+          from artuc@heinens_custom_prod
+         where liscfin = aracfin
+           and lisccin = araccin
+           and lisnfilf = aranfilf
+           and trunc(sysdate) between araddeb and aradfin
+           and arasite != 1900
+           and pkresrel.isSiteBelongToNode@heinens_custom_prod(1, lissite, arasite, ''1'') = 1)
+)
+SELECT * 
+FROM LIST_VENDOR
+WHERE NOT EXISTS (SELECT 1 FROM alertlog, alerts
+                                where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''SUP0000000001''
+                                AND LALTMESS LIKE ''%'' || "Supplier code desc." || ''%'')  
+</QUERY>
+  <HEADERIFEMPTY>No missing schedule</HEADERIFEMPTY>
+  <HEADER>Schedule missing</HEADER>
+  <PARAMS></PARAMS>
+</ROOT>

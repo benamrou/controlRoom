@@ -117,6 +117,7 @@ import { DashboardReceptionModule } from './pages/reporting/account.payable/rece
 import { EdiAsnModule } from './pages/edi/asn/edi.asn.module';
 import { ItemImagesModule } from './pages/mass.update/item.images/item.images.module';
 import { NextPPGModule } from './pages/mdm/next.ppg/next.ppg.module';
+import { SpaceItemDimReportingModule } from './pages/space.planning/item.dimension.reporting/space.item.dimension.reporting.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -218,7 +219,8 @@ import { PPGRetailModule } from './pages/mdm/ppg.retail/ppg.retail.module';
     ItemImagesModule,
     SpaceItemReportingModule,
     PPGRetailModule,
-    NextPPGModule
+    NextPPGModule,
+    SpaceItemDimReportingModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,
