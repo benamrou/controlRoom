@@ -1,5 +1,5 @@
 <div class="login-page" [@routerTransition] style="background-color: steelblue; color: black" >
-    <div class="row justify-content-md-center" >
+	<div class="row justify-content-md-center">
 		<!-- Snow effect -->
 		<!--div *ngFor="let dummy of ' '.repeat(100).split('')" class="snowflake">*</div-->
 
@@ -7,11 +7,11 @@
 			<p-toast key="top" [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 		</div>
 		
-        <div class="col-md-4">
+		<div class="col-md-4" style="z-index: 99999">
             <img src="./assets/images/logo.png" width="150px" class="user-avatar" />
 			<h1>Inventory Control Room</h1>
 			<p-message severity="info" text="PrimeNG Rocks"></p-message>
-			<p-messages [(value)]="connectionMessage"></p-messages>
+			<p-messages [value]="connectionMessage"></p-messages>
 
             <form role="form" (ngSubmit)="onLoggedin()" >
                 <div class="form-content">
@@ -27,7 +27,7 @@
 							   style="border-radius: 10px">
                     </div>
                 </div>
-                <button class="btn rounded-btn" type="submit" [disabled]="authentification.username.length === 0" > Log in </button>
+                <button class="btn rounded-btn" style="color: black;font-weight: bold;background-color: tan;" type="submit" [disabled]="authentification.username.length === 0" > Log in </button>
             </form>
 
 &nbsp;
@@ -37,38 +37,38 @@
 		<div *ngIf="canConnect" style="text-align: left; width: 500px; font-size: smaller; line-height: 1">
 				<div class="ui-grid-row">
 					<div class="col-md-12" style="font-weight: bolder" >User authentification validation</div>
-					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="userInfoGathered"></i>
-					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!userInfoGathered"></i>
+					<i class="fa fa-check " style="color: green; float: right" aria-hidden="true" *ngIf="userInfoGathered"></i>
+					<i class="fa fa-spinner " style="color: gray; float: right" aria-hidden="true" *ngIf="!userInfoGathered"></i>
 				</div>
 				<div class="ui-grid-row">
 					<div class="col-md-12" style="font-weight: bolder" >Gathering user information and authorization profiles</div>
-					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="userInfoGathered"></i>
-					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!userInfoGathered"></i>
+					<i class="fa fa-check " style="color: green; float: right" aria-hidden="true" *ngIf="userInfoGathered"></i>
+					<i class="fa fa-spinner " style="color: gray; float: right" aria-hidden="true" *ngIf="!userInfoGathered"></i>
 				</div>
 				<div class="ui-grid-row">
 					<div class="col-md-12" style="font-weight: bolder" >Gathering user Menu access </div>
-					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="userInfoGathered"></i>
-					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!userInfoGathered"></i>
+					<i class="fa fa-check " style="color: green; float: right" aria-hidden="true" *ngIf="userInfoGathered"></i>
+					<i class="fa fa-spinner " style="color: gray; float: right" aria-hidden="true" *ngIf="!userInfoGathered"></i>
 				</div>
 				<div class="ui-grid-row">
 					<div class="col-md-12" style="font-weight: bolder" >Gathering user Environment access </div>
-					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="environmentGathered"></i>
-					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!environmentGathered"></i>
+					<i class="fa fa-check " style="color: green; float: right" aria-hidden="true" *ngIf="environmentGathered"></i>
+					<i class="fa fa-spinner " style="color: gray; float: right" aria-hidden="true" *ngIf="!environmentGathered"></i>
 				</div>
 				<div class="ui-grid-row">
 					<div class="col-md-12" style="font-weight: bolder" >Gathering parameter list  </div>
-					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="parameterGathered"></i>
-					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!parameterGathered"></i>
+					<i class="fa fa-check " style="color: green; float: right" aria-hidden="true" *ngIf="parameterGathered"></i>
+					<i class="fa fa-spinner " style="color: gray; float: right" aria-hidden="true" *ngIf="!parameterGathered"></i>
 				</div>
 				<div class="ui-grid-row">
 					<div class="col-md-12" style="font-weight: bolder" >Gathering labels in your language </div>
-					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="labelsGathered"></i>
-					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!labelsGathered"></i>
+					<i class="fa fa-check " style="color: green; float: right" aria-hidden="true" *ngIf="labelsGathered"></i>
+					<i class="fa fa-spinner " style="color: gray; float: right" aria-hidden="true" *ngIf="!labelsGathered"></i>
 				</div>
 				<div class="ui-grid-row">
 					<div class="col-md-12" style="font-weight: bolder" >Refreshing your workspace with your preference </div>
-					<i class="fa fa-check pull-right" style="color: green" aria-hidden="true" *ngIf="labelsGathered"></i>
-					<i class="fa fa-spinner pull-right" style="color: gray" aria-hidden="true" *ngIf="!labelsGathered"></i>
+					<i class="fa fa-check " style="color: green; float: right" aria-hidden="true" *ngIf="labelsGathered"></i>
+					<i class="fa fa-spinner " style="color: gray; float: right" aria-hidden="true" *ngIf="!labelsGathered"></i>
 				</div>
 			</div>
         </div>
@@ -107,8 +107,8 @@
   <li class="lastwave"></li>
 </ul>
 
-<div class="animation">
-	<svg version="1.1" id="palmlayer" xmlns="http://www.w3.org/2000/svg"  x="0px" y="0px"
+<div class="animation" style="margin-top:15%">
+	<svg version="2024.5" id="palmlayer" xmlns="http://www.w3.org/2000/svg"  x="0px" y="0px"
 	 width="408.986px" height="512.283px" viewBox="0 0 408.986 512.283" enable-background="new 0 0 408.986 512.283"
 	 xml:space="preserve">
 		<path class="palm-body" stroke="#2b2b2e" stroke-width="0.25" stroke-linecap="round" stroke-linejoin="round" d="M74.862,501.769
@@ -1863,3 +1863,27 @@
 </svg>
 </div>
 <!-- SUMMER END -->
+
+<div style="text-align:center; color: #555; font-weight: 300; 
+		   margin: 10px; font-family: fantasy;
+		   color: white;
+		   z-index: 99;
+		   position: absolute; bottom: 30%; width: 100%;">
+	<h1 style="display: flex;
+				flex-direction: row;
+				justify-content: space-between; margin-left:25%; margin-right:25%"> 
+		<span>H</span>
+		<span>A</span>
+		<span>P</span>
+		<span>P</span>
+		<span>Y</span>
+		<span> </span>
+		<span>S</span>
+		<span>U</span>
+		<span>M</span>
+		<span>M</span>
+		<span>E</span>
+		<span>R</span>
+		<span>!</span>
+	</h1>
+</div>

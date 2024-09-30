@@ -147,7 +147,7 @@
               [responsive]="true" [totalRecords]="searchResult.length"
               [reorderableColumns]="true" scrollHeight="400px"
               (onRowSelect)="onRowSelect($event)"
-              [globalFilterFields]="['sippliercode', 'supplierdescription']"
+              [globalFilterFields]="['Item code', 'Item desc', 'UPC']"
               [autoLayout]="true" tableStyleClass="table-layout: auto;">
       
       <!-- FILTER -->
@@ -195,6 +195,7 @@
                   <td class="ui-resizable-column" [style.justify-content]="col.align" [style.text-align]="col.align">
                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'NEW'" class="badge bg-success text-dark" tooltipPosition="top"  style="color: white !important">{{rowData[col.field] }}</span>
                        <span *ngIf="col.field==='Status' && rowData[col.field] === 'DISCONTINUED'" class="badge bg-danger text-dark" tooltipPosition="top"  style="color: white !important">{{rowData[col.field] }}</span>
+                       <span *ngIf="col.field==='Status' && rowData[col.field] === 'DISC. UPC'" class="badge bg-warning text-dark" tooltipPosition="top"  style="color: white !important">{{rowData[col.field] }}</span>
                       <span *ngIf="col.field!='Status'" [style.text-align]="col.align">
                           {{rowData[col.field]}}
                       </span>

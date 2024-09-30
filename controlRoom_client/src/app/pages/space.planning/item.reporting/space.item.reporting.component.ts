@@ -267,13 +267,28 @@ export class SpaceItemReportingComponent {
                   "priority": "4",
                   "type": "containsText",
                   "operator": "containsText",
+                  "text": "DISC. UPC",
+                  "style": {
+                    "fill": {
+                      "type": "pattern",
+                      "pattern": "solid",
+                      "bgColor": {
+                        "argb": "FFFCA33F"
+                      }
+                    }
+                  }
+                },
+                {
+                  "priority": "4",
+                  "type": "containsText",
+                  "operator": "containsText",
                   "text": "NEW",
                   "style": {
                     "fill": {
                       "type": "pattern",
                       "pattern": "solid",
                       "bgColor": {
-                        "argb": "FF91D2FF"
+                        "argb": "F3cff33F"
                       }
                     }
                   }

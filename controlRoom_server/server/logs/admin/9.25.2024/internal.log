@@ -1,0 +1,8 @@
+9/25/2024 16:34:23 [internal] internal: "Received SIGTERM"
+9/25/2024 16:34:23 [internal] internal: "Shutting down"
+9/25/2024 16:34:23 [internal] internal: "Closing Inventory Control Room backend server"
+9/25/2024 16:34:23 [internal] internal: "Web server closed"
+9/25/2024 16:34:23 [internal] internal: "Uncaught exception Error: EEXIST: file already exists, mkdir 'logs/admin/9.25.2024'"
+9/25/2024 16:34:23 [internal] internal: "Shutting down"
+9/25/2024 16:34:23 [internal] internal: "Closing Inventory Control Room backend server"
+9/25/2024 16:34:23 [internal] internal: "Web server closed"
