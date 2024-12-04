@@ -54,6 +54,7 @@ import { ItemLogisticCodeComponent } from './pages/mass.update/item.logistic.cod
 import { ItemImagesComponent } from './pages/mass.update/item.images/item.images.component';
 import { SpaceItemReportingComponent } from './pages/space.planning/item.reporting/space.item.reporting.component';
 import { NextPPGComponent } from './pages/mdm/next.ppg/next.ppg.component';
+import { ReleasePalletComponent } from './pages/warehouse/toolkit/release.pallet/release.pallet.component';
 
 import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
 import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
@@ -94,7 +95,8 @@ const routes: Routes = [
   { path: 'warehouse', component: WarehouseComponent, canActivate: [AuthentificationGuard] },
   { path: 'fixpickingunit', component: FixPickingUnitComponent, canActivate: [AuthentificationGuard] },
   { path: 'whsrestartservices', component: WarehouseRestartServicesComponent, canActivate: [AuthentificationGuard] },
-
+  { path: 'releasepallet', component: ReleasePalletComponent, canActivate: [AuthentificationGuard] },
+  
   /* Syndigo */
   { path: 'syndigosearch', component: SyndigoProductComponent, canActivate: [AuthentificationGuard] },
   { path: 'syndigocollect', component: SyndigoDownloadComponent, canActivate: [AuthentificationGuard] },

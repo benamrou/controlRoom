@@ -110,6 +110,7 @@ export class OrderUrgentComponent implements OnDestroy {
     this.columnsResult = [
       { field:'X', header: '', placeholder: 'Selected', align:'center', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
       { field:'PO #', header: 'PO #', placeholder: 'Order number...', align:'center', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
+      { field:'Parent PO #', header: 'Parent PO #', placeholder: 'Parent order number...', align:'center', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
       { field:'Location', header: 'Location', placeholder: 'Selected', align:'center', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
       { field:'Supplier code', header: 'Supplier code', placeholder: 'Supplier code', align:'left', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
       { field:'Supplier desc', header: 'Supplier desc', placeholder: 'Supplier description', align:'left', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
@@ -196,7 +197,7 @@ export class OrderUrgentComponent implements OnDestroy {
                 data => {
                   console.log('order update: ', data);  
                   this.waitMessage = '';
-                  this.msgDisplayed = 'All the selected purchase orders have been updated.<br><br>Play safe, please review in GOLD the updated PO.'
+                  this.msgDisplayed = 'All the selected purchase orders have been updated. Play safe, please review in GOLD the updated PO.'
                   this.displayUpdateCompleted=true;
 
               },

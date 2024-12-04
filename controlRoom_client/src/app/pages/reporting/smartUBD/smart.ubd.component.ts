@@ -214,7 +214,7 @@ export class SmartUBDComponent implements OnDestroy {
       {label:'91071 - Frozen',  name: 'Frozen', code: '91071', checked: false},
       {label:'91072 - Meat', name: 'Meat', code: '91072', checked: false},
       {label:'95073 - Produce', name: 'Produce', code: '95073', checked: false},
-      {label:'95074 - Floral', name: 'Produce', code: '95074', checked: false},
+      {label:'95074 - Floral', name: 'Produce', code: '95074', checked: false}
     ];
 
     this.selectedWarehouse = ["90061"];

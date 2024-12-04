@@ -23,6 +23,11 @@ export class WarehouseItemService {
 
 private baseWarehousePickingUnitUrl: string = '/api/warehouse/itemdata/1/';
 private baseWarehouseChangePickingUnitUrl: string = '/api/warehouse/itemdata/2/';
+private baseQuery: string = '/api/request/';
+private basePostQuery: string = '/api/request/';
+
+private queryReleasePallet: string = 'WHS0000001';
+private queryPalletInfo: string = 'WHS0000002';
 
 private dataResult: any[] ;
 private request: string;
@@ -115,6 +120,35 @@ getItemPickingInfo (itemParam: string, pickingParam: string) {
       }));
 }
 
+
+releasePallet(ssccToChange) {
+  this.request = this.basePostQuery;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+
+        let body = ssccToChange;
+
+        headersSearch = headersSearch.set('QUERY_ID', this.queryReleasePallet);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+        return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
+                let data = <any> response;
+                return data;
+        }));
+}
+
+getSSCCInfo(whs, sscc) {
+  this.request = this.baseQuery;
+  let headersSearch = new HttpHeaders();
+  this.params= new HttpParams();
+  this.params = this.params.set('PARAM', whs);
+  this.params = this.params.append('PARAM', sscc);
+  headersSearch = headersSearch.set('QUERY_ID', this.queryPalletInfo);
+
+  return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+      return <any> response;
+  }));
+}
 
 
 }

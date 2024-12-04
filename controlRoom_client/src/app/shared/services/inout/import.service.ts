@@ -259,7 +259,7 @@ export class ImportService{
             case pt33_4_ITEMCATMANAGER: /* Item - Category Manager Package update */
                 break;
             case pt33_6_ITEMSVINFO: /* Item SV Info - psifa166p */ 
-                command = command + 'psifa166p psifa166p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ';
+                command = command + 'psifa166p psifa166p $USERID 1 ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ';
                 break;
             case pt33_7_SKUDIMENSION: /* Item - SKU dimension Package update */
                 break;
