@@ -72,6 +72,7 @@ export class OrderUrgentComponent implements OnDestroy {
 
   // Search action
    searchCode: string = '';
+   searchPO: string = '';
    periodStart: string = '';
    periodEnd: string = '';
    notUrgentOnly: string = '';
@@ -133,6 +134,7 @@ export class OrderUrgentComponent implements OnDestroy {
 
   search() {
     let vendorCodeSearch;
+    let poCodeSearch;
     let urgentSearch;
     let storeSearch;
     let periodStartSearch;
@@ -141,6 +143,7 @@ export class OrderUrgentComponent implements OnDestroy {
     this.razSearch();
 
     if (! this.searchCode) { vendorCodeSearch = '-1' }  else { vendorCodeSearch=this.searchCode }
+    if (! this.searchPO) { poCodeSearch = '-1' }  else { poCodeSearch=this.searchPO }
     if (this.notUrgentOnly) { urgentSearch = '1' }  else { urgentSearch='-1' }
     if (this.storeOnly) { storeSearch = '1' }  else { storeSearch='-1' }
     if (! this.periodStart) { periodStartSearch = '-1' }  else { periodStartSearch=this.datePipe.transform(this.periodStart, 'MM/dd/yyyy')}
@@ -156,7 +159,8 @@ export class OrderUrgentComponent implements OnDestroy {
                                                       storeSearch,
                                                       orderStatusSearch,
                                                       periodStartSearch,
-                                                      periodEndSearch)
+                                                      periodEndSearch,
+                                                      poCodeSearch)
             .subscribe( 
                 data => {
                   this.searchResult = data; // put the data returned from the server in our variable

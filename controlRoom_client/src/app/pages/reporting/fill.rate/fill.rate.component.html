@@ -1,0 +1,224 @@
+<app-page-header [heading]="'Fill rate'" [icon]="'fa-glass-water'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+
+<!-- Search Panel -->
+<div class="bbs_search_panel"  >
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier : </span>
+    <span style="overflow: hidden; padding-right: .5em; width: 70%; line-height: 25px; align-self: center;">
+        <input type="text"  [(ngModel)]="searchVendorCode" placeholder="  Enter a code or a description" 
+               style="width: 50%;margin-left: 10px;"/>     
+    </span>
+
+
+    <span class="pull-right" style="padding-right: 20px">
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+                [disabled]="searchVendorCode === '' || periodStart === '' || periodEnd === ''" 
+                [style]="{'height': '35px'}"
+                style="margin-right: 15px"></button>
+        <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" 
+                [style]="{'height': '35px'}"[disabled]="true"></button>
+    </span>
+</div>
+<div class="bbs_search_sub_panel"  >
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Period start : </span>
+    <p-calendar [(ngModel)]="periodStart"  
+                dateFormat="mm/dd/yy"
+                [style]="{'height': '35px'}"
+                name="scheduleStart" [showIcon]="true" 
+                [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
+
+    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Period end : </span>
+    <p-calendar [(ngModel)]="periodEnd"  
+                [readonlyInput]="true"
+                dateFormat="mm/dd/yy"
+                [style]="{'height': '35px'}"
+                name="scheduleEnd" [showIcon]="true" 
+                [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+</div>
+
+<p></p>
+
+<!--  panel result -->
+<div  item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
+    <p-table #result [value]="searchResult" sortMode="multiple" 
+    [rows]="50"  [rowsPerPageOptions]="[50,100,200]"
+    [paginator]="true" [pageLinks]="3" 
+    [columns]="columnsResult"
+    selectionMode="single" [(selection)]="selectedElement" 
+    [resizableColumns]="true" columnResizeMode="fit"
+    [responsive]="true" [totalRecords]="searchResult.length"
+    [reorderableColumns]="true" scrollHeight="400px"
+    (onRowSelect)="onRowSelect($event)"
+    [scrollable]="true"
+    [autoLayout]="true" tableStyleClass="table-layout: auto;">
+    
+        <!-- FILTER -->
+        <ng-template pTemplate="caption">
+            <div class="table-header grid">
+                <div class="col-1">
+                    <span>
+                            <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                                *ngIf="searchResult.length>0"
+                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                            </button>
+                            <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                                disabled *ngIf="searchResult.length==0"
+                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                            </button>
+                    </span>
+                </div>
+                <div class="col-2">
+                    <span >
+                            <button type="button" pButton icon="pi pi-user" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="{{recapButtonTooltip}}" [escape]="false"
+                                disabled *ngIf="searchResult.length==0"
+                                label="Recap" (click)="exportExcelRecap()" style="float:left">
+                            </button>
+                            <button type="button" pButton icon="pi pi-user" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="{{recapButtonTooltip}}" [escape]="false"
+                                *ngIf="searchResult.length>0"
+                                label="Recap" (click)="exportExcelRecap()" style="float:left">
+                            </button>
+                    </span>
+                </div>
+                <div class="col-9" style="text-align: right;">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+        <!-- HEADER -->
+        <ng-template pTemplate="header">           
+            <tr style="background: darkslategrey; color: white" >
+                <th style="background-color:cadetblue; color: white" pReorderableColumn pResizableColumn 
+                    *ngFor="let col of columsCollapse;  let indice=index" [attr.colspan]="col.colspan">
+                    {{col.header}}
+                    <span style="padding-left: 1em" *ngIf="col.expand === 1" class="pi pi-plus-circle pull-right" (click)='expandColumn(indice)'> </span>
+                    <span style="padding-left: 1em" *ngIf="col.expand === -1" class="pi pi-minus-circle pull-right" (click)='expandColumn(indice)'></span>
+                </th>
+            </tr>             
+            <tr style="background: lightyellow;">
+                <ng-container *ngFor="let col of columnsResult">
+                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.justify-content]="col.align">
+                            {{col.header}}
+                    <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+            
+        <!-- BODY -->
+        <ng-template pTemplate="body" let-rowData let-columns="columnsResult" let-globalIndice="rowIndex">
+            <tr [pSelectableRow]="rowData" [style.background-color]="(rowData['New in report item'] == 1) ? 'lightyellow' : 'unset'">
+                <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column"  >
+                    <td *ngIf="col.display " class="ui-resizable-column" [style.justify-content]="col.align" >
+                        <span *ngIf="col.field==='% of fill'">{{rowData[col.field] | number: '1.2-2'}} %</span>      
+                        <span *ngIf="col.field!='% of fill'">{{rowData[col.field]}}</span>
+                        
+                    </td>
+                </ng-container>
+            </tr> 
+        </ng-template>
+    </p-table>
+    <i class="FOOTER_Table" >{{searchResult.length}} references</i>
+</div>
+
+<!-- button type="submit" pButton (click)="clickedOpen()"  label="OPEN" ></button -->
+    <!-- Panel result style="width: 50%;" -->
+    <!--chart-cmp  [chart_id]='chartConfig.id' [chart_type]='chartConfig.type'
+                [axis_labels]='chartConfig.axis_labels' [label_graph]='chartConfig.label_graph'
+                [data]='chartConfig.data' [nbSetOfData]='chartConfig.nbSetOfData'
+                [borderColor]='chartConfig.borderColor'>
+    </chart-cmp-->
+
+<br>
+<h5 *ngIf="poNotDelivered.length > 0" style="background-color: cornflowerblue;color: white;border-radius: 5px;padding-left: 0.8em;margin-bottom: 1em;margin-top: 2em;">Purchase orders not delivered</h5>
+<p-table *ngIf="poNotDelivered.length > 0" #resultPOnotDelivered [value]="poNotDelivered" sortMode="multiple" 
+[rows]="20"  [rowsPerPageOptions]="[50,100,200]"
+[paginator]="true" [pageLinks]="3" 
+[columns]="columnsResultPOnotDelivered"
+selectionMode="single" [(selection)]="selectedElement" 
+[resizableColumns]="true" columnResizeMode="fit"
+[responsive]="true" [totalRecords]="poNotDelivered.length"
+[reorderableColumns]="true" scrollHeight="400px"
+(onRowSelect)="onRowSelect($event)"
+[scrollable]="true"
+[autoLayout]="true" tableStyleClass="table-layout: auto;">
+
+    <!-- FILTER -->
+    <ng-template pTemplate="caption">
+        <div class="table-header grid">
+            <div class="col-1">
+                <span>
+                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                            *ngIf="poNotDelivered.length>0"
+                            label="CSV" (click)="resultPOnotDelivered.exportCSV()" style="float:left">
+                        </button>
+                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                            disabled *ngIf="poNotDelivered.length==0"
+                            label="CSV" (click)="resultPOnotDelivered.exportCSV()" style="float:left">
+                        </button>
+                </span>
+            </div>
+            <div class="col-2">
+                <span >
+                        <button type="button" pButton icon="pi pi-user" iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            pTooltip="{{recapButtonTooltip}}" [escape]="false"
+                            disabled *ngIf="poNotDelivered.length==0"
+                            label="Recap" (click)="exportExcelRecap()" style="float:left">
+                        </button>
+                </span>
+            </div>
+            <div class="col-9" style="text-align: right;">
+                <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="resultPOnotDelivered.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                </span>
+            </div>
+        </div>
+    </ng-template>
+    <!-- HEADER -->
+    <ng-template pTemplate="header">                     
+        <tr style="background: lightyellow;">
+            <ng-container *ngFor="let col of columnsResultPOnotDelivered">
+                <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn [style.justify-content]="col.align">
+                        {{col.header}}
+                <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                <p-sortIcon [field]="col.field"></p-sortIcon>
+                </th>
+            </ng-container>
+        </tr>
+    </ng-template>
+        
+    <!-- BODY -->
+    <ng-template pTemplate="body" let-rowData let-columns="columnsResultPOnotDelivered" let-globalIndice="rowIndex">
+        <tr [pSelectableRow]="rowData" [style.background-color]="(rowData['New in report item'] == 1) ? 'lightyellow' : 'unset'">
+            <ng-container *ngFor="let col of columnsResultPOnotDelivered; let indice=index" class="ui-resizable-column"  >
+                <td *ngIf="col.display " class="ui-resizable-column" [style.justify-content]="col.align" >
+                    <span *ngIf="col.field==='% of fill'">{{rowData[col.field] | number: '1.2-2'}} %</span>      
+                    <span *ngIf="col.field!='% of fill'">{{rowData[col.field]}}</span>
+                    
+                </td>
+            </ng-container>
+        </tr> 
+    </ng-template>
+</p-table>
+<i *ngIf="poNotDelivered.length > 0" class="FOOTER_Table" >{{poNotDelivered.length}} item references</i>

@@ -184,9 +184,9 @@ export class MassJournalComponent {
   }
 
   downloadFile(id: any, isError: any) {
-    //console.log ('Downloading...', id, this.searchResult)
+    console.log ('Downloading...', id, this.searchResult)
     if (isError) {
-      this._exportService.saveCSV(JSON.parse(this.searchResult[id].JSONERROR), null, null, null, 
+      this._exportService.saveCSV(JSON.parse(this.searchResult[id].JSONERROR.replace(/'/g, '"')), null, null, null, 
                                   'MASSCHANGE_' + this.searchResult[id].JSONID, 
                                   'Mass Change execution report REJECTION', 'Process ' + this.searchResult[id].JSONID + ' running the EXCEL file ' + this.searchResult[id].JSONFILE +  ' has been executed on ' +
                                   this.searchResult[id].JSONDPROCESS + ' by ' + this.searchResult[id].USERNAME + ' - Nb error: ' + this.searchResult[id].JSONNBERROR);

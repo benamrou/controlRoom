@@ -107,6 +107,33 @@ module.post = function (request,response) {
             }
         });
       });
+
+
+      app.post('/api/authentification/oneway/', function (request, response) {
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        // requestuest methods you wish to allow
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        SQL.executeLibQueryCallback(SQL.getNextTicketID(), 
+                            "ONE0000002", "'{" + 
+                            request.header('USER') + "," +
+                            request.header('PASSWORD') + "}'", 
+                            request.header('USER'), 
+                            "'{}'", "'{}'",
+                            request, response, 0, function (err, data) {
+            if (data[0]) {
+               response.status(200).json({
+                    TYPE: true,
+                    USERID: data[0].USERID,
+                    TOKEN: jwt.encode(data[0].USERID, config.secret)
+                }); 
+            } else {
+                response.status(200).json({
+                        TYPE: false,
+                        USERID: "Invalid username/password"
+                    });    
+            }
+        });
+      });
     };
      return module;
 }

@@ -105,20 +105,23 @@ module.exports = function (app, SQL) {
                 //host configuration with connection settings and commands
                var host = {
                     server:        {     
-                    host:         request.header('ENV_IP'),
+                    host:         '127.0.0.1',//request.header('ENV_IP'),
                     userName:     request.header('ENV_ID'),
                     password:     request.header('ENV_PASS'),
+
+            	    //readyTimeout: 1000000,
                     },
                     //commands:      [ request.header('ENV_COMMAND') ],
                     verbose:       true,
                     debug:       true,
+		    
                     idleTimeOut:    1000000,
                     dataIdleTimeOut:    1000000,
-                    //enter:              "\n",
-                    //streamEncoding:     "utf8",
+                    enter:              "\n",
+                    streamEncoding:     "utf8",
                     //standardPrompt:     ">",
-                    disableASCIIFilter: true,
-                    disableColorFilter: true,
+                    //disableASCIIFilter: true,
+                    //disableColorFilter: true,
                     commands:      [ request.body.command ] ,
                     //commands:      request.body.command.split(';'),
                     onCommandTimeout: function( command, response, stream, sshObj ) {
@@ -191,7 +194,9 @@ module.exports = function (app, SQL) {
                 //host configuration with connection settings and commands
                let host = {
                     server:        {     
-                    host:         request.header('ENV_IP'),
+                    
+                    host:         '127.0.0.1',//request.header('ENV_IP'),
+		    //host:         request.header('ENV_IP'),
                     userName:     request.header('ENV_ID'),
                     password:     request.header('ENV_PASS'),
                     },

@@ -108,6 +108,11 @@
                                 <span><i class="fas fa-list-ol"></i> {{ 'Next PPG' }}</span>
                             </a>
                         </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/ecommdesc" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-film"></i> {{ 'eCommerce desc' }}</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </div>
@@ -174,6 +179,11 @@
                         <li>
                             <a class="bbs_link_menu" routerLink="/releasepallet" [routerLinkActive]="['router-link-active']" >
                                 <span><i class="fas fa-pallet"></i> {{ 'Release pallet' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/palletlabel" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-barcode"></i> {{ 'Pallet label' }}</span>
                             </a>
                         </li>
                     </ul>
@@ -302,6 +312,11 @@
                                 <span><i class="fa fa-camera"></i> {{ 'Item images'}}</span>
                             </a>
                         </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/supplieraddress" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-address-card"></i> {{ 'Supplier address'}}</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </div>
@@ -361,6 +376,18 @@
                             <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'smartubd' }"> 
                                 <a class="bbs_link_menu" routerLink="/dashboardreception" [routerLinkActive]="['router-link-active']" >
                                     <span><i class="pi pi-download"></i> &nbsp; {{ 'AP Receiving' }} </span>
+                                </a>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="submenu" style="padding-left: 1.1em;">
+                        <a class="list-group-item" (click)="addExpandClass('reporting;fillrate')" >
+                            <span><i class="fas fa-glass-water"></i> &nbsp; {{ 'Fill Rate' }} </span>
+                        </a>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('fillrate') !== -1 }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'fillrate' }"> 
+                                <a class="bbs_link_menu" routerLink="/fillrate" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-industry"></i> &nbsp; {{ 'DSD / Warehouse' }} </span>
                                 </a>
                             </ul>
                         </li>

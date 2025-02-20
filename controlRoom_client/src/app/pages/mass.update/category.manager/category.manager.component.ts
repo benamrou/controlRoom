@@ -186,7 +186,7 @@ export class CategoryManagerComponent implements OnInit{
                 () => { 
                         if (existTemplate) {
                             this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Template file', detail:  
-                                                    'File Item Merchandise Hierrarchy downloaded.' }); 
+                                                    'File Item Category Mgr downloaded.' }); 
                         } else {
                             this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
                         }

@@ -119,6 +119,9 @@ import { ItemImagesModule } from './pages/mass.update/item.images/item.images.mo
 import { NextPPGModule } from './pages/mdm/next.ppg/next.ppg.module';
 import { SpaceItemDimReportingModule } from './pages/space.planning/item.dimension.reporting/space.item.dimension.reporting.module';
 import { ReleasePalletModule } from './pages/warehouse/toolkit/release.pallet/release.pallet.module';
+import { EcomerceDescModule } from './pages/mdm/ecommerce/ecommerce.desc.module';
+import { FillRateModule } from './pages/reporting/fill.rate/fill.rate.module';
+import { SupplierAddressModule } from './pages/mass.update/supplier.address/supplier.address.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -140,6 +143,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
 import { PPGRetailModule } from './pages/mdm/ppg.retail/ppg.retail.module';
+import { PalletLabelModule } from './pages/warehouse/toolkit/pallet.label/pallet.label.module';
 
 @NgModule({
   declarations: [
@@ -222,7 +226,11 @@ import { PPGRetailModule } from './pages/mdm/ppg.retail/ppg.retail.module';
     PPGRetailModule,
     NextPPGModule,
     SpaceItemDimReportingModule,
-    ReleasePalletModule
+    ReleasePalletModule, 
+    EcomerceDescModule,
+    FillRateModule,
+    SupplierAddressModule,
+    PalletLabelModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

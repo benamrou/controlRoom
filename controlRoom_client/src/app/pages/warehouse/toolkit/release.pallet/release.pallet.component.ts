@@ -32,6 +32,7 @@ export class ReleasePalletComponent {
 
    // Search Panel
    searchSSCC: string = '';
+   searchItem: string = '';
 
    datePipe: DatePipe;
    dateNow: Date;
@@ -64,6 +65,9 @@ export class ReleasePalletComponent {
       { field:'X', header: 'Selection', placeholder: 'Selected', align:'center', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
       { field: 'WHSID', header: 'Warehouse code', align:'center' },
       { field: 'WHSDESC', header: 'Whs. description', align:'left' },
+      { field: 'ITEM_CODE', header: 'Item #', align:'left' },
+      { field: 'LV', header: 'LV #', align:'left' },
+      { field: 'ITEM_DESC', header: 'Item desc.', align:'left' },
       { field: 'SSCC', header: 'Pallet #', align:'left' },
       { field: 'STATUS', header: 'Task status', align:'center' }
     ];
@@ -95,21 +99,17 @@ export class ReleasePalletComponent {
     //this.searchCode = searchCode;
     //console.log('Looking for item code : ' + this.searchSSCC + ' - Picking Unit : ' + this.selectedPU);
     this.razSearch();
-    let ssccSearch, warehouseCodeSearch;
+    let ssccSearch, warehouseCodeSearch, itemSearch;
     this._messageService.add({severity:'info', summary:'Info Message', detail: 'Looking for pallet information : ' + JSON.stringify(this.searchSSCC)});
    
-    if (! this.searchSSCC) { 
-      ssccSearch = '-1'
-    } 
-    else {
-      ssccSearch=this.searchSSCC
-    }
+    if (! this.searchSSCC) { ssccSearch = '-1' } else { ssccSearch=this.searchSSCC}
+    if (! this.searchItem) { itemSearch = '-1' } else { itemSearch=this.searchItem}
     if (! this.selectedWarehouse) { warehouseCodeSearch= '-1' }  else { 
       warehouseCodeSearch=this.selectedWarehouse.join('/'); 
     }
 
     //console.log('Looking for item code : ' + this.searchSSCC + ' - Picking Unit : ' + pickingUnitSearch);
-    this._warehouseItemService.getSSCCInfo(warehouseCodeSearch, ssccSearch)
+    this._warehouseItemService.getSSCCInfo(warehouseCodeSearch, ssccSearch, itemSearch)
             .subscribe( 
                 data => { 
                   this.searchResult = data; // put the data returned from the server in our variable

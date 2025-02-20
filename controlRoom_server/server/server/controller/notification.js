@@ -285,7 +285,8 @@ module.get = async function (request,response) {
                                             request.req_datadetail, request.response_dataDetail, 
                                             async function (err,dataDetail) {
                                                 let detailData =dataDetail;
-                                                if (detailData.length > 0 || alertData[0].ALTREALTIME == '0') {
+                                                heap.logger.log('alert','ALTNOHTML ' + alertData[0].ALTNOHTML, 'alert', 3);
+                                                if ((detailData.length > 0 || alertData[0].ALTREALTIME == '0') && ALTNOHTML == 0) {
                                                     let html = '';
                                                     let preHtml='';
                                                     let bannerHtml='';
@@ -322,9 +323,9 @@ module.get = async function (request,response) {
                                                         sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html);
                                                     }
                                                     else {
-                                                        if (detailData.length > 500) {
+                                                        if (detailData.length > 500 || alertData[0].ALTNOHTML == 1) {
                                                             html += preHtml;
-                                                            html += 'Number of objects > 500 - Look at the attachment for details.';
+                                                            html += 'Look at the attachment for details.';
                                                         }
                                                         else {
                                                             html = preHtml;
@@ -365,7 +366,7 @@ module.get = async function (request,response) {
                                                         }
                                                         /* Check if multiple tab */
                                                         if (result.ROOT.QUERY2) {
-                                                            let tabName2 = 'RESULT';
+                                                            let tabName2 = 'RESULT2';
                                                             //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
                                                             if (result.ROOT.NAME2) {
                                                                 tabName2 =  '' + result.ROOT.NAME2
@@ -474,6 +475,7 @@ module.get = async function (request,response) {
                                 async function (err,dataDetail) {
                                     //request = null;
                                     let detailData =dataDetail;
+                                    heap.logger.log('alert','ALTNOHTML ' + alertData[0].ALTNOHTML, 'alert', 3);
                                     if (detailData.length > 0 || alertData[0].ALTREALTIME == '0') {
                                         let html = '';
                                         let preHtml='';
@@ -493,9 +495,9 @@ module.get = async function (request,response) {
                                             sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html);
                                         }
                                         else {
-                                            if (detailData.length > 500) {
+                                            if (detailData.length > 500 || alertData[0].ALTNOHTML == 1) {
                                                 html += preHtml;
-                                                html += 'Number of objects > 500 - Look at the attachment for details.';
+                                                html += 'Look at the attachment for details.';
                                             }
                                             else {
                                                 html = preHtml;
@@ -614,7 +616,7 @@ module.get = async function (request,response) {
 
                                                 /* Check if multiple tab */
                                                 if (result.ROOT.QUERY2) {
-                                                    let tabName2 = 'RESULT2';
+                                                    let tabName2 = 'RESULT';
                                                     //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
                                                     if (result.ROOT.NAME2) {
                                                         tabName2 =  '' + result.ROOT.NAME2

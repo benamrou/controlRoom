@@ -338,6 +338,8 @@ export class SupplierScheduleComponent {
                         '<br><br>'+
                         '<b>Supplier schedule change is usually taking less than a minute</b>';
 
+    let invalidCollectionTime = false;
+    let invalidDeliveryTime = false;
     for (let i =0; i < this.temporarySchedule.length; i++) {
       if (this.temporarySchedule[i].temporary) {
           for (let j =0; j < this.temporarySchedule[i].orderActive.length; j++) {
@@ -370,11 +372,27 @@ export class SupplierScheduleComponent {
               calcDeliveryDate.setDate(calcDeliveryDate.getDate() + parseInt(this.temporarySchedule[i].leadTime[j]));
 
               buildValidePlanning.deliveryDate = this.datePipe.transform(calcDeliveryDate,'MM/dd/yyyy');
+              if (buildValidePlanning.collectionTime.length != 4  ){
+                invalidCollectionTime = true;
+              }
+              if (buildValidePlanning.deliveryTime.length != 4  ){
+                invalidDeliveryTime = true;
+              }
               //console.log (' buildValidePlanning.deliveryDate: ' + JSON.stringify(buildValidePlanning.deliveryDate));
               this.validateSchedule.push(buildValidePlanning);
             }
           }
       }
+    }
+    if (invalidCollectionTime) {
+      this._messageService.add({severity:'error', summary:'Error Message', detail: 'Please correct the COLLECTION time format HHMM (24 hours).'});
+      this.waitMessage = '';
+      return;
+    }
+    if (invalidDeliveryTime) {
+      this._messageService.add({severity:'error', summary:'Error Message', detail: 'Please correct the DELIVERY time format HHMM (24 hours).'});
+      this.waitMessage = '';
+      return;
     }
 
     this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Supplier schedule is being updated'});

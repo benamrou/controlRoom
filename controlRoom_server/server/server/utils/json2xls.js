@@ -471,7 +471,7 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
 
     if ( alertData[0].ALTBORDER === 1) {
         worksheet.eachRow(function (row, _rowNumber) {
-            row.eachCell(function (cell, _colNumber) {
+            row.eachCell({ includeEmpty: true },function (cell, _colNumber) {
                 if (_rowNumber > heap.TABLE_HEADER) {
                     cell.border = {
                         top: { style: 'thin' },

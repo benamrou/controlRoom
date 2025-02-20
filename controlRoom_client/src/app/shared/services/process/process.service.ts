@@ -185,6 +185,16 @@ export class ProcessService {
         scriptToExecute = this._userService.userInfo.mainEnvironment[i].initSH + '; ';
       }
     }
+    if (!scriptToExecute ){
+    for(let i=0; i < this._userService.userInfo.envUserAccess.length; i++) {
+      /* Pick STOCK environment */
+      if (this._userService.userInfo.mainEnvironment[0].type == this._userService.userInfo.envUserAccess[i].type &&
+          this._userService.userInfo.envUserAccess[i].domain == '2' /* 2 : Stock, 1: Central */) {
+        scriptToExecute = this._userService.userInfo.envUserAccess[i].initSH + '; ';
+      }
+    }
+      /* Look in all environment */
+    }
     scriptToExecute = scriptToExecute +
                       'export GOLD_DEBUG=1; ' +
                       // Batch to execute

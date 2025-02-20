@@ -361,7 +361,7 @@ export class ExportService{
         workbook.calcProperties.fullCalcOnLoad = true;
     }
 
-    json2xls(workbook, worksheet, reportid, subject, content, rawData, formatStructure, border ?, freeze?) {
+    json2xls(workbook, worksheet, reportid, subject, content, rawData, formatStructure, border ?, freeze?, tableName?) {
 
         let valueColumns = Object.keys(rawData[0]);
         let dataColumns = [];
@@ -372,6 +372,9 @@ export class ExportService{
             )
         }
 
+        if(!tableName) {
+            tableName = 'Result'
+        }
         // Add rows detail
         let dataRows = [];
 
@@ -388,7 +391,7 @@ export class ExportService{
         /**************************************************************************/  
         // Creating the table detail EXCEL (real table)
         worksheet.addTable({
-            name: 'Result',
+            name: tableName,
             ref: 'A5',
             headerRow: true,
             totalsRow: true,
@@ -424,12 +427,20 @@ export class ExportService{
         this.setXLSProperties(workbook);
     }
 
-    saveCSV(rawData, image, imageWidth, imageHeight,reportId, reportTitle, reportContent, formatStructure ?: any, border?, freeze?) {
+    saveCSV(rawData, image, imageWidth, imageHeight,reportId, reportTitle, reportContent, 
+            formatStructure ?: any, border?, freeze?, 
+            wrksheet2name?, formatStructure2?, wrksheet2data?) {
         let workbook = new excel.Workbook();
         let ws = workbook.addWorksheet('result');
         
-        this.json2xls(workbook, ws, reportId, reportTitle, reportContent,rawData, formatStructure, border, freeze);
+        this.json2xls(workbook, ws, reportId, reportTitle, reportContent,rawData, formatStructure, border, freeze, 'result');
   
+
+        if(wrksheet2name) {
+            let worksheet2 = workbook.addWorksheet(wrksheet2name, {properties:{tabColor:{argb:'E7EBFF0'}}});
+            this.json2xls(workbook, worksheet2, reportId, reportTitle, reportContent, wrksheet2data, formatStructure2, border, freeze, 'result2');
+        }
+        
         if (!!image) {
             //console.log('image :',image);
            let imageid =  workbook.addImage({ base64: image, extension: 'png'});

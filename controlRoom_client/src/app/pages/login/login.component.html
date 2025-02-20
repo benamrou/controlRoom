@@ -1,5 +1,5 @@
 <!-- div class="login-page" [@routerTransition] style="background-color: steelblue; color: black" -->
-<div class="login-page" [@routerTransition] style="background: linear-gradient(0deg, rgba(0, 0, 13, 1) 0%,  rgb(15, 145, 162) 100%); color: black">
+<div class="login-page" [@routerTransition]>
 	<div  class="pull-right" font-size="small" ><span #versionDiv style="visibility: hidden;font-size: small">vers. 6.0.1b0.10</span></div>
     <div class="row justify-content-md-center" >
 		<!-- Snow effect -->
@@ -11,7 +11,7 @@
 		
         <div class="col-md-4" style="z-index: 9999;">
             <img src="./assets/images/logo.png" width="150px" class="user-avatar" (click)="showHideVersion()" />
-			<h1>Inventory Control Room</h1>  
+			<h1 style="color: white">Inventory Control Room</h1>  
 			<p-toast></p-toast>
 
             <form role="form" (ngSubmit)="onLoggedin()" >
@@ -28,7 +28,7 @@
 							   style="border-radius: 10px">
                     </div>
                 </div>
-                <button class="btn rounded-btn" type="submit" [disabled]="authentification.username.length === 0 " > Log in </button>
+                <button class="btn rounded-btn" type="submit" [disabled]="authentification.username.length === 0 " style="background-color: black;"> Log in </button>
             </form>
 
 &nbsp;
@@ -79,7 +79,7 @@
 
 
 <!-- Chrismas TREE BEGIN -->
-<div style="padding-top: 10%;">
+<!--div style="padding-top: 10%;">
 	<div class="container_christmas" style="z-index: 99999"> 
 			<div class="star"></div>
 			<div class="pressie">
@@ -116,7 +116,7 @@
 				<div class="line four"> </div> 
 			</div>
 	</div>
-</div>
+</div-->
 <!-- Chrismas TREE END -->
 
 <!-- Christmas banner-->
@@ -146,7 +146,7 @@
 </div>
 
 <!-- Santa Claus -->
-<div class="circular-bg">
+<!--div class="circular-bg">
 	<div class="moon"></div> 
 	<div class="snores">
 	  <div class="snore snore1">Z</div>
@@ -220,8 +220,8 @@
 	  <div class="gift-top"></div>
 	  <div class="gift-bottom"></div>
 	</div>
-  </div>
+  </div-->
 
 <!-- Happy Holiday -->
-<h2>Happy Holiday</h2>
+<h2>~Ohio~ ~Winter~</h2>
   

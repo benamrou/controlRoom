@@ -21,7 +21,7 @@ export class OrderService {
     }
 
 
-    getOrderInfo(supplier: any, noturgent: any, storeOnly: any, orderstatus: any, periodStart: any, periodEnd:any) {
+    getOrderInfo(supplier: any, noturgent: any, storeOnly: any, orderstatus: any, periodStart: any, periodEnd:any, poNumber: any) {
         this.request = this.baseQuery;
         let headersSearch = new HttpHeaders();
         this.params= new HttpParams();
@@ -31,6 +31,7 @@ export class OrderService {
         this.params = this.params.append('PARAM', orderstatus);
         this.params = this.params.append('PARAM', periodStart);
         this.params = this.params.append('PARAM', periodEnd);
+        this.params = this.params.append('PARAM', poNumber);
         headersSearch = headersSearch.set('QUERY_ID', this.queryOrder);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {

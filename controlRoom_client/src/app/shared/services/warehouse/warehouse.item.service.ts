@@ -137,12 +137,13 @@ releasePallet(ssccToChange) {
         }));
 }
 
-getSSCCInfo(whs, sscc) {
+getSSCCInfo(whs, sscc, item) {
   this.request = this.baseQuery;
   let headersSearch = new HttpHeaders();
   this.params= new HttpParams();
   this.params = this.params.set('PARAM', whs);
   this.params = this.params.append('PARAM', sscc);
+  this.params = this.params.append('PARAM', item);
   headersSearch = headersSearch.set('QUERY_ID', this.queryPalletInfo);
 
   return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {

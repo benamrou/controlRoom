@@ -29,6 +29,7 @@ let fs = require('fs');
 let oracledb = require('oracledb');      // Oracle DB connection
 let logger = require("../utils/logger.js");
 let excel = require('exceljs');
+let requestPOST = require('request');
 
 module.exports = function (app, SQL) {
 
@@ -390,6 +391,110 @@ module.post = function (request,response) {
             response.end("ERROR File does not exist");
             });
     });
+
+
+    /**
+     * Get file + filename like
+     */
+    app.get('/api/upload/8/', function (request, response) {
+        "use strict";
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        // requestuest methods you wish to allow
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
+        let directoryPath;
+        let filename;
+        let containsIn;
+        let data;
+
+        directoryPath= request.query.PARAM[0].replace(/%2F/g,'/');
+        filename=request.query.PARAM[1];
+        containsIn=request.query.PARAM[2];
+
+        logger.log('[UPLOAD]', 'directory : ' + directoryPath, 'upload', 2);
+        logger.log('[UPLOAD]', 'filename : ' + filename, 'upload', 2);
+        logger.log('[UPLOAD]', 'containsIn : ' + containsIn, 'upload', 2);
+        
+        if(!filename){
+            response.writeHead(200, { "Content-Type": "text/plain" });
+            response.end("ERROR filename is required (first letters)");
+            return false;
+        }
+        
+        // Check if file specified by the filePath exists
+        fs.readdir(directoryPath, function (err, files) {
+            let fileFound;
+            //handling error
+            if (err) {
+                return console.log('Unable to scan directory: ' + err);
+            } 
+            //listing all files using forEach
+            files.every(function (file) {
+                
+                if(!fileFound) {
+                    if (file.startsWith(filename)) {
+                        logger.log('[UPLOAD]', 'looking in file : ' + file + ' starting with ' + filename, 'upload', 2);
+
+                            logger.log('[UPLOAD]', 'file exists : ' + directoryPath+file, 'upload', 2);
+                            data = fs.readFileSync(directoryPath+file, 'utf8');
+                            logger.log('[UPLOAD]', 'Reading data : ' + data, 'upload', 2);
+
+                            if(data.includes(containsIn)){
+                                logger.log('[UPLOAD]', 'file found : ' + file, 'upload', 2);
+                                fileFound = file;
+                            }
+                        }
+                     }
+                // Do whatever you want to do with the file
+                console.log(file); 
+
+                if(files[files.length-1] === file){
+                    if (!fileFound) {
+                        logger.log('[UPLOAD]', 'Done reading files... ' + fileFound, 'upload', 2);
+                        response.writeHead(200, { "Content-Type": "text/plain" });
+                        response.end("ERROR File does not exist");
+                        console.log("Last Element");
+                    }
+                    else {
+                        /** Convert ZPL to PDF */
+                        logger.log('[UPLOAD]', 'Sending file : ' + directoryPath+fileFound, 'upload', 2);
+                                // Content-type is very interesting part that guarantee that
+                                // Web browser will handle response in an appropriate manner.
+
+                        let options = {
+                            encoding: null,
+                            formData: { file: data},
+                            // omit this line to get PNG images back
+                            headers: { 'Accept': 'application/pdf' },
+                            // adjust print density (8dpmm), label width (4 inches), label height (6 inches), and label index (0) as necessary
+                            url: 'http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/'
+                        };
+
+                        requestPOST.post(options, function(err, resp, body) {
+                            logger.log('[UPLOAD]', 'Labelary conversion... ' + body, 'upload', 2);
+                            if (err) {
+                                return console.log(err);
+                            }
+                            let filenamePDF = containsIn + '.pdf'; // change file name for PNG images
+                            fs.writeFile(filenamePDF, body, function(err) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            });
+                            response.writeHead(200, {
+                                "Content-Type": "application/octet-stream",
+                                "Content-Disposition": "attachment; filename=" + filenamePDF
+                            });
+
+                            fs.createReadStream(filenamePDF).pipe(response);
+    
+                        });
+                    }
+                }
+                return true;
+            });
+        });
+});
 
    return module;
 }

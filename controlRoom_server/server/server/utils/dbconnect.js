@@ -21,6 +21,7 @@ let pool;
 let buildupScripts = [];
 let teardownScripts = [];
 
+oracledb.initOracleClient();
 
 let numRows = config.db.maxRows; // max number of rows by packets
 
@@ -28,6 +29,7 @@ module.exports.OBJECT = oracledb.OBJECT;
 
 function createPool(config) {
     return new Promise(function(resolve, reject) {
+	oracledb.initOracleClient();
         oracledb.createPool(
             config,
             function(err, p) {
@@ -95,6 +97,7 @@ module.exports.addTeardownSql = addTeardownSql;
 function getConnection() {
     // Display the Pool stats
     // pool._logStats();
+    oracledb.initOracleClient();
     return new Promise(function(resolve, reject) {
         pool.getConnection(function(err, connection) {
             if (err) {

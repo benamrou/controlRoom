@@ -32,29 +32,35 @@
     </span>
 </div>
 <div class="bbs_search_sub_panel"  >
+        <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Status : </span>
+        <bbs-multiselect [options]="listOrderStatus" 
+                        (shareCheckedList)="shareCheckedList($any($event))" 
+                        (shareCheckedCodeList)="shareCheckedCodeList($any($event))" 
+                        (shareIndividualCheckedList)="shareIndividualCheckedList($event)">
+        </bbs-multiselect>
 
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Status : </span>
-    <bbs-multiselect [options]="listOrderStatus" 
-                    (shareCheckedList)="shareCheckedList($any($event))" 
-                    (shareCheckedCodeList)="shareCheckedCodeList($any($event))" 
-                    (shareIndividualCheckedList)="shareIndividualCheckedList($event)">
-    </bbs-multiselect>
+        <span style="margin-left:1em; margin-right:1.3em; padding-left: 5px; font-weight: bolder">Period start : </span>
+        <p-calendar [(ngModel)]="periodStart"  
+                    [readonlyInput]="true"
+                    dateFormat="mm/dd/yy"
+                    [style]="{'height': '35px'}"
+                    name="scheduleStart" [showIcon]="true" 
+                    [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
-    <span style="margin-left:1em; margin-right:1.3em; padding-left: 5px; font-weight: bolder">Period start : </span>
-    <p-calendar [(ngModel)]="periodStart"  
-                [readonlyInput]="true"
-                dateFormat="mm/dd/yy"
-                [style]="{'height': '35px'}"
-                name="scheduleStart" [showIcon]="true" 
-                [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
-
-    <span style="margin-left:1em; padding-left: 5px; font-weight: bolder">Period end : </span>
-    <p-calendar [(ngModel)]="periodEnd"  
-                [readonlyInput]="true"
-                dateFormat="mm/dd/yy"
-                [style]="{'height': '35px'}"
-                name="scheduleEnd" [showIcon]="true" 
-                [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+        <span style="margin-left:1em; padding-left: 5px; font-weight: bolder">Period end : </span>
+        <p-calendar [(ngModel)]="periodEnd"  
+                    [readonlyInput]="true"
+                    dateFormat="mm/dd/yy"
+                    [style]="{'height': '35px'}"
+                    name="scheduleEnd" [showIcon]="true" 
+                    [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
+</div>
+<div class="bbs_search_sub_panel"  >
+        <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder; margin-top: 5px; ">PO/Parent/Child # : </span>
+        <span style="overflow: hidden;line-height: 25px;align-self: center;">
+            <input type="text"  [(ngModel)]="searchPO" placeholder="  Enter a PO number" 
+                    style="width: 30%;margin-left: 10px;"/>     
+        </span>
 </div>
 <p></p>
 

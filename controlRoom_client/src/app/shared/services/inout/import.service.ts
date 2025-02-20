@@ -61,6 +61,7 @@ export class ImportService{
     private collectResultUrl: string = '/api/upload/5/'; // Collect result
     private updateJournalUrl: string = '/api/upload/6/'; // Update Journal
     private getFileUrl: string = '/api/upload/7/'; // Get file
+    private getFileNoPerfectMatchUrl: string = '/api/upload/8/'; // Get file in STOCK
     private executeJobURL: string = '/api/execute/1/';
     
     private request: string;
@@ -259,7 +260,7 @@ export class ImportService{
             case pt33_4_ITEMCATMANAGER: /* Item - Category Manager Package update */
                 break;
             case pt33_6_ITEMSVINFO: /* Item SV Info - psifa166p */ 
-                command = command + 'psifa166p psifa166p $USERID 1 ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ';
+                command = command + 'psifa166p psifa166p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
                 break;
             case pt33_7_SKUDIMENSION: /* Item - SKU dimension Package update */
                 break;
@@ -455,6 +456,35 @@ export class ImportService{
         return this._http.getFile(this.request, this.params, headersSearch).pipe(map(response => {
                 let data = <any> response;
                 return data;
+        }));
+
+    }
+    
+    /** File path not exactly  */
+    getFileStock (filePath: any, filename: any, containsIn: any, exact: any) {
+        this.request = this.getFileNoPerfectMatchUrl;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+        this.params = this.params.append('PARAM',encodeURIComponent(filePath));
+        this.params = this.params.append('PARAM',filename);
+        this.params = this.params.append('PARAM',containsIn);
+        this.params = this.params.append('PARAM',exact);
+    
+        return this._http.getFile(this.request, this.params, headersSearch).pipe(map(response => {
+                let data = <any> response;
+
+                let blob = new Blob([data], { type: "application/pdf" });
+                const fileName = containsIn + `.pdf`;
+                let file = new File([blob], fileName);
+                let fileUrl = URL.createObjectURL(file);
+                
+                let link = document.createElement('a');
+                link.target = '_blank';
+                link.href = window.URL.createObjectURL(blob);
+                link.setAttribute("download", fileName);
+                link.click();
+
+                return 'Ok';
         }));
 
     }

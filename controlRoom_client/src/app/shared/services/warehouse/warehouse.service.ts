@@ -10,6 +10,8 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
 export class WarehouseService {
 
   private baseWarehouseScheduleUrl: string = '/api/Warehouse/1/';
+  private zpl2pdfUrl: string = 'http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/';
+
   
   private WarehouseList: any[] ;
   private request: string;
@@ -17,7 +19,7 @@ export class WarehouseService {
   private paramsItem: HttpParams;
   private options: HttpHeaders;
 
-  constructor(private http : HttpService,private _userService: UserService, private datePipe: DatePipe){ }
+  constructor(private _http : HttpService,private _userService: UserService, private datePipe: DatePipe){ }
 
     /**
      * This function retrieves the User information.
@@ -38,7 +40,7 @@ export class WarehouseService {
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-        return this.http.get(this.request, this.params, this.options).pipe(map(response => {
+        return this._http.get(this.request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
                 let schedule, site, newSupplierPlannings;
                 //console.log('Supplier schedule JSON: ' +  data.length + ' => ' + JSON.stringify(data));
@@ -62,6 +64,5 @@ export class WarehouseService {
                 return this.WarehouseList;
             }));
   }
-
 
 }

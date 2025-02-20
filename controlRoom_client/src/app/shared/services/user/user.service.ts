@@ -164,6 +164,7 @@ export class User {
      getEnvironment(username: string) {
          //console.log('***** getEnvironment - User -  ****');
          // Reinitialize data
+         let idMainEnv;
          this.userInfo.mainEnvironment =  [];
          this.userInfo.envUserAccess = [];
          this.userInfo.sid = [];
@@ -222,7 +223,8 @@ export class User {
                      if (env.level === 'CORPORATE') { this.userInfo.envCorporateAccess.push(env); }
  
                      if (env.default === 1) {
-                        console.log('MAIN ',env);
+                        console.log('MAIN CENTRAL ',env);
+                        idMainEnv = i;
                         // Set cookies for environment access information
                         this.setCookiesEnvironment(env);
 
@@ -230,10 +232,55 @@ export class User {
                         this.userInfo.envDefaultLanguage = env.defaultLanguage;
                         if ( ! this.userInfo.sid.includes(env.dbLink)) {
                             this.userInfo.sid.push(env.dbLink);
+
                         }
                      }
  
                  }
+
+                 /* Set cookies STOCK main */
+                 console.log('idMainEnv ',idMainEnv, data[idMainEnv]);
+                 for(let i=0; i < data.length; i ++) {
+                    let env = new Environment();
+                     env.level = data[i].LEVEL;
+                     env.id = data[i].ENVID;
+                     env.code = data[i].ENVCODE;
+                     env.type = data[i].ENVTYPE;
+                     env.status = data[i].ENVACTIVE;
+                     env.shortDescription = data[i].ENVSDESC;
+                     env.longDescription = data[i].ENVLDESC;
+                     env.dbType = data[i].ENVDBTYPE;
+                     env.ipAddress = data[i].ENVIP;
+                     env.portNumber = data[i].ENVPORT;
+                     env.connectionID = data[i].ENVUSER;
+                     env.connectionPassword = data[i].ENVPASSWORD;
+                     env.databaseSourceSID = data[i].ENVSOURCE;
+                     env.dbLink = data[i].ENVDBLINK;
+                     env.GOLDversion = data[i].ENVVERSION;
+                     env.default = data[i].ENVDEFAULT;
+                     env.defaultLanguage = data[i].ENVDEFLANG;
+                     env.initSH = data[i].ENVVARINITSH;
+                     env.titleColor = data[i].ENVTITLECOLOR;
+                     env.title = data[i].ENVTITLE;
+                     env.picture = data[i].CORPPIC;
+                     env.domain = data[i].ENVDOMAIN;
+                     env.restartcentral = data[i].ENVCENTRALRESTART;
+                     env.restartstock = data[i].ENVSTOCKRESTART;
+                     env.restartallstock = data[i].ENVALLSTOCKRESTART;
+                     env.restartmob = data[i].ENVMOBRESTART;
+                     env.restartgfa = data[i].ENVGFARESTART;
+                     env.restartgwvo = data[i].ENVGWVORESTART;
+                     env.restartgwr = data[i].ENVGWRRESTART;
+                     env.restartprint = data[i].ENVPRINTERRESTART;
+                     env.restartradio = data[i].ENVRADIORESTART;
+                     env.restartxml = data[i].ENVXMLRESTART;
+                     env.restartvocal = data[i].ENVVOCALRESTART;
+                    if (data[i].ENVTYPE == data[idMainEnv].ENVTYPE && data[i].ENVDOMAIN == 2) {
+                        console.log('MAIN STOCK ',data[i]);
+                        this.setCookiesEnvironment(env);
+                    }
+                }
+
                  console.log('ICRSID', this.userInfo);
                  localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
                  localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);

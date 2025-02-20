@@ -55,6 +55,10 @@ import { ItemImagesComponent } from './pages/mass.update/item.images/item.images
 import { SpaceItemReportingComponent } from './pages/space.planning/item.reporting/space.item.reporting.component';
 import { NextPPGComponent } from './pages/mdm/next.ppg/next.ppg.component';
 import { ReleasePalletComponent } from './pages/warehouse/toolkit/release.pallet/release.pallet.component';
+import { EcommerceDescComponent } from './pages/mdm/ecommerce/ecommerce.desc.component';
+import { FillRateComponent } from './pages/reporting/fill.rate/fill.rate.component';
+import { SupplierAddressComponent } from './pages/mass.update/supplier.address/supplier.address.component';
+import { PalletLabelComponent } from './pages/warehouse/toolkit/pallet.label/pallet.label.component';
 
 import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
 import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
@@ -77,6 +81,7 @@ const routes: Routes = [
   { path: 'mdmbrand', component: MdmAttributeBrandComponent, canActivate: [AuthentificationGuard] },
   { path: 'ppgretail', component: PPGRetailComponent, canActivate: [AuthentificationGuard] },
   { path: 'nextppg', component: NextPPGComponent, canActivate: [AuthentificationGuard] },
+  { path: 'ecommdesc', component: EcommerceDescComponent, canActivate: [AuthentificationGuard] },
 
   /* CAO */
   { path: 'caoconfig', component: CaoConfigComponent, canActivate: [AuthentificationGuard] },
@@ -96,6 +101,8 @@ const routes: Routes = [
   { path: 'fixpickingunit', component: FixPickingUnitComponent, canActivate: [AuthentificationGuard] },
   { path: 'whsrestartservices', component: WarehouseRestartServicesComponent, canActivate: [AuthentificationGuard] },
   { path: 'releasepallet', component: ReleasePalletComponent, canActivate: [AuthentificationGuard] },
+  { path: 'palletlabel', component: PalletLabelComponent, canActivate: [AuthentificationGuard] },
+
   
   /* Syndigo */
   { path: 'syndigosearch', component: SyndigoProductComponent, canActivate: [AuthentificationGuard] },
@@ -131,6 +138,7 @@ const routes: Routes = [
   { path: 'variableweight', component: VariableWeightComponent, canActivate: [AuthentificationGuard] },
   { path: 'logisticcode', component: ItemLogisticCodeComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemimages', component: ItemImagesComponent, canActivate: [AuthentificationGuard] },
+  { path: 'supplieraddress', component: SupplierAddressComponent, canActivate: [AuthentificationGuard] },
   
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },
@@ -141,7 +149,8 @@ const routes: Routes = [
   { path: 'smartubd', component: SmartUBDComponent, canActivate: [AuthentificationGuard] },
   { path: 'reporting', component: ReportingComponent, canActivate: [AuthentificationGuard] },
   { path: 'dashboardreception', component: DashboardReceptionComponent, canActivate: [AuthentificationGuard] },
-
+  { path: 'fillrate', component: FillRateComponent, canActivate: [AuthentificationGuard] },
+  
   /** ALERT */
   { path: 'alerts-icr', component: AlertsICRComponent, canActivate: [AuthentificationGuard] },
 

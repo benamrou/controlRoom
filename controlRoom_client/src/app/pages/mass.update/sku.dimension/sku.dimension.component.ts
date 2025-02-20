@@ -186,7 +186,7 @@ export class SKUDimensionComponent implements OnInit{
                 () => { 
                         if (existTemplate) {
                             this._messageService.add({key:'top', sticky:false, severity:'success', summary:'Template file', detail:  
-                                                    'File Item Merchandise Hierrarchy downloaded.' }); 
+                                                    'File Item dimension downloaded.' }); 
                         } else {
                             this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
                         }
