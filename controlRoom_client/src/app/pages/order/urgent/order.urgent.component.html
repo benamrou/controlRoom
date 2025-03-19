@@ -198,7 +198,7 @@
         <!-- FILTER -->
         <ng-template pTemplate="caption">
             <div class="table-header grid">
-                <div class="col-6">
+                <div class="col-8">
                     <span>
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
@@ -236,11 +236,11 @@
                         <button type="button" pButton iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
                             pTooltip="Send valued status PO with passed collection date/time" [escape]="false" tooltipPosition="top"
-                            label="Send" (click)="sendPO()" style="float: right;background: darkcyan;color: white !important;">
+                            label="Send to Awaiting delivery" (click)="sendPO()" style="float: right;background: darkcyan;color: white !important;">
                         </button>
                     </span>
                 </div>
-                <div class="col-6" style="text-align: right;">
+                <div class="col-4" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
                         <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />

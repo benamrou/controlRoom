@@ -285,8 +285,8 @@ module.get = async function (request,response) {
                                             request.req_datadetail, request.response_dataDetail, 
                                             async function (err,dataDetail) {
                                                 let detailData =dataDetail;
-                                                heap.logger.log('alert','ALTNOHTML ' + alertData[0].ALTNOHTML, 'alert', 3);
-                                                if ((detailData.length > 0 || alertData[0].ALTREALTIME == '0') && ALTNOHTML == 0) {
+                                                //heap.logger.log('alert','ALTNOHTML ' + alertData[0].ALTNOHTML, 'alert', 3);
+                                                if ((detailData.length > 0 || alertData[0].ALTREALTIME == '0') && alertData[0].ALTNOHTML == 0) {
                                                     let html = '';
                                                     let preHtml='';
                                                     let bannerHtml='';

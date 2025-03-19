@@ -183,7 +183,9 @@ export class SyndigoDownloadComponent implements OnDestroy {
 
                       this.subscription.push(this._syndigoService.searchUPCMarketplace(UPCs,this.skip, UPCs.length*5+this.take) .subscribe( 
                       //this.subscription.push(this._syndigoService.testConnection().subscribe(  
-                      data => { this.searchResultSyndigo = data;}, 
+                      data => { this.searchResultSyndigo = data;
+                        console.log('Syndigo answer : ', data);
+                      }, 
                         error => {
                               this.searchButtonEnable = true;
                               console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
