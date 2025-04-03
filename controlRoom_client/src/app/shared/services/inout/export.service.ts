@@ -363,8 +363,12 @@ export class ExportService{
 
     json2xls(workbook, worksheet, reportid, subject, content, rawData, formatStructure, border ?, freeze?, tableName?) {
 
-        let valueColumns = Object.keys(rawData[0]);
-        let dataColumns = [];
+        let valueColumns=[];
+        let dataColumns;
+        if(rawData.length >1) {
+            valueColumns = Object.keys(rawData[0]);
+            dataColumns = [];
+        }
 
         for(let i =0;i < valueColumns.length ; i ++) {
             dataColumns.push (
@@ -390,36 +394,38 @@ export class ExportService{
 
         /**************************************************************************/  
         // Creating the table detail EXCEL (real table)
-        worksheet.addTable({
-            name: tableName,
-            ref: 'A5',
-            headerRow: true,
-            totalsRow: true,
-            style: {
-            theme: 'TableStyleLight1',
-            showRowStripes: true,
-            },
-            columns: dataColumns,
-            rows: dataRows,
-        });
+        if(valueColumns.length >0) {
+            worksheet.addTable({
+                name: tableName,
+                ref: 'A5',
+                headerRow: true,
+                totalsRow: true,
+                style: {
+                theme: 'TableStyleLight1',
+                showRowStripes: true,
+                },
+                columns: dataColumns,
+                rows: dataRows,
+            });
         
 
 
-        this.formatXLS(worksheet,dataRows, formatStructure);
+            this.formatXLS(worksheet,dataRows, formatStructure);
 
-        if (border) {
-            worksheet.eachRow(function (row, _rowNumber) {
-                row.eachCell(function (cell, _colNumber) {
-                    if (_rowNumber > ExportService.tableRow) {
-                        cell.border = {
-                            top: { style: 'thin' },
-                            left: { style: 'thin' },
-                            bottom: { style: 'thin' },
-                            right: { style: 'thin' }
-                        };
-                    }
+            if (border) {
+                worksheet.eachRow(function (row, _rowNumber) {
+                    row.eachCell(function (cell, _colNumber) {
+                        if (_rowNumber > ExportService.tableRow) {
+                            cell.border = {
+                                top: { style: 'thin' },
+                                left: { style: 'thin' },
+                                bottom: { style: 'thin' },
+                                right: { style: 'thin' }
+                            };
+                        }
+                    });
                 });
-            });
+            }
         }
         this.autofitColumns(worksheet);
         //this.setPrintArea(worksheet, null);

@@ -67,7 +67,14 @@ export class SearchComponent implements OnDestroy {
     this.searchButtonEnable = false; 
     this.subscription.push(this._searchService.getSearchResult(this.values)
             .subscribe( 
-                data => { this.searchResult = data;}, // put the data returned from the server in our variable
+                data => { 
+                  for (let i=0; i < data.length; i++) {
+                    data[i].salesvariants = [];
+                    data[i].logisticsvariants =[];
+                    data[i].warehousepallets = [];
+                  }
+                this.searchResult = data;
+              }, // put the data returned from the server in our variable
                 error => {
                       console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
                       this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });

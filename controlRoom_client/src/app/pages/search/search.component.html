@@ -102,27 +102,29 @@
             <div class="col-1 header_cell">Food Stamps</div>
 
 
-            <ng-container *ngFor="let sale of result.salesvariants; let indice=index" >
-                <div class="col-1 line_cell">{{sale.ARVCEXV}}</div>
-                <div class="col-2 line_cell">{{sale.LONG_DESC}}</div>
-                <div class="col-2 line_cell">{{sale.SHORT_DESC}}</div>
-                <div class="col-2 line_cell">{{sale.ECOMM_DESC}}</div>
-                <div class="col-2 line_cell">{{sale.ARCCODE}}</div>
-                <div class="col-1 line_cell">{{sale.ARVPUVC}}</div>
-                <div class="col-1 line_cell">{{sale.BYLB}}</div>
-                <div class="col-1 line_cell">{{sale.FSDN}}</div>
-            </ng-container>
+            <ng-template *ngif="result.salesvariants">
+                <ng-container *ngFor="let sale of result.salesvariants; let indice=index" >
+                    <div class="col-1 line_cell">{{sale.ARVCEXV}}</div>
+                    <div class="col-2 line_cell">{{sale.LONG_DESC}}</div>
+                    <div class="col-2 line_cell">{{sale.SHORT_DESC}}</div>
+                    <div class="col-2 line_cell">{{sale.ECOMM_DESC}}</div>
+                    <div class="col-2 line_cell">{{sale.ARCCODE}}</div>
+                    <div class="col-1 line_cell">{{sale.ARVPUVC}}</div>
+                    <div class="col-1 line_cell">{{sale.BYLB}}</div>
+                    <div class="col-1 line_cell">{{sale.FSDN}}</div>
+                </ng-container>
 
-            <ng-container *ngIf="result.salesvariants.length === 0" >
-                <div class="col-1 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-2 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-                <div class="col-1 line_cell">---</div>
-            </ng-container>
+                <ng-container *ngIf="result.salesvariants.length == 0" >
+                    <div class="col-1 line_cell">---</div>
+                    <div class="col-2 line_cell">---</div>
+                    <div class="col-2 line_cell">---</div>
+                    <div class="col-2 line_cell">---</div>
+                    <div class="col-2 line_cell">---</div>
+                    <div class="col-1 line_cell">---</div>
+                    <div class="col-1 line_cell">---</div>
+                    <div class="col-1 line_cell">---</div>
+                </ng-container>
+            </ng-template>
 
 
             <div class="col-12 header_table">Logistic Variant</div>
@@ -147,7 +149,7 @@
                 <div class="col-2 line_cell">{{log.DIMENSION}}</div>
             </ng-container>
 
-            <ng-container *ngIf="result.logisticsvariants.length === 0" >
+            <ng-container *ngIf="result.logisticsvariants.length == 0" >
                 <div class="col-1 line_cell">---</div>
                 <div class="col-3 line_cell">---</div>
                 <div class="col-1 line_cell">---</div>
@@ -178,7 +180,7 @@
                 <div class="col-1 line_cell">{{sub.ARRDFIN}}</div>
             </ng-container>
 
-            <ng-container *ngIf="result.substitutions.length === 0" >
+            <ng-container *ngIf="result.substitutions.length == 0" >
                 <div class="col-2 line_cell">---</div>
                 <div class="col-3 line_cell">---</div>
                 <div class="col-3 line_cell">---</div>
@@ -216,7 +218,7 @@
                 <div class="col-1 line_cell">{{ord.ARAREFC}}</div>
             </ng-container>
 
-            <ng-container *ngIf="result.orderables.length === 0" >
+            <ng-container *ngIf="result.orderables.length == 0" >
                 <div class="col-1 line_cell">---</div>
                 <div class="col-1 line_cell">---</div>
                 <div class="col-2 line_cell">---</div>
@@ -252,7 +254,7 @@
                 <div class="col-1 line_cell">{{del.ALODFIN | date: "MM/dd/yy"}}</div>
             </ng-container>
 
-            <ng-container *ngIf="result.deliverables.length === 0" >
+            <ng-container *ngIf="result.deliverables.length == 0" >
                 <div class="col-2 line_cell">---</div>
                 <div class="col-2 line_cell">---</div>
                 <div class="col-2 line_cell">---</div>
@@ -286,7 +288,7 @@
                 <div class="col-1 line_cell">{{retail.AVIDFIN | date: "MM/dd/yy"}}</div>
             </ng-container>
 
-            <ng-container *ngIf="result.retails.length === 0" >
+            <ng-container *ngIf="result.retails.length == 0" >
                     <div class="col-1 line_cell">---</div>
                     <div class="col-1 line_cell">---</div>
                     <div class="col-2 line_cell">---</div>
@@ -317,7 +319,7 @@
                 <div class="col-1 line_cell">{{cost.TAPDDEB | date: "MM/dd/yy"}}</div>
                 <div class="col-1 line_cell">{{cost.TAPDFIN | date: "MM/dd/yy"}}</div>
             </ng-container>
-            <ng-container *ngIf="result.costs.length === 0" >
+            <ng-container *ngIf="result.costs.length == 0" >
                 <div class="col-1 line_cell">---</div>
                 <div class="col-1 line_cell">---</div>
                 <div class="col-2 line_cell">---</div>
@@ -351,7 +353,7 @@
                 <div class="col-1 line_cell">{{deal.TRXDDEB | date: "MM/dd/yy"}}</div>
                 <div class="col-1 line_cell">{{deal.TRXDFIN | date: "MM/dd/yy"}}</div>
             </ng-container>
-            <ng-container *ngIf="result.deals.length === 0" >
+            <ng-container *ngIf="result.deals.length == 0" >
                 <div class="col-1 line_cell">---</div>
                 <div class="col-1 line_cell">---</div>
                 <div class="col-2 line_cell">---</div>
@@ -385,7 +387,7 @@
                 <div class="col-2 line_cell">{{pallet.UL_NQTEUP}}</div>
             </ng-container>
 
-            <ng-container *ngIf="result.pallets.length === 0" >
+            <ng-container *ngIf="result.pallets.length == 0" >
                 <div class="col-1 line_cell">---</div>
                 <div class="col-1 line_cell">---</div>
                 <div class="col-2 line_cell">---</div>

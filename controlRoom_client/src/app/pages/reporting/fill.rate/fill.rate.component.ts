@@ -253,6 +253,7 @@ exportExcelRecap() {
     "% of fill rate": item['% of fill rate']* 100
   }))
 
+  if (this.poNotDelivered.length >0) {
   this.poNotDelivered.map(item => recapReportSheet2.push ({
     "Location": item["location"],
     "PO #": item["PO #"],
@@ -265,6 +266,11 @@ exportExcelRecap() {
     "Case ordered": item["Case ordered"],
     "Case received": item["Case received"],
     "% of fill": item["% of fill"],}));
+  }
+  else {
+    recapReportSheet2 = [];
+  }
+    
 
   let formatXLS = {
     "conditionalRule": [
@@ -423,7 +429,7 @@ exportExcelRecap() {
       },
     ]
   }
-  recapReportSheet2
+  
   let freezePanel = {"ALTROWCOLUMN" : 4
                     }
   this._exportService.saveCSV(recapReport, null, null, null, "FIL000000001", 

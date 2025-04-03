@@ -85,6 +85,10 @@ export class SearchService {
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
                 let data = <any> response;
+                for(let i=0; i < data.length; i ++) {
+                    data[i].salesvariants = [];
+                    data[i].logisticsvariants = [];
+                }
                 return data;
         }));
 /*
