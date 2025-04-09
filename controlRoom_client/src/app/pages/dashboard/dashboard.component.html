@@ -59,7 +59,7 @@
         </div>
     </ng-template>
     <!-- HEADER -->
-    <ng-template pTemplate="header">            
+    <ng-template pTemplate="header" >            
         <tr >
             <th *ngFor="let col of widgetFocus.columns" [pSortableColumn]="col.field" 
                 style="background-color:  #8fbc8f!important;"
@@ -81,7 +81,7 @@
     <i class="FOOTER_Table" >{{widgetFocus.result.length}} references</i>
 </p-dialog>
 
-<div class="main-content">
+<div class="main-content" *ngIf="this._widgetService.widgetsInfo.widgets">
     <gridster [options]="grid.gridsterOptions" [draggableOptions]="grid.gridsterDraggableOptions" (reflow)="grid.onReflow($event)"
     (optionsChange)="grid.optionsChange($event)" #gridster1 class="dashboard" >
 
