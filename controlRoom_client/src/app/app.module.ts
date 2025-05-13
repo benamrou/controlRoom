@@ -122,6 +122,8 @@ import { ReleasePalletModule } from './pages/warehouse/toolkit/release.pallet/re
 import { EcomerceDescModule } from './pages/mdm/ecommerce/ecommerce.desc.module';
 import { FillRateModule } from './pages/reporting/fill.rate/fill.rate.module';
 import { SupplierAddressModule } from './pages/mass.update/supplier.address/supplier.address.module';
+import { UnarchiveInvoiceModule } from './pages/finance/unarchive/unarchive.invoice.module';
+import { ReportFilterModule } from './pages/reporting/report.filter/report.filter.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -144,6 +146,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
 import { PPGRetailModule } from './pages/mdm/ppg.retail/ppg.retail.module';
 import { PalletLabelModule } from './pages/warehouse/toolkit/pallet.label/pallet.label.module';
+import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module';
 
 @NgModule({
   declarations: [
@@ -230,7 +233,10 @@ import { PalletLabelModule } from './pages/warehouse/toolkit/pallet.label/pallet
     EcomerceDescModule,
     FillRateModule,
     SupplierAddressModule,
-    PalletLabelModule
+    PalletLabelModule,
+    UnarchiveInvoiceModule,
+    ReportFilterModule,
+    AvailableMHModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

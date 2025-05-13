@@ -404,4 +404,50 @@ export class OrderUrgentComponent implements OnDestroy {
   trackByIdx(index: number, obj: any): any {
     return index;
   }
+
+  clearOrder(){
+    this._confrmationService.confirm({
+      message: 'Are you sure that you want to clear the selected orders ? <br><br>',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+
+        let ordersToClear = [];
+        this.searchResult.filter(item => item["Selected"] == true)
+                        .map(item => ordersToClear.push (item));
+        this.waitMessage =  'Clearing the orders in Central and Stock ... <br>'+
+                            '<br><br>'+
+                            '<b>This process is usually taking less than a minute</b>';
+                            this.subscription.push(this._orderService.clearOrder(ordersToClear)
+                            .subscribe( 
+                                data => {
+                                  console.log('order clear: ', data);  
+                                  this.waitMessage = '';
+                                  this.msgDisplayed = 'All the selected purchase orders have been cleared. Play safe, please review in GOLD Central and Stock the updated PO.'
+                                  this.displayUpdateCompleted=true;
+                
+                              },
+                                error => {
+                                      // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
+                                      this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+                                },
+                                () => {this._messageService.add({severity:'warn', summary:'Info Message', detail: 'Clearing orders completed.'});
+                                      this.waitMessage = '';
+                                }
+                            ));
+
+      },
+      reject: (type) => {
+          switch(type) {
+              case ConfirmEventType.REJECT:
+                  this._messageService.add({severity:'error', summary:'Cancelled', detail:'Cancelled - Sending PO has been cancelled.'});
+              break;
+              case ConfirmEventType.CANCEL:
+                  this._messageService.add({severity:'warn', summary:'Cancelled', detail:'Cancelled - Sending PO has been cancelled.'});
+              break;
+          }
+          this.waitMessage='';
+      }
+    });
+  }
 }

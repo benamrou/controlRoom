@@ -1,0 +1,219 @@
+<app-page-header [heading]="'Available node'" [icon]="'fa-code-merge'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+<p-dialog header="Updates completed" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    <span>{{msgDisplayed}}</span>
+        <p-footer>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
+                    label="Ok">
+            </button>
+        </p-footer>
+  </p-dialog>
+<div class="row">
+    <div class="alert alert-warning" role="alert"  style="float: left; font-size:small; border: black 1px solid;">
+        <i class="fas fa-exclamation-circle"></i>
+        This functionality helps on finding out available category and sub category code. Each category and sub-category code are unique across the hierarchy. The hierarchy is designed on 13 digits charactes:<br>
+        <ul>
+            <li>Level 1: ROOT (1 digit)</li>
+            <li>Level 2: DEPARTMENT (2 digits)</li>
+            <li>Level 3: SUB-DEPARTMENT (3 digits)</li>
+            <li>Level 4: CATEGORY (3 digits)</li>
+            <li>Level 5: SUB-CATEGORY (4 digits)</li>
+        </ul>
+    </div>
+</div>
+
+<p></p>
+
+<!--  panel result -->
+<div class="row" >
+    <div style="width: 100%;" *ngIf="searchResult !== null">
+        <p-table #resultTable [value]="searchResult" sortMode="multiple" 
+        [rows]="25"  [rowsPerPageOptions]="[50,100,200]"
+        [paginator]="true" [pageLinks]="3" 
+        [columns]="columnsResult"
+        selectionMode="single" [(selection)]="selectedElement" 
+        [resizableColumns]="true" columnResizeMode="fit"
+        [responsive]="true" [totalRecords]="searchResult.length"
+        [reorderableColumns]="true" scrollHeight="400px"
+        [autoLayout]="true" tableStyleClass="table-layout: auto;">
+        
+            <!-- FILTER -->
+            <ng-template pTemplate="caption">
+                <div class="table-header grid">
+                    <div class="col-1">
+                        <span>
+                                <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                    class="CSV_Button p-input-icon-left ml-auto"
+                                    pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                                    *ngIf="searchResult.length>0"
+                                    label="CSV" (click)="resultTable.exportCSV()" style="float:left">
+                                </button>
+                                <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                    class="CSV_Button p-input-icon-left ml-auto"
+                                    pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                                    disabled *ngIf="searchResult.length==0"
+                                    label="CSV" (click)="resultTable.exportCSV()" style="float:left">
+                                </button>
+                        </span>
+                    </div>
+                    <div class="col-2">
+                    </div>
+                    <div class="col-9" style="text-align: right;">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="resultTable.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        </span>
+                    </div>
+                </div>
+            </ng-template>
+            <!-- HEADER -->
+            <ng-template pTemplate="header">           
+                <tr style="background: lightyellow;">
+                    <ng-container *ngFor="let col of columnsResult">
+                        <th *ngIf="col.display" [pSortableColumn]="col.field" pResizableColumn [style.justify-content]="col.align">
+                                {{col.header}}
+                        <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                    </ng-container>
+                </tr>
+            </ng-template>
+                
+            <!-- BODY -->
+            <ng-template *ngIf="searchResult" pTemplate="body" let-rowData let-columns="columnsResult" let-globalIndice="rowIndex">
+                <tr  [pSelectableRow]="rowData" [style.background-color]="(rowData.selected) ? 'greenyellow' : 'unset'">
+                    <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column"  >
+                        <td *ngIf="col.display " class="ui-resizable-column" [style.justify-content]="col.align" >  
+                            <span>{{rowData[col.field]}}</span>
+                            
+                        </td>
+                    </ng-container>
+                </tr> 
+            </ng-template>
+        </p-table>
+        <i class="FOOTER_Table" >{{searchResult.length}} references</i>
+    </div>
+</div>
+<div class="row">
+    <div style="width: 100%;" *ngIf="searchResult !== null">
+        <p-tabView>
+            <p-tabPanel header="AVAILABLE CATEGORY">  
+                <div style="width: 40%;">
+                    <p-table #resultCategoryTable [value]="searchCategoryResult" sortMode="multiple" 
+                            [rows]="50"  [rowsPerPageOptions]="[50,100,200]"
+                            [paginator]="true" [pageLinks]="3" 
+                            [columns]="columnsResultAvailableCat"
+                            selectionMode="single" 
+                            [resizableColumns]="true" columnResizeMode="fit"
+                            [responsive]="true" [totalRecords]="searchCategoryResult.length"
+                            [reorderableColumns]="true" scrollHeight="400px"
+                            [autoLayout]="true" tableStyleClass="table-layout: auto;">
+                <ng-template pTemplate="caption">
+                    <div class="table-header grid">
+                        <div class="col-2">
+                            <span>
+                                <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                    class="CSV_Button p-input-icon-left ml-auto"
+                                    pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                                    *ngIf="searchCategoryResult.length>0"
+                                    label="CSV" (click)="resultCategoryTable.exportCSV()" style="float:left">
+                                </button>
+                                <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                    class="CSV_Button p-input-icon-left ml-auto"
+                                    pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                                    disabled *ngIf="searchCategoryResult.length==0"
+                                    label="CSV" (click)="resultCategoryTable.exportCSV()" style="float:left">
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <!-- HEADER -->
+                <ng-template pTemplate="header">           
+                    <tr style="background: lightyellow;">
+                        <ng-container *ngFor="let col of columnsResultAvailableCat">
+                            <th *ngIf="col.display" [pSortableColumn]="col.field" pResizableColumn [style.justify-content]="col.align">
+                                    {{col.header}}
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <!-- BODY -->
+                    <ng-template pTemplate="body" let-rowData let-columns="columnsResultAvailableCat" let-globalIndice="rowIndex">
+                        <tr  [pSelectableRow]="rowData">
+                            <ng-container *ngFor="let col of columnsResultAvailableCat; let indice=index" class="ui-resizable-column"  >
+                                <td class="ui-resizable-column" [style.justify-content]="col.align" >  
+                                    <span>{{rowData[col.field]}}</span>
+                                </td>
+                            </ng-container>
+                        </tr> 
+                    </ng-template>
+                    </p-table>
+                    <i class="FOOTER_Table" >{{searchCategoryResult.length}} references</i>
+                </div>
+            </p-tabPanel>
+
+            <p-tabPanel header="AVAILABLE SUB-CATEGORY">
+                <div style="width: 40%;">
+                    <p-table #resultSubCategoryTable [value]="searchSubCategoryResult" sortMode="multiple" 
+                            [rows]="50"  [rowsPerPageOptions]="[50,100,200]"
+                            [paginator]="true" [pageLinks]="3" 
+                            [columns]="columnsResultAvailableSubCat"
+                            selectionMode="single" 
+                            [resizableColumns]="true" columnResizeMode="fit"
+                            [responsive]="true" [totalRecords]="searchSubCategoryResult.length"
+                            [reorderableColumns]="true" scrollHeight="400px"
+                            [autoLayout]="true" tableStyleClass="table-layout: auto;">
+                <ng-template pTemplate="caption">
+                    <div class="table-header grid">
+                        <div class="col-2">
+                            <span>
+                                <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                    class="CSV_Button p-input-icon-left ml-auto"
+                                    pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                                    *ngIf="searchSubCategoryResult.length>0"
+                                    label="CSV" (click)="resultSubCategoryTable.exportCSV()" style="float:left">
+                                </button>
+                                <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                    class="CSV_Button p-input-icon-left ml-auto"
+                                    pTooltip="{{csvButtonTooltip}}" [escape]="false"
+                                    disabled *ngIf="searchSubCategoryResult.length==0"
+                                    label="CSV" (click)="resultSubCategoryTable.exportCSV()" style="float:left">
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <!-- HEADER -->
+                <ng-template pTemplate="header">           
+                    <tr style="background: lightyellow;">
+                        <ng-container *ngFor="let col of columnsResultAvailableSubCat">
+                            <th *ngIf="col.display" [pSortableColumn]="col.field" pResizableColumn [style.justify-content]="col.align">
+                                    {{col.header}}
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <!-- BODY -->
+                    <ng-template pTemplate="body" let-rowData let-columns="columnsResultAvailableSubCat" let-globalIndice="rowIndex">
+                        <tr  [pSelectableRow]="rowData">
+                            <ng-container *ngFor="let col of columnsResultAvailableSubCat; let indice=index" class="ui-resizable-column"  >
+                                <td class="ui-resizable-column" [style.justify-content]="col.align" >  
+                                    <span>{{rowData[col.field]}}</span>
+                                </td>
+                            </ng-container>
+                        </tr> 
+                    </ng-template>
+                    </p-table>
+                    <i class="FOOTER_Table" >{{searchSubCategoryResult.length}} references</i>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+    
+    </div>
+</div>

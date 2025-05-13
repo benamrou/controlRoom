@@ -1,0 +1,32 @@
+
+.p-datatable .p-datatable-header {
+  padding-bottom: 1em;
+}
+
+.p-dialog-draggable .p-dialog-header {
+  height: 20px;
+}
+
+.p-panel.p-panel-toggleable .p-panel-header {
+  background-color: steelblue !important;
+}
+
+
+.mini-button.p-button.p-button-icon-only {
+  width: 2rem; /* smaller width */
+  height: 2rem; /* smaller height */
+  padding: 0; /* no extra padding */
+  font-size: 0.75rem; /* icon size */
+}
+
+.mini-button .p-button-icon {
+  font-size: 0.8rem; /* smaller icon */
+  margin: 0; /* remove space */
+}
+
+.table-header.grid {
+  padding: 0.2rem 0.5rem; /* shrink header padding */
+  row-gap: 0; /* no gap between rows */
+  margin-top: -2em !important;
+  margin-bottom: -1em !important;
+}

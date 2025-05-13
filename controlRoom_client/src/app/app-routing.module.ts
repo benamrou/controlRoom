@@ -59,12 +59,15 @@ import { EcommerceDescComponent } from './pages/mdm/ecommerce/ecommerce.desc.com
 import { FillRateComponent } from './pages/reporting/fill.rate/fill.rate.component';
 import { SupplierAddressComponent } from './pages/mass.update/supplier.address/supplier.address.component';
 import { PalletLabelComponent } from './pages/warehouse/toolkit/pallet.label/pallet.label.component';
+import { UnarchiveInvoiceComponent } from './pages/finance/unarchive/unarchive.invoice.component';
+import { ReportFilterComponent } from './pages/reporting/report.filter/report.filter.component';
 
 import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
 import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
 import { SyndigoUpdateComponent } from './pages/syndigo/update/syndigo.update.component';
 import { PPGRetailComponent } from './pages/mdm/ppg.retail/ppg.retail.component';
 import { SpaceItemDimReportingComponent } from './pages/space.planning/item.dimension.reporting/space.item.dimension.reporting.component';
+import { AvailableMHComponent } from './pages/mdm/available.mh/available.mh.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -89,7 +92,8 @@ const routes: Routes = [
 
   /* FINANCE */
   { path: 'ediinvoice', component: EDIInvoiceComponent, canActivate: [AuthentificationGuard] },
-
+  { path: 'unarchiveinvoice', component: UnarchiveInvoiceComponent, canActivate: [AuthentificationGuard] },
+  
   /* VENDOR SCHEDULE */
   { path: 'schedule', component: SupplierScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'generateschedule', component: GenerateScheduleComponent, canActivate: [AuthentificationGuard] },
@@ -126,6 +130,9 @@ const routes: Routes = [
   { path: 'servicescenter', component: ServicesCenterComponent, canActivate: [AuthentificationGuard] },
   { path: 'orderurgent', component: OrderUrgentComponent, canActivate: [AuthentificationGuard] },
   
+  /* MH */
+  { path: 'availableMH', component: AvailableMHComponent, canActivate: [AuthentificationGuard] },
+
   /* MASS_CHANGE */
   { path: 'massjournal', component: MassJournalComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemattribute', component: ItemAttributeComponent, canActivate: [AuthentificationGuard] },
@@ -150,6 +157,7 @@ const routes: Routes = [
   { path: 'reporting', component: ReportingComponent, canActivate: [AuthentificationGuard] },
   { path: 'dashboardreception', component: DashboardReceptionComponent, canActivate: [AuthentificationGuard] },
   { path: 'fillrate', component: FillRateComponent, canActivate: [AuthentificationGuard] },
+  { path: 'reportfilter', component: ReportFilterComponent, canActivate: [AuthentificationGuard] },
   
   /** ALERT */
   { path: 'alerts-icr', component: AlertsICRComponent, canActivate: [AuthentificationGuard] },

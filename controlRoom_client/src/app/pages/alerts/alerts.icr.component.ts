@@ -220,7 +220,7 @@ export class AlertsICRComponent implements OnDestroy {
   }
 
   executeLocalQuery(params){
-    this.runReportDialog = 1; /* Mode 1 - Execute local */
+    this.runReportDialog = 2; /* Mode 1 - Execute local */
     this.executionDataResult=[];
     this.columnsResultExecution = [];
     this.subscription.push( this._alertsICRService.executeQuery(this.searchResult[this.executionAlertIndex].ALTID, params)
@@ -247,6 +247,7 @@ export class AlertsICRComponent implements OnDestroy {
   }
 
   confirmRunReport(alertId) {
+    this.runReportDialog = 1;
     this.executionAlertIndex = this.searchResult.findIndex(x => x.ALTID == alertId);
     this._confrmation.confirm({
       message: 'Are you sure that you want to <b>execute</b> this report? <b>' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT + 

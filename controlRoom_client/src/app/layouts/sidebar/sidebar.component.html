@@ -165,6 +165,21 @@
                 </li>
             </div>
 
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1">
+                <a class="list-group-item" (click)="addExpandClass('finance')" >
+                    <span><i class="fas fa-file-invoice"></i> &nbsp; {{ 'Account Payable' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'finance' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/unarchiveinvoice" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-cash-register"></i> {{ 'Unarchive' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+
             <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1 || _userService.userInfo.warehouse ==1 ">
                 <a class="list-group-item" (click)="addExpandClass('warehouse')" >
                     <span><i class="fas fa-warehouse"></i> &nbsp; {{ 'Warehouse box' }} </span>
@@ -248,7 +263,20 @@
                     </ul>
                 </li>
             </div>
-            
+            <div class="nested-menu" *ngIf="_userService.userInfo.dataIntegrity ==1 || _userService.userInfo.warehouse ==1">
+                <a class="list-group-item" (click)="addExpandClass('hierarchy')" >
+                    <span><i class="fas fa-sitemap"></i> &nbsp; {{ 'Hierarchy' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'hierarchy' }">
+                    <ul class="submenu">
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/availableMH"
+                                [routerLinkActive]="['router-link-active']"><span><i class="fas fa-code-merge"></i> {{
+                                    'Available node'}}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
             <div class="nested-menu" *ngIf="_userService.userInfo.dataIntegrity ==1 || _userService.userInfo.warehouse ==1">
                 <a class="list-group-item" (click)="addExpandClass('massupdate')" >
                     <span><i class="fas fa-chalkboard-teacher"></i> &nbsp; {{ 'Mass-change box' }} </span>
@@ -404,6 +432,11 @@
                         <li>
                             <a class="bbs_link_menu" routerLink="/alerts-icr" [routerLinkActive]="['router-link-active']" >
                                 <span><i class="fas fa-bullhorn"></i> {{ 'Alerts management' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/reportfilter" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-filter"></i> {{ 'Filter config.' }}</span>
                             </a>
                         </li>
                     </ul>

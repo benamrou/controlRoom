@@ -1,0 +1,126 @@
+<app-page-header [heading]="'Unarchive invoice'" [icon]="'fa-cash-register'"
+                 [waitMessage]="waitMessage" [okExit]="okExit" [screenID]="screenID"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+<div>
+    <div class="alert alert-warning"
+      style="width: 100%; float: left; font-size: small; border: black 1px solid;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span style="margin-left: 1em;"> Use this functionnality on business request. The action will unarchive invoices.
+      </span>
+      <br>
+      <br>
+      <span style="margin-left: 2.2em; font-weight: bold;"> Make sure AP associates are aware about the action.
+      </span>
+    </div>
+  </div>
+<!-- Search Panel -->
+<div class="bbs_search_panel"  >        
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier # : </span>
+    <span style="overflow: hidden; padding-right: .5em; width: 70%; line-height: 25px; align-self: center;">
+    <input type="text"  [(ngModel)]="searchVendor" placeholder="  Enter a supplier code desc" 
+            style="width: 50%;margin-left: 10px;"/>     
+    </span>
+
+    <span class="pull-right" style="padding-right: 20px">
+            <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+                    [style]="{'height': '35px'}" style="margin-right: 15px">
+            </button>
+            <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true"
+                    [style]="{'height': '35px'}"></button>
+    </span>
+</div>
+
+<div class="bbs_search_sub_panel"  >
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Invoice # : </span>
+    <span style="overflow: hidden; padding-right: .5em; width: 30%; line-height: 25px; align-self: center;">
+    <input type="text"  [(ngModel)]="searchInvoice" placeholder="  Enter an invoice # " 
+            style="margin-left: 10px;"/>     
+    </span>
+</div>
+
+
+<p></p>
+
+<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    <span>{{msgDisplayed}}</span>
+        <p-footer>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
+                    label="Ok">
+            </button>
+        </p-footer>
+</p-dialog>
+
+<!-- Panel resul -->
+<!-- Result panel of the resarch --> 
+<!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
+<div  item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
+
+        <p-table #result [value]="searchResult" sortMode="multiple" 
+        [rows]="5"  [rowsPerPageOptions]="[5,10,50]"
+        [paginator]="true" [pageLinks]="3" 
+        [columns]="columnsResult"
+        selectionMode="single" [(selection)]="selectedElement" 
+        [resizableColumns]="true" columnResizeMode="expand"
+        [responsive]="true" [totalRecords]="searchResult.length"
+        [reorderableColumns]="true" scrollHeight="400px"
+        (onRowSelect)="onRowSelect($event)"
+        [globalFilterFields]="['SUPPLIER_CODE', 'INVOICE_NUMBER']"
+        [autoLayout]="true"tableStyleClass="table-layout: auto;">
+        
+        <!-- FILTER -->
+        <ng-template pTemplate="caption">
+            <div class="table-header grid">
+                <div class="col-3">
+                    <span>
+                        <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                            class="CSV_Button p-input-icon-left ml-auto"
+                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                        </button>
+                    </span>
+                </div>
+                <div class="col-9" style="text-align: right;">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+        <!-- HEADER -->
+            <ng-template pTemplate="header">            
+                <tr>
+                    <th *ngFor="let col of columnsResult" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                        {{col.header}}
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+        <!-- BODY -->
+            <ng-template pTemplate="body" let-rowData let-columns="columnsResult">
+                <tr [pSelectableRow]="rowData" [style.background-color]="(rowData['Selected']) ? 'lightyellow' : 'unset'">
+                    <ng-container *ngFor="let col of columnsResult; let indice=index" class="ui-resizable-column"  >
+                        <td class="ui-resizable-column" [style.text-align]="col.align" >
+                            <span *ngIf="col.field==='X'"  >
+                                <p-checkbox [(ngModel)]="rowData['Selected']" [binary]="true"></p-checkbox>
+                            </span>
+                            <span *ngIf="col.field!='X'" class="ui-resizable-column">
+                                    {{rowData[col.field]}}
+                            </span>
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-template>
+        </p-table>
+        <i class="FOOTER_Table" >{{searchResult.length}} references</i>
+</div>
+<br>
+<br>
+<p style='border-style: solid; border: black'></p>
+<div style="text-align:center" >
+    <button  *ngIf="searchResult.length > 0"  pButton icon="fas fa-dot-circle"  label="Unarchive" (click)="validateChanges()" ></button>
+    <button  *ngIf="searchResult.length == 0" disabled pButton icon="fas fa-dot-circle"  label="Unarchive" (click)="validateChanges()" ></button>
+</div>

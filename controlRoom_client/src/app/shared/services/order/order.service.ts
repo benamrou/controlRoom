@@ -13,6 +13,7 @@ export class OrderService {
 
     private queryOrder = 'ORD0000002';
     private queryUpdateOrder = 'ORD0000003';
+    private queryClearOrder = 'ORD0000004';
     
     private request: string;
     private params: HttpParams;
@@ -47,6 +48,22 @@ export class OrderService {
         let body = orderDetails;
 
         headersSearch = headersSearch.set('QUERY_ID', this.queryUpdateOrder);
+        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+        return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
+                let data = <any> response;
+                return data;
+        }));
+    }
+
+    clearOrder(orderDetails: any) {
+        this.request = this.basePostQuery;
+        let headersSearch = new HttpHeaders();
+        this.params= new HttpParams();
+
+        let body = orderDetails;
+
+        headersSearch = headersSearch.set('QUERY_ID', this.queryClearOrder);
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
