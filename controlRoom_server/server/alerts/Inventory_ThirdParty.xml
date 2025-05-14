@@ -72,7 +72,7 @@ SELECT DINSITE "Store #",EINCEXINV "Inventory #",
         END "Dept.",
        ARTCEXR "Item #",
        PKARTUV.GET_LIBELLE_LONG@HEINENS_CUSTOM_PROD(1, DINCINL, ''HN'') "Item desc",
-       REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2) "Previous counting",
+       TRIM(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2)) "Previous counting",
           (select sum(DINQTIN) from INVDETINV@HEINENS_CUSTOM_PROD dl
            where dl.DINCININV =trim(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 1))
            and dl.dincinl=T.dincinl

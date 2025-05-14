@@ -1,0 +1,34 @@
+<ROOT>
+    <QUERY> 
+
+/** DSD **/
+SELECT ecdsite "Site", foucnuf "Supplier code", 
+       foulibl "Supplier Name", fccnum "Comm. Contract", ecdnfilf "Ad Chain", 
+       to_char(trunc(ecddenvoi), ''MM/DD/RRRR'') "Sending Date", 
+       to_char(trunc(ecddliv), ''MM/DD/RRRR'') "Delivery Date", 
+       dcdcexr "Comm", 
+       pkstrucobj.get_desc@heinens_custom_prod(1, dcdcinr, ''HN'') "Item Description",
+       SUM(dcdqtec) "Quantity Ordered (SKU)",
+       SUM(dcdqtec/dcduauvc) "Quantity Ordered (Case)"
+FROM cdeentcde@heinens_custom_prod, fouccom@heinens_custom_prod, 
+     foudgene@heinens_custom_prod, cdedetcde@heinens_custom_prod
+WHERE ecdcfin=foucfin
+AND ecdcincde=dcdcincde
+AND ecdccin=fccccin
+AND TRUNC(ecddliv) BETWEEN to_date(:param2, ''MM/DD/RR'') AND to_date(:param3, ''MM/DD/RR'')
+AND foutype=1
+AND 100 > ecdsite 
+AND (EXISTS (SELECT 1 FROM REPORTFILTER WHERE FILREPORT=''DAR0000000001'' AND FILVENDOR=foucnuf)
+   OR NOT EXISTS (SELECT 1 FROM REPORTFILTER WHERE FILREPORT=''DAR0000000001''))
+GROUP BY ecdsite, foucnuf, foulibl, fccnum, ecdnfilf, to_char(trunc(ecddenvoi), ''MM/DD/RRRR''),
+	to_char(trunc(ecddliv), ''MM/DD/RRRR''),
+       dcdcexr, dcdcinr
+ORDER BY ecdsite, foucnuf, dcdcexr ASC
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No order DSD</HEADERIFEMPTY>
+  <HEADER>Order DSD for a sending date</HEADER>
+  
+</ROOT>
+

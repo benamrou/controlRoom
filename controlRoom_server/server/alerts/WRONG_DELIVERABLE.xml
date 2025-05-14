@@ -1,0 +1,33 @@
+<ROOT>
+    <QUERY> 
+select alosite "Whs", foucnuf "Central vendor", foulibl "Vendor desc", arlcexr "Item code", 
+       arlcexvl "LV#", pkstrucobj.get_desc@heinens_custom_prod(1,alocinr,''HN'') "Item desc.",
+       alosmag "Scope", to_char(aloddeb,''MM/DD/RR'') "deliverable since", to_char(alodfin,''MM/DD/RR'') "deliverable until", 
+       alocomm || '' | '' || pkparpostes.get_postlibl@heinens_custom_prod(1,10,20, alocomm,''HN'') "Stock",
+       aloutil "lastUser", ''Review the deliverable assortment H% vendor are on-stock items'' "Comment"
+from artasent@heinens_custom_prod, foudgene@heinens_custom_prod, artvl@heinens_custom_prod
+where alocfin=foucfin
+and foucnuf like ''H%''
+and trunc(sysdate+1) between aloddeb and alodfin
+and alocomm !=0
+and aloseqvl=arlseqvl
+UNION
+select alosite "Whs", foucnuf "Central vendor", foulibl "Vendor desc", arlcexr "Item code",
+       arlcexvl "LV#", pkstrucobj.get_desc@heinens_custom_prod(1,alocinr,''HN'') "Item desc.",
+       alosmag "Scope", to_char(aloddeb,''MM/DD/RR'') "deliverable since", to_char(alodfin,''MM/DD/RR'') "deliverable until",
+       alocomm || '' | '' || pkparpostes.get_postlibl@heinens_custom_prod(1,10,20, alocomm,''HN'') "Stock",
+       aloutil "lastUser", ''Review the deliverable assortment H% vendor are on-stock items'' "Comment"
+from artasent@heinens_custom_prod, foudgene@heinens_custom_prod, artvl@heinens_custom_prod
+where alocfin=foucfin
+and foucnuf like ''AO%''
+and trunc(sysdate+1) between aloddeb and alodfin
+and alocomm !=2
+and aloseqvl=arlseqvl
+order by "deliverable since" desc
+    </QUERY>
+ 
+  <HEADERIFEMPTY>No invalid deliverable</HEADERIFEMPTY>
+  <HEADER>Invalid deliverable</HEADER>
+  
+</ROOT>
+

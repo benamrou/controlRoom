@@ -23,7 +23,7 @@ BEGIN
 
 
 --	DBMS_STATS.gather_table_stats(
---    		ownname => 'CONTROLROOM',
+--    		ownname => 'HNCUSTOM2',
 --    		tabname => 'MV_DSHPI000001');
 
 END;

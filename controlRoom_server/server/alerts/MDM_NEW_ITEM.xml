@@ -28,7 +28,7 @@ FROM artuc@heinens_custom_prod ac, artvl@heinens_custom_prod vc,
 WHERE TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin 
 AND arlcinluvc=arucinl
 AND ac.araseqvl=vc.arlseqvl
-AND scat.strcint=pkstrucrel.GET_CINT_PERE(1,''1'',aracinr,TRUNC(SYSDATE))
+AND scat.strcint=pkstrucrel.GET_CINT_PERE@HEINENS_CUSTOM_PROD(1,''1'',aracinr,TRUNC(SYSDATE))
 AND TRUNC(araddeb+1) >= TRUNC(SYSDATE)
 AND scat.strpere=sobcint
 AND scat.strlevel =0

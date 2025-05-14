@@ -34,6 +34,7 @@ WITH UBD_ITEMS AS
          ARTRAC@HEINENS_CEN_PROD
    WHERE UT_VALIND IS NOT NULL
      AND UL_USSCC = UE_USSCC
+     AND trunc(to_date(UT_VALIND,''RRRRMMDD'')) >= trunc(sysdate)
      AND UE_INDFIC = ''1''
      AND UL_USSCC = UT_USSCC
      AND UL_CSSCC = UT_CSSCC
@@ -46,6 +47,7 @@ WITH UBD_ITEMS AS
      AND AR_ARPROM = UL_ARPROM
      AND AR_DONORD = UL_DONORD
      AND ARLCINR = ARTCINR
+     AND ut_typind=''DLC''
 --     AND ar_fourn=''12664''
      AND (TRUNC(SYSDATE) + :param3 + NVL(ARTPOV, 0) + NVL(ARTPOC, 0)) >= TO_DATE(UT_VALIND, ''RRRRMMDD'')
      AND UL_CPROIN = ARLCEXR
@@ -334,7 +336,7 @@ UBD_ITEMS_DATA_PREP AS
            WHERE AVICINV = ARLCINLUVC
              AND AVINTAR = AVENTAR
              AND AVESTAT = 2 /* Temporary */
-             AND TO_NUMBER(TO_CHAR(AVIDDEB, ''RRRRWW'')) >=  to_number(to_char(TRUNC(SYSDATE),''RRRRWW'')-7)
+             AND TO_NUMBER(TO_CHAR(AVIDDEB, ''RRRRWW'')) >=  to_number(to_char(TRUNC(SYSDATE-7*7),''RRRRWW''))
              AND to_number(to_char(TRUNC(SYSDATE),''RRRRWW''))>= TO_NUMBER(TO_CHAR(AVIDFIN, ''RRRRWW''))) "Nb Promo past 13 weeks",
          TO_DATE(UT_VALIND, ''RRRRMMDD'') "UBD",
          SSCC_ADDRESS "SSCC",
@@ -448,11 +450,11 @@ SELECT "Item code desc",
            "Sold per week", 
 
           (SELECT his."Hypothetical push" FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
-          AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-1)  and rownum=1) "Hyp. push Week-1",
+          AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE-1*7,''RRRRWW''))  and rownum=1) "Hyp. push Week-1",
           (SELECT his."Hypothetical push" FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
-          AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-2)  and rownum=1) "Hyp. push Week-2",
+          AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE-2*7,''RRRRWW''))  and rownum=1) "Hyp. push Week-2",
           (SELECT his."Hypothetical push" FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
-          AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-3)  and rownum=1) "Hyp. push Week-3",
+          AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE-3*7,''RRRRWW''))  and rownum=1) "Hyp. push Week-3",
 
            "SKU sold trend_1" "Trend sales Week-1 (%)",  
            "SKU sold trend_2" "Trend sales Week-2 (%)",  
@@ -463,10 +465,10 @@ SELECT "Item code desc",
            "SKU sold week_3" "Qty sold Week-3 (sku)",
            "SKU sold week_4" "Qty sold Week-4 (sku)",
 	   NVL((SELECT 0 FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
-		     AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-1)  and rownum=1),1) "New in report item",
+		     AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE-1*7,''RRRRWW''))  and rownum=1),1) "New in report item",
            NVL((SELECT NVL(IT."Hypothetical push",0) - NVL(his."Hypothetical push",0) 
 	        FROM SMARTUBD his WHERE his."Whs"=IT."Whs" and his."Item code desc"=IT."Item code desc"
-                     AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE,''RRRRWW'')-1)  and rownum=1),0) "Trend Hyp. push", 
+                     AND his."UBD"=IT."UBD" and to_char(SNAPDATE,''RRRRWW'')=(to_char(SYSDATE-1*7,''RRRRWW''))  and rownum=1),0) "Trend Hyp. push", 
 	   "Whs", 
            "Supplier code desc",
            "Categ" "Category Mgr"

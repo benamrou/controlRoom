@@ -13,6 +13,7 @@ AND fadcfin=foucfin
 /* Last two digits of receiver location is a store number */
 AND receiverslocation IS NOT NULL
 AND substr(receiverslocation,length(receiverslocation) - 1, length(receiverslocation)) NOT BETWEEN ''01'' AND ''50''
+AND substr(receiverslocation,length(receiverslocation) - 1, length(receiverslocation)) not in (''72'',''71'',''70'',''74'',''75'',''61'')
 AND NOT EXISTS (SELECT 1 FROM alertlog, alerts
                                 where LALTID=ALTID AND ALTREALTIME=1 AND ALTID=''EDI0000000005''
                                 AND LALTMESS LIKE ''%'' || invoicenumber || ''%'')

@@ -1,0 +1,32 @@
+<ROOT>
+    <QUERY> 
+
+/** DSD **/
+
+SELECT sersite "Site", foucnuf "Supplier code", 
+       foulibl "Supplier Name", fccnum "Comm. Contract", serfilf "Ad Chain", 
+       to_char(serdrec, ''MM/DD/RRRR'') "Reception Date", 
+       sdrcexr "Comm", 
+       pkstrucobj.get_desc@heinens_custom_prod(1, sdrcinr, ''HN'') "Item Description",
+       SUM(sdrqtea) "Received Quantity (SKU)",
+       SUM(sdrqtea/sdruauvc) "Received Quantity (Case)"
+FROM stoentre@heinens_custom_prod, stodetre@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+WHERE sercinrec=sdrcinrec
+AND sercfin=foucfin
+AND serccin=fccccin
+AND TRUNC(serdrec) BETWEEN to_date(:param2, ''MM/DD/RR'') AND to_date(:param3, ''MM/DD/RR'')
+AND foutype=1
+AND sertmvt=1 /* RECEPTION */
+AND 100 > sersite 
+AND (EXISTS (SELECT 1 FROM REPORTFILTER WHERE FILREPORT=''DAR0000000002'' AND FILVENDOR=foucnuf)
+   OR NOT EXISTS (SELECT 1 FROM REPORTFILTER WHERE FILREPORT=''DAR0000000002''))
+GROUP BY sersite, foucnuf, foulibl, fccnum, serfilf, 
+       to_char(serdrec, ''MM/DD/RRRR''), 
+       sdrcexr, sdrcinr
+</QUERY>
+ 
+  <HEADERIFEMPTY>No receiptDSD</HEADERIFEMPTY>
+  <HEADER>Receipt DSD for a reception date</HEADER>
+  
+</ROOT>
+

@@ -1,0 +1,168 @@
+
+DELETE FROM fillrate WHERE TRUNC("Snapdate")=TRUNC(SYSDATE);
+INSERT INTO fillrate (
+"Snapdate",
+"Flow",
+"Location #",
+"Supplier code desc.",
+"Item code desc.",
+"PO #",
+"Order date",
+"Delivery date",
+"Qty ordered",
+"Receiving date",
+"Qty received",
+"Cuts",
+"Match status",
+"Comm. contract",
+"Addr. chain")
+WITH MATCHED_DATA_DSD AS (
+    SELECT
+        SYSDATE "Snapdate",
+        'DSD' "Flow",
+        DECODE(o.dcdsite, NULL, c.sdrsite, o.dcdsite) AS "Location #",
+        DECODE(o.foucnuf, NULL,c.foucnuf || ' | ' || c.foulibl,
+                               o.foucnuf || ' | ' || o.foulibl) AS "Supplier code desc.",
+        DECODE(o.dcdcexr, NULL,c.sdrcexr || ' | ' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1,c.sdrcinr,'HN'),
+                               o.dcdcexr || ' | ' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1,o.dcdcinr,'HN')) AS "Item code desc.",
+        NVL(o.dcdcexcde,c.sercexcde) "PO #",
+        o.dcddcom "Order date",
+        o.dcddliv "Delivery date",
+        (o.dcdqtec/o.dcduauvc) "Qty ordered",
+        c.serdrec "Receiving date",
+        (c.sdrqtea/c.sdruauvc) "Qty received",
+        CASE
+            WHEN o.dcdcinl IS NOT NULL AND c.sdrcinls IS NOT NULL THEN
+                CASE
+                    WHEN NVL(o.dcdqtec, 0) = NVL(c.sdrqtea, 0) THEN 'Exact Match'
+                    WHEN NVL(c.sdrqtea, 0) = 0 THEN 'Ordered Not Received'
+                    WHEN NVL(o.dcdqtec, 0) = 0 THEN 'Received Not Ordered'
+                    ELSE 'Partial Match'
+                END
+            WHEN o.dcdcinl IS NOT NULL AND c.sdrcinls IS NULL THEN 'Ordered Not Received'
+            WHEN o.dcdcinl IS NULL AND c.sdrcinls IS NOT NULL THEN 'Received Not Ordered'
+            ELSE 'Unknown'
+        END AS "Match status",
+        NVL(o.fccnum, c.fccnum) || ' | ' || NVL(o.fcclib, c.fcclib) "Comm. contract",
+        NVL(ecdnfilf,serfilf) "Addr. chain"
+    FROM
+        (SELECT *
+         FROM CDEDETCDE@HEINENS_CUSTOM_PROD, cdeentcde@HEINENS_CUSTOM_PROD,
+              foudgene@HEINENS_CUSTOM_PROD, sitdgene@HEINENS_CUSTOM_PROD, fouccom@HEINENS_CUSTOM_PROD
+         WHERE ecdcincde=dcdcincde AND ecdcfin=foucfin /*AND foucnuf='06324'*/
+         AND TRUNC(ecddliv) BETWEEN TRUNC(SYSDATE-2) AND TRUNC(SYSDATE-1)
+         AND ecdsite=socsite
+         AND ecdccin=fccccin
+         /* External vendor only */
+         /* AND foutype=1  */
+         AND soccmag=10
+         ) o
+        FULL OUTER JOIN (SELECT *
+                         FROM STODETRE@HEINENS_CUSTOM_PROD r, STOENTRE@HEINENS_CUSTOM_PROD e,
+                              foudgene@HEINENS_CUSTOM_PROD, sitdgene@HEINENS_CUSTOM_PROD, fouccom@HEINENS_CUSTOM_PROD
+                         WHERE r.sdrcinrec = e.sercinrec
+                         AND e.sercfin=foucfin /*AND foucnuf='06324'  */
+                         AND TRUNC(e.serdrec) BETWEEN TRUNC(SYSDATE-2) AND TRUNC(SYSDATE-1)
+                         AND e.sersite=socsite
+                         AND e.serccin=fccccin
+                         /* External vendor only */
+                         /* AND foutype=1  */
+                         AND sertmvt=1
+                         AND soccmag=10
+                         ) c
+            ON o.dcdsite = c.sersite
+            AND o.dcdcfin = c.sercfin
+            AND o.dcdccin = c.serccin
+            AND o.dcdcinr = c.sdrcinr
+            /* WHS/DSD Param */
+            AND 1>=ABS(NVL(c.serdrec,o.dcddliv)  - NVL(o.dcddliv, c.serdrec))  /* within 1 day for DSD */
+ ORDER BY "Supplier code desc." ASC, "Item code desc." ASC
+            ),
+ MATCHED_DATA_WHS AS (
+ SELECT
+    SYSDATE "Snapdate",
+    'WHS' "Flow",
+    DECODE(t.dcdsite, NULL, t.sdrsite, t.dcdsite) AS "Location #",
+    DECODE(t.foucnuf, NULL, t.foucnuf || ' | ' || t.foulibl,
+                        t.foucnuf || ' | ' || t.foulibl) AS "Supplier code desc.",
+    DECODE(t.dcdcexr, NULL, t.sdrcexr || ' | ' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, t.sdrcinr, 'HN'),
+                        t.dcdcexr || ' | ' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, t.dcdcinr, 'HN')) AS "Item code desc.",
+    NVL(t.dcdcexcde, t.sercexcde) AS "PO #",
+    t.dcddcom AS "Order date",
+    t.dcddliv AS "Delivery date",
+    (t.dcdqtec / t.dcduauvc) AS "Qty ordered",
+    t.serdrec AS "Receiving date",
+    (t.sdrqtea / t.sdruauvc) AS "Qty received",
+    CASE
+        WHEN t.dcdcinl IS NOT NULL AND t.sdrcinla IS NOT NULL THEN
+            CASE
+                WHEN NVL(t.dcdqtec, 0) = NVL(t.sdrqtea, 0) THEN 'Exact Match'
+                WHEN NVL(t.sdrqtea, 0) = 0 THEN 'Ordered Not Received'
+                WHEN NVL(t.dcdqtec, 0) = 0 THEN 'Received Not Ordered'
+                ELSE 'Partial Match'
+            END
+        WHEN t.dcdcinl IS NOT NULL AND t.sdrcinla IS NULL THEN 'Ordered Not Received'
+        WHEN t.dcdcinl IS NULL AND t.sdrcinla IS NOT NULL THEN 'Received Not Ordered'
+        ELSE 'Unknown'
+    END AS "Match status",
+    fccnum || ' | ' || fcclib "Comm. contract",
+    ecdnfilf "Addr. chain"
+FROM (
+    SELECT DISTINCT o.dcdcinl, foucnuf, foulibl, sdrqtea, sdrcinla, o.dcddcom, o.dcddliv, o.dcdcexr, sdrcexr, o.dcdqtec,sdruauvc, serdrec,
+           o.dcduauvc, sercexcde, o.dcdcexcde, o.dcdcinr, sdrcinr, o.dcdsite , sdrsite, ec.ecdnfilf, fcclib, fccnum
+    FROM cdeentcde@HEINENS_CUSTOM_PROD ec
+    JOIN foudgene@HEINENS_CUSTOM_PROD fou ON ec.ecdcfin = fou.foucfin
+    JOIN fouccom@HEINENS_CUSTOM_PROD com ON ec.ecdccin=com.fccccin
+    JOIN sitdgene@HEINENS_CUSTOM_PROD soc ON ec.ecdsite = soc.socsite
+    JOIN CDEDETCDE@HEINENS_CUSTOM_PROD o ON ec.ecdcincde = o.dcdcincde
+    LEFT JOIN stoentre@HEINENS_CUSTOM_PROD e ON e.sercincde = ec.ecdcincde
+    LEFT JOIN STODETRE@HEINENS_CUSTOM_PROD c ON c.sdrcinrec = e.sercinrec AND o.dcdcinr = c.sdrcinr
+    WHERE TRUNC(e.serdrec) = TRUNC(SYSDATE - 1)
+      AND soc.soccmag = 0
+      AND sertmvt=1
+      AND soc.socsite !=93080
+      /* WHS/DSD Param */
+) t
+ORDER BY "Location #" ASC, "Supplier code desc." ASC, "Item code desc." ASC)
+/* Final selection */
+SELECT
+    "Snapdate",
+    "Flow",
+    "Location #",
+    "Supplier code desc.",
+    "Item code desc.",
+    "PO #",
+    to_char("Order date",'MM/DD/RRRR HH:MI') "Order date",
+    to_char("Delivery date",'MM/DD/RRRR HH:MI') "Delivery date",
+    "Qty ordered",
+    to_char("Receiving date", 'MM/DD/RRRR HH:MI') "Receiving date",
+    "Qty received",
+    NVL("Qty received",0) - NVL("Qty ordered",0) "Cuts",
+    "Match status",
+    "Comm. contract",
+    "Addr. chain"
+FROM MATCHED_DATA_DSD
+WHERE NVL("Qty received",0) + NVL("Qty ordered",0) > 0
+UNION
+SELECT
+    "Snapdate",
+    "Flow",
+    "Location #",
+    "Supplier code desc.",
+    "Item code desc.",
+    "PO #",
+    to_char("Order date",'MM/DD/RRRR HH:MI') "Order date",
+    to_char("Delivery date",'MM/DD/RRRR HH:MI') "Delivery date",
+    "Qty ordered",
+    to_char("Receiving date", 'MM/DD/RRRR HH:MI') "Receiving date",
+    "Qty received",
+    NVL("Qty received",0) - NVL("Qty ordered",0) "Cuts",
+    "Match status",
+    "Comm. contract",
+    "Addr. chain"
+FROM MATCHED_DATA_WHS;
+
+commit;
+
+exit;
+/

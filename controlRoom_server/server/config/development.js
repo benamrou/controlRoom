@@ -14,7 +14,7 @@ module.exports = {
           // HEINEN'S - PROD
 	  "user": "hncustom2",
 	  "password": "hncustom2",
-          "connectString": "10.200.14.230/central",
+          "connectString": "10.227.100.85/central",
           // B&B SYMPHONY
           //"connectString": "vps145391.vps.ovh.ca/croom.vps.ovh.ca",
           // S&F PERF
@@ -42,7 +42,7 @@ module.exports = {
       // HEINEN'S
       "user": "hncustom2",
       "password": "hncustom2",
-      "connectString": "10.200.14.230/central",
+      "connectString": "10.227.100.85/central",
       "poolMin": 1,
       "poolMax": 200,
       "poolTimeout": 60,
@@ -56,26 +56,17 @@ module.exports = {
  },
  server : {
    timeout: 8800000
- },/*
+ },
  notification: {
   email_service:  'heinens.com',
-  email_host:  'smtp.heinens.com',
+  //email_host:  'smtp.heinens.com',
+  email_host: '10.227.101.214',
   email_port:  25,
   email_secure:  false,
   email_user: 'inventorycontrol@heinens.com',
   email_password: 'Warrensville4540!',
   email_private_key: '/home/hnpcen/heinensapps/controlRoom_server/config/private_key.pem',
   email_cache_dir: '/home/hnpcen/heinensapps/controlRoom_server/cache'
- },*/
- notification: {
-  email_service:  'bbsymphony.com',
-  email_host:  'ehub66.webhostinghub.com',
-  email_port:  465,
-  email_secure:  true,
-  email_user: 'heinens@bbsymphony.com',
-  email_password: 'bbsymphony1!1!',
-  email_private_key: '/opt/apps/controlRoom/controlRoom_server/server/config/private_key.pem',
-  email_cache_dir: '/opt/apps/controlRoom/controlRoom_server/server/cache'
  },
  secret: 'bbsymphonysecret',
 };

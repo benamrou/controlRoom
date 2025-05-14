@@ -1,0 +1,38 @@
+<ROOT>
+    <QUERY> 
+/***********************************************************************/
+/* Query : Look for expired SSCC by depot                              */
+/***********************************************************************/
+
+SELECT  ul_donord "Whs #",
+        ul_cproin ||''/'' || to_number(ul_ilogis) || '' '' || AR_LIBPRO "Item/LV code desc.",
+        UE_USSCC "SSCC #", UE_ADRUMS "Address",
+        to_char(to_date(UT_VALIND,''RRRRMMDD''),''MM/DD/RRRR'') "UBD",
+        SUM(ul_nqteup) "Inventory (Case)",
+        ar_dlc "Shelf life (#days)",
+        round(ar_dlctd*ar_dlc/100) "Nb days Whs",
+        round(ar_dlctp*ar_dlc/100) "Nb days Store",
+        to_date(UT_VALIND,''RRRRMMDD'')-round(ar_dlctp*ar_dlc/100) - trunc(sysdate) || '' days left in distribution center'' "Comment"
+  FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD, TB_TRAUMS@HEINENS_STK_PROD,
+       TB_ART@HEINENS_STK_PROD
+  WHERE UT_VALIND IS NOT NULL
+  -- Param3: Number of days left
+  and 0 >= to_date(UT_VALIND,''RRRRMMDD'')-round(ar_dlctp*ar_dlc/100) - trunc(sysdate)  
+  AND UL_USSCC  = UE_USSCC
+  AND UE_INDFIC = ''1''
+  AND UL_USSCC  = UT_USSCC
+  AND UL_CSSCC  = UT_CSSCC
+  AND UL_CPROIN || UL_ILOGIS || UL_ARPROM = AR_CPROIN || AR_ILOGIS || AR_ARPROM
+  AND ul_nqtuvc > 0
+  AND ul_donord =93080
+  AND UL_NUMLIG = UT_NUMLIG
+  GROUP BY ul_donord, UT_VALIND, ul_cproin, ul_ilogis, ul_arprom, UE_USSCC, UE_ADRUMS, AR_LIBPRO, AR_DLC, AR_DLCTP, AR_DLCTD
+  ORDER BY ut_valind, ul_donord ASC
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No Warehouse expiring UBD</HEADERIFEMPTY>
+  <HEADER>Warehouse expiring UBD</HEADER>
+  
+</ROOT>
+

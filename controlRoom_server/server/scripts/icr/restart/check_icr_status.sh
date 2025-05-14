@@ -6,7 +6,7 @@
 
 . $HOME/env/envCEN
 
-# Logs are in /data/hnpcen/heinensapps/restart/restart.log
+# Logs are in $DATA_FOLDER/heinensapps/restart/restart.log
 
 IP_ADDRESS=localhost
 PORT=8093
@@ -31,8 +31,8 @@ ERROR_NUM="errorNum"
 # echo $response
 
 if [[ "$response" != *"$HTTP_REQUEST_OK"*  ||  "$response" =~ ${ERROR_NUM} ]]; then
-	echo "Server down: " ${PORT} `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
-        echo $response `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
+	echo "Server down: " ${PORT} `date` >> $DATA_FOLDER/heinensapps/restart/restart_icr.log
+        echo $response `date` >> $DATA_FOLDER/heinensapps/restart/restart_icr.log
 	$HOME/heinensapps/controlRoom_server/start_backend.sh
 	exit 1
 fi
@@ -48,8 +48,8 @@ wait $!
 # echo $response
 
 if [[ "$response" != *"$HTTP_REQUEST_OK"* ||  "$response" =~ ${ERROR_NUM} ]]; then
-	echo "Server down: " ${PORT_CRON} `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
-        echo $response `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
+	echo "Server down: " ${PORT_CRON} `date` >> $DATA_FOLDER/heinensapps/restart/restart_icr.log
+        echo $response `date` >> $DATA_FOLDER/heinensapps/restart/restart_icr.log
         $HOME/heinensapps/controlRoom_server/start_backend.sh
 	exit 1
 fi
@@ -65,11 +65,11 @@ wait $!
 # echo $response
 
 if [[ "$response" != *"$HTTP_REQUEST_OK"* ||  "$response" =~ ${ERROR_NUM} ]]; then
-	echo "Server down: " ${PORT_ALERT} `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
-        echo $response `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
+	echo "Server down: " ${PORT_ALERT} `date` >> $DATA_FOLDER/heinensapps/restart/restart_icr.log
+        echo $response `date` >> $DATA_FOLDER/heinensapps/restart/restart_icr.log
         $HOME/heinensapps/controlRoom_server/start_backend.sh
 	exit 1
 fi
 
-echo "Server up .... " `date` >> /data/hnpcen/heinensapps/restart/restart_icr.log
+echo "Server up .... " `date` >> $DATA_FOLDER/heinensapps/restart/restart_icr.log
 exit 0

@@ -34,7 +34,7 @@ WITH COUNTING AS
            and el.eindinv!=e.eindinv) LAST_COUNT
     FROM INVDETINV@HEINENS_CUSTOM_PROD d, INVENTINV@HEINENS_CUSTOM_PROD e, strucobj@HEINENS_CUSTOM_PROD, artrac@HEINENS_CUSTOM_PROD
    WHERE EINTINV = 42
-     AND EINDINV >= TRUNC(SYSDATE-5)
+     AND EINDINV >= TRUNC(SYSDATE)
      AND dinstrcint=sobcint
      AND DINCININV = EINCININV
      AND dincinr=artcinr
@@ -79,7 +79,7 @@ SELECT DINSITE "Store #",EINCEXINV "Inventory #",
        COST_PRICE "Unit cost",
        round(QTY_REPORTED*COST_PRICE,2) "Inventory cost",
        round((QTY_REPORTED - greatest(THEO_QTY,0))*COST_PRICE,2) "Shrink (-)/Pickup (+)",
-       REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2) "Previous inventory",
+       TRIM(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 2)) "Previous inventory",
        --LAST_COUNT_DATE "Previous count",
           (select (DINQTIN - greatest(DINSINF,0)) from INVDETINV@HEINENS_CUSTOM_PROD dl
            where dl.DINCININV =trim(REGEXP_SUBSTR (LAST_COUNT, ''(\S*)(\s)'', 1, 1))

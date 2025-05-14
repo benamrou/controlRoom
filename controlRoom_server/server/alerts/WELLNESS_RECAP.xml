@@ -15,6 +15,7 @@ and ecdnfilf=1
 and ecdcincde=pcdcincde
 and trunc(ecddenvoi)=trunc(sysdate)
 and pcdrubr=1
+and ecdetat >= 3 
 group by ecdsite, foucnuf, foulibl, ecdnfilf, fccnum, fcclib, ecddenvoi
 )
 select * from store_missing_total

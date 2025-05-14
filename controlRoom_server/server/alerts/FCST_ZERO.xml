@@ -1,0 +1,30 @@
+<ROOT>
+    <QUERY> 
+
+select distinct pvesite "Whs", 
+       to_char(pvedpvh,''MM/DD/RR'') "Last forecast calc.", 
+       arlcexr "Item code", 
+       pkstrucobj.get_desc(1,arlcinr,''HN'') "Item desc.",
+       pvedprv "Forecast from",
+       pvefprv "Forecast until",
+       pvdcalc "Calculated forecast",
+       pvdcorr "Corrected forecast",
+       (select listagg (pvdnsem, '' | '') WITHIN GROUP (ORDER BY pvdnsem asc) 
+        from fctdetpvh@heinens_cen_prod det2 where det2.pvdeid=pveid and 0>= det2.pvdcalc and  det2.pvdnsem >= to_char(sysdate,''RRRRWW'')) 
+        "Fct weeks at zero"
+from fctdetpvh@heinens_cen_prod, fctentpvh@heinens_cen_prod, artvl@heinens_cen_prod
+where pvdnsem >= to_char(sysdate,''RRRRWW'')
+and 0 >= pvdcalc
+and arlcinluvc=pvecinl
+and pveid=pvdeid 
+and pvesite in (90061,91070, 91071)
+and exists (select 1 from artuc@heinens_cen_prod where pvesite=arasite amd arlseqvl=araseqvl and aradfin >=trunc(sysdate))
+order by pvesite, arlcexr asc
+
+    </QUERY>
+ 
+  <HEADERIFEMPTY>No zero forecast generated</HEADERIFEMPTY>
+  <HEADER>Zero forecast</HEADER>
+  
+</ROOT>
+

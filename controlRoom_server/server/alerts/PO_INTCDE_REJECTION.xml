@@ -10,6 +10,7 @@ FROM intcde@heinens_custom_prod, foudgene@heinens_custom_prod, artrac@heinens_cu
 WHERE intstat=2 
 AND TRUNC(intdcre)=TRUNC(SYSDATE)
 AND foucnuf=intcnuf
+AND foucnuf != ''XMF001''
 AND artcexr=intcode
 AND NVL(intrefext,''0'')!=''0'' 
 AND NOT EXISTS (SELECT 1 FROM alertlog, alerts

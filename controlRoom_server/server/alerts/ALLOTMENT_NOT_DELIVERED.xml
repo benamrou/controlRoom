@@ -28,7 +28,7 @@ and trunc(sysdate)>trunc(ecddliv)
 and ecdsite in (91072, 95073, 95074)
 and foucfin=ecdcfin
 and ecdtype=9 
-and trunc(ecddliv)>trunc(sysdate-14) */
+and trunc(ecddliv)>trunc(sysdate-14) 
 and ecdetat=7
 and ecdmotif=903
 

@@ -1,0 +1,35 @@
+<ROOT>
+    <QUERY> 
+select /*pdcnprop "Proposal", */
+	pdcsitli "Whs #", foucnuf "Vendor code", foulibl "Vendor desc", to_char(pdcdcde,''MM/DD/RR'') "Proposal date", 
+       arlcexr "Item code", arlcexvl "LV #", 
+       pkstrucobj.get_desc@heinens_cen_prod(1,arlcinr,''HN'') "Item desc",
+       lpcnjstk "Nb days inv.",
+       lpcnjsrl "Nb days inv. + TBD",
+       lpcnjstkh "Nb days inv + TBD - fcst sales"
+from prpentprop@heinens_cen_prod, prpdetprop@heinens_cen_prod, 
+     foudgene@heinens_cen_prod, artvl@heinens_cen_prod, 
+     artuc@heinens_cen_prod
+where pdccfin=foucfin
+and 40 > lpcnjstkh 
+and lpcnprop=pdcnprop
+and lpcseqvl=arlseqvl
+and pdcsitli in (90061,91071)
+/* Only main supplier ~ No secondary */
+and aracfin=pdccfin
+and araccin=pdcccin
+and arasite=pdcsitli
+and aranfilf=pdcnfilf
+and trunc(pdcdcde) between araddeb and aradfin
+and lpcseqvl=araseqvl
+and aratfou=1 /* Only main supplier */
+and aratcde=1
+order by pdcsitli, foucnuf, lpcnjstkh asc
+
+    </QUERY>
+ 
+  <HEADERIFEMPTY>No x days below inventory generated</HEADERIFEMPTY>
+  <HEADER>X days below inventory</HEADER>
+  
+</ROOT>
+

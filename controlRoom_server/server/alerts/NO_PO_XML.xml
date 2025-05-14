@@ -1,0 +1,20 @@
+<ROOT>
+    <QUERY> 
+
+select "Location", "PO#", "Vendor code",  "Vendor desc.", "Comm. contract",
+        "Order date",  "Status", "Delivery date", 
+        "Communication mode",
+        "Nb items"
+from ALERTXNTCDE
+WHERE
+/** NOT in SQL **/
+not exists (select 1  FROM SQL_tbl_FROM_GOLD_Cdeentcde_TO_POHeader@Heinens_Custom_Prod where "PurchaseOrder"="PO#")
+and not exists (select 1 from XNTCDE where xcdcincde=ecdcincde)
+and (sysdate - snapdate) * 24 * 60 > 1
+</QUERY>
+ 
+  <HEADERIFEMPTY>No XML generated</HEADERIFEMPTY>
+  <HEADER>NO PO XML generated</HEADER>
+  
+</ROOT>
+

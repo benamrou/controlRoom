@@ -1,0 +1,33 @@
+<ROOT>
+    <QUERY> 
+
+/* Alert query ready to display stocj layer for all items in warehouse */
+/* does not support Retail value and Weight items */
+WITH ITEM_STOCOUCH AS (
+select SUM (NVL(stovali,0) + NVL(stovall,0) - NVL(stovalv,0) + NVL(stovale,0) + NVL(stovalc,0) - NVL(stovalr,0)) "SKU", 
+    SUM ((NVL(STOVALI,0) + NVL(STOVALL,0) - NVL(STOVALV,0) + NVL(STOVALE,0) + NVL(STOVALC,0) - NVL(STOVALR,0))* NVL(stopuap,0)) "Purchase Stock Value",
+    SUM ((NVL(STOVALI,0) + NVL(STOVALL,0) - NVL(STOVALV,0) + NVL(STOVALE,0) + NVL(STOVALC,0) - NVL(STOVALR,0))* NVL(stopurp,0)) "Stock Cost Value",
+		stoseqvl,
+    MAX(STOSEQ)
+from stocouch@heinens_custom_prod
+where stosite=:param2
+group by stoseqvl)
+select arlcexr "Item code", arlcexvl "LV", pkartvl.get_vldesc@heinens_custom_prod(1,arlseqvl, ''HN'') "Description",
+        "SKU", 0 "Weight/SKU" /* Weight */,
+        to_char(round("Purchase Stock Value"/decode("SKU",0,1,"SKU"),2)) "Unit purchase price",
+        to_char(round("Stock Cost Value"/decode("SKU",0,1,"SKU"),2)) "Unit Cost Price",
+	0 "Unit Sales price",
+        to_char(round("Purchase Stock Value",2)) "Purchase Stock Value",
+        to_char(round("Stock Cost Value",2)) "Stock Cost Value",
+        0 "Sales Cost Value"
+        /* (select round(aprfapn,2) from areprix@heinens_custom_prod where trunc(sysdate) between aprddeb and aprdfin 
+       and aprseqvl=arlseqvl and  aprsite=:param2 and rownum=1) "Cost price" */
+from artvl@heinens_custom_prod,ITEM_STOCOUCH
+where  arlseqvl=stoseqvl
+  
+</QUERY>
+  <HEADERIFEMPTY>No Finance warehouse stock info</HEADERIFEMPTY>
+  <HEADER>Warehouse stock information</HEADER>
+  
+</ROOT>
+

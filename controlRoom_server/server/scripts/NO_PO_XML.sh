@@ -1,7 +1,7 @@
 
 # Today's date 
 today=$(date +%m-%d-%y)
-echo `date` >> no_po..txt
+# echo `date` >> no_po..txt
 sqlplus hncustom/hncustom @sql/CAPTURE_NO_PO_XML.sql
 
 #sleep 1m

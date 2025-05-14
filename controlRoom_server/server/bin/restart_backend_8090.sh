@@ -2,10 +2,10 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-. /home/hntcen/env/envCEN
-. /home/hntcen/env/envICR
+. $HOME/env/envCEN
+. $HOME/env/envICR
 
-CONTROLROOM_SERVER=/opt/apps/controlRoom/controlRoom_server/server
+CONTROLROOM_SERVER=$HOME/heinensapps/controlRoom_server
 BIN=/usr/local/bin/
 NODE_BIN=/usr/local/bin
 

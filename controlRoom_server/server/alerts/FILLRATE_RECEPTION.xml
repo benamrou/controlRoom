@@ -1,0 +1,200 @@
+<ROOT>
+    <QUERY> 
+
+-- Create a view or CTE to combine orders and receipts
+
+WITH MATCHED_DATA_DSD AS (
+    -- First part: Items ordered (including those not received)
+    SELECT
+        o.dcdsite AS "Location #",
+        o.foucnuf || '' | '' || o.foulibl AS "Supplier code desc.",
+        o.dcdcexr || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1,o.dcdcinr,''HN'') AS "Item code desc.",
+        o.dcdcexcde "PO #",
+        o.dcddcom "Order date",  
+        o.dcddliv "Delivery date",
+        (o.dcdqtec/o.dcduauvc) "Qty ordered",
+        c.serdrec "Receiving date",
+        (c.sdrqtea/c.sdruauvc) "Qty received",
+        NVL((c.sdrqtea/c.sdruauvc),0) - NVL((o.dcdqtec/o.dcduauvc),0) "Cuts",
+        CASE
+            WHEN NVL((o.dcdqtec), 0) = NVL((c.sdrqtea), 0) THEN ''Exact Match''
+            WHEN NVL((c.sdrqtea), 0) = 0 THEN ''Ordered Not Received''
+            WHEN NVL((o.dcdqtec), 0) = 0 THEN ''Received Not Ordered''
+            ELSE ''Partial Match''
+        END AS "Match status",
+        o.fccnum || '' | '' || o.fcclib "Comm. contract",
+        o.ecdnfilf "Addr. chain"
+    FROM
+        (SELECT *
+         FROM CDEDETCDE@HEINENS_CUSTOM_PROD, cdeentcde@HEINENS_CUSTOM_PROD,
+              foudgene@HEINENS_CUSTOM_PROD, sitdgene@HEINENS_CUSTOM_PROD, fouccom@HEINENS_CUSTOM_PROD
+         WHERE ecdcincde=dcdcincde AND ecdcfin=foucfin
+         AND TRUNC(ecddliv) BETWEEN TRUNC(SYSDATE-2) AND TRUNC(SYSDATE-1)
+         AND ecdsite=socsite
+         AND ecdccin=fccccin
+         AND soccmag=10
+	 AND :param2 != 1
+         ) o
+        LEFT JOIN (SELECT MAX(serdrec) serdrec, sdrcexr, SUM(sdrqtea) sdrqtea, sercfin, serccin, sdrcinr, sersite, sdruauvc
+                   FROM STODETRE@HEINENS_CUSTOM_PROD r, STOENTRE@HEINENS_CUSTOM_PROD e,
+                        foudgene@HEINENS_CUSTOM_PROD, sitdgene@HEINENS_CUSTOM_PROD, fouccom@HEINENS_CUSTOM_PROD
+                   WHERE r.sdrcinrec = e.sercinrec
+                   AND e.sercfin=foucfin  
+                   AND TRUNC(e.serdrec) BETWEEN TRUNC(SYSDATE-2) AND TRUNC(SYSDATE-1)
+                   AND e.sersite=socsite
+                   AND e.serccin=fccccin
+                   AND sertmvt=1
+                   AND soccmag=10
+                   GROUP BY sdrcexr, sercfin, serccin, sdrcinr, sersite, sdruauvc
+                   ) c
+        ON o.dcdsite = c.sersite
+        AND o.dcdcfin = c.sercfin
+        AND o.dcdccin = c.serccin
+        AND o.dcdcinr = c.sdrcinr
+        AND 1>=ABS(NVL(c.serdrec,o.dcddliv) - NVL(o.dcddliv, c.serdrec))
+    UNION ALL
+    -- Second part: Items received but not ordered
+    SELECT
+        c.sersite AS "Location #",
+        c.foucnuf || '' | '' || c.foulibl AS "Supplier code desc.",
+        c.sdrcexr || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1,c.sdrcinr,''HN'') AS "Item code desc.",
+        c.sercexcde "PO #",
+        NULL "Order date",
+        NULL "Delivery date",
+        NULL "Qty ordered",
+        c.serdrec "Receiving date",
+        (c.sdrqtea/c.sdruauvc) "Qty received",
+        (c.sdrqtea/c.sdruauvc) "Cuts",
+        ''Received Not Ordered'' AS "Match status",
+        c.fccnum || '' | '' || c.fcclib "Comm. contract",
+        c.serfilf "Addr. chain"
+    FROM 
+        (SELECT MAX(serdrec) serdrec, sdrcexr, SUM(sdrqtea) sdrqtea, sercfin, serccin, sdrcinr, sersite, sdruauvc, serfilf,sercexcde,
+                fcclib, fccnum, foulibl, foucnuf
+         FROM STODETRE@HEINENS_CUSTOM_PROD r, STOENTRE@HEINENS_CUSTOM_PROD e,
+              foudgene@HEINENS_CUSTOM_PROD, sitdgene@HEINENS_CUSTOM_PROD, fouccom@HEINENS_CUSTOM_PROD
+         WHERE r.sdrcinrec = e.sercinrec
+         AND e.sercfin=foucfin  
+         AND TRUNC(e.serdrec) BETWEEN TRUNC(SYSDATE-2) AND TRUNC(SYSDATE-1)
+         AND e.sersite=socsite
+         AND e.serccin=fccccin
+         AND sertmvt=1
+         AND soccmag=10
+	 AND :param2 != 1
+         GROUP BY sdrcexr, sercfin, serccin, sdrcinr, sersite, sdruauvc, serfilf, fcclib, fccnum, sercexcde, foulibl, foucnuf
+         ) c
+    LEFT JOIN 
+        (SELECT *
+         FROM CDEDETCDE@HEINENS_CUSTOM_PROD, cdeentcde@HEINENS_CUSTOM_PROD,
+              foudgene@HEINENS_CUSTOM_PROD, sitdgene@HEINENS_CUSTOM_PROD, fouccom@HEINENS_CUSTOM_PROD
+         WHERE ecdcincde=dcdcincde AND ecdcfin=foucfin
+         AND TRUNC(ecddliv) BETWEEN TRUNC(SYSDATE-2) AND TRUNC(SYSDATE-1)
+         AND ecdsite=socsite
+         AND ecdccin=fccccin
+         AND soccmag=10
+         ) o
+    ON c.sersite = o.dcdsite
+    AND c.sercfin = o.dcdcfin
+    AND c.serccin = o.dcdccin
+    AND c.sdrcinr = o.dcdcinr
+    AND 1>=ABS(NVL(c.serdrec,o.dcddliv) - NVL(o.dcddliv, c.serdrec))
+    WHERE o.dcdcinr IS NULL
+),
+ MATCHED_DATA_WHS AS (
+ SELECT
+    DECODE(t.dcdsite, NULL, t.sdrsite, t.dcdsite) AS "Location #",
+    DECODE(t.foucnuf, NULL, t.foucnuf || '' | '' || t.foulibl,  
+                        t.foucnuf || '' | '' || t.foulibl) AS "Supplier code desc.",
+    DECODE(t.dcdcexr, NULL, t.sdrcexr || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, t.sdrcinr, ''HN''),
+                        t.dcdcexr || '' | '' || pkstrucobj.get_desc@HEINENS_CUSTOM_PROD(1, t.dcdcinr, ''HN'')) AS "Item code desc.",
+    NVL(t.dcdcexcde, t.sercexcde) AS "PO #",
+    t.dcddcom AS "Order date",
+    t.dcddliv AS "Delivery date",
+    (t.dcdqtec / t.dcduauvc) AS "Qty ordered",
+    t.serdrec AS "Receiving date",
+    (t.sdrqtea / t.sdruauvc) AS "Qty received",
+    CASE 
+        WHEN t.dcdcinl IS NOT NULL AND t.sdrcinla IS NOT NULL THEN
+            CASE 
+                WHEN NVL(t.dcdqtec, 0) = NVL(t.sdrqtea, 0) THEN ''Exact Match''
+                WHEN NVL(t.sdrqtea, 0) = 0 THEN ''Ordered Not Received''
+                WHEN NVL(t.dcdqtec, 0) = 0 THEN ''Received Not Ordered''
+                ELSE ''Partial Match''
+            END
+        WHEN t.dcdcinl IS NOT NULL AND t.sdrcinla IS NULL THEN ''Ordered Not Received''
+        WHEN t.dcdcinl IS NULL AND t.sdrcinla IS NOT NULL THEN ''Received Not Ordered''
+        ELSE ''Unknown''
+    END AS "Match status",
+    fccnum || '' | '' || fcclib "Comm. contract",
+    ecdnfilf "Addr. chain"
+FROM (
+    SELECT DISTINCT o.dcdcinl, foucnuf, foulibl, sdrqtea, sdrcinla, o.dcddcom, o.dcddliv, o.dcdcexr, sdrcexr, o.dcdqtec,sdruauvc, serdrec,
+           o.dcduauvc, sercexcde, o.dcdcexcde, o.dcdcinr, sdrcinr, o.dcdsite , sdrsite, ec.ecdnfilf, fcclib, fccnum
+    FROM cdeentcde@HEINENS_CUSTOM_PROD ec
+    JOIN foudgene@HEINENS_CUSTOM_PROD fou ON ec.ecdcfin = fou.foucfin
+    JOIN fouccom@HEINENS_CUSTOM_PROD com ON ec.ecdccin=com.fccccin
+    JOIN sitdgene@HEINENS_CUSTOM_PROD soc ON ec.ecdsite = soc.socsite
+    JOIN CDEDETCDE@HEINENS_CUSTOM_PROD o ON ec.ecdcincde = o.dcdcincde
+    LEFT JOIN stoentre@HEINENS_CUSTOM_PROD e ON e.sercincde = ec.ecdcincde
+    LEFT JOIN STODETRE@HEINENS_CUSTOM_PROD c ON c.sdrcinrec = e.sercinrec AND o.dcdcinr = c.sdrcinr
+    WHERE TRUNC(e.serdrec) = TRUNC(SYSDATE - 1)
+      AND soc.soccmag = 0
+      AND sertmvt=1
+      AND soc.socsite !=93080
+      /* WHS/DSD Param */
+      AND :param2 = 1
+) t 
+ORDER BY "Location #" ASC, "Supplier code desc." ASC, "Item code desc." ASC)
+-- Final selection
+SELECT
+    "Location #",
+    "Supplier code desc.",
+    "Item code desc.",
+    LISTAGG("PO #", '', '') WITHIN GROUP (ORDER BY "PO #" DESC) "PO #",
+    to_char("Order date",''MM/DD/RRRR HH:MI'') "Order date",
+    to_char("Delivery date",''MM/DD/RRRR HH:MI'') "Delivery date",
+    SUM("Qty ordered") "Qty ordered",
+    to_char("Receiving date", ''MM/DD/RRRR HH:MI'') "Receiving date",
+    SUM("Qty received") "Qty received",
+    NVL(SUM("Qty received"),0) - NVL(SUM("Qty ordered"),0) "Cuts",
+    CASE
+          WHEN NVL(SUM("Qty ordered"), 0) = NVL(SUM("Qty received"), 0) THEN ''Exact Match''
+          WHEN NVL(SUM("Qty received"), 0) = 0 THEN ''Ordered Not Received''
+          WHEN NVL(SUM("Qty ordered"), 0) = 0 THEN ''Received Not Ordered''
+          ELSE ''Partial Match''
+      END AS "Match status",
+    "Comm. contract",
+    "Addr. chain"
+FROM MATCHED_DATA_DSD
+GROUP BY 
+    "Location #",
+    "Supplier code desc.",
+    "Item code desc.",
+     "Order date",
+     "Delivery date",
+     "Receiving date",
+    "Comm. contract",
+    "Addr. chain"
+UNION 
+SELECT
+    "Location #",
+    "Supplier code desc.",
+    "Item code desc.",
+    "PO #",
+    to_char("Order date",''MM/DD/RRRR HH:MI'') "Order date",
+    to_char("Delivery date",''MM/DD/RRRR HH:MI'') "Delivery date",
+    "Qty ordered",
+    to_char("Receiving date", ''MM/DD/RRRR HH:MI'') "Receiving date",
+    "Qty received",
+    NVL("Qty received",0) - NVL("Qty ordered",0) "Cuts",
+    "Match status",
+    "Comm. contract",
+    "Addr. chain"
+FROM MATCHED_DATA_WHS
+   
+</QUERY>
+  <HEADERIFEMPTY>No fill rate reception</HEADERIFEMPTY>
+  <HEADER>Fill rate reception</HEADER>
+  
+</ROOT>
+

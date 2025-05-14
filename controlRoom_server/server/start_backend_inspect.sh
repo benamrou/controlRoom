@@ -1,5 +1,5 @@
 
-CONTROLROOM=$HOME/Workspace/controlRoom/server
+CONTROLROOM=$HOME/heinensapps/controlRoom_server
 CONFIG_SERVER=${CONTROLROOM}/config/admin/server
 
 # export NODE_MODULE_PATH=${CONFIG_SERVER}/node_modules/lib/node_modules/ControlRoomAdminServer/node_modules/

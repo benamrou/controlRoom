@@ -3,7 +3,7 @@ date_today=`date +"%Y%m%d"`
 
 
 # DUMP THE DATABASE
-exp hncustom2/hncustom2@central owner=hncustom2 file=/data/hnpcen/heinensapps/backup/controlroom_$date_today.dmp > $HOME/heinensapps/controlRoom_server/scripts/icr/logs/controlroom_$date_today.log
+exp hncustom2/hncustom2@central owner=hncustom2 file=$DATA_FOLDER/heinensapps/backup/controlroom_$date_today.dmp > $HOME/heinensapps/controlRoom_server/scripts/icr/logs/controlroom_$date_today.log
 
 # REMOVE 30 days more logs
 sqlplus hncustom2/hncustom2@central @$HOME/heinensapps/controlRoom_server/scripts/icr/sql/maintenance.sql
@@ -25,5 +25,5 @@ find $HOME/heinensapps/controlRoom_server/ -name "*.log" -mtime +2 -exec rm -f {
 $HOME/heinensapps/controlRoom_server/scripts/prod/maintenance.sh 
 
 # Save crontab
-/usr/bin/crontab -l > /data/hnpcen/heinensapps/backup/crontab/crontab_$date_today.log
+/usr/bin/crontab -l > $DATA_FOLDER/heinensapps/backup/crontab/crontab_$date_today.log
 

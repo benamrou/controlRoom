@@ -1,0 +1,64 @@
+<ROOT>
+    <QUERY> 
+
+/** WHS/ALLO **/
+
+/** WHS **/
+SELECT sersite "Site", foucnuf "Supplier code", 
+       foulibl "Supplier Name", fccnum "Comm. Contract", serfilf "Ad Chain", 
+       to_char(serdrec, ''MM/DD/RRRR'') "Reception Date", 
+       sdrcexr "Comm", 
+       pkstrucobj.get_desc@heinens_custom_prod(1, sdrcinr, ''HN'') "Item Description",
+       sercexcde "PO",
+       (SELECT SUM(dcdqtec) FROM cdedetcde@heinens_custom_prod WHERE dcdcincde=sercincde AND dcdcinr=sdrcinr) "Quantity Ordered (SKU)",
+       SUM(sdrqtea) "Received Quantity (SKU)",
+       (SELECT SUM(dcdqtec/dcduauvc) FROM cdedetcde@heinens_custom_prod WHERE dcdcincde=sercincde AND dcdcinr=sdrcinr) "Quantity Ordered (Case)",
+       SUM(sdrqtea/sdruauvc) "Received Quantity (Case)"
+FROM stoentre@heinens_custom_prod, stodetre@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod, sitdgene@heinens_custom_prod
+WHERE sercinrec=sdrcinrec
+AND sercfin=foucfin
+AND serccin=fccccin
+AND TRUNC(serdrec) BETWEEN to_date(:param2, ''MM/DD/RR'') AND to_date(:param3, ''MM/DD/RR'')
+AND foutype=1
+AND sertmvt=1 /* RECEPTION */
+AND sersite =socsite
+AND soccmag=0
+AND (EXISTS (SELECT 1 FROM REPORTFILTER WHERE FILREPORT=''DAR0000000003'' AND FILVENDOR=foucnuf)
+   OR NOT EXISTS (SELECT 1 FROM REPORTFILTER WHERE FILREPORT=''DAR0000000003''))
+GROUP BY sersite, foucnuf, foulibl, fccnum, serfilf, 
+       to_char(serdrec, ''MM/DD/RRRR''), 
+       sdrcexr, sdrcinr, sercexcde, sercincde, sdrcinr
+UNION
+/** ALLOTMENT **/
+SELECT sersite "Site", foucnuf "Supplier code", 
+       foulibl "Supplier Name", fccnum "Comm. Contract", serfilf "Ad Chain", 
+       to_char(serdrec, ''MM/DD/RRRR'') "Reception Date", 
+       sdrcexr "Comm", 
+       pkstrucobj.get_desc@heinens_custom_prod(1, sdrcinr, ''HN'') "Item Description",
+       sercexcde "PO",
+       (SELECT SUM(dcdqtec) FROM cdedetcde@heinens_custom_prod WHERE dcdcincde=sercincde AND dcdseqvl=sdrseqvl) "Quantity Ordered (SKU)",
+       SUM(sdrqtea) "Received Quantity (SKU)",
+       (SELECT SUM(dcdqtec/dcduauvc) FROM cdedetcde@heinens_custom_prod WHERE dcdcincde=sercincde AND dcdseqvl=sdrseqvl) "Quantity Ordered (Case)",
+       SUM(sdrqtea/sdruauvc) "Received Quantity (Case)"
+FROM stoentre@heinens_custom_prod, stodetre@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod,sitdgene@heinens_custom_prod
+WHERE sercinrec=sdrcinrec
+AND sercfin=foucfin
+AND serccin=fccccin
+AND TRUNC(serdrec) BETWEEN to_date(:param2, ''MM/DD/RR'') AND to_date(:param3, ''MM/DD/RR'')
+AND foutype=3
+AND foucnuf LIKE ''AO%''
+AND sertmvt=1 /* RECEPTION */
+AND sersite =socsite
+AND soccmag=10
+AND (EXISTS (SELECT 1 FROM REPORTFILTER WHERE FILREPORT=''DAR0000000003'' AND FILVENDOR=foucnuf)
+   OR NOT EXISTS (SELECT 1 FROM REPORTFILTER WHERE FILREPORT=''DAR0000000003''))
+GROUP BY sersite, foucnuf, foulibl, fccnum, serfilf, 
+       to_char(serdrec, ''MM/DD/RRRR''), 
+       sdrcexr, sdrcinr, sercexcde, sercincde, sdrseqvl
+</QUERY>
+ 
+  <HEADERIFEMPTY>No receipt WHS/ALLO</HEADERIFEMPTY>
+  <HEADER>Receipt WHS/ALLO for a reception date</HEADER>
+  
+</ROOT>
+

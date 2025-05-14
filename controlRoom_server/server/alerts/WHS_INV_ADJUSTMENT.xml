@@ -1,0 +1,45 @@
+<ROOT>
+    <QUERY> 
+
+select mi_donord "Whs #", ar_cproin "Item code", ar_ilogis "LV #", ar_libpro "Item description",
+       mi_adrpal "Address",
+       mi_sensxx ||  mi_qtiups "Nb cases adjusted",
+       mi_cecart || '' | '' || (SELECT pi_libpos
+                           FROM tb_parl@heinens_stk_prod t, tb_par@heinens_stk_prod
+                           WHERE pr_tablex = ''CEI'' AND pi_tablex = pr_tablex
+                           AND pi_postex = pr_postex
+                           AND pr_sensxx in (''+'',''-'') AND pi_lang =''GB''
+                           AND pi_postex=mi_cecart) "Reason code",
+       mi_libinv "Adjusted by"
+from tb_mvtin@heinens_stk_prod, tb_art@heinens_stk_prod 
+where mi_donord=:param2
+and mi_cproin=ar_cproin
+and mi_ilogis=ar_ilogis
+and mi_arprom=ar_arprom
+and trunc(mi_datinv)=trunc(sysdate-1)
+union 
+select hi_donord "Whs #", ar_cproin "Item code", ar_ilogis "LV #", ar_libpro "Item description",
+       hi_adrpal "Address",
+       hi_sensxx ||  hi_qtiups "Nb cases adjusted",
+       hi_cecart || '' | '' || (SELECT pi_libpos         
+                           FROM tb_parl@heinens_stk_prod t, tb_par@heinens_stk_prod 
+			   WHERE pr_tablex = ''CEI'' AND pi_tablex = pr_tablex  
+			   AND pi_postex = pr_postex
+                           AND pr_sensxx in (''+'',''-'') AND pi_lang =''GB''   
+                           AND pi_postex=hi_cecart) "Reason code",
+	hi_libinv "Adjusted by"
+from tb_hmvtin@heinens_stk_prod, tb_art@heinens_stk_prod 
+where hi_donord=:param2
+and hi_cproin=ar_cproin
+and hi_ilogis=ar_ilogis
+and hi_arprom=ar_arprom
+and trunc(hi_datinv)=trunc(sysdate-1)
+order by "Item code" asc
+
+
+</QUERY>
+  <HEADERIFEMPTY>No whs inventory adjutment</HEADERIFEMPTY>
+  <HEADER>Whs inventory adjustment</HEADER>
+  
+</ROOT>
+

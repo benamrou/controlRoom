@@ -1,0 +1,61 @@
+<ROOT>
+    <QUERY> 
+
+/** ALLOTMENT **/
+WITH VENDOR_LIST AS
+ (SELECT *
+    FROM foudgene@heinens_custom_prod, stoentre@heinens_custom_prod
+   WHERE foutype = 3
+     AND sercfin = foucfin
+     AND TRUNC(serdrec) BETWEEN to_date(:param2, ''MM/DD/RR'') AND
+         to_date(:param3, ''MM/DD/RR'')
+     AND (EXISTS (SELECT 1
+                    FROM REPORTFILTER
+                   WHERE FILREPORT = ''DAR0000000003''
+                     AND FILVENDOR = foucnuf) OR NOT EXISTS
+          (SELECT 1 FROM REPORTFILTER WHERE FILREPORT = ''DAR0000000003'')))
+SELECT sersite "Site",
+       foucnuf "Supplier code",
+       foulibl "Supplier Name",
+       fccnum "Comm. Contract",
+       serfilf "Ad Chain",
+       to_char(serdrec, ''MM/DD/RRRR'') "Reception Date",
+       dcdcexr "Comm",
+       pkstrucobj.get_desc@heinens_custom_prod(1, dcdcinr, ''HN'') "Item Description",
+       sercexcde "PO",
+       SUM(dcdqtec) "Quantity Ordered (SKU)",
+       (SELECT SUM(sdrqtea)
+          FROM stodetre@heinens_custom_prod
+         WHERE sdrcinrec = sercinrec
+           AND dcdcinr = sdrcinr) "Received quantity (SKU)",
+       SUM(dcdqtec / dcduauvc) "Quantity Ordered (PU)",
+       (SELECT SUM(sdrqtea / sdruauvc)
+          FROM stodetre@heinens_custom_prod
+         WHERE sdrcinrec = sercinrec
+           AND dcdcinr = sdrcinr) "Received quantity (PU)"
+  FROM cdedetcde@heinens_custom_prod,
+       VENDOR_LIST,
+       fouccom@heinens_custom_prod
+ WHERE sercincde = dcdcincde
+   AND dcdcfin = foucfin
+   AND serccin = fccccin
+   AND sertmvt = 1 /* RECEPTION */
+ GROUP BY sersite,
+          foucnuf,
+          foulibl,
+          fccnum,
+          serfilf,
+          to_char(serdrec, ''MM/DD/RRRR''),
+          dcdcexr,
+          dcdcinr,
+          sercexcde,
+          dcdcincde,
+          sercinrec
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No receipt WHS/ALLO</HEADERIFEMPTY>
+  <HEADER>Receipt WHS/ALLO for a reception date</HEADER>
+  
+</ROOT>
+

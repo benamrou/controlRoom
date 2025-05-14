@@ -1,0 +1,30 @@
+<ROOT>
+    <QUERY> 
+
+SELECT arasite "Whs #", foucnuf || '' | '' || foulibl "Vendor code desc",
+       fccnum "Contract",
+       aracexr || ''/'' || aracexvl || '' '' || pkstrucobj.get_desc@heinens_custom_prod(1,aracinr,''HN'') "Item code desc.",
+       ''Secondary vendor'' "Main",
+       to_char(MIN(araddeb),''MM/DD/RRRR'') "Orderable since",
+       to_char(MAX(aradfin),''MM/DD/RRRR'') "Orderable until"
+FROM artuc@heinens_custom_prod uc1, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+WHERE aratfou=0
+AND aracfin=foucfin
+AND araccin=fccccin
+AND TRUNC(SYSDATE+1) BETWEEN araddeb AND aradfin
+AND arasite IN (90061, 91070, 91071)
+AND NOT EXISTS (SELECT 1 FROM artuc@heinens_custom_prod uc2
+                WHERE uc2.aratfou=1 AND uc2.aracinr=uc1.aracinr 
+                AND TRUNC(SYSDATE+1) BETWEEN uc2.araddeb AND uc2.aradfin 
+                AND uc1.arasite=uc2.arasite)
+ GROUP BY arasite, foucnuf, foulibl, fccnum,
+          aracexr,aracexvl, aracinr
+ORDER BY arasite, foucnuf ASC
+
+</QUERY>
+ 
+  <HEADERIFEMPTY>No secondary vendor issue</HEADERIFEMPTY>
+  <HEADER>No main but secondary vendor issue</HEADER>
+  
+</ROOT>
+

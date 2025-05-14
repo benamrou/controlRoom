@@ -16,6 +16,7 @@ AND to_char(ecddenvoi,''HH:MI'') != ''10:10''
 AND ecdsite=socsite
 AND ecdcfin=foucfin
 AND soccmag=10
+and foucnuf not like ''%XMF%''
 AND foutype=3 /* Allotment vendor */
 AND foucnuf LIKE ''AO%''
 AND NOT EXISTS (SELECT 1 FROM alertlog, alerts

@@ -1,0 +1,8 @@
+5/9/2025 6:53:17 [batch] batch: "Executing command on 10.227.100.85 hnpcen Heinen123! . /home/hnpcen/env/envCEN; export GOLD_DEBUG=1; psifa128p psifa128p $USERID 09/05/25  -u259053543 HN 1;"
+5/9/2025 6:53:18 [batch] batch: "127.0.0.1: host.onEnd event"
+5/9/2025 11:48:4 [batch] batch: "Executing command on 10.227.100.85 hnpcen Heinen123! . /home/hnpcen/env/envCEN; export GOLD_DEBUG=1; $BIN/shell/generate_fouplan.sh 17472 05/10/25 12/31/25"
+5/9/2025 11:48:7 [batch] batch: "127.0.0.1: host.onEnd event"
+5/9/2025 11:48:10 [batch] batch: "Executing command on 10.227.100.85 hnpcen Heinen123! . /home/hnpcen/env/envCEN; export GOLD_DEBUG=1; $BIN/shell/generate_fouplan.sh 17472 01/01/26 12/31/26"
+5/9/2025 11:48:12 [batch] batch: "127.0.0.1: host.onEnd event"
+5/9/2025 14:19:30 [batch] batch: "Executing command on 10.227.100.85 hnpcen Heinen123! . /home/hnpcen/env/envCEN; export GOLD_DEBUG=1; psifa40p psifa40p $USERID 09/05/25 1 -1  -uvmorgan3563 HN 1;"
+5/9/2025 14:19:32 [batch] batch: "127.0.0.1: host.onEnd event"

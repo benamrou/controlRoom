@@ -1,0 +1,43 @@
+<ROOT>
+    <QUERY> 
+
+WITH PREP_ROUTE AS (select ''OK'' "STATUS",
+       to_char(et_ctourn) "Route #",
+       trunc(qt_datexp) "Ship. date",
+       et_libtou "Route desc.",
+       qt_statut "Status",
+       PAR_STM.pi_li2pos "Status desc"
+  from tb_etour@heinens_stk_prod, tb_qtour@heinens_stk_prod, 
+       tb_parl@heinens_stk_prod PAR_TTO, tb_parl@heinens_stk_prod PAR_STM
+ where et_ttourn != ''P''
+   and et_ctourn = qt_ctourn
+   and qt_statut in (''0'', ''2'', ''3'')
+   and qt_depot = :param2
+   and trunc(qt_datexp) between trunc(sysdate) and trunc (sysdate+5)
+   and (PAR_TTO.pi_tablex = ''TTO'' and PAR_TTO.pi_postex = et_ttourn and PAR_TTO.pi_lang = ''GB'') 
+   and (PAR_STM.pi_tablex = ''STM'' and PAR_STM.pi_postex = qt_statut and PAR_STM.pi_lang = ''GB'') ),
+   CHECK_DATE AS (select trunc(sysdate) "onCheckDate" from dual union 
+                  select trunc(sysdate+1) from dual union 
+                  select trunc(sysdate+2) from dual union 
+                  select trunc(sysdate+3) from dual union 
+                  select trunc(sysdate+4) from dual union 
+                  select trunc(sysdate+5) from dual)  
+   select ''MISSING ROUTE'', ''STORE #'' || ir_codint "Store #", 
+          to_char("onCheckDate", ''MM/DD/RR'') "Ship date", ''Prepared route already processed.'' "Comment"
+   from tb_inter@heinens_stk_prod,CHECK_DATE
+   where ir_typint=2 and ir_codint !=0 and (50 > ir_codint or ir_codint=99953)
+   and not exists (select 1 from PREP_ROUTE 
+                   where "Ship. date"="onCheckDate" and (lpad(ir_codint,2,''0'')=substr("Route #", 5, 2) or 
+                   (ir_codint=''99953'' and substr("Route #", 5, 2)=''51'')
+                   )
+        )
+   /* Exception Sunday no shipment */
+   and to_char(sysdate,''D'')!=''1''
+
+   
+</QUERY>
+  <HEADERIFEMPTY>No missing route</HEADERIFEMPTY>
+  <HEADER>Whs missing route</HEADER>
+  
+</ROOT>
+

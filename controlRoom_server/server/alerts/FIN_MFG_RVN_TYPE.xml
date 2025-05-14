@@ -1,0 +1,21 @@
+<ROOT>
+    <QUERY> 
+select distinct arasite "Whs", foucnuf || '' | '' || foulibl "Vendor code desc", fccnum "Contact",
+       aracexr "Item code", aracexvl "LV", pkstrucobj.get_desc@heinens_custom_prod(1, aracinr,''HN'') "Item desc",
+       (select aatcatt from artattri@heinens_custom_prod where aatcinr=aracinr and trunc(sysdate+1) between aatddeb and aatdfin and aatccla=''MFG3'') "Revenue type",
+       ''No Mfg revenue type defined'' "Comment"
+from artuc@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+where aracfin=foucfin
+and araccin=fccccin
+and foucnuf=''XMF001''
+and trunc(sysdate+1) between araddeb and aradfin
+and not exists (select 1 from artattri where aatcinr=aracinr and trunc(sysdate+1) between aatddeb and aatdfin and aatccla=''MFG3'')
+order by aracexr asc
+
+
+</QUERY>
+  <HEADERIFEMPTY>No Revenue type missing</HEADERIFEMPTY>
+  <HEADER>Mfg revenue type missing</HEADER>
+  
+</ROOT>
+

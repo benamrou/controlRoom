@@ -1,0 +1,26 @@
+<ROOT>
+    <QUERY> 
+ select distinct aracexr "Item code", aracexvl "LV", ararefc "JF code", 
+               foucnuf "Vendor code", fccnum "Comm. contract", fcclib "Contract desc", 
+               pkstrucobj.get_desc@heinens_custom_prod(1,aracinr,''HN'') "Item desc.",
+               artdlim "Shelf life"
+        from artrac@heinens_custom_prod, artuc@heinens_custom_prod, 
+             artasent@heinens_custom_prod, foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+        where aracinr=artcinr
+        and trunc(sysdate) between araddeb and aradfin
+        and aratcde=1
+        and aratfou=1
+        and aloseqvl=araseqvl
+        and trunc(sysdate) between aloddeb and alodfin
+        and alocomm=0 /* in-stock */
+        and foutype=3
+        and foucfin=aracfin
+        and araccin=fccccin
+        and nvl(artdlim,0)=0
+        and alosite=93080
+</QUERY>
+  <HEADERIFEMPTY>No new Item</HEADERIFEMPTY>
+  <HEADER>New active items</HEADER>
+  
+</ROOT>
+

@@ -1,0 +1,55 @@
+<ROOT>
+    <QUERY> 
+   select ecdsite "Store #",
+               ecdcexcde "PO#",
+               foucnuf "Vendor code", fccnum "Contract",
+               ecdnfilf "Address chain",
+               fcclib "Vendor desc.",
+               trunc(ecddcom) "Order date",
+               trunc(ecddliv) "Delivery date",
+               ecdetat || '' | '' || pkparpostes.get_postlibl@heinens_custom_prod(1,10,502, ecdetat,''HN'') "Order status",
+               dcdcexr "Item code", pkstrucobj.get_desc@heinens_custom_prod(1,dcdcinr, ''HN'') "Item desc.",
+               dcdrefc "ref. to order",
+               (select rp_adrpic
+                from v_pick_3@heinens_stk_prod pk where rp_cproin=dcdcexr and rp_donord=93080 and rownum=1) "Picking address",
+               dcdqtec/dcduauvc "Qty ord. (cases)",
+               (SELECT SUM(UL_NQTEUP) from TB_EUMS@HEINENS_STK_PROD,TB_LCUMS@HEINENS_STK_PROD, TB_TRAUMS@HEINENS_STK_PROD
+                WHERE UL_USSCC = UE_USSCC
+                AND UL_USSCC  = UT_USSCC
+                AND UL_CSSCC  = UT_CSSCC
+                 AND UE_INDFIC = ''1''
+                 AND UL_DONORD=93080
+                 AND UL_NUMLIG = UT_NUMLIG
+                 and ul_nqteup > 0
+                 AND UL_CPROIN = DCDCEXR) "Inventory (cases)",
+
+                (SELECT 
+                LISTAGG(''['' || SUM(ul_nqteup) || '',''  || to_char(to_date(ut_valind,''RRRRMMDD''),''MM/DD/RR'') || '']'' , '' / '' ON OVERFLOW TRUNCATE)
+                   WITHIN GROUP (ORDER BY ut_valind) UBD
+                FROM TB_EUMS@HEINENS_STK_PROD, TB_LCUMS@HEINENS_STK_PROD, TB_TRAUMS@HEINENS_STK_PROD
+                WHERE UL_USSCC  = UE_USSCC
+                --AND UE_INDFIC = ''1''
+                AND UL_USSCC  = UT_USSCC
+                AND UL_CSSCC  = UT_CSSCC
+                AND ul_donord=93080
+                AND ul_cproin=dcdcexr
+               AND UL_NUMLIG = UT_NUMLIG
+               and ul_nqteup > 0
+               group by ut_valind ) "UBD"
+
+        from cdeentcde@heinens_custom_prod, cdedetcde@heinens_custom_prod,
+             foudgene@heinens_custom_prod, fouccom@heinens_custom_prod
+        where ecdcincde=dcdcincde
+        and ecdcfin=foucfin
+        and ecdccin=fccccin
+        and foucnuf in (''H093080'', ''AOXMF00172'', ''AOXMF00180'')
+        and ecdetat=5
+        order by ecdcexcde desc
+        
+
+  </QUERY>
+  <HEADERIFEMPTY>No MFG order today</HEADERIFEMPTY>
+  <HEADER>MFG opened order</HEADER>
+  
+</ROOT>
+
