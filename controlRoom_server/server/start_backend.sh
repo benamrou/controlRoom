@@ -9,7 +9,8 @@ export UV_THREADPOOL_SIZE=10
 
 CONTROLROOM_SERVER=${ICR_SERVER}
 #CONFIG_SERVER=${CONTROLROOM_SERVER}/config/admin/server
-NODE_BIN=/usr/bin/
+#NODE_BIN=/usr/bin/
+NODE_BIN=/usr/local/bin/
 
 cd ${CONTROLROOM_SERVER}
 # export NODE_MODULE_PATH=${CONFIG_SERVER}/node_modules/lib/node_modules/ControlRoomAdminServer/node_modules/

@@ -67,7 +67,7 @@ function executeLibQuery (ticketId, queryNum, params, user, database_sid, langua
     executeLibQueryCallback(ticketId, queryNum, params, user, database_sid, language, request, response, volume, 
     function (err,data) {
         if(err) {
-            heap.logger.log(ticketId, 'Error executeLibQuery ' + JSON.stringify(err), 3);
+            heap.logger.log(ticketId, 'Error executeLibQuery ' + JSON.stringify(err), user, 3);
         }
         callbackSendData(response,data);
     });
@@ -79,7 +79,7 @@ function executeSQLQuery (ticketId, queryNum, commit, params, user, database_sid
     executeSQLQueryCallback(ticketId, queryNum, commit, params, user, database_sid, language, request, response, volume, 
     function (err,data) {
         if(err) {
-            heap.logger.log(ticketId, 'Error executeSQL ' + JSON.stringify(err), 3);
+            heap.logger.log(ticketId, 'Error executeSQL ' + JSON.stringify(err), user, 3);
         }
         callbackSendData(response,data);
     });
@@ -146,7 +146,7 @@ function executeSmartLoadedQuery (ticketId, queryNum, params, user, database_sid
         if (heap.fs.existsSync(__dirname + '/../../' + filename)) {
             let data = require(__dirname + '/../../' + filename);
             //let data = require(filename);
-            heap.logger.log(ticketId, filename + " File(s) returned... [FETCH]", user);
+            heap.logger.log(ticketId, filename + " File(s) returned... [FETCH]", user, 1);
             callbackSendData(response,data);
             return;
         }
@@ -187,7 +187,7 @@ async function executeLibQueryCallback(ticketId, queryNum, params, user, databas
         //heap.logger.log(ticketId, "LIBQUERY with Callback: ", user);
         SQLquery = SQLquery + ",'" + queryNum + "','" + user + "'," + database_sid + ", " + params  + "," +
                                 language + ", :cursor); END;";
-        heap.logger.log(ticketId, SQLquery, user);
+        heap.logger.log(ticketId, SQLquery, user, 1);
 
 
         heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
@@ -205,7 +205,7 @@ async function executeLibQueryCallback(ticketId, queryNum, params, user, databas
             )
             .catch (function(err) {
                 //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
-                heap.logger.log(ticketId,'SQLQuery - executeLibQueryCallback : ' + err, user);
+                heap.logger.log(ticketId,'SQLQuery - executeLibQueryCallback : ' + err, user, 3);
                 //app.next(err);
             });
             //return promiseExecution;
@@ -223,7 +223,7 @@ async function executeSQLQueryCallback(ticketId, query, commit, params, user, da
 
         SQLquery = SQLquery + ",'" + query + "'," + commit + ",'" + user + "'," + database_sid + ", " + params  + "," +
                                 language + ", :cursor); END;";
-        heap.logger.log(ticketId, SQLquery, user);
+        heap.logger.log(ticketId, SQLquery, user, 1);
 
 
         heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
@@ -241,7 +241,7 @@ async function executeSQLQueryCallback(ticketId, query, commit, params, user, da
             )
             .catch (function(err) {
                 //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
-                heap.logger.log(ticketId,'SQLQuery - executeCursor : ' + err, user);
+                heap.logger.log(ticketId,'SQLQuery - executeCursor : ' + err, user, 1);
                 //app.next(err);
             });
             //return promiseExecution;
@@ -276,7 +276,7 @@ async function executeQueryCallback(ticketId, query, params, user, database_sid,
     //heap.logger.log(ticketId, "LIBQUERY with Callback: ", user);
     SQLquery = SQLquery + ",'" + query + "','" + user + "'," + database_sid + ", " + params  + "," +
                             language + ", :cursor); END;";
-    heap.logger.log(ticketId, SQLquery, user);
+    heap.logger.log(ticketId, SQLquery, user, 1);
 
     heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
     await heap.dbConnect.executeCursor(
@@ -293,7 +293,7 @@ async function executeQueryCallback(ticketId, query, params, user, database_sid,
         )
         .catch (function(err) {
             //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
-            heap.logger.log(ticketId,'SQLQuery - executeQueryCallback : ' + err, user);
+            heap.logger.log(ticketId,'SQLQuery - executeQueryCallback : ' + err, user, 1);
             //app.next(err);
         });
         //return promiseExecution;
@@ -320,7 +320,7 @@ module.exports.executeQueryCallback = executeQueryCallback;
 async function executeSQL(ticketId, sql, bindParams, user, request, response, callback)  {
 
     //heap.logger.log(ticketId, "LIBQUERY with Callback: ", user);
-    heap.logger.log(ticketId, sql + '\n' + JSON.stringify(bindParams), user);
+    heap.logger.log(ticketId, sql + '\n' + JSON.stringify(bindParams), user,1);
 
     heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
     await heap.dbConnect.executeQuery(sql, bindParams,
@@ -333,7 +333,7 @@ async function executeSQL(ticketId, sql, bindParams, user, request, response, ca
                             callback)
         .catch (function(err) {
             //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
-            heap.logger.log(ticketId,'SQLQuery - executeSQL : ' + err, user);
+            heap.logger.log(ticketId,'SQLQuery - executeSQL : ' + err, user, 1);
             //app.next(err);
         });
         //return promiseExecution;

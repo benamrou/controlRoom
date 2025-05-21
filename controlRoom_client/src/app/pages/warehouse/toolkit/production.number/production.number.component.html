@@ -1,0 +1,153 @@
+<app-page-header [heading]="'Production batch number'" [icon]="'fa-hashtag'"
+                 [waitMessage]="waitMessage" [okExit]="okExit" [screenID]="screenID"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+<div>
+    <div class="alert alert-warning"
+      style="width: 100%; float: left; font-size: small; border: black 1px solid;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span style="margin-left: 1em;"> Use this functionnality when items needs to be added/removed to Manufacturing production batch number traceability group. All manufactured items are produced with a unique Production batch number, this batch number is scanned during the receiving process and shared across all the warehouses.
+      </span>
+      <br>
+      <br>
+      <span style="margin-left: 2.2em; font-weight: bold;"> Pre-requisite, item must be in warehouse. Make sure you are selecting the correct item. Most of warehouse items are UBD managed.
+      </span>
+    </div>
+  </div>
+<!-- Search Panel -->
+<div class="bbs_search_panel"  >        
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Item # : </span>
+    <span style="overflow: hidden; padding-right: .5em; width: 70%; line-height: 25px; align-self: center;">
+    <input type="text"  [(ngModel)]="searchItem" placeholder="  Enter an item code " 
+            style="width: 50%;margin-left: 10px;"/>     
+    </span>
+    <span class="pull-right" style="padding-right: 20px">
+            <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+                    [style]="{'height': '35px'}" style="margin-right: 15px">
+            </button>
+            <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true"
+                    [style]="{'height': '35px'}"></button>
+    </span>
+</div>
+<div class="bbs_search_sub_panel"  style="height: 75px !important">
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Traceability indicator : </span>
+    <span style="overflow: hidden; padding-left: .7em; width: 90%; line-height: 25px">
+    <p-dropdown [options]="traceabilityIndicator" [(ngModel)]="selectedIndicator" placeholder="Select an indicator group" 
+            optionLabel="name" [showClear]="true">
+    </p-dropdown>
+    </span>
+</div>
+
+
+<p></p>
+
+<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    <span>{{msgDisplayed}}</span>
+        <p-footer>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
+                    label="Ok">
+            </button>
+        </p-footer>
+</p-dialog>
+
+<!-- Panel resul -->
+<!-- Result panel of the resarch --> 
+<!-- If more than one element retrieved elde assumed element selected  *ngIf="searchResult.length > 1" -->
+<div  item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
+
+        <p-table #result [value]="searchResult" sortMode="multiple" 
+        [rows]="5"  [rowsPerPageOptions]="[5,10,50]"
+        [paginator]="true" [pageLinks]="3" 
+        [columns]="columnsResult"
+        selectionMode="single" [(selection)]="selectedElement" 
+        [resizableColumns]="true" columnResizeMode="expand"
+        [responsive]="true" [totalRecords]="searchResult.length"
+        [reorderableColumns]="true" scrollHeight="400px"
+        (onRowSelect)="onRowSelect($event)"
+        [globalFilterFields]="['WHSID', 'WHSDESC', 'SSCC']"
+        [autoLayout]="true"tableStyleClass="table-layout: auto;">
+        
+        <!-- FILTER -->
+        <ng-template pTemplate="caption">
+            <div class="table-header grid">
+                <div class="col-1">
+                    <div>
+                        <span>
+                            <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div style="margin-left: 1em">
+                        <span>
+                            <button type="button" pButton iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="Unselect all" [escape]="false" tooltipPosition="bottom"
+                                label="Unselect all" (click)="unselectAll()" style="float:left">
+                            </button>
+                        </span>
+                        <span>
+                            <button type="button" pButton iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="Enable Producton lot number traceability" [escape]="false" tooltipPosition="bottom"
+                                label="Activate" (click)="activate()" style="float:left">
+                            </button>
+                        </span>
+                        <span>
+                            <button type="button" pButton iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                pTooltip="Deactivate Producton lot number traceability" [escape]="false" tooltipPosition="bottom"
+                                label="Deactivate" (click)="deactivate()" style="float:left">
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="col-6" style="text-align: right;">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+        <!-- HEADER -->
+            <ng-template pTemplate="header">            
+                <tr>
+                    <th *ngFor="let col of columnsResult" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                        {{col.header}}
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+        <!-- BODY -->
+            <ng-template pTemplate="body" let-rowData let-columns="columnsResult" let-rowIndex="rowIndex">
+                <tr [pSelectableRow]="rowData" [style.background-color]="(rowData['Selected']) ? 'lightyellow' : 'unset'">
+                    <ng-container *ngFor="let col of columnsResult; " class="ui-resizable-column"  >
+                        <td class="ui-resizable-column" [style.text-align]="col.align" >
+                            <span *ngIf="col.field==='X'"  >
+                                <p-checkbox [(ngModel)]="rowData['Selected']" [binary]="true"></p-checkbox>
+                            </span>
+                            <span *ngIf="col.field!='X'" class="ui-resizable-column" >
+                                    {{rowData[col.field]}}
+                            </span>
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-template>
+        </p-table>
+        <i class="FOOTER_Table" >{{searchResult.length}} references</i>
+</div>
+<br>
+<br>
+<p style='border-style: solid; border: black'></p>
+<div style="text-align:center" >
+    <button  *ngIf="searchResult.length > 0"  pButton icon="fas fa-dot-circle"  label="Validate" (click)="validateChanges()" ></button>
+    <button  *ngIf="searchResult.length == 0" disabled pButton icon="fas fa-dot-circle"  label="Validate" (click)="validateChanges()" ></button>
+</div>

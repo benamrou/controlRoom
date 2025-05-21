@@ -124,6 +124,7 @@ import { FillRateModule } from './pages/reporting/fill.rate/fill.rate.module';
 import { SupplierAddressModule } from './pages/mass.update/supplier.address/supplier.address.module';
 import { UnarchiveInvoiceModule } from './pages/finance/unarchive/unarchive.invoice.module';
 import { ReportFilterModule } from './pages/reporting/report.filter/report.filter.module';
+import { ProductionNumberModule } from './pages/warehouse/toolkit/production.number/production.number.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -236,7 +237,8 @@ import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module'
     PalletLabelModule,
     UnarchiveInvoiceModule,
     ReportFilterModule,
-    AvailableMHModule
+    AvailableMHModule,
+    ProductionNumberModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

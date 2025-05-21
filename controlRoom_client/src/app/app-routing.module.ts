@@ -61,6 +61,7 @@ import { SupplierAddressComponent } from './pages/mass.update/supplier.address/s
 import { PalletLabelComponent } from './pages/warehouse/toolkit/pallet.label/pallet.label.component';
 import { UnarchiveInvoiceComponent } from './pages/finance/unarchive/unarchive.invoice.component';
 import { ReportFilterComponent } from './pages/reporting/report.filter/report.filter.component';
+import { ProductionNumberComponent } from './pages/warehouse/toolkit/production.number/production.number.component';
 
 import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
 import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
@@ -106,7 +107,7 @@ const routes: Routes = [
   { path: 'whsrestartservices', component: WarehouseRestartServicesComponent, canActivate: [AuthentificationGuard] },
   { path: 'releasepallet', component: ReleasePalletComponent, canActivate: [AuthentificationGuard] },
   { path: 'palletlabel', component: PalletLabelComponent, canActivate: [AuthentificationGuard] },
-
+  { path: 'productionnumber', component: ProductionNumberComponent, canActivate: [AuthentificationGuard] },
   
   /* Syndigo */
   { path: 'syndigosearch', component: SyndigoProductComponent, canActivate: [AuthentificationGuard] },

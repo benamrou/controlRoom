@@ -1,0 +1,14 @@
+/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server_admin.js:52
+initOracleClient();
+^
+
+ReferenceError: initOracleClient is not defined
+    at Object.<anonymous> (/Users/bbsymphony/Workspace/controlRoom/controlRoom_server/server/server_admin.js:52:1)
+    at Module._compile (node:internal/modules/cjs/loader:1099:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1153:10)
+    at Module.load (node:internal/modules/cjs/loader:975:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:77:12)
+    at node:internal/main/run_main_module:17:47
+
+Node.js v17.9.1

@@ -49,6 +49,7 @@ app.use( bodyParser.urlencoded({
 );
 
 //app.use(bodyParser());
+initOracleClient();
 
 let corsOptions = {
     origin: '*',
@@ -255,7 +256,7 @@ dbConnection.createPool(config.db.connAttrs)
 
 process.on('uncaughtException', function(err) {
     logger.log('internal', 'Uncaught exception ' + err, 'internal', 3);
-    shutdown();
+    //shutdown();
 });
 
 process.on('SIGTERM', function () {
