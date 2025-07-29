@@ -3,7 +3,12 @@
 
 sqlplus -s $ICRUSERID @$HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.sql
 
-chmod 777 $HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.txt
+if [ -f "/path/to/your/file" ]; then
+	chmod 777 $HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.txt
+	sed '/^$/d' $HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.txt > $HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.out
+else
+	exit;
+fi
 sed '/^$/d' $HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.txt > $HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.out
 
 mylist="$HOME/heinensapps/controlRoom_server/scripts/sql/INVENTORY_store_list.out"

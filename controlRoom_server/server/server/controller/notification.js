@@ -144,7 +144,7 @@ function sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, 
         }]
     };
 
-    heap.logger.log('alert', 'Sending email sent to:' + to + ' cc:' +  emailcc + ' bcc:' + emailbcc + ' subject: ' + subject, 'alert', 1);
+    heap.logger.log('alert', 'Sending email to:' + to + ' cc:' +  emailcc + ' bcc:' + emailbcc + ' subject: ' + subject, 'alert', 1);
     let infoMessage =  heap.transporter.sendMail(mailOptions, function(error, info) {
         if (error) { 
             heap.logger.log('alert', 'Error sending email function call: ' + to + ' ' + subject, 'alert', 3);
@@ -179,32 +179,49 @@ function clearModule() {
     heap.disrequire('json2xls.js');
 }
 
-function processContent(SQL, alertData, request, result) {
-    let SUBJECT_EXT ='';
-    let FILENAME_EXT='result.xlsx';
-    if ( typeof request.header('SUBJECT_EXT') !== 'undefined' )  {
-        SUBJECT_EXT = request.header('SUBJECT_EXT');
-    }
-    if ( typeof request.header('FILENAME_EXT') !== 'undefined' )  {
-        FILENAME_EXT = request.header('FILENAME_EXT');
-    }
-    let bannerAdjusted, queryAdjusted, renameColumn, query2Adjusted;
-    try {
-        bannerAdjusted = result.ROOT.BANNER? '' + result.ROOT.BANNER:'';
-        queryAdjusted = result.ROOT.QUERY? '' + result.ROOT.QUERY:'';
-        query2Adjusted = result.ROOT.QUERY2? '' + result.ROOT.QUERY2:'';
-        renameColumn = result.ROOT.RENAME? '' + result.ROOT.RENAME:'';
-    } catch (err) {
-        heap.logger.log('alert', 'Error formatting XML - Query/Banner not found ROOT :' + JSON.stringify(err.message), 'alert', 3);
-        return;
-    }
+async function processContent(SQLProcess, alertData, request, response, result) {
+  let SUBJECT_EXT = request.header('SUBJECT_EXT') || '';
+  let FILENAME_EXT = request.header('FILENAME_EXT') || 'result.xlsx';
 
-    bannerAdjusted = bannerAdjusted.replace(/'/g,"''")
-    queryAdjusted = queryAdjusted.replace(/'/g,"''")
+  // Parse banner, rename query, etc.
+  let bannerAdjusted, renameQuery, queryNodes = [];
+  try {
+    bannerAdjusted = result.ROOT.BANNER ? '' + result.ROOT.BANNER : '';
+    renameQuery = result.ROOT.RENAME ? '' + result.ROOT.RENAME : '';
     
-    /** If banner to publish **/
-    if (result.ROOT.BANNER) {
-        SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
+    // Dynamically collect all QUERY, QUERY2, QUERY3, ...
+    Object.keys(result.ROOT).forEach((key) => {
+      const match = key.match(/^QUERY(\d*)$/i);
+      if (match) {
+        const index = match[1] || '1'; // '1' for QUERY without number
+        queryNodes.push({
+          key,
+          sql: result.ROOT[key],
+          index,
+          sheetName: result.ROOT[index === '1' ? 'NAME' : `NAME${index}`] || `RESULT${index}`,
+          sheetFormat: result.ROOT[index === '1' ? 'FORMATXLS' : `FORMATXLS${index}`] || '',
+          sheetFreezeHeader: result.ROOT[index === '1' ? 'FREEZERHEADER' : `FREEZERHEADER${index}`] || '',
+          sheetFreezeColumn: result.ROOT[index === '1' ? 'FREEZERCOLUMN' : `FREEZERCOLUMN${index}`] || '',
+          sheetColor: result.ROOT[index === '1' ? 'TABCOLORXLS' : `TABCOLORXLS${index}`] || '244062'
+        });
+      }
+    });
+
+     heap.logger.log('alert', 'queryNodes :' +JSON.stringify(queryNodes), 'alert', 3);
+
+    // Sort by index ascending (e.g., QUERY, QUERY2, QUERY3 ...)
+    queryNodes.sort((a, b) => parseInt(a.index) - parseInt(b.index));
+  } catch (err) {
+    heap.logger.log('alert', 'Error formatting XML - ' + JSON.stringify(err.message), 'alert', 3);
+    return;
+  }
+
+  // Escape single quotes for safety in SQL
+  bannerAdjusted = bannerAdjusted.replace(/'/g, "''");
+
+  // Start executing first SQL query to get detailData for HTML/email usage
+  if (result.ROOT.BANNER) {
+        SQLProcess.executeQueryUsingMyCallBack(SQLProcess.getNextTicketID(),
             result.ROOT.BANNER, 
             "'{" + request.query.PARAM + "}'",
             request.header('USER'),
@@ -213,439 +230,275 @@ function processContent(SQL, alertData, request, result) {
             request.req_dataBanner, request.response_dataBanner, 
             function (err,dataBanner) {
                 let bannerData = dataBanner;
-
-                SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                    result.ROOT.QUERY, 
-                    "'{" + request.query.PARAM + "}'",
-                    request.header('USER'),
-                    "'{" + request.header('DATABASE_SID') + "}'", 
-                    "'{" +request.header('LANGUAGE') + "}'", 
-                    request.req_datadetail, request.response_dataDetail, 
-                    async function (err,dataDetail) {
-                        let detailData =dataDetail;
-                        //heap.logger.log('alert','ALTNOHTML ' + alertData[0].ALTNOHTML, 'alert', 3);
-                        if ((detailData.length > 0 || alertData[0].ALTREALTIME == '0') && alertData[0].ALTNOHTML == 0) {
-                            let html = '';
-                            let preHtml='';
-                            let bannerHtml='';
-                            let workbook, worksheet;
-                            if (bannerData.length >= 1) {
-                                if (bannerData[0].MESSAGE) {
-                                if (bannerData[0].CRITICALITY === 'WARNING') {
-                                    bannerHtml += '<div style="position: absolute; top: 0; left: 0;  width: 100%; text-align: center;background-color: #bb3434; ">';
-                                    bannerHtml += '<span style="font-weight: bolder;color:#FFFFFF">';
-                                }
-                                else {
-                                    bannerHtml += '<div style="position: absolute; top: 0; left: 0;  width: 100%; text-align: center;background-color: #32CD32;">'
-                                    bannerHtml += '<span style="font-weight: bolder;color:#000000">'
-                                }
-                                bannerHtml += bannerData[0].MESSAGE;
-                                bannerHtml += '</span>';
-                                bannerHtml += '</div>';
-                                bannerHtml += '<br>';
-                                bannerHtml += '<br>';
-                                
-                                }
-                            }
-                            preHtml += bannerHtml;
-                            preHtml += '<strong>' + alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] </strong>';
-                            preHtml += '<br>';
-                            preHtml += '<br>';
-                            preHtml += alertData[0].ALTCONTENTHTML;
-                            preHtml += '<br>';
-                            preHtml += '<br>';
-                            preHtml += '<br>';
-                            if (detailData.length == 0) {
-                                html += preHtml;
-                                html += 'No reported elements.';
-                                sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html);
-                            }
-                            else {
-                                if (detailData.length > 500 || alertData[0].ALTNOHTML == 1) {
-                                    html += preHtml;
-                                    html += 'Look at the attachment for details.';
-                                }
-                                else {
-                                    html = preHtml;
-                                    html = heap.json2html.json2table(detailData, html, alertData[0].ALTFORMAT);
-                                }
-                                
-                                let tabName = 'RESULT';
-                                let workbook = new heap.excel.Workbook();
-                                //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
-                                if (result.ROOT.NAME) {
-                                    tabName =  '' + result.ROOT.NAME
-                                }
-                                let worksheet = workbook.addWorksheet(tabName, {properties:{tabColor:{argb:'FFC0000'}}});
-
-                                /* RENAME COLUMN */
-                                let renameColumn;
-                                if (result.ROOT.RENAME) {
-                                    SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                                    result.ROOT.RENAME, 
-                                    "'{" + request.query.PARAM + "}'",
-                                    request.header('USER'),
-                                    "'{" + request.header('DATABASE_SID') + "}'", 
-                                    "'{" +request.header('LANGUAGE') + "}'", 
-                                    request.req_dataRename, request.response_dataRename, 
-                                    async function (err,dataRename) {
-                                        renameColumn = dataRename;
-                                    });
-                                }
-                                heap.logger.log('alert', 'renameColumn: ' + JSON.stringify(renameColumn), 'alert', 3);
-
-                                
-                                try {
-                                    let wbxls= heap.json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT, 'ResultTable', alertData[0].ALTFORMATXLS1 + alertData[0].ALTFORMATXLS2);
-                                    workbook= wbxls.wb;
-                                    worksheet= wbxls.ws;
-                                } catch (err) {
-                                    heap.logger.log('alert', 'Error heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
-                                }
-                                /* Check if multiple tab */
-                                if (result.ROOT.QUERY2) {
-                                    let tabName2 = 'RESULT2';
-                                    //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
-                                    if (result.ROOT.NAME2) {
-                                        tabName2 =  '' + result.ROOT.NAME2
-                                    }
-
-                                    await SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                                                        result.ROOT.QUERY2, 
-                                                        "'{" + request.query.PARAM + "}'",
-                                                        request.header('USER'),
-                                                        "'{" + request.header('DATABASE_SID') + "}'", 
-                                                        "'{" +request.header('LANGUAGE') + "}'", 
-                                                        request.req_datadetail2, request.response_dataDetail2, 
-                                                        async function (err,dataDetail2) {
-                                                            let detailData2 =dataDetail2;
-
-                                                            let worksheet2 = workbook.addWorksheet(tabName2, {properties:{tabColor:{argb:'E7EBFF0'}}});
-                                                            if (alertData[0].ALTFREEZEHEADER == 1) {
-                                                                worksheet2.views = [{state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER+1}];
-                                                            }
-                                                            /* RENAME COLUMN */
-                                                            let renameColumn;
-                                                            if (result.ROOT.RENAME2) {
-                                                                SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                                                                result.ROOT.RENAME, 
-                                                                "'{" + request.query.PARAM + "}'",
-                                                                request.header('USER'),
-                                                                "'{" + request.header('DATABASE_SID') + "}'", 
-                                                                "'{" +request.header('LANGUAGE') + "}'", 
-                                                                request.req_dataRename, request.response_dataRename, 
-                                                                async function (err,dataRename) {
-                                                                    renameColumn = dataRename;
-                                                                });
-                                                            }
-                                                            heap.logger.log('alert', 'renameColumn: ' + JSON.stringify(renameColumn2), 'alert', 3);
-
-                                                            try {
-                                                                let wbxls2= await heap.json2xls.json2xls(workbook, worksheet2, alertData, detailData2, SUBJECT_EXT, 'ResultTable2', alertData[0].ALTFORMATTAB2XLS1 + alertData[0].ALTFORMATTAB2XLS2);
-                                                                workbook= wbxls2.wb;
-                                                            } catch (err) {
-                                                                heap.logger.log('alert', 'Error query2 heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
-                                                            }
-
-                                                            if (html.indexOf('ERRORDIAGNOSED') < 1) {
-                                                                workbook.xlsx.writeBuffer()
-                                                                .then(function(buffer) {
-                                                                    sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
-                                                                    buffer=null;
-                                                                });
-                                                            }
-                                    });
-                                }
-                                if (!result.ROOT.QUERY2) {
-                                    if (html.indexOf('ERRORDIAGNOSED') < 1) {
-                                        workbook.xlsx.writeBuffer()
-                                        .then(function(buffer) {
-                                            sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
-                                            buffer=null;
-                                        });
-                                    }
-                                }
-                            }
-
-                        if (alertData[0].ALTSMSCONTENT != '' && html.indexOf('ERRORDIAGNOSED') < 1) {
-                            let newLineSMS = '<br>'
-                            sendSMS(alertData[0].ALTMOBILE,   /* To */
-                                    alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT,  /* Subject */
-                                    alertData[0].ALTSMSCONTENT + ' : ' + detailData.length + newLineSMS +
-                                            '<b>Distribution list : </b> ' + alertData[0].ALTEMAIL) ;  /* Content */
-                        }
-                    }   
-                    if (detailData.length > 500) {
-                        SQL.executeQuery(SQL.getNextTicketID(),
-                                "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(''{big data}''), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
-                                "'{" + request.query.PARAM + "}'",
-                                request.header('USER'),
-                                "'{" + request.header('DATABASE_SID') + "}'", 
-                                "'{" +request.header('LANGUAGE') + "}'", 
-                                request,response);
-                    }
-                    else {
-                        SQL.executeQuery(SQL.getNextTicketID(),
-                                "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
-                                JSON.stringify(detailData).substring(1,3000).replace(/'/g, " ") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
-                                "'{" + request.query.PARAM + "}'",
-                                request.header('USER'),
-                                "'{" + request.header('DATABASE_SID') + "}'", 
-                                "'{" +request.header('LANGUAGE') + "}'", 
-                                request,response);
-                    }
-
-                    //sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT, 'body')  
-                    //response.send(detailData);
-                    //return;
-                });
+                processDetailandXLS(SQLProcess, alertData, request, response, result, queryNodes, renameQuery, SUBJECT_EXT, FILENAME_EXT, bannerData);
             });
+  }
+  else {
+    processDetailandXLS(SQLProcess, alertData, request, response, result, queryNodes, renameQuery, SUBJECT_EXT, FILENAME_EXT,[]);
+  }
+}
+
+
+async function processDetailandXLS(SQLProcess, alertData, request, response, result, queryNodes, renameQuery,
+                                   SUBJECT_EXT, FILENAME_EXT, bannerData) {
+      // Start executing first SQL query to get detailData for HTML/email usage
+    SQLProcess.executeQueryUsingMyCallBack(
+      SQLProcess.getNextTicketID(),
+      result.ROOT.QUERY,
+      "'{" + request.query.PARAM + "}'",
+      request.header('USER'),
+      "'{" + request.header('DATABASE_SID') + "}'",
+      "'{" + request.header('LANGUAGE') + "}'",
+      request.req_datadetail,
+      request.response_dataDetail,
+      async function (err, detailData) {
+        if (err) {
+          heap.logger.log('alert', 'SQL Error on main QUERY: ' + err.message, 'alert', 3);
+          return;
         }
-    else {
-        /** No banner to publish - Result directly **/
-        SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                                        result.ROOT.QUERY, 
-                                        "'{" + request.query.PARAM + "}'",
-                                        request.header('USER'),
-                                        "'{" + request.header('DATABASE_SID') + "}'", 
-                                        "'{" +request.header('LANGUAGE') + "}'", 
-        request.req_datadetail, request.response_dataDetail, 
-        async function (err,dataDetail) {
-            //request = null;
-            let detailData =dataDetail;
-            heap.logger.log('alert','ALTNOHTML ' + alertData[0].ALTNOHTML, 'alert', 3);
-            if (detailData.length > 0 || alertData[0].ALTREALTIME == '0') {
-                let html = '';
-                let preHtml='';
-                let bannerHtml='';
-                let workbook, worksheet;
-                
-                preHtml += '<strong>' + alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] </strong>';
-                preHtml += '<br>';
-                preHtml += '<br>';
-                preHtml += alertData[0].ALTCONTENTHTML;
-                preHtml += '<br>';
-                preHtml += '<br>';
-                preHtml += '<br>';
-                if (detailData.length == 0) {
-                    html += preHtml;
-                    html += 'No reported elements.';
-                    sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html);
-                }
-                else {
-                    if (detailData.length > 500 || alertData[0].ALTNOHTML == 1) {
-                        html += preHtml;
-                        html += 'Look at the attachment for details.';
-                    }
-                    else {
-                        html = preHtml;
-                        html = heap.json2html.json2table(detailData, html, alertData[0].ALTFORMAT);
-                    }
-                    
-                    let tabName = 'RESULT';
-                    let workbook = new heap.excel.Workbook();
-                    //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
-                    if (result.ROOT.NAME) {
-                        tabName =  '' + result.ROOT.NAME
-                    }
+        let preHtml = '';
+        let bannerHtml = '';
+        if (bannerData.length >= 1) {
+            if (bannerData[0].MESSAGE) {
+              if (bannerData[0].CRITICALITY === 'WARNING') {
+                  bannerHtml += '<div style="position: absolute; top: 0; left: 0;  width: 100%; text-align: center;background-color: #bb3434; ">';
+                  bannerHtml += '<span style="font-weight: bolder;color:#FFFFFF">';
+              }
+              else {
+                  bannerHtml += '<div style="position: absolute; top: 0; left: 0;  width: 100%; text-align: center;background-color: #32CD32;">'
+                  bannerHtml += '<span style="font-weight: bolder;color:#000000">'
+              }
+            bannerHtml += bannerData[0].MESSAGE;
+            bannerHtml += '</span>';
+            bannerHtml += '</div>';
+            bannerHtml += '<br>';
+            bannerHtml += '<br>';
+            preHtml += bannerHtml;
+          }
+        }
 
-                    let worksheet = workbook.addWorksheet(tabName, {properties:{tabColor:{argb:'FFC0000'}}});
-                    if (alertData[0].ALTFREEZEHEADER == 1) {
-                        worksheet.views = [{state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER+1}];
-                    }
+        // Prepare initial email HTML content
+        preHtml += `<strong>${alertData[0].ALTSUBJECT} ${SUBJECT_EXT} [${detailData.length} Object(s)]</strong><br><br>`;
+        preHtml += alertData[0].ALTCONTENTHTML + '<br><br><br>';
 
-                    /* RENAME COLUMN */
-                    let renameColumn;
-                    if (result.ROOT.RENAME) {
-                        await SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                        result.ROOT.RENAME, 
-                        "'{" + request.query.PARAM + "}'",
-                        request.header('USER'),
-                        "'{" + request.header('DATABASE_SID') + "}'", 
-                        "'{" +request.header('LANGUAGE') + "}'", 
-                        request.req_dataRename, request.response_dataRename, 
-                        async function (err,dataRename) {
-                            renameColumn = dataRename;
-                            try {
-                                let wbxlsa= heap.json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT, 'ResultTable', alertData[0].ALTFORMATXLS1 + alertData[0].ALTFORMATXLS2, renameColumn);
-                                workbook= wbxlsa.wb;
-                                worksheet= wbxlsa.ws;
-                            } catch (err) {
-                                heap.logger.log('alert', 'Error heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
-                            }
-                            try {
-                            heap.logger.log('alert', 'Completed JSON2XLS ' + JSON.stringify(query2Adjusted), 'alert', 3);
+        let html = '';
+        if (detailData.length === 0) {
+          html = preHtml + 'No reported elements.';
+        } else {
+          if (detailData.length > 500 || alertData[0].ALTNOHTML == 1) {
+            html = preHtml + 'Look at the attachment for details.';
+          } else {
+            html = preHtml;
+            html = heap.json2html.json2table(detailData, html, alertData[0].ALTFORMAT);
+          }
+        }
+        heap.logger.log('alert', `HTML : ${html} `, 'alert', 1);
 
-                            } catch (err) {
-                                heap.logger.log('alert', 'Error log heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
-                            }
+        // Create Excel workbook
+        let workbook = new heap.excel.Workbook();
 
-                            /* Check if multiple tab */
-                            if (query2Adjusted != 'undefined') {
-                                heap.logger.log('alert', 'Query 2 exists ', 'alert', 3);
-                                let tabName2 = 'RESULT2';
-                                //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
-                                if (result.ROOT.NAME2) {
-                                    tabName2 =  '' + result.ROOT.NAME2
-                                }
+        // Handle column renaming if RENAME query exists
+        let renameColumn = null;
+        if (renameQuery) {
+          await new Promise((resolve) => {
+            SQLProcess.executeQueryUsingMyCallBack(
+              SQLProcess.getNextTicketID(),
+              renameQuery,
+              "'{" + request.query.PARAM + "}'",
+              request.header('USER'),
+              "'{" + request.header('DATABASE_SID') + "}'",
+              "'{" + request.header('LANGUAGE') + "}'",
+              request.req_dataRename,
+              request.response_dataRename,
+              function (err, dataRename) {
+                renameColumn = dataRename;
+                resolve();
+              }
+            );
+          });
+        }
 
-                                await SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                                                    result.ROOT.QUERY2, 
-                                                    "'{" + request.query.PARAM + "}'",
-                                                    request.header('USER'),
-                                                    "'{" + request.header('DATABASE_SID') + "}'", 
-                                                    "'{" +request.header('LANGUAGE') + "}'", 
-                                                    request.req_datadetail2, request.response_dataDetail2, 
-                                        function (err,dataDetail2) {
-                                            let detailData2 =dataDetail2;
+        // Helper: Process one query into worksheet
+        async function processQueryNode(qNode) {
+          return new Promise((resolve) => {
+            const reqDataDetailKey = `req_datadetail${qNode.index === '1' ? '' : qNode.index}`;
+            const resDataDetailKey = `response_dataDetail${qNode.index === '1' ? '' : qNode.index}`;
 
-                                            let worksheet2 = workbook.addWorksheet(tabName2, {properties:{tabColor:{argb:'E7EBFF0'}}});
-                                            if (alertData[0].ALTFREEZEHEADER == 1) {
-                                                worksheet2.views = [{state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER+1}];
-                                            }
-
-                                            try {
-                                                let wbxls2= heap.json2xls.json2xls(workbook, worksheet2, alertData, detailData2, SUBJECT_EXT, 'ResultTable2', alertData[0].ALTFORMATTAB2XLS1 + alertData[0].ALTFORMATTAB2XLS2);
-                                                workbook= wbxls2.wb;
-                                            } catch (err) {
-                                                heap.logger.log('alert', 'Error query2 heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
-                                            }
-
-                                            if (html.indexOf('ERRORDIAGNOSED') < 1) {
-                                                workbook.xlsx.writeBuffer()
-                                                .then(function(buffer) {
-                                                    sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
-                                                    buffer=null;
-                                                });
-                                            }
-                                    });
-                                }
-                                else {
-                                heap.logger.log('alert', 'Sending email ' + JSON.stringify(alertData[0].ALTEMAIL), 'alert', 3);
-
-                                if (html.indexOf('ERRORDIAGNOSED') < 1) {
-                                    workbook.xlsx.writeBuffer()
-                                    .then(function(buffer) {
-                                        sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
-                                        buffer=null;
-                                    });
-                                }
-                            }
-
-                            if (alertData[0].ALTSMSCONTENT != '' && html.indexOf('ERRORDIAGNOSED') < 1) {
-                                let newLineSMS = '<br>'
-                                sendSMS(alertData[0].ALTMOBILE,   /* To */
-                                        alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT,  /* Subject */
-                                        alertData[0].ALTSMSCONTENT + ' : ' + detailData.length + newLineSMS +
-                                                '<b>Distribution list : </b> ' + alertData[0].ALTEMAIL) ;  /* Content */
-                            }
-                        });
-                    }
-                    else {
-
-                        try {
-                            let wbxls= heap.json2xls.json2xls(workbook, worksheet, alertData, detailData, SUBJECT_EXT, 'ResultTable', alertData[0].ALTFORMATXLS1 + alertData[0].ALTFORMATXLS2);
-                            workbook= wbxls.wb;
-                            worksheet= wbxls.ws;
-                        } catch (err) {
-                            heap.logger.log('alert', 'Error heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
-                        }
-
-
-                        /* Check if multiple tab */
-                        if (result.ROOT.QUERY2) {
-                            let tabName2 = 'RESULT';
-                            //heap.logger.log('alert', 'result.ROOT.NAME ' + JSON.stringify(result.ROOT.NAME), 'alert', 3);
-                            if (result.ROOT.NAME2) {
-                                tabName2 =  '' + result.ROOT.NAME2
-                            }
-
-                        await SQL.executeQueryUsingMyCallBack(SQL.getNextTicketID(),
-                                            result.ROOT.QUERY2, 
-                                            "'{" + request.query.PARAM + "}'",
-                                            request.header('USER'),
-                                            "'{" + request.header('DATABASE_SID') + "}'", 
-                                            "'{" +request.header('LANGUAGE') + "}'", 
-                                            request.req_datadetail2, request.response_dataDetail2, 
-                                            function (err,dataDetail2) {
-                                                let detailData2 =dataDetail2;
-
-                                                let worksheet2 = workbook.addWorksheet(tabName2, {properties:{tabColor:{argb:'E7EBFF0'}}});
-                                                if (alertData[0].ALTFREEZEHEADER == 1) {
-                                                    worksheet2.views = [{state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER+1}];
-                                                }
-
-                                                try {
-                                                    let wbxls2= heap.json2xls.json2xls(workbook, worksheet2, alertData, detailData2, SUBJECT_EXT, 'ResultTable2', alertData[0].ALTFORMATTAB2XLS1 + alertData[0].ALTFORMATTAB2XLS2);
-                                                    workbook= wbxls2.wb;
-                                                } catch (err) {
-                                                    heap.logger.log('alert', 'Error query2 heap.json2xls.json2xls ' + JSON.stringify(err), 'alert', 3);
-                                                }
-
-                                                if (html.indexOf('ERRORDIAGNOSED') < 1) {
-                                                    workbook.xlsx.writeBuffer()
-                                                    .then(function(buffer) {
-                                                        sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
-                                                        buffer=null;
-                                                    });
-                                                }
-                                            });
-                        }
-                        if (! result.ROOT.QUERY2) {
-                            if (html.indexOf('ERRORDIAGNOSED') < 1) {
-                                workbook.xlsx.writeBuffer()
-                                .then(function(buffer) {
-                                    sendEmailCSV(alertData[0].ALTEMAIL, alertData[0].ALTEMAILCC, alertData[0].ALTEMAILBCC, alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT + ' [' + detailData.length + ' Object(s)] ', html, buffer, preHtml, false, FILENAME_EXT);
-                                    buffer=null;
-                                });
-                            }
-                        }
-                    }
+            heap.logger.log('alert', `SQL#${qNode.index} to execute ${qNode.sql}`, 'alert', 1);
+            SQLProcess.executeQueryUsingMyCallBack(
+              SQLProcess.getNextTicketID(),
+              qNode.sql,
+              "'{" + request.query.PARAM + "}'",
+              request.header('USER'),
+              "'{" + request.header('DATABASE_SID') + "}'",
+              "'{" + request.header('LANGUAGE') + "}'",
+              request[reqDataDetailKey],
+              request[resDataDetailKey],
+              async function (err, dataDetailN) {
+                if (err) {
+                  heap.logger.log('alert', `SQL Error on ${qNode.key}: ${err.message}`, 'alert', 3);
+                  return resolve();
                 }
 
-                if (alertData[0].ALTSMSCONTENT != '' && html.indexOf('ERRORDIAGNOSED') < 1) {
-                    let newLineSMS = '<br>'
-                    sendSMS(alertData[0].ALTMOBILE,   /* To */
-                            alertData[0].ALTSUBJECT + ' ' + SUBJECT_EXT,  /* Subject */
-                            alertData[0].ALTSMSCONTENT + ' : ' + detailData.length + newLineSMS +
-                                    '<b>Distribution list : </b> ' + alertData[0].ALTEMAIL) ;  /* Content */
+                // Add worksheet
+                heap.logger.log('alert', `SQL#${qNode.index} - data result length: ${dataDetailN.length}`, 'alert', 1);
+                heap.logger.log('alert', `Add worksheet ${qNode.sheetName} `, 'alert', 1);
+                let worksheet = workbook.addWorksheet(qNode.sheetName + '', { properties: { tabColor: { argb: qNode.sheetColor } } });
+                if (alertData[0].ALTFREEZEHEADER == 1) {
+                  worksheet.views = [{ state: 'frozen', xSplit: alertData[0].ALTFREEZECOLUMN, ySplit: heap.TABLE_HEADER + 1 }];
                 }
-            }   
 
-            /** Records trace in ALERTLOG **/
-            if (detailData.length > 500) {
-                SQL.executeQuery(SQL.getNextTicketID(),
-                        "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(''{big data}''), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
-                        "'{" + request.query.PARAM + "}'",
-                        request.header('USER'),
-                        "'{" + request.header('DATABASE_SID') + "}'", 
-                        "'{" +request.header('LANGUAGE') + "}'", 
-                        request,response);
-            }
-            else {
-                SQL.executeQuery(SQL.getNextTicketID(),
-                        "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
-                        JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL", 
-                        "'{" + request.query.PARAM + "}'",
-                        request.header('USER'),
-                        "'{" + request.header('DATABASE_SID') + "}'", 
-                        "'{" +request.header('LANGUAGE') + "}'", 
-                        request,response);
-            }
+                heap.logger.log('alert', `Worksheet added ${qNode.sheetName} `, 'alert', 1);
 
-            
-            result=null;
-            clearModule();
-            global.gc();
-            //sendEmail(alertData[0].ALTEMAIL, alertData[0].ALTSUBJECT, 'body')  
-            //response.send(detailData);
-            //return;
-        });
+                try {
+                  if([undefined, null].includes(dataDetailN)) {
+                    heap.logger.log('alert', `dataDetailN empty ${qNode.dataDetailN}`, 'alert', 3);
+                    dataDetailN = [];
+                  }
+                    const wbxls = heap.json2xls.json2xls(workbook, worksheet, alertData, dataDetailN, SUBJECT_EXT, `ResultTable${qNode.index}`, qNode.sheetFormat +'', renameColumn);
+                    workbook = wbxls.wb;
+                } catch (err) {
+                  heap.logger.log('alert', `Error in json2xls alert data ${qNode.key}: ` + JSON.stringify(alertData), 'alert', 3);
+                  heap.logger.log('alert', `Error in json2xls detail ${qNode.key}: ${dataDetailN}`, 'alert', 3);
+                  heap.logger.log('alert', `Error in json2xls detail length ${qNode.key}: ${dataDetailN.length}`, 'alert', 3);
+                  heap.logger.log('alert', `Error in json2xls SUBJECT_EXT ${qNode.key}: ${SUBJECT_EXT}`, 'alert', 3);
+                  heap.logger.log('alert', `Error in json2xls ResultTable ${qNode.key}: ResultTable${qNode.index}`, 'alert', 3);
+                  heap.logger.log('alert', `Error in json2xls sheetFormat ${qNode.key}: ${qNode.sheetFormat}`, 'alert', 3);
+                  heap.logger.log('alert', `Error in json2xls renameColumn ${qNode.key}: ${renameColumn}`, 'alert', 3);
+                  heap.logger.log('alert', `Error in json2xls for ${qNode.key}: ${err}`, 'alert', 3);
+                }
+                resolve();
+              }
+            );
+          });
+        }
 
-    }
+        // Process all queries in sequence (await each)
+        for (const qNode of queryNodes) {
+          await processQueryNode(qNode);
+        }
+
+        // Write Excel to buffer and send email
+
+        if (detailData.length === 0) {
+              heap.logger.log('alert', `Emailing workbook length main query 0 ${alertData[0].ALTEMAIL} `, 'alert', 1);
+              heap.logger.log('alert', `Emailing workbook real time ${alertData[0].ALTREALTIME} `, 'alert', 1);
+          if (alertData[0].ALTREALTIME == '0') {
+              heap.logger.log('alert', `Emailing workbook no attachment ${alertData[0].ALTEMAIL} `, 'alert', 1);
+              sendEmail(
+                alertData[0].ALTEMAIL,
+                alertData[0].ALTEMAILCC,
+                alertData[0].ALTEMAILBCC,
+                `${alertData[0].ALTSUBJECT} ${SUBJECT_EXT} [0 Object(s)]`,
+                html
+              );
+          }
+        }
+        else { 
+          if (html.indexOf('ERRORDIAGNOSED') < 0) {
+            heap.logger.log('alert', `Emailing workbook ${alertData[0].ALTEMAIL} `, 'alert', 1);
+            workbook.xlsx.writeBuffer().then((buffer) => {
+              sendEmailCSV(
+                alertData[0].ALTEMAIL,
+                alertData[0].ALTEMAILCC,
+                alertData[0].ALTEMAILBCC,
+                `${alertData[0].ALTSUBJECT} ${SUBJECT_EXT} [${detailData.length} Object(s)]`,
+                html,
+                buffer,
+                preHtml,
+                false,
+                FILENAME_EXT
+              );
+              buffer = null;
+            });
+          }
+
+        // Optionally send SMS if configured
+        if (alertData[0].ALTSMSCONTENT && html.indexOf('ERRORDIAGNOSED') < 0) {
+          const newLineSMS = '<br>';
+          sendSMS(
+            alertData[0].ALTMOBILE,
+            `${alertData[0].ALTSUBJECT} ${SUBJECT_EXT}`,
+            `${alertData[0].ALTSMSCONTENT} : ${detailData.length}${newLineSMS}<b>Distribution list : </b> ${alertData[0].ALTEMAIL}`
+          );
+        }
+
+        // Log to ALERTLOG
+        if (detailData.length > 500) {
+          await SQLProcess.executeQuery(
+            SQLProcess.getNextTicketID(),
+            `INSERT INTO ALERTLOG SELECT ''${alertData[0].ALTID}'', SYSDATE, utl_raw.cast_to_raw('{big data}'), sysdate, sysdate, 'notification.js', '${detailData.length}' FROM DUAL`,
+            "'{" + request.query.PARAM + "}'",
+            request.header('USER'),
+            "'{" + request.header('DATABASE_SID') + "}'",
+            "'{" + request.header('LANGUAGE') + "}'",
+            request,
+            response
+          );
+        } else {
+          const jsonSnippet = JSON.stringify(detailData).substring(1, 2000).replace(/'/g, "''''");
+          //const query = `INSERT INTO ALERTLOG SELECT ''${alertData[0].ALTID}'', SYSDATE, utl_raw.cast_to_raw(''${jsonSnippet}''), sysdate, sysdate, ''notification.js'', '''${detailData.length}''' FROM DUAL`;
+          const query = "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
+                              JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL";
+                  
+          heap.logger.log('alert', 'Insert log ALERTLOG ' + alertData[0].ALTID + ' QUERY: ' + query, 'alert', 3);
+          await SQLProcess.executeQuery(
+            SQLProcess.getNextTicketID(),
+            query,
+            "'{" + request.query.PARAM + "}'",
+            request.header('USER'),
+            "'{" + request.header('DATABASE_SID') + "}'",
+            "'{" + request.header('LANGUAGE') + "}'",
+            request,
+            response
+          );
+        }
+
+        // Cleanup
+        result = null;
+        clearModule();
+        global.gc();
+          }
+        }
+    );
+
 }
 
 function processContentNoHTML(SQL, alertData, request, result) {
+  let SUBJECT_EXT ='';
+  let FILENAME_EXT='result.xlsx';
+  if ( typeof request.header('SUBJECT_EXT') !== 'undefined' )  {
+      SUBJECT_EXT = request.header('SUBJECT_EXT');
+  }
+  if ( typeof request.header('FILENAME_EXT') !== 'undefined' )  {
+      FILENAME_EXT = request.header('FILENAME_EXT');
+  }
+
+  let bannerAdjusted, queryAdjusted;
+
+  if ( result.ROOT.BANNER !== 'undefined' )  {
+      bannerAdjusted = '' + result.ROOT.BANNER;;
+  }
+  if ( result.ROOT.QUERY !== 'undefined' )  {
+      queryAdjusted = '' + result.ROOT.QUERY;
+  }
+  try {
+      queryAdjusted = '' + result.ROOT.QUERY;
+  } catch (err) {
+      heap.logger.log('alert', 'Error formatting XML - Query not found ROOT :' + JSON.stringify(err.message), 'alert', 3);
+      return;
+  }
+
+  bannerAdjusted = bannerAdjusted.replace(/'/g,"''");
+  queryAdjusted = queryAdjusted.replace(/'/g,"''");
+
+  SQL.executeQuery(SQL.getNextTicketID(),
+                      result.ROOT.QUERY, 
+                      "'{" + request.query.PARAM + "}'",
+                      request.header('USER'),
+                      "'{" + request.header('DATABASE_SID') + "}'", 
+                      "'{" +request.header('LANGUAGE') + "}'", 
+                      request, response);
 
 }
 
@@ -710,7 +563,7 @@ module.get = async function (request,response) {
                         heap.parseXML2JS(content, function (err, result) {
                             heap.logger.log('alert', 'content XML' + JSON.stringify(result), 'alert', 3);
                             // Now process the content from XML file
-                            processContent(SQL, alertData, request, result);
+                            processContent(SQL, alertData, request, response, result);
                         });
                     }
                     else if (alertData[0].ALTFILE) {
@@ -724,7 +577,7 @@ module.get = async function (request,response) {
                                 heap.parseXML2JS(data, function (err, result) {
                                     heap.logger.log('alert', 'content XML' + JSON.stringify(result), 'alert', 3);
                                     // Now process the content from XML file
-                                    processContent(SQL, alertData, request, result);
+                                    processContent(SQL, alertData, request, response, result);
                                 });
                             });
                         }  else {
@@ -768,9 +621,7 @@ module.get = async function (request,response) {
                     if (alertData.length >= 1) {
 
                     if (alertData[0].ALTSQL) {
-                        heap.logger.log('alert', 'Query store in DB : ', 'alert', 1);
                         let content = alertData[0].ALTSQL;
-                        heap.logger.log('alert', 'Query store in DB : ' + content, 'alert', 1);
 
                         heap.parseXML2JS(content, function (err, result) {
                             heap.logger.log('alert', 'content XML' + JSON.stringify(result), 'alert', 3);
@@ -792,58 +643,10 @@ module.get = async function (request,response) {
                                     processContentNoHTML(SQL, alertData, request, result);
                                 });
                             });
-                        }  else {
+                        }  
+                        else {
                         heap.logger.log('alert', 'No ALTFILE or ALTSQL found in alert data', 'alert', 3);
-                    }
-
-                        heap.fs.readFile(alertData[0].ALTFILE, 'utf8', function (err, data) {
-                            if (err) {
-                                heap.logger.log('alert', 'Error reading XML:' + alertData[0].ALTFILE + ': ' + JSON.stringify(err.message), 'alert', 3);
-                                return null;
-                                throw err; // we'll not consider error handling for now
-                            }
-                            heap.parseXML2JS(data, function (err, result) {
-                                if (process.env.ICR_DEBUG ==1) {
-                                    heap.logger.log('alert', 'objXML2JS.query: ' + result, 'alert', 1);
-                                }
-                                
-                                let SUBJECT_EXT ='';
-                                let FILENAME_EXT='result.xlsx';
-                                if ( typeof request.header('SUBJECT_EXT') !== 'undefined' )  {
-                                    SUBJECT_EXT = request.header('SUBJECT_EXT');
-                                }
-                                if ( typeof request.header('FILENAME_EXT') !== 'undefined' )  {
-                                    FILENAME_EXT = request.header('FILENAME_EXT');
-                                }
-
-                                let bannerAdjusted, queryAdjusted;
-
-                                if ( result.ROOT.BANNER !== 'undefined' )  {
-                                    bannerAdjusted = '' + result.ROOT.BANNER;;
-                                }
-                                if ( result.ROOT.QUERY !== 'undefined' )  {
-                                    queryAdjusted = '' + result.ROOT.QUERY;
-                                }
-                                try {
-                                    queryAdjusted = '' + result.ROOT.QUERY;
-                                } catch (err) {
-                                    heap.logger.log('alert', 'Error formatting XML - Query not found ROOT :' + JSON.stringify(err.message), 'alert', 3);
-                                    return;
-                                }
-    
-                                bannerAdjusted = bannerAdjusted.replace(/'/g,"''");
-                                queryAdjusted = queryAdjusted.replace(/'/g,"''");
-
-                                SQL.executeQuery(SQL.getNextTicketID(),
-                                                    result.ROOT.QUERY, 
-                                                    "'{" + request.query.PARAM + "}'",
-                                                    request.header('USER'),
-                                                    "'{" + request.header('DATABASE_SID') + "}'", 
-                                                    "'{" +request.header('LANGUAGE') + "}'", 
-                                                    request, response);
-                                result=null;
-                            });
-                        });
+                      }
                     }
                 }
 

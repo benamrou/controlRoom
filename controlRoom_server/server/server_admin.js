@@ -49,7 +49,6 @@ app.use( bodyParser.urlencoded({
 );
 
 //app.use(bodyParser());
-initOracleClient();
 
 let corsOptions = {
     origin: '*',

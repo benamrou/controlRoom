@@ -18,7 +18,7 @@ and 0 >= pvdcalc
 and arlcinluvc=pvecinl
 and pveid=pvdeid 
 and pvesite in (90061,91070, 91071)
-and exists (select 1 from artuc@heinens_cen_prod where pvesite=arasite amd arlseqvl=araseqvl and aradfin >=trunc(sysdate))
+and exists (select 1 from artuc@heinens_cen_prod where pvesite=arasite and arlseqvl=araseqvl and aradfin >=trunc(sysdate))
 order by pvesite, arlcexr asc
 
     </QUERY>

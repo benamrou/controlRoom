@@ -93,9 +93,6 @@ export class AvailableMHComponent {
     this.scorecardDate = new Date();
 
     this.columnsResult = [
-      { field: 'Code', header: 'Code', placeholder: 'Filter on MH code', align:'left', type: 'input', options: [],expand: 0, format: false, display: true, main: true },
-      { field: 'MH desc', header: 'MH desc', placeholder: 'Search by desc', align:'left', type: 'input', options: [],expand: -1, format: false, display: true, main: true  },
-      { field: 'Level', header: 'Level', placeholder: 'filter on level', align:'left', type: 'input', options: [],expand: -1, format: false, display: true, main: true  },
       { field: 'Root', header: 'Root', placeholder: 'Search by root', align:'left', type: 'input', options: [],expand: -1, format: false, display: true, main: true  },
       { field: 'Dept', header: 'Dept', placeholder: 'Search by dept', align:'left', type: 'input', options: [],expand: -1, format: false, display: true, main: true  },
       { field: 'Sub-Dept', header: 'Sub-Dept', placeholder: 'Search by sub-dept', align:'left', type: 'input', options: [],expand: -1, format: false, display: true, main: true  },

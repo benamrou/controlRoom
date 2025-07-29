@@ -125,6 +125,8 @@ import { SupplierAddressModule } from './pages/mass.update/supplier.address/supp
 import { UnarchiveInvoiceModule } from './pages/finance/unarchive/unarchive.invoice.module';
 import { ReportFilterModule } from './pages/reporting/report.filter/report.filter.module';
 import { ProductionNumberModule } from './pages/warehouse/toolkit/production.number/production.number.module';
+import { ItemListDescriptionModule } from './pages/mass.update/itemlist.description/itemlist.description.module';
+import { PurchaseOrderModule } from './pages/mass.update/purchase.order/purchase.order.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -238,7 +240,9 @@ import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module'
     UnarchiveInvoiceModule,
     ReportFilterModule,
     AvailableMHModule,
-    ProductionNumberModule
+    ProductionNumberModule,
+    ItemListDescriptionModule,
+    PurchaseOrderModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

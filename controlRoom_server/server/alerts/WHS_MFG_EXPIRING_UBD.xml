@@ -22,6 +22,7 @@ SELECT  ul_donord "Whs #",
   AND UE_INDFIC = ''1''
   AND UL_USSCC  = UT_USSCC
   AND UL_CSSCC  = UT_CSSCC
+  AND UT_TYPIND=''DLC''
   AND UL_CPROIN || UL_ILOGIS || UL_ARPROM = AR_CPROIN || AR_ILOGIS || AR_ARPROM
   AND ul_nqtuvc > 0
   AND ul_donord =93080

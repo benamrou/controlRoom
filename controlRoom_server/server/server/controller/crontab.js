@@ -18,6 +18,85 @@ let {streamWrite, streamEnd, onExit} = require('@rauschma/stringio');
 let cron = require('node-cron');
 let spawn  = require('child_process').spawn;
 let user   = "crontab";
+const fs = require('fs/promises');
+const path = require('path');
+const os = require('os');
+const { v4: uuidv4 } = require('uuid');
+
+
+async function writeToWritable(writable) {
+    //await streamWrite(writable, '');
+    await streamEnd(writable);
+}
+
+async function executeScript(id, schedule, scriptContent, user) {
+    if (!scriptContent) return;
+
+    const tempDir = path.join(os.tmpdir(), 'croom'); // optional
+    const fileName = `script-${id}-${uuidv4()}.sh`;
+    const filePath = path.join(tempDir, fileName);
+
+    try {
+        // Ensure temp dir exists
+        await fs.mkdir(tempDir, { recursive: true });
+
+        // Write script to temp file
+        await fs.writeFile(filePath, scriptContent, { mode: 0o755 });
+
+        const command = spawn('bash', [filePath], {
+            stdio: ['pipe', process.stdout, process.stderr]
+        });
+
+        writeToWritable(command.stdin); // Optional input
+
+        command.on('uncaughtException', function (err) {
+            logger.log('CRON', `uncaughtException - Cron Job ${id} ${data} `, user, 2);
+        });
+
+        command.on('error', async (err) => {
+            logger.log('CRON', `ERROR - Cron Job ${id} ${schedule} ${err}`, user, 3);
+            await safeCleanup(filePath);
+        });
+
+        command.on('exit', async (code) => {
+            if (code === 0) {
+                logger.log('CRON', `Cron Job ${id} ${schedule} [COMPLETED]`, user, 2);
+            } else {
+                logger.log('CRON', `ERROR - Cron Job ${id} ${schedule} exited with code ${code}`, user, 3);
+            }
+            await safeCleanup(filePath);
+        });
+
+        await onExit(command); // optional await
+
+    } catch (err) {
+        logger.log('CRON', `ERROR - Cron Job ${id} ${schedule} ${err}`, user, 3);
+        await safeCleanup(filePath);
+    }
+
+    global.gc?.();
+}
+
+async function safeCleanup(filePath) {
+    try {
+        await fs.unlink(filePath);
+    } catch (e) {
+        // Log or ignore, depending on needs
+        logger.log('CRON', `Failed to delete temp file: ${filePath} ${e}`, user, 3);
+    }
+}
+
+function shell2crontab(crontab, id, schedule, script, user) {
+    try {
+        if(crontab)
+        crontab.push (cron.schedule(schedule,async ()=> {
+            await executeScript(id, schedule, script, user);
+        }));
+    } catch (e) {
+        // Log or ignore, depending on needs
+        logger.log('CRON', `Failed to schedule script ${id} ${schedule}`, user, 3);
+    }
+}
 
 module.exports = function (app, SQL) {
 
@@ -53,72 +132,46 @@ module.exports = function (app, SQL) {
                                 logger.log('CRON', 'Cron Job ' + data[i].SALTID + ' is not active. Activation date on ' + data[i].SALTACTIVE, user, 3);
                             }
                             else {
-
                                 logger.log('CRON', 'Cron Job ' + data[i].SALTID + ' is now scheduled using cron setup : ' + data[i].SALTCRON, user, 2);
-                                cronTab.push (cron.schedule(data[i].SALTCRON,async ()=> {
+                                if(data[i].SALTSHELL) {
+                                    shell2crontab(cronTab, data[i].SALTID, data[i].SALTCRON, data[i].SALTSHELL, user);
+                                }
+                                else 
                                     if (data[i].SALTJOB) {
-                                        try {
-                                                let command = spawn(data[i].SALTJOB, {}, {stdio: ['pipe', process.stdout, process.stderr]}); 
-                                                writeToWritable(command.stdin); // (B)
-                                                await onExit(command);
-                                                command.on('error', err => {
-                                                    if (err) {
-                                                        logger.log('CRON', 'ERROR - Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' ' + stderr + error + stdout, user, 3);
-                                                    } else {
-                                                        logger.log('CRON', 'Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' [COMPLETED]' , user, 2);
-                                                    }
-                                                });
-                                            }
-                                        catch (err) {
-                                            logger.log('CRON', 'ERROR - Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' ' + err, user, 3);
-                                        }
-                                        global.gc();
+                                        shell2crontab(cronTab, data[i].SALTID, data[i].SALTCRON, data[i].SALTJOB, user);
                                     } 
-                                }));
+                                }
                             }
                         }
+                    }});
 
-                         /** Test if alert of the day didn't run yet */
-                         SQL.executeLibQueryUsingMyCallback(SQL.getNextTicketID(),
-                         "CRON000002", 
-                         "'{}'" /* request.query.PARAM  */,
-                         "crontab",
-                         "'{}'" /* DATABASE_SID */, 
-                         "'{}'" /* LANGUAGE */, 
-                         request.dataJob, response.dataJob, 
+        /** Test if alert of the day didn't run yet */
+        SQL.executeLibQueryUsingMyCallback(SQL.getNextTicketID(),
+                            "CRON000002", 
+                            "'{}'" /* request.query.PARAM  */,
+                            "crontab",
+                            "'{}'" /* DATABASE_SID */, 
+                            "'{}'" /* LANGUAGE */, 
+                            request, response, 
                         async function (errorMissing,dataMissingRun) {
                             for (let j=0; j < dataMissingRun.length; j++) {
                                 logger.log('CRON','RUN : ' +  dataMissingRun[j].SALTJOB, user);
-                                if (dataMissingRun[j].SALTJOB) {
-                                    let command = spawn(dataMissingRun[j].SALTJOB, {},  {stdio: ['pipe', process.stdout, process.stderr]}); 
-                                    writeToWritable(command.stdin); // (B)
-                                    await onExit(command);
-
-                                    command.on('error', err => {
-                                        if (err) {
-                                            logger.log('CRON', 'ERROR - Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' ' + stderr + error + stdout, user, 3);
-                                        } else {
-                                            logger.log('CRON', 'Cron Job ' + data[i].SALTID + ' ' + data[i].SALTCRON + ' [COMPLETED]' , user, 2);
-                                        }
-                                    });
+                                if(dataMissingRun[j].SALTSHELL) {
+                                    executeScript(dataMissingRun[j].SALTID, dataMissingRun[j].SALTCRON, dataMissingRun[j].SALTSHELL, user);
+                                }
+                                else {
+                                    if (dataMissingRun[j].SALTJOB) {
+                                        executeScript(dataMissingRun[j].SALTID, dataMissingRun[j].SALTCRON, dataMissingRun[j].SALTJOB, user);
+                                    } 
                                 }
                             }
                                     
-                        })
-                    }
-                }
         });
     }
 
-    async function writeToWritable(writable) {
-        //await streamWrite(writable, '');
-        await streamEnd(writable);
-
-      }
-
     module.killJob = function (request,response) {
         for(let i =0;i < cronTab.length ; i ++) {
-            cronTab[i].stop;
+            cronTab[i].stop();
             logger.log('CRON', 'Cron Job ' + JSON.stringify(cronTab[i]) + ' is now stoped.', user, 3);
         }
     }

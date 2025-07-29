@@ -77,6 +77,7 @@ export class User {
     public restartmob: string;
     public restartxml: string;
     public restartvocal: string;
+    public debug: string;
  }
  
  @Injectable()
@@ -216,6 +217,7 @@ export class User {
                      env.restartradio = data[i].ENVRADIORESTART;
                      env.restartxml = data[i].ENVXMLRESTART;
                      env.restartvocal = data[i].ENVVOCALRESTART;
+                     env.debug = data[i].ENVDEBUG;
  
                      this.userInfo.envDefaultLanguage = env.defaultLanguage;
                  
@@ -275,6 +277,7 @@ export class User {
                      env.restartradio = data[i].ENVRADIORESTART;
                      env.restartxml = data[i].ENVXMLRESTART;
                      env.restartvocal = data[i].ENVVOCALRESTART;
+                     env.debug = data[i].ENVDEBUG;
                     if (data[i].ENVTYPE == data[idMainEnv].ENVTYPE && data[i].ENVDOMAIN == 2) {
                         console.log('MAIN STOCK ',data[i]);
                         this.setCookiesEnvironment(env);

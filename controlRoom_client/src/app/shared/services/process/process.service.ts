@@ -130,8 +130,11 @@ export class ProcessService {
     this.params= new HttpParams();
     let dateNow = new Date();
 
-    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
-                          'export GOLD_DEBUG=1; ' +
+    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ';
+    if(this._userService.userInfo.mainEnvironment[0].debug == '1') {
+      scriptToExecute = scriptToExecute + 'export GOLD_DEBUG=1; ';
+    }
+    scriptToExecute = scriptToExecute + 
                           // Batch to execute
                           batchid + ' ' + batchid + '.icr' + ' $USERID ' + parameter + '; ' ;
     
@@ -151,10 +154,14 @@ export class ProcessService {
     let headersSearch = new HttpHeaders();
     this.params= new HttpParams();
     let dateNow = new Date();
-    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
-                          'export GOLD_DEBUG=1; ' +
+    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ';
+
+    if(this._userService.userInfo.mainEnvironment[0].debug == '1') {
+      scriptToExecute = scriptToExecute + 'export GOLD_DEBUG=1; ';
+    }
+    scriptToExecute = scriptToExecute + 
                           // Batch to execute
-                          script ;
+                      script ;
     
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
@@ -195,9 +202,12 @@ export class ProcessService {
     }
       /* Look in all environment */
     }
-    scriptToExecute = scriptToExecute +
-                      'export GOLD_DEBUG=1; ' +
-                      // Batch to execute
+
+    if(this._userService.userInfo.mainEnvironment[0].debug == '1') {
+      scriptToExecute = scriptToExecute + 'export GOLD_DEBUG=1; ';
+    }
+    scriptToExecute = scriptToExecute + 
+                          // Batch to execute
                       script ;
 
     this.params = this.params.set('PARAM', scriptToExecute);
@@ -226,10 +236,13 @@ export class ProcessService {
     let headersSearch = new HttpHeaders();
     this.params= new HttpParams();
     let dateNow = new Date();
-    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
-                          'export GOLD_DEBUG=1; ' +
+    let scriptToExecute = this._userService.userInfo.mainEnvironment[0].initSH + '; ';
+    if(this._userService.userInfo.mainEnvironment[0].debug == '1') {
+      scriptToExecute = scriptToExecute + 'export GOLD_DEBUG=1; ';
+    }
+    scriptToExecute = scriptToExecute + 
                           // Batch to execute
-                          script ;
+                      script ;
     
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);

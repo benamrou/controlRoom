@@ -13,6 +13,7 @@ AND ue_codtsu = ''1''
 AND ar_cproin=ul_cproin
 AND ar_ilogis=ul_ilogis
 AND ar_dlc >0
+AND UT_TYPIND=''DLC''
 and (ue_stapre is null or (ue_stapre in (0, 50)
 and ue_staums = 1
 AND ue_typpre in (''P'',''R'') and ue_typums = ''0'' ))

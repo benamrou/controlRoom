@@ -357,7 +357,7 @@ function setXLSProperties(workbook) {
 }
 
 function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, tableName, formatingRules, renameColumn) {
-    let valueColumns = Object.keys(detailData[0]);
+    let valueColumns = Object.keys(detailData[0] || {});
     let dataColumns = [];
     renameColumn = renameColumn || [];
     //heap.logger.log('alert', 'valueColumns before ' + JSON.stringify(valueColumns), 'alert', 3);
@@ -448,18 +448,30 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
 
     /**************************************************************************/  
     // Creating the table detail EXCEL (real table)
-    worksheet.addTable({
-        name: tableName,
-        ref: 'A5',
-        headerRow: true,
-        totalsRow: true,
-        style: {
-        theme: 'TableStyleLight1',
-        showRowStripes: true,
-        },
-        columns: [...dataColumns],
-        rows: [...dataRows]
-    });
+    if (dataRows.length == 0) {
+        worksheet.getCell('A6').value = 'No reported elements';
+        worksheet.getCell('A6').font = {
+                name: 'Arial',
+                family: 4,
+                size: 10,
+                underline: false,
+                bold: true
+            };
+    }
+    else {
+        worksheet.addTable({
+            name: tableName,
+            ref: 'A5',
+            headerRow: true,
+            totalsRow: true,
+            style: {
+            theme: 'TableStyleLight1',
+            showRowStripes: true,
+            },
+            columns: [...dataColumns],
+            rows: [...dataRows]
+        });
+    }
 
     try {
         if (formatingRules) {

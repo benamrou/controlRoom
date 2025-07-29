@@ -300,6 +300,12 @@
                             </a>
                         </li>
                         <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemlistdescription"
+                                [routerLinkActive]="['router-link-active']">
+                                <span><i class="fas fa-clipboard-list"></i> {{ 'Item List desc.'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/categorymanager"
                                 [routerLinkActive]="['router-link-active']">
                                 <span><i class="fas fa-user"></i> {{ 'Category Mgr'}}</span>
@@ -348,6 +354,11 @@
                         <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/supplieraddress" [routerLinkActive]="['router-link-active']">
                                 <span><i class="fa fa-address-card"></i> {{ 'Supplier address'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/purchaseorder" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-paste"></i> {{ 'Purchase order'}}</span>
                             </a>
                         </li>
                     </ul>

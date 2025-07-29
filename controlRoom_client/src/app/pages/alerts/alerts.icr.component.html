@@ -9,6 +9,17 @@
 <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
 
+<!-- Dialog for saving change -->
+<p-dialog header="Updates completed" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    <span>{{msgDisplayed}}</span>
+        <p-footer>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
+                    label="Ok">
+            </button>
+        </p-footer>
+  </p-dialog>
+
 <!-- Dialog for launching report TEST -->
 <p-dialog *ngIf="executionDataResultDisplay" header="{{searchResult[executionAlertIndex].ALTID}} - {{searchResult[executionAlertIndex].ALTSUBJECT}}" 
             [(visible)]="executionDataResultDisplay"
@@ -178,17 +189,20 @@
                 <div class="formgrid grid">
                     <div class="field col-3">
                         <label class="font-bold" for="daltemail">Email sent to:</label>
-                        <p-chips id="daltemail" [(ngModel)]="alertSheduleDisplay_DALTEMAIL">
+                        <p-chips #daltemail [(ngModel)]="alertSheduleDisplay_DALTEMAIL" 
+                                (paste)="onPasteEmail($event)">
                         </p-chips>
                     </div>
                     <div class="field col-3">
                         <label class="font-bold" for="daltemailcc">Copy :</label>
-                        <p-chips id="daltemailcc" [(ngModel)]="alertSheduleDisplay_DALTEMAILCC">
+                        <p-chips #daltemailcc [(ngModel)]="alertSheduleDisplay_DALTEMAILCC"
+                                (paste)="onPasteEmailCC($event)">
                         </p-chips>
                     </div>
                     <div class="field col-3">
                         <label class="font-bold" for="daltemailbcc">Hidden copy :</label>
-                        <p-chips id="daltemailbcc" [(ngModel)]="alertSheduleDisplay_DALTEMAILBCC">
+                        <p-chips #daltemailbcc [(ngModel)]="alertSheduleDisplay_DALTEMAILBCC"
+                                (paste)="onPasteEmailBCC($event)">
                         </p-chips>
                     </div>
                 </div>

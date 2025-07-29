@@ -1,0 +1,71 @@
+#00 2 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/shell/restart_TomEE_hnpcen.sh
+01 0 * * * . $HOME/env/envCEN; $GOLD_$HOME/seyc/nmon/start_nmon.sh
+0 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/gaia_out txt.2* 1
+1 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/gaia_out log 1
+2 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/tomee_log log 7
+3 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/tomee_log txt 7
+4 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/tomee_log gz 7
+5 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/bin_log log 7
+6 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/nmon_files nmon 365
+7 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/nmon_files gz 365
+8 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/ws_log gz 7
+9 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/ws_log txt 7
+10 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /home/hnpcen/bin/shell/logs log 7
+11 1 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/deleteFiles /data/hnpcen/report_log log 7
+#0 5 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/shell/gold_cao.sh 2 > $GOLD_HOME/bin/shell/gold_cao.sh_ma.log
+0 7 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/shell/loadPromoImpactCalculationForCGO/loadPromoImpactCalc.sh > $GOLD_HOME/bin/shell/loadPromoImpactCalculationForCGO/loadPromoImpactCalc.log
+0 11 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/shell/gold_cao_11.sh 2
+0 14 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/shell/gold_cao_14.sh 2
+
+30 5 * * * $DATA_FOLDER/heinensapps/bin_icr/scripts/CGO_negative_inventory.sh
+30 5 * * * $DATA_FOLDER//heinensapps/bin_icr/scripts/DAILY_NEG_INVENTORY_CAPTURE_MORNING.sh
+30 11 * * * $DATA_FOLDER//heinensapps/bin_icr/scripts/DAILY_NEG_INVENTORY_CAPTURE_EVENING.sh
+
+# Nightly Restart GMS web service hnpcen
+#15 00 * * * . $HOME/env/envCEN; $GOLD_HOME/bin/shell/restart_hnpcen_processes_nightly.sh > $GOLD_HOME/bin/shell/restart_processes.log 2>&1
+
+
+# 0 21 * * * . $HOME/env/envCEN; $BIN/shell/abe/fixInterDept.sh
+30 20 * * * . $HOME/env/envCEN; $BIN/shell/abe/DAILY_DELETION_INTCDE_PROCESSED.sh
+5 1 * * * . $HOME/env/envCEN; $BIN/shell/abe/icr/maintenance.sh
+00 16 * * * . $HOME/env/envCEN; $BIN/shell/abe/runPSPUR83P.sh
+
+# ICR
+5 5 * * * . $HOME/env/envCEN; $GOLD_HOME/heinensapps/controlRoom_server/start_backend.sh > $GOLD_HOME/heinensapps/controlRoom_server/init.log
+54 6 * * * . $HOME/env/envCEN; $GOLD_HOME/heinensapps/controlRoom_server/start_backend.sh > $GOLD_HOME/heinensapps/controlRoom_server/init.log
+58 12 * * * . $HOME/env/envCEN; $GOLD_HOME/heinensapps/controlRoom_server/start_backend.sh > $GOLD_HOME/heinensapps/controlRoom_server/init.log
+30 1 * * * . $HOME/env/envCEN; $GOLD_HOME/heinensapps/controlRoom_server/scripts/icr/maintenance.sh
+*/9 * * * * . $HOME/env/envCEN; $GOLD_HOME/heinensapps/controlRoom_server/scripts/icr/restart/check_icr_status.sh
+
+# Supplier schedule
+0 19 * * * . $HOME/env/envCEN; $BIN/shell/supplierSchedule/supplierSchedule.sh
+0 11 * * 0 . $HOME/env/envCEN; $BIN/shell/supplierSchedule/supplierSchedule_Year1.sh
+0 13 * * 0 . $HOME/env/envCEN; $BIN/shell/supplierSchedule/supplierSchedule_Year2.sh
+
+# PURGE
+# 0 14 * * 0 $BIN/shell/purges/purges.sh
+
+# PICS/RGIS automatic integration counting
+*/15 1-11 * * * . $HOME/env/envCEN; $BIN/shell/thirdpartyinventory/0.GetFTPfiles.sh >> $BIN/shell/thirdpartyinventory/logs/0.GetFTPfiles.txt
+*/17 1-11 * * * . $HOME/env/envCEN; $BIN/shell/thirdpartyinventory/1.LoadMapThirdPartyCounting.sh >> $BIN/shell/thirdpartyinventory/logs/1.LoadMapThirdPartyCounting.txt
+*/10 1-11 * * * . $HOME/env/envCEN; $BIN/shell/thirdpartyinventory/2.executeGOLDcountingIntegration.sh >> $BIN/shell/thirdpartyinventory/logs/2.executeGOLDcountingIntegration.txt
+30 6 * * * . $HOME/env/envCEN; $BIN/shell/thirdpartyinventory/zeroOutPosition.sh >> $BIN/shell/thirdpartyinventory/logs/zeroOutPosition.txt
+
+# Refreshing DailyMaintenance new MV
+#46 03 * * * $BIN/shell/refresh_vwdailyregularitemchanged_v2.sh
+
+0 23 * * * . $HOME/env/envCEN; pssti11p pssti11p_planB $USERID PSSTI11P01 1 HN 1
+0 1 * * * . $HOME/env/envCEN; pssti11p pssti11p_planB $USERID PSSTI11P01 1 HN 1
+
+# EYC issue 202405 - Missing XML
+# 45 8 * * * . $HOME/env/envCEN; $BIN/shell/abe/xmlPOMissing.sh
+# 45 10 * * * . $HOME/env/envCEN; $BIN/shell/abe/xmlPOMissing.sh
+# 0 17 * * * . $HOME/env/envCEN; $BIN/shell/abe/xmlPOMissing.sh
+# 45 21 * * * . $HOME/env/envCEN; $BIN/shell/abe/xmlPOMissing.sh
+# 45 0 * * * . $HOME/env/envCEN; $BIN/shell/abe/xmlPOMissing.sh
+#-------------------------------------------------------------------------------------------------------------------------
+# Daily restart of GOLD Application Services                                                                             -
+#-------------------------------------------------------------------------------------------------------------------------
+#
+15  0   *  *  * /bin/bash -l /home/hnpcen/tools/SERVICE_RESTART/Service_Restart.sh /home/hnpcen/env/envCEN CEN
+#

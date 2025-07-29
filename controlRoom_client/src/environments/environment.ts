@@ -12,6 +12,13 @@ export const environment = {
   serverBatchURL    : "http://10.227.100.75:8091",
   baseURL           : "http://10.227.100.75:8090/icr",
 
+  //Heinen's UAT OCI
+  //hostURL           : "http://10.227.100.43:8090",
+  //serverURL_local   : "http://10.227.100.43:8093",
+  //serverURL         : "http://10.227.100.43:8093",
+  //serverBatchURL    : "http://10.227.100.43:8091",
+  //baseURL           : "http://10.227.100.43:8090/icr",
+
   //hostURL           : "http://heinens-prdapp.srai.heinens.com:8090",
   //serverURL_local   : "http://heinens-prdapp.srai.heinens.com:8093",
   //serverURL         : "http://heinens-prdapp.srai.heinens.com:8093",

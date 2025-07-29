@@ -20,6 +20,7 @@
                  AND UE_INDFIC = ''1''
                  AND UL_DONORD=93080
                  AND UL_NUMLIG = UT_NUMLIG
+		 AND UT_TYPIND=''DLC''
                  and ul_nqteup > 0
                  AND UL_CPROIN = DCDCEXR) "Inventory (cases)",
 

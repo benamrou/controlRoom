@@ -236,6 +236,8 @@ export class ImportService{
         let pt33_10_ITEMLOGISTICCODE = 10;
         let pt33_11_ITEMIMAGES = 11;
         let pt33_12_ITEMRETAIL = 12;
+        let pt33_13_ITEMLISTDESC = 13;
+        let pt33_15_PURCHASEORDER = 15;
 
         this.request = this.executeJobURL;
         let headersSearch = new HttpHeaders();
@@ -244,8 +246,10 @@ export class ImportService{
         let datePassed = new Date();
         datePassed.setDate(datePassed.getDate() - 4); /* INTARTCOUL requirement */
         console.log(' Param :', userID, toolId);
-        let command = this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
-                    'export GOLD_DEBUG=1; ' ;
+        let command = this._userService.userInfo.mainEnvironment[0].initSH + '; ';
+        if(this._userService.userInfo.mainEnvironment[0].debug == '1') {
+            command = command + 'export GOLD_DEBUG=1; ';
+        }
         switch (toolId)  {
             case pt33_1_MERCHHIERARCHY: /* Item Merchandise change - psifa05p */
                 // Batch to execute
@@ -278,6 +282,9 @@ export class ImportService{
                 break;
             case pt33_12_ITEMRETAIL: /* Item retail */ 
                 command = command + 'psifa40p psifa40p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 -1 ';
+                break;
+            case pt33_15_PURCHASEORDER: /* Purchase order */ 
+                command = command + 'psint05p psint05p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' -1 -1 ';
                 break;
             default:
                 console.log ('Unknown mass tool id : ', toolId);

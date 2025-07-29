@@ -1,8 +1,9 @@
 import { Component, ViewChild, OnDestroy, HostListener } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
-import { ImportService,  AlertsICRService } from '../../shared/services/index';
+import { ImportService,  AlertsICRService, QueryService } from '../../shared/services/index';
 import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
 import { Dialog } from 'primeng/dialog';
+import { Chips } from 'primeng/chips';
 
 @Component({
     selector: 'alerts.icr-cmp',
@@ -12,6 +13,9 @@ import { Dialog } from 'primeng/dialog';
 })
 
 export class AlertsICRComponent implements OnDestroy {
+  @ViewChild('daltemail') chipsEmail: Chips;
+  @ViewChild('daltemailcc') chipsEmailCC: Chips;
+  @ViewChild('daltemailbcc') chipsEmailBCC: Chips;
 
   // Search action
    values: string [] = [];
@@ -28,6 +32,8 @@ export class AlertsICRComponent implements OnDestroy {
    searchAlertId;
    searchAlertDesc;
    searchAlertEmail;
+
+  queryPostDistribution='ALT0000005'; /* Query to update report filter */
 
    /** Local execution and data capture/display */
    executionDataResult;
@@ -56,10 +62,13 @@ export class AlertsICRComponent implements OnDestroy {
 
   // Request subscription
   subscription: any[] = [];
+  msgDisplayed: string;
+  displayProcessCompleted: boolean;
 
   constructor(private _alertsICRService: AlertsICRService, 
               private _confrmation: ConfirmationService,
               private _uploadService: ImportService,
+              private _queryService: QueryService, 
               private _messageService: MessageService) {
     this.screenID =  'SCR0000000019';
     this.columnsResult = [
@@ -137,7 +146,53 @@ export class AlertsICRComponent implements OnDestroy {
 
   }
   saveChanges() {
+    this.alertDistributionDisplay = {
+                      DALTID: this.alertDisplay.ALTID,
+                      NEW_DALTEMAIL:'',
+                      NEW_DALTEMAILCC :'',
+                      NEW_DALTEMAILBCC : ''
+    };
+    console.log('Update alertSheduleDisplay_XXXX:',this.alertSheduleDisplay_DALTEMAIL,this.alertSheduleDisplay_DALTEMAILCC,this.alertSheduleDisplay_DALTEMAILBCC);
 
+    if(!Object.is(this.alertSheduleDisplay_DALTEMAIL, null)  && !Object.is(this.alertSheduleDisplay_DALTEMAIL, undefined)) {
+      for(let i=0; i< this.alertSheduleDisplay_DALTEMAIL.length; i ++) {
+        if(this.alertDistributionDisplay.NEW_DALTEMAIL != '' ) {
+          this.alertDistributionDisplay.NEW_DALTEMAIL+= ';';
+        }
+        this.alertDistributionDisplay.NEW_DALTEMAIL+= this.alertSheduleDisplay_DALTEMAIL[i];
+      }
+    }
+       
+    if(!Object.is(this.alertSheduleDisplay_DALTEMAILCC, null)  && !Object.is(this.alertSheduleDisplay_DALTEMAILCC, undefined)) {
+      for(let i=0; i< this.alertSheduleDisplay_DALTEMAILCC.length; i ++) {
+        if(this.alertDistributionDisplay.NEW_DALTEMAILCC != '' ) {
+          this.alertDistributionDisplay.NEW_DALTEMAILCC+= ';';
+        }
+        this.alertDistributionDisplay.NEW_DALTEMAILCC+= this.alertSheduleDisplay_DALTEMAILCC[i];
+      }
+    }
+    if(!Object.is(this.alertSheduleDisplay_DALTEMAILBCC, null)  && !Object.is(this.alertSheduleDisplay_DALTEMAILBCC, undefined)) {
+      for(let i=0; i< this.alertSheduleDisplay_DALTEMAILBCC.length; i ++) {
+        if(this.alertDistributionDisplay.NEW_DALTEMAILBCC != '' ) {
+          this.alertDistributionDisplay.NEW_DALTEMAILBCC+= ';';
+        }
+        this.alertDistributionDisplay.NEW_DALTEMAILBCC+= this.alertSheduleDisplay_DALTEMAILBCC[i];
+      }
+    }
+
+   console.log('Update alert:',this.alertDistributionDisplay);
+    this.subscription.push(this._queryService.postQueryResult(this.queryPostDistribution, [this.alertDistributionDisplay])
+    .subscribe( 
+        data => {  
+            console.log('Update result:',data);
+            this.msgDisplayed = "Alert " + this.alertDisplay.ALTID + " has been updated."; 
+            this.displayProcessCompleted =true;
+        }, // put the data returned from the server in our variable
+        error => {
+        },
+        async () => { 
+                    //this._messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
+    }));
   }
 
   editAlert(alertId) {
@@ -347,5 +402,91 @@ export class AlertsICRComponent implements OnDestroy {
               this._messageService.add({severity:'success', summary:'Completed', detail: 'Alerts/reports download completed...' });
         }));
 
+  }
+
+  onPasteEmail(event) {
+    /* ClipboardEvent */
+    console.log('chipsEmail :', this.chipsEmail);
+    let splitPaste = event.clipboardData.getData('text').split(' ');
+    if(event.clipboardData.getData('text').includes(' ')) {
+       this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste]; // don't push the new value inside the array, create a new reference
+       this.chipsEmail.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes('\r\n')) {
+      this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste[0].split('\r\n')]; // don't push the new value inside the array, create a new reference
+       this.chipsEmail.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes(';')) {
+      this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste[0].split(';')]; // don't push the new value inside the array, create a new reference
+       this.chipsEmail.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes(',')) {
+      this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste[0].split(',')]; // don't push the new value inside the array, create a new reference
+       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+  }
+  onPasteEmailCC(event) {
+    /* ClipboardEvent */
+    let splitPaste = event.clipboardData.getData('text').split(' ');
+    if(event.clipboardData.getData('text').includes(' ')) {
+       this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste]; // don't push the new value inside the array, create a new reference
+       this.chipsEmailCC.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes('\r\n')) {
+      this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste[0].split('\r\n')]; // don't push the new value inside the array, create a new reference
+       this.chipsEmailCC.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes(';')) {
+      this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste[0].split(';')]; // don't push the new value inside the array, create a new reference
+       this.chipsEmailCC.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes(',')) {
+      this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste[0].split(',')]; // don't push the new value inside the array, create a new reference
+       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+  }
+  onPasteEmailBCC(event) {
+    /* ClipboardEvent */
+    let splitPaste = event.clipboardData.getData('text').split(' ');
+    if(event.clipboardData.getData('text').includes(' ')) {
+       this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste]; // don't push the new value inside the array, create a new reference
+       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes('\r\n')) {
+      this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste[0].split('\r\n')]; // don't push the new value inside the array, create a new reference
+       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes(';')) {
+      this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste[0].split(';')]; // don't push the new value inside the array, create a new reference
+       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
+    if(splitPaste[0].includes(',')) {
+      this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste[0].split(',')]; // don't push the new value inside the array, create a new reference
+       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
+       event.preventDefault();    //prevent ';' to be written
+       event.target.value ="";
+    } 
   }
 }

@@ -62,6 +62,7 @@ import { PalletLabelComponent } from './pages/warehouse/toolkit/pallet.label/pal
 import { UnarchiveInvoiceComponent } from './pages/finance/unarchive/unarchive.invoice.component';
 import { ReportFilterComponent } from './pages/reporting/report.filter/report.filter.component';
 import { ProductionNumberComponent } from './pages/warehouse/toolkit/production.number/production.number.component';
+import { PurchaseOrderComponent } from './pages/mass.update/purchase.order/purchase.order.component';
 
 import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
 import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
@@ -69,6 +70,7 @@ import { SyndigoUpdateComponent } from './pages/syndigo/update/syndigo.update.co
 import { PPGRetailComponent } from './pages/mdm/ppg.retail/ppg.retail.component';
 import { SpaceItemDimReportingComponent } from './pages/space.planning/item.dimension.reporting/space.item.dimension.reporting.component';
 import { AvailableMHComponent } from './pages/mdm/available.mh/available.mh.component';
+import { ItemListDescriptionComponent } from './pages/mass.update/itemlist.description/itemlist.description.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -147,6 +149,8 @@ const routes: Routes = [
   { path: 'logisticcode', component: ItemLogisticCodeComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemimages', component: ItemImagesComponent, canActivate: [AuthentificationGuard] },
   { path: 'supplieraddress', component: SupplierAddressComponent, canActivate: [AuthentificationGuard] },
+  { path: 'itemlistdescription', component: ItemListDescriptionComponent, canActivate: [AuthentificationGuard] },
+  { path: 'purchaseorder', component: PurchaseOrderComponent, canActivate: [AuthentificationGuard] },
   
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },
