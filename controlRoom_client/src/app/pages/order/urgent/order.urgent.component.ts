@@ -201,7 +201,7 @@ export class OrderUrgentComponent implements OnDestroy {
                 data => {
                   console.log('order update: ', data);  
                   this.waitMessage = '';
-                  this.msgDisplayed = 'All the selected purchase orders have been updated. Play safe, please review in GOLD the updated PO.'
+                  this.msgDisplayed = 'All the selected purchase orders have been updated. To be safe, kindly review the updated PO in GOLD.'
                   this.displayUpdateCompleted=true;
 
               },
@@ -423,7 +423,7 @@ export class OrderUrgentComponent implements OnDestroy {
                                 data => {
                                   console.log('order clear: ', data);  
                                   this.waitMessage = '';
-                                  this.msgDisplayed = 'All the selected purchase orders have been cleared. Play safe, please review in GOLD Central and Stock the updated PO.'
+                                  this.msgDisplayed = 'All the selected purchase orders have been cleared. To be safe, kindly review the updated PO in GOLD.'
                                   this.displayUpdateCompleted=true;
                 
                               },

@@ -281,6 +281,7 @@ export class SVAttributeComponent implements OnInit{
                                                                             '<br><br>'+
                                                                             '<b>Item SV attribute change is usually taking between 1 and 3 minutes</b>';
                                                         this.waitMessage = '';
+                                                        this.reset();
                                                     });
                                                 });
                                         });                     
@@ -380,5 +381,11 @@ export class SVAttributeComponent implements OnInit{
 
     return result;
   }
- 
+  
+  reset() {
+      this.activeIndex = 0; // Go next step;
+      this.uploadedFiles = [];
+      this.displayConfirm = false;
+      this.indicatorXLSfileLoaded = false;
+  }
 }

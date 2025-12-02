@@ -200,8 +200,21 @@ export class EdiAsnComponent {
                     this.displayNewVendor = true;
                   }
                   else {
+                    let match = false;
                     this.displayNewVendor = false;
-                    this.searchResult = [...this.searchResult, ...newVendorInformation]; 
+                    for (let i=0; i < newVendorInformation.length; i++) {
+                      match = false;
+                      for (let j=0; j < this.searchResult.length; j++) {
+                        if (newVendorInformation[i].FOUCNUF==this.searchResult[j].FOUCNUF &&
+                            newVendorInformation[i].STORE_CODE==this.searchResult[j].STORE_CODE) {
+                              console.log('Match...',newVendorInformation[i], this.searchResult[j]);
+                              match = true;
+                         }
+                       }
+                        if(! match) {
+                            this.searchResult = [...this.searchResult, ...[newVendorInformation[i]]];
+                        }
+                    }
 
                       console.log('this.searchResult:', this.searchResult);
                   }

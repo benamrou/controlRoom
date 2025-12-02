@@ -281,6 +281,7 @@ export class ItemAttributeComponent implements OnInit{
                                                                             '<br><br>'+
                                                                             '<b>Item attribute change is usually taking between 1 and 3 minutes</b>';
                                                         this.waitMessage = '';
+                                                        this.reset();
                                                     });
                                                 });
                                         });                     
@@ -376,5 +377,10 @@ export class ItemAttributeComponent implements OnInit{
 
     return result;
   }
- 
+  reset() {
+      this.activeIndex = 0; // Go next step;
+      this.uploadedFiles = [];
+      this.displayConfirm = false;
+      this.indicatorXLSfileLoaded = false;
+  }
 }

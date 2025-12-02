@@ -15,6 +15,7 @@ import { BatchScheduleComponent } from './pages/it/schedule/batch.schedule.compo
 import { MyBatchListComponent } from './pages/it/schedule/mybatchlist/mybatch.list.component';
 import { MdmAttributeBrandComponent } from './pages/mass.update/item.brand/mdm.attribute.brand.component';
 import { ItemAttributeComponent } from './pages/mass.update/item.attribute/item.attribute.component';
+import { ItemAttributeDatedComponent } from './pages/mass.update/item.attribute.dated/item.attribute.dated.component';
 import { ItemHierarchyComponent } from './pages/mass.update/item.hierarchy/item.hierarchy.component';
 import { MassJournalComponent } from './pages/mass.update/journal/massjournal.component';
 import { SVAttributeComponent } from './pages/mass.update/sv.attribute/sv.attribute.component';
@@ -71,6 +72,9 @@ import { PPGRetailComponent } from './pages/mdm/ppg.retail/ppg.retail.component'
 import { SpaceItemDimReportingComponent } from './pages/space.planning/item.dimension.reporting/space.item.dimension.reporting.component';
 import { AvailableMHComponent } from './pages/mdm/available.mh/available.mh.component';
 import { ItemListDescriptionComponent } from './pages/mass.update/itemlist.description/itemlist.description.component';
+import { ItemDescriptionComponent } from './pages/mass.update/item.description/item.description.component';
+import { ItemAddressComponent } from './pages/mass.update/item.address/item.address.component';
+import { VegaProcessDashboardComponent } from './pages/it/vega/vega-process-dashboard.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -115,7 +119,9 @@ const routes: Routes = [
   { path: 'syndigosearch', component: SyndigoProductComponent, canActivate: [AuthentificationGuard] },
   { path: 'syndigocollect', component: SyndigoDownloadComponent, canActivate: [AuthentificationGuard] },
   { path: 'syndigoupdate', component: SyndigoUpdateComponent, canActivate: [AuthentificationGuard] },
+  { path: 'itemaddress', component: ItemAddressComponent, canActivate: [AuthentificationGuard] },
 
+  
   /* E-commerce/Space Planning */
   { path: 'ecommercepicture', component: EcommercePictureComponent, canActivate: [AuthentificationGuard] },
   { path: 'spaceitemreporting', component: SpaceItemReportingComponent, canActivate: [AuthentificationGuard] },
@@ -124,6 +130,8 @@ const routes: Routes = [
   /* IT */
   { path: 'batchschedule', component: BatchScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'batchlist', component: MyBatchListComponent, canActivate: [AuthentificationGuard] },
+  { path: 'vega', component: VegaProcessDashboardComponent, canActivate: [AuthentificationGuard] },
+  
 
   /* EDI */
   { path: 'ediasn', component: EdiAsnComponent, canActivate: [AuthentificationGuard] },
@@ -139,6 +147,7 @@ const routes: Routes = [
   /* MASS_CHANGE */
   { path: 'massjournal', component: MassJournalComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemattribute', component: ItemAttributeComponent, canActivate: [AuthentificationGuard] },
+  { path: 'itemattributedated', component: ItemAttributeDatedComponent, canActivate: [AuthentificationGuard] },
   { path: 'svattribute', component: SVAttributeComponent, canActivate: [AuthentificationGuard] },
   { path: 'svinfo', component: SVInfoComponent, canActivate: [AuthentificationGuard] },
   { path: 'categorymanager', component: CategoryManagerComponent, canActivate: [AuthentificationGuard] },
@@ -151,6 +160,7 @@ const routes: Routes = [
   { path: 'supplieraddress', component: SupplierAddressComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemlistdescription', component: ItemListDescriptionComponent, canActivate: [AuthentificationGuard] },
   { path: 'purchaseorder', component: PurchaseOrderComponent, canActivate: [AuthentificationGuard] },
+  { path: 'itemdescription', component: ItemDescriptionComponent, canActivate: [AuthentificationGuard] },
   
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },

@@ -1,0 +1,219 @@
+<!-- login.component.html -->
+<div class="login-page">
+    <!-- Aurora Effect -->
+    <div class="aurora"></div>
+
+    <!-- Snowflakes -->
+    <div *ngFor="let dummy of snowflakes" class="snowflake">❄</div>
+
+    <!-- Stars -->
+    <div class="star star-1">✨</div>
+    <div class="star star-2">✨</div>
+    <div class="star star-3">✨</div>
+    <div class="star star-4">✨</div>
+
+    <!-- Christmas Ornaments -->
+    <div class="ornament ornament-1"></div>
+    <div class="ornament ornament-2"></div>
+    <div class="ornament ornament-3"></div>
+
+    <!-- Christmas Tree Left -->
+    <div class="christmas-tree tree-left">
+        <div class="tree-star">⭐</div>
+        <div class="tree-section tree-top"></div>
+        <div class="tree-section tree-middle"></div>
+        <div class="tree-section tree-bottom"></div>
+        <div class="tree-trunk"></div>
+        <div class="tree-lights">
+            <div class="light light-red" style="top: 20px; left: 15px;"></div>
+            <div class="light light-yellow" style="top: 35px; left: 25px;"></div>
+            <div class="light light-blue" style="top: 50px; left: 10px;"></div>
+            <div class="light light-green" style="top: 65px; left: 30px;"></div>
+            <div class="light light-red" style="top: 80px; left: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- Christmas Tree Right -->
+    <div class="christmas-tree tree-right">
+        <div class="tree-star">⭐</div>
+        <div class="tree-section tree-top"></div>
+        <div class="tree-section tree-middle"></div>
+        <div class="tree-section tree-bottom"></div>
+        <div class="tree-trunk"></div>
+        <div class="tree-lights">
+            <div class="light light-blue" style="top: 20px; left: 15px;"></div>
+            <div class="light light-green" style="top: 35px; left: 25px;"></div>
+            <div class="light light-red" style="top: 50px; left: 10px;"></div>
+            <div class="light light-yellow" style="top: 65px; left: 30px;"></div>
+            <div class="light light-blue" style="top: 80px; left: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- Santa Sleigh -->
+    <div class="santa-sleigh">
+        <div class="sleigh-body">
+            <div class="santa-hat">🎅</div>
+        </div>
+        <div class="reindeer">🦌</div>
+    </div>
+
+    <!-- Gift Boxes -->
+    <div class="gift-box gift-1">
+        <div class="gift-ribbon"></div>
+        <div class="gift-bow">🎀</div>
+    </div>
+    <div class="gift-box gift-2">
+        <div class="gift-ribbon"></div>
+        <div class="gift-bow">🎀</div>
+    </div>
+    <div class="gift-box gift-3">
+        <div class="gift-ribbon"></div>
+        <div class="gift-bow">🎀</div>
+    </div>
+
+    <!-- Candy Canes -->
+    <div class="candy-cane cane-1">🍭</div>
+    <div class="candy-cane cane-2">🍭</div>
+
+    <!-- Snowman -->
+    <div class="snowman">
+        <div class="snowman-head">
+            <div class="snowman-eyes">• •</div>
+            <div class="snowman-nose">🥕</div>
+            <div class="snowman-smile">⌣</div>
+        </div>
+        <div class="snowman-body">
+            <div class="snowman-buttons">●<br>●<br>●</div>
+        </div>
+        <div class="snowman-hat">🎩</div>
+        <div class="snowman-scarf"></div>
+    </div>
+
+	
+    <!-- Bells -->
+    <div class="bell bell-1">🔔</div>
+    <div class="bell bell-2">🔔</div>
+
+    <!-- Holly Decorations -->
+    <div class="holly holly-1">🌿</div>
+    <div class="holly holly-2">🌿</div>
+    <div class="holly holly-3">🌿</div>
+
+    <!-- Gingerbread Man -->
+    <div class="gingerbread">
+        <div class="gingerbread-head">
+            <div class="gingerbread-eyes">• •</div>
+            <div class="gingerbread-smile">⌣</div>
+        </div>
+        <div class="gingerbread-body">
+            <div class="gingerbread-buttons">●●●</div>
+        </div>
+    </div>
+
+    <!-- Christmas Lights String -->
+    <div class="lights-string lights-top">
+        <div class="string-light" style="left: 10%;"></div>
+        <div class="string-light" style="left: 20%;"></div>
+        <div class="string-light" style="left: 30%;"></div>
+        <div class="string-light" style="left: 40%;"></div>
+        <div class="string-light" style="left: 50%;"></div>
+        <div class="string-light" style="left: 60%;"></div>
+        <div class="string-light" style="left: 70%;"></div>
+        <div class="string-light" style="left: 80%;"></div>
+        <div class="string-light" style="left: 90%;"></div>
+    </div>
+
+    <!-- Wreaths -->
+    <div class="wreath wreath-1">
+        <div class="wreath-circle"></div>
+        <div class="wreath-bow">🎀</div>
+    </div>
+    <div class="wreath wreath-2">
+        <div class="wreath-circle"></div>
+        <div class="wreath-bow">🎀</div>
+    </div>
+
+    <!-- Version -->
+    <div class="version" #versionDiv [style.visibility]="showVersion ? 'visible' : 'hidden'">
+        vers. 6.0.1b0.10
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo" (click)="showHideVersion()">
+            	<img src="./assets/images/logo.png" width="150px" class="user-avatar" />
+            </div>
+            
+            <h1>Inventory Control Room</h1>
+
+            <p-toast key="top" [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+            <p-toast></p-toast>
+
+            <form role="form" (ngSubmit)="onLoggedin()">
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    <input 
+                        type="text" 
+                        name="username" 
+                        [(ngModel)]="authentification.username"
+                        class="form-control" 
+                        placeholder="Username"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input 
+                        type="password" 
+                        [(ngModel)]="authentification.password"
+                        name="password"
+                        class="form-control" 
+                        placeholder="Password"
+                        required>
+                </div>
+
+                <button 
+                    type="submit" 
+                    class="login-btn" 
+                    [disabled]="authentification.username.length === 0">
+                    <i class="fas fa-sign-in-alt"></i> Log In
+                </button>
+
+                <div class="loading-status" *ngIf="canConnect">
+                    <div class="status-item">
+                        <span>User authentication validation</span>
+                        <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
+                    </div>
+                    <div class="status-item">
+                        <span>Gathering user information</span>
+                        <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
+                    </div>
+                    <div class="status-item">
+                        <span>Gathering menu access</span>
+                        <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
+                    </div>
+                    <div class="status-item">
+                        <span>Loading environment</span>
+                        <i class="fas" [class.fa-check]="environmentGathered" [class.fa-spinner]="!environmentGathered"></i>
+                    </div>
+                    <div class="status-item">
+                        <span>Gathering parameters</span>
+                        <i class="fas" [class.fa-check]="parameterGathered" [class.fa-spinner]="!parameterGathered"></i>
+                    </div>
+                    <div class="status-item">
+                        <span>Loading language labels</span>
+                        <i class="fas" [class.fa-check]="labelsGathered" [class.fa-spinner]="!labelsGathered"></i>
+                    </div>
+                    <div class="status-item">
+                        <span>Refreshing workspace</span>
+                        <i class="fas" [class.fa-check]="labelsGathered" [class.fa-spinner]="!labelsGathered"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Holiday Message -->
+    <div class="holiday-message">Happy Holidays! 🎄</div>
+</div>

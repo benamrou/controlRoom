@@ -46,6 +46,7 @@ export class MassJournalComponent {
 
    columnOptions!: SelectItem[];
    trackIndex: number = 0;
+  selectedMassObject: any;
 
   // Search result 
   searchResult : any [] = [];
@@ -148,6 +149,17 @@ export class MassJournalComponent {
   onRowSelect(event: any) {
   }
 
+  onSearchScopeCodeChange(searchValue: string) {
+    this.selectedMassObject = this.pt_33_data.find(mass => mass.TENTRYDESC === searchValue);
+    
+    // Now you have the complete object and can do whatever you need with it.
+    if (this.selectedMassObject) {
+      console.log('Selected object:', this.selectedMassObject);
+    } else {
+      console.log('No matching object found.');
+    }
+  }
+  
   search() {
     //this.searchCode = searchCode;
     //console.log('Looking for item code : ' + this.searchJobCode + ' - Picking Unit : ' + this.selectedPU);
@@ -184,9 +196,13 @@ export class MassJournalComponent {
   }
 
   downloadFile(id: any, isError: any) {
-    console.log ('Downloading...', id, this.searchResult)
+    let raw = this.searchResult[id].JSONERROR;
+    // Step 1: Replace single quotes with double quotes
+    raw = this.fixMalformedJson(raw);
+
+    console.log ('Downloading...', id, this.searchResult[id], raw)
     if (isError) {
-      this._exportService.saveCSV(JSON.parse(this.searchResult[id].JSONERROR.replace(/'/g, '"')), null, null, null, 
+      this._exportService.saveCSV(raw, null, null, null, 
                                   'MASSCHANGE_' + this.searchResult[id].JSONID, 
                                   'Mass Change execution report REJECTION', 'Process ' + this.searchResult[id].JSONID + ' running the EXCEL file ' + this.searchResult[id].JSONFILE +  ' has been executed on ' +
                                   this.searchResult[id].JSONDPROCESS + ' by ' + this.searchResult[id].USERNAME + ' - Nb error: ' + this.searchResult[id].JSONNBERROR);
@@ -199,6 +215,50 @@ export class MassJournalComponent {
 
     }
   }
+
+ fixMalformedJson(raw: string): any[] {
+  let corrected = raw;
+
+  // Step 1: Quote all unquoted keys.
+  corrected = corrected.replace(/([A-Z_]+)\s*:/g, '"$1":');
+
+  // Step 2: Quote date values and other unquoted strings.
+  // This regex is now more comprehensive to catch various unquoted values.
+  corrected = corrected.replace(/:([^\s"\[{,}\]]+)/g, (match, value) => {
+    // If the value is a number or boolean, don't quote it.
+    if (/^-?\d+(\.\d+)?$|^(true|false|null)$/i.test(value)) {
+      return `:${value}`;
+    }
+    // Otherwise, wrap it in quotes.
+    return `:"${value}"`;
+  });
+
+  // Step 3: Explicitly handle the COMMENTS field, which contains commas and other characters.
+  // The regex finds the COMMENTS key and the rest of the string until the end of the object.
+  corrected = corrected.replace(/("COMMENTS":)([^}]*)/g, (match, key, value) => {
+    // We need to be careful with nested commas and other potential issues.
+    // Let's manually find the end of the comment by looking for the last parentheses.
+    const endOfCommentIndex = value.lastIndexOf(')');
+    if (endOfCommentIndex !== -1) {
+      // The comment ends with the closing parenthesis and is followed by the closing brace of the object.
+      const commentValue = value.substring(0, endOfCommentIndex + 1);
+      const remaining = value.substring(endOfCommentIndex + 1);
+      const escapedComment = commentValue.trim().replace(/"/g, '\\"');
+      return `${key}"${escapedComment}"${remaining}`;
+    }
+    // If no parenthesis is found, fall back to a simpler quote.
+    const escapedValue = value.trim().replace(/"/g, '\\"');
+    return `${key}"${escapedValue}"`;
+  });
+
+  // Final parse
+  try {
+    return JSON.parse(corrected);
+  } catch (e) {
+    console.error("❌ JSON parsing failed:", e, corrected);
+    return [];
+  }
+}
 
   expandColumn(indice: number) {
     //console.log ('expandColumnCaoMissing : ' + indice);

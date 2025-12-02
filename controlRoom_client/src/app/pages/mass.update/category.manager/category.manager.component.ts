@@ -284,6 +284,7 @@ export class CategoryManagerComponent implements OnInit{
                                                         this.displayUpdateCompleted = true;
 
                                                         this.waitMessage ='';
+                                                        this.reset();
                                                     });
                                                 });
                                         });                     
@@ -368,5 +369,10 @@ export class CategoryManagerComponent implements OnInit{
 
     return result;
   }
- 
+  reset() {
+      this.activeIndex = 0; // Go next step;
+      this.uploadedFiles = [];
+      this.displayConfirm = false;
+      this.indicatorXLSfileLoaded = false;
+  }
 }

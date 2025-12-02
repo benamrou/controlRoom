@@ -88,6 +88,7 @@ import { InquiryModule } from './pages/inquiry/inquiry.module';
 import { CategoryModule } from './pages/interfacing/category/category.module';
 import { MdmAttributeBrandModule } from './pages/mass.update/item.brand/mdm.attribute.brand.module';
 import { ItemAttributeModule } from './pages/mass.update/item.attribute/item.attribute.module';
+import { ItemAttributeDatedModule } from './pages/mass.update/item.attribute.dated/item.attribute.dated.module';
 import { ItemHierarchyModule } from './pages/mass.update/item.hierarchy/item.hierarchy.module';
 import { MassJournalModule } from './pages/mass.update/journal/massjournal.module';
 import { SVAttributeModule } from './pages/mass.update/sv.attribute/sv.attribute.module';
@@ -127,6 +128,9 @@ import { ReportFilterModule } from './pages/reporting/report.filter/report.filte
 import { ProductionNumberModule } from './pages/warehouse/toolkit/production.number/production.number.module';
 import { ItemListDescriptionModule } from './pages/mass.update/itemlist.description/itemlist.description.module';
 import { PurchaseOrderModule } from './pages/mass.update/purchase.order/purchase.order.module';
+import { ItemDescriptionModule } from './pages/mass.update/item.description/item.description.module';
+import { ItemAddressModule } from './pages/mass.update/item.address/item.address.module';
+import { VegaProcessDashboardModule } from './pages/it/vega/vega-process-dashboard.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -197,6 +201,7 @@ import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module'
     StockModule,
     MdmAttributeBrandModule,
     ItemAttributeModule,
+    ItemAttributeDatedModule,
     ItemHierarchyModule,
     MassJournalModule,
     ReportingModule,
@@ -242,7 +247,10 @@ import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module'
     AvailableMHModule,
     ProductionNumberModule,
     ItemListDescriptionModule,
-    PurchaseOrderModule
+    PurchaseOrderModule,
+    ItemDescriptionModule,
+    ItemAddressModule,
+    VegaProcessDashboardModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

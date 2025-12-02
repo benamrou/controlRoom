@@ -1,0 +1,227 @@
+<div>
+    <app-page-header #pageHeader [heading]="'Item attribute start&end change'" [icon]="'fa-mattress-pillow'"
+                     [waitMessage]="waitMessage"  [okExit]="okExit" [screenID]="screenID">
+    </app-page-header>
+</div>
+
+<div class="content-section implementation" style="padding: 5px">
+    <p-toast key="top" [style]="{marginTop: '80px'}" [sticky]=true position="top-right"></p-toast>
+</div>
+<div style="width: 50%; float: right;">
+    <p-steps styleClass="steps-custom" 
+            [model]="menuItems" [(activeIndex)]="activeIndex" [readonly]="true">
+    </p-steps>
+</div>
+
+<p-dialog header="Update completed" [(visible)]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+    <span>{{msgFinalDisplayed}}</span>
+        <p-footer>
+            <button style="float: right; margin-bottom:0.5em" 
+                    type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
+                    label="Ok">
+            </button>
+        </p-footer>
+</p-dialog>
+
+<div style="padding-top: 5%;">
+    <!-- Step 0 - File selection -->
+    <p-fieldset #step0 legend="{{menuItems[0].title}}" [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder">
+        <div class="row">
+            <div class="col">
+                Select your Item attribute file change. The XLS(x) Excel file should contain those four columns headers:
+                <ul>
+                    <li>COLUMN A: item code</li>
+                    <li>COLUMN B: Attribute class</li>
+                    <li>COLUMN C: Attribute code</li>
+                    <li>COLUMN D: Attribute value</li>
+                    <li>COLUMN E: Period start (MM/DD/RR)</li>
+                    <li>COLUMN F: Period end (MM/DD/RR)</li>
+                </ul>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <button #template type="submit" pButton (click)="getTemplate()" icon="fas fa-file-excel-o" label="TEMPLATE" 
+                                class="CSV_Button"
+                                style="margin-right: 15px; float: right; font-size: x-small;"></button>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:0.5em">
+                    <div class="col">
+                        <b style="background-color: greenyellow;border-radius: 5%;" *ngFor="let file of uploadedFiles">
+                            {{file.name}}
+                        </b>
+                    </div>
+                    <div class="col" style="margin-right: 15px; text-align: right;">
+                        
+                        <p-fileUpload #fileUpload mode="basic"  name="file"
+                                    accept=".xlsx" 
+                                    [showUploadButton]="true"
+                                    chooseLabel="Browse"
+                                    [auto]="true"
+                                    [style]="{'font-size':'smaller','height':'25px'}"
+                                    (onSelect)="onSelect($event)"
+                                    (onBeforeUpload)="onBeforeUpload($event)"
+                                    (onUpload)="onUploadCompleted($event)"></p-fileUpload>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col" *ngIf="displayConfirm" style="margin-top: 5px">
+                        <button type="submit" pButton (click)="confirmFile()" icon="fas fa-check" label="Confirm" 
+                                class="CSV_Reverse_Button"
+                                style="margin-right: 15px; float: right; font-size: small;"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+             
+        <div class="row" style="padding-left: 15px">
+            You can use the template file as example in order to respect the columns headers naming.
+        </div>
+
+        <div class="alert alert-danger" role="alert" *ngFor="let message of globalError"
+             style="margin-bottom: 1px;">
+             <i class="fas fa-exclamation-circle"></i>
+            <strong style="padding-left: 1em;">{{message}}</strong>
+        </div>
+
+        <div class="alert alert-success" role="alert" *ngFor="let message of globalValid"
+             style="margin-bottom: 1px;">
+             <div [innerHTML]="message"></div>
+        </div>
+
+        <div item-width="400px" table-layout="fixed" 
+             *ngIf="indicatorXLSfileLoaded && _importService.wb.sheets.length > 0">
+
+            <p-table #result [value]="_importService.wb.sheets[0].worksheet.rows"
+                [rows]="5"  [rowsPerPageOptions]="[5,10,50]"
+                [paginator]="true" [pageLinks]="3" 
+                [columns]="_importService.wb.sheets[0].worksheet.columns"
+                selectionMode="single" 
+                [resizableColumns]="true" columnResizeMode="expand"
+                [responsive]="true" [totalRecords]="_importService.wb.sheets[0].worksheet.rows.length"
+                [reorderableColumns]="false" scrollHeight="400px"
+                tableStyleClass="tableCustom">
+            
+            <!-- FILTER -->
+
+        <!-- FILTER -->
+            <ng-template pTemplate="caption">
+                <div class="table-header grid">
+                    <div class="col-3">
+                        <span>
+                            <button type="button" pButton icon="fas fa-file" iconPos="left" 
+                                class="CSV_Button p-input-icon-left ml-auto"
+                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                            </button>
+                        </span>
+                    </div>
+                    <div class="col-9" style="text-align: right;">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        </span>
+                    </div>
+                </div>
+            </ng-template>
+            <!-- HEADER -->
+                <ng-template pTemplate="header">            
+                    <tr>
+                        <ng-container *ngFor="let col of _importService.wb.sheets[0].worksheet.columns" >
+                            <th style="background-color: cornflowerblue; color: white" 
+                                [pSortableColumn]="col.field" pReorderableColumn pResizableColumn
+                                *ngIf="col.field != 'COMMENTS'">
+                                {{col.header}}
+                                <p-sortIcon [field]="col.field"></p-sortIcon>
+                            </th>
+                            <th style="width: 60%;background-color: crimson; color: white"
+                                [pSortableColumn]="col.field"  pReorderableColumn pResizableColumn 
+                                *ngIf="col.field == 'COMMENTS'" >
+                                {{col.header}}
+                                <p-sortIcon [field]="col.field"></p-sortIcon>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+            <!-- BODY -->
+                <ng-template pTemplate="body" let-rowData let-columns="_importService.wb.sheets[0].worksheet.columns">
+                    <tr *ngIf="rowData['COMMENTS'] != '' && rowData['COMMENTS']" [pSelectableRow]="rowData" style="background-color: orangered; color: white">
+                        <td   *ngFor="let col of _importService.wb.sheets[0].worksheet.columns" class="ui-resizable-column" >
+                            {{rowData[col.field]}}
+                        </td>
+                    </tr>                    
+                    <tr *ngIf="rowData['COMMENTS'] == '' || !rowData['COMMENTS']" [pSelectableRow]="rowData" >
+                        <td   *ngFor="let col of _importService.wb.sheets[0].worksheet.columns" class="ui-resizable-column" >
+                            {{rowData[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <i class="FOOTER_Table" >{{_importService.wb.sheets[0].worksheet.rows.length}} references</i>
+        </div>
+
+
+    </p-fieldset>
+    <br>
+    <!-- Step 1 - Configuration definition -->
+    <p-fieldset #step1 legend="{{menuItems[1].title}}" [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder" *ngIf="activeIndex > 0">
+        <div class="row">
+            <!--div style="width: 50%;">
+                <span style="margin-right:1.3em; margin-top: 5px; padding-left: 15px; font-weight: bolder">New Item link start date : </span>
+                <p-calendar [(ngModel)]="startDate"  
+                            [readonlyInput]="true"
+                            dateFormat="mm/dd/yy"
+                            [defaultDate]="defaultStartDate"
+                            name="linkStart" [showIcon]="true" 
+                            [showOnFocus]="true" [showOtherMonths]="true">
+                </p-calendar>
+            </div-->
+
+            <div style="width: 50%;">
+                <p-checkbox [(ngModel)]="itemTrace" [binary]="true"></p-checkbox>
+                <span style="margin-top: 5px; padding-left: 15px;">Item trace generation </span>
+            </div>
+            
+        </div>
+        <div class="row" style="padding: 1em; ">
+            <span style="font-size: xx-small;">(*) Existing item link will be ended at this date - 1.</span>
+        </div>
+
+    </p-fieldset>
+
+    <br>
+    <!-- Step 2 - Execution / Schedule -->
+    <p-fieldset #step2 legend="{{menuItems[2].title}}" [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder"  *ngIf="activeIndex > 1">
+        <div class="row">
+            <div style="width: 50%;">
+                <span style="padding-left: 15px; font-weight: bolder">
+                    When do you want to execute the item attribute changes?
+                </span>
+                &nbsp;&nbsp;
+                <p-toggleButton [(ngModel)]="scheduleFlag" onLabel="Schedule-it" offLabel="Now" >
+
+                </p-toggleButton>
+            </div>
+
+            <div *ngIf="scheduleFlag"  style="width: 50%;">
+
+                <p-calendar [(ngModel)]="scheduleDate"  
+                            [minDate]="dateNow"
+                            dateFormat="mm/dd/yy"
+                            [showTime]="true"
+                            name="scheduleDateObjet" [showIcon]="true" [showOtherMonths]="true">
+                </p-calendar>
+            </div>
+        </div>
+
+    </p-fieldset>
+
+    <br>
+    <!-- Step 3 - Recap -->
+    <p-fieldset #step3 legend="{{menuItems[3].title}}" [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder"  *ngIf="activeIndex > 2">
+        <div style="text-align:center" *ngIf="activeIndex > 2 && startDate ">
+            <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" (click)="validationChanges()"></button>
+        </div>
+    </p-fieldset>
+</div>

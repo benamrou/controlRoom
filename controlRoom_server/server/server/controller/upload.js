@@ -220,7 +220,7 @@ module.post = function (request,response) {
                                 response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                                 SQL.executeLibQuery(SQL.getNextTicketID(),
                                                     "MAS0000001", 
-                                                    "'{" + data + ',' + request.query.PARAM + "}'",
+                                                    "'{" + data + ',' + (request.query.PARAM).toString().replace("'", "_")  + "}'",
                                                     request.header('USER'),
                                                     "'{" + request.header('DATABASE_SID') + "}'", 
                                                     "'{" +request.header('LANGUAGE') + "}'", 
@@ -253,7 +253,7 @@ module.post = function (request,response) {
 
                             {jsonuserid: request.header('USER'),
                              jsonutil: request.header('USER'),
-                             jsonfile: request.header('FILENAME'), 
+                             jsonfile: request.header('FILENAME').replace("'", "_"), 
                              jsonstatus: 0,
                              jsoncontent: JSON.stringify(request.body), 
                              jsonnbrecord: request.query.PARAM[6], 
@@ -292,7 +292,7 @@ module.post = function (request,response) {
         //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
         SQL.executeLibQuery(SQL.getNextTicketID(),
                            "MAS0000002", 
-                            "'{" + request.query.PARAM + "}'",
+                            "'{" + (request.query.PARAM).toString().replace("'", "_")  + "}'",
                             request.header('USER'),
                             "'{" + request.header('DATABASE_SID') + "}'", 
                             "'{" +request.header('LANGUAGE') + "}'", 
@@ -310,7 +310,7 @@ module.post = function (request,response) {
         //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
         SQL.executeLibQuery(SQL.getNextTicketID(),
                         "MAS0000003", 
-                            "'{" + request.query.PARAM + "}'",
+                            "'{" + (request.query.PARAM).toString().replace("'", "_")  + "}'",
                             request.header('USER'),
                             "'{" + request.header('DATABASE_SID') + "}'", 
                             "'{" +request.header('LANGUAGE') + "}'", 
@@ -326,7 +326,7 @@ module.post = function (request,response) {
         //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
         SQL.executeLibQuery(SQL.getNextTicketID(),
                            "MAS0000004", 
-                            "'{" + request.query.PARAM + "}'",
+                            "'{" + (request.query.PARAM).toString().replace("'", "_") + "}'",
                             request.header('USER'),
                             "'{" + request.header('DATABASE_SID') + "}'", 
                             "'{" +request.header('LANGUAGE') + "}'", 
@@ -343,7 +343,7 @@ module.post = function (request,response) {
         //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
         SQL.executeLibQuery(SQL.getNextTicketID(),
                            "MAS0000005", 
-                            "'{" + request.query.PARAM + "}'",
+                            "'{" + (request.query.PARAM).toString().replace("'", "_") + "}'",
                             request.header('USER'),
                             "'{" + request.header('DATABASE_SID') + "}'", 
                             "'{" +request.header('LANGUAGE') + "}'", 

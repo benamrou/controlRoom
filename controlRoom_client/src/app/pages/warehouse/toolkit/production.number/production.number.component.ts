@@ -225,7 +225,7 @@ export class ProductionNumberComponent {
                   data => {
                     console.log('order update: ', data);  
                     this.waitMessage = '';
-                    this.msgDisplayed = 'All the selected item traceability groups have been updated. Play safe, please review in GOLD STOCK the item ID card.'
+                    this.msgDisplayed = 'All the selected item traceability groups have been updated. To be safe, kindly review the traceability group i PO in GOLD STOCK the item ID card.'
                     this.displayUpdateCompleted=true;
   
                 },

@@ -288,6 +288,7 @@ export class VariableWeightComponent implements OnInit{
                                                                             '<br><br>'+
                                                                             '<b>Variable weight is usually taking between 1 and 2 minutes</b>';
                                                         this.waitMessage = '';
+                                                        this.reset();
                                                     });
                                                 });
                                         });                     
@@ -378,6 +379,13 @@ export class VariableWeightComponent implements OnInit{
     }
 
     return result;
+  }
+
+  reset() {
+      this.activeIndex = 0; // Go next step;
+      this.uploadedFiles = [];
+      this.displayConfirm = false;
+      this.indicatorXLSfileLoaded = false;
   }
  
 }

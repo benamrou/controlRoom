@@ -7,7 +7,8 @@ import { LogginService, UserService, LabelService, StructureService, ScreenServi
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss', './SeasonalThemes/halloween.scss', './SeasonalThemes/christmas.scss', './SeasonalThemes/winter.scss', './SeasonalThemes/spring.scss', './SeasonalThemes/thanksGiving.scss'],
+    styleUrls: ['./login.component.scss', './SeasonalThemes/halloween.scss', './SeasonalThemes/christmas.scss', './SeasonalThemes/winter.scss', './SeasonalThemes/spring.scss', 
+                './SeasonalThemes/thanksGiving.scss', './SeasonalThemes/happy_holiday.scss'],
     animations: [routerTransition()]
 })
 export class LoginComponent implements OnInit {
@@ -26,6 +27,12 @@ export class LoginComponent implements OnInit {
     canConnect: boolean = false;
 	connectionMessage: Message [] = [];
     divVersion: any;
+
+  // Version visibility
+  showVersion = false;
+  // Snowflakes array (for *ngFor)
+  snowflakes: number[] = Array(80).fill(0);
+  stars = Array(40).fill(0);       // increase stars count
 
     constructor(public router: Router, 
                 private _messageService: MessageService,
@@ -120,12 +127,19 @@ export class LoginComponent implements OnInit {
 		//this._userService.getEnvironment(JSON.parse(localStorage.getItem('ICRUser')!)).subscribe( result => { this.environmentGathered = true; });
     }
 
-    showHideVersion() {
+   /* showHideVersion() {
        if(this.divVersion.nativeElement.style.visibility === 'hidden') {
             this.divVersion.nativeElement.style.visibility = 'visible';
         }
         else {
             this.divVersion.nativeElement.style.visibility = 'hidden';
         }
+    }*/
+
+      /**
+     * Toggle version visibility
+     */
+    showHideVersion(): void {
+        this.showVersion = !this.showVersion;
     }
 }

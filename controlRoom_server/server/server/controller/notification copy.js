@@ -366,7 +366,7 @@ async function processContent(SQLProcess, alertData, request, response, result) 
       if (detailData.length > 500) {
         await SQLProcess.executeQuery(
           SQLProcess.getNextTicketID(),
-          `INSERT INTO ALERTLOG SELECT ''${alertData[0].ALTID}'', SYSDATE, utl_raw.cast_to_raw('{big data}'), sysdate, sysdate, 'notification.js', '${detailData.length}' FROM DUAL`,
+          `INSERT INTO ALERTLOG SELECT ''${alertData[0].ALTID}'', SYSDATE, utl_raw.cast_to_raw(''{big data}''), sysdate, sysdate, ''notification.js'', ''${detailData.length}'' FROM DUAL`,
           "'{" + request.query.PARAM + "}'",
           request.header('USER'),
           "'{" + request.header('DATABASE_SID') + "}'",

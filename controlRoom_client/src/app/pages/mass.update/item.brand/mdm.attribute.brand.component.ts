@@ -180,7 +180,7 @@ export class MdmAttributeBrandComponent {
         this._messageService.add({severity: 'info', summary: 'Brand file Uploaded', detail: ''});
       }
   
-      load() {
-        
-      }
+  load() {
+    
+  }
 }

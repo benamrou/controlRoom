@@ -145,7 +145,7 @@ export class ReleasePalletComponent {
                   data => {
                     console.log('SSCC update: ', data);  
                     this.waitMessage = '';
-                    this.msgDisplayed = 'All the selected SSCC  have been released. Play safe, please review in GOLD the updated SSCC.'
+                    this.msgDisplayed = 'All the selected SSCC  have been released. To be safe, kindly review the updated SSCC in GOLD Stock.'
                     this.displayUpdateCompleted=true;
   
                 },

@@ -1,0 +1,206 @@
+<app-page-header [heading]="'Vega Process Dashboard'" [icon]="'fa-university'"
+                 [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+<div class="dashboard-container p-4">
+
+  <!-- Filter Controls -->
+  <div>
+      <p-card class="mb-4">
+        <ng-template pTemplate="header">
+          <div class="p-3">
+            <h2 class="text-2xl font-bold m-0">Process Filters</h2>
+          </div>
+        </ng-template>
+        
+        <div #mydiv class="grid">
+          <div class="col-12 md:col-4">
+            <label class="block mb-2 font-semibold">Process</label>
+            <p-dropdown 
+              [(ngModel)]="selectedProcess"
+              [options]="processOptions"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              filterBy="label"
+              [showClear]="true"
+              appendTo="body"
+              placeholder="All Processes"
+              (onChange)="onProcessChange()"
+              [style]="{'width': '100%'}">
+            </p-dropdown>
+          </div>
+          
+          <div class="col-12 md:col-4">
+            <label class="block mb-2 font-semibold">Time Period</label>
+            <p-dropdown 
+              [(ngModel)]="selectedGranularity"
+              [options]="granularities"
+              optionLabel="label"
+              appendTo="body"
+              (onChange)="onGranularityChange()"
+              [style]="{'width': '100%'}">
+            </p-dropdown>
+          </div>
+          
+          <div class="col-12 md:col-4">
+            <div style="float: right">
+              <label class="block mb-2">&nbsp;</label>
+              <p-button 
+                label="Export to CSV" 
+                icon="pi pi-download" 
+                (onClick)="exportToCSV()"
+                severity="secondary"
+                [style]="{'width': '100%'}">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+  </div>
+  <!-- Process Table -->
+  <div style="margin-top: 1em;">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="flex align-items-center justify-content-between p-3">
+            <div>
+              <h2 class="text-2xl font-bold m-0">Process Runs</h2>
+              <p class="text-500 mt-1 mb-0">{{ filteredProcesses.length }} run(s) found</p>
+            </div>
+          </div>
+        </ng-template>
+        
+        <p-table 
+          [value]="filteredProcesses"
+          [paginator]="true"
+          [rows]="25"
+          [rowsPerPageOptions]="[10, 25, 50, 100]"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} runs"
+          [tableStyle]="{'min-width': '80rem'}"
+          styleClass="p-datatable-striped"
+          [sortField]="'lastRunStart'"
+          [sortOrder]="-1">
+          
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="processId" style="width: 8%">
+                Process ID
+                <p-sortIcon field="processId"></p-sortIcon>
+              </th>
+              <th pSortableColumn="processName" style="width: 25%">
+                Process Name
+                <p-sortIcon field="processName"></p-sortIcon>
+              </th>
+              <th pSortableColumn="lastBatchId" style="width: 8%">
+                Batch ID
+                <p-sortIcon field="lastBatchId"></p-sortIcon>
+              </th>
+              <th pSortableColumn="lastRunStart" style="width: 18%">
+                Run Start
+                <p-sortIcon field="lastRunStart"></p-sortIcon>
+              </th>
+              <th pSortableColumn="lastRunEnd" style="width: 18%">
+                Run End
+                <p-sortIcon field="lastRunEnd"></p-sortIcon>
+              </th>
+              <th pSortableColumn="durationMinutes" style="width: 12%" class="text-center">
+                Duration
+                <p-sortIcon field="durationMinutes"></p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="body" let-process>
+            <tr>
+              <td>
+                <span class="font-semibold text-primary">{{ process.processId }}</span>
+              </td>
+              <td>
+                <div class="font-semibold">{{ process.processName }}</div>
+              </td>
+              <td>
+                <p-tag [value]="process.lastBatchId.toString()" severity="info"></p-tag>
+              </td>
+              <td>
+                <div *ngIf="process.lastRunStart">
+                  <div class="font-semibold">{{ process.lastRunStart | date: 'short' }}</div>
+                  <small class="text-500">{{ process.lastRunStart | date: 'EEE' }}</small>
+                </div>
+                <span *ngIf="!process.lastRunStart" class="text-400">N/A</span>
+              </td>
+              <td>
+                <div *ngIf="process.lastRunEnd">
+                  <div class="font-semibold">{{ process.lastRunEnd | date: 'short' }}</div>
+                  <small class="text-500">{{ process.lastRunEnd | date: 'EEE' }}</small>
+                </div>
+                <span *ngIf="!process.lastRunEnd" class="text-400">N/A</span>
+              </td>
+              <td class="text-center">
+                <p-tag 
+                  *ngIf="process.durationMinutes !== undefined"
+                  [value]="formatDuration(process.durationMinutes)" 
+                  [severity]="process.durationMinutes < 1 ? 'info' : (process.durationMinutes > 60 ? 'warning' : 'success')">
+                </p-tag>
+                <span *ngIf="process.durationMinutes === undefined" class="text-400">N/A</span>
+              </td>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6" class="text-center p-5">
+                <i class="pi pi-inbox text-5xl text-400 mb-3"></i>
+                <p class="text-500 text-lg mb-2">No process runs found</p>
+                <p class="text-400">Try adjusting your filters to see results</p>
+              </td>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between p-2">
+              <span class="text-500">
+                Showing data for: <strong>{{ selectedGranularity.label }}</strong>
+                <span *ngIf="selectedProcess"> | Process: <strong>{{ selectedProcess }}</strong></span>
+                <span *ngIf="!selectedProcess"> | <strong>All Processes</strong></span>
+              </span>
+            </div>
+          </ng-template>
+        </p-table>
+      </p-card>
+
+
+  </div>
+  <!-- Duration Chart -->
+  <p-card class="mb-4">
+    <ng-template pTemplate="header">
+      <div class="p-3">
+        <h2 class="text-2xl font-bold m-0">Duration Over Time</h2>
+        <p class="text-500 mt-1 mb-0">Process execution duration in minutes</p>
+      </div>
+    </ng-template>
+    
+    <div style="height: 400px;">
+      <p-chart 
+        *ngIf="durationChartData"
+        type="line" 
+        [data]="durationChartData" 
+        [options]="chartOptions"
+        [style]="{'height': '100%'}">
+      </p-chart>
+      
+      <div *ngIf="!durationChartData" class="text-center p-5">
+        <i class="pi pi-info-circle text-5xl text-400 mb-3"></i>
+        <p class="text-500 text-lg">No data available for the selected filters</p>
+        <p class="text-400">Try selecting a different time period or process</p>
+      </div>
+    </div>
+  </p-card>
+
+
+
+</div>

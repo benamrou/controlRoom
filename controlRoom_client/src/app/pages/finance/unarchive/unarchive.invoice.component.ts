@@ -129,7 +129,7 @@ export class UnarchiveInvoiceComponent {
                   data => {
                     //console.log('SSCC update: ', data);  
                     this.waitMessage = '';
-                    this.msgDisplayed = 'All the selected invoices have been unarchived. Play safe, please review in GOLD the updated invoices.'
+                    this.msgDisplayed = 'All the selected invoices have been unarchived. To be safe, kindly review the updated invoices in GOLD.'
                     this.displayUpdateCompleted=true;
   
                 },

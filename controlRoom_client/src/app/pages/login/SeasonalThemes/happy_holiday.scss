@@ -1,0 +1,974 @@
+/* login.component.css */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+/* Main Container */
+.login-page {
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    background: linear-gradient(0deg, rgba(0, 0, 13, 1) 0%, rgb(15, 145, 162) 100%);
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Aurora Effect */
+.aurora {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.4;
+    background: linear-gradient(to bottom, 
+        transparent 0%, 
+        rgba(0, 255, 200, 0.1) 20%, 
+        rgba(100, 200, 255, 0.15) 40%, 
+        transparent 60%);
+    animation: aurora-move 15s ease-in-out infinite;
+}
+
+@keyframes aurora-move {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-20px) scale(1.05); }
+}
+
+/* Snowflake Animation */
+.snowflake {
+    position: fixed;
+    color: #fff;
+    font-size: 1.2em;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    user-select: none;
+    pointer-events: none;
+    animation: snowfall 10s linear infinite;
+}
+
+@keyframes snowfall {
+    0% {
+        top: -10%;
+        transform: translateX(0) rotate(0deg);
+    }
+    100% {
+        top: 110%;
+        transform: translateX(100px) rotate(360deg);
+    }
+}
+
+/* Stagger snowflakes */
+.snowflake:nth-child(2) { left: 5%; animation-delay: 0s; animation-duration: 12s; }
+.snowflake:nth-child(3) { left: 15%; animation-delay: 1s; animation-duration: 10s; }
+.snowflake:nth-child(4) { left: 25%; animation-delay: 2s; animation-duration: 14s; }
+.snowflake:nth-child(5) { left: 35%; animation-delay: 1.5s; animation-duration: 11s; }
+.snowflake:nth-child(6) { left: 45%; animation-delay: 3s; animation-duration: 13s; }
+.snowflake:nth-child(7) { left: 55%; animation-delay: 0.5s; animation-duration: 15s; }
+.snowflake:nth-child(8) { left: 65%; animation-delay: 2.5s; animation-duration: 9s; }
+.snowflake:nth-child(9) { left: 75%; animation-delay: 1.8s; animation-duration: 12s; }
+.snowflake:nth-child(10) { left: 85%; animation-delay: 3.5s; animation-duration: 11s; }
+.snowflake:nth-child(11) { left: 95%; animation-delay: 2.2s; animation-duration: 13s; }
+
+/* Twinkling Stars */
+.star {
+    position: fixed;
+    color: #fff;
+    font-size: 20px;
+    animation: twinkle 2s ease-in-out infinite;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    z-index: 5;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+.star-1 { top: 15%; left: 20%; animation-delay: 0s; }
+.star-2 { top: 25%; right: 25%; animation-delay: 0.7s; }
+.star-3 { bottom: 30%; left: 15%; animation-delay: 1.4s; }
+.star-4 { top: 40%; right: 10%; animation-delay: 0.3s; }
+
+/* Christmas Ornaments */
+.ornament {
+    position: fixed;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    animation: swing 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 5;
+}
+
+@keyframes swing {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+.ornament-1 { 
+    top: 10%; 
+    left: 10%; 
+    background: linear-gradient(135deg, #e74c3c, #c0392b); 
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.5); 
+}
+
+.ornament-2 { 
+    top: 15%; 
+    right: 15%; 
+    background: linear-gradient(135deg, #f39c12, #d68910); 
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); 
+    animation-delay: 0.5s; 
+}
+
+.ornament-3 { 
+    bottom: 20%; 
+    left: 8%; 
+    background: linear-gradient(135deg, #27ae60, #229954); 
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.5); 
+    animation-delay: 1s; 
+}
+
+/* Version Info */
+.version {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    z-index: 100;
+}
+
+/* Login Container */
+.login-container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-card {
+    //background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 25px;
+    padding: 50px 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.1) inset;
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: card-entrance 0.8s ease-out;
+}
+
+@keyframes card-entrance {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.logo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, grey, darkgray);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(8, 8, 8, 0.4);
+    position: relative;
+    animation: logo-pulse 2s ease-in-out infinite;
+    cursor: pointer;
+}
+
+@keyframes logo-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.logo i {
+    font-size: 60px;
+    color: white;
+}
+
+.logo::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 50%;
+    border: 3px solid rgba(231, 76, 60, 0.3);
+    animation: ring-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.5; }
+}
+
+.login-card h1 {
+    //color: #2c3e50;
+    color: white;
+    margin-bottom: 10px;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #95a5a6;
+    font-size: 18px;
+    z-index: 1;
+}
+
+.form-control {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+}
+
+.form-control::placeholder {
+    color: #bdc3c7;
+}
+
+/* Login Button */
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+}
+
+.login-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(231, 76, 60, 0.4);
+}
+
+.login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.login-btn i {
+    margin-right: 8px;
+}
+
+/* Loading Status */
+.loading-status {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: rgba(52, 152, 219, 0.05);
+    border-radius: 8px;
+    font-size: 13px;
+    color: #34495e;
+}
+
+.status-item i {
+    font-size: 16px;
+}
+
+.status-item .fa-check {
+    color: #27ae60;
+}
+
+.status-item .fa-spinner {
+    color: #3498db;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+/* --- Christmas Trees --- */
+
+.christmas-tree {
+    position: fixed;
+    bottom: 40px;
+    z-index: 6;
+    pointer-events: none;
+    width: 120px;
+    height: auto;
+}
+
+.tree-left {
+    left: 5%;
+}
+
+.tree-right {
+    right: 5%;
+}
+
+.tree-center {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Tree star */
+.tree-star {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 32px;
+    animation: star-twinkle 1.6s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px gold);
+}
+
+@keyframes star-twinkle {
+    0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+    50% { opacity: 0.4; transform: translateX(-50%) scale(1.25); }
+}
+
+/* Tree body */
+.tree-section {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    margin: 0 auto;
+    position: relative;
+}
+
+.tree-top {
+    border-width: 0 30px 45px 30px;
+    border-color: transparent transparent #27ae60 transparent;
+}
+
+.tree-middle {
+    border-width: 0 40px 60px 40px;
+    border-color: transparent transparent #229954 transparent;
+    margin-top: -15px;
+}
+
+.tree-bottom {
+    border-width: 0 55px 75px 55px;
+    border-color: transparent transparent #1e8449 transparent;
+    margin-top: -18px;
+}
+
+.tree-trunk {
+    width: 26px;
+    height: 38px;
+    background: #8b4513;
+    margin: 0 auto;
+    border-radius: 0 0 5px 5px;
+    margin-top: -8px;
+    box-shadow: inset 0 -3px 5px rgba(0, 0, 0, 0.25);
+}
+
+
+/* --- Snowflakes --- */
+
+.snowflake {
+    position: fixed;
+    top: -10px;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    user-select: none;
+    z-index: 4;
+    pointer-events: none;
+    animation: snow-fall 8s linear infinite;
+    opacity: 0.85;
+
+    /* random scatter */
+    left: calc(100% * random());
+    animation-delay: calc(-10s * random());
+    animation-duration: calc(4s + 8s * random());
+}
+
+@keyframes snow-fall {
+    from {
+        transform: translateY(-10vh) translateX(0);
+    }
+    to {
+        transform: translateY(110vh) translateX(30px);
+    }
+}
+
+
+/* --- Stars --- */
+
+.star {
+    position: fixed;
+    color: #fffce4;
+    font-size: 14px;
+    opacity: 0.6;
+    z-index: 5;
+    pointer-events: none;
+    animation: star-blink 3s infinite ease-in-out;
+
+    /* random scattering */
+    left: calc(100% * random());
+    top: calc(100% * random());
+    animation-delay: calc(-4s * random());
+}
+
+@keyframes star-blink {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.4); }
+}
+
+.light {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: lights-blink 1.5s ease-in-out infinite;
+}
+
+.light-red {
+    background: #e74c3c;
+    box-shadow: 0 0 10px #e74c3c;
+}
+
+.light-yellow {
+    background: #f39c12;
+    box-shadow: 0 0 10px #f39c12;
+    animation-delay: 0.3s;
+}
+
+.light-blue {
+    background: #3498db;
+    box-shadow: 0 0 10px #3498db;
+    animation-delay: 0.6s;
+}
+
+.light-green {
+    background: #2ecc71;
+    box-shadow: 0 0 10px #2ecc71;
+    animation-delay: 0.9s;
+}
+
+@keyframes lights-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Santa Sleigh */
+.santa-sleigh {
+    position: fixed;
+    top: 20%;
+    right: -150px;
+    z-index: 100;
+    animation: sleigh-fly 30s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes sleigh-fly {
+    0% { right: -150px; top: 20%; }
+    50% { right: 110%; top: 15%; }
+    51% { right: -150px; top: 70%; }
+    100% { right: 110%; top: 65%; }
+}
+
+.sleigh-body {
+    font-size: 40px;
+    position: relative;
+}
+
+.reindeer {
+    font-size: 35px;
+    position: absolute;
+    left: -45px;
+    top: -5px;
+}
+
+/* Gift Boxes */
+.gift-box {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    z-index: 6;
+    pointer-events: none;
+    animation: gift-bounce 2s ease-in-out infinite;
+}
+
+.gift-1 {
+    bottom: 100px;
+    left: 150px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.gift-2 {
+    bottom: 120px;
+    right: 200px;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    animation-delay: 0.5s;
+}
+
+.gift-3 {
+    bottom: 80px;
+    right: 150px;
+    background: linear-gradient(135deg, #f39c12, #d68910);
+    animation-delay: 1s;
+}
+
+@keyframes gift-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.gift-ribbon {
+    position: absolute;
+    width: 8px;
+    height: 100%;
+    background: #fff;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.gift-ribbon::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 8px;
+    background: #fff;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.gift-bow {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+}
+
+/* Candy Canes */
+.candy-cane {
+    position: fixed;
+    font-size: 48px;
+    z-index: 6;
+    pointer-events: none;
+    animation: candy-rotate 4s ease-in-out infinite;
+}
+
+.cane-1 {
+    top: 30%;
+    left: 5%;
+}
+
+.cane-2 {
+    top: 60%;
+    right: 5%;
+    animation-delay: 2s;
+}
+
+@keyframes candy-rotate {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
+}
+
+/* Snowman */
+.snowman {
+    position: fixed;
+    //bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;
+    pointer-events: none;
+}
+
+.snowman-head {
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.snowman-eyes {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #000;
+}
+
+.snowman-nose {
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+}
+
+.snowman-smile {
+   /* position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    color: #000;
+*/
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    width: 40px;
+    height: 20px;
+    transform: translateX(-50%);
+    border-bottom: 3px solid #333;
+    border-radius: 0 0 40px 40px;
+}
+
+.snowman-body {
+    width: 70px;
+    height: 70px;
+    background: white;
+    border-radius: 50%;
+    margin: 5px auto 0;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.snowman-buttons {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000;
+    font-size: 14px;
+    line-height: 12px;
+}
+
+.snowman-hat {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 30px;
+}
+
+.snowman-scarf {
+    position: absolute;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 8px;
+    background: #e74c3c;
+    border-radius: 4px;
+}
+
+/* Bells */
+.bell {
+    position: fixed;
+    font-size: 32px;
+    z-index: 6;
+    pointer-events: none;
+    animation: bell-ring 2s ease-in-out infinite;
+}
+
+.bell-1 {
+    top: 15%;
+    left: 8%;
+}
+
+.bell-2 {
+    top: 18%;
+    right: 8%;
+    animation-delay: 1s;
+}
+
+@keyframes bell-ring {
+    0%, 100% { transform: rotate(-15deg); }
+    50% { transform: rotate(15deg); }
+}
+
+/* Holly Decorations */
+.holly {
+    position: fixed;
+    font-size: 28px;
+    z-index: 6;
+    pointer-events: none;
+    animation: holly-sway 3s ease-in-out infinite;
+}
+
+.holly-1 {
+    top: 25%;
+    left: 15%;
+}
+
+.holly-2 {
+    top: 50%;
+    right: 12%;
+    animation-delay: 1s;
+}
+
+.holly-3 {
+    bottom: 35%;
+    left: 10%;
+    animation-delay: 2s;
+}
+
+@keyframes holly-sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+/* Gingerbread Man */
+.gingerbread {
+    position: fixed;
+    bottom: 150px;
+    right: 80px;
+    z-index: 6;
+    pointer-events: none;
+    animation: gingerbread-dance 2s ease-in-out infinite;
+}
+
+@keyframes gingerbread-dance {
+    0%, 100% { transform: rotate(-5deg) translateY(0); }
+    50% { transform: rotate(5deg) translateY(-10px); }
+}
+
+.gingerbread-head {
+    width: 35px;
+    height: 35px;
+    background: #c17817;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.gingerbread-eyes {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: #fff;
+}
+
+.gingerbread-smile {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #fff;
+}
+
+.gingerbread-body {
+    width: 45px;
+    height: 50px;
+    background: #c17817;
+    margin: 3px auto 0;
+    border-radius: 10px 10px 20px 20px;
+    position: relative;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.gingerbread-buttons {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+/* Christmas Lights String */
+.lights-string {
+    position: fixed;
+    width: 100%;
+    height: 3px;
+    background: #2c3e50;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.lights-top {
+    top: 30px;
+}
+
+.string-light {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    top: -5px;
+    animation: string-lights-blink 1.5s ease-in-out infinite;
+}
+
+.string-light:nth-child(1) { background: #e74c3c; box-shadow: 0 0 10px #e74c3c; animation-delay: 0s; }
+.string-light:nth-child(2) { background: #f39c12; box-shadow: 0 0 10px #f39c12; animation-delay: 0.2s; }
+.string-light:nth-child(3) { background: #3498db; box-shadow: 0 0 10px #3498db; animation-delay: 0.4s; }
+.string-light:nth-child(4) { background: #2ecc71; box-shadow: 0 0 10px #2ecc71; animation-delay: 0.6s; }
+.string-light:nth-child(5) { background: #9b59b6; box-shadow: 0 0 10px #9b59b6; animation-delay: 0.8s; }
+.string-light:nth-child(6) { background: #e74c3c; box-shadow: 0 0 10px #e74c3c; animation-delay: 1s; }
+.string-light:nth-child(7) { background: #f39c12; box-shadow: 0 0 10px #f39c12; animation-delay: 1.2s; }
+.string-light:nth-child(8) { background: #3498db; box-shadow: 0 0 10px #3498db; animation-delay: 1.4s; }
+.string-light:nth-child(9) { background: #2ecc71; box-shadow: 0 0 10px #2ecc71; animation-delay: 1.6s; }
+
+@keyframes string-lights-blink {
+    0%, 100% { opacity: 1; transform: translateY(0); }
+    50% { opacity: 0.4; transform: translateY(2px); }
+}
+
+/* Wreaths */
+.wreath {
+    position: fixed;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.wreath-1 {
+    top: 10%;
+    left: 3%;
+}
+
+.wreath-2 {
+    top: 10%;
+    right: 3%;
+}
+
+.wreath-circle {
+    width: 60px;
+    height: 60px;
+    border: 8px solid #27ae60;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.wreath-circle::before,
+.wreath-circle::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e74c3c;
+    box-shadow: 0 0 5px #e74c3c;
+}
+
+.wreath-circle::before {
+    top: 10px;
+    left: 5px;
+}
+
+.wreath-circle::after {
+    bottom: 10px;
+    right: 5px;
+}
+
+.wreath-bow {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+}
+
+/* Holiday Message */
+.holiday-message {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-family: 'Dancing Script', cursive;
+    font-size: 48px;
+    text-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    z-index: 5;
+    animation: message-glow 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes message-glow {
+    0%, 100% { text-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); }
+    50% { text-shadow: 0 5px 30px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .holiday-message {
+        font-size: 32px;
+        bottom: 20px;
+    }
+    
+    .login-card {
+        padding: 40px 30px;
+    }
+    
+    .login-card h1 {
+        font-size: 24px;
+    }
+    
+    .logo {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .logo i {
+        font-size: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .holiday-message {
+        font-size: 24px;
+    }
+    
+    .login-card {
+        padding: 30px 20px;
+    }
+}

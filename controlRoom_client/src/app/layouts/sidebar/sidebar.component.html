@@ -161,6 +161,11 @@
                                 <span><i class="fas fa-circle-info"></i> {{ 'SKU information' }}</span>
                             </a>
                         </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/itemaddress" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-upload"></i> {{ 'Item address load'}}</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </div>
@@ -218,6 +223,11 @@
                         <li>
                             <a class="bbs_link_menu" routerLink="/batchschedule" [routerLinkActive]="['router-link-active']" >
                                 <span><i class="fas fa-tools"></i> {{ 'Batch processing' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/vega" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-lemon"></i> {{ 'Vega journal' }}</span>
                             </a>
                         </li>
                     </ul>
@@ -300,6 +310,12 @@
                             </a>
                         </li>
                         <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemdescription"
+                                [routerLinkActive]="['router-link-active']">
+                                <span><i class="fas fa-newspaper"></i> {{ 'Item description'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/itemlistdescription"
                                 [routerLinkActive]="['router-link-active']">
                                 <span><i class="fas fa-clipboard-list"></i> {{ 'Item List desc.'}}</span>
@@ -314,6 +330,11 @@
                         <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/itemattribute" [routerLinkActive]="['router-link-active']">
                                 <span><i class="fas fa-list-ul"></i> {{ 'Item Attribute'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemattributedated" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fas fa-mattress-pillow"></i> {{ 'Item Attribute Period'}}</span>
                             </a>
                         </li>
                         <li *ngIf="_userService.userInfo.dataIntegrity ==1">

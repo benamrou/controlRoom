@@ -3,9 +3,8 @@ import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import {DatePipe} from '@angular/common';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
-
+import { Observable } from 'rxjs';
 
 import * as excel from 'exceljs';
 import * as fs from 'file-saver';  
@@ -78,78 +77,12 @@ export class ImportService{
         return this._http.postFile(this.baseUploadUrl, formData);
     }
 
-    getExcelFile(file: File): any  {
-        let getExcelFFileObserver = new Observable( observer => {  
-            try {
-                this.wb = new WorkBookJSON();
-                this.wb.contentBuffer = <unknown> this.readFileAsync(file);
-                
-                this.wb.buffer = <ArrayBuffer> this.wb.contentBuffer;
-
-                if (file.name.split('.').pop() === 'xls' || file.name.split('.').pop() === 'xlsx') {
-                    this.wb.excel.xlsx.load(this.wb.buffer).then(workbook => {
-                        for (let i =0; i < workbook.worksheets.length ; i ++) {
-                                let ws = new WorkSheetJSON();
-                                for (let j =0; j < workbook.worksheets[i].rowCount ; j ++) {
-                                    if (j === 0 ) { // first line is the column header
-                                        for (let k =0; k < workbook.worksheets[i].actualColumnCount; k ++) {
-                                            ws.columns.push(({field: workbook.worksheets[i].getRow(j+1).getCell(k+1).value, 
-                                                              header: workbook.worksheets[i].getRow(j+1).getCell(k+1).value}));
-                                        }
-                                    } else { // Build the JSON object with the rows
-                                        let obj: any = {};
-                                        for (let k =0; k <  ws.columns.length; k ++) {
-                                            obj[ws.columns[k].field] = workbook.worksheets[i].getRow(j+1).getCell(k+1).value;
-                                        }
-
-                                        ws.rows.push(obj);
-                                    }
-                                };
-                                let worksheet = {worksheet: ws}
-                                this.wb.sheets.push(worksheet);
-                            };
-
-                        observer.next(this.wb);
-                        observer.complete();
-                        })
-                        .catch(err => { observer.error(err); 
-                                        observer.complete();
-                        });
-
-                };
-            } catch(err) {
-                observer.error(err);
-                observer.complete();
-            }
-        });
-        return getExcelFFileObserver;
-    }
-
     addColumns(columnName: any, value: any) {
         this.wb.sheets[0].worksheet.rows.map(function(item: any) {
             item[columnName] = value; 
         });
 
         this.wb.sheets[0].worksheet.columns.push( {field: columnName, header:columnName});
-    }
-
-    /**
-     * Private function to read file asyncchroniously
-     * @param file 
-     */
-    readFileAsync(file: any) {
-
-        return new Promise((resolve, reject) => {
-          let reader = new FileReader();
-      
-          reader.onload = () => {
-            resolve(reader.result);
-          };
-      
-          reader.onerror = reject;
-      
-          reader.readAsArrayBuffer(file);
-        })
     }
 
 
@@ -238,6 +171,9 @@ export class ImportService{
         let pt33_12_ITEMRETAIL = 12;
         let pt33_13_ITEMLISTDESC = 13;
         let pt33_15_PURCHASEORDER = 15;
+        let pt33_16_ITEMATTRIBUTEPERIOD = 16;
+        let pt33_17_ITEMDESCRIPTION = 17;
+        let pt33_18_ITEMADDRESS = 18;
 
         this.request = this.executeJobURL;
         let headersSearch = new HttpHeaders();
@@ -259,6 +195,9 @@ export class ImportService{
                 command = command + 'psifa122p psifa122p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
                 break;
             case pt33_3_ITEMATTRIBUTE: /* Item attribute - psifa55p */
+                command = command + 'psifa55p psifa55p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                break;
+            case pt33_16_ITEMATTRIBUTEPERIOD: /* Item attribute - psifa55p */
                 command = command + 'psifa55p psifa55p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
                 break;
             case pt33_4_ITEMCATMANAGER: /* Item - Category Manager Package update */
@@ -285,6 +224,9 @@ export class ImportService{
                 break;
             case pt33_15_PURCHASEORDER: /* Purchase order */ 
                 command = command + 'psint05p psint05p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' -1 -1 ';
+                break;
+            case pt33_18_ITEMADDRESS: /* Purchase order */ 
+                command = command + 'psifa34p psifa34p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ';
                 break;
             default:
                 console.log ('Unknown mass tool id : ', toolId);
@@ -494,6 +436,183 @@ export class ImportService{
                 return 'Ok';
         }));
 
+    }
+
+    /** Parse/Read file */
+    getExcelFile(file: File): Observable<any> {
+        return new Observable(observer => {
+            this.parseFileAsync(file, observer);
+        });
+    }
+
+    private async parseFileAsync(file: File, observer: any): Promise<void> {
+        try {
+            this.wb = new WorkBookJSON();
+            
+            // Read file as ArrayBuffer
+            this.wb.buffer = await this.readFileAsync(file);
+            
+            const extension = file.name.split('.').pop()?.toLowerCase();
+
+            if (extension === 'xls' || extension === 'xlsx') {
+                await this.parseExcelFile(observer);
+            } else if (extension === 'csv') {
+                this.parseCSVFile(observer);
+            } else {
+                throw new Error(`Unsupported file type: ${extension}`);
+            }
+        } catch (err) {
+            observer.error(err);
+            observer.complete();
+        }
+    }
+
+    private readFileAsync(file: File): Promise<ArrayBuffer> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                resolve(e.target?.result as ArrayBuffer);
+            };
+            reader.onerror = () => {
+                reject(new Error('Failed to read file'));
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    private async parseExcelFile(observer: any): Promise<void> {
+        try {
+            const workbook = await this.wb.excel.xlsx.load(this.wb.buffer);
+            
+            for (let i = 0; i < workbook.worksheets.length; i++) {
+                const worksheet = workbook.worksheets[i];
+                const ws = new WorkSheetJSON();
+                
+                for (let j = 0; j < worksheet.rowCount; j++) {
+                    const row = worksheet.getRow(j + 1);
+                    
+                    if (j === 0) {
+                        // First line is the column header
+                        for (let k = 0; k < worksheet.actualColumnCount; k++) {
+                            const cellValue = row.getCell(k + 1).value;
+                            ws.columns.push({
+                                field: cellValue,
+                                header: cellValue
+                            });
+                        }
+                    } else {
+                        // Build the JSON object with the rows
+                        const obj: any = {};
+                        for (let k = 0; k < ws.columns.length; k++) {
+                            obj[ws.columns[k].field] = row.getCell(k + 1).value;
+                        }
+                        ws.rows.push(obj);
+                    }
+                }
+                
+                this.wb.sheets.push({ worksheet: ws });
+            }
+            
+            observer.next(this.wb);
+            observer.complete();
+        } catch (err) {
+            observer.error(err);
+            observer.complete();
+        }
+    }
+
+    private parseCSVFile(observer: any): void {
+        try {
+            // Decode the buffer to text
+            const text = new TextDecoder('utf-8').decode(new Uint8Array(this.wb.buffer));
+            
+            // Split into lines and filter out empty lines
+            const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+            
+            if (lines.length === 0) {
+                throw new Error('CSV file is empty');
+            }
+            
+            const ws = new WorkSheetJSON();
+            
+            // Detect delimiter (try common ones: comma, semicolon, tab, pipe)
+            const delimiter = this.detectDelimiter(lines[0]);
+            
+            // Parse first line as headers
+            const headers = this.parseCSVLine(lines[0], delimiter);
+            ws.columns = headers.map(h => ({
+                field: h.trim(),
+                header: h.trim()
+            }));
+            
+            // Parse data rows
+            for (let i = 1; i < lines.length; i++) {
+                const values = this.parseCSVLine(lines[i], delimiter);
+                const obj: any = {};
+                
+                ws.columns.forEach((col, index) => {
+                    obj[col.field] = values[index]?.trim() ?? '';
+                });
+                
+                ws.rows.push(obj);
+            }
+            
+            this.wb.sheets.push({ worksheet: ws });
+            observer.next(this.wb);
+            observer.complete();
+        } catch (err) {
+            observer.error(err);
+            observer.complete();
+        }
+    }
+
+    private detectDelimiter(line: string): string {
+        const delimiters = [',', ';', '\t', '|'];
+        let maxCount = 0;
+        let detectedDelimiter = ',';
+        
+        for (const delimiter of delimiters) {
+            const count = line.split(delimiter).length - 1;
+            if (count > maxCount) {
+                maxCount = count;
+                detectedDelimiter = delimiter;
+            }
+        }
+        
+        return detectedDelimiter;
+    }
+
+    private parseCSVLine(line: string, delimiter: string): string[] {
+        const result: string[] = [];
+        let current = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const nextChar = line[i + 1];
+            
+            if (char === '"') {
+                if (inQuotes && nextChar === '"') {
+                    // Escaped quote
+                    current += '"';
+                    i++; // Skip next quote
+                } else {
+                    // Toggle quote state
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === delimiter && !inQuotes) {
+                // End of field
+                result.push(current);
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        
+        // Push last field
+        result.push(current);
+        
+        return result;
     }
     
 }

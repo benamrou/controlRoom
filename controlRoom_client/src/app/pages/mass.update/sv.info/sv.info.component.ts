@@ -270,6 +270,7 @@ export class SVInfoComponent implements OnInit {
                                                     data => { },
                                                     error => { this._messageService.add({ key: 'top', sticky: true, severity: 'error', summary: 'Invalid file during execution plan load', detail: error }); },
                                                     () => {
+                                                        this.reset();
                                                     });
                                             });
                                     });
@@ -367,5 +368,12 @@ export class SVInfoComponent implements OnInit {
 
         return result;
     }
+
+  reset() {
+      this.activeIndex = 0; // Go next step;
+      this.uploadedFiles = [];
+      this.displayConfirm = false;
+      this.indicatorXLSfileLoaded = false;
+  }
 
 }
