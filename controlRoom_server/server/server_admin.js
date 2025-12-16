@@ -127,6 +127,7 @@ let alerts = require('./server/controller/alerts')(app, SQL);
 let syndigo = require('./server/controller/syndigo')(app, SQL);
 let logs = require('./server/controller/logs')(app, SQL);
 let oneway = require('./server/controller/oneway')(app, SQL);
+let unix = require('./server/controller/command/unix')(app, SQL);
 
 
 //dbConnection.createPool('dd');
@@ -173,6 +174,8 @@ alerts.get(app, oracledb);
 syndigo.get(app, oracledb);
 logs.post(app, oracledb);
 oneway.post(app, oracledb);
+unix.post(app, oracledb);
+unix.get(app, oracledb);
 //finance.get(aoo,oracledb);
 
 

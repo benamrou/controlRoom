@@ -32,5 +32,5 @@ export * from './robot/robot.service';
 export * from './syndigo/syndigo.service';
 export * from './alerts.icr/alerts.icr.service';
 export * from './order/order.service';
-
+export * from './unix/unix.runner.service';
 

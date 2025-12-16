@@ -1,0 +1,85 @@
+<app-page-header
+    [heading]="'Job execution'"
+    [icon]="'fa-tools'"
+    [waitMessage]="waitMessage"
+    [screenID]="screenID">
+</app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+<!--
+FIXES APPLIED:
+1. Fixed encoding issue: "â€"" should be "—" (em-dash) - was UTF-8 encoding problem
+2. Fixed textarea: Changed 'autoResize="true"' to '[autoResize]="true"' (property binding)
+3. Fixed textarea: Changed 'styleClass' to 'class' (textarea is native HTML, not PrimeNG)
+4. Added pInputTextarea directive to textarea for PrimeNG styling
+5. Fixed status display text encoding
+-->
+
+<p-card styleClass="runner-card">
+
+  <div class="runner-wrapper">
+
+    <h2 class="section-title">Unix Command Runner</h2>
+
+    <!-- PRESET COMMAND -->
+    <div class="form-row">
+      <label>Preset commands</label>
+      <p-dropdown
+        [options]="presets"
+        optionLabel="label"
+        optionValue="cmd"
+        [(ngModel)]="selectedPreset"
+        placeholder="Select a preset"
+        styleClass="full-width">
+      </p-dropdown>
+    </div>
+
+    <!-- CUSTOM COMMAND -->
+    <div class="form-row">
+      <label>Or enter custom command</label>
+      <!-- FIX: Use pInputTextarea directive and fix autoResize binding -->
+      <textarea
+          pInputTextarea
+          [(ngModel)]="customCommand"
+          rows="3"
+          [autoResize]="true"
+          class="textarea-full">
+      </textarea>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="button-row">
+      <button pButton label="Run" icon="pi pi-play" class="p-button-success"
+              (click)="run()" [disabled]="running"></button>
+
+      <button pButton label="Cancel" icon="pi pi-stop" class="p-button-warning"
+              (click)="cancel()" [disabled]="!running"></button>
+
+      <button pButton label="Clear" icon="pi pi-trash" class="p-button-secondary"
+              (click)="clearLogs()"></button>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status-row">
+      <!-- FIX: Fixed UTF-8 encoding issue with em-dash -->
+      <ng-container *ngIf="running">
+        <p-progressSpinner styleClass="small-spinner"></p-progressSpinner>
+        <span class="status-running">Running &mdash; session {{sessionId}}</span>
+      </ng-container>
+
+      <ng-container *ngIf="!running">
+        <span class="status-idle">Idle</span>
+      </ng-container>
+    </div>
+
+    <!-- LOG OUTPUT -->
+    <div class="log-container">
+      <label>Output log</label>
+      <pre class="log-viewer">{{ logs }}</pre>
+    </div>
+
+  </div>
+</p-card>

@@ -131,6 +131,7 @@ import { PurchaseOrderModule } from './pages/mass.update/purchase.order/purchase
 import { ItemDescriptionModule } from './pages/mass.update/item.description/item.description.module';
 import { ItemAddressModule } from './pages/mass.update/item.address/item.address.module';
 import { VegaProcessDashboardModule } from './pages/it/vega/vega-process-dashboard.module';
+import { UnixRunnerModule } from './pages/it/unix.runner/unix.runner.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -250,7 +251,8 @@ import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module'
     PurchaseOrderModule,
     ItemDescriptionModule,
     ItemAddressModule,
-    VegaProcessDashboardModule
+    VegaProcessDashboardModule,
+    UnixRunnerModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

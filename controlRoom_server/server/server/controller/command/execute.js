@@ -105,7 +105,7 @@ module.exports = function (app, SQL) {
                 //host configuration with connection settings and commands
                var host = {
                     server:        {     
-                    host:         request.header('ENV_IP'),
+                    host:         request.header('ENV_IP'),//'127.0.0.1',//request.header('ENV_IP'),
                     userName:     request.header('ENV_ID'),
                     password:     request.header('ENV_PASS'),
 

@@ -151,8 +151,8 @@ module.exports = function (app, SQL) {
                             response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
                             response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
+                            logger.log(SQL.getNextTicketID(), 'REQUEST ' + request.header('QUERY_ID') + ' ' + "'{" + data + "," + request.query.PARAM + "}'", request.header('USER'), 1);
 
-                            logger.log('[POST]', 'RESQUEST ' + request.header('QUERY_ID') + ' ' + "'{" + data + "," + request.query.PARAM + "}'", 3);
                             SQL.executeLibQuery(SQL.getNextTicketID(),
                                     request.header('QUERY_ID'),
                                     "'{" + data + "," + request.query.PARAM + "}'",

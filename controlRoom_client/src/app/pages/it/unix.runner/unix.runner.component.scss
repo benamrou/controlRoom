@@ -1,0 +1,143 @@
+/**
+ * Unix Runner Component Styles
+ * 
+ * FIXES APPLIED:
+ * 1. Added focus styles for accessibility
+ * 2. Added scrollbar styling for the log viewer
+ * 3. No major issues in original - just enhancements
+ */
+
+/* Make the card adapt to full page width but with nice margins */
+.runner-card {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Add more spacing so the content is not glued */
+.runner-wrapper {
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-title {
+  margin: 0;
+  padding-bottom: 10px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.full-width {
+  width: 100% !important;
+}
+
+.textarea-full {
+  width: 100% !important;
+  min-height: 90px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  
+  &:focus {
+    outline: 2px solid #0a66c2;
+    outline-offset: 2px;
+  }
+}
+
+.button-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 5px;
+  flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  min-height: 32px; /* Prevent layout shift */
+}
+
+.status-running {
+  color: #0a66c2;
+}
+
+.status-idle {
+  color: #888;
+}
+
+/* FIX: PrimeNG spinner sizing override */
+.small-spinner {
+  width: 24px !important;
+  height: 24px !important;
+  
+  /* Target the SVG inside if needed */
+  ::ng-deep svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.log-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.log-viewer {
+  background: #1e1e1e;
+  color: #dcdcdc;
+  padding: 12px;
+  border-radius: 6px;
+  max-height: 400px; /* Increased from 300px for better visibility */
+  min-height: 200px;
+  overflow-y: auto;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+
+  /* Custom scrollbar for webkit browsers */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #2d2d2d;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+
+    &:hover {
+      background: #777;
+    }
+  }
+
+  /* Empty state */
+  &:empty::before {
+    content: 'No output yet...';
+    color: #666;
+    font-style: italic;
+  }
+}

@@ -75,6 +75,7 @@ import { ItemListDescriptionComponent } from './pages/mass.update/itemlist.descr
 import { ItemDescriptionComponent } from './pages/mass.update/item.description/item.description.component';
 import { ItemAddressComponent } from './pages/mass.update/item.address/item.address.component';
 import { VegaProcessDashboardComponent } from './pages/it/vega/vega-process-dashboard.component';
+import { UnixRunnerComponent } from './pages/it/unix.runner/unix.runner.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
@@ -131,6 +132,8 @@ const routes: Routes = [
   { path: 'batchschedule', component: BatchScheduleComponent, canActivate: [AuthentificationGuard] },
   { path: 'batchlist', component: MyBatchListComponent, canActivate: [AuthentificationGuard] },
   { path: 'vega', component: VegaProcessDashboardComponent, canActivate: [AuthentificationGuard] },
+  { path: 'unixrunner', component: UnixRunnerComponent, canActivate: [AuthentificationGuard] },
+
   
 
   /* EDI */

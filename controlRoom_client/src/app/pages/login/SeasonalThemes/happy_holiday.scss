@@ -798,7 +798,7 @@
 
 .gingerbread-smile {
     position: absolute;
-    bottom: 5px;
+    bottom: -0.5em;
     left: 50%;
     transform: translateX(-50%);
     font-size: 14px;
@@ -817,9 +817,9 @@
 
 .gingerbread-buttons {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 40%;
+    left: 25%;
+    transform: rotate(90deg);
     color: #fff;
     font-size: 10px;
     letter-spacing: 2px;

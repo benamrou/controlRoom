@@ -209,7 +209,7 @@ export class ItemAddressComponent implements OnInit{
 
         this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
                             '<br><br>'+
-                            '<b>item address change is usually taking between 1 and 3 minutes</b>';
+                            '<b>item address change is usually taking between 5 and 10 minutes</b>';
 
         this._importService.postExecution(this.uploadedFiles[0].name, this.toolID,
                             this.datePipe.transform(this.startDate,'MM/dd/yy'), 
@@ -238,7 +238,7 @@ export class ItemAddressComponent implements OnInit{
                        this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
                                            'Step 2/4: Executing item address mapping change... <br>'+ 
                                             '<br><br>'+
-                                            '<b>item address change is usually taking between 1 and 3 minutes</b>';
+                                            '<b>item address change is usually taking between 5 and 10 minutes</b>';
                         this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
@@ -252,7 +252,7 @@ export class ItemAddressComponent implements OnInit{
                                                         'Step 2/4: Executing item address mapping change... &emsp;<b>COMPLETED</b><br>'+ 
                                                         'Step 3/4: Running integration job... <br>'+ 
                                                         '<br><br>'+
-                                                        '<b>item address change is usually taking between 1 and 3 minutes</b>';
+                                                        '<b>item address change is usually taking between 5 and 10 minutes</b>';
                                     this._messageService.add({key:'top', sticky:false, severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
                                     this._importService.executePlan(userID, this.toolID).subscribe( 
                                             data => {  },
@@ -266,7 +266,7 @@ export class ItemAddressComponent implements OnInit{
                                                                         'Step 3/4: Running integration job... &emsp;<b>COMPLETED</b><br>'+ 
                                                                         'Step 4/4: Collecting integration result... <br>'+ 
                                                                         '<br><br>'+
-                                                                        '<b>item address change is usually taking between 1 and 3 minutes</b>';
+                                                                        '<b>item address change is usually taking between 5 and 10 minutes</b>';
                                                     // Collect result in the back
                                                     this._importService.collectResult(executionId.RESULT[0]).subscribe (
                                                     data => { },
@@ -279,7 +279,7 @@ export class ItemAddressComponent implements OnInit{
                                                                             'Step 3/4: Running integration job... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             'Step 4/4: Collecting integration result... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             '<br><br>'+
-                                                                            '<b>item address change is usually taking between 1 and 3 minutes</b>';
+                                                                            '<b>item address change is usually taking between 5 and 10 minutes</b>';
                                                         this.waitMessage = '';
                                                         this.reset();
                                                     });
@@ -354,7 +354,7 @@ export class ItemAddressComponent implements OnInit{
     this.globalError=[];
     let result = true;    
     if(this._importService.wb.sheets[0].worksheet.columns.length < 5) {
-        this.globalError.push('item address file must contains the following headers: UPC, STORE, SCHEMATIC, SHELF_NUMBER, POSITION_NUMBER, CAPACITY, FACING, GOLD_CODIFICATION'); 
+        this.globalError.push('item address file must contains the following headers: UPC, STORE, SCHEMATIC, EFFECTIVE_DATE, SHELF_NUMBER, LOCATION_NUMBER, CAPACITY, FACING'); 
         return false;
     }
     if (this._importService.wb.sheets[0].worksheet.columns[0].field.toUpperCase() !== 'UPC') {
@@ -369,27 +369,26 @@ export class ItemAddressComponent implements OnInit{
         this.globalError.push('The column C header must be named SCHEMATIC'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'SHELF_NUMBER') {
-        this.globalError.push('The column D header must be named SHELF_NUMBER'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'EFFECTIVE_DATE') {
+        this.globalError.push('The column D header must be named EFFECTIVE_DATE'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[4].field.toUpperCase() !== 'POSITION_NUMBER') {
-        this.globalError.push('The column E header must be named POSITION_NUMBER'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[4].field.toUpperCase() !== 'SHELF_NUMBER') {
+        this.globalError.push('The column E header must be named SHELF_NUMBER'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[5].field.toUpperCase() !== 'CAPACITY') {
-        this.globalError.push('The column F header must be named CAPACITY'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[5].field.toUpperCase() !== 'LOCATION_NUMBER') {
+        this.globalError.push('The column F header must be named LOCATION_NUMBER'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[6].field.toUpperCase() !== 'FACING') {
-        this.globalError.push('The column G header must be named FACING'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[6].field.toUpperCase() !== 'CAPACITY') {
+        this.globalError.push('The column G header must be named CAPACITY'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[7].field.toUpperCase() !== 'GOLD_CODIFICATION') {
-        this.globalError.push('The column H header must be named GOLD_CODIFICATION'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[7].field.toUpperCase() !== 'FACING') {
+        this.globalError.push('The column H header must be named FACING'); 
       result = false;
     }
-
     return result;
   }
 
