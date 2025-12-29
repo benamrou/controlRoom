@@ -132,6 +132,8 @@ import { ItemDescriptionModule } from './pages/mass.update/item.description/item
 import { ItemAddressModule } from './pages/mass.update/item.address/item.address.module';
 import { VegaProcessDashboardModule } from './pages/it/vega/vega-process-dashboard.module';
 import { UnixRunnerModule } from './pages/it/unix.runner/unix.runner.module';
+import { QueryLibraryModule } from './pages/admin/query.library/query.library.module';
+import { DictionaryModule } from './pages/admin/dictionary/dictionary.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -155,6 +157,7 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
 import { PPGRetailModule } from './pages/mdm/ppg.retail/ppg.retail.module';
 import { PalletLabelModule } from './pages/warehouse/toolkit/pallet.label/pallet.label.module';
 import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module';
+
 
 @NgModule({
   declarations: [
@@ -252,7 +255,9 @@ import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module'
     ItemDescriptionModule,
     ItemAddressModule,
     VegaProcessDashboardModule,
-    UnixRunnerModule
+    UnixRunnerModule,
+    QueryLibraryModule,
+    DictionaryModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

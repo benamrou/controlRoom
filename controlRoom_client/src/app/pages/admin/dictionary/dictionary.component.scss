@@ -1,0 +1,272 @@
+.dictionary-container {
+    padding: 1rem;
+    
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary-color);
+        
+        .title-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            
+            .title-icon {
+                font-size: 1.75rem;
+                color: var(--primary-color);
+            }
+            
+            h2 {
+                margin: 0;
+                font-size: 1.5rem;
+                color: var(--text-color);
+            }
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            
+            .record-count {
+                background: var(--surface-100);
+                padding: 0.5rem 1rem;
+                border-radius: 4px;
+                font-weight: 600;
+                color: var(--text-color-secondary);
+            }
+        }
+    }
+    
+    .search-panel {
+        background: var(--surface-50);
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        border: 1px solid var(--surface-200);
+        
+        .search-buttons {
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 0.5rem;
+        }
+    }
+    
+    .toolbar {
+        margin-bottom: 1rem;
+        padding: 0.5rem 0;
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    // Table styles
+    ::ng-deep {
+        .p-datatable {
+            .p-datatable-header {
+                background: var(--surface-100);
+                border: none;
+                padding: 0.75rem 1rem;
+            }
+            
+            .p-datatable-thead > tr > th {
+                background: var(--surface-100);
+                color: var(--text-color);
+                font-weight: 600;
+                padding: 0.75rem;
+                border-color: var(--surface-200);
+                
+                &:hover {
+                    background: var(--surface-200);
+                }
+            }
+            
+            .p-datatable-tbody > tr {
+                transition: background-color 0.2s;
+                
+                &:hover {
+                    background: var(--surface-100) !important;
+                }
+                
+                &.p-highlight {
+                    background: var(--primary-100) !important;
+                    color: var(--primary-900);
+                }
+                
+                > td {
+                    padding: 0.5rem 0.75rem;
+                    border-color: var(--surface-200);
+                    vertical-align: middle;
+                }
+            }
+            
+            .p-paginator {
+                background: var(--surface-50);
+                border: none;
+                padding: 0.75rem;
+            }
+        }
+        
+        // TabView styles
+        .p-tabview {
+            .p-tabview-nav {
+                background: transparent;
+                border-bottom: 2px solid var(--surface-200);
+                
+                li {
+                    .p-tabview-nav-link {
+                        background: transparent;
+                        border: none;
+                        color: var(--text-color-secondary);
+                        padding: 1rem 1.5rem;
+                        margin-right: 0.25rem;
+                        transition: all 0.2s;
+                        
+                        &:hover {
+                            background: var(--surface-100);
+                            color: var(--primary-color);
+                        }
+                        
+                        i {
+                            margin-right: 0.5rem;
+                        }
+                    }
+                    
+                    &.p-highlight .p-tabview-nav-link {
+                        background: transparent;
+                        color: var(--primary-color);
+                        border-bottom: 2px solid var(--primary-color);
+                        margin-bottom: -2px;
+                    }
+                }
+            }
+            
+            .p-tabview-panels {
+                background: transparent;
+                padding: 1rem 0;
+            }
+        }
+        
+        // Dialog styles
+        .p-dialog {
+            .p-dialog-header {
+                background: var(--primary-color);
+                color: white;
+                padding: 1rem 1.5rem;
+                
+                .p-dialog-title {
+                    font-weight: 600;
+                }
+                
+                .p-dialog-header-icon {
+                    color: white;
+                    
+                    &:hover {
+                        background: rgba(255,255,255,0.1);
+                    }
+                }
+            }
+            
+            .p-dialog-content {
+                padding: 1.5rem;
+            }
+            
+            .p-dialog-footer {
+                padding: 1rem 1.5rem;
+                background: var(--surface-50);
+                border-top: 1px solid var(--surface-200);
+            }
+        }
+        
+        // Dropdown styles
+        .p-dropdown {
+            width: 100%;
+            
+            &.p-focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.2rem var(--primary-100);
+            }
+        }
+        
+        // Input styles
+        .p-inputtext {
+            &:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.2rem var(--primary-100);
+            }
+        }
+        
+        // Textarea styles
+        .p-inputtextarea {
+            resize: vertical;
+            
+            &:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.2rem var(--primary-100);
+            }
+        }
+    }
+    
+    // Action buttons in table
+    .action-buttons {
+        display: flex;
+        gap: 0.25rem;
+        
+        .action-btn {
+            width: 28px;
+            height: 28px;
+            
+            &.p-button-rounded {
+                border-radius: 4px;
+            }
+            
+            .pi {
+                font-size: 0.875rem;
+            }
+        }
+    }
+    
+    // Cursor pointer for clickable rows
+    .cursor-pointer {
+        cursor: pointer;
+    }
+    
+    // Field label styling
+    .font-bold {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    // Form grid adjustments
+    .formgrid {
+        .field {
+            margin-bottom: 1rem;
+        }
+    }
+}
+
+// Responsive adjustments
+@media screen and (max-width: 768px) {
+    .dictionary-container {
+        .header-section {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .search-panel {
+            .search-buttons {
+                justify-content: flex-start;
+                padding-top: 0.5rem;
+            }
+        }
+        
+        .toolbar {
+            flex-wrap: wrap;
+        }
+    }
+}

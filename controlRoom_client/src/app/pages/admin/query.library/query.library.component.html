@@ -1,0 +1,436 @@
+<app-page-header [heading]="'Query Library'" [waitMessage]="waitMessage" [screenID]="screenID"
+    [icon]="'fa-database'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+<!-- Process Completed Dialog -->
+<p-dialog header="Process Completed" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '30vw'}" [maximizable]="false">
+    <span>{{msgDisplayed}}</span>
+    <p-footer>
+        <button style="float: right; margin-bottom:0.5em" 
+                type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
+                label="Ok">
+        </button>
+    </p-footer>
+</p-dialog>
+
+<!-- Test Query Result Dialog -->
+<p-dialog *ngIf="displayTestResult" header="Query Test Results" 
+            [(visible)]="displayTestResult"
+            [style]="{width: '90vw', height: '85vh'}"
+            [maximizable]="true" #testResultDialog>
+
+    <div item-width="400px" table-layout="fixed">
+        <p-table #resultTest [value]="testResultData" sortMode="multiple" [rows]="20" [rowsPerPageOptions]="[20,50,100]"
+            [paginator]="true" [pageLinks]="3" [columns]="testResultColumns" selectionMode="single"
+            [resizableColumns]="true" columnResizeMode="fit"
+            [totalRecords]="testResultData.length" [reorderableColumns]="true" scrollHeight="400px"
+            [autoLayout]="true" tableStyleClass="table-layout: auto;">
+
+            <!-- FILTER -->
+            <ng-template pTemplate="caption">
+                <div class="table-header grid">
+                    <div class="col-1">
+                        <button type="button" pButton icon="fas fa-file" iconPos="left"
+                            class="CSV_Button p-input-icon-left ml-auto" pTooltip="{{csvButtonTooltip}}"
+                            *ngIf="testResultData.length>0" label="CSV" (click)="resultTest.exportCSV()" style="float:left">
+                        </button>
+                    </div>
+                    <div class="col-11" style="text-align: right;">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text"
+                                (input)="resultTest.filterGlobal($any($event.target).value, 'contains')"
+                                placeholder="Type text to filter..." />
+                        </span>
+                    </div>
+                </div>
+            </ng-template>
+
+            <!-- HEADER -->
+            <ng-template pTemplate="header">
+                <tr style="background: lightyellow;">
+                    <ng-container *ngFor="let col of testResultColumns">
+                        <th [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                            {{col.header}}
+                            <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                    </ng-container>
+                </tr>
+            </ng-template>
+
+            <!-- BODY -->
+            <ng-template pTemplate="body" let-rowData>
+                <tr>
+                    <ng-container *ngFor="let col of testResultColumns">
+                        <td class="ui-resizable-column">
+                            <span>{{rowData[col.field]}}</span>
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-template>
+
+            <!-- EMPTY MESSAGE -->
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="testResultColumns.length" style="text-align: center; padding: 20px;">
+                        <i class="pi pi-info-circle" style="font-size: 2rem; color: #6c757d;"></i>
+                        <p>No results returned from query execution.</p>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <i class="FOOTER_Table">{{testResultData.length}} records returned</i>
+    </div>
+</p-dialog>
+
+<!-- Parameter Capture Dialog for Test Execution -->
+<p-dialog *ngIf="captureTestParamDialog" header="Enter Query Parameters" 
+            [(visible)]="captureTestParamDialog" [style]="{width: '40vw'}" [modal]="true">
+    <div class="formgrid grid">
+        <ng-container *ngFor="let param of testParamLabels; let i=index">
+            <div class="field col-12">
+                <label class="font-bold" for="testParam{{i}}">{{param}}</label>
+                <input id="testParam{{i}}" pInputText [(ngModel)]="testParams[i]"
+                    class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            </div>
+        </ng-container>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-times" (click)="captureTestParamDialog = false" label="Cancel" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (click)="executeTestQuery(testParams)" label="Execute" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Edit/Create Query Dialog -->
+<p-dialog *ngIf="queryDisplay" [header]="isNewQuery ? 'Create New Query' : 'Edit Query: ' + queryDisplay.QUERYNUM" 
+    [(visible)]="displayQuery"
+    (onShow)="queryDetail.maximize()"
+    [maximizable]="true" #queryDetail>
+
+    <!-- Action buttons at top right -->
+    <div style="display: flex; justify-content: flex-end; padding: 0 20px 10px 0;">
+        <button (click)="displayQuery=false" pButton icon="fas fa-close" label="CANCEL"
+            style="margin-right: 15px; height: 35px;"></button>
+        <button (click)="saveChanges()" pButton icon="fas fa-save" label="SAVE"
+            style="height: 35px;"></button>
+    </div>
+
+    <!-- Tab View -->
+    <p-tabView>
+            <!-- General Tab -->
+            <p-tabPanel header="General">
+                <div class="formgrid grid">
+                    <!-- Row 1: ID, Query Number, Title -->
+                    <div class="field col-2" *ngIf="!isNewQuery">
+                        <label class="font-bold" for="queryId">ID</label>
+                        <input id="queryId" pInputText value="{{queryDisplay.QUERYID}}" disabled
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    </div>
+                    <div class="field col-2">
+                        <label class="font-bold" for="queryNum">Query # <span style="color: red;">*</span></label>
+                        <input id="queryNum" pInputText [(ngModel)]="queryDisplay.QUERYNUM" maxlength="10"
+                            placeholder="e.g., QRY001"
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    </div>
+                    <div class="field" [ngClass]="isNewQuery ? 'col-10' : 'col-8'">
+                        <label class="font-bold" for="queryTitle">Title <span style="color: red;">*</span></label>
+                        <input id="queryTitle" pInputText [(ngModel)]="queryDisplay.QUERYTITLE" maxlength="50"
+                            placeholder="Query title description"
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    </div>
+
+                    <!-- Row 2: Description -->
+                    <div class="field col-12">
+                        <label class="font-bold" for="queryDesc">Description</label>
+                        <textarea id="queryDesc" pInputText rows="3" [(ngModel)]="queryDisplay.QUERYDESC" maxlength="1000"
+                            placeholder="Detailed description of what this query does..."
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"></textarea>
+                    </div>
+
+                    <!-- Row 3: SQL Query and Resolved SQL side by side -->
+                    <div class="field" [ngClass]="isPackageReference(queryDisplay.QUERYSQL) && queryDisplay.PACKAGE_SOURCE ? 'col-6' : 'col-12'">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label class="font-bold" for="querySql">
+                                <i class="fas fa-database" style="margin-right: 5px;"></i>SQL Query <span style="color: red;">*</span>
+                                <span *ngIf="isPackageReference(queryDisplay.QUERYSQL)" class="package-badge">
+                                    <i class="fas fa-cube"></i> Package Reference
+                                </span>
+                            </label>
+                            <span>
+                                <button pButton type="button" icon="fas fa-magic" 
+                                    (click)="formatSQL()" 
+                                    pTooltip="Format SQL" tooltipPosition="left"
+                                    class="p-button-text p-button-sm" style="height: 28px; margin-bottom: 1em; margin-right: 5px;">
+                                </button>
+                                <button pButton type="button" icon="fas fa-copy" 
+                                    (click)="copyToClipboard(queryDisplay.QUERYSQL)" 
+                                    pTooltip="Copy to clipboard" tooltipPosition="left"
+                                    class="p-button-text p-button-sm" style="height: 28px; margin-bottom: 1em;">
+                                </button>
+                            </span>
+                        </div>
+                        <textarea id="querySql" pInputText rows="10" [(ngModel)]="queryDisplay.QUERYSQL" maxlength="4000"
+                            placeholder="SELECT column1, column2&#10;FROM table_name&#10;WHERE condition = :param1"
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full sql-textarea"></textarea>
+                    </div>
+
+                    <!-- Resolved SQL (side by side when QUERYSQL references PKQUERYMANAGER) -->
+                    <div class="field col-6" *ngIf="isPackageReference(queryDisplay.QUERYSQL) && queryDisplay.PACKAGE_SOURCE">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label class="font-bold" for="querySqlResolved">
+                                <i class="fas fa-code" style="margin-right: 5px;"></i>Package Content
+                                <span style="font-weight: normal; color: #888; font-size: 0.85em;"> ({{getPackageFunctionName(queryDisplay.QUERYSQL)}})</span>
+                            </label>
+                            <button pButton type="button" icon="fas fa-copy" 
+                                (click)="copyToClipboard(queryDisplay.PACKAGE_SOURCE)" 
+                                pTooltip="Copy package content" tooltipPosition="left"
+                                class="p-button-text p-button-sm" style="height: 28px; margin-bottom: 1em;">
+                            </button>
+                        </div>
+                        <textarea id="querySqlResolved" pInputText rows="10" [(ngModel)]="queryDisplay.PACKAGE_SOURCE" 
+                            readonly
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full sql-textarea resolved-sql"></textarea>
+                    </div>
+
+                    <!-- Row 4: Parameters and Result -->
+                    <div class="field col-6">
+                        <label class="font-bold" for="queryParam">
+                            <i class="fas fa-list" style="margin-right: 5px;"></i>Parameters
+                            <span style="font-weight: normal; color: #888; font-size: 0.85em;"> (JSON array)</span>
+                        </label>
+                        <input id="queryParam" pInputText [(ngModel)]="queryDisplay.QUERYPARAM" maxlength="1000"
+                            placeholder='["Parameter 1", "Parameter 2"]'
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                            style="font-family: 'Courier New', monospace;">
+                    </div>
+                    <div class="field col-6">
+                        <label class="font-bold" for="queryResult">
+                            <i class="fas fa-columns" style="margin-right: 5px;"></i>Expected Result Columns
+                            <span style="font-weight: normal; color: #888; font-size: 0.85em;"> (Optional)</span>
+                        </label>
+                        <input id="queryResult" pInputText [(ngModel)]="queryDisplay.QUERYRESULT" maxlength="1000"
+                            placeholder="COLUMN1, COLUMN2, COLUMN3"
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    </div>
+                </div>
+            </p-tabPanel>
+
+            <!-- Configuration Tab -->
+            <p-tabPanel header="Configuration">
+                <div class="formgrid grid">
+                    <!-- Query Type -->
+                    <div class="field col-4">
+                        <label class="font-bold" for="queryType">Query Type</label>
+                        <p-dropdown id="queryType" [options]="queryTypeOptions" [(ngModel)]="queryDisplay.QUERYTYPE"
+                            optionLabel="label" optionValue="value"
+                            class="w-full">
+                        </p-dropdown>
+                    </div>
+
+                    <!-- Access Level -->
+                    <div class="field col-4">
+                        <label class="font-bold" for="queryAccess">Access Level</label>
+                        <p-dropdown id="queryAccess" [options]="queryAccessOptions" [(ngModel)]="queryDisplay.QUERYACCESS"
+                            optionLabel="label" optionValue="value"
+                            class="w-full">
+                        </p-dropdown>
+                    </div>
+
+                    <!-- Update Mode -->
+                    <div class="field col-4">
+                        <label class="font-bold" for="queryUpdate">Execution Mode</label>
+                        <p-dropdown id="queryUpdate" [options]="queryUpdateOptions" [(ngModel)]="queryDisplay.QUERYUPDATE"
+                            optionLabel="label" optionValue="value"
+                            class="w-full">
+                        </p-dropdown>
+                    </div>
+
+                    <!-- Info Panel -->
+                    <div class="field col-12" style="margin-top: 20px;">
+                        <div class="info-panel">
+                            <h4><i class="fas fa-info-circle" style="margin-right: 8px;"></i>Configuration Guide</h4>
+                            <ul>
+                                <li><strong>Type 0 (SQL):</strong> Standard queries</li>
+                                <li><strong>Type 1 (PKQUERYMANAGER):</strong> Queries called via PKQUERYMANAGER SQL builder</li>
+                                <li><strong>Type 2 (PKWIDGETS):</strong> Widget-specific queries for dashboard components</li>
+                                <li><strong>Access 0 (Admin Only):</strong> Only administrators can view and execute</li>
+                                <li><strong>Access 1 (Everyone):</strong> All users can view and execute</li>
+                                <li><strong>Select Mode:</strong> Read-only queries (SELECT statements)</li>
+                                <li><strong>Alter Mode:</strong> Queries that modify data (INSERT, UPDATE, DELETE)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </p-tabPanel>
+
+            <!-- Audit Tab -->
+            <p-tabPanel header="Audit Info" *ngIf="!isNewQuery">
+                <div class="formgrid grid">
+                    <div class="field col-4">
+                        <label class="font-bold" for="queryDcre">Created Date</label>
+                        <input id="queryDcre" pInputText value="{{queryDisplay.QUERYDCRE}}" disabled
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    </div>
+                    <div class="field col-4">
+                        <label class="font-bold" for="queryDmaj">Last Modified</label>
+                        <input id="queryDmaj" pInputText value="{{queryDisplay.QUERYDMAJ}}" disabled
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    </div>
+                    <div class="field col-4">
+                        <label class="font-bold" for="queryUtil">Last Updated By</label>
+                        <input id="queryUtil" pInputText value="{{queryDisplay.QUERYUTIL}}" disabled
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    </div>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+</p-dialog>
+
+<!-- Search Panel -->
+<div class="bbs_search_panel">
+    <span style="margin-right: 1em; padding-left: 15px; font-weight: bolder;">Query # :</span>
+    <span style="padding-right: 1em; align-self: center;">
+        <input type="text" [(ngModel)]="searchQueryNum" placeholder="Query num"
+            style="height: 35px; width: 100px;">
+    </span>
+    <span style="margin-right: 1em; font-weight: bolder;">Title :</span>
+    <span style="padding-right: 1em; align-self: center;">
+        <input type="text" [(ngModel)]="searchQueryTitle" placeholder="Enter title"
+            style="height: 35px; width: 150px;">
+    </span>
+    <span style="margin-right: 1em; font-weight: bolder;">Description :</span>
+    <span style="padding-right: 1em; align-self: center;">
+        <input type="text" [(ngModel)]="searchQueryDesc" placeholder="Enter description"
+            style="height: 35px; width: 200px;">
+    </span>
+
+    <span class="pull-right" style="padding-right: 20px">
+        <button pButton (click)="search()" icon="fas fa-search" label="SEARCH" [style]="{'height': '35px'}"></button>
+        <button pButton (click)="search()" icon="fas fa-sync-alt" pTooltip="Refresh" [style]="{'height': '35px'}"></button>
+    </span>
+</div>
+
+<!-- Result Search Panel -->
+<div item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
+    <p-table #queryTable [value]="searchResult" sortMode="multiple" [rows]="20" [rowsPerPageOptions]="[20,50,100]"
+        [paginator]="true" [pageLinks]="3" [columns]="columnsResult" selectionMode="single"
+        [(selection)]="selectedElement" [resizableColumns]="true" columnResizeMode="fit" 
+        [totalRecords]="searchResult.length" [reorderableColumns]="true" scrollHeight="400px"
+        (onRowSelect)="onRowSelect($event)" [autoLayout]="true" tableStyleClass="table-layout: auto;">
+
+        <!-- FILTER -->
+        <ng-template pTemplate="caption">
+            <div class="table-header grid">
+                <div class="col-1">
+                    <button type="button" pButton icon="fas fa-file" iconPos="left"
+                        class="CSV_Button" pTooltip="{{csvButtonTooltip}}"
+                        *ngIf="searchResult.length>0" label="CSV" (click)="queryTable.exportCSV()" style="float:left">
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button type="button" pButton icon="pi pi-plus" iconPos="left"
+                        class="CREATE_Button" label="CREATE" (click)="createQuery()"
+                        style="float:left">
+                    </button>
+                </div>
+                <div class="col-9" style="text-align: right;">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text"
+                            (input)="queryTable.filterGlobal($any($event.target).value, 'contains')"
+                            placeholder="Type text to filter..." />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+
+        <!-- HEADER -->
+        <ng-template pTemplate="header">
+            <tr style="background: lightyellow;">
+                <ng-container *ngFor="let col of columnsResult">
+                    <th *ngIf="col.display" 
+                        [pSortableColumn]="col.field !== 'ACTION' ? col.field : null" 
+                        pResizableColumn
+                        [style.width]="col.width">
+                        <span *ngIf="col.field !== 'ACTION'">
+                            {{col.header}}
+                            <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </span>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+
+        <!-- BODY -->
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr [pSelectableRow]="rowData" (dblclick)="onRowDblClick(rowData)" class="cursor-pointer">
+                <ng-container *ngFor="let col of columnsResult">
+                    <td *ngIf="col.display" [style.width]="col.width">
+                        
+                        <!-- Action column - NOW FIRST -->
+                        <span *ngIf="col.field === 'ACTION'" class="action-buttons">
+                            <button pButton pRipple type="button" icon="pi pi-pencil"
+                                (click)="editQuery(rowData['QUERYID']); $event.stopPropagation()" 
+                                pTooltip="Edit" tooltipPosition="top"
+                                class="p-button-rounded p-button-sm action-btn">
+                            </button>
+                            <button pButton pRipple type="button" icon="pi pi-copy"
+                                (click)="duplicateQuery(rowData['QUERYID']); $event.stopPropagation()" 
+                                pTooltip="Duplicate" tooltipPosition="top"
+                                class="p-button-rounded p-button-sm action-btn">
+                            </button>
+                            <button pButton pRipple type="button" icon="pi pi-play"
+                                (click)="selectedElement = rowData; testQuery(rowData['QUERYID']); $event.stopPropagation()" 
+                                pTooltip="Test" tooltipPosition="top"
+                                class="p-button-rounded p-button-sm action-btn">
+                            </button>
+                            <button pButton pRipple type="button" icon="pi pi-trash"
+                                (click)="removeQuery(rowData['QUERYID'], rowData['QUERYNUM']); $event.stopPropagation()" 
+                                pTooltip="Delete" tooltipPosition="top"
+                                class="p-button-rounded p-button-sm action-btn">
+                            </button>
+                        </span>
+
+                        <!-- Query Number -->
+                        <span *ngIf="col.field === 'QUERYNUM'" class="query-num">
+                            {{rowData[col.field]}}
+                        </span>
+
+                        <!-- Title -->
+                        <span *ngIf="col.field === 'QUERYTITLE'">
+                            {{rowData[col.field]}}
+                        </span>
+
+                        <!-- Description - truncated with tooltip -->
+                        <span *ngIf="col.field === 'QUERYDESC'" 
+                              class="description-cell"
+                              [pTooltip]="rowData[col.field]" 
+                              tooltipPosition="top"
+                              [tooltipStyleClass]="'description-tooltip'">
+                            {{truncateText(rowData[col.field], 120)}}
+                        </span>
+                    </td>
+                </ng-container>
+            </tr>
+        </ng-template>
+
+        <!-- EMPTY MESSAGE -->
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td [attr.colspan]="columnsResult.length" style="text-align: center; padding: 40px;">
+                    <i class="pi pi-database" style="font-size: 3rem; color: #6c757d;"></i>
+                    <p style="margin-top: 10px; color: #6c757d;">No queries found. Click CREATE to add a new query.</p>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <i class="FOOTER_Table">{{searchResult.length}} queries</i>
+</div>

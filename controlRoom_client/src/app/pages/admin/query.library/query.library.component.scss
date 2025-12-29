@@ -1,0 +1,472 @@
+// Query Library Component Styles
+// Matching the existing ICR application styling
+
+// Search Panel
+.bbs_search_panel {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    input {
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 0 10px;
+        
+        &:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+    }
+
+    .pull-right {
+        margin-left: auto;
+    }
+}
+
+// Table styling
+.p-datatable {
+    .p-datatable-header {
+        background: #f8f9fa;
+        border: none;
+    }
+
+    .p-datatable-thead > tr > th {
+        background: lightyellow;
+        border: 1px solid #dee2e6;
+        padding: 0.75rem;
+        font-weight: 600;
+        
+        &:hover {
+            background: #fff8dc;
+        }
+    }
+
+    .p-datatable-tbody > tr {
+        &:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        &:hover {
+            background: #e9ecef;
+        }
+
+        > td {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+    }
+}
+
+// Footer table info
+.FOOTER_Table {
+    display: block;
+    padding: 10px 15px;
+    color: #6c757d;
+    font-size: 0.9em;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+// Action buttons in table - compact style with subtle gray tones
+.action-buttons {
+    display: flex;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.action-btn {
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    background: #6c757d !important;
+    border-color: #6c757d !important;
+    color: white !important;
+    
+    &:hover {
+        background: #5a6268 !important;
+        border-color: #545b62 !important;
+    }
+    
+    &.p-button-info,
+    &.p-button-success,
+    &.p-button-danger,
+    &.p-button-secondary {
+        background: #6c757d !important;
+        border-color: #6c757d !important;
+        
+        &:hover {
+            background: #545b62 !important;
+            border-color: #4e555b !important;
+        }
+    }
+}
+
+// Description cell - truncated with ellipsis
+.description-cell {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #666;
+    font-size: 0.9em;
+}
+
+// Query number styling
+.query-num {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #007bff;
+}
+
+// Cursor pointer for clickable rows
+.cursor-pointer {
+    cursor: pointer;
+    
+    &:hover {
+        background-color: #e3f2fd !important;
+    }
+}
+
+// Tooltip for long descriptions
+::ng-deep .description-tooltip {
+    max-width: 500px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+}
+
+// Action buttons in table
+.p-button-rounded {
+    margin: 0 2px;
+    
+    &.p-button-secondary {
+        background: #6c757d;
+        
+        &:hover {
+            background: #5a6268;
+        }
+    }
+}
+
+// CSV Button - outlined style
+.CSV_Button {
+    background: transparent !important;
+    border: 1px solid #28a745 !important;
+    color: #28a745 !important;
+    
+    &:hover {
+        background: #28a745 !important;
+        color: white !important;
+    }
+    
+    &:disabled {
+        background: transparent !important;
+        border-color: #6c757d !important;
+        color: #6c757d !important;
+        opacity: 0.65;
+    }
+}
+
+// Create Button - outlined style
+.CREATE_Button {
+    background: transparent !important;
+    border: 1px solid #17a2b8 !important;
+    color: #17a2b8 !important;
+    
+    &:hover {
+        background: #17a2b8 !important;
+        color: white !important;
+    }
+}
+
+// Dialog styling
+::ng-deep {
+    .p-dialog {
+        .p-dialog-header {
+            background: #007bff;
+            color: white;
+            padding: 1rem 1.5rem;
+            
+            .p-dialog-title {
+                font-weight: 600;
+            }
+            
+            .p-dialog-header-icons {
+                .p-dialog-header-icon {
+                    color: white;
+                    
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.1);
+                    }
+                }
+            }
+        }
+        
+        .p-dialog-content {
+            padding: 1.5rem;
+        }
+        
+        .p-dialog-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #dee2e6;
+        }
+    }
+}
+
+// Form styling
+.formgrid {
+    .field {
+        margin-bottom: 1rem;
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #495057;
+            
+            &.font-bold {
+                font-weight: 600;
+            }
+        }
+        
+        input, textarea {
+            width: 100%;
+            
+            &:disabled {
+                background: #e9ecef;
+                cursor: not-allowed;
+            }
+        }
+        
+        small.p-text-secondary {
+            display: block;
+            margin-top: 0.25rem;
+            color: #6c757d;
+            font-size: 0.85em;
+            
+            i {
+                margin-right: 0.25rem;
+            }
+        }
+    }
+}
+
+// TabView styling
+::ng-deep {
+    .p-tabview {
+        .p-tabview-nav {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #dee2e6;
+            
+            li {
+                .p-tabview-nav-link {
+                    background: transparent;
+                    border: none;
+                    border-bottom: 2px solid transparent;
+                    margin-bottom: -2px;
+                    color: #6c757d;
+                    padding: 1rem 1.5rem;
+                    
+                    &:hover {
+                        color: #007bff;
+                        border-bottom-color: #007bff;
+                    }
+                    
+                    .p-tabview-left-icon {
+                        margin-right: 0.5rem;
+                    }
+                }
+                
+                &.p-highlight {
+                    .p-tabview-nav-link {
+                        color: #007bff;
+                        border-bottom-color: #007bff;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+        
+        .p-tabview-panels {
+            background: white;
+            padding: 1.5rem 0;
+            border: none;
+        }
+    }
+}
+
+// Dropdown styling
+::ng-deep {
+    .p-dropdown {
+        width: 100%;
+        
+        .p-dropdown-label {
+            padding: 0.5rem 0.75rem;
+        }
+    }
+}
+
+// Info panel
+.info-panel {
+    padding: 15px;
+    background: #e3f2fd;
+    border-radius: 8px;
+    border-left: 4px solid #2196f3;
+    
+    h4 {
+        margin: 0 0 10px 0;
+        color: #1565c0;
+    }
+    
+    ul {
+        margin: 0;
+        padding-left: 20px;
+        color: #424242;
+        
+        li {
+            margin-bottom: 5px;
+        }
+    }
+}
+
+// SQL Textarea styling
+.sql-textarea,
+textarea#querySql {
+    font-family: 'Courier New', Consolas, monospace !important;
+    font-size: 12px !important;
+    line-height: 1.5;
+    tab-size: 4;
+    resize: vertical;
+    min-height: 200px;
+    background-color: #f8f9fa;
+}
+
+// Resolved SQL - read-only style
+.resolved-sql {
+    background-color: #e8f5e9 !important;
+    border-color: #4caf50 !important;
+    cursor: default;
+}
+
+// Package reference badge
+.package-badge {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 2px 8px;
+    background: #fff3e0;
+    border: 1px solid #ff9800;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: normal;
+    color: #e65100;
+    
+    i {
+        margin-right: 4px;
+    }
+}
+
+// Toast positioning
+::ng-deep {
+    .p-toast {
+        z-index: 10001;
+    }
+}
+
+// Confirmation dialog
+::ng-deep {
+    .p-confirm-dialog {
+        .p-dialog-header {
+            background: #dc3545;
+        }
+    }
+}
+
+// Filter input in table header
+.p-input-icon-right,
+.p-input-icon-left {
+    position: relative;
+    display: inline-block;
+    
+    i {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+    
+    &.p-input-icon-right i {
+        right: 0.75rem;
+    }
+    
+    &.p-input-icon-left i {
+        left: 0.75rem;
+    }
+    
+    input {
+        padding-right: 2.5rem;
+        
+        &:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+    }
+}
+
+// Grid system
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -0.5rem;
+    
+    > [class*="col"] {
+        padding: 0.5rem;
+    }
+}
+
+.col-1 { flex: 0 0 8.333%; max-width: 8.333%; }
+.col-2 { flex: 0 0 16.666%; max-width: 16.666%; }
+.col-3 { flex: 0 0 25%; max-width: 25%; }
+.col-4 { flex: 0 0 33.333%; max-width: 33.333%; }
+.col-5 { flex: 0 0 41.666%; max-width: 41.666%; }
+.col-6 { flex: 0 0 50%; max-width: 50%; }
+.col-7 { flex: 0 0 58.333%; max-width: 58.333%; }
+.col-8 { flex: 0 0 66.666%; max-width: 66.666%; }
+.col-9 { flex: 0 0 75%; max-width: 75%; }
+.col-10 { flex: 0 0 83.333%; max-width: 83.333%; }
+.col-11 { flex: 0 0 91.666%; max-width: 91.666%; }
+.col-12 { flex: 0 0 100%; max-width: 100%; }
+
+// Responsive
+@media (max-width: 768px) {
+    .bbs_search_panel {
+        flex-direction: column;
+        align-items: flex-start;
+        
+        span {
+            margin-bottom: 10px;
+        }
+        
+        .pull-right {
+            margin-left: 0;
+            width: 100%;
+            
+            button {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+    }
+    
+    [class*="col-"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}

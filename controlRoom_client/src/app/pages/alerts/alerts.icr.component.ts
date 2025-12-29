@@ -48,6 +48,59 @@ export class AlertsICRComponent implements OnDestroy {
    alertSQLFileContent;
    alertSQLFileDisplay;
 
+   /** Schedule type options for dropdown */
+   scheduleTypeOptions = [
+     { label: 'Type 1', value: 1 },
+     { label: 'Type 2', value: 2 },
+     { label: 'Type 3', value: 3 }
+   ];
+
+   /** Schedule builder properties */
+   scheduleFrequency: string = 'daily';
+   scheduleHour: number = 9;
+   scheduleMinute: number = 0;
+   scheduleDayOfWeek: number = 1;
+   scheduleDayOfMonth: number = 1;
+   scheduleInterval: number = 15;
+   scheduleReadable: string = '';
+   scheduleHourRange: string = '';
+   scheduleDayOfWeekRange: string = '';
+
+   frequencyOptions = [
+     { label: 'Every X minutes', value: 'interval_minutes' },
+     { label: 'Hourly', value: 'hourly' },
+     { label: 'Hour range', value: 'hour_range' },
+     { label: 'Daily', value: 'daily' },
+     { label: 'Weekly', value: 'weekly' },
+     { label: 'Monthly', value: 'monthly' },
+     { label: 'Custom', value: 'custom' }
+   ];
+
+   hourOptions = Array.from({ length: 24 }, (_, i) => ({ label: i.toString().padStart(2, '0'), value: i }));
+   minuteOptions = Array.from({ length: 60 }, (_, i) => ({ label: i.toString().padStart(2, '0'), value: i }));
+   
+   dayOfWeekOptions = [
+     { label: 'Sunday', value: 0 },
+     { label: 'Monday', value: 1 },
+     { label: 'Tuesday', value: 2 },
+     { label: 'Wednesday', value: 3 },
+     { label: 'Thursday', value: 4 },
+     { label: 'Friday', value: 5 },
+     { label: 'Saturday', value: 6 }
+   ];
+
+   dayOfMonthOptions = Array.from({ length: 31 }, (_, i) => ({ label: (i + 1).toString(), value: i + 1 }));
+   
+   intervalMinuteOptions = [
+     { label: '5', value: 5 },
+     { label: '10', value: 10 },
+     { label: '15', value: 15 },
+     { label: '20', value: 20 },
+     { label: '30', value: 30 },
+     { label: '45', value: 45 },
+     { label: '55', value: 55 }
+   ];
+
    /** Alert focus */
    alertDisplay;
    alertDistributionDisplay;
@@ -132,6 +185,238 @@ export class AlertsICRComponent implements OnDestroy {
     this.selectedElement = {};
   }
 
+  /** Build cron expression from user-friendly inputs */
+  buildCronExpression() {
+    let cron = '';
+    
+    switch (this.scheduleFrequency) {
+      case 'interval_minutes':
+        // */X * * * * (every X minutes)
+        cron = `*/${this.scheduleInterval} * * * *`;
+        break;
+      case 'hourly':
+        // M * * * * (every hour at minute M)
+        cron = `${this.scheduleMinute} * * * *`;
+        break;
+      case 'hour_range':
+        // M H1-H2 * * D (hour range with optional day range)
+        const dayPart = this.scheduleDayOfWeekRange || '*';
+        cron = `${this.scheduleMinute} ${this.scheduleHourRange} * * ${dayPart}`;
+        break;
+      case 'daily':
+        // M H * * * (every day at H:M)
+        cron = `${this.scheduleMinute} ${this.scheduleHour} * * *`;
+        break;
+      case 'weekly':
+        // M H * * D (every week on day D at H:M)
+        cron = `${this.scheduleMinute} ${this.scheduleHour} * * ${this.scheduleDayOfWeek}`;
+        break;
+      case 'monthly':
+        // M H D * * (every month on day D at H:M)
+        cron = `${this.scheduleMinute} ${this.scheduleHour} ${this.scheduleDayOfMonth} * *`;
+        break;
+      case 'custom':
+        // Don't modify - user edits cron directly
+        return;
+    }
+    
+    if (this.alertSheduleDisplay) {
+      this.alertSheduleDisplay.SALTCRON = cron;
+    }
+    this.updateReadableSchedule();
+  }
+
+  /** Parse cron expression and update user-friendly inputs */
+  parseCronExpression() {
+    if (!this.alertSheduleDisplay || !this.alertSheduleDisplay.SALTCRON) {
+      return;
+    }
+    
+    const cron = this.alertSheduleDisplay.SALTCRON.trim();
+    const parts = cron.split(/\s+/);
+    
+    if (parts.length < 5) {
+      this.scheduleReadable = 'Invalid cron expression';
+      return;
+    }
+    
+    const [minute, hour, dayOfMonth, month, dayOfWeek] = parts;
+    
+    // Detect pattern and set frequency
+    if (minute.startsWith('*/')) {
+      // Interval pattern: */X * * * *
+      this.scheduleFrequency = 'interval_minutes';
+      this.scheduleInterval = parseInt(minute.substring(2)) || 15;
+    } else if (hour === '*' && dayOfMonth === '*' && dayOfWeek === '*') {
+      // Hourly pattern: M * * * * (every hour at minute M)
+      this.scheduleFrequency = 'hourly';
+      this.scheduleMinute = parseInt(minute) || 0;
+    } else if (hour.includes('-') || hour.includes(',')) {
+      // Hour range pattern: M H1-H2 * * * or M H1,H2,H3 * * *
+      this.scheduleFrequency = 'hour_range';
+      this.scheduleMinute = parseInt(minute) || 0;
+      this.scheduleHourRange = hour;
+      this.scheduleDayOfWeekRange = dayOfWeek !== '*' ? dayOfWeek : '';
+    } else if (minute.includes('-') || minute.includes(',') || minute.includes('/')) {
+      // Complex minute pattern - treat as custom
+      this.scheduleFrequency = 'custom';
+    } else if (dayOfMonth === '*' && dayOfWeek === '*') {
+      // Daily pattern: M H * * *
+      this.scheduleFrequency = 'daily';
+      this.scheduleMinute = parseInt(minute) || 0;
+      this.scheduleHour = parseInt(hour) || 9;
+    } else if (dayOfMonth === '*' && dayOfWeek !== '*') {
+      // Weekly pattern: M H * * D (could have day range like 1-5)
+      this.scheduleFrequency = 'weekly';
+      this.scheduleMinute = parseInt(minute) || 0;
+      this.scheduleHour = parseInt(hour) || 9;
+      if (dayOfWeek.includes('-') || dayOfWeek.includes(',')) {
+        this.scheduleFrequency = 'hour_range';
+        this.scheduleHourRange = hour;
+        this.scheduleDayOfWeekRange = dayOfWeek;
+      } else {
+        this.scheduleDayOfWeek = parseInt(dayOfWeek) || 1;
+      }
+    } else if (dayOfMonth !== '*') {
+      // Monthly pattern: M H D * *
+      this.scheduleFrequency = 'monthly';
+      this.scheduleMinute = parseInt(minute) || 0;
+      this.scheduleHour = parseInt(hour) || 1;
+      this.scheduleDayOfMonth = parseInt(dayOfMonth) || 1;
+    }
+    
+    this.updateReadableSchedule();
+  }
+
+  /** Update human-readable schedule description */
+  updateReadableSchedule() {
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const timeStr = `${this.scheduleHour.toString().padStart(2, '0')}:${this.scheduleMinute.toString().padStart(2, '0')}`;
+    
+    switch (this.scheduleFrequency) {
+      case 'interval_minutes':
+        this.scheduleReadable = `Runs every ${this.scheduleInterval} minutes`;
+        break;
+      case 'hourly':
+        this.scheduleReadable = `Runs every hour at minute ${this.scheduleMinute.toString().padStart(2, '0')}`;
+        break;
+      case 'hour_range':
+        const hourRangeDesc = this.formatHourRange(this.scheduleHourRange);
+        const dayRangeDesc = this.scheduleDayOfWeekRange ? ` on ${this.formatDayRange(this.scheduleDayOfWeekRange)}` : '';
+        this.scheduleReadable = `Runs ${hourRangeDesc} at minute ${this.scheduleMinute.toString().padStart(2, '0')}${dayRangeDesc}`;
+        break;
+      case 'daily':
+        this.scheduleReadable = `Runs every day at ${timeStr}`;
+        break;
+      case 'weekly':
+        this.scheduleReadable = `Runs every ${dayNames[this.scheduleDayOfWeek]} at ${timeStr}`;
+        break;
+      case 'monthly':
+        const suffix = this.getDaySuffix(this.scheduleDayOfMonth);
+        this.scheduleReadable = `Runs on the ${this.scheduleDayOfMonth}${suffix} of every month at ${timeStr}`;
+        break;
+      case 'custom':
+        this.scheduleReadable = `Custom schedule (see cron expression)`;
+        break;
+      default:
+        this.scheduleReadable = 'Schedule not configured';
+    }
+  }
+
+  /** Format hour range for readable display */
+  formatHourRange(hourRange: string): string {
+    if (hourRange.includes('-')) {
+      const [start, end] = hourRange.split('-');
+      return `every hour from ${start.padStart(2, '0')}:00 to ${end.padStart(2, '0')}:00`;
+    } else if (hourRange.includes(',')) {
+      const hours = hourRange.split(',').map(h => h.trim().padStart(2, '0') + ':00');
+      return `at hours ${hours.join(', ')}`;
+    }
+    return `at hour ${hourRange}`;
+  }
+
+  /** Format day of week range for readable display */
+  formatDayRange(dayRange: string): string {
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const shortDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    
+    if (dayRange.includes('-')) {
+      const [start, end] = dayRange.split('-');
+      return `${dayNames[parseInt(start)]} to ${dayNames[parseInt(end)]}`;
+    } else if (dayRange.includes(',')) {
+      const days = dayRange.split(',').map(d => shortDayNames[parseInt(d.trim())]);
+      return days.join(', ');
+    }
+    return dayNames[parseInt(dayRange)] || dayRange;
+  }
+
+  /** Get ordinal suffix for day of month */
+  getDaySuffix(day: number): string {
+    if (day >= 11 && day <= 13) return 'th';
+    switch (day % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  }
+
+  /** Handle frequency change */
+  onFrequencyChange() {
+    this.buildCronExpression();
+  }
+
+  /** Copy text to clipboard */
+  copyToClipboard(text: string) {
+    if (!text) {
+      this._messageService.add({severity:'warn', summary:'Nothing to copy', detail: 'The field is empty.'});
+      return;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+      this._messageService.add({severity:'success', summary:'Copied', detail: 'Content copied to clipboard.'});
+    }).catch(err => {
+      this._messageService.add({severity:'error', summary:'Error', detail: 'Failed to copy to clipboard.'});
+      console.error('Failed to copy: ', err);
+    });
+  }
+
+  /** Create a new schedule for the current alert */
+  createNewSchedule() {
+    // Initialize a new schedule object with default values
+    this.alertSheduleDisplay = {
+      SALTID: '', // Will be generated by backend or user can set
+      SALTDESC: this.alertDisplay.ALTSUBJECT + ' Schedule',
+      SALTCRON: '0 9 * * *', // Default: daily at 9:00 AM
+      SALTTYPE: 2,
+      SALTQUERYNUM: '',
+      SALTQUERYPARAM: '',
+      SALTJOB: '',
+      SALTACTIVE: null,
+      SALTACTIVEDATE: new Date(), // Default to today
+      SALTDCRE: '',
+      SALTDMAJ: '',
+      SALTUTIL: '',
+      SALTCATCHUP: 0,
+      SALTCATCHUPBOOLEAN: false,
+      SALTREFALTID: this.alertDisplay.ALTID,
+      SALTCOMMENT: '',
+      SALTSHELL: ''
+    };
+    
+    // Set default schedule builder values
+    this.scheduleFrequency = 'daily';
+    this.scheduleHour = 9;
+    this.scheduleMinute = 0;
+    this.scheduleDayOfWeek = 1;
+    this.scheduleDayOfMonth = 1;
+    this.scheduleInterval = 15;
+    
+    // Update readable display
+    this.updateReadableSchedule();
+    
+    this._messageService.add({severity:'info', summary:'New Schedule', detail: 'Configure the schedule settings and save.'});
+  }
+
   ngOnDestroy() {
     for(let i=0; i< this.subscription.length; i++) {
       this.subscription[i].unsubscribe();
@@ -198,7 +483,7 @@ export class AlertsICRComponent implements OnDestroy {
   editAlert(alertId) {
     let index = this.searchResult.findIndex(x => x.ALTID == alertId);
     let indexDistribution = this.searchResultDistribution.findIndex(x => x.DALTID == alertId);
-    let indexScheduling = this.searchResultSchedule.findIndex(x => x.ALTID == alertId);
+    let indexScheduling = this.searchResultSchedule.findIndex(x => x.SALTREFALTID == alertId);
     
     this.searchResult[index].ALTFITPAGEBOOLEAN = this.searchResult[index].ALTFITPAGE==1;
     this.searchResult[index].ALTFREEZEHEADERBOOLEAN = this.searchResult[index].ALTFREEZEHEADER==1;
@@ -207,6 +492,17 @@ export class AlertsICRComponent implements OnDestroy {
     this.alertDisplay = this.searchResult[index];
     this.alertDistributionDisplay = this.searchResultDistribution[indexDistribution];
     this.alertSheduleDisplay = this.searchResultSchedule[indexScheduling];
+
+    // Convert schedule boolean fields and date
+    if (this.alertSheduleDisplay) {
+      this.alertSheduleDisplay.SALTCATCHUPBOOLEAN = this.alertSheduleDisplay.SALTCATCHUP == 1;
+      // Convert SALTACTIVE date string to Date object for calendar
+      if (this.alertSheduleDisplay.SALTACTIVE) {
+        this.alertSheduleDisplay.SALTACTIVEDATE = new Date(this.alertSheduleDisplay.SALTACTIVE);
+      }
+      // Parse cron expression to populate schedule builder
+      this.parseCronExpression();
+    }
 
     if (this.alertDistributionDisplay.DALTEMAIL) {
       this.alertSheduleDisplay_DALTEMAIL = this.alertDistributionDisplay.DALTEMAIL.split(';');

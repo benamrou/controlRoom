@@ -256,7 +256,7 @@
                                 class="badge badge-pill" 
                                 style="float: right; font-size:x-large; background-color: steelblue; color: white; border: none;">
                                 {{widget.result.length}}</button>
-                        <p-progressSpinner #spinner [attr.id]="widget.widid + widget.widparam + '_spinner' + indx" *ngIf="!widget.dataReady"  style="float: right;"></p-progressSpinner>
+                        <p-progressSpinner #spinner [attr.id]="widget.widid + widget.widparam + '_spinner' + indx" *ngIf="!widget.dataReady"  [style]="{'float': 'right'}"></p-progressSpinner>
                     </div>
                     </div>
                 </div>

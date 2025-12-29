@@ -1,0 +1,623 @@
+<app-page-header [heading]="'Dictionary'" [waitMessage]="waitMessage" [screenID]="screenID"
+    [icon]="'fa-language'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+<div class="dictionary-container">
+    <div class="header-section">
+        <div class="title-area">
+            <i class="fas fa-language title-icon"></i>
+            <h2>Dictionary Management</h2>
+        </div>
+        <div class="header-actions">
+            <span class="record-count" *ngIf="activeTabIndex === 0">{{ techObjList.length }} records</span>
+            <span class="record-count" *ngIf="activeTabIndex === 1">{{ labelsList.length }} records</span>
+            <span class="record-count" *ngIf="activeTabIndex === 2">{{ parametersList.length }} records</span>
+            <span class="record-count" *ngIf="activeTabIndex === 3">{{ entriesList.length }} records</span>
+        </div>
+    </div>
+
+    <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)">
+        
+        <!-- TAB 1: Technical Objects -->
+        <p-tabPanel header="Technical Objects" leftIcon="fas fa-cogs">
+            <div class="search-panel">
+                <div class="formgrid grid">
+                    <div class="field col-3">
+                        <label class="font-bold" for="searchTobId">Object ID</label>
+                        <input id="searchTobId" pInputText [(ngModel)]="searchTechObj.id" placeholder="Search by ID..."
+                            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                            (keyup.enter)="searchTechObjData()">
+                    </div>
+                    <div class="field col-3">
+                        <label class="font-bold" for="searchTobCat">Category</label>
+                        <p-dropdown id="searchTobCat" [(ngModel)]="searchTechObj.cat" [options]="categoryOptions" 
+                            optionLabel="label" optionValue="value" [showClear]="true" placeholder="All Categories" class="w-full">
+                        </p-dropdown>
+                    </div>
+                    <div class="field col-4">
+                        <label class="font-bold" for="searchTobDesc">Description</label>
+                        <input id="searchTobDesc" pInputText [(ngModel)]="searchTechObj.desc" placeholder="Search description..."
+                            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                            (keyup.enter)="searchTechObjData()">
+                    </div>
+                    <div class="field col-2 search-buttons">
+                        <button pButton type="button" icon="pi pi-search" label="Search"
+                            class="p-button-outlined mr-2" (click)="searchTechObjData()"></button>
+                        <button pButton type="button" icon="pi pi-times" label="Clear"
+                            class="p-button-outlined p-button-secondary" (click)="clearTechObjSearch()"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toolbar flex justify-content-between align-items-center">
+                <div class="toolbar-left">
+                    <button pButton type="button" icon="pi pi-plus" label="New"
+                        class="p-button-outlined p-button-success mr-2" (click)="newTechObj()"></button>
+                    <button pButton type="button" icon="pi pi-refresh" label="Refresh"
+                        class="p-button-outlined p-button-info mr-2" (click)="loadTechObjData()"></button>
+                    <button pButton type="button" icon="pi pi-file-excel" label="Export CSV"
+                        class="p-button-outlined p-button-help" (click)="exportCSV('techObj')"></button>
+                </div>
+                <div class="toolbar-right">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-filter"></i>
+                        <input pInputText type="text" #techObjFilter
+                            (input)="techObjTable.filterGlobal(techObjFilter.value, 'contains')" 
+                            placeholder="Filter by ID or Description..." style="width: 250px;" />
+                    </span>
+                </div>
+            </div>
+
+            <p-table #techObjTable [value]="techObjList" [columns]="columnsTechObj"
+                [paginator]="true" [rows]="15" [rowsPerPageOptions]="[10,15,25,50]"
+                [loading]="loadingTechObj" [resizableColumns]="true" selectionMode="single" [(selection)]="selectedTechObj"
+                [globalFilterFields]="['TOBID', 'TOBDESC']"
+                styleClass="p-datatable-sm p-datatable-gridlines" responsiveLayout="scroll" dataKey="TOBID" [exportFilename]="'technical_objects'">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <ng-container *ngFor="let col of columnsTechObj">
+                            <th *ngIf="col.display" [pSortableColumn]="col.sortable ? col.field : null" pResizableColumn [style.width]="col.width">
+                                <span *ngIf="col.field !== 'ACTION'">{{col.header}}
+                                    <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                                    <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+                                </span>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                    <tr [pSelectableRow]="rowData" (dblclick)="onRowDblClickTechObj(rowData)" class="cursor-pointer">
+                        <ng-container *ngFor="let col of columnsTechObj">
+                            <td *ngIf="col.display" [style.width]="col.width">
+                                <span *ngIf="col.field === 'ACTION'" class="action-buttons">
+                                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editTechObj(rowData['TOBID']); $event.stopPropagation()"
+                                        pTooltip="Edit" tooltipPosition="top" class="p-button-rounded p-button-text p-button-sm"></button>
+                                    <button pButton pRipple type="button" icon="pi pi-copy" (click)="duplicateTechObj(rowData['TOBID']); $event.stopPropagation()"
+                                        pTooltip="Duplicate" tooltipPosition="top" class="p-button-rounded p-button-text p-button-sm"></button>
+                                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteTechObj(rowData['TOBID']); $event.stopPropagation()"
+                                        pTooltip="Delete" tooltipPosition="top" class="p-button-rounded p-button-text p-button-danger p-button-sm"></button>
+                                </span>
+                                <span *ngIf="col.field !== 'ACTION'">
+                                    <ng-container [ngSwitch]="col.field">
+                                        <span *ngSwitchCase="'TOBDMAJ'">{{ rowData[col.field] | date:'MM/dd/yyyy' }}</span>
+                                        <span *ngSwitchDefault>{{ rowData[col.field] }}</span>
+                                    </ng-container>
+                                </span>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td [attr.colspan]="columnsTechObj.length" class="text-center p-4">
+                        <i class="pi pi-inbox" style="font-size: 2rem; color: var(--text-color-secondary);"></i>
+                        <p class="mt-2">No technical objects found</p>
+                    </td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <!-- TAB 2: Screen Labels -->
+        <p-tabPanel header="Screen Labels" leftIcon="fas fa-tags">
+            <div class="search-panel">
+                <div class="formgrid grid">
+                    <div class="field col-3">
+                        <label class="font-bold" for="searchLabelId">Label ID</label>
+                        <input id="searchLabelId" pInputText [(ngModel)]="searchLabel.id" placeholder="Search by ID..."
+                            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                            (keyup.enter)="searchLabelsData()">
+                    </div>
+                    <div class="field col-4">
+                        <label class="font-bold" for="searchLabelDesc">Description</label>
+                        <input id="searchLabelDesc" pInputText [(ngModel)]="searchLabel.desc" placeholder="Search description..."
+                            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                            (keyup.enter)="searchLabelsData()">
+                    </div>
+                    <div class="field col-3">
+                        <label class="font-bold" for="searchLabelScreen">Screen</label>
+                        <input id="searchLabelScreen" pInputText [(ngModel)]="searchLabel.screen" placeholder="Search by screen..."
+                            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                            (keyup.enter)="searchLabelsData()">
+                    </div>
+                    <div class="field col-2 search-buttons">
+                        <button pButton type="button" icon="pi pi-search" label="Search"
+                            class="p-button-outlined mr-2" (click)="searchLabelsData()"></button>
+                        <button pButton type="button" icon="pi pi-times" label="Clear"
+                            class="p-button-outlined p-button-secondary" (click)="clearLabelsSearch()"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toolbar flex justify-content-between align-items-center">
+                <div class="toolbar-left">
+                    <button pButton type="button" icon="pi pi-plus" label="New"
+                        class="p-button-outlined p-button-success mr-2" (click)="newLabel()"></button>
+                    <button pButton type="button" icon="pi pi-refresh" label="Refresh"
+                        class="p-button-outlined p-button-info mr-2" (click)="loadLabelsData()"></button>
+                    <button pButton type="button" icon="pi pi-file-excel" label="Export CSV"
+                        class="p-button-outlined p-button-help" (click)="exportCSV('labels')"></button>
+                </div>
+                <div class="toolbar-right">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-filter"></i>
+                        <input pInputText type="text" #labelsFilter
+                            (input)="labelsTable.filterGlobal(labelsFilter.value, 'contains')" 
+                            placeholder="Filter by ID or Description..." style="width: 250px;" />
+                    </span>
+                </div>
+            </div>
+
+            <p-table #labelsTable [value]="labelsList" [columns]="columnsLabels"
+                [paginator]="true" [rows]="15" [rowsPerPageOptions]="[10,15,25,50]"
+                [loading]="loadingLabels" [resizableColumns]="true" selectionMode="single" [(selection)]="selectedLabel"
+                [globalFilterFields]="['TLAID', 'TLADESC']"
+                styleClass="p-datatable-sm p-datatable-gridlines" responsiveLayout="scroll" dataKey="TLAID" [exportFilename]="'labels'">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <ng-container *ngFor="let col of columnsLabels">
+                            <th *ngIf="col.display" [pSortableColumn]="col.sortable ? col.field : null" pResizableColumn [style.width]="col.width">
+                                <span *ngIf="col.field !== 'ACTION'">{{col.header}}
+                                    <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                                    <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+                                </span>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                    <tr [pSelectableRow]="rowData" (dblclick)="onRowDblClickLabel(rowData)" class="cursor-pointer">
+                        <ng-container *ngFor="let col of columnsLabels">
+                            <td *ngIf="col.display" [style.width]="col.width">
+                                <span *ngIf="col.field === 'ACTION'" class="action-buttons">
+                                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editLabel(rowData['TLAID']); $event.stopPropagation()"
+                                        pTooltip="Edit" tooltipPosition="top" class="p-button-rounded p-button-text p-button-sm"></button>
+                                    <button pButton pRipple type="button" icon="pi pi-copy" (click)="duplicateLabel(rowData['TLAID']); $event.stopPropagation()"
+                                        pTooltip="Duplicate" tooltipPosition="top" class="p-button-rounded p-button-text p-button-sm"></button>
+                                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteLabel(rowData['TLAID']); $event.stopPropagation()"
+                                        pTooltip="Delete" tooltipPosition="top" class="p-button-rounded p-button-text p-button-danger p-button-sm"></button>
+                                </span>
+                                <span *ngIf="col.field !== 'ACTION'">
+                                    <ng-container [ngSwitch]="col.field">
+                                        <span *ngSwitchCase="'TLAMENU'">
+                                            <p-tag [severity]="rowData[col.field] === 1 ? 'success' : 'secondary'" [value]="rowData[col.field] === 1 ? 'Yes' : 'No'"></p-tag>
+                                        </span>
+                                        <span *ngSwitchCase="'TLADMAJ'">{{ rowData[col.field] | date:'MM/dd/yyyy' }}</span>
+                                        <span *ngSwitchDefault>{{ rowData[col.field] }}</span>
+                                    </ng-container>
+                                </span>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td [attr.colspan]="columnsLabels.length" class="text-center p-4">
+                        <i class="pi pi-inbox" style="font-size: 2rem; color: var(--text-color-secondary);"></i>
+                        <p class="mt-2">No labels found</p>
+                    </td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <!-- TAB 3: Parameters -->
+        <p-tabPanel header="Parameters" leftIcon="fas fa-sliders-h">
+            <div class="search-panel">
+                <div class="formgrid grid">
+                    <div class="field col-3">
+                        <label class="font-bold" for="searchParamId">Parameter ID</label>
+                        <input id="searchParamId" pInputText [(ngModel)]="searchParameter.id" placeholder="Search by ID..."
+                            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                            (keyup.enter)="searchParametersData()">
+                    </div>
+                    <div class="field col-7">
+                        <label class="font-bold" for="searchParamDesc">Description</label>
+                        <input id="searchParamDesc" pInputText [(ngModel)]="searchParameter.desc" placeholder="Search description..."
+                            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                            (keyup.enter)="searchParametersData()">
+                    </div>
+                    <div class="field col-2 search-buttons">
+                        <button pButton type="button" icon="pi pi-search" label="Search"
+                            class="p-button-outlined mr-2" (click)="searchParametersData()"></button>
+                        <button pButton type="button" icon="pi pi-times" label="Clear"
+                            class="p-button-outlined p-button-secondary" (click)="clearParametersSearch()"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toolbar flex justify-content-between align-items-center">
+                <div class="toolbar-left">
+                    <button pButton type="button" icon="pi pi-plus" label="New"
+                        class="p-button-outlined p-button-success mr-2" (click)="newParameter()"></button>
+                    <button pButton type="button" icon="pi pi-refresh" label="Refresh"
+                        class="p-button-outlined p-button-info mr-2" (click)="loadParametersData()"></button>
+                    <button pButton type="button" icon="pi pi-file-excel" label="Export CSV"
+                        class="p-button-outlined p-button-help" (click)="exportCSV('parameters')"></button>
+                </div>
+                <div class="toolbar-right">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-filter"></i>
+                        <input pInputText type="text" #parametersFilter
+                            (input)="parametersTable.filterGlobal(parametersFilter.value, 'contains')" 
+                            placeholder="Filter by ID or Description..." style="width: 250px;" />
+                    </span>
+                </div>
+            </div>
+
+            <p-table #parametersTable [value]="parametersList" [columns]="columnsParameters"
+                [paginator]="true" [rows]="15" [rowsPerPageOptions]="[10,15,25,50]"
+                [loading]="loadingParameters" [resizableColumns]="true" selectionMode="single" [(selection)]="selectedParameter"
+                [globalFilterFields]="['TPARAMID', 'TPARAMDESC']"
+                styleClass="p-datatable-sm p-datatable-gridlines" responsiveLayout="scroll" dataKey="TPARAMID" [exportFilename]="'parameters'">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <ng-container *ngFor="let col of columnsParameters">
+                            <th *ngIf="col.display" [pSortableColumn]="col.sortable ? col.field : null" pResizableColumn [style.width]="col.width">
+                                <span *ngIf="col.field !== 'ACTION'">{{col.header}}
+                                    <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                                    <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+                                </span>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                    <tr [pSelectableRow]="rowData" (dblclick)="onRowDblClickParameter(rowData)" class="cursor-pointer">
+                        <ng-container *ngFor="let col of columnsParameters">
+                            <td *ngIf="col.display" [style.width]="col.width">
+                                <span *ngIf="col.field === 'ACTION'" class="action-buttons">
+                                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editParameter(rowData['TPARAMID']); $event.stopPropagation()"
+                                        pTooltip="Edit" tooltipPosition="top" class="p-button-rounded p-button-text p-button-sm"></button>
+                                    <button pButton pRipple type="button" icon="pi pi-copy" (click)="duplicateParameter(rowData['TPARAMID']); $event.stopPropagation()"
+                                        pTooltip="Duplicate" tooltipPosition="top" class="p-button-rounded p-button-text p-button-sm"></button>
+                                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteParameter(rowData['TPARAMID'], rowData['TPARAMDESC']); $event.stopPropagation()"
+                                        pTooltip="Delete" tooltipPosition="top" class="p-button-rounded p-button-text p-button-danger p-button-sm"></button>
+                                </span>
+                                <span *ngIf="col.field !== 'ACTION'">
+                                    <ng-container [ngSwitch]="col.field">
+                                        <span *ngSwitchCase="'TPARAMDMAJ'">{{ rowData[col.field] | date:'MM/dd/yyyy' }}</span>
+                                        <span *ngSwitchDefault>{{ rowData[col.field] }}</span>
+                                    </ng-container>
+                                </span>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td [attr.colspan]="columnsParameters.length" class="text-center p-4">
+                        <i class="pi pi-inbox" style="font-size: 2rem; color: var(--text-color-secondary);"></i>
+                        <p class="mt-2">No parameters found</p>
+                    </td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <!-- TAB 4: Entry Labels -->
+        <p-tabPanel header="Entry Labels" leftIcon="fas fa-list-alt">
+            <div class="search-panel">
+                <div class="formgrid grid">
+                    <div class="field col-3">
+                        <label class="font-bold" for="searchEntryParamId">Parameter ID</label>
+                        <input id="searchEntryParamId" pInputText [(ngModel)]="searchEntry.paramId" placeholder="Search by Param ID..."
+                            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                            (keyup.enter)="searchEntriesData()">
+                    </div>
+                    <div class="field col-7">
+                        <label class="font-bold" for="searchEntryDesc">Description</label>
+                        <input id="searchEntryDesc" pInputText [(ngModel)]="searchEntry.desc" placeholder="Search description..."
+                            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                            (keyup.enter)="searchEntriesData()">
+                    </div>
+                    <div class="field col-2 search-buttons">
+                        <button pButton type="button" icon="pi pi-search" label="Search"
+                            class="p-button-outlined mr-2" (click)="searchEntriesData()"></button>
+                        <button pButton type="button" icon="pi pi-times" label="Clear"
+                            class="p-button-outlined p-button-secondary" (click)="clearEntriesSearch()"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toolbar flex justify-content-between align-items-center">
+                <div class="toolbar-left">
+                    <button pButton type="button" icon="pi pi-plus" label="New"
+                        class="p-button-outlined p-button-success mr-2" (click)="newEntry()"></button>
+                    <button pButton type="button" icon="pi pi-refresh" label="Refresh"
+                        class="p-button-outlined p-button-info mr-2" (click)="loadEntriesData()"></button>
+                    <button pButton type="button" icon="pi pi-file-excel" label="Export CSV"
+                        class="p-button-outlined p-button-help" (click)="exportCSV('entries')"></button>
+                </div>
+                <div class="toolbar-right">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-filter"></i>
+                        <input pInputText type="text" #entriesFilter
+                            (input)="entriesTable.filterGlobal(entriesFilter.value, 'contains')" 
+                            placeholder="Filter by ID or Description..." style="width: 250px;" />
+                    </span>
+                </div>
+            </div>
+
+            <p-table #entriesTable [value]="entriesList" [columns]="columnsEntries"
+                [paginator]="true" [rows]="15" [rowsPerPageOptions]="[10,15,25,50]"
+                [loading]="loadingEntries" [resizableColumns]="true" selectionMode="single" [(selection)]="selectedEntry"
+                [globalFilterFields]="['TENTRYID', 'TENTRYDESC']"
+                styleClass="p-datatable-sm p-datatable-gridlines" responsiveLayout="scroll" dataKey="TENTRYID" [exportFilename]="'entries'">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <ng-container *ngFor="let col of columnsEntries">
+                            <th *ngIf="col.display" [pSortableColumn]="col.sortable ? col.field : null" pResizableColumn [style.width]="col.width">
+                                <span *ngIf="col.field !== 'ACTION'">{{col.header}}
+                                    <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                                    <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+                                </span>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                    <tr [pSelectableRow]="rowData" (dblclick)="onRowDblClickEntry(rowData)" class="cursor-pointer">
+                        <ng-container *ngFor="let col of columnsEntries">
+                            <td *ngIf="col.display" [style.width]="col.width">
+                                <span *ngIf="col.field === 'ACTION'" class="action-buttons">
+                                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editEntry(rowData['TENTRYID']); $event.stopPropagation()"
+                                        pTooltip="Edit" tooltipPosition="top" class="p-button-rounded p-button-text p-button-sm"></button>
+                                    <button pButton pRipple type="button" icon="pi pi-copy" (click)="duplicateEntry(rowData['TENTRYID']); $event.stopPropagation()"
+                                        pTooltip="Duplicate" tooltipPosition="top" class="p-button-rounded p-button-text p-button-sm"></button>
+                                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteEntry(rowData['TENTRYID'], rowData['TENTRYPARAMID'], rowData['TENTRYDESC']); $event.stopPropagation()"
+                                        pTooltip="Delete" tooltipPosition="top" class="p-button-rounded p-button-text p-button-danger p-button-sm"></button>
+                                </span>
+                                <span *ngIf="col.field !== 'ACTION'">
+                                    <ng-container [ngSwitch]="col.field">
+                                        <span *ngSwitchCase="'TENTRYDMAJ'">{{ rowData[col.field] | date:'MM/dd/yyyy' }}</span>
+                                        <span *ngSwitchDefault>{{ rowData[col.field] }}</span>
+                                    </ng-container>
+                                </span>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td [attr.colspan]="columnsEntries.length" class="text-center p-4">
+                        <i class="pi pi-inbox" style="font-size: 2rem; color: var(--text-color-secondary);"></i>
+                        <p class="mt-2">No entries found</p>
+                    </td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+
+<!-- DIALOG: Technical Object Edit -->
+<p-dialog [(visible)]="displayTechObjDialog" [modal]="true" [style]="{width: '800px'}"
+    [header]="isNewTechObj ? 'New Technical Object' : 'Edit Technical Object'" [closable]="true" [draggable]="true" [resizable]="true">
+    <p-tabView>
+        <p-tabPanel header="General" leftIcon="fas fa-info-circle">
+            <div class="formgrid grid">
+                <div class="field col-6">
+                    <label class="font-bold" for="tobId">Object ID *</label>
+                    <input id="tobId" pInputText [(ngModel)]="techObjDisplay.TOBID" [disabled]="!isNewTechObj"
+                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+                </div>
+                <div class="field col-6">
+                    <label class="font-bold" for="tobCat">Category</label>
+                    <p-dropdown id="tobCat" [(ngModel)]="techObjDisplay.TOBCAT" [options]="categoryOptions" 
+                        optionLabel="label" optionValue="value" [showClear]="true" placeholder="Select Category" class="w-full"></p-dropdown>
+                </div>
+                <div class="field col-6">
+                    <label class="font-bold" for="tobTid">Source File</label>
+                    <input id="tobTid" pInputText [(ngModel)]="techObjDisplay.TOBTID"
+                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+                </div>
+                <div class="field col-6">
+                    <label class="font-bold" for="tobLang">Language</label>
+                    <p-dropdown id="tobLang" [(ngModel)]="techObjDisplay.TOBLANGUE" [options]="languageOptions" 
+                        optionLabel="label" optionValue="value" placeholder="Select Language" class="w-full"></p-dropdown>
+                </div>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Descriptions" leftIcon="fas fa-align-left">
+            <div class="formgrid grid">
+                <div class="field col-12">
+                    <label class="font-bold" for="tobDesc">Description 1</label>
+                    <textarea id="tobDesc" pInputTextarea [(ngModel)]="techObjDisplay.TOBDESC" rows="2"
+                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"></textarea>
+                </div>
+                <div class="field col-12">
+                    <label class="font-bold" for="tobDesc2">Description 2</label>
+                    <textarea id="tobDesc2" pInputTextarea [(ngModel)]="techObjDisplay.TOBDESC2" rows="2"
+                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"></textarea>
+                </div>
+                <div class="field col-12">
+                    <label class="font-bold" for="tobDesc3">Description 3</label>
+                    <textarea id="tobDesc3" pInputTextarea [(ngModel)]="techObjDisplay.TOBDESC3" rows="2"
+                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"></textarea>
+                </div>
+                <div class="field col-12">
+                    <label class="font-bold" for="tobDesc4">Description 4</label>
+                    <textarea id="tobDesc4" pInputTextarea [(ngModel)]="techObjDisplay.TOBDESC4" rows="2"
+                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"></textarea>
+                </div>
+                <div class="field col-12">
+                    <label class="font-bold" for="tobDesc5">Description 5</label>
+                    <textarea id="tobDesc5" pInputTextarea [(ngModel)]="techObjDisplay.TOBDESC5" rows="2"
+                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"></textarea>
+                </div>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Audit" leftIcon="fas fa-history">
+            <div class="formgrid grid">
+                <div class="field col-6">
+                    <label class="font-bold">Created</label>
+                    <input pInputText [value]="techObjDisplay.TOBDCRE | date:'MM/dd/yyyy HH:mm'" disabled
+                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+                </div>
+                <div class="field col-6">
+                    <label class="font-bold">Last Updated</label>
+                    <input pInputText [value]="techObjDisplay.TOBDMAJ | date:'MM/dd/yyyy HH:mm'" disabled
+                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+                </div>
+                <div class="field col-6">
+                    <label class="font-bold">Last User</label>
+                    <input pInputText [value]="techObjDisplay.TOBUTIL" disabled
+                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-text" (click)="cancelTechObjDialog()"></button>
+        <button pButton type="button" label="Save" icon="pi pi-check" class="p-button-outlined" (click)="saveTechObj()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- DIALOG: Label Edit -->
+<p-dialog [(visible)]="displayLabelDialog" [modal]="true" [style]="{width: '700px'}"
+    [header]="isNewLabel ? 'New Label' : 'Edit Label'" [closable]="true" [draggable]="true" [resizable]="true">
+    <div class="formgrid grid">
+        <div class="field col-6">
+            <label class="font-bold" for="labelId">Label ID *</label>
+            <input id="labelId" pInputText [(ngModel)]="labelDisplay.TLAID" [disabled]="!isNewLabel"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+        </div>
+        <div class="field col-6">
+            <label class="font-bold" for="labelScreen">Screen ID</label>
+            <input id="labelScreen" pInputText [(ngModel)]="labelDisplay.TLASCREEN"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+        </div>
+        <div class="field col-12">
+            <label class="font-bold" for="labelDesc">Description</label>
+            <input id="labelDesc" pInputText [(ngModel)]="labelDisplay.TLADESC"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+        </div>
+        <div class="field col-6">
+            <label class="font-bold" for="labelMenu">Menu Entry</label>
+            <p-dropdown id="labelMenu" [(ngModel)]="labelDisplay.TLAMENU" [options]="menuOptions" 
+                optionLabel="label" optionValue="value" placeholder="Select" class="w-full"></p-dropdown>
+        </div>
+        <div class="field col-6">
+            <label class="font-bold" for="labelLang">Language</label>
+            <p-dropdown id="labelLang" [(ngModel)]="labelDisplay.TLALANGUE" [options]="languageOptions" 
+                optionLabel="label" optionValue="value" placeholder="Select Language" class="w-full"></p-dropdown>
+        </div>
+        <div class="field col-12" *ngIf="!isNewLabel">
+            <p-divider></p-divider>
+            <div class="grid">
+                <div class="col-4"><label class="font-bold text-sm">Created:</label><span class="ml-2">{{ labelDisplay.TLADCRE | date:'MM/dd/yyyy' }}</span></div>
+                <div class="col-4"><label class="font-bold text-sm">Updated:</label><span class="ml-2">{{ labelDisplay.TLADMAJ | date:'MM/dd/yyyy' }}</span></div>
+                <div class="col-4"><label class="font-bold text-sm">User:</label><span class="ml-2">{{ labelDisplay.TLAUTIL }}</span></div>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-text" (click)="cancelLabelDialog()"></button>
+        <button pButton type="button" label="Save" icon="pi pi-check" class="p-button-outlined" (click)="saveLabel()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- DIALOG: Parameter Edit -->
+<p-dialog [(visible)]="displayParameterDialog" [modal]="true" [style]="{width: '700px'}"
+    [header]="isNewParameter ? 'New Parameter' : 'Edit Parameter'" [closable]="true" [draggable]="true" [resizable]="true">
+    <div class="formgrid grid">
+        <div class="field col-6">
+            <label class="font-bold" for="paramId">Parameter ID *</label>
+            <input id="paramId" pInputText [(ngModel)]="parameterDisplay.TPARAMID" [disabled]="!isNewParameter"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                type="number" placeholder="Enter Parameter ID">
+        </div>
+        <div class="field col-6">
+            <label class="font-bold" for="paramLang">Language</label>
+            <p-dropdown id="paramLang" [(ngModel)]="parameterDisplay.TPARAMLANG" [options]="languageOptions" 
+                optionLabel="label" optionValue="value" placeholder="Select Language" class="w-full"></p-dropdown>
+        </div>
+        <div class="field col-12">
+            <label class="font-bold" for="paramDesc">Description *</label>
+            <input id="paramDesc" pInputText [(ngModel)]="parameterDisplay.TPARAMDESC"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+        </div>
+        <div class="field col-12">
+            <label class="font-bold" for="paramComment">Comment</label>
+            <textarea id="paramComment" pInputTextarea [(ngModel)]="parameterDisplay.TPARAMCOMMENT" rows="3"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"></textarea>
+        </div>
+        <div class="field col-12" *ngIf="!isNewParameter">
+            <p-divider></p-divider>
+            <div class="grid">
+                <div class="col-4"><label class="font-bold text-sm">Created:</label><span class="ml-2">{{ parameterDisplay.TPARAMDCRE | date:'MM/dd/yyyy' }}</span></div>
+                <div class="col-4"><label class="font-bold text-sm">Updated:</label><span class="ml-2">{{ parameterDisplay.TPARAMDMAJ | date:'MM/dd/yyyy' }}</span></div>
+                <div class="col-4"><label class="font-bold text-sm">User:</label><span class="ml-2">{{ parameterDisplay.TPARAMUTIL }}</span></div>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-text" (click)="cancelParameterDialog()"></button>
+        <button pButton type="button" label="Save" icon="pi pi-check" class="p-button-outlined" (click)="saveParameter()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- DIALOG: Entry Edit -->
+<p-dialog [(visible)]="displayEntryDialog" [modal]="true" [style]="{width: '700px'}"
+    [header]="isNewEntry ? 'New Entry' : 'Edit Entry'" [closable]="true" [draggable]="true" [resizable]="true">
+    <div class="formgrid grid">
+        <div class="field col-6">
+            <label class="font-bold" for="entryId">Entry ID *</label>
+            <input id="entryId" pInputText [(ngModel)]="entryDisplay.TENTRYID" [disabled]="!isNewEntry"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                type="number" placeholder="Enter Entry ID">
+        </div>
+        <div class="field col-6">
+            <label class="font-bold" for="entryParamId">Parameter ID *</label>
+            <p-dropdown id="entryParamId" [(ngModel)]="entryDisplay.TENTRYPARAMID" [options]="parametersDropdownList" 
+                optionLabel="label" optionValue="value" filterBy="label"
+                placeholder="Select Parameter" class="w-full"></p-dropdown>
+        </div>
+        <div class="field col-6">
+            <label class="font-bold" for="entryLang">Language</label>
+            <p-dropdown id="entryLang" [(ngModel)]="entryDisplay.TENTRYLANG" [options]="languageOptions" 
+                optionLabel="label" optionValue="value" placeholder="Select Language" class="w-full"></p-dropdown>
+        </div>
+        <div class="field col-12">
+            <label class="font-bold" for="entryDesc">Description *</label>
+            <input id="entryDesc" pInputText [(ngModel)]="entryDisplay.TENTRYDESC"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+        </div>
+        <div class="field col-12">
+            <label class="font-bold" for="entryComment">Comment</label>
+            <textarea id="entryComment" pInputTextarea [(ngModel)]="entryDisplay.TENTRYCOMMENT" rows="3"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"></textarea>
+        </div>
+        <div class="field col-12" *ngIf="!isNewEntry">
+            <p-divider></p-divider>
+            <div class="grid">
+                <div class="col-4"><label class="font-bold text-sm">Created:</label><span class="ml-2">{{ entryDisplay.TENTRYCRE | date:'MM/dd/yyyy' }}</span></div>
+                <div class="col-4"><label class="font-bold text-sm">Updated:</label><span class="ml-2">{{ entryDisplay.TENTRYDMAJ | date:'MM/dd/yyyy' }}</span></div>
+                <div class="col-4"><label class="font-bold text-sm">User:</label><span class="ml-2">{{ entryDisplay.TENTRYUTIL }}</span></div>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-text" (click)="cancelEntryDialog()"></button>
+        <button pButton type="button" label="Save" icon="pi pi-check" class="p-button-outlined" (click)="saveEntry()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<p-toast></p-toast>
