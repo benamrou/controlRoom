@@ -7,7 +7,7 @@ import { LogginService, UserService, LabelService, StructureService, ScreenServi
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss', './SeasonalThemes/new_year.scss'],
+    styleUrls: ['./login.component.scss', './SeasonalThemes/winter.scss'],
     animations: [routerTransition()]
 })
 export class LoginComponent implements OnInit {
@@ -27,8 +27,8 @@ export class LoginComponent implements OnInit {
     // Version visibility
     showVersion = false;
     
-    // New Year elements - subtle and professional
-    stars: number[] = Array(25).fill(0);
+    // Winter elements
+    snowflakes: number[] = Array(50).fill(0);
 
     constructor(
         public router: Router,

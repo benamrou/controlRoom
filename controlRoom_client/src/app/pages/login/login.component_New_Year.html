@@ -1,169 +1,117 @@
-<!-- login.component.html - New Year Theme -->
+<!-- login.component.html - New Year Theme (Professional & Warm) -->
 <div class="login-page">
-    <!-- Gradient Background with Animated Stars -->
-    <div class="night-sky"></div>
+    <!-- Warm Gradient Background -->
+    <div class="background-gradient"></div>
 
-    <!-- Animated Stars -->
-    <div *ngFor="let star of stars; let i = index" 
-         class="star" 
-         [style.left.%]="(i * 17) % 100"
-         [style.top.%]="(i * 23) % 80"
-         [style.animation-delay.s]="(i * 0.1) % 3">✦</div>
-
-    <!-- Fireworks -->
-    <div *ngFor="let fw of fireworks; let i = index" 
-         class="firework"
-         [style.left.%]="10 + (i * 7) % 80"
-         [style.animation-delay.s]="i * 0.5">
-        <div class="firework-burst">
-            <span class="spark"></span>
-            <span class="spark"></span>
-            <span class="spark"></span>
-            <span class="spark"></span>
-            <span class="spark"></span>
-            <span class="spark"></span>
-            <span class="spark"></span>
-            <span class="spark"></span>
-        </div>
+    <!-- Subtle Bokeh Lights -->
+    <div class="bokeh-container">
+        <div *ngFor="let i of stars" 
+             class="bokeh"
+             [style.left.%]="(i * 17) % 100"
+             [style.top.%]="(i * 23) % 100"
+             [style.animation-delay.s]="(i * 0.2) % 4"></div>
     </div>
 
-    <!-- Confetti -->
-    <div *ngFor="let conf of confetti; let i = index" 
-         class="confetti"
-         [style.left.%]="(i * 13) % 100"
-         [style.animation-delay.s]="(i * 0.15) % 5"
-         [attr.data-color]="i % 5"></div>
-
-    <!-- Champagne Bubbles -->
-    <div *ngFor="let bubble of bubbles; let i = index" 
-         class="bubble"
-         [style.left.%]="20 + (i * 3)"
-         [style.animation-delay.s]="i * 0.3"></div>
-
-    <!-- Clock Display -->
-    <div class="countdown-display">
-        <div class="year-transition">
-            <span class="old-year">2024</span>
-            <span class="arrow">→</span>
-            <span class="new-year">2025</span>
-        </div>
-    </div>
-
-    <!-- Champagne Glasses -->
-    <div class="champagne-glasses">
-        <div class="glass glass-left">🥂</div>
-        <div class="glass glass-right">🍾</div>
-    </div>
-
-    <!-- Party Elements Left -->
-    <div class="party-element party-hat-1">🎉</div>
-    <div class="party-element party-hat-2">🎊</div>
-    <div class="party-element balloon-1">🎈</div>
-    <div class="party-element balloon-2">🎈</div>
-    <div class="party-element balloon-3">🎈</div>
-
-    <!-- Party Elements Right -->
-    <div class="party-element party-popper-1">🎉</div>
-    <div class="party-element party-popper-2">🎊</div>
-    <div class="party-element balloon-4">🎈</div>
-    <div class="party-element balloon-5">🎈</div>
-
-    <!-- Disco Ball -->
-    <div class="disco-ball">
-        <div class="disco-inner">🪩</div>
-        <div class="disco-light"></div>
-    </div>
-
-    <!-- Streamers -->
-    <div class="streamer streamer-1"></div>
-    <div class="streamer streamer-2"></div>
-    <div class="streamer streamer-3"></div>
-    <div class="streamer streamer-4"></div>
+    <!-- Gentle Sparkles -->
+    <div *ngFor="let i of [1,2,3,4,5,6,7,8]" 
+         class="sparkle"
+         [attr.data-index]="i"></div>
 
     <!-- Version -->
     <div class="version" #versionDiv [style.visibility]="showVersion ? 'visible' : 'hidden'">
         vers. 6.0.1b0.10
     </div>
 
-    <!-- Login Container -->
-    <div class="login-container">
-        <div class="login-card">
-            <div class="logo" (click)="showHideVersion()">
-                <img src="./assets/images/logo.png" width="150px" class="user-avatar" />
-            </div>
-
-            <h1>Inventory Control Room</h1>
-
-            <p-toast key="top" [style]="{marginTop: '80px'}" position="top-right"></p-toast>
-            <p-toast></p-toast>
-
-            <form role="form" (ngSubmit)="onLoggedin()">
-                <div class="form-group">
-                    <i class="fas fa-user"></i>
-                    <input 
-                        type="text" 
-                        name="username" 
-                        [(ngModel)]="authentification.username"
-                        class="form-control" 
-                        placeholder="Username"
-                        required>
-                </div>
-
-                <div class="form-group">
-                    <i class="fas fa-lock"></i>
-                    <input 
-                        type="password" 
-                        [(ngModel)]="authentification.password"
-                        name="password"
-                        class="form-control" 
-                        placeholder="Password"
-                        required>
-                </div>
-
-                <button 
-                    type="submit" 
-                    class="login-btn" 
-                    [disabled]="authentification.username.length === 0">
-                    <i class="fas fa-sign-in-alt"></i> Log In
-                </button>
-
-                <div class="loading-status" *ngIf="canConnect">
-                    <div class="status-item">
-                        <span>User authentication validation</span>
-                        <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
-                    </div>
-                    <div class="status-item">
-                        <span>Gathering user information</span>
-                        <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
-                    </div>
-                    <div class="status-item">
-                        <span>Gathering menu access</span>
-                        <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
-                    </div>
-                    <div class="status-item">
-                        <span>Loading environment</span>
-                        <i class="fas" [class.fa-check]="environmentGathered" [class.fa-spinner]="!environmentGathered"></i>
-                    </div>
-                    <div class="status-item">
-                        <span>Gathering parameters</span>
-                        <i class="fas" [class.fa-check]="parameterGathered" [class.fa-spinner]="!parameterGathered"></i>
-                    </div>
-                    <div class="status-item">
-                        <span>Loading language labels</span>
-                        <i class="fas" [class.fa-check]="labelsGathered" [class.fa-spinner]="!labelsGathered"></i>
-                    </div>
-                    <div class="status-item">
-                        <span>Refreshing workspace</span>
-                        <i class="fas" [class.fa-check]="labelsGathered" [class.fa-spinner]="!labelsGathered"></i>
-                    </div>
-                </div>
-            </form>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Year Display -->
+        <div class="year-display">
+            <span class="year-old">2025</span>
+            <span class="year-divider">•</span>
+            <span class="year-new">2026</span>
         </div>
-    </div>
 
-    <!-- New Year Message -->
-    <div class="holiday-message">
-        <span class="message-text">Happy New Year 2025! 🎆</span>
-        <span class="message-sub">Wishing you success and prosperity!</span>
+        <!-- Login Container -->
+        <div class="login-container">
+            <div class="login-card">
+                <div class="logo" (click)="showHideVersion()">
+                    <img src="./assets/images/logo.png" width="140px" class="user-avatar" />
+                </div>
+
+                <h1>Inventory Control Room</h1>
+
+                <p-toast key="top" [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+                <p-toast></p-toast>
+
+                <form role="form" (ngSubmit)="onLoggedin()">
+                    <div class="form-group">
+                        <i class="fas fa-user"></i>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            [(ngModel)]="authentification.username"
+                            class="form-control" 
+                            placeholder="Username"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input 
+                            type="password" 
+                            [(ngModel)]="authentification.password"
+                            name="password"
+                            class="form-control" 
+                            placeholder="Password"
+                            required>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="login-btn" 
+                        [disabled]="authentification.username.length === 0">
+                        <i class="fas fa-sign-in-alt"></i> Log In
+                    </button>
+
+                    <div class="loading-status" *ngIf="canConnect">
+                        <div class="status-item">
+                            <span>User authentication validation</span>
+                            <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Gathering user information</span>
+                            <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Gathering menu access</span>
+                            <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Loading environment</span>
+                            <i class="fas" [class.fa-check]="environmentGathered" [class.fa-spinner]="!environmentGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Gathering parameters</span>
+                            <i class="fas" [class.fa-check]="parameterGathered" [class.fa-spinner]="!parameterGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Loading language labels</span>
+                            <i class="fas" [class.fa-check]="labelsGathered" [class.fa-spinner]="!labelsGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Refreshing workspace</span>
+                            <i class="fas" [class.fa-check]="labelsGathered" [class.fa-spinner]="!labelsGathered"></i>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- New Year Message -->
+        <div class="holiday-message">
+            <div class="message-icon">✨</div>
+            <h2>Cheers to 2026</h2>
+            <p>Success, optimism and serenity</p>
+        </div>
     </div>
 </div>
