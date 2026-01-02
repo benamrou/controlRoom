@@ -1,0 +1,461 @@
+/* newyear.scss - Professional & Warm New Year Theme */
+
+// Color Palette - Warm & Elegant
+$deep-navy: #0f1729;
+$warm-navy: #1a2744;
+$rich-purple: #2d1f47;
+$gold-primary: #d4af37;
+$gold-light: #f4d683;
+$gold-soft: #e8c872;
+$champagne: #f7e8d0;
+$warm-white: #faf8f5;
+$soft-cream: #fff9f0;
+$accent-copper: #b87333;
+$success-green: #4ade80;
+
+// Mixins
+@mixin glass-effect {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+@mixin subtle-glow($color, $intensity: 0.3) {
+    box-shadow: 0 0 40px rgba($color, $intensity);
+}
+
+// Base Layout
+.login-page {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+// Background
+.background-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(ellipse at 20% 80%, rgba($rich-purple, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba($gold-primary, 0.08) 0%, transparent 40%),
+        radial-gradient(ellipse at 50% 50%, rgba($warm-navy, 0.6) 0%, transparent 70%),
+        linear-gradient(160deg, $deep-navy 0%, $warm-navy 40%, darken($rich-purple, 10%) 100%);
+    z-index: 0;
+}
+
+// Bokeh Effect - Soft glowing circles
+.bokeh-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.bokeh {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: bokeh-float 8s ease-in-out infinite;
+    
+    &:nth-child(5n + 1) {
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(circle, rgba($gold-light, 0.15) 0%, transparent 70%);
+    }
+    
+    &:nth-child(5n + 2) {
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba($champagne, 0.1) 0%, transparent 70%);
+    }
+    
+    &:nth-child(5n + 3) {
+        width: 60px;
+        height: 60px;
+        background: radial-gradient(circle, rgba($gold-primary, 0.12) 0%, transparent 70%);
+    }
+    
+    &:nth-child(5n + 4) {
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba($warm-white, 0.08) 0%, transparent 70%);
+    }
+    
+    &:nth-child(5n + 5) {
+        width: 70px;
+        height: 70px;
+        background: radial-gradient(circle, rgba($accent-copper, 0.1) 0%, transparent 70%);
+    }
+}
+
+@keyframes bokeh-float {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+    }
+    20%, 80% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1);
+    }
+}
+
+// Sparkles - Subtle stars
+.sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: $gold-light;
+    border-radius: 50%;
+    opacity: 0;
+    animation: sparkle-twinkle 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 12px;
+        height: 12px;
+        background: radial-gradient(circle, rgba($gold-light, 0.4) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    
+    &[data-index="1"] { top: 10%; left: 15%; animation-delay: 0s; }
+    &[data-index="2"] { top: 20%; left: 80%; animation-delay: 0.5s; }
+    &[data-index="3"] { top: 60%; left: 10%; animation-delay: 1s; }
+    &[data-index="4"] { top: 75%; left: 85%; animation-delay: 1.5s; }
+    &[data-index="5"] { top: 30%; left: 5%; animation-delay: 2s; }
+    &[data-index="6"] { top: 85%; left: 20%; animation-delay: 2.5s; }
+    &[data-index="7"] { top: 15%; left: 60%; animation-delay: 0.8s; }
+    &[data-index="8"] { top: 50%; left: 92%; animation-delay: 1.8s; }
+}
+
+@keyframes sparkle-twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 0.8; transform: scale(1); }
+}
+
+// Version
+.version {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    color: rgba($warm-white, 0.4);
+    font-size: 0.75rem;
+    z-index: 100;
+    letter-spacing: 0.5px;
+}
+
+// Main Content Container
+.main-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 40px 20px;
+    width: 100%;
+    max-width: 480px;
+}
+
+// Year Display
+.year-display {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+    
+    .year-old {
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: rgba($warm-white, 0.35);
+        letter-spacing: 2px;
+    }
+    
+    .year-divider {
+        color: $gold-primary;
+        font-size: 0.75rem;
+        opacity: 0.6;
+    }
+    
+    .year-new {
+        font-size: 2rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, $gold-light 0%, $gold-primary 50%, $gold-soft 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 3px;
+        animation: year-glow 3s ease-in-out infinite alternate;
+    }
+}
+
+@keyframes year-glow {
+    0% { filter: brightness(1) drop-shadow(0 0 8px rgba($gold-primary, 0.3)); }
+    100% { filter: brightness(1.1) drop-shadow(0 0 16px rgba($gold-primary, 0.5)); }
+}
+
+// Login Container
+.login-container {
+    width: 100%;
+}
+
+.login-card {
+    @include glass-effect;
+    border-radius: 20px;
+    padding: 40px 36px;
+    border: 1px solid rgba($gold-primary, 0.15);
+    @include subtle-glow($gold-primary, 0.08);
+    transition: all 0.4s ease;
+    
+    &:hover {
+        border-color: rgba($gold-primary, 0.25);
+        @include subtle-glow($gold-primary, 0.12);
+    }
+    
+    .logo {
+        text-align: center;
+        margin-bottom: 24px;
+        cursor: pointer;
+        
+        .user-avatar {
+            //border-radius: 12px;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+            
+            &:hover {
+                transform: scale(1.03);
+            }
+        }
+    }
+    
+    h1 {
+        text-align: center;
+        color: $gold-soft;
+        font-size: 1.35rem;
+        font-weight: 500;
+        margin-bottom: 32px;
+        letter-spacing: 0.5px;
+    }
+}
+
+// Form Styles
+.form-group {
+    position: relative;
+    margin-bottom: 20px;
+    
+    i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $gold-primary;
+        font-size: 0.9rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 16px 16px 16px 48px;
+        background: rgba($warm-white, 0.06);
+        border: 1px solid rgba($warm-white, 0.12);
+        border-radius: 12px;
+        color: $warm-white;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+        
+        &::placeholder {
+            color: rgba($warm-white, 0.4);
+            font-weight: 300;
+        }
+        
+        &:focus {
+            outline: none;
+            border-color: rgba($gold-primary, 0.5);
+            background: rgba($warm-white, 0.08);
+            box-shadow: 0 0 0 3px rgba($gold-primary, 0.1);
+            
+            & + i,
+            & ~ i {
+                opacity: 1;
+            }
+        }
+    }
+    
+    &:focus-within i {
+        opacity: 1;
+    }
+}
+
+.login-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, $gold-primary 0%, darken($gold-primary, 8%) 100%);
+    border: none;
+    border-radius: 12px;
+    color: $deep-navy;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    margin-top: 8px;
+    
+    &:hover:not(:disabled) {
+        background: linear-gradient(135deg, $gold-light 0%, $gold-primary 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba($gold-primary, 0.3);
+    }
+    
+    &:active:not(:disabled) {
+        transform: translateY(0);
+    }
+    
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+    
+    i {
+        margin-right: 8px;
+    }
+}
+
+// Loading Status
+.loading-status {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba($warm-white, 0.08);
+    
+    .status-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        color: rgba($warm-white, 0.7);
+        font-size: 0.85rem;
+        border-bottom: 1px solid rgba($warm-white, 0.06);
+        
+        &:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        &:first-child {
+            padding-top: 0;
+        }
+        
+        i {
+            font-size: 0.9rem;
+            
+            &.fa-check {
+                color: $success-green;
+            }
+            
+            &.fa-spinner {
+                color: $gold-light;
+                animation: spin 1s linear infinite;
+            }
+        }
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+// Holiday Message
+.holiday-message {
+    text-align: center;
+    margin-top: 8px;
+    
+    .message-icon {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+        animation: icon-float 3s ease-in-out infinite;
+    }
+    
+    h2 {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: $gold-soft;
+        margin: 0 0 6px 0;
+        letter-spacing: 1px;
+    }
+    
+    p {
+        font-size: 0.9rem;
+        color: rgba($warm-white, 0.5);
+        margin: 0;
+        font-weight: 300;
+        font-style: italic;
+    }
+}
+
+@keyframes icon-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+// Responsive Design
+@media (max-width: 520px) {
+    .main-content {
+        padding: 24px 16px;
+        gap: 20px;
+    }
+    
+    .login-card {
+        padding: 32px 24px;
+    }
+    
+    .year-display {
+        .year-old { font-size: 1.25rem; }
+        .year-new { font-size: 1.75rem; }
+    }
+    
+    .login-card h1 {
+        font-size: 1.2rem;
+    }
+    
+    .holiday-message {
+        h2 { font-size: 1.1rem; }
+        p { font-size: 0.85rem; }
+    }
+}
+
+// Toast Adjustments (PrimeNG)
+:host ::ng-deep {
+    .p-toast {
+        .p-toast-message {
+            border-radius: 12px;
+            
+            &.p-toast-message-error {
+                background: rgba(220, 38, 38, 0.95);
+                border: 1px solid rgba(248, 113, 113, 0.3);
+            }
+        }
+    }
+}

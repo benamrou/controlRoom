@@ -1,0 +1,569 @@
+<nav class="sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" *ngIf="_userService.userInfo" style="padding-top:1%">
+        <ul class="list-group">
+            <a routerLink="/dashboard" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                <i class="fas fa-tachometer-alt"></i>&nbsp; {{ 'Dashboard' }}
+            </a>
+
+            <div class="nested-menu" *ngIf="_userService.userInfo.buyer ==1 || _userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1">
+                <a class="list-group-item" (click)="addExpandClass('inventory')">
+                    <span><i class="fas fa-cubes"></i> &nbsp; {{ 'Inventory' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'inventory' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/inventory" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-fw fa-university"></i> {{ 'Inventory follow-up' }}</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'inventory' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/counting" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-fw fa-university"></i> {{ 'Third-Party counting' }}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <div class="nested-menu" *ngIf="_userService.userInfo.buyer ==1 || _userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1">
+                <a class="list-group-item" (click)="addExpandClass('caoconfig')">
+                    <span><i class="fas fa-robot"></i> &nbsp; {{ 'Computer Ordering' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'caoconfig' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/caoconfig" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-check-double"></i> {{ 'CAO setting' }}</span></a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/caomissing" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-frog"></i> {{ 'CAO missing' }}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <!--div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('billing')">
+                    <span><i class="fas fa-donate"></i> &nbsp; {{ 'Billing & Invoice' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'billing' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/ediinvoice" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-check-double"></i> {{ 'EDI Invoices' }}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div-->
+            <!--div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('pricing')">
+                    <span><i class="fas fa-robot"></i> &nbsp; {{ 'Pricing' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'pricing' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/mdmbrand" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-check-double"></i> {{ 'Brand management' }}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div-->
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1">
+                <a class="list-group-item" (click)="addExpandClass('supplierschedule')">
+                    <span><i class="fa fa-calendar"></i> &nbsp; {{ 'Supplier schedule' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'supplierschedule' }">
+                    <ul class="submenu" >
+                        <!--li>
+                            <a class="bbs_link_menu" routerLink="/service" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-calendar"></i> {{ 'Mgt by contract' }}</span></a>
+                        </li -->
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/holiday" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-sun"></i> {{ 'Holiday schedule' }} </span>
+                                <!--span style="font-size: xx-small; color: yellow">NEW</span -->
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/schedule" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-calendar"></i> {{ 'Mgt by schedule' }} </span>
+                                <!--span style="font-size: xx-small; color: yellow">NEW</span -->
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/generateschedule" [routerLinkActive]="['router-link-active']" ><span><i class="pi pi-slack"></i> {{ 'Generate schedule' }} </span>
+                                <!--span style="font-size: xx-small; color: yellow">NEW</span -->
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <a routerLink="/search" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                <i class="fa fa-fw fa-search"></i> &nbsp; {{ 'Search' }}
+            </a>
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1 || _userService.userInfo.spaceplanning ==1">
+                <a class="list-group-item" (click)="addExpandClass('masterdata')" >
+                    <span><i class="fas fa-brain"></i> &nbsp; {{ 'Master data' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'masterdata' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/ppgretail" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-money-check-dollar"></i> {{ 'Retail by PPG' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/nextppg" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-list-ol"></i> {{ 'Next PPG' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/ecommdesc" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-film"></i> {{ 'eCommerce desc' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1 || _userService.userInfo.spaceplanning ==1">
+                <a class="list-group-item" (click)="addExpandClass('syndigo')" >
+                    <span><i class="fas fa-barcode"></i> &nbsp; {{ 'Syndigo' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'syndigo' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/syndigosearch" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-search"></i> {{ 'Search' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/syndigocollect" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-camera"></i> {{ 'Collect' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/syndigoupdate" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-wrench"></i> {{ 'Syndigo to MDM' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <div class="nested-menu" *ngIf="_userService.userInfo.spaceplanning ==1">
+                <a class="list-group-item" (click)="addExpandClass('spaceplanning')" >
+                    <span><i class="fas fa-ruler-horizontal"></i> &nbsp; {{ 'Space Planning' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'spaceplanning' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/ecommercepicture" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-camera"></i> {{ 'E-commerce picture' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/spaceitemreporting" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-timeline"></i> {{ 'Item history' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/spaceitemdimreporting" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-circle-info"></i> {{ 'SKU information' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/itemaddress" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-upload"></i> {{ 'Item address load'}}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1">
+                <a class="list-group-item" (click)="addExpandClass('finance')" >
+                    <span><i class="fas fa-file-invoice"></i> &nbsp; {{ 'Account Payable' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'finance' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/unarchiveinvoice" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-cash-register"></i> {{ 'Unarchive' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.it ==1 || _userService.userInfo.warehouse ==1 ">
+                <a class="list-group-item" (click)="addExpandClass('warehouse')" >
+                    <span><i class="fas fa-warehouse"></i> &nbsp; {{ 'Warehouse box' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'warehouse' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/fixpickingunit" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-tools"></i> {{ 'Fix Picking unit' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/releasepallet" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-pallet"></i> {{ 'Release pallet' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/palletlabel" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-barcode"></i> {{ 'Pallet label' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/productionnumber" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-hashtag"></i> {{ 'Production number' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.it ==1">
+                <a class="list-group-item" (click)="addExpandClass('batchschedule')" >
+                    <span><i class="fas fa-chalkboard-teacher"></i> &nbsp; {{ 'I.T.' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'batchschedule' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/batchschedule" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-tools"></i> {{ 'Batch processing' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/vega" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-lemon"></i> {{ 'Vega journal' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/unixrunner" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-terminal"></i> {{ 'Job execution' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1">
+                <a class="list-group-item" (click)="addExpandClass('robot')" >
+                    <span><i class="fa fa-desktop"></i> &nbsp; {{ 'Helpdesk' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'robot' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/robot" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-robot"></i> {{ 'Robot' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/whsrestartservices" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-repeat"></i> {{ 'Warehouse all services' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/servicescenter" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-repeat"></i> {{ 'Services center' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/orderurgent" [routerLinkActive]="['router-link-active']" ><span><i class="pi pi-slack"></i> {{ 'Order urgency' }} </span>
+                                <!--span style="font-size: xx-small; color: yellow">NEW</span -->
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1">
+                <a class="list-group-item" (click)="addExpandClass('edi')" >
+                    <span><i class="fa fa-wifi"></i> &nbsp; {{ 'EDI' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'edi' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/ediasn" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-truck-fast"></i> {{ 'Store ASN' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <div class="nested-menu" *ngIf="_userService.userInfo.dataIntegrity ==1 || _userService.userInfo.warehouse ==1">
+                <a class="list-group-item" (click)="addExpandClass('hierarchy')" >
+                    <span><i class="fas fa-sitemap"></i> &nbsp; {{ 'Hierarchy' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'hierarchy' }">
+                    <ul class="submenu">
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/availableMH"
+                                [routerLinkActive]="['router-link-active']"><span><i class="fas fa-code-merge"></i> {{
+                                    'Available node'}}</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <div class="nested-menu" *ngIf="_userService.userInfo.dataIntegrity ==1 || _userService.userInfo.warehouse ==1">
+                <a class="list-group-item" (click)="addExpandClass('massupdate')" >
+                    <span><i class="fas fa-chalkboard-teacher"></i> &nbsp; {{ 'Mass-change box' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'massupdate' }">
+                    <ul class="submenu">
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/massjournal"
+                                [routerLinkActive]="['router-link-active']"><span><i class="fas fa-clipboard-check"></i> {{
+                                    'Journal'}}</span></a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemhierarchy"
+                                [routerLinkActive]="['router-link-active']">
+                                <span><i class="fas fa-sitemap"></i> {{ 'Item Hierarchy'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemdescription"
+                                [routerLinkActive]="['router-link-active']">
+                                <span><i class="fas fa-newspaper"></i> {{ 'Item description'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemlistdescription"
+                                [routerLinkActive]="['router-link-active']">
+                                <span><i class="fas fa-clipboard-list"></i> {{ 'Item List desc.'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/categorymanager"
+                                [routerLinkActive]="['router-link-active']">
+                                <span><i class="fas fa-user"></i> {{ 'Category Mgr'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemattribute" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fas fa-list-ul"></i> {{ 'Item Attribute'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemattributedated" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fas fa-mattress-pillow"></i> {{ 'Item Attribute Period'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/svattribute" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fas fa-code-branch"></i> {{ 'SV Attribute'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/svinfo" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-info-circle"></i> {{ 'SV Info.'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/skudimension" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-ruler"></i> {{ 'SKU dimension'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.warehouse ==1 || _userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemcharacteristic" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-tags"></i> {{ 'Whs. item desc'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/variableweight" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-balance-scale"></i> {{ 'Variable weight'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/logisticcode" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-box"></i> {{ 'Logistic code'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemimages" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-camera"></i> {{ 'Item images'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/supplieraddress" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-address-card"></i> {{ 'Supplier address'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/purchaseorder" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-paste"></i> {{ 'Purchase order'}}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.dataIntegrity ==1 || _userService.userInfo.buyer ==1">
+                <a class="list-group-item" (click)="addExpandClass('reporting')" >
+                    <span><i class="fas fa-bar-chart"></i> &nbsp; {{ 'Reporting box' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('reporting') !== -1  }">
+                    <ul class="submenu" style="padding-left: 1.1em;">
+                        <a class="list-group-item" (click)="addExpandClass('reporting;scorecard')" >
+                            <span><i class="fas fa-bandcamp"></i> &nbsp; {{ 'Scorecard' }} </span>
+                        </a>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('scorecard') !== -1  }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'scorecard' }">
+                                <a class="bbs_link_menu" routerLink="/scorecardcao" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-shopping-cart"></i> &nbsp; {{ 'Automatic Order' }} </span>
+                                </a>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="submenu" style="padding-left: 1.1em;">
+                        <a class="list-group-item" (click)="addExpandClass('reporting;dashboard')" >
+                            <span><i class="fas fa-tachometer-alt"></i> &nbsp; {{ 'Dashboard' }} </span>
+                        </a>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('dashboard') !== -1 }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'dashboard' }"> 
+                                <a class="bbs_link_menu" routerLink="/dashboardcycle" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-shopping-cart"></i> &nbsp; {{ 'PI adjustment' }} </span>
+                                </a>
+                            </ul>
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'dashboard' }"> 
+                                <a class="bbs_link_menu" routerLink="/dashboardsupplier" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-truck"></i> &nbsp; {{ 'Supplier service' }} </span>
+                                </a>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="submenu" style="padding-left: 1.1em;">
+                        <a class="list-group-item" (click)="addExpandClass('reporting;quality')" >
+                            <span><i class="fas fa-bars"></i> &nbsp; {{ 'Quality' }} </span>
+                        </a>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('quality') !== -1 }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'quality' }"> 
+                                <a class="bbs_link_menu" routerLink="/qualitywhsreplenishment" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-industry"></i> &nbsp; {{ 'Whs Repl.' }} </span>
+                                </a>
+                            </ul>
+                        </li>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('quality') !== -1 }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'smartubd' }"> 
+                                <a class="bbs_link_menu" routerLink="/smartubd" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="pi pi-clock"></i> &nbsp; {{ 'Smart UBD' }} </span>
+                                </a>
+                            </ul>
+                        </li>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('quality') !== -1 }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'smartubd' }"> 
+                                <a class="bbs_link_menu" routerLink="/dashboardreception" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="pi pi-download"></i> &nbsp; {{ 'AP Receiving' }} </span>
+                                </a>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="submenu" style="padding-left: 1.1em;">
+                        <a class="list-group-item" (click)="addExpandClass('reporting;fillrate')" >
+                            <span><i class="fas fa-glass-water"></i> &nbsp; {{ 'Fill Rate' }} </span>
+                        </a>
+                        <li class="nested" [ngClass]="{'expand' : showMenu.indexOf('fillrate') !== -1 }">
+                            <ul class="subsubmenu" style="padding-left: 1.2em;" [ngClass]="{'expand' : showMenu === 'fillrate' }"> 
+                                <a class="bbs_link_menu" routerLink="/fillrate" [routerLinkActive]="['router-link-active']" >
+                                    <span><i class="fas fa-industry"></i> &nbsp; {{ 'DSD / Warehouse' }} </span>
+                                </a>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+
+            <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1 || _userService.userInfo.buyer || _userService.userInfo.dataIntegrity ==1">
+                <a class="list-group-item" (click)="addExpandClass('alertsicr')" >
+                    <span><i class="fas fa-bell"></i> &nbsp; {{ 'Alerts' }} </span>
+                </a>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'alertsicr' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/alerts-icr" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-bullhorn"></i> {{ 'Alerts management' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" routerLink="/reportfilter" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-filter"></i> {{ 'Filter config.' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div>
+
+            <!--div class="nested-menu">
+                <a class="list-group-item" (click)="addExpandClass('toolbox')">
+                    <span><i class="fa fa-plus"></i> &nbsp; {{ 'Toolbox' }} </span>
+                </a>
+
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'toolbox' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a class="bbs_link_menu"  [routerLink]="['/charts']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;{{ 'charts'  }}
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" [routerLink]="['/tables']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-fw fa-table"></i>&nbsp;{{ 'tables'  }}
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" [routerLink]="['/forms']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-fw fa-edit"></i>&nbsp;{{ 'forms'  }}
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" [routerLink]="['/bs-element']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-fw fa-desktop"></i>&nbsp;{{ 'boostrapElement'  }}
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" [routerLink]="['/grid']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-fw fa-wrench"></i>&nbsp;{{ 'boostrapGrid'  }}
+                            </a>
+                        </li>
+                        <li>
+                            <a class="bbs_link_menu" [routerLink]="['/components']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                                <i class="fa fa-th-list"></i>&nbsp;{{ 'component'  }}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </div-->
+            <!--a [routerLink]="['/blank-page']" [routerLinkActive]="['router-link-active']" class="list-group-item">
+                <i class="fas fa-file"></i> &nbsp; {{ 'blankPage'  }}
+            </a-->
+        </ul>
+</nav>
+<!-- Administration section -->
+<nav class="sidebar_admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" *ngIf="_userService.userInfo">
+    <div class="list-group" *ngIf="this._userService.userInfo.type=='1'">
+        <div class="nested-menu" >
+                <a class="list-group-item" (click)="addExpandClass('settings')" [ngClass]="{'isDisabled': this._userService.userInfo.type || null == '2' }">
+                    <span><i class="fa fa-cogs"></i> &nbsp; {{ 'General Settings' }} </span>
+                </a>
+                <div>
+                <li class="nested" [ngClass]="{'expand' : showMenu === 'settings' }">
+                    <ul class="submenu" >
+                        <li>
+                            <a routerLink="/settingcustomer" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fa fa-th-large"></i> &nbsp;  {{ 'Retailer & Access' }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a routerLink="/settingusers" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-user"></i> &nbsp;  {{ 'Users & Profiles' }}</span></a>
+                        </li>
+                        <li>
+                            <a routerLink="/settingwidget" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-chart-bar"></i> &nbsp;  {{ 'Widget Library' }}</span></a>
+                        </li>
+                        <li>
+                            <a routerLink="/settingquery" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-share-square"></i> &nbsp;  {{ 'Query Library' }}</span></a>
+                        </li>
+                        <li>
+                            <a routerLink="/settinglabel" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-flag"></i> &nbsp;  {{ 'Dictionary' }}</span></a>
+                        </li>
+                    </ul>
+                </li>
+                </div>
+        </div>
+    </div>
+    <div class="logo">
+        <img style="width: 50%" *ngIf="_userService.userInfo.mainEnvironment[0].picture"
+             src="{{_userService.userInfo.mainEnvironment[0].picture}}" alt="Picture">
+    </div>
+    </nav>

@@ -7,89 +7,83 @@ import { LogginService, UserService, LabelService, StructureService, ScreenServi
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss', './SeasonalThemes/halloween.scss', './SeasonalThemes/christmas.scss', './SeasonalThemes/winter.scss', './SeasonalThemes/spring.scss', 
-                './SeasonalThemes/thanksGiving.scss', './SeasonalThemes/happy_holiday.scss'],
+    styleUrls: ['./login.component.scss', './SeasonalThemes/new_year.scss'],
     animations: [routerTransition()]
 })
 export class LoginComponent implements OnInit {
 
+    authentification: any = {};
+    mess: string = '';
 
-//@ViewChild('versionDiv') divVersion: ElementRef;
-
-	authentification : any = {};
-	mess: string = '';
-
-	userInfoGathered: boolean = false;
-	environmentGathered: boolean = false;
-	parameterGathered: boolean = false;
-	labelsGathered: boolean = false;
+    userInfoGathered: boolean = false;
+    environmentGathered: boolean = false;
+    parameterGathered: boolean = false;
+    labelsGathered: boolean = false;
 
     canConnect: boolean = false;
-	connectionMessage: Message [] = [];
+    connectionMessage: Message[] = [];
     divVersion: any;
 
-  // Version visibility
-  showVersion = false;
-  // Snowflakes array (for *ngFor)
-  snowflakes: number[] = Array(80).fill(0);
-  stars = Array(40).fill(0);       // increase stars count
+    // Version visibility
+    showVersion = false;
+    
+    // New Year elements - subtle and professional
+    stars: number[] = Array(25).fill(0);
 
-    constructor(public router: Router, 
-                private _messageService: MessageService,
-                private _logginService: LogginService, 
-                private _userService: UserService,
-                private _labelService: LabelService, 
-                private _screenService: ScreenService,
-                private _structureService: StructureService) { 
+    constructor(
+        public router: Router,
+        private _messageService: MessageService,
+        private _logginService: LogginService,
+        private _userService: UserService,
+        private _labelService: LabelService,
+        private _screenService: ScreenService,
+        private _structureService: StructureService
+    ) {
         this.canConnect = false;
         this.authentification.username = '';
-    
     }
 
     ngOnInit() {}
 
     onLoggedin() {
-        //localStorage.setItem('isLoggedin', 'true');
         if (!this.authentification.password) {
             this.showInvalidCredential();
-        }
-        else {
-            this._logginService.login(this.authentification.username, this.authentification.password) 
-                .subscribe( result => {
+        } else {
+            this._logginService.login(this.authentification.username, this.authentification.password)
+                .subscribe(result => {
                     this.canConnect = result;
                     if (this.canConnect) {
                         this.fetchUserConfiguration();
-                    }
-                    else {
+                    } else {
                         this.showInvalidCredential();
                     }
-                }
-            );
+                });
         }
     }
 
     showInvalidCredential() {
-		this.connectionMessage = [];
-        this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid credentials', detail: 'Use your GOLD user/password or contact HelpDesk'});
-	}
+        this.connectionMessage = [];
+        this._messageService.add({
+            key: 'top',
+            sticky: true,
+            severity: 'error',
+            summary: 'Invalid credentials',
+            detail: 'Use your GOLD user/password or contact HelpDesk'
+        });
+    }
 
     async fetchUserConfiguration() {
-        /**
-		 * 1. Load User information to enable menu access and functionnality
-		 * 2. Get the corporate environments user can have access
-		 * 3. Get Profile and Menu access
-		 */
-
-        console.log('LOGIN : Fectching user configuration');
+        console.log('LOGIN : Fetching user configuration');
 
         this.parameterGathered = true;
         this.labelsGathered = true;
+        
         await this._userService.getInfo(localStorage.getItem('ICRUser')!)
-            .subscribe( result => { this.userInfoGathered = true; });        
+            .subscribe(result => { this.userInfoGathered = true; });
 
-        await this._userService.getEnvironment(localStorage.getItem('ICRUser')!)       
-            .subscribe( result => { 
-                console.log('Environment data gathered' , this._userService.userInfo);
+        await this._userService.getEnvironment(localStorage.getItem('ICRUser')!)
+            .subscribe(result => {
+                console.log('Environment data gathered', this._userService.userInfo);
                 this.environmentGathered = true;
                 localStorage.setItem('isLoggedin', 'true');
                 console.log('route to dashboard');
@@ -97,48 +91,8 @@ export class LoginComponent implements OnInit {
                 this._structureService.getStructure();
                 this._structureService.getNetwork();
             });
-
-	      /*    this._userService.getEnvironment(JSON.parse(localStorage.getItem('ICRUser')!)).pipe(
-                mergeMap( result => { this.environmentGathered = true; return [true];}));*/
-		//this._labelService.getAllLabels().subscribe( result => { this.labelsGathered = true; });
-
-        
-       /*new Promise  ((resolve, reject) => {
-        let user = this._userService.getInfo(JSON.parse(localStorage.getItem('ICRUser')!)).subscribe( result =>  {
-          resolve(user);
-          this.userInfoGathered = true;
-            });
-        });
-       new Promise  ((resolve, reject) => {
-        let env = this._userService.getEnvironment(JSON.parse(localStorage.getItem('ICRUser')!)).subscribe( result =>  {
-          resolve(env);
-          this.environmentGathered = true;
-            });
-        });
-		
-       new Promise((resolve, reject) => {
-        let labels = this._labelService.getAllLabels().subscribe(result => {
-          resolve(labels);
-          this.labelsGathered = true;
-            });
-        });*/
-
-        //this._userService.getInfo(JSON.parse(localStorage.getItem('ICRUser')!)).subscribe( result => { this.userInfoGathered = true; });
-		//this._userService.getEnvironment(JSON.parse(localStorage.getItem('ICRUser')!)).subscribe( result => { this.environmentGathered = true; });
     }
 
-   /* showHideVersion() {
-       if(this.divVersion.nativeElement.style.visibility === 'hidden') {
-            this.divVersion.nativeElement.style.visibility = 'visible';
-        }
-        else {
-            this.divVersion.nativeElement.style.visibility = 'hidden';
-        }
-    }*/
-
-      /**
-     * Toggle version visibility
-     */
     showHideVersion(): void {
         this.showVersion = !this.showVersion;
     }

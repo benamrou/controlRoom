@@ -1,0 +1,463 @@
+/* newyear-theme.scss - New Year Theme for Header & Sidebar */
+
+// ========================================
+// Color Palette - Warm & Elegant (matching login)
+// ========================================
+$deep-navy: #0f1729;
+$warm-navy: #1a2744;
+$rich-purple: #2d1f47;
+$gold-primary: #d4af37;
+$gold-light: #f4d683;
+$gold-soft: #e8c872;
+$champagne: #f7e8d0;
+$warm-white: #faf8f5;
+$soft-cream: #fff9f0;
+$accent-copper: #b87333;
+
+// Sidebar colors
+$sidebar-bg: linear-gradient(180deg, $deep-navy 0%, darken($warm-navy, 5%) 100%);
+$sidebar-item-hover: rgba($gold-primary, 0.1);
+$sidebar-item-active-bg: rgba($gold-primary, 0.15);
+$sidebar-text: rgba($warm-white, 0.7);
+$sidebar-text-hover: $gold-soft;
+$sidebar-text-active: $gold-primary;
+
+// ========================================
+// HEADER STYLES
+// ========================================
+.newyear-header {
+    background: linear-gradient(135deg, $deep-navy 0%, $warm-navy 50%, darken($rich-purple, 5%) 100%) !important;
+    border-bottom: 1px solid rgba($gold-primary, 0.2) !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3), 0 1px 0 rgba($gold-primary, 0.1) inset;
+    position: relative;
+    overflow: visible !important;
+    min-height: 56px;
+
+    // Subtle sparkle accents in header
+    .header-sparkle {
+        position: absolute;
+        color: $gold-light;
+        font-size: 10px;
+        opacity: 0;
+        animation: header-sparkle 4s ease-in-out infinite;
+        pointer-events: none;
+
+        &.sparkle-1 {
+            top: 8px;
+            left: 20%;
+            animation-delay: 0s;
+        }
+        &.sparkle-2 {
+            top: 12px;
+            right: 30%;
+            animation-delay: 1.5s;
+        }
+        &.sparkle-3 {
+            bottom: 8px;
+            left: 60%;
+            animation-delay: 3s;
+        }
+    }
+
+    .navbar-brand {
+        color: $gold-soft !important;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+
+        .brand-icon {
+            font-size: 1rem;
+            animation: icon-pulse 3s ease-in-out infinite;
+        }
+
+        &:hover {
+            color: $gold-light !important;
+        }
+    }
+
+    .nav-link {
+        color: rgba($warm-white, 0.8) !important;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &:hover {
+            color: $gold-soft !important;
+        }
+
+        i {
+            color: $gold-primary;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        &:hover i {
+            opacity: 1;
+        }
+    }
+
+    .navbar-toggler {
+        border-color: rgba($gold-primary, 0.3);
+        
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(212, 175, 55, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+    }
+
+    // New Year Badge
+    .newyear-badge {
+        position: absolute;
+        right: 50%;
+        transform: translateX(50%);
+        top: 50%;
+        margin-top: -12px;
+        
+        span {
+            background: linear-gradient(135deg, $gold-primary 0%, $gold-light 100%);
+            color: $deep-navy;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 12px;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px rgba($gold-primary, 0.3);
+        }
+    }
+}
+
+// Dropdown styling
+.newyear-dropdown {
+    background: $deep-navy !important;
+    border: 1px solid rgba($gold-primary, 0.2) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+    padding: 8px 0 !important;
+    margin-top: 8px !important;
+
+    .dropdown-item {
+        color: rgba($warm-white, 0.8) !important;
+        padding: 10px 20px !important;
+        transition: all 0.2s ease !important;
+
+        i {
+            color: $gold-primary;
+            opacity: 0.7;
+            margin-right: 8px;
+        }
+
+        &:hover {
+            background: rgba($gold-primary, 0.1) !important;
+            color: $gold-soft !important;
+
+            i {
+                opacity: 1;
+            }
+        }
+
+        &:active,
+        &:focus {
+            background: rgba($gold-primary, 0.15) !important;
+        }
+    }
+}
+
+@keyframes header-sparkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 0.6; transform: scale(1); }
+}
+
+@keyframes icon-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+// ========================================
+// SIDEBAR STYLES
+// ========================================
+.newyear-sidebar {
+    background: $sidebar-bg !important;
+    border-right: 1px solid rgba($gold-primary, 0.15) !important;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
+
+    // Scrollbar styling
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba($gold-primary, 0.3);
+        border-radius: 3px;
+
+        &:hover {
+            background: rgba($gold-primary, 0.5);
+        }
+    }
+
+    .list-group {
+        a.list-group-item {
+            background: transparent !important;
+            border: none !important;
+            color: $sidebar-text !important;
+            padding: 12px 20px;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent !important;
+
+            i, .fa, .fas, .far, .pi {
+                color: rgba($gold-primary, 0.6);
+                width: 20px;
+                text-align: center;
+                transition: color 0.2s ease;
+            }
+
+            &:hover {
+                background: $sidebar-item-hover !important;
+                color: $sidebar-text-hover !important;
+                border-left-color: rgba($gold-primary, 0.3) !important;
+
+                i, .fa, .fas, .far, .pi {
+                    color: $gold-primary;
+                }
+            }
+
+            &.router-link-active {
+                background: $sidebar-item-active-bg !important;
+                color: $sidebar-text-active !important;
+                border-left-color: $gold-primary !important;
+
+                i, .fa, .fas, .far, .pi {
+                    color: $gold-primary;
+                }
+            }
+        }
+    }
+
+    // Nested menu styling
+    .nested-menu {
+        .list-group-item {
+            cursor: pointer;
+
+            &::after {
+                content: '›';
+                float: right;
+                color: rgba($gold-primary, 0.5);
+                transition: transform 0.2s ease;
+            }
+        }
+
+        .nested {
+            list-style-type: none;
+        }
+
+        ul.submenu {
+            display: none;
+            height: 0;
+            background: rgba(0, 0, 0, 0.15);
+            margin: 0;
+            padding: 0;
+        }
+
+        & .expand {
+            > .list-group-item::after {
+                transform: rotate(90deg);
+            }
+
+            ul.submenu {
+                display: block;
+                height: auto;
+                padding: 8px 0;
+
+                li {
+                    a {
+                        color: rgba($warm-white, 0.65) !important;
+                        padding: 10px 20px 10px 40px;
+                        display: block;
+                        text-decoration: none;
+                        transition: all 0.2s ease;
+                        border-left: 3px solid transparent;
+
+                        i, .fa, .fas, .far, .pi {
+                            color: rgba($gold-primary, 0.5);
+                            width: 18px;
+                            text-align: center;
+                            margin-right: 8px;
+                        }
+
+                        &:hover {
+                            background: rgba($gold-primary, 0.08);
+                            color: $gold-soft !important;
+                            border-left-color: rgba($gold-primary, 0.2);
+
+                            i, .fa, .fas, .far, .pi {
+                                color: $gold-primary;
+                            }
+                        }
+
+                        &.router-link-active {
+                            background: rgba($gold-primary, 0.12) !important;
+                            color: $gold-primary !important;
+                            border-left-color: $gold-primary;
+
+                            i, .fa, .fas, .far, .pi {
+                                color: $gold-primary;
+                            }
+                        }
+                    }
+                }
+            }
+
+            ul.subsubmenu {
+                display: none;
+                background: rgba(0, 0, 0, 0.1);
+                padding: 4px 0;
+
+                a {
+                    padding-left: 52px !important;
+                    font-size: 0.9em;
+                }
+            }
+
+            & .expand {
+                ul.subsubmenu {
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
+// ========================================
+// SIDEBAR ADMIN STYLES
+// ========================================
+.newyear-sidebar-admin {
+    background: linear-gradient(180deg, darken($deep-navy, 3%) 0%, darken($warm-navy, 8%) 100%) !important;
+    border: 1px solid rgba($gold-primary, 0.1) !important;
+    border-top: 2px solid rgba($gold-primary, 0.3) !important;
+
+    .list-group {
+        a.list-group-item {
+            background: transparent !important;
+            border: none !important;
+            color: rgba($warm-white, 0.6) !important;
+            transition: all 0.2s ease;
+
+            i {
+                color: rgba($gold-primary, 0.5);
+            }
+
+            &:hover {
+                background: rgba($gold-primary, 0.08) !important;
+                color: $gold-soft !important;
+
+                i {
+                    color: $gold-primary;
+                }
+            }
+
+            &.router-link-active {
+                background: rgba($gold-primary, 0.12) !important;
+                color: $gold-primary !important;
+            }
+        }
+    }
+
+    .nested-menu {
+        ul.submenu {
+            background: rgba(0, 0, 0, 0.15);
+
+            li a {
+                color: rgba($warm-white, 0.6) !important;
+                padding: 8px 16px 8px 36px;
+                display: block;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    background: rgba($gold-primary, 0.08);
+                    color: $gold-soft !important;
+                }
+
+                &.router-link-active {
+                    background: rgba($gold-primary, 0.1) !important;
+                    color: $gold-primary !important;
+                }
+            }
+        }
+    }
+
+    .logo {
+        //background: linear-gradient(135deg, rgba($warm-white, 0.95) 0%, rgba($champagne, 0.9) 100%);
+        padding: 12px 0 12px 50px;
+        border-top: 1px solid rgba($gold-primary, 0.2);
+    }
+}
+
+// ========================================
+// TOGGLE BUTTON STYLES
+// ========================================
+.toggle-button {
+    background: $deep-navy !important;
+    color: rgba($warm-white, 0.7) !important;
+    border-top: 1px solid rgba($gold-primary, 0.2) !important;
+    transition: all 0.2s ease;
+
+    i {
+        color: $gold-primary;
+    }
+
+    &:hover {
+        background: $warm-navy !important;
+        color: $gold-soft !important;
+    }
+}
+
+.at-button {
+    background: $deep-navy !important;
+    color: rgba($warm-white, 0.7) !important;
+    border: 1px solid rgba($gold-primary, 0.2) !important;
+}
+
+// ========================================
+// COLLAPSED STATE
+// ========================================
+.collapsed {
+    .newyear-sidebar,
+    .newyear-sidebar-admin {
+        span {
+            display: none;
+        }
+    }
+}
+
+// ========================================
+// UTILITY CLASSES
+// ========================================
+.isDisabled {
+    color: rgba($warm-white, 0.3) !important;
+    cursor: not-allowed;
+    opacity: 0.4;
+    text-decoration: none;
+    pointer-events: none;
+}
+
+// ========================================
+// RESPONSIVE
+// ========================================
+@media screen and (max-width: 992px) {
+    .newyear-header {
+        .newyear-badge {
+            display: none;
+        }
+    }
+}
+
+@media print {
+    .newyear-sidebar,
+    .newyear-sidebar-admin {
+        display: none !important;
+    }
+}

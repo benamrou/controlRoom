@@ -1,4 +1,4 @@
-<nav class="sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" *ngIf="_userService.userInfo" style="padding-top:1%">
+<nav class="sidebar newyear-sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" *ngIf="_userService.userInfo" style="padding-top:1%">
         <ul class="list-group">
             <a routerLink="/dashboard" [routerLinkActive]="['router-link-active']" class="list-group-item">
                 <i class="fas fa-tachometer-alt"></i>&nbsp; {{ 'Dashboard' }}
@@ -38,53 +38,20 @@
                     </ul>
                 </li>
             </div>
-            <!--div class="nested-menu">
-                <a class="list-group-item" (click)="addExpandClass('billing')">
-                    <span><i class="fas fa-donate"></i> &nbsp; {{ 'Billing & Invoice' }} </span>
-                </a>
-                <li class="nested" [ngClass]="{'expand' : showMenu === 'billing' }">
-                    <ul class="submenu" >
-                        <li>
-                            <a class="bbs_link_menu" routerLink="/ediinvoice" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-check-double"></i> {{ 'EDI Invoices' }}</span></a>
-                        </li>
-                    </ul>
-                </li>
-            </div-->
-            <!--div class="nested-menu">
-                <a class="list-group-item" (click)="addExpandClass('pricing')">
-                    <span><i class="fas fa-robot"></i> &nbsp; {{ 'Pricing' }} </span>
-                </a>
-                <li class="nested" [ngClass]="{'expand' : showMenu === 'pricing' }">
-                    <ul class="submenu" >
-                        <li>
-                            <a class="bbs_link_menu" routerLink="/mdmbrand" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-check-double"></i> {{ 'Brand management' }}</span></a>
-                        </li>
-                    </ul>
-                </li>
-            </div-->
             <div class="nested-menu" *ngIf="_userService.userInfo.helpDesk ==1">
                 <a class="list-group-item" (click)="addExpandClass('supplierschedule')">
                     <span><i class="fa fa-calendar"></i> &nbsp; {{ 'Supplier schedule' }} </span>
                 </a>
                 <li class="nested" [ngClass]="{'expand' : showMenu === 'supplierschedule' }">
                     <ul class="submenu" >
-                        <!--li>
-                            <a class="bbs_link_menu" routerLink="/service" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-calendar"></i> {{ 'Mgt by contract' }}</span></a>
-                        </li -->
                         <li>
-                            <a class="bbs_link_menu" routerLink="/holiday" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-sun"></i> {{ 'Holiday schedule' }} </span>
-                                <!--span style="font-size: xx-small; color: yellow">NEW</span -->
-                            </a>
+                            <a class="bbs_link_menu" routerLink="/holiday" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-sun"></i> {{ 'Holiday schedule' }} </span></a>
                         </li>
                         <li>
-                            <a class="bbs_link_menu" routerLink="/schedule" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-calendar"></i> {{ 'Mgt by schedule' }} </span>
-                                <!--span style="font-size: xx-small; color: yellow">NEW</span -->
-                            </a>
+                            <a class="bbs_link_menu" routerLink="/schedule" [routerLinkActive]="['router-link-active']" ><span><i class="fas fa-calendar"></i> {{ 'Mgt by schedule' }} </span></a>
                         </li>
                         <li>
-                            <a class="bbs_link_menu" routerLink="/generateschedule" [routerLinkActive]="['router-link-active']" ><span><i class="pi pi-slack"></i> {{ 'Generate schedule' }} </span>
-                                <!--span style="font-size: xx-small; color: yellow">NEW</span -->
-                            </a>
+                            <a class="bbs_link_menu" routerLink="/generateschedule" [routerLinkActive]="['router-link-active']" ><span><i class="pi pi-slack"></i> {{ 'Generate schedule' }} </span></a>
                         </li>
                     </ul>
                 </li>
@@ -261,9 +228,7 @@
                             </a>
                         </li>
                         <li>
-                            <a class="bbs_link_menu" routerLink="/orderurgent" [routerLinkActive]="['router-link-active']" ><span><i class="pi pi-slack"></i> {{ 'Order urgency' }} </span>
-                                <!--span style="font-size: xx-small; color: yellow">NEW</span -->
-                            </a>
+                            <a class="bbs_link_menu" routerLink="/orderurgent" [routerLinkActive]="['router-link-active']" ><span><i class="pi pi-slack"></i> {{ 'Order urgency' }} </span></a>
                         </li>
                     </ul>
                 </li>
@@ -484,86 +449,43 @@
                     </ul>
                 </li>
             </div>
-
-            <!--div class="nested-menu">
-                <a class="list-group-item" (click)="addExpandClass('toolbox')">
-                    <span><i class="fa fa-plus"></i> &nbsp; {{ 'Toolbox' }} </span>
-                </a>
-
-                <li class="nested" [ngClass]="{'expand' : showMenu === 'toolbox' }">
-                    <ul class="submenu" >
-                        <li>
-                            <a class="bbs_link_menu"  [routerLink]="['/charts']" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                                <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;{{ 'charts'  }}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="bbs_link_menu" [routerLink]="['/tables']" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                                <i class="fa fa-fw fa-table"></i>&nbsp;{{ 'tables'  }}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="bbs_link_menu" [routerLink]="['/forms']" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                                <i class="fa fa-fw fa-edit"></i>&nbsp;{{ 'forms'  }}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="bbs_link_menu" [routerLink]="['/bs-element']" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                                <i class="fa fa-fw fa-desktop"></i>&nbsp;{{ 'boostrapElement'  }}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="bbs_link_menu" [routerLink]="['/grid']" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                                <i class="fa fa-fw fa-wrench"></i>&nbsp;{{ 'boostrapGrid'  }}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="bbs_link_menu" [routerLink]="['/components']" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                                <i class="fa fa-th-list"></i>&nbsp;{{ 'component'  }}
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </div-->
-            <!--a [routerLink]="['/blank-page']" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                <i class="fas fa-file"></i> &nbsp; {{ 'blankPage'  }}
-            </a-->
         </ul>
 </nav>
+
 <!-- Administration section -->
-<nav class="sidebar_admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" *ngIf="_userService.userInfo">
+<nav class="sidebar_admin newyear-sidebar-admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" *ngIf="_userService.userInfo">
     <div class="list-group" *ngIf="this._userService.userInfo.type=='1'">
-        <div class="nested-menu" >
-                <a class="list-group-item" (click)="addExpandClass('settings')" [ngClass]="{'isDisabled': this._userService.userInfo.type || null == '2' }">
-                    <span><i class="fa fa-cogs"></i> &nbsp; {{ 'General Settings' }} </span>
-                </a>
-                <div>
+        <div class="nested-menu">
+            <a class="list-group-item" (click)="addExpandClass('settings')" >
+                <span><i class="fa fa-cogs"></i> &nbsp; {{ 'General Settings' }} </span>
+            </a>
+            <div>
                 <li class="nested" [ngClass]="{'expand' : showMenu === 'settings' }">
-                    <ul class="submenu" >
+                    <ul class="submenu">
                         <li>
-                            <a routerLink="/settingcustomer" [routerLinkActive]="['router-link-active']" >
-                                <span><i class="fa fa-th-large"></i> &nbsp;  {{ 'Retailer & Access' }}</span>
+                            <a routerLink="/settingcustomer" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-th-large"></i> &nbsp; {{ 'Retailer & Access' }}</span>
                             </a>
                         </li>
                         <li>
-                            <a routerLink="/settingusers" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-user"></i> &nbsp;  {{ 'Users & Profiles' }}</span></a>
+                            <a routerLink="/settingusers" [routerLinkActive]="['router-link-active']"><span><i class="fa fa-user"></i> &nbsp; {{ 'Users & Profiles' }}</span></a>
                         </li>
                         <li>
-                            <a routerLink="/settingwidget" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-chart-bar"></i> &nbsp;  {{ 'Widget Library' }}</span></a>
+                            <a routerLink="/settingwidget" [routerLinkActive]="['router-link-active']"><span><i class="fa fa-chart-bar"></i> &nbsp; {{ 'Widget Library' }}</span></a>
                         </li>
                         <li>
-                            <a routerLink="/settingquery" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-share-square"></i> &nbsp;  {{ 'Query Library' }}</span></a>
+                            <a routerLink="/settingquery" [routerLinkActive]="['router-link-active']"><span><i class="fa fa-share-square"></i> &nbsp; {{ 'Query Library' }}</span></a>
                         </li>
                         <li>
-                            <a routerLink="/settinglabel" [routerLinkActive]="['router-link-active']" ><span><i class="fa fa-flag"></i> &nbsp;  {{ 'Dictionary' }}</span></a>
+                            <a routerLink="/settinglabel" [routerLinkActive]="['router-link-active']"><span><i class="fa fa-flag"></i> &nbsp; {{ 'Dictionary' }}</span></a>
                         </li>
                     </ul>
                 </li>
-                </div>
+            </div>
         </div>
     </div>
     <div class="logo">
         <img style="width: 50%" *ngIf="_userService.userInfo.mainEnvironment[0].picture"
              src="{{_userService.userInfo.mainEnvironment[0].picture}}" alt="Picture">
     </div>
-    </nav>
+</nav>
