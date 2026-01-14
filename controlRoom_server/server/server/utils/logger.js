@@ -23,6 +23,9 @@ let heap = {
     _: require("lodash")
 }
 
+// Log truncation settings
+const MAX_LOG_MESSAGE_LENGTH = 5000;
+const TRUNCATE_PREVIEW_LENGTH = 500; // Characters to show from beginning and end
 
 function timestampLog() {
     let date = new Date();
@@ -62,16 +65,41 @@ function logParam (uniqueId, parameters, username) {
 
 }
 
+/**
+* Truncates a message if it exceeds the maximum length.
+* Shows the beginning and end of the message with a truncation indicator.
+* Truncation is disabled when ICR_DEBUG=1 (full messages stored for debugging)
+*
+* @param {String} message - The message to potentially truncate
+* @returns {String} - The original or truncated message
+*/
+function truncateMessage(message) {
+    // When ICR_DEBUG is enabled, store full messages (no truncation)
+    if (process.env.ICR_DEBUG == 1 || !message || message.length <= MAX_LOG_MESSAGE_LENGTH) {
+        return message;
+    }
+
+    const beginning = message.substring(0, TRUNCATE_PREVIEW_LENGTH);
+    const end = message.substring(message.length - TRUNCATE_PREVIEW_LENGTH);
+    const truncatedLength = message.length - (TRUNCATE_PREVIEW_LENGTH * 2);
+
+    return `${beginning}\n\n... [TRUNCATED ${truncatedLength} characters] ...\n\n${end}`;
+}
+
 function logFile(uniqueId, message, username) {
     let timestamp = folderDateLog();
     buildLogStructure();
 
+    // Truncate message if too long (unless ICR_DEBUG is enabled)
+    let truncatedMessage = truncateMessage(message);
+
     let logFile  = heap.fs.openSync('logs/admin/' + timestamp + "/" + username + ".log",'a');
-    heap.fs.appendFileSync(logFile, message, 'utf8', function (err) {
+    heap.fs.appendFileSync(logFile, truncatedMessage, 'utf8', function (err) {
         if (err) {
             console.log(err);
         }
-        message =null;
+        truncatedMessage = null;
+        message = null;
         heap.fs.close(logFile);
     });
 }
@@ -120,4 +148,4 @@ function log (uniqueId, message, username, level) {
     message=null;
 };
 
-module.exports.log = log; 
+module.exports.log = log;

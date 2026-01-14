@@ -4,7 +4,7 @@ module.exports = {
     url: process.env.REDIS_URL
   },
    db: {
-    maxRows: 0,
+    maxRows: 5000,  // Batch size for cursor fetching
     provider: "oracledb",
     connAttrs: {
           //"user": "controlroom",
@@ -26,7 +26,7 @@ module.exports = {
           "poolMin": 1,
           "poolMax": 200,
           "poolTimeout": 0,
-          "maxRows": 0,
+          "maxRows": 5000,  // Rows per fetch batch
           "autocommit"  : true,   // default is false
           "_enableStats"  : false,   // default is false
           "queueRequests": false,
@@ -44,7 +44,7 @@ module.exports = {
       "poolMin": 1,
       "poolMax": 200,
       "poolTimeout": 0,
-      "maxRows": 0, //value is 0, meaning unlimited
+      "maxRows": 5000,  // Rows per fetch batch for large queries
       "autocommit"  : true,   // default is false
       "_enableStats"  : false,   // default is false
       "queueRequests": false,

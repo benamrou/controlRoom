@@ -16,6 +16,7 @@ export class AlertsICRService {
 
     private runReportQuery: string = '/api/notification/';
     private executeLocalQuery: string = '/api/notification/1';
+    private executeShell: string = '/api/notification/shell';
     
     private request: string;
     private params: HttpParams;
@@ -90,5 +91,24 @@ export class AlertsICRService {
         }));
     }
 
+    /**
+     * Execute shell script on server side
+     * Called when SALTSHELL is populated for the alert's schedule
+     */
+    executeShellScript(saltid, paramsAlert) {
+        this.request = this.executeShell;
+        let headersSearch = new HttpHeaders();
+        this.params = new HttpParams();
+        this.params = this.params.append('PARAM', saltid);
+        for (let i = 0; i < paramsAlert.length; i++) {
+            this.params = this.params.append('PARAM', paramsAlert[i]);
+        }
 
-} 
+        return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
+            let data = <any> response;
+            return data;
+        }));
+    }
+
+
+}

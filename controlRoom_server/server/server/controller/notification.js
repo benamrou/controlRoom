@@ -28,6 +28,13 @@ let configuration = {
     config : new require("../../config/" + (process.env.NODE_ENV || "development") + ".js")
 }
 
+// Shell script execution imports
+const fs_promises = require('fs/promises');
+const path = require('path');
+const os = require('os');
+const { v4: uuidv4 } = require('uuid');
+const { spawn } = require('child_process');
+
 let heap = {
     logger : require("../utils/logger.js"),
     excel : require('exceljs'),
@@ -177,6 +184,79 @@ function clearModule() {
     heap.disrequire('logger.js');
     heap.disrequire('json2html.js');
     heap.disrequire('json2xls.js');
+}
+
+/**
+ * Execute a shell script from SALTSHELL content
+ * Adapted from crontab.js executeScript function
+ */
+async function executeShellScript(id, scriptContent, user) {
+    return new Promise(async (resolve, reject) => {
+        if (!scriptContent) {
+            resolve({ success: false, message: 'No script content provided' });
+            return;
+        }
+
+        //const tempDir = path.join(os.tmpdir(), 'croom');
+        const tempDir = path.join(process.env.HOME, 'heinensapps', 'controlRoom_server', 'temp');
+        const fileName = `script-${id}-${uuidv4()}.sh`;
+        const filePath = path.join(tempDir, fileName);
+        let output = '';
+        let errorOutput = '';
+
+        try {
+            // Ensure temp dir exists
+            await fs_promises.mkdir(tempDir, { recursive: true });
+
+            // Write script to temp file
+            await fs_promises.writeFile(filePath, scriptContent, { mode: 0o755 });
+
+            const command = spawn('bash', [filePath], {
+                stdio: ['pipe', 'pipe', 'pipe']
+            });
+
+            command.stdout.on('data', (data) => {
+                output += data.toString();
+            });
+
+            command.stderr.on('data', (data) => {
+                errorOutput += data.toString();
+            });
+
+            command.on('error', async (err) => {
+                heap.logger.log('alert', `ERROR - Shell execution ${id}: ${err}`, user, 3);
+                await safeCleanupScript(filePath);
+                reject({ success: false, message: err.message, output, errorOutput });
+            });
+
+            command.on('exit', async (code) => {
+                await safeCleanupScript(filePath);
+                if (code === 0) {
+                    heap.logger.log('alert', `Shell execution ${id} [COMPLETED]`, user, 2);
+                    resolve({ success: true, message: 'Script executed successfully', output, errorOutput, exitCode: code });
+                } else {
+                    heap.logger.log('alert', `ERROR - Shell execution ${id} exited with code ${code}`, user, 3);
+                    resolve({ success: false, message: `Script exited with code ${code}`, output, errorOutput, exitCode: code });
+                }
+            });
+
+            // Close stdin
+            command.stdin.end();
+
+        } catch (err) {
+            heap.logger.log('alert', `ERROR - Shell execution ${id}: ${err}`, user, 3);
+            await safeCleanupScript(filePath);
+            reject({ success: false, message: err.message });
+        }
+    });
+}
+
+async function safeCleanupScript(filePath) {
+    try {
+        await fs_promises.unlink(filePath);
+    } catch (e) {
+        heap.logger.log('alert', `Failed to delete temp script file: ${filePath} ${e}`, 'alert', 3);
+    }
 }
 
 async function processContent(SQLProcess, alertData, request, response, result) {
@@ -657,6 +737,89 @@ module.get = async function (request,response) {
               } catch (e) {
                 heap.logger.log('alert', 'Garbage collector issue ' + JSON.stringify(e), 'alert', 3);
               }
+            });
+        });
+
+    /* This library entry - execute shell script from SALTSHELL */
+    app.get('/api/notification/shell', function (request, response) {
+        "use strict";
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        
+        // Query to get the schedule data with SALTSHELL - SALTID is passed as first PARAM
+        // Uses CRON000003 or a new library query that returns SALTSHELL for a given SALTID
+        SQL.executeLibQueryUsingMyCallback(SQL.getNextTicketID(),
+                            "SHELL00001",  // New library query to get schedule with SALTSHELL by SALTID
+                            "'{" + request.query.PARAM + "}'",
+                            request.header('USER'),
+                            "'{" + request.header('DATABASE_SID') + "}'", 
+                            "'{" + request.header('LANGUAGE') + "}'", 
+                            request.req_dataSchedule, request.response_dataSchedule, 
+            async function (err, dataSchedule) { 
+                if (err) {
+                    heap.logger.log('alert', 'Error gathering schedule data: ' + JSON.stringify(err), 'alert', 3);
+                    response.status(500).send([{ STATUS: 'ERROR', MESSAGE: 'Failed to retrieve schedule data' }]);
+                    return;
+                }
+
+                let scheduleData = JSON.parse(JSON.stringify(dataSchedule));
+                
+                if (scheduleData.length < 1) {
+                    heap.logger.log('alert', 'No schedule found for SALTID: ' + request.query.PARAM, 'alert', 3);
+                    response.status(404).send([{ STATUS: 'ERROR', MESSAGE: 'Schedule not found' }]);
+                    return;
+                }
+
+                const saltshell = scheduleData[0].SALTSHELL;
+                const saltid = scheduleData[0].SALTID;
+
+                if (!saltshell || saltshell.trim() === '') {
+                    heap.logger.log('alert', 'No SALTSHELL content for SALTID: ' + saltid, 'alert', 3);
+                    response.status(400).send([{ STATUS: 'ERROR', MESSAGE: 'No shell script content found' }]);
+                    return;
+                }
+
+                heap.logger.log('alert', 'Executing shell script for SALTID: ' + saltid, 'alert', 2);
+
+                try {
+                    const result = await executeShellScript(saltid, saltshell, request.header('USER') || 'notification');
+                    heap.logger.log('alert', 'Shell script execution completed: ' + JSON.stringify(result), 'alert', 2);
+                    
+                    // Return result as array for consistent frontend handling
+                    if (result.output) {
+                        try {
+                            // Try to parse output as JSON
+                            const parsedOutput = JSON.parse(result.output);
+                            response.send(Array.isArray(parsedOutput) ? parsedOutput : [parsedOutput]);
+                        } catch (parseErr) {
+                            // Output is not JSON, return as structured result
+                            response.send([{ 
+                                STATUS: result.success ? 'SUCCESS' : 'ERROR',
+                                EXIT_CODE: result.exitCode,
+                                OUTPUT: result.output,
+                                ERROR_OUTPUT: result.errorOutput,
+                                MESSAGE: result.message
+                            }]);
+                        }
+                    } else {
+                        response.send([{ 
+                            STATUS: result.success ? 'SUCCESS' : 'ERROR',
+                            MESSAGE: result.message
+                        }]);
+                    }
+                } catch (error) {
+                    heap.logger.log('alert', 'Shell script execution failed: ' + JSON.stringify(error), 'alert', 3);
+                    response.status(500).send([{ 
+                        STATUS: 'ERROR',
+                        MESSAGE: error.message || 'Shell script execution failed'
+                    }]);
+                }
+
+                try {
+                    global.gc?.();
+                } catch (e) {
+                    heap.logger.log('alert', 'Garbage collector issue ' + JSON.stringify(e), 'alert', 3);
+                }
             });
         });
     }

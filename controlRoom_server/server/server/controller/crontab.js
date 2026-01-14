@@ -32,7 +32,8 @@ async function writeToWritable(writable) {
 async function executeScript(id, schedule, scriptContent, user) {
     if (!scriptContent) return;
 
-    const tempDir = path.join(os.tmpdir(), 'croom'); // optional
+    //const tempDir = path.join(os.tmpdir(), 'croom'); // optional
+    const tempDir = path.join(process.env.HOME, 'heinensapps', 'controlRoom_server', 'temp');  
     const fileName = `script-${id}-${uuidv4()}.sh`;
     const filePath = path.join(tempDir, fileName);
 

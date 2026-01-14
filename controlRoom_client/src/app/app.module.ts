@@ -134,6 +134,8 @@ import { VegaProcessDashboardModule } from './pages/it/vega/vega-process-dashboa
 import { UnixRunnerModule } from './pages/it/unix.runner/unix.runner.module';
 import { QueryLibraryModule } from './pages/admin/query.library/query.library.module';
 import { DictionaryModule } from './pages/admin/dictionary/dictionary.module';
+import { PurchaseOrderPushModule } from './pages/mass.update/purchase.order.push/purchase.order.push.module';
+import { StockLayerModule } from './pages/mass.update/stock.layer/stock.layer.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -252,12 +254,14 @@ import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module'
     ProductionNumberModule,
     ItemListDescriptionModule,
     PurchaseOrderModule,
+    PurchaseOrderPushModule,
     ItemDescriptionModule,
     ItemAddressModule,
     VegaProcessDashboardModule,
     UnixRunnerModule,
     QueryLibraryModule,
-    DictionaryModule
+    DictionaryModule,
+    StockLayerModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

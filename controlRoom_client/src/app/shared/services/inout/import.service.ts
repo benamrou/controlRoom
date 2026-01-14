@@ -174,6 +174,9 @@ export class ImportService{
         let pt33_16_ITEMATTRIBUTEPERIOD = 16;
         let pt33_17_ITEMDESCRIPTION = 17;
         let pt33_18_ITEMADDRESS = 18;
+        let pt33_19_PURCHASEORDERPUSH = 19;
+        let pt33_20_STOCKLAYER = 20;
+
 
         this.request = this.executeJobURL;
         let headersSearch = new HttpHeaders();
@@ -227,6 +230,12 @@ export class ImportService{
                 break;
             case pt33_18_ITEMADDRESS: /* Purchase order */ 
                 command = command + 'psifa34p psifa34p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ';
+                break;
+            case pt33_19_PURCHASEORDERPUSH: /* Purchase order */ 
+                command = command + 'psint05p psint05p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' -1 -1 ';
+                break;
+            case pt33_20_STOCKLAYER: /* Purchase order */ 
+                command = command + 'psitf03p psitf03p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
                 break;
             default:
                 console.log ('Unknown mass tool id : ', toolId);

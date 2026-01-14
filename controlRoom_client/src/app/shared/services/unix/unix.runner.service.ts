@@ -4,6 +4,7 @@ import { HttpService } from '../request/html.service';
 import { UserService } from '../user/user.service';
 import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { DatePipe } from '@angular/common';
 
 export interface ExecPreset { label: string; cmd: string }
 
@@ -12,22 +13,26 @@ import {environment} from '../../../../environments/environment';
 
 @Injectable()
 export class UnixRunnerService {
-  private PRESETS: ExecPreset[] = [
-    { label: 'List /var/log (safe)', cmd: 'ls -la /var/log' },
-    { label: 'Disk usage root', cmd: 'df -h /' },
-    { label: 'Show last 200 lines of syslog', cmd: 'tail -n 200 /var/log/syslog' },
-  ];
+  private PRESETS: ExecPreset[] ;
 
   private baseUrl: string = environment.serverBatchURL;  // Will be set from environment or detected
   private basePostQuery: string = '/api/exec';
 
-  constructor(
+  constructor (
     private http: HttpService,
-    private _userService: UserService
+    private _userService: UserService,
+    private datePipe: DatePipe
   ) {
     // FIX: Get the base URL for API calls
     // Adjust this based on your environment configuration
     this.baseUrl = this.getApiBaseUrl();
+    const today = this.datePipe.transform(new Date(), 'MM/dd/yy');
+    this.PRESETS = [
+    { label: 'List /var/log (safe)', cmd: 'ls -la /var/log' },
+    { label: 'Afresh orders', cmd: 'psint05p psint05p $USERID ' + today  + ' -1 -1 -uAFRESH_ORDER HN 1' },
+    { label: 'MFG orders', cmd: 'psint05p psint05p $USERID ' + today  + ' -1 -1 -uAFRESH_ORDER HN 1' },
+    { label: 'Show last 200 lines of syslog', cmd: 'tail -n 200 /var/log/syslog' },
+  ];
   }
 
   /**

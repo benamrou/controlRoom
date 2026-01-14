@@ -64,6 +64,7 @@ import { UnarchiveInvoiceComponent } from './pages/finance/unarchive/unarchive.i
 import { ReportFilterComponent } from './pages/reporting/report.filter/report.filter.component';
 import { ProductionNumberComponent } from './pages/warehouse/toolkit/production.number/production.number.component';
 import { PurchaseOrderComponent } from './pages/mass.update/purchase.order/purchase.order.component';
+import { StockLayerComponent } from './pages/mass.update/stock.layer/stock.layer.component';
 
 import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
 import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
@@ -76,6 +77,7 @@ import { ItemDescriptionComponent } from './pages/mass.update/item.description/i
 import { ItemAddressComponent } from './pages/mass.update/item.address/item.address.component';
 import { VegaProcessDashboardComponent } from './pages/it/vega/vega-process-dashboard.component';
 import { UnixRunnerComponent } from './pages/it/unix.runner/unix.runner.component';
+import { PurchaseOrderPushComponent } from './pages/mass.update/purchase.order.push/purchase.order.push.component';
 
 import { QueryLibraryComponent } from './pages/admin/query.library/query.library.component';
 import { DictionaryComponent } from './pages/admin/dictionary/dictionary.component';
@@ -167,6 +169,8 @@ const routes: Routes = [
   { path: 'itemlistdescription', component: ItemListDescriptionComponent, canActivate: [AuthentificationGuard] },
   { path: 'purchaseorder', component: PurchaseOrderComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemdescription', component: ItemDescriptionComponent, canActivate: [AuthentificationGuard] },
+  { path: 'purchaseorderpush', component: PurchaseOrderPushComponent, canActivate: [AuthentificationGuard] },
+  { path: 'stocklayer', component: StockLayerComponent, canActivate: [AuthentificationGuard] },
   
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },

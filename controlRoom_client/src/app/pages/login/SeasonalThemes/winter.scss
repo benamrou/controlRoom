@@ -87,53 +87,179 @@ $winter-success: #6dd4a0;
     }
 }
 
+// Distant Hills
+.distant-hills {
+    position: absolute;
+    bottom: 100px;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: 
+        radial-gradient(ellipse 80% 100% at 20% 100%, rgba($winter-steel, 0.3) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 100% at 50% 100%, rgba($winter-steel, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 100% at 80% 100%, rgba($winter-steel, 0.3) 0%, transparent 55%);
+    z-index: 1;
+}
+
 // Ground Snow
 .snow-ground {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 80px;
+    height: 100px;
     background: linear-gradient(180deg, 
         transparent 0%,
-        rgba($winter-snow, 0.3) 20%,
-        rgba($winter-snow, 0.6) 50%,
+        rgba($winter-snow, 0.4) 30%,
+        rgba($winter-snow, 0.7) 60%,
         $winter-snow 100%
     );
     z-index: 2;
+}
+
+// Snow Drifts
+.snow-drift {
+    position: absolute;
+    bottom: 0;
+    height: 60px;
+    background: rgba($winter-snow, 0.9);
+    border-radius: 50% 50% 0 0;
+    z-index: 3;
     
-    &::before {
-        content: '';
-        position: absolute;
-        top: -20px;
-        left: 0;
-        right: 0;
+    &.drift-1 {
+        left: -5%;
+        width: 30%;
+        height: 50px;
+    }
+    &.drift-2 {
+        left: 35%;
+        width: 35%;
         height: 40px;
-        background: radial-gradient(ellipse at 50% 100%, rgba($winter-snow, 0.4) 0%, transparent 70%);
+    }
+    &.drift-3 {
+        right: -5%;
+        width: 25%;
+        height: 55px;
     }
 }
 
-// Pine Trees
-.trees {
+// Pine Trees - Back Row
+.trees-back {
     position: absolute;
-    bottom: 40px;
+    bottom: 80px;
     left: 0;
     right: 0;
-    z-index: 3;
+    z-index: 4;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 5%;
     pointer-events: none;
+    
+    .tree {
+        font-size: 2.5rem;
+        filter: brightness(0.25) saturate(0.4);
+        opacity: 0.5;
+        
+        &:nth-child(odd) { transform: translateY(10px); }
+        &:nth-child(3n) { font-size: 2rem; }
+    }
 }
 
-.tree {
+// Pine Trees - Front Row
+.trees-front {
     position: absolute;
-    font-size: 4rem;
-    filter: brightness(0.3) saturate(0.5);
-    opacity: 0.6;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2%;
+    pointer-events: none;
     
-    &.tree-1 { left: 5%; font-size: 3rem; bottom: 10px; }
-    &.tree-2 { left: 12%; font-size: 5rem; bottom: 0; }
-    &.tree-3 { right: 15%; font-size: 4.5rem; bottom: 5px; }
-    &.tree-4 { right: 8%; font-size: 3.5rem; bottom: 15px; }
-    &.tree-5 { right: 2%; font-size: 4rem; bottom: 0; }
+    .tree {
+        font-size: 4rem;
+        filter: brightness(0.3) saturate(0.5);
+        opacity: 0.7;
+        
+        &:nth-child(odd) { 
+            font-size: 3.5rem;
+            transform: translateY(-5px);
+        }
+        &:nth-child(3n) { 
+            font-size: 5rem; 
+            opacity: 0.8;
+        }
+        &:nth-child(4n) { 
+            font-size: 3rem;
+            transform: translateY(10px);
+        }
+    }
+}
+
+// Winter Objects
+.winter-objects {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 6;
+    
+    .snowman {
+        position: absolute;
+        bottom: 60px;
+        left: 8%;
+        font-size: 3.5rem;
+        filter: drop-shadow(0 4px 8px rgba($winter-night, 0.3));
+        animation: snowman-sway 4s ease-in-out infinite;
+    }
+    
+    .cabin {
+        position: absolute;
+        bottom: 55px;
+        right: 12%;
+        font-size: 3rem;
+        filter: drop-shadow(0 4px 8px rgba($winter-night, 0.3));
+        
+        &::after {
+            content: '💨';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            font-size: 1rem;
+            opacity: 0.6;
+            animation: smoke 3s ease-out infinite;
+        }
+    }
+    
+    .deer {
+        position: absolute;
+        bottom: 70px;
+        left: 25%;
+        font-size: 2rem;
+        filter: drop-shadow(0 2px 4px rgba($winter-night, 0.3));
+        animation: deer-walk 8s ease-in-out infinite;
+    }
+}
+
+@keyframes snowman-sway {
+    0%, 100% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
+}
+
+@keyframes smoke {
+    0% { 
+        opacity: 0.6; 
+        transform: translateY(0) scale(1); 
+    }
+    100% { 
+        opacity: 0; 
+        transform: translateY(-20px) scale(1.5); 
+    }
+}
+
+@keyframes deer-walk {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(20px); }
 }
 
 // Version

@@ -4,12 +4,13 @@
 * All the SQLQUERY request are logs.
 *
 * Environment variable used:
-*   > db.maxRows in the configuration file (config folder). Represent the number of max Rows to fetch.
+*   > db.maxRows in the configuration file (config folder). Represent the number of max Rows to fetch per batch.
 *
 * @class DBCONNECT
 *
 * @author Ahmed Benamrouche
 * Date: March 2017
+* Updated: January 2026 - Optimized cursor fetching for large datasets
 */
 
 "use strict"
@@ -23,13 +24,14 @@ let teardownScripts = [];
 
 oracledb.initOracleClient();
 
-let numRows = config.db.maxRows; // max number of rows by packets
+// Batch size for fetching rows - should be set to 5000 in config
+let numRows = config.db.maxRows || 5000; // Default to 5000 if not set or 0
 
 module.exports.OBJECT = oracledb.OBJECT;
 
 function createPool(config) {
     return new Promise(function(resolve, reject) {
-	oracledb.initOracleClient();
+        oracledb.initOracleClient();
         oracledb.createPool(
             config,
             function(err, p) {
@@ -76,7 +78,6 @@ function addBuildupSql(statement) {
         binds: statement.binds || {},
         options: statement.options || {}
     };
-
     buildupScripts.push(stmt);
 }
 
@@ -88,107 +89,33 @@ function addTeardownSql(statement) {
         binds: statement.binds || {},
         options: statement.options || {}
     };
-
     teardownScripts.push(stmt);
 }
 
 module.exports.addTeardownSql = addTeardownSql;
 
 function getConnection() {
-    // Display the Pool stats
-    // pool._logStats();
     oracledb.initOracleClient();
     return new Promise(function(resolve, reject) {
         pool.getConnection(function(err, connection) {
             if (err) {
                 throw err;
             }
-             
-            async.eachSeries(
-                buildupScripts,
-                function(statement, callback) {
-                    connection.execute(statement.sql, statement.binds, statement.options, function(err) {
-                        callback(err);
-                    });
-                    connection.close({drop: true});
-                },null
-                /*function (err) {
-                    if (err) {
-                        console.log ('002 - Error while getConnection() ' + err);
-                        return reject(err);
-                    }
-
-                    resolve(connection);
-                }*/
-            );
+            resolve(connection);
         });
     })
     .catch(function(err) {
-        logger.log('[DB]', '003 - getConnection  rejection ' + err, 'internal', 1);
+        logger.log('[DB]', '003 - getConnection rejection ' + err, 'internal', 1);
         throw err;
     });
 }
 
 module.exports.getConnection = getConnection;
 
-async function executeStream(sql, bindParams, options, connection) {
-    let stream = await connection.queryStream(sql, bindParams, options);
-    const consumeStream = new Promise((resolve, reject) => {
-        stream.on('error', 
-                function (error) {
-                        logger.log('[DB]', '004 - execute connection rejection  ' + error, 'internal', 1);
-                        return;
-                    });
-        stream.on('metadata', 
-                function (metadata) {
-                        logger.log('[DB]', metadata, 'internal', 1);
-                    });
-        stream.on('data', 
-                function (data) {
-                            return (data);
-                    });
-        stream.on('end', 
-                function () {
-                            stream.destroy();  // clean up resources being used
-                            connection.release(function(err) {
-                                                if (err) {
-                                                console.error(err.message);
-                                                }
-                                            });
-                                }
-                );
-
-        stream.on('close', function() {
-            // console.log("stream 'close' event");
-            // The underlying ResultSet has been closed, so the connection can now
-            // be closed, if desired.  Note: do not close connections on 'end'.
-            resolve(rowcount);
-        });
-        
-
-        /*return new Promise(function(resolve, reject) {
-            connection.execute(sql, bindParams, options, function(err, results) {
-                if (err) {
-                    reject(err);
-                }
-                resolve(results);
-            });
-        })
-        .catch(function(err) {
-            console.log ('004 - execute connection rejection  ' + err);
-            reject(err);
-        });*/
-    });
-    //const numrows = await consumeStream;
-}
-
-module.exports.executeStream = executeStream;
-
 function execute(sql, bindParams, options, connection, ticketId, user, callback) {
     return new Promise(async function(resolve, reject) {
         try {
-            let resultSet;
-            resultSet = await connection.execute(sql, bindParams, options, async function(err, results) {
+            let resultSet = await connection.execute(sql, bindParams, options, async function(err, results) {
                 if (err) {
                     logger.log(ticketId, '003 - ' + err, user, 3);
                     callback(err, -1);
@@ -200,40 +127,37 @@ function execute(sql, bindParams, options, connection, ticketId, user, callback)
         catch(err) {
             logger.log(ticketId, '004 - ' + err, user, 3);    
             throw err;
-        }})
+        }
+    });
 }
 
 module.exports.execute = execute;
 
-//module.exports.releaseConnection = releaseConnection;
 module.exports.releaseConnections = releaseConnections;
 
 async function executeQuery(sql, bindParams, options, ticketId, request, response, user, volume, callback) {
     options.isAutoCommit = true;
 
-    //console.log('executing query 1 ', sql);
     let oracleQuery_config; 
-    if (volume === 0) { // 70 rows query max
+    if (volume === 0) {
         oracleQuery_config = config.db.connAttrs;
     }
-    else { // Big data query
+    else {
         oracleQuery_config = config.db.connAttrs_volume;
     }
+    
     return await new Promise(async function(resolve, reject) {
         await oracledb.getConnection()
             .then(async function(connection){
                 await execute(sql, bindParams, options, connection, ticketId, user, callback)
                     .then(async function(result) {
-                        //resolve(results);
                         let rowsToReturn = [];
-                        callback(null,result.outBinds.cursor);  
-                        await releaseConnections(connection, null); // always close the ResultSet
+                        callback(null, result.outBinds.cursor);  
+                        await releaseConnections(connection, null);
                     })
                     .catch(function(err) {
-                        //reject(err);
                         logger.log(ticketId, '005 - ' + err, user, 3);    
-                        //doRelease(connection);   // always close 
-                        releaseConnections(connection, null); // always close the ResultSet
+                        releaseConnections(connection, null);
                     });
             })
             .catch(function(err) {
@@ -249,89 +173,217 @@ async function executeCursor(sql, bindParams, options, ticketId, request, respon
     options.outFormat = oracledb.OUT_FORMAT_OBJECT;
     
     let oracleQuery_config; 
-    if (volume === 0) { // 70 rows query max
+    let fetchBatchSize;
+    
+    if (volume === 0) {
         oracleQuery_config = config.db.connAttrs;
+        fetchBatchSize = Math.min(numRows, 1000); // Smaller batch for small queries
     }
-    else { // Big data query
+    else {
         oracleQuery_config = config.db.connAttrs_volume;
+        fetchBatchSize = numRows; // Full batch size for large queries (5000)
     }
+    
+    // Ensure we have a valid batch size
+    if (!fetchBatchSize || fetchBatchSize <= 0) {
+        fetchBatchSize = 5000;
+    }
+    
     return await new Promise(async function(resolve, reject) {
-         let connection = await oracledb.getConnection(oracleQuery_config);
-         await execute(sql, bindParams, options, connection, ticketId, user, callback)
-            .then(async function(result) {
+        let connection;
+        try {
+            connection = await oracledb.getConnection(oracleQuery_config);
+            const result = await execute(sql, bindParams, options, connection, ticketId, user, callback);
+            
+            if (result && result.outBinds && result.outBinds.cursor) {
                 let rowsToReturn = [];
-                //console.log('result: ', result);
-                await fetchRowsFromRSCallback(ticketId, connection, result.outBinds.cursor, numRows, request, response, user, 0, callback, rowsToReturn);
-            })
-            .catch(function(err) {
-                logger.log(ticketId, '007 - ' + err, user, 3);    
-                process.nextTick(function() {
-                });
-            });
+                await fetchRowsFromRS(ticketId, connection, result.outBinds.cursor, fetchBatchSize, user, callback, rowsToReturn);
+            } else {
+                logger.log(ticketId, 'No cursor returned from query', user, 3);
+                await releaseConnections(connection, null);
+                callback(null, []);
+            }
+        } catch (err) {
+            logger.log(ticketId, '007 - ' + err, user, 3);
+            if (connection) {
+                await releaseConnections(connection, null);
+            }
+            callback(err, null);
+        }
     });
 }
 
 module.exports.executeCursor = executeCursor;
 
-async function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, clear, callback, rowsToReturn)
-{
- if (resultSet == null) {
-        logger.log(ticketId, " Resultset empty...", user);    // close the result set and release the connection
-        connection.close();
-        callback(null,[]);
- }
- else {
-    await resultSet.getRows( // get numRows rows
-      numRows,
-    async function (err, rows)
-    {
-      if (err) { 
-        callback(null,err); 
-        logger.log(ticketId, " Error... : " + JSON.stringify(err),user);
-        await releaseConnections(connection, resultSet); // always close the ResultSet
-        return; 
-      } 
-      else if (rows.length == 0) {  
-        await callback(null,rowsToReturn);  
-        await releaseConnections(connection, resultSet); // always close the ResultSet
+/**
+ * Optimized row fetching using async/await pattern
+ * Fetches rows in batches for memory efficiency
+ */
+async function fetchRowsFromRS(ticketId, connection, resultSet, batchSize, user, callback, rowsToReturn) {
+    if (resultSet == null) {
+        logger.log(ticketId, " Resultset empty...", user);
+        await releaseConnections(connection, null);
+        callback(null, []);
         return;
-      } else if (rows.length > 0) {
-                rowsToReturn.push.apply(rowsToReturn,rows);
-            if (rows.length < 20 ) {
-                logger.log(ticketId, JSON.stringify(rows), user);
+    }
+
+    try {
+        let totalFetched = 0;
+        let rows;
+        
+        // Fetch in batches until no more rows
+        do {
+            rows = await resultSet.getRows(batchSize);
+            
+            if (rows.length > 0) {
+                rowsToReturn.push(...rows);
+                totalFetched += rows.length;
+                
+                // Log progress for large datasets
+                if (totalFetched % 10000 === 0 || rows.length < batchSize) {
+                    logger.log(ticketId, `Fetched ${totalFetched} rows so far...`, user);
+                }
             }
-            logger.log(ticketId, rows.length + " Object(s) returned... [FETCH]", user);
-            // If more than max Rows Fetch again
-            await fetchRowsFromRSCallback(ticketId, connection, resultSet, numRows, request, response, user, 1, callback, rowsToReturn);  // get next set of rows
-        }
-        else {
-            await releaseConnections(connection, resultSet); // always close the ResultSet
-        }
-    });
- }
+        } while (rows.length === batchSize);
+        
+        logger.log(ticketId, `${totalFetched} total Object(s) returned [FETCH COMPLETE]`, user);
+        
+        await releaseConnections(connection, resultSet);
+        callback(null, rowsToReturn);
+        
+    } catch (err) {
+        logger.log(ticketId, " Error fetching rows: " + JSON.stringify(err), user);
+        await releaseConnections(connection, resultSet);
+        callback(err, null);
+    }
 }
 
-function releaseConnections(connection, resultSet) {
-    process.nextTick(() => {
-      if (resultSet) {
-        resultSet
-          .close()
-          .then(() => {
-            connection
-              .close()
-              .catch(err => {
-                throw err
-              })
-          })
-          .catch(err => {
-          })
-      } else {
-        connection
-          .close()
-          .catch(err => {
-            throw err
-          })
-      }
-    })
+/**
+ * Legacy callback-based row fetching (kept for backward compatibility)
+ */
+async function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRowsToFetch, request, response, user, clear, callback, rowsToReturn) {
+    // Ensure valid batch size
+    const batchSize = (numRowsToFetch && numRowsToFetch > 0) ? numRowsToFetch : 5000;
+    
+    if (resultSet == null) {
+        logger.log(ticketId, " Resultset empty...", user);
+        await connection.close();
+        callback(null, []);
+        return;
+    }
+    
+    try {
+        const rows = await resultSet.getRows(batchSize);
+        
+        if (rows.length === 0) {
+            // No more rows, return accumulated results
+            await callback(null, rowsToReturn);
+            await releaseConnections(connection, resultSet);
+            return;
+        }
+        
+        // Add fetched rows to result array
+        rowsToReturn.push(...rows);
+        
+        // Log sample for small results
+        if (rows.length < 20) {
+            logger.log(ticketId, JSON.stringify(rows), user);
+        }
+        logger.log(ticketId, `${rows.length} Object(s) fetched, total: ${rowsToReturn.length}`, user);
+        
+        // If we got a full batch, there might be more rows
+        if (rows.length === batchSize) {
+            await fetchRowsFromRSCallback(ticketId, connection, resultSet, batchSize, request, response, user, 1, callback, rowsToReturn);
+        } else {
+            // Last batch (partial), return results
+            await callback(null, rowsToReturn);
+            await releaseConnections(connection, resultSet);
+        }
+        
+    } catch (err) {
+        logger.log(ticketId, " Error: " + JSON.stringify(err), user);
+        await releaseConnections(connection, resultSet);
+        callback(err, null);
+    }
 }
-  
+
+module.exports.fetchRowsFromRSCallback = fetchRowsFromRSCallback;
+
+/**
+ * Stream-based execution for very large datasets (memory efficient)
+ * Use this when expecting 100k+ rows
+ */
+async function executeCursorStream(sql, bindParams, options, ticketId, request, response, user, volume, callback) {
+    options.isAutoCommit = true;
+    options.outFormat = oracledb.OUT_FORMAT_OBJECT;
+    
+    let oracleQuery_config = volume === 0 ? config.db.connAttrs : config.db.connAttrs_volume;
+    
+    try {
+        let connection = await oracledb.getConnection(oracleQuery_config);
+        const stream = connection.queryStream(sql, bindParams, options);
+        
+        let rowsToReturn = [];
+        let rowCount = 0;
+        
+        stream.on('data', (row) => {
+            rowsToReturn.push(row);
+            rowCount++;
+            
+            // Log progress every 10000 rows
+            if (rowCount % 10000 === 0) {
+                logger.log(ticketId, `Streamed ${rowCount} rows...`, user);
+            }
+        });
+        
+        stream.on('end', async () => {
+            logger.log(ticketId, `${rowsToReturn.length} Object(s) returned [STREAM COMPLETE]`, user);
+            await connection.close();
+            callback(null, rowsToReturn);
+        });
+        
+        stream.on('error', async (err) => {
+            logger.log(ticketId, '008 - Stream error: ' + err, user, 3);
+            await connection.close();
+            callback(err, null);
+        });
+        
+    } catch (err) {
+        logger.log(ticketId, '009 - ' + err, user, 3);
+        callback(err, null);
+    }
+}
+
+module.exports.executeCursorStream = executeCursorStream;
+
+/**
+ * Safely release database connections and result sets
+ */
+function releaseConnections(connection, resultSet) {
+    return new Promise((resolve) => {
+        process.nextTick(async () => {
+            try {
+                if (resultSet) {
+                    try {
+                        await resultSet.close();
+                    } catch (err) {
+                        // ResultSet may already be closed, ignore
+                    }
+                }
+                
+                if (connection) {
+                    try {
+                        await connection.close();
+                    } catch (err) {
+                        logger.log('[DB]', 'Error closing connection: ' + err, 'internal', 1);
+                    }
+                }
+                
+                resolve();
+            } catch (err) {
+                logger.log('[DB]', 'Error in releaseConnections: ' + err, 'internal', 1);
+                resolve();
+            }
+        });
+    });
+}

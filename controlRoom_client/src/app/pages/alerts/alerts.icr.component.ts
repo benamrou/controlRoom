@@ -571,35 +571,51 @@ export class AlertsICRComponent implements OnDestroy {
   }
 
   executeLocalQuery(params){
-    this.runReportDialog = 2; /* Mode 1 - Execute local */
+    this.runReportDialog = 2; /* Mode 2 - Execute local */
     this.executionDataResult=[];
     this.columnsResultExecution = [];
-    this.subscription.push( this._alertsICRService.executeQuery(this.searchResult[this.executionAlertIndex].ALTID, params)
-    .subscribe( 
-        data => { this.executionDataResult = data;
-                  if(this.executionDataResult.length > 0) {
-                  let columns =Object.keys(this.executionDataResult[0]);
-                      for(let i =0; i < columns.length; i++) {
-                        this.columnsResultExecution.push({ field: columns[i], header: columns[i]});
-                      }
-                  }
-                },
+    
+    const alertId = this.searchResult[this.executionAlertIndex].ALTID;
+    
+    // Execute query via notification API (original flow)
+    this.subscription.push(this._alertsICRService.executeQuery(alertId, params)
+      .subscribe( 
+        data => { 
+          this.executionDataResult = data;
+          if (this.executionDataResult.length > 0) {
+            let columns = Object.keys(this.executionDataResult[0]);
+            for (let i = 0; i < columns.length; i++) {
+              this.columnsResultExecution.push({ field: columns[i], header: columns[i] });
+            }
+          }
+        },
         error => {
-              // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-              this.waitMessage='';
-              this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+          this.waitMessage = '';
+          this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
         },
         () => { 
-              this.waitMessage='';
-              console.log('Report result', this.executionDataResult);
-              this._messageService.add({severity:'success', summary:'Completed', detail: 'Alerts/reports execution completed...' });
-              this.executionDataResultDisplay=true;
-        }));
+          this.waitMessage = '';
+          console.log('Report result', this.executionDataResult);
+          this._messageService.add({severity:'success', summary:'Completed', detail: 'Alerts/reports execution completed...' });
+          this.executionDataResultDisplay = true;
+        }
+      ));
   }
 
   confirmRunReport(alertId) {
     this.runReportDialog = 1;
     this.executionAlertIndex = this.searchResult.findIndex(x => x.ALTID == alertId);
+    
+    // Find the schedule for this alert to check if SALTSHELL is populated
+    // Use loose equality (==) since alertId might be string and SALTREFALTID might differ in type
+    const schedule = this.searchResultSchedule.find(s => s.SALTREFALTID == alertId || s.SALTQUERYNUM == alertId);
+    const hasSaltShell = schedule && schedule.SALTSHELL && schedule.SALTSHELL.trim() !== '';
+    
+    console.log('confirmRunReport - alertId:', alertId);
+    console.log('confirmRunReport - searchResultSchedule:', this.searchResultSchedule);
+    console.log('confirmRunReport - found schedule:', schedule);
+    console.log('confirmRunReport - hasSaltShell:', hasSaltShell);
+    
     this._confrmation.confirm({
       message: 'Are you sure that you want to <b>execute</b> this report? <b>' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT + 
                '</b><br><br>This will send the email notification to the distribution list.',
@@ -609,16 +625,18 @@ export class AlertsICRComponent implements OnDestroy {
           this._messageService.add({severity:'info', summary:'Info Message', detail: 'Executing alerts/reports ...' });
           this.waitMessage='Running <b>' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT + '</b> report...<br>' + 
                            '<br> The report usually taking <b>between 1 to 3 minutes</b>. An automatic result pop-up will be opened shortly.';
-          this.executionAlertParam = [];
-          if(this.searchResult[this.executionAlertIndex].ALTNBPARAM > 0) {
-            this.executionAlertParamDesc = this.searchResult[this.executionAlertIndex].ALTPARAMDESC.split(',');
-            for(let i=0; i < this.executionAlertParamDesc.length; i++) {
-              this.executionAlertParam.push('-1');
-            }
-            this.captureParamDialog = true;
-          }
-          else {
-            this.runReport(this.executionAlertParam);
+          
+          console.log('confirmRunReport accept - hasSaltShell:', hasSaltShell);
+          
+          // If SALTSHELL is populated, ask user which execution method to use
+          if (hasSaltShell) {
+            // Use setTimeout to allow first dialog to close before showing second
+            setTimeout(() => {
+              this.showShellVsParameterConfirmation(alertId, schedule);
+            }, 100);
+          } else {
+            // No SALTSHELL - proceed with parameter check
+            this.proceedWithParameterCheck();
           }
       },
       reject: (type) => {
@@ -635,20 +653,92 @@ export class AlertsICRComponent implements OnDestroy {
     });
   }
 
-  runReport(params){
-    this.subscription.push( this._alertsICRService.runReport(this.searchResult[this.executionAlertIndex].ALTID, params)
-    .subscribe( 
-        data => { this.executionDataResult = data;
-                },
+  /** Show confirmation dialog to choose between shell script or parameter execution */
+  showShellVsParameterConfirmation(alertId, schedule) {
+    this._confrmation.confirm({
+      key: 'shellConfirm',
+      message: `<b>Shell script detected for this alert.</b><br><br>
+                Choose execution method:<br><br>
+                <b>• Execute Shell Script:</b> Runs the complete shell script as configured<br>
+                <b>• Run with Parameters:</b> Executes the report query using the provided parameters`,
+      header: 'Execution Method',
+      icon: 'pi pi-question-circle',
+      acceptLabel: 'Execute Shell Script',
+      rejectLabel: 'Run with Parameters',
+      accept: () => {
+        // Execute shell script - call runReport directly with empty params (shell doesn't need params)
+        console.log('Executing shell script for schedule:', schedule);
+        this.executionAlertParam = [];
+        this.runReportShellOnly(alertId);
+      },
+      reject: (type) => {
+        if (type === ConfirmEventType.REJECT) {
+          // Run with parameters - proceed to parameter check
+          this.proceedWithParameterCheck();
+        } else {
+          // Cancel was clicked
+          this.waitMessage = '';
+          this._messageService.add({severity:'warn', summary:'Cancelled', detail: 'Report execution cancelled'});
+        }
+      }
+    });
+  }
+
+  /** Proceed with parameter check and execute report */
+  proceedWithParameterCheck() {
+    this.executionAlertParam = [];
+    if(this.searchResult[this.executionAlertIndex].ALTNBPARAM > 0) {
+      this.executionAlertParamDesc = this.searchResult[this.executionAlertIndex].ALTPARAMDESC.split(',');
+      for(let i=0; i < this.executionAlertParamDesc.length; i++) {
+        this.executionAlertParam.push('-1');
+      }
+      // Use setTimeout to ensure previous dialog is closed
+      setTimeout(() => {
+        this.captureParamDialog = true;
+      }, 100);
+    }
+    else {
+      this.runReportWithParams(this.executionAlertParam);
+    }
+  }
+
+  /** Execute report using shell script (no parameters needed) */
+  runReportShellOnly(alertId) {
+    this.subscription.push(this._alertsICRService.runReport(alertId, [])
+      .subscribe( 
+        data => { this.executionDataResult = data; },
         error => {
-              // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
-              this.waitMessage='';
-              this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+          this.waitMessage = '';
+          this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
         },
         () => { 
-              this.waitMessage='';
-              this._messageService.add({severity:'success', summary:'Completed', detail: 'Alerts/reports execution completed...' });
-        }));
+          this.waitMessage = '';
+          this._messageService.add({severity:'success', summary:'Completed', detail: 'Shell script execution completed...' });
+        }
+      ));
+  }
+
+  /** Execute report with parameters (original flow) */
+  runReportWithParams(params) {
+    const alertId = this.searchResult[this.executionAlertIndex].ALTID;
+    this.subscription.push(this._alertsICRService.runReport(alertId, params)
+      .subscribe( 
+        data => { this.executionDataResult = data; },
+        error => {
+          this.waitMessage = '';
+          this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
+        },
+        () => { 
+          this.waitMessage = '';
+          this._messageService.add({severity:'success', summary:'Completed', detail: 'Alerts/reports execution completed...' });
+        }
+      ));
+  }
+
+  runReport(params){
+    // This method is called from the parameter dialog submission
+    // Simply execute the report with parameters
+    this.runReportWithParams(params);
   }
 
   removeReport(alertId) {
