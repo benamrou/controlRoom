@@ -544,7 +544,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
 
 }
 
-function processContentNoHTML(SQL, alertData, request, result) {
+function processContentNoHTML(SQL, alertData, request, result, response) {
   let SUBJECT_EXT ='';
   let FILENAME_EXT='result.xlsx';
   if ( typeof request.header('SUBJECT_EXT') !== 'undefined' )  {
@@ -706,7 +706,7 @@ module.get = async function (request,response) {
                         heap.parseXML2JS(content, function (err, result) {
                             heap.logger.log('alert', 'content XML' + JSON.stringify(result), 'alert', 3);
                             // Now process the content from XML file
-                            processContentNoHTML(SQL, alertData, request, result);
+                            processContentNoHTML(SQL, alertData, request, result, response);
                         });
                     }
                     else if (alertData[0].ALTFILE) {
@@ -720,7 +720,7 @@ module.get = async function (request,response) {
                                 heap.parseXML2JS(data, function (err, result) {
                                     heap.logger.log('alert', 'content XML' + JSON.stringify(result), 'alert', 3);
                                     // Now process the content from XML file
-                                    processContentNoHTML(SQL, alertData, request, result);
+                                    processContentNoHTML(SQL, alertData, request, result, response);
                                 });
                             });
                         }  

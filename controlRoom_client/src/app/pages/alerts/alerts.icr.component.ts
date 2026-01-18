@@ -48,11 +48,29 @@ export class AlertsICRComponent implements OnDestroy {
    alertSQLFileContent;
    alertSQLFileDisplay;
 
+   /** CRUD mode tracking */
+   crudMode: 'create' | 'edit' | 'view' = 'view';
+   isNewAlert: boolean = false;
+   isNewDistribution: boolean = false;
+   isNewSchedule: boolean = false;
+
    /** Schedule type options for dropdown */
    scheduleTypeOptions = [
-     { label: 'Type 1', value: 1 },
-     { label: 'Type 2', value: 2 },
-     { label: 'Type 3', value: 3 }
+     { label: 'Execute Query', value: 1 },
+     { label: 'Execute File', value: 2 },
+     { label: 'Execute Shell', value: 3 }
+   ];
+
+   /** Real-time options for dropdown */
+   realTimeOptions = [
+     { label: 'Real time', value: 1 },
+     { label: 'Scheduled', value: 0 }
+   ];
+
+   /** Yes/No options for dropdown */
+   yesNoOptions = [
+     { label: 'Yes', value: 1 },
+     { label: 'No', value: 0 }
    ];
 
    /** Schedule builder properties */
@@ -102,11 +120,13 @@ export class AlertsICRComponent implements OnDestroy {
    ];
 
    /** Alert focus */
-   alertDisplay;
-   alertDistributionDisplay;
-   alertSheduleDisplay;
+   alertDisplay: any = {};
+   alertDistributionDisplay: any = {};
+   alertSheduleDisplay: any = {};
    displayAlert: boolean = false;
-   alertSheduleDisplay_DALTEMAIL; alertSheduleDisplay_DALTEMAILCC; alertSheduleDisplay_DALTEMAILBCC;
+   alertSheduleDisplay_DALTEMAIL: string[] = []; 
+   alertSheduleDisplay_DALTEMAILCC: string[] = []; 
+   alertSheduleDisplay_DALTEMAILBCC: string[] = [];
 
    screenID;
    csvButtonTooltip: string ='';
@@ -185,38 +205,543 @@ export class AlertsICRComponent implements OnDestroy {
     this.selectedElement = {};
   }
 
+
+  // ==================== ALERT CRUD OPERATIONS ====================
+
+  /** Create new alert - Initialize empty form */
+  createAlert() {
+    this.crudMode = 'create';
+    this.isNewAlert = true;
+    this.isNewDistribution = true;
+    this.isNewSchedule = true;
+
+    // Initialize empty alert object with all fields
+    this.alertDisplay = {
+      ALTID: '',
+      ALTQUERY: '',  // Query number - editable for new alerts
+      ALTSUBJECT: '',
+      ALTCONTENT: '',
+      ALTDCRE: new Date(),
+      ALTDMAJ: new Date(),
+      ALTUTIL: '',
+      ALTFILE: '',
+      ALTREALTIME: 0,
+      ALTSMSCONTENT: '',
+      ALTORIENTATION: 'landscape',
+      ALTPRINTAREA: '',
+      ALTMARGIN: '{ left: 0.3, right: 0.3, top: 0.5, bottom: 0.5 }',
+      ALTFITPAGE: 1,
+      ALTFITPAGEBOOLEAN: true,
+      ALTFITHEIGHT: 10,
+      ALTFITWIDTH: 1,
+      ALTTITLEREPEAT: '1:5',
+      ALTFOOTER: '',
+      ALTFORMAT: '',
+      ALTFORMATXLS: '',
+      ALTCONTENTHTML: '',
+      ALTXLSBREAK: '',
+      ALTSCALE: 100,
+      ALTCOLMOVE: '',
+      ALTNBPARAM: 0,
+      ALTPARAMDESC: '',
+      ALTBORDER: 0,
+      ALTBORDERBOOLEAN: false,
+      ALTTITLEXLS: '',
+      ALTTITLEXLSCOLOR: '000000',
+      ALTFREEZEHEADER: 0,
+      ALTFREEZEHEADERBOOLEAN: false,
+      ALTFREEZECOLUMN: 0,
+      ALTFORMATTAB2XLS: '',
+      ALTNOHTML: 0,
+      ALTSQL: ''
+    };
+
+    // Initialize empty distribution
+    this.alertDistributionDisplay = {
+      DALTID: '',
+      DALTUSERID: '',
+      DALTTYPE: 1,
+      DALTREPEAT: 0,
+      DALTDCRE: new Date(),
+      DALTDMAJ: new Date(),
+      DALTUTIL: '',
+      DALTEMAIL: '',
+      DALTSMS: 0,
+      DALTEMAILCC: '',
+      DALTEMAILBCC: ''
+    };
+    this.alertSheduleDisplay_DALTEMAIL = [];
+    this.alertSheduleDisplay_DALTEMAILCC = [];
+    this.alertSheduleDisplay_DALTEMAILBCC = [];
+
+    // Initialize empty schedule
+    this.alertSheduleDisplay = {
+      SALTID: '',
+      SALTDESC: '',
+      SALTCRON: '0 9 * * *',
+      SALTTYPE: 2,
+      SALTQUERYNUM: '',  // External query identifier
+      SALTQUERYPARAM: '',
+      SALTJOB: '',
+      SALTACTIVE: new Date(),
+      SALTACTIVEDATE: new Date(),
+      SALTDCRE: new Date(),
+      SALTDMAJ: new Date(),
+      SALTUTIL: '',
+      SALTCATCHUP: 0,
+      SALTCATCHUPBOOLEAN: false,
+      SALTREFALTID: '',
+      SALTCOMMENT: '',
+      SALTSHELL: ''
+    };
+
+    // Set default schedule builder values
+    this.scheduleFrequency = 'daily';
+    this.scheduleHour = 9;
+    this.scheduleMinute = 0;
+    this.updateReadableSchedule();
+
+    this.displayAlert = true;
+    this._messageService.add({severity:'info', summary:'New Alert', detail: 'Fill in the alert details and save.'});
+  }
+
+  /** Edit existing alert */
+  editAlert(alertId) {
+    this.crudMode = 'edit';
+    this.isNewAlert = false;
+    
+    let index = this.searchResult.findIndex(x => x.ALTID == alertId);
+    let indexDistribution = this.searchResultDistribution.findIndex(x => x.DALTID == alertId);
+    let indexScheduling = this.searchResultSchedule.findIndex(x => x.SALTREFALTID == alertId);
+    
+    // Convert boolean fields
+    this.searchResult[index].ALTFITPAGEBOOLEAN = this.searchResult[index].ALTFITPAGE == 1;
+    this.searchResult[index].ALTFREEZEHEADERBOOLEAN = this.searchResult[index].ALTFREEZEHEADER == 1;
+    this.searchResult[index].ALTBORDERBOOLEAN = this.searchResult[index].ALTBORDER == 1;
+
+    this.alertDisplay = { ...this.searchResult[index] };
+    
+    // Handle distribution
+    if (indexDistribution >= 0) {
+      this.alertDistributionDisplay = { ...this.searchResultDistribution[indexDistribution] };
+      this.isNewDistribution = false;
+    } else {
+      // No distribution exists - create new one
+      this.alertDistributionDisplay = {
+        DALTID: alertId,
+        DALTUSERID: '',
+        DALTTYPE: 1,
+        DALTREPEAT: 0,
+        DALTDCRE: new Date(),
+        DALTDMAJ: new Date(),
+        DALTUTIL: '',
+        DALTEMAIL: '',
+        DALTSMS: 0,
+        DALTEMAILCC: '',
+        DALTEMAILBCC: ''
+      };
+      this.isNewDistribution = true;
+    }
+
+    // Handle schedule
+    if (indexScheduling >= 0) {
+      this.alertSheduleDisplay = { ...this.searchResultSchedule[indexScheduling] };
+      this.isNewSchedule = false;
+      // Convert schedule boolean fields and date
+      this.alertSheduleDisplay.SALTCATCHUPBOOLEAN = this.alertSheduleDisplay.SALTCATCHUP == 1;
+      if (this.alertSheduleDisplay.SALTACTIVE) {
+        this.alertSheduleDisplay.SALTACTIVEDATE = new Date(this.alertSheduleDisplay.SALTACTIVE);
+      }
+      this.parseCronExpression();
+    } else {
+      // No schedule exists - create new one
+      this.alertSheduleDisplay = {
+        SALTID: '',
+        SALTDESC: this.alertDisplay.ALTSUBJECT + ' Schedule',
+        SALTCRON: '0 9 * * *',
+        SALTTYPE: 2,
+        SALTQUERYNUM: '',
+        SALTQUERYPARAM: '',
+        SALTJOB: '',
+        SALTACTIVE: new Date(),
+        SALTACTIVEDATE: new Date(),
+        SALTDCRE: new Date(),
+        SALTDMAJ: new Date(),
+        SALTUTIL: '',
+        SALTCATCHUP: 0,
+        SALTCATCHUPBOOLEAN: false,
+        SALTREFALTID: alertId,
+        SALTCOMMENT: '',
+        SALTSHELL: ''
+      };
+      this.isNewSchedule = true;
+      this.scheduleFrequency = 'daily';
+      this.scheduleHour = 9;
+      this.scheduleMinute = 0;
+      this.updateReadableSchedule();
+    }
+
+    // Parse email lists
+    this.alertSheduleDisplay_DALTEMAIL = this.parseEmailList(this.alertDistributionDisplay.DALTEMAIL);
+    this.alertSheduleDisplay_DALTEMAILCC = this.parseEmailList(this.alertDistributionDisplay.DALTEMAILCC);
+    this.alertSheduleDisplay_DALTEMAILBCC = this.parseEmailList(this.alertDistributionDisplay.DALTEMAILBCC);
+
+    this.displayAlert = true;
+  }
+
+  /** Duplicate existing alert - creates a copy with new IDs */
+  duplicateAlert(alertId) {
+    this.crudMode = 'create';
+    this.isNewAlert = true;
+    this.isNewDistribution = true;
+    this.isNewSchedule = true;
+    
+    let index = this.searchResult.findIndex(x => x.ALTID == alertId);
+    let indexDistribution = this.searchResultDistribution.findIndex(x => x.DALTID == alertId);
+    let indexScheduling = this.searchResultSchedule.findIndex(x => x.SALTREFALTID == alertId);
+    
+    // Copy alert data
+    this.alertDisplay = { ...this.searchResult[index] };
+    
+    // Clear ID and set as new - user must provide new ID
+    this.alertDisplay.ALTID = '';
+    // Keep ALTQUERY (querynum) from source - user can modify if needed
+    this.alertDisplay.ALTSUBJECT = this.alertDisplay.ALTSUBJECT + ' (Copy)';
+    this.alertDisplay.ALTDCRE = new Date();
+    this.alertDisplay.ALTDMAJ = new Date();
+    
+    // Convert boolean fields
+    this.alertDisplay.ALTFITPAGEBOOLEAN = this.alertDisplay.ALTFITPAGE == 1;
+    this.alertDisplay.ALTFREEZEHEADERBOOLEAN = this.alertDisplay.ALTFREEZEHEADER == 1;
+    this.alertDisplay.ALTBORDERBOOLEAN = this.alertDisplay.ALTBORDER == 1;
+    
+    // Copy distribution data
+    if (indexDistribution >= 0) {
+      this.alertDistributionDisplay = { ...this.searchResultDistribution[indexDistribution] };
+      this.alertDistributionDisplay.DALTID = ''; // Will be set from ALTID on save
+      this.alertDistributionDisplay.DALTDCRE = new Date();
+      this.alertDistributionDisplay.DALTDMAJ = new Date();
+    } else {
+      this.alertDistributionDisplay = {
+        DALTID: '',
+        DALTUSERID: '',
+        DALTTYPE: 1,
+        DALTREPEAT: 0,
+        DALTDCRE: new Date(),
+        DALTDMAJ: new Date(),
+        DALTUTIL: '',
+        DALTEMAIL: '',
+        DALTSMS: 0,
+        DALTEMAILCC: '',
+        DALTEMAILBCC: ''
+      };
+    }
+
+    // Copy schedule data
+    if (indexScheduling >= 0) {
+      this.alertSheduleDisplay = { ...this.searchResultSchedule[indexScheduling] };
+      this.alertSheduleDisplay.SALTID = ''; // User must provide new ID
+      this.alertSheduleDisplay.SALTDESC = this.alertSheduleDisplay.SALTDESC + ' (Copy)';
+      // Keep SALTQUERYNUM from source - user can modify if needed
+      this.alertSheduleDisplay.SALTREFALTID = ''; // Will be set from ALTID on save
+      this.alertSheduleDisplay.SALTDCRE = new Date();
+      this.alertSheduleDisplay.SALTDMAJ = new Date();
+      this.alertSheduleDisplay.SALTCATCHUPBOOLEAN = this.alertSheduleDisplay.SALTCATCHUP == 1;
+      if (this.alertSheduleDisplay.SALTACTIVE) {
+        this.alertSheduleDisplay.SALTACTIVEDATE = new Date(this.alertSheduleDisplay.SALTACTIVE);
+      }
+      this.parseCronExpression();
+    } else {
+      this.alertSheduleDisplay = {
+        SALTID: '',
+        SALTDESC: 'New Schedule (Copy)',
+        SALTCRON: '0 9 * * *',
+        SALTTYPE: 2,
+        SALTQUERYNUM: '',
+        SALTQUERYPARAM: '',
+        SALTJOB: '',
+        SALTACTIVE: new Date(),
+        SALTACTIVEDATE: new Date(),
+        SALTDCRE: new Date(),
+        SALTDMAJ: new Date(),
+        SALTUTIL: '',
+        SALTCATCHUP: 0,
+        SALTCATCHUPBOOLEAN: false,
+        SALTREFALTID: '',
+        SALTCOMMENT: '',
+        SALTSHELL: ''
+      };
+      this.scheduleFrequency = 'daily';
+      this.scheduleHour = 9;
+      this.scheduleMinute = 0;
+      this.updateReadableSchedule();
+    }
+
+    // Parse email lists from source
+    this.alertSheduleDisplay_DALTEMAIL = this.parseEmailList(this.alertDistributionDisplay.DALTEMAIL);
+    this.alertSheduleDisplay_DALTEMAILCC = this.parseEmailList(this.alertDistributionDisplay.DALTEMAILCC);
+    this.alertSheduleDisplay_DALTEMAILBCC = this.parseEmailList(this.alertDistributionDisplay.DALTEMAILBCC);
+
+    this.displayAlert = true;
+    this._messageService.add({severity:'info', summary:'Duplicate Alert', detail: 'Enter a new Alert ID. Query number and other settings have been copied.'});
+  }
+
+  /** Helper to parse semicolon-separated email list */
+  parseEmailList(emailString: string): string[] {
+    if (!emailString) return [];
+    return emailString.split(';').filter(e => e.trim().length > 0);
+  }
+
+  /** Save all changes (Alert, Distribution, Schedule) */
+  saveChanges() {
+    // Validate required fields
+    if (!this.alertDisplay.ALTID || this.alertDisplay.ALTID.trim() === '') {
+      this._messageService.add({severity:'error', summary:'Validation Error', detail: 'Alert ID is required.'});
+      return;
+    }
+
+    // Convert boolean fields back to numbers
+    this.alertDisplay.ALTFITPAGE = this.alertDisplay.ALTFITPAGEBOOLEAN ? 1 : 0;
+    this.alertDisplay.ALTFREEZEHEADER = this.alertDisplay.ALTFREEZEHEADERBOOLEAN ? 1 : 0;
+    this.alertDisplay.ALTBORDER = this.alertDisplay.ALTBORDERBOOLEAN ? 1 : 0;
+    this.alertDisplay.ALTDMAJ = new Date();
+
+    // Save Alert (MERGE handles both insert and update)
+    this.subscription.push(this._alertsICRService.saveAlert(this.alertDisplay)
+      .subscribe(
+        data => {
+          console.log('Save alert result:', data);
+          this._messageService.add({severity:'success', summary:'Success', detail: 'Alert saved successfully.'});
+          this.saveDistribution();
+        },
+        error => {
+          this._messageService.add({severity:'error', summary:'Error', detail: 'Failed to save alert: ' + error});
+        }
+      ));
+  }
+
+  /** Save distribution after alert is saved */
+  saveDistribution() {
+    // Build email strings from chips
+    this.alertDistributionDisplay.DALTID = this.alertDisplay.ALTID;
+    this.alertDistributionDisplay.DALTEMAIL = this.alertSheduleDisplay_DALTEMAIL.join(';');
+    this.alertDistributionDisplay.DALTEMAILCC = this.alertSheduleDisplay_DALTEMAILCC.join(';');
+    this.alertDistributionDisplay.DALTEMAILBCC = this.alertSheduleDisplay_DALTEMAILBCC.join(';');
+    this.alertDistributionDisplay.DALTDMAJ = new Date();
+
+    // Save distribution (MERGE handles both insert and update)
+    this.subscription.push(this._alertsICRService.saveDistribution(this.alertDistributionDisplay)
+      .subscribe(
+        data => {
+          console.log('Save distribution result:', data);
+          this.saveSchedule();
+        },
+        error => {
+          console.log('Error saving distribution:', error);
+          // Still try to save schedule even if distribution fails
+          this.saveSchedule();
+        }
+      ));
+  }
+
+  /** Save schedule after distribution is saved */
+  saveSchedule() {
+    // Only save if schedule has an ID
+    if (!this.alertSheduleDisplay.SALTID || this.alertSheduleDisplay.SALTID.trim() === '') {
+      this.finalizeSave();
+      return;
+    }
+
+    // Convert boolean back to number
+    this.alertSheduleDisplay.SALTCATCHUP = this.alertSheduleDisplay.SALTCATCHUPBOOLEAN ? 1 : 0;
+    this.alertSheduleDisplay.SALTREFALTID = this.alertDisplay.ALTID;
+    this.alertSheduleDisplay.SALTDMAJ = new Date();
+
+    // Convert date to ISO string for JSON
+    if (this.alertSheduleDisplay.SALTACTIVEDATE) {
+      this.alertSheduleDisplay.SALTACTIVE = this.alertSheduleDisplay.SALTACTIVEDATE.toISOString();
+    }
+
+    // Save schedule (MERGE handles both insert and update)
+    this.subscription.push(this._alertsICRService.saveSchedule(this.alertSheduleDisplay)
+      .subscribe(
+        data => {
+          console.log('Save schedule result:', data);
+          this.finalizeSave();
+        },
+        error => {
+          console.log('Error saving schedule:', error);
+          this.finalizeSave();
+        }
+      ));
+  }
+
+  /** Finalize save operation */
+  finalizeSave() {
+    this.msgDisplayed = "Alert " + this.alertDisplay.ALTID + " has been saved successfully.";
+    this.displayProcessCompleted = true;
+    
+    // Refresh data
+    this.search();
+  }
+
+  /** Delete alert with confirmation */
+  confirmDeleteAlert(alertId) {
+    this._confrmation.confirm({
+      message: `Are you sure you want to <b>DELETE</b> this alert and all related data?<br><br>
+                <b>Alert ID:</b> ${alertId}<br><br>
+                This will also delete associated distribution and schedule records.`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.deleteAlert(alertId);
+      },
+      reject: () => {
+        this._messageService.add({severity:'info', summary:'Cancelled', detail: 'Delete operation cancelled.'});
+      }
+    });
+  }
+
+  /** Delete alert and related records */
+  deleteAlert(alertId: string) {
+    // Delete schedule first
+    const schedule = this.searchResultSchedule.find(s => s.SALTREFALTID == alertId);
+    if (schedule && schedule.SALTID) {
+      this.subscription.push(this._alertsICRService.deleteSchedule(schedule.SALTID)
+        .subscribe(
+          data => console.log('Schedule deleted:', data),
+          error => console.log('Error deleting schedule:', error)
+        ));
+    }
+
+    // Delete distribution
+    this.subscription.push(this._alertsICRService.deleteDistribution(alertId)
+      .subscribe(
+        data => console.log('Distribution deleted:', data),
+        error => console.log('Error deleting distribution:', error)
+      ));
+
+    // Delete alert
+    this.subscription.push(this._alertsICRService.deleteAlert(alertId)
+      .subscribe(
+        data => {
+          console.log('Alert deleted:', data);
+          this._messageService.add({severity:'success', summary:'Success', detail: 'Alert deleted successfully.'});
+          // Remove from local array
+          const index = this.searchResult.findIndex(x => x.ALTID == alertId);
+          if (index >= 0) {
+            this.searchResult.splice(index, 1);
+          }
+        },
+        error => {
+          this._messageService.add({severity:'error', summary:'Error', detail: 'Failed to delete alert: ' + error});
+        }
+      ));
+  }
+
+
+  // ==================== SCHEDULE CRUD OPERATIONS ====================
+
+  /** Create a new schedule for the current alert */
+  createNewSchedule() {
+    this.isNewSchedule = true;
+    this.alertSheduleDisplay = {
+      SALTID: '',
+      SALTDESC: this.alertDisplay.ALTSUBJECT + ' Schedule',
+      SALTCRON: '0 9 * * *',
+      SALTTYPE: 2,
+      SALTQUERYNUM: '',
+      SALTQUERYPARAM: '',
+      SALTJOB: '',
+      SALTACTIVE: new Date(),
+      SALTACTIVEDATE: new Date(),
+      SALTDCRE: new Date(),
+      SALTDMAJ: new Date(),
+      SALTUTIL: '',
+      SALTCATCHUP: 0,
+      SALTCATCHUPBOOLEAN: false,
+      SALTREFALTID: this.alertDisplay.ALTID,
+      SALTCOMMENT: '',
+      SALTSHELL: ''
+    };
+    
+    this.scheduleFrequency = 'daily';
+    this.scheduleHour = 9;
+    this.scheduleMinute = 0;
+    this.scheduleDayOfWeek = 1;
+    this.scheduleDayOfMonth = 1;
+    this.scheduleInterval = 15;
+    this.updateReadableSchedule();
+    
+    this._messageService.add({severity:'info', summary:'New Schedule', detail: 'Configure the schedule settings and save.'});
+  }
+
+  /** Delete schedule with confirmation */
+  confirmDeleteSchedule() {
+    if (!this.alertSheduleDisplay || !this.alertSheduleDisplay.SALTID) {
+      this._messageService.add({severity:'warn', summary:'Warning', detail: 'No schedule to delete.'});
+      return;
+    }
+
+    this._confrmation.confirm({
+      key: 'scheduleDelete',
+      message: `Are you sure you want to delete this schedule?<br><br><b>Schedule ID:</b> ${this.alertSheduleDisplay.SALTID}`,
+      header: 'Confirm Delete Schedule',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        const saltidToDelete = this.alertSheduleDisplay.SALTID;
+        this.subscription.push(this._alertsICRService.deleteSchedule(saltidToDelete)
+          .subscribe(
+            data => {
+              console.log('Schedule deleted:', data);
+              this._messageService.add({severity:'success', summary:'Success', detail: 'Schedule deleted successfully.'});
+              // Remove from local array
+              const index = this.searchResultSchedule.findIndex(s => s.SALTID == saltidToDelete);
+              if (index >= 0) {
+                this.searchResultSchedule.splice(index, 1);
+              }
+              // Clear schedule display and reset to new
+              this.alertSheduleDisplay = {};
+              this.isNewSchedule = true;
+            },
+            error => {
+              this._messageService.add({severity:'error', summary:'Error', detail: 'Failed to delete schedule: ' + error});
+            }
+          ));
+      }
+    });
+  }
+
+
+  // ==================== SCHEDULE BUILDER METHODS ====================
+
   /** Build cron expression from user-friendly inputs */
   buildCronExpression() {
     let cron = '';
     
     switch (this.scheduleFrequency) {
       case 'interval_minutes':
-        // */X * * * * (every X minutes)
         cron = `*/${this.scheduleInterval} * * * *`;
         break;
       case 'hourly':
-        // M * * * * (every hour at minute M)
         cron = `${this.scheduleMinute} * * * *`;
         break;
       case 'hour_range':
-        // M H1-H2 * * D (hour range with optional day range)
         const dayPart = this.scheduleDayOfWeekRange || '*';
         cron = `${this.scheduleMinute} ${this.scheduleHourRange} * * ${dayPart}`;
         break;
       case 'daily':
-        // M H * * * (every day at H:M)
         cron = `${this.scheduleMinute} ${this.scheduleHour} * * *`;
         break;
       case 'weekly':
-        // M H * * D (every week on day D at H:M)
         cron = `${this.scheduleMinute} ${this.scheduleHour} * * ${this.scheduleDayOfWeek}`;
         break;
       case 'monthly':
-        // M H D * * (every month on day D at H:M)
         cron = `${this.scheduleMinute} ${this.scheduleHour} ${this.scheduleDayOfMonth} * *`;
         break;
       case 'custom':
-        // Don't modify - user edits cron directly
         return;
     }
     
@@ -242,31 +767,24 @@ export class AlertsICRComponent implements OnDestroy {
     
     const [minute, hour, dayOfMonth, month, dayOfWeek] = parts;
     
-    // Detect pattern and set frequency
     if (minute.startsWith('*/')) {
-      // Interval pattern: */X * * * *
       this.scheduleFrequency = 'interval_minutes';
       this.scheduleInterval = parseInt(minute.substring(2)) || 15;
     } else if (hour === '*' && dayOfMonth === '*' && dayOfWeek === '*') {
-      // Hourly pattern: M * * * * (every hour at minute M)
       this.scheduleFrequency = 'hourly';
       this.scheduleMinute = parseInt(minute) || 0;
     } else if (hour.includes('-') || hour.includes(',')) {
-      // Hour range pattern: M H1-H2 * * * or M H1,H2,H3 * * *
       this.scheduleFrequency = 'hour_range';
       this.scheduleMinute = parseInt(minute) || 0;
       this.scheduleHourRange = hour;
       this.scheduleDayOfWeekRange = dayOfWeek !== '*' ? dayOfWeek : '';
     } else if (minute.includes('-') || minute.includes(',') || minute.includes('/')) {
-      // Complex minute pattern - treat as custom
       this.scheduleFrequency = 'custom';
     } else if (dayOfMonth === '*' && dayOfWeek === '*') {
-      // Daily pattern: M H * * *
       this.scheduleFrequency = 'daily';
       this.scheduleMinute = parseInt(minute) || 0;
       this.scheduleHour = parseInt(hour) || 9;
     } else if (dayOfMonth === '*' && dayOfWeek !== '*') {
-      // Weekly pattern: M H * * D (could have day range like 1-5)
       this.scheduleFrequency = 'weekly';
       this.scheduleMinute = parseInt(minute) || 0;
       this.scheduleHour = parseInt(hour) || 9;
@@ -278,7 +796,6 @@ export class AlertsICRComponent implements OnDestroy {
         this.scheduleDayOfWeek = parseInt(dayOfWeek) || 1;
       }
     } else if (dayOfMonth !== '*') {
-      // Monthly pattern: M H D * *
       this.scheduleFrequency = 'monthly';
       this.scheduleMinute = parseInt(minute) || 0;
       this.scheduleHour = parseInt(hour) || 1;
@@ -323,8 +840,8 @@ export class AlertsICRComponent implements OnDestroy {
     }
   }
 
-  /** Format hour range for readable display */
   formatHourRange(hourRange: string): string {
+    if (!hourRange) return '';
     if (hourRange.includes('-')) {
       const [start, end] = hourRange.split('-');
       return `every hour from ${start.padStart(2, '0')}:00 to ${end.padStart(2, '0')}:00`;
@@ -335,7 +852,6 @@ export class AlertsICRComponent implements OnDestroy {
     return `at hour ${hourRange}`;
   }
 
-  /** Format day of week range for readable display */
   formatDayRange(dayRange: string): string {
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const shortDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -350,7 +866,6 @@ export class AlertsICRComponent implements OnDestroy {
     return dayNames[parseInt(dayRange)] || dayRange;
   }
 
-  /** Get ordinal suffix for day of month */
   getDaySuffix(day: number): string {
     if (day >= 11 && day <= 13) return 'th';
     switch (day % 10) {
@@ -361,10 +876,12 @@ export class AlertsICRComponent implements OnDestroy {
     }
   }
 
-  /** Handle frequency change */
   onFrequencyChange() {
     this.buildCronExpression();
   }
+
+
+  // ==================== UTILITY METHODS ====================
 
   /** Copy text to clipboard */
   copyToClipboard(text: string) {
@@ -380,41 +897,13 @@ export class AlertsICRComponent implements OnDestroy {
     });
   }
 
-  /** Create a new schedule for the current alert */
-  createNewSchedule() {
-    // Initialize a new schedule object with default values
-    this.alertSheduleDisplay = {
-      SALTID: '', // Will be generated by backend or user can set
-      SALTDESC: this.alertDisplay.ALTSUBJECT + ' Schedule',
-      SALTCRON: '0 9 * * *', // Default: daily at 9:00 AM
-      SALTTYPE: 2,
-      SALTQUERYNUM: '',
-      SALTQUERYPARAM: '',
-      SALTJOB: '',
-      SALTACTIVE: null,
-      SALTACTIVEDATE: new Date(), // Default to today
-      SALTDCRE: '',
-      SALTDMAJ: '',
-      SALTUTIL: '',
-      SALTCATCHUP: 0,
-      SALTCATCHUPBOOLEAN: false,
-      SALTREFALTID: this.alertDisplay.ALTID,
-      SALTCOMMENT: '',
-      SALTSHELL: ''
-    };
-    
-    // Set default schedule builder values
-    this.scheduleFrequency = 'daily';
-    this.scheduleHour = 9;
-    this.scheduleMinute = 0;
-    this.scheduleDayOfWeek = 1;
-    this.scheduleDayOfMonth = 1;
-    this.scheduleInterval = 15;
-    
-    // Update readable display
-    this.updateReadableSchedule();
-    
-    this._messageService.add({severity:'info', summary:'New Schedule', detail: 'Configure the schedule settings and save.'});
+  /** Close dialog and reset */
+  closeDialog() {
+    this.displayAlert = false;
+    this.crudMode = 'view';
+    this.isNewAlert = false;
+    this.isNewDistribution = false;
+    this.isNewSchedule = false;
   }
 
   ngOnDestroy() {
@@ -423,115 +912,10 @@ export class AlertsICRComponent implements OnDestroy {
     }
   }
 
-  createAlert() {
-
-  }
-
   onRowSelect(ev) {
-
-  }
-  saveChanges() {
-    this.alertDistributionDisplay = {
-                      DALTID: this.alertDisplay.ALTID,
-                      NEW_DALTEMAIL:'',
-                      NEW_DALTEMAILCC :'',
-                      NEW_DALTEMAILBCC : ''
-    };
-    console.log('Update alertSheduleDisplay_XXXX:',this.alertSheduleDisplay_DALTEMAIL,this.alertSheduleDisplay_DALTEMAILCC,this.alertSheduleDisplay_DALTEMAILBCC);
-
-    if(!Object.is(this.alertSheduleDisplay_DALTEMAIL, null)  && !Object.is(this.alertSheduleDisplay_DALTEMAIL, undefined)) {
-      for(let i=0; i< this.alertSheduleDisplay_DALTEMAIL.length; i ++) {
-        if(this.alertDistributionDisplay.NEW_DALTEMAIL != '' ) {
-          this.alertDistributionDisplay.NEW_DALTEMAIL+= ';';
-        }
-        this.alertDistributionDisplay.NEW_DALTEMAIL+= this.alertSheduleDisplay_DALTEMAIL[i];
-      }
-    }
-       
-    if(!Object.is(this.alertSheduleDisplay_DALTEMAILCC, null)  && !Object.is(this.alertSheduleDisplay_DALTEMAILCC, undefined)) {
-      for(let i=0; i< this.alertSheduleDisplay_DALTEMAILCC.length; i ++) {
-        if(this.alertDistributionDisplay.NEW_DALTEMAILCC != '' ) {
-          this.alertDistributionDisplay.NEW_DALTEMAILCC+= ';';
-        }
-        this.alertDistributionDisplay.NEW_DALTEMAILCC+= this.alertSheduleDisplay_DALTEMAILCC[i];
-      }
-    }
-    if(!Object.is(this.alertSheduleDisplay_DALTEMAILBCC, null)  && !Object.is(this.alertSheduleDisplay_DALTEMAILBCC, undefined)) {
-      for(let i=0; i< this.alertSheduleDisplay_DALTEMAILBCC.length; i ++) {
-        if(this.alertDistributionDisplay.NEW_DALTEMAILBCC != '' ) {
-          this.alertDistributionDisplay.NEW_DALTEMAILBCC+= ';';
-        }
-        this.alertDistributionDisplay.NEW_DALTEMAILBCC+= this.alertSheduleDisplay_DALTEMAILBCC[i];
-      }
-    }
-
-   console.log('Update alert:',this.alertDistributionDisplay);
-    this.subscription.push(this._queryService.postQueryResult(this.queryPostDistribution, [this.alertDistributionDisplay])
-    .subscribe( 
-        data => {  
-            console.log('Update result:',data);
-            this.msgDisplayed = "Alert " + this.alertDisplay.ALTID + " has been updated."; 
-            this.displayProcessCompleted =true;
-        }, // put the data returned from the server in our variable
-        error => {
-        },
-        async () => { 
-                    //this._messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
-    }));
   }
 
-  editAlert(alertId) {
-    let index = this.searchResult.findIndex(x => x.ALTID == alertId);
-    let indexDistribution = this.searchResultDistribution.findIndex(x => x.DALTID == alertId);
-    let indexScheduling = this.searchResultSchedule.findIndex(x => x.SALTREFALTID == alertId);
-    
-    this.searchResult[index].ALTFITPAGEBOOLEAN = this.searchResult[index].ALTFITPAGE==1;
-    this.searchResult[index].ALTFREEZEHEADERBOOLEAN = this.searchResult[index].ALTFREEZEHEADER==1;
-    this.searchResult[index].ALTBORDERBOOLEAN = this.searchResult[index].ALTBORDER==1;
-
-    this.alertDisplay = this.searchResult[index];
-    this.alertDistributionDisplay = this.searchResultDistribution[indexDistribution];
-    this.alertSheduleDisplay = this.searchResultSchedule[indexScheduling];
-
-    // Convert schedule boolean fields and date
-    if (this.alertSheduleDisplay) {
-      this.alertSheduleDisplay.SALTCATCHUPBOOLEAN = this.alertSheduleDisplay.SALTCATCHUP == 1;
-      // Convert SALTACTIVE date string to Date object for calendar
-      if (this.alertSheduleDisplay.SALTACTIVE) {
-        this.alertSheduleDisplay.SALTACTIVEDATE = new Date(this.alertSheduleDisplay.SALTACTIVE);
-      }
-      // Parse cron expression to populate schedule builder
-      this.parseCronExpression();
-    }
-
-    if (this.alertDistributionDisplay.DALTEMAIL) {
-      this.alertSheduleDisplay_DALTEMAIL = this.alertDistributionDisplay.DALTEMAIL.split(';');
-      for(let i=0; i < this.alertSheduleDisplay_DALTEMAIL.length; i++) {
-        if(this.alertSheduleDisplay_DALTEMAIL[i].trim().length == 0) {
-          this.alertSheduleDisplay_DALTEMAIL.splice(i,1);
-        }
-      }
-    }
-
-    if (this.alertDistributionDisplay.DALTEMAILCC) {
-      this.alertSheduleDisplay_DALTEMAILCC = this.alertDistributionDisplay.DALTEMAILCC.split(';');
-      for(let i=0; i < this.alertSheduleDisplay_DALTEMAILCC.length; i++) {
-        if(this.alertSheduleDisplay_DALTEMAILCC[i].trim().length == 0) {
-          this.alertSheduleDisplay_DALTEMAILCC.splice(i,1);
-        }
-      }
-    }
-    if (this.alertDistributionDisplay.DALTEMAILBCC) {
-      this.alertSheduleDisplay_DALTEMAILBCC = this.alertDistributionDisplay.DALTEMAILBCC.split(';');
-      for(let i=0; i < this.alertSheduleDisplay_DALTEMAILBCC.length; i++) {
-        if(this.alertSheduleDisplay_DALTEMAILBCC[i].trim().length == 0) {
-          this.alertSheduleDisplay_DALTEMAILBCC.splice(i,1);
-        }
-      }
-    }
-
-    this.displayAlert = true
-  }
+  // ==================== EXECUTION METHODS (Keep existing) ====================
 
   confirmExecutionLocalQuery(alertId) {
     this.runReportDialog = 2;
@@ -571,13 +955,12 @@ export class AlertsICRComponent implements OnDestroy {
   }
 
   executeLocalQuery(params){
-    this.runReportDialog = 2; /* Mode 2 - Execute local */
+    this.runReportDialog = 2;
     this.executionDataResult=[];
     this.columnsResultExecution = [];
     
     const alertId = this.searchResult[this.executionAlertIndex].ALTID;
     
-    // Execute query via notification API (original flow)
     this.subscription.push(this._alertsICRService.executeQuery(alertId, params)
       .subscribe( 
         data => { 
@@ -606,15 +989,8 @@ export class AlertsICRComponent implements OnDestroy {
     this.runReportDialog = 1;
     this.executionAlertIndex = this.searchResult.findIndex(x => x.ALTID == alertId);
     
-    // Find the schedule for this alert to check if SALTSHELL is populated
-    // Use loose equality (==) since alertId might be string and SALTREFALTID might differ in type
     const schedule = this.searchResultSchedule.find(s => s.SALTREFALTID == alertId || s.SALTQUERYNUM == alertId);
     const hasSaltShell = schedule && schedule.SALTSHELL && schedule.SALTSHELL.trim() !== '';
-    
-    console.log('confirmRunReport - alertId:', alertId);
-    console.log('confirmRunReport - searchResultSchedule:', this.searchResultSchedule);
-    console.log('confirmRunReport - found schedule:', schedule);
-    console.log('confirmRunReport - hasSaltShell:', hasSaltShell);
     
     this._confrmation.confirm({
       message: 'Are you sure that you want to <b>execute</b> this report? <b>' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT + 
@@ -626,16 +1002,11 @@ export class AlertsICRComponent implements OnDestroy {
           this.waitMessage='Running <b>' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT + '</b> report...<br>' + 
                            '<br> The report usually taking <b>between 1 to 3 minutes</b>. An automatic result pop-up will be opened shortly.';
           
-          console.log('confirmRunReport accept - hasSaltShell:', hasSaltShell);
-          
-          // If SALTSHELL is populated, ask user which execution method to use
           if (hasSaltShell) {
-            // Use setTimeout to allow first dialog to close before showing second
             setTimeout(() => {
               this.showShellVsParameterConfirmation(alertId, schedule);
             }, 100);
           } else {
-            // No SALTSHELL - proceed with parameter check
             this.proceedWithParameterCheck();
           }
       },
@@ -653,7 +1024,6 @@ export class AlertsICRComponent implements OnDestroy {
     });
   }
 
-  /** Show confirmation dialog to choose between shell script or parameter execution */
   showShellVsParameterConfirmation(alertId, schedule) {
     this._confrmation.confirm({
       key: 'shellConfirm',
@@ -666,17 +1036,14 @@ export class AlertsICRComponent implements OnDestroy {
       acceptLabel: 'Execute Shell Script',
       rejectLabel: 'Run with Parameters',
       accept: () => {
-        // Execute shell script - call runReport directly with empty params (shell doesn't need params)
         console.log('Executing shell script for schedule:', schedule);
         this.executionAlertParam = [];
-        this.runReportShellOnly(alertId);
+        this.runReportShellOnly(alertId, schedule);
       },
       reject: (type) => {
         if (type === ConfirmEventType.REJECT) {
-          // Run with parameters - proceed to parameter check
           this.proceedWithParameterCheck();
         } else {
-          // Cancel was clicked
           this.waitMessage = '';
           this._messageService.add({severity:'warn', summary:'Cancelled', detail: 'Report execution cancelled'});
         }
@@ -684,7 +1051,6 @@ export class AlertsICRComponent implements OnDestroy {
     });
   }
 
-  /** Proceed with parameter check and execute report */
   proceedWithParameterCheck() {
     this.executionAlertParam = [];
     if(this.searchResult[this.executionAlertIndex].ALTNBPARAM > 0) {
@@ -692,7 +1058,6 @@ export class AlertsICRComponent implements OnDestroy {
       for(let i=0; i < this.executionAlertParamDesc.length; i++) {
         this.executionAlertParam.push('-1');
       }
-      // Use setTimeout to ensure previous dialog is closed
       setTimeout(() => {
         this.captureParamDialog = true;
       }, 100);
@@ -702,9 +1067,8 @@ export class AlertsICRComponent implements OnDestroy {
     }
   }
 
-  /** Execute report using shell script (no parameters needed) */
-  runReportShellOnly(alertId) {
-    this.subscription.push(this._alertsICRService.runReport(alertId, [])
+  runReportShellOnly(alertId, alertSchedule) {
+    this.subscription.push(this._alertsICRService.executeShellScript(alertSchedule.SALTID)
       .subscribe( 
         data => { this.executionDataResult = data; },
         error => {
@@ -718,7 +1082,6 @@ export class AlertsICRComponent implements OnDestroy {
       ));
   }
 
-  /** Execute report with parameters (original flow) */
   runReportWithParams(params) {
     const alertId = this.searchResult[this.executionAlertIndex].ALTID;
     this.subscription.push(this._alertsICRService.runReport(alertId, params)
@@ -736,34 +1099,11 @@ export class AlertsICRComponent implements OnDestroy {
   }
 
   runReport(params){
-    // This method is called from the parameter dialog submission
-    // Simply execute the report with parameters
     this.runReportWithParams(params);
   }
 
   removeReport(alertId) {
-    this.executionAlertIndex = this.searchResult.findIndex(x => x.ALTID == alertId);
-    this._confrmation.confirm({
-      message: 'Are you sure that you want to <b>REMOVE</b> this report? <b>' + this.searchResult[this.executionAlertIndex].ALTID + ' ' + this.searchResult[this.executionAlertIndex].ALTSUBJECT ,
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-          this._messageService.add({severity:'info', summary:'Info Message', detail: 'Alerts/reports removal completed...' });
-          this.searchResult.splice(this.executionAlertIndex,1);
-      },
-      reject: (type) => {
-          switch(type) {
-              case ConfirmEventType.REJECT:
-                  this._messageService.add({severity:'error', summary:'Cancelled', detail:'Alerts/reports removal cancelled'});
-              break;
-              case ConfirmEventType.CANCEL:
-                  this._messageService.add({severity:'warn', summary:'Cancelled', detail:'Alerts/reports removal cancelled'});
-              break;
-          }
-          this.waitMessage='';
-      }
-    });
-    
+    this.confirmDeleteAlert(alertId);
   }
 
   showDialogMaximized(event, dialog: Dialog) {
@@ -778,7 +1118,6 @@ export class AlertsICRComponent implements OnDestroy {
         async data => { this.alertSQLFileContent = await data.text();
                   console.log('Get File result', this.alertSQLFileContent);},
         error => {
-              // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message
               this.waitMessage='';
               this._messageService.add({severity:'error', summary:'ERROR Message', detail: error });
         },
@@ -787,91 +1126,90 @@ export class AlertsICRComponent implements OnDestroy {
               this.alertSQLFileDisplay = true;
               this._messageService.add({severity:'success', summary:'Completed', detail: 'Alerts/reports download completed...' });
         }));
-
   }
+
+  // ==================== EMAIL PASTE HANDLERS ====================
 
   onPasteEmail(event) {
-    /* ClipboardEvent */
-    console.log('chipsEmail :', this.chipsEmail);
     let splitPaste = event.clipboardData.getData('text').split(' ');
     if(event.clipboardData.getData('text').includes(' ')) {
-       this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste]; // don't push the new value inside the array, create a new reference
-       this.chipsEmail.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+       this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste];
+       this.chipsEmail.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
     if(splitPaste[0].includes('\r\n')) {
-      this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste[0].split('\r\n')]; // don't push the new value inside the array, create a new reference
-       this.chipsEmail.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+      this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste[0].split('\r\n')];
+       this.chipsEmail.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
     if(splitPaste[0].includes(';')) {
-      this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste[0].split(';')]; // don't push the new value inside the array, create a new reference
-       this.chipsEmail.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+      this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste[0].split(';')];
+       this.chipsEmail.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
     if(splitPaste[0].includes(',')) {
-      this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste[0].split(',')]; // don't push the new value inside the array, create a new reference
-       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+      this.alertSheduleDisplay_DALTEMAIL=[...this.alertSheduleDisplay_DALTEMAIL, ...splitPaste[0].split(',')];
+       this.chipsEmail.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
   }
+
   onPasteEmailCC(event) {
-    /* ClipboardEvent */
     let splitPaste = event.clipboardData.getData('text').split(' ');
     if(event.clipboardData.getData('text').includes(' ')) {
-       this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste]; // don't push the new value inside the array, create a new reference
-       this.chipsEmailCC.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+       this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste];
+       this.chipsEmailCC.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
     if(splitPaste[0].includes('\r\n')) {
-      this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste[0].split('\r\n')]; // don't push the new value inside the array, create a new reference
-       this.chipsEmailCC.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+      this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste[0].split('\r\n')];
+       this.chipsEmailCC.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
     if(splitPaste[0].includes(';')) {
-      this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste[0].split(';')]; // don't push the new value inside the array, create a new reference
-       this.chipsEmailCC.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+      this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste[0].split(';')];
+       this.chipsEmailCC.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
     if(splitPaste[0].includes(',')) {
-      this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste[0].split(',')]; // don't push the new value inside the array, create a new reference
-       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+      this.alertSheduleDisplay_DALTEMAILCC=[...this.alertSheduleDisplay_DALTEMAILCC, ...splitPaste[0].split(',')];
+       this.chipsEmailCC.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
   }
+
   onPasteEmailBCC(event) {
-    /* ClipboardEvent */
     let splitPaste = event.clipboardData.getData('text').split(' ');
     if(event.clipboardData.getData('text').includes(' ')) {
-       this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste]; // don't push the new value inside the array, create a new reference
-       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+       this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste];
+       this.chipsEmailBCC.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
     if(splitPaste[0].includes('\r\n')) {
-      this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste[0].split('\r\n')]; // don't push the new value inside the array, create a new reference
-       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+      this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste[0].split('\r\n')];
+       this.chipsEmailBCC.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
     if(splitPaste[0].includes(';')) {
-      this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste[0].split(';')]; // don't push the new value inside the array, create a new reference
-       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+      this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste[0].split(';')];
+       this.chipsEmailBCC.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
     if(splitPaste[0].includes(',')) {
-      this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste[0].split(',')]; // don't push the new value inside the array, create a new reference
-       this.chipsEmailBCC.cd.detectChanges(); // use internal change detection
-       event.preventDefault();    //prevent ';' to be written
+      this.alertSheduleDisplay_DALTEMAILBCC=[...this.alertSheduleDisplay_DALTEMAILBCC, ...splitPaste[0].split(',')];
+       this.chipsEmailBCC.cd.detectChanges();
+       event.preventDefault();
        event.target.value ="";
     } 
   }

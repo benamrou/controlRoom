@@ -137,7 +137,7 @@
 </p-dialog>
 
 <!-- Dialog for edit alert -->
-<p-dialog *ngIf="alertDisplay" header="{{alertDisplay.ALTSUBJECT}}" [(visible)]="displayAlert"
+<p-dialog *ngIf="alertDisplay" header="{{isNewAlert ? 'New Alert' : alertDisplay.ALTSUBJECT}}" [(visible)]="displayAlert"
     (onShow)="showDialogMaximized($event,alertDetail)" [maximizable]="true" #alertDetail>
 
     <div class="flex flex-row-reverse flex-wrap" style="padding-right: 20px;">
@@ -145,15 +145,17 @@
             <button (click)="displayAlert=false" pButton="" icon="fas fa-close" label="CANCEL"
                 style="margin-right: 15px; height: 35px;"></button>
             <button (click)="saveChanges()" pButton="" icon="fas fa-save" label="SAVE"
-                style="margin-right: 15px; height: 35px;"></button>
+                    [disabled]="isNewAlert && !alertDisplay.ALTID"
+                    style="margin-right: 15px; height: 35px;"></button>
         </span>
 
         <p-tabView style="width: 100%;">
             <p-tabPanel header="General" lefticon="fas fa-file-invoice">
                 <div class="formgrid grid">
                     <div class="field col-6">
-                        <label class="font-bold" for="alertid">ID</label>
-                        <input id="alertid" pInputText value="{{alertDisplay.ALTID}}" disabled
+                        <label class="font-bold" for="alertid">ID <span *ngIf="isNewAlert" style="color: red;">*</span></label>
+                        <input id="alertid" pInputText [(ngModel)]="alertDisplay.ALTID" [disabled]="!isNewAlert"
+                            placeholder="e.g., QRY0000001"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-6">
@@ -317,7 +319,8 @@
                     <!-- Row 1: ID, Description, Active Date -->
                     <div class="field col-3">
                         <label class="font-bold" for="saltid">Schedule ID</label>
-                        <input id="saltid" pInputText [(ngModel)]="alertSheduleDisplay.SALTID" disabled
+                        <input id="saltid" pInputText [(ngModel)]="alertSheduleDisplay.SALTID" [disabled]="!isNewSchedule"
+                            [placeholder]="isNewSchedule ? 'Enter schedule ID' : ''"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
                     </div>
                     <div class="field col-6">
@@ -635,7 +638,7 @@
                                 style="height: 3em; width: 3em; border-color: white !important; color: white !important;">
                             </button>
                             <button pButton pRipple tooltipPosition="bottom" icon="pi pi-copy"
-                                pTooltip="Duplicate alert" class="p-button-rounded p-button-sm p-button-secondary"
+                                (click)="duplicateAlert(rowData.ALTID)" pTooltip="Duplicate alert" class="p-button-rounded p-button-sm p-button-secondary"
                                 style="height: 3em; width: 3em; border-color: white !important; color: white !important;">
                             </button>
                             <button pButton pRipple tooltipPosition="bottom" icon="pi pi-play"
