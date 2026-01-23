@@ -18,7 +18,7 @@ import { TreeDragDropService } from 'primeng/api';
  * 
  * @author Ahmed Benamrouche
  * 
- */
+ */ 
 
 @Component({
 
@@ -195,69 +195,129 @@ export class MassJournalComponent {
     this.selectedElement = null;
   }
 
-  downloadFile(id: any, isError: any) {
+downloadFile(id: any, isError: any) {
+  console.log('Downloading...', id, this.searchResult[id]);
+  
+  if (isError) {
+    // For errors, parse the malformed JSONERROR
     let raw = this.searchResult[id].JSONERROR;
-    // Step 1: Replace single quotes with double quotes
-    raw = this.fixMalformedJson(raw);
-
-    console.log ('Downloading...', id, this.searchResult[id], raw)
-    if (isError) {
-      this._exportService.saveCSV(raw, null, null, null, 
+    let parsedData = this.fixMalformedJson(raw);
+    
+    this._exportService.saveCSV(parsedData, null, null, null, 
+                                'MASSCHANGE_' + this.searchResult[id].JSONID, 
+                                'Mass Change execution report REJECTION', 
+                                'Process ' + this.searchResult[id].JSONID + 
+                                ' running the EXCEL file ' + this.searchResult[id].JSONFILE + 
+                                ' has been executed on ' + this.searchResult[id].JSONDPROCESS + 
+                                ' by ' + this.searchResult[id].USERNAME + 
+                                ' - Nb error: ' + this.searchResult[id].JSONNBERROR);
+  } else {
+    // For successful records, JSONCONTENT is already valid JSON
+    try {
+      let content = this.searchResult[id].JSONCONTENT;
+      let parsedData;
+      
+      // Check if it's a string that needs parsing or already an object
+      if (typeof content === 'string') {
+        parsedData = JSON.parse(content);
+      } else {
+        parsedData = content;
+      }
+      
+      console.log('✅ Successfully parsed', parsedData.length, 'records');
+      
+      this._exportService.saveCSV(parsedData, null, null, null, 
                                   'MASSCHANGE_' + this.searchResult[id].JSONID, 
-                                  'Mass Change execution report REJECTION', 'Process ' + this.searchResult[id].JSONID + ' running the EXCEL file ' + this.searchResult[id].JSONFILE +  ' has been executed on ' +
-                                  this.searchResult[id].JSONDPROCESS + ' by ' + this.searchResult[id].USERNAME + ' - Nb error: ' + this.searchResult[id].JSONNBERROR);
-    }
-    else {
-      this._exportService.saveCSV(JSON.parse(this.searchResult[id].JSONCONTENT), null, null, null, 
-                                  'MASSCHANGE_' + this.searchResult[id].JSONID, 
-                                  'Mass Change execution report', 'Process ' + this.searchResult[id].JSONID + ' running the EXCEL file ' + this.searchResult[id].JSONFILE +  ' has been executed on ' +
-                                  this.searchResult[id].JSONDPROCESS + ' by ' + this.searchResult[id].USERNAME);
-
+                                  'Mass Change execution report', 
+                                  'Process ' + this.searchResult[id].JSONID + 
+                                  ' running the EXCEL file ' + this.searchResult[id].JSONFILE + 
+                                  ' has been executed on ' + this.searchResult[id].JSONDPROCESS + 
+                                  ' by ' + this.searchResult[id].USERNAME);
+    } catch (e) {
+      console.error('Failed to parse JSONCONTENT:', e);
+      this._messageService.add({
+        severity: 'error', 
+        summary: 'Parse Error', 
+        detail: 'Could not parse the content data'
+      });
     }
   }
+}
 
- fixMalformedJson(raw: string): any[] {
-  let corrected = raw;
-
-  // Step 1: Quote all unquoted keys.
-  corrected = corrected.replace(/([A-Z_]+)\s*:/g, '"$1":');
-
-  // Step 2: Quote date values and other unquoted strings.
-  // This regex is now more comprehensive to catch various unquoted values.
-  corrected = corrected.replace(/:([^\s"\[{,}\]]+)/g, (match, value) => {
-    // If the value is a number or boolean, don't quote it.
-    if (/^-?\d+(\.\d+)?$|^(true|false|null)$/i.test(value)) {
-      return `:${value}`;
-    }
-    // Otherwise, wrap it in quotes.
-    return `:"${value}"`;
-  });
-
-  // Step 3: Explicitly handle the COMMENTS field, which contains commas and other characters.
-  // The regex finds the COMMENTS key and the rest of the string until the end of the object.
-  corrected = corrected.replace(/("COMMENTS":)([^}]*)/g, (match, key, value) => {
-    // We need to be careful with nested commas and other potential issues.
-    // Let's manually find the end of the comment by looking for the last parentheses.
-    const endOfCommentIndex = value.lastIndexOf(')');
-    if (endOfCommentIndex !== -1) {
-      // The comment ends with the closing parenthesis and is followed by the closing brace of the object.
-      const commentValue = value.substring(0, endOfCommentIndex + 1);
-      const remaining = value.substring(endOfCommentIndex + 1);
-      const escapedComment = commentValue.trim().replace(/"/g, '\\"');
-      return `${key}"${escapedComment}"${remaining}`;
-    }
-    // If no parenthesis is found, fall back to a simpler quote.
-    const escapedValue = value.trim().replace(/"/g, '\\"');
-    return `${key}"${escapedValue}"`;
-  });
-
-  // Final parse
+// Alternative: More defensive parsing
+fixMalformedJson(raw: string): any[] {
+  const records: any[] = [];
+  
+  // Step 1: Try normal JSON parse first
   try {
-    return JSON.parse(corrected);
+    return JSON.parse(raw);
   } catch (e) {
-    console.error("❌ JSON parsing failed:", e, corrected);
-    return [];
+    console.log('Standard parse failed, attempting manual extraction...');
   }
+  
+  // Step 2: Remove outer brackets if present
+  let content = raw.trim().replace(/^\[/, '').replace(/\]$/, '');
+  
+  // Step 3: Split on object boundaries - look for },{
+  const objectStrings = content.split(/\},\s*\{/);
+  
+  console.log(`Found ${objectStrings.length} potential objects`);
+  
+  // Step 4: Process each object string
+  objectStrings.forEach((objStr, index) => {
+    // Add back braces if missing
+    if (!objStr.trim().startsWith('{')) objStr = '{' + objStr;
+    if (!objStr.trim().endsWith('}')) objStr = objStr + '}';
+    
+    try {
+      // Try to parse with quotes added
+      let fixed = objStr
+        // Quote unquoted keys
+        .replace(/([{,]\s*)([A-Z_]+)(\s*:)/g, '$1"$2"$3')
+        // Quote date values
+        .replace(/:\s*(\d{1,2}\/\d{1,2}\/\d{4})/g, ':"$1"')
+        // Quote numbers with leading zeros
+        .replace(/:\s*(0\d{5,})/g, ':"$1"')
+        // Quote unquoted string values (but not numbers, booleans, null)
+        .replace(/:\s*([^"\s,{}[\]]+?)(\s*[,}])/g, (match, value, end) => {
+          if (/^-?\d+(\.\d+)?$/.test(value) || /^(true|false|null)$/i.test(value)) {
+            return `:${value}${end}`;
+          }
+          return `:"${value}"${end}`;
+        });
+      
+      const parsed = JSON.parse(fixed);
+      records.push(parsed);
+    } catch (parseError) {
+      console.warn(`Could not parse object ${index}:`, objStr.substring(0, 100));
+      
+      // Last resort: manual field extraction
+      const record: any = {};
+      
+      // This regex captures field name and value
+      const fieldPattern = /"?([A-Z_]+)"?\s*:\s*([^,}]+)/g;
+      let match;
+      
+      while ((match = fieldPattern.exec(objStr)) !== null) {
+        const key = match[1];
+        let value = match[2].trim().replace(/^["']|["']$/g, '');
+        
+        // Convert to number if appropriate (but not UPC or EFFECTIVE_DATE)
+        if (key !== 'UPC' && key !== 'EFFECTIVE_DATE' && /^\d+$/.test(value)) {
+          record[key] = parseInt(value);
+        } else {
+          record[key] = value || null;
+        }
+      }
+      
+      if (Object.keys(record).length > 0) {
+        records.push(record);
+      }
+    }
+  });
+  
+  console.log(`✅ Manually extracted ${records.length} records`);
+  return records;
 }
 
   expandColumn(indice: number) {

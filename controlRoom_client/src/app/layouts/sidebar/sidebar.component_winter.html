@@ -352,6 +352,16 @@
                                 <span><i class="fa fa-paste"></i> {{ 'Purchase order'}}</span>
                             </a>
                         </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/purchaseorderpush" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-paste"></i> {{ 'Purchase order (Push)'}}</span>
+                            </a>
+                        </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/stocklayer" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-layer-group"></i> {{ 'Stock layer'}}</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </div>

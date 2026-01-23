@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import {DatePipe} from '@angular/common';
-import { map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 
 import * as excel from 'exceljs';
 import * as fs from 'file-saver';  
@@ -271,11 +271,16 @@ export class ImportService{
         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('FILENAME', filename);
         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
-        return this._http.post(this.request, this.params, headersSearch, json).pipe(map(response => {
+        return this._http.post(this.request, this.params, headersSearch, json).pipe(
+            tap(response => console.log('Backend response received')),
+            catchError(error => {
+                console.error('Backend error:', error);
+                return throwError(error);
+            }),
+            map(response => {
                 let data = <any> response;
                 return data;
         }));
-
     }
 
     getTemplate (templateID: any) {

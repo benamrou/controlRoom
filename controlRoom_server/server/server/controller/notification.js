@@ -59,6 +59,15 @@ let heap = {
         tls: {
               rejectUnauthorized: false
           },
+          // ADD THESE TIMEOUT CONFIGURATIONS:
+        connectionTimeout: 60000,      // 60 seconds to connect
+        greetingTimeout: 30000,        // 30 seconds for greeting
+        socketTimeout: 300000,         // 5 minutes for socket operations (DATA phase)
+        
+        // ADD CONNECTION POOLING:
+        pool: true,                    // Use connection pool
+        maxConnections: 5,             // Max simultaneous connections
+        maxMessages: 100,              // Max messages per connection
         dkim: {
             domainName: configuration.config.notification.email_service,
             keySelector: "default",
@@ -321,6 +330,10 @@ async function processContent(SQLProcess, alertData, request, response, result) 
 
 async function processDetailandXLS(SQLProcess, alertData, request, response, result, queryNodes, renameQuery,
                                    SUBJECT_EXT, FILENAME_EXT, bannerData) {
+                                         // Object to collect all sheet data for archiving
+      let archiveData = {};
+      let totalArchiveRows = 0;
+
       // Start executing first SQL query to get detailData for HTML/email usage
     SQLProcess.executeQueryUsingMyCallBack(
       SQLProcess.getNextTicketID(),
@@ -447,6 +460,9 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                   heap.logger.log('alert', `Error in json2xls renameColumn ${qNode.key}: ${renameColumn}`, 'alert', 3);
                   heap.logger.log('alert', `Error in json2xls for ${qNode.key}: ${err}`, 'alert', 3);
                 }
+                // Store sheet data for archiving (after worksheet processing)
+                archiveData[qNode.sheetName] = dataDetailN || [];
+                totalArchiveRows += (dataDetailN || []).length;
                 resolve();
               }
             );
@@ -503,36 +519,42 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
           );
         }
 
-        // Log to ALERTLOG
-        if (detailData.length > 500) {
-          await SQLProcess.executeQuery(
-            SQLProcess.getNextTicketID(),
-            `INSERT INTO ALERTLOG SELECT ''${alertData[0].ALTID}'', SYSDATE, utl_raw.cast_to_raw('{big data}'), sysdate, sysdate, 'notification.js', '${detailData.length}' FROM DUAL`,
-            "'{" + request.query.PARAM + "}'",
-            request.header('USER'),
-            "'{" + request.header('DATABASE_SID') + "}'",
-            "'{" + request.header('LANGUAGE') + "}'",
-            request,
-            response
-          );
-        } else {
-          const jsonSnippet = JSON.stringify(detailData).substring(1, 2000).replace(/'/g, "''''");
-          //const query = `INSERT INTO ALERTLOG SELECT ''${alertData[0].ALTID}'', SYSDATE, utl_raw.cast_to_raw(''${jsonSnippet}''), sysdate, sysdate, ''notification.js'', '''${detailData.length}''' FROM DUAL`;
-          const query = "INSERT INTO ALERTLOG  SELECT ''" + alertData[0].ALTID + "'', SYSDATE, utl_raw.cast_to_raw(SUBSTR(''" +
-                              JSON.stringify(detailData).substring(1,3000).replace(/'/g, "''''") + "'',1,2000)), sysdate, sysdate, ''notification.js'', ''" + detailData.length + "'' from DUAL";
-                  
-          heap.logger.log('alert', 'Insert log ALERTLOG ' + alertData[0].ALTID + ' QUERY: ' + query, 'alert', 3);
-          await SQLProcess.executeQuery(
-            SQLProcess.getNextTicketID(),
-            query,
-            "'{" + request.query.PARAM + "}'",
-            request.header('USER'),
-            "'{" + request.header('DATABASE_SID') + "}'",
-            "'{" + request.header('LANGUAGE') + "}'",
-            request,
-            response
-          );
-        }
+        // Log to ALERTLOG with all sheets data (async - don't block email)
+        const archiveJson = JSON.stringify(archiveData);
+        heap.logger.log('alert', 'Archiving to ALERTLOG - ALTID: ' + alertData[0].ALTID + ', Total rows: ' + totalArchiveRows + ', Sheets: ' + Object.keys(archiveData).join(', '), 'alert', 1);
+        
+        // Fire and forget - don't await, let email send immediately
+        (async function archiveToDatabase() {
+          const oracledb = require('oracledb');
+          let archiveConnection;
+          try {
+            archiveConnection = await oracledb.getConnection(configuration.config.db.connAttrs);
+            
+            const insertSql = `INSERT INTO ALERTLOG (LALTID, LALTEDATE, LALTMESS, LALTDCRE, LALTDMAJ, LALTUTIL, LALTROWCOUNT) 
+                               VALUES (:altid, SYSDATE, :blobdata, SYSDATE, SYSDATE, :util, :rowcount)`;
+            
+            const bindParams = {
+              altid: alertData[0].ALTID,
+              blobdata: Buffer.from(archiveJson, 'utf8'),
+              util: 'notification.js',
+              rowcount: String(totalArchiveRows)
+            };
+            
+            await archiveConnection.execute(insertSql, bindParams, { autoCommit: true });
+            heap.logger.log('alert', 'Archive SUCCESS - ALTID: ' + alertData[0].ALTID, 'alert', 1);
+            
+          } catch (archiveErr) {
+            heap.logger.log('alert', 'Archive ERROR: ' + archiveErr.message, 'alert', 3);
+          } finally {
+            if (archiveConnection) {
+              try {
+                await archiveConnection.close();
+              } catch (closeErr) {
+                heap.logger.log('alert', 'Archive connection close error: ' + closeErr.message, 'alert', 3);
+              }
+            }
+          }
+        })();
 
         // Cleanup
         result = null;

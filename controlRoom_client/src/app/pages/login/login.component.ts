@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
     showVersion = false;
     
     // Winter elements
+    footballs: number[] = Array(50).fill(0);
     snowflakes: number[] = Array(50).fill(0);
 
     constructor(

@@ -1,0 +1,842 @@
+/* header.component.scss - Super Bowl LX 2026 Beach Boardwalk Theme */
+
+.navbar.superbowl-header {
+    background: linear-gradient(135deg, #4682B4 0%, #5F9EA0 50%, #4682B4 100%);
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.2),
+        0 1px 0 rgba(212, 175, 55, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    height: 56px;
+    border-bottom: 2px solid #d4af37;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, 
+            #d4af37 0%, 
+            #f4d03f 25%, 
+            #d4af37 50%, 
+            #f4d03f 75%, 
+            #d4af37 100%);
+        animation: shimmer 3s linear infinite;
+    }
+}
+
+@keyframes shimmer {
+    0% { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Base navbar positioning */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    height: 56px;
+    margin-bottom: 0;
+}
+
+.superbowl-nav {
+    background: transparent !important;
+    padding: 8px 0;
+    height: 56px;
+}
+
+.navbar-brand {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: scale(1.05);
+        color: #d4af37 !important;
+    }
+}
+
+/* Super Bowl Badge */
+.superbowl-badge {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #d4af37 100%);
+    padding: 6px 20px;
+    border-radius: 20px;
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border: 2px solid #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.badge-text {
+    font-size: 12px;
+    font-weight: 900;
+    color: #001a33;
+    letter-spacing: 1.2px;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+    line-height: 1;
+}
+
+.badge-location {
+    font-size: 9px;
+    font-weight: 700;
+    color: #003366;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 
+            0 3px 10px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+        box-shadow: 
+            0 5px 15px rgba(212, 175, 55, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+}
+
+/* Navigation Items */
+.navbar-nav {
+    .nav-item {
+        margin: 0 5px;
+    }
+    
+    .nav-link {
+        color: #ffffff !important;
+        font-weight: 600;
+        padding: 8px 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        
+        &:hover {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37 !important;
+            transform: translateY(-2px);
+        }
+        
+        i {
+            font-size: 16px;
+        }
+    }
+}
+
+/* Dropdown Menus */
+.superbowl-dropdown {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    padding: 8px 0;
+    margin-top: 10px;
+    min-width: 200px;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        right: 20px;
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid #d4af37;
+    }
+    
+    .dropdown-item {
+        color: #001a33;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        
+        &:hover {
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+            color: #001a33;
+            padding-left: 25px;
+        }
+        
+        &.isDisabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        i {
+            width: 20px;
+            text-align: center;
+            color: #003366;
+        }
+    }
+}
+
+/* Toggle Button */
+.navbar-toggler {
+    border: 2px solid #d4af37;
+    background: rgba(212, 175, 55, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background: rgba(212, 175, 55, 0.3);
+        transform: rotate(90deg);
+    }
+    
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(212, 175, 55, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .superbowl-badge {
+        position: static;
+        transform: none;
+        margin: 10px auto;
+        width: fit-content;
+    }
+    
+    .navbar-collapse {
+        background: rgba(70, 130, 180, 0.95);
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 12px;
+        border: 2px solid #d4af37;
+    }
+    
+    .navbar-nav {
+        .nav-link {
+            margin: 5px 0;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .superbowl-badge {
+        padding: 6px 16px;
+        
+        .badge-text {
+            font-size: 12px;
+        }
+        
+        .badge-location {
+            font-size: 9px;
+        }
+    }
+    
+    .navbar-brand {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-brand {
+        font-size: 14px;
+    }
+    
+    .superbowl-badge {
+        padding: 4px 12px;
+        
+        .badge-text {
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .badge-location {
+            font-size: 8px;
+        }
+    }
+}
+
+/* Additional Decorative Elements */
+.header {
+    position: relative;
+    
+    &::after {
+        content: '🏈';
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 24px;
+        opacity: 0.2;
+        pointer-events: none;
+        animation: rotate 10s linear infinite;
+    }
+}
+
+@keyframes rotate {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* Dialog Styling */
+.p-dialog {
+    .p-dialog-header {
+        background: linear-gradient(135deg, #003366 0%, #004d99 100%);
+        color: #ffffff;
+        border-bottom: 3px solid #d4af37;
+    }
+    
+    .p-dialog-content {
+        background: #ffffff;
+    }
+    
+    button.p-button {
+        background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+        border: 2px solid #001a33;
+        color: #001a33;
+        font-weight: 600;
+        
+        &:hover {
+            background: linear-gradient(135deg, #f4d03f 0%, #d4af37 100%);
+            transform: translateY(-2px);
+        }
+    }
+}
+
+/** SIDEBAR **/
+/* sidebar.component.scss - Super Bowl LX 2026 Beach Boardwalk Theme */
+
+/* Base sidebar positioning - works with both .sidebar and .superbowl-sidebar */
+.sidebar {
+    background: linear-gradient(180deg, #5F9EA0 0%, #4682B4 30%, #5F9EA0 70%, #4682B4 100%);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+    border-right: 3px solid #d4af37;
+    position: fixed;
+    left: 235px;
+    top: 56px;
+    width: 235px;
+    margin-left: -235px;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: all 0.2s ease-in-out;
+    z-index: 1000;
+    padding-bottom: 40px;
+    white-space: nowrap;
+}
+
+.sidebar.superbowl-sidebar {
+    background: linear-gradient(180deg, #5F9EA0 0%, #4682B4 30%, #5F9EA0 70%, #4682B4 100%);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+    border-right: 3px solid #d4af37;
+    position: fixed;
+    left: 235px;
+    top: 56px;
+    width: 235px;
+    margin-left: -235px;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: all 0.2s ease-in-out;
+    z-index: 1000;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 3px;
+        height: 100%;
+        background: linear-gradient(180deg, 
+            #d4af37 0%, 
+            #f4d03f 25%, 
+            #d4af37 50%, 
+            #f4d03f 75%, 
+            #d4af37 100%);
+        animation: shimmer 3s linear infinite;
+    }
+}
+
+/* Collapsed and push states work for both .sidebar and .superbowl-sidebar */
+.sidebar.collapsed,
+.sidebar.superbowl-sidebar.collapsed {
+    width: 50px;
+    
+    .list-group-item {
+        span {
+            display: none;
+        }
+    }
+}
+
+.sidebar.sidebarPushRight,
+.sidebar.superbowl-sidebar.sidebarPushRight {
+    left: 0;
+}
+
+@keyframes shimmer {
+    0% { background-position: 0 -100%; }
+    100% { background-position: 0 200%; }
+}
+
+/* Scrollbar Styling */
+.superbowl-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.superbowl-sidebar::-webkit-scrollbar-track {
+    background: rgba(70, 130, 180, 0.3);
+}
+
+.superbowl-sidebar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #d4af37 0%, #f4d03f 100%);
+    border-radius: 4px;
+    
+    &:hover {
+        background: linear-gradient(180deg, #f4d03f 0%, #d4af37 100%);
+    }
+}
+
+/* List Group Items */
+.sidebar .list-group,
+.superbowl-sidebar .list-group {
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
+.sidebar .list-group-item,
+.superbowl-sidebar .list-group-item {
+    background: #1B3A57 !important;
+    border: none !important;
+    color: #ffffff !important;
+    padding: 15px 20px;
+    margin: 2px 0;
+    font-size: 15px;
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    position: relative;
+    
+    &::before {
+        content: '🏈';
+        position: absolute;
+        left: -20px;
+        opacity: 0;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+    
+    &:hover {
+        background: rgba(212, 175, 55, 0.15);
+        border-left-color: #d4af37;
+        padding-left: 25px;
+        color: #d4af37;
+        
+        &::before {
+            left: 5px;
+            opacity: 1;
+        }
+    }
+    
+    &.router-link-active {
+        background: linear-gradient(90deg, rgba(212, 175, 55, 0.2) 0%, transparent 100%);
+        border-left-color: #d4af37;
+        color: #d4af37;
+        font-weight: 600;
+        box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.2);
+    }
+    
+    i {
+        margin-right: 10px;
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+}
+
+/* Nested Menu */
+.sidebar .nested-menu,
+.superbowl-sidebar .nested-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar .nested,
+.superbowl-sidebar .nested {
+    list-style: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    
+    &.expand {
+        max-height: 1000px;
+    }
+}
+
+/* Submenu */
+.sidebar .submenu,
+.superbowl-sidebar .submenu {
+    background: rgba(0, 60, 80, 0.3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 2px solid rgba(212, 175, 55, 0.3);
+    
+    li {
+        list-style: none;
+        
+        a {
+            display: block;
+            padding: 12px 20px 12px 40px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border-left: 2px solid transparent;
+            position: relative;
+            
+            &::before {
+                content: '›';
+                position: absolute;
+                left: 25px;
+                color: #d4af37;
+                font-size: 18px;
+                opacity: 0;
+                transition: all 0.3s ease;
+            }
+            
+            &:hover {
+                background: rgba(212, 175, 55, 0.1);
+                padding-left: 45px;
+                color: #d4af37;
+                border-left-color: #d4af37;
+                
+                &::before {
+                    opacity: 1;
+                    left: 30px;
+                }
+            }
+            
+            &.router-link-active {
+                background: rgba(212, 175, 55, 0.15);
+                color: #d4af37;
+                border-left-color: #d4af37;
+                font-weight: 600;
+            }
+            
+            i {
+                margin-right: 8px;
+                width: 18px;
+                text-align: center;
+            }
+        }
+    }
+}
+
+/* Sub-submenu */
+.superbowl-sidebar .subsubmenu {
+    background: rgba(0, 60, 80, 0.4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 2px solid rgba(212, 175, 55, 0.2);
+    
+    a {
+        display: block;
+        padding: 10px 20px 10px 60px;
+        color: rgba(255, 255, 255, 0.75);
+        text-decoration: none;
+        font-size: 13px;
+        transition: all 0.3s ease;
+        border-left: 2px solid transparent;
+        
+        &:hover {
+            background: rgba(212, 175, 55, 0.1);
+            padding-left: 65px;
+            color: #d4af37;
+            border-left-color: #d4af37;
+        }
+        
+        &.router-link-active {
+            background: rgba(212, 175, 55, 0.15);
+            color: #d4af37;
+            border-left-color: #d4af37;
+            font-weight: 600;
+        }
+        
+        i {
+            margin-right: 6px;
+            width: 16px;
+            text-align: center;
+        }
+    }
+}
+
+/* Admin Sidebar */
+.sidebar_admin.superbowl-sidebar-admin {
+    background: linear-gradient(180deg, #5F9EA0 0%, #4682B4 50%, #5F9EA0 100%);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+    border-right: 3px solid #d4af37;
+    position: fixed;
+    left: 235px;
+    bottom: 0;
+    width: 235px;
+    margin-left: -235px;
+    padding: 20px 0;
+    transition: all 0.2s ease-in-out;
+    z-index: 999;
+    
+    &.collapsed {
+        width: 50px;
+    }
+    
+    &.sidebarPushRight {
+        left: 0;
+    }
+    
+    .list-group {
+        margin: 0;
+        padding: 0 10px;
+    }
+    
+    .list-group-item {
+        background: transparent;
+        border: none;
+        border-left: 3px solid transparent;
+        color: #ffffff;
+        padding: 12px 15px;
+        margin: 2px 0;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            background: rgba(212, 175, 55, 0.15);
+            border-left-color: #d4af37;
+            color: #d4af37;
+        }
+        
+        &.isDisabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        i {
+            margin-right: 8px;
+        }
+    }
+    
+    .submenu {
+        background: rgba(0, 60, 80, 0.3);
+        margin: 5px 0;
+        padding: 0;
+        list-style: none;
+        border-radius: 8px;
+        overflow: hidden;
+        
+        li {
+            list-style: none;
+            
+            a {
+                display: block;
+                padding: 10px 15px 10px 35px;
+                color: rgba(255, 255, 255, 0.85);
+                text-decoration: none;
+                font-size: 13px;
+                transition: all 0.3s ease;
+                border-left: 2px solid transparent;
+                
+                &:hover {
+                    background: rgba(212, 175, 55, 0.1);
+                    padding-left: 40px;
+                    color: #d4af37;
+                    border-left-color: #d4af37;
+                }
+                
+                &.router-link-active {
+                    background: rgba(212, 175, 55, 0.15);
+                    color: #d4af37;
+                    border-left-color: #d4af37;
+                    font-weight: 600;
+                }
+                
+                i {
+                    margin-right: 6px;
+                    width: 16px;
+                    text-align: center;
+                }
+            }
+        }
+    }
+    
+    .logo {
+        text-align: center;
+        padding: 20px;
+        border-top: 2px solid rgba(212, 175, 55, 0.3);
+        margin-top: 15px;
+        
+        img {
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.3));
+            transition: all 0.3s ease;
+            
+            &:hover {
+                transform: scale(1.05);
+                filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.5));
+            }
+        }
+    }
+}
+
+/* Football Icon Decoration */
+.superbowl-sidebar::after {
+    content: '🏈';
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    font-size: 32px;
+    opacity: 0.15;
+    animation: spin 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Link Styles */
+.bbs_link_menu {
+    display: block;
+    text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .sidebar,
+    .superbowl-sidebar {
+        top: 54px;
+        left: 0;
+    }
+    
+    .superbowl-sidebar-admin {
+        left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar,
+    .superbowl-sidebar {
+        width: 235px;
+        
+        &.sidebarPushRight {
+            left: -250px;
+        }
+        
+        &.collapsed {
+            width: 50px;
+        }
+    }
+    
+    .sidebar.collapsed,
+    .superbowl-sidebar.collapsed {
+        width: 50px;
+    }
+    
+    .superbowl-sidebar-admin {
+        width: 235px;
+        
+        &.collapsed {
+            width: 50px;
+        }
+    }
+}
+
+/* Additional Decorative Elements */
+.superbowl-sidebar {
+    &::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 5px;
+        background: linear-gradient(90deg, 
+            #d4af37 0%, 
+            #f4d03f 50%, 
+            #d4af37 100%);
+        z-index: 1001;
+    }
+}
+
+/* Nested Menu Expand Animation */
+.nested {
+    &.expand {
+        animation: expandDown 0.4s ease;
+    }
+}
+
+@keyframes expandDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Icon Animations on Hover */
+.superbowl-sidebar .list-group-item:hover i,
+.superbowl-sidebar-admin .list-group-item:hover i {
+    transform: scale(1.2) rotate(10deg);
+}
+
+/* Active Route Glow Effect */
+.superbowl-sidebar .router-link-active,
+.superbowl-sidebar-admin .router-link-active {
+    position: relative;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at left, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+}
