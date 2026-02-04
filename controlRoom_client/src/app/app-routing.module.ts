@@ -82,6 +82,8 @@ import { PurchaseOrderPushComponent } from './pages/mass.update/purchase.order.p
 import { QueryLibraryComponent } from './pages/admin/query.library/query.library.component';
 import { DictionaryComponent } from './pages/admin/dictionary/dictionary.component';
 
+import { ItemRetailComponent } from './pages/mass.update/item.retail/item.retail.component';
+
 const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
   { path: 'login', component: LoginComponent },
@@ -171,6 +173,7 @@ const routes: Routes = [
   { path: 'itemdescription', component: ItemDescriptionComponent, canActivate: [AuthentificationGuard] },
   { path: 'purchaseorderpush', component: PurchaseOrderPushComponent, canActivate: [AuthentificationGuard] },
   { path: 'stocklayer', component: StockLayerComponent, canActivate: [AuthentificationGuard] },
+  { path: 'itemretail', component: ItemRetailComponent, canActivate: [AuthentificationGuard] },
   
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },

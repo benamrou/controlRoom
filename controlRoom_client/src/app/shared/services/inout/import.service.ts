@@ -282,41 +282,49 @@ export class ImportService{
                 return data;
         }));
     }
+getTemplate(templateID: any) {
+    this.request = this.getTemplateJSONUrl;
+    let headersSearch = new HttpHeaders();
+    this.params = new HttpParams();
+    this.params = this.params.append('PARAM', templateID);
 
-    getTemplate (templateID: any) {
-        //console.log('checkFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
-        this.request = this.getTemplateJSONUrl;
-        let headersSearch = new HttpHeaders();
-        let options = new HttpHeaders();
-        this.params= new HttpParams();
-        this.params = this.params.append('PARAM',templateID);
+    headersSearch = headersSearch.set('QUERY_ID', this.request);
+    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
+    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
-        headersSearch = headersSearch.set('QUERY_ID', this.request );
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    return this._http.getFile(this.request, this.params, headersSearch).pipe(
+        map(response => {
+            console.log('=== DEBUGGING BLOB ===');
+            console.log('Response type:', response.constructor.name);
+            console.log('Response:', response);
+            
+            let blob = response as unknown as Blob;
+            console.log('Blob size:', blob.size);
+            console.log('Blob type:', blob.type);
+            
+            // Check if blob is too small (error response)
+            if (blob.size < 100) {
+                console.error('Blob too small, likely an error response');
+                return -1;
+            }
 
-        return  this._http.getFile(this.request, this.params, headersSearch).pipe(map(response => {
-                console.log('response getfile:', response);
-                let data = <any> response;
-                if (data.size < 100 ) {
-                    return -1
-                }
+            const fileName = `${templateID}.xlsx`;
+            
+            // Create download link
+            let link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = fileName;
+            document.body.appendChild(link);  // Add to DOM
+            link.click();
+            document.body.removeChild(link);  // Remove from DOM
+            
+            // Clean up
+            setTimeout(() => window.URL.revokeObjectURL(link.href), 100);
 
-                let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                const fileName = templateID + `.xlsx`;
-                let file = new File([blob], fileName);
-                let fileUrl = URL.createObjectURL(file);
-                
-                let link = document.createElement('a');
-                link.target = '_blank';
-                link.href = window.URL.createObjectURL(blob);
-                link.setAttribute("download", fileName);
-                link.click();
-
-                return 'Ok';
-        }));
-
-    }
+            return 'Ok';
+        })
+    );
+}
 
     getJournal(filename: any, scope: any, loadDate: any, executionDate: any, futureOnly: any) {
             this.request = this.getJournalJSONUrl;

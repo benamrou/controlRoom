@@ -57,6 +57,9 @@ export class ItemHierarchyComponent implements OnInit{
    msgFinalDisplayed: any;
 
    missingData: any;
+   
+   // NEW: Store execution errors separately (don't merge into worksheet)
+   executionErrors: any[] = [];
 
    screenID;
     waitMessage: string = '';
@@ -272,7 +275,19 @@ export class ItemHierarchyComponent implements OnInit{
                                                                     '<b>Item hierarchy change is usually taking between 1 and 2 minutes</b>';
                                                 
                                                     this._importService.collectResult(executionId.RESULT[0]).subscribe (
-                                                    data => { },
+                                                    data => { 
+                                                        // collectResult returns ONLY error records
+                                                        // Store them separately - don't try to merge into worksheet
+                                                        console.log('collectResult returned:', data);
+                                                        
+                                                        if (data && Array.isArray(data)) {
+                                                            this.executionErrors = data;
+                                                            console.log('Stored', this.executionErrors.length, 'execution errors');
+                                                        } else {
+                                                            this.executionErrors = [];
+                                                            console.log('No execution errors');
+                                                        }
+                                                    },
                                                     error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                                     () => { 
                                                         this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});

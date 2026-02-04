@@ -42,7 +42,7 @@ export class QueryService {
     for (let i=0; i < param.length;i++) {
       this.params = this.params.append('PARAM',param[i]);
     }
-    this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
+    //this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
 
     headersSearch = headersSearch.set('QUERY_ID', queryId);
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());

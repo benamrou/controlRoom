@@ -135,49 +135,29 @@ module.post = function (request,response) {
      * Get Mass-upload template
      */
     app.get('/api/upload/0/', function (request, response) {
-            "use strict";
-            response.setHeader('Access-Control-Allow-Origin', '*');
-            // requestuest methods you wish to allow
-            response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
-            let templateFile;
+        "use strict";
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        
+        let templateFile = __dirname + '/../../templates/' + request.query.PARAM + '.xlsx';
+        
+        logger.log('[UPLOAD]', 'Getting request ' + JSON.stringify(request.query.PARAM), 'upload', 1);
 
-            logger.log('[UPLOAD]', 'Getting request ' + JSON.stringify(request.query.PARAM), 'upload', 1);
-
-            /**
-             * 1 - Item Merhandise Hierarhy template
-             * 2 - SV Attribute
-             */
-            /*if (request.query.PARAM === 'ICR_TEMPLATE001') {
-                templateFile= __dirname + '/../../templates/ICR_CATEGORY_CHANGE_TEMPLATE.xlsx'
-            }*/
-            templateFile= __dirname + '/../../templates/' + request.query.PARAM + '.xlsx';
-            // Check if file specified by the filePath exists 
-            fs.exists( templateFile, function(exists){
-                if (exists) {
-                    // Content-type is very interesting part that guarantee that
-                    // Web browser will handle response in an appropriate manner.
-                    response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                    response.setHeader("Content-Disposition", "attachment; filename=" + request.query.PARAM + '.xlsx');
-
-                    let workbook = new excel.Workbook();
-                    workbook.xlsx.readFile(templateFile)
-                        .then(function() {
-                            return workbook.xlsx.write(response)
-                                .then(function() {
-                                    response.status(200).end();
-                                });
-                        });
-                    //response.download(templateFile);
-                    //fs.createReadStream(templateFile).pipe(response);
-                    //response.end();
-
-                } else {
-                    logger.log('[UPLOAD]', 'file doesnt exist '  + templateFile, 'upload', 3);
-                    response.write("ERROR Template does not exist");
-                    response.status(200).end();
-                }
-            });
+        // Check if file exists
+        fs.exists(templateFile, function(exists) {
+            if (exists) {
+                // Set headers
+                response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                response.setHeader('Content-Disposition', 'attachment; filename=' + request.query.PARAM + '.xlsx');
+                
+                // Stream the file directly - DON'T use ExcelJS
+                fs.createReadStream(templateFile).pipe(response);
+                
+            } else {
+                logger.log('[UPLOAD]', 'file doesnt exist ' + templateFile, 'upload', 3);
+                response.status(404).send('ERROR Template does not exist');
+            }
+        });
     });
         
     // Check 

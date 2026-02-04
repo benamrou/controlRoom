@@ -51,6 +51,9 @@ export class MdmAttributeBrandComponent {
   datePipe: DatePipe;
   dateNow: Date;
   dateTomorrow: Date;
+   
+   // NEW: Store execution errors separately (don't merge into worksheet)
+   executionErrors: any[] = [];
 
   myRepository: TreeNode[] = [];
   selection!: TreeNode;
@@ -58,7 +61,16 @@ export class MdmAttributeBrandComponent {
   batchTobeAdded: any [] = [];
 
   addAllButtonStatus!: string;
-
+   // NEW: Recap dialog properties (REUSABLE - Just copy/paste to other mass-load screens)
+   displayRecapDialog: boolean = false;
+   recapErrorFieldName: string = 'COMMENTS'; // Configure this: the field name that contains error messages
+   recapSummary = {
+       totalRecords: 0,
+       successRecords: 0,
+       errorRecords: 0,
+       errorDetails: [] as any[], // Array of row objects with all columns
+       columns: [] as string[] // Dynamic column names from worksheet
+   };
   // Search action
    searchButtonEnable: boolean = true; // Disable the search button when clicking on search in order to not overload queries
    

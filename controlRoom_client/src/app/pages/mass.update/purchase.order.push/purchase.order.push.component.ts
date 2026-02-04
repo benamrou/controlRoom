@@ -49,7 +49,21 @@ export class PurchaseOrderPushComponent implements OnInit{
    displayUpdateCompleted: boolean = false;
    msgFinalDisplayed;
 
+   // NEW: Recap dialog properties (REUSABLE - Just copy/paste to other mass-load screens)
+   displayRecapDialog: boolean = false;
+   recapErrorFieldName: string = 'COMMENTS'; // Configure this: the field name that contains error messages
+   recapSummary = {
+       totalRecords: 0,
+       successRecords: 0,
+       errorRecords: 0,
+       errorDetails: [] as any[], // Array of row objects with all columns
+       columns: [] as string[] // Dynamic column names from worksheet
+   };
+
    missingData;
+   
+   // NEW: Store execution errors separately (don't merge into worksheet)
+   executionErrors: any[] = [];
 
    screenID;
    waitMessage: string = '';
@@ -77,7 +91,7 @@ export class PurchaseOrderPushComponent implements OnInit{
     this.scheduleDate = new Date();
     this.itemTrace = true;
     this.scheduleFlag = false;
-    this.screenID = 'SCR0000000044';
+    this.screenID = 'SCR0000000049';
     this.activeIndex = 0;
     this.displayConfirm = false;
     this.globalError = [];
@@ -90,10 +104,10 @@ export class PurchaseOrderPushComponent implements OnInit{
       this.menuItems = [{
               id: 'step0',
               label: 'Data selection',
-              title: 'Pick your push order file',
+              title: 'Pick your Push/Breakdown order file',
               command: (event: any) => {
                   this.activeIndex = 0;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Pick your data file push order', detail: event.item.label});
+                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Pick your data file Push/Breakdown order', detail: event.item.label});
               }
           },
           {
@@ -188,7 +202,7 @@ export class PurchaseOrderPushComponent implements OnInit{
                 () => { 
                         if (existTemplate) {
                             this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Template file', detail:  
-                                                    'File push order downloaded.' }); 
+                                                    'File Push/Breakdown order downloaded.' }); 
                         } else {
                             this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
                         }
@@ -209,7 +223,7 @@ export class PurchaseOrderPushComponent implements OnInit{
 
         this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
                             '<br><br>'+
-                            '<b>push order change is usually taking between 1 and 3 minutes</b>';
+                            '<b>Push/Breakdown order change is usually taking between 1 and 3 minutes</b>';
 
         this._importService.postExecution(this.uploadedFiles[0].name, this.toolID,
                             this.datePipe.transform(this.startDate,'MM/dd/yy'), 
@@ -236,9 +250,9 @@ export class PurchaseOrderPushComponent implements OnInit{
                         }
                         /** Run the job integration */
                        this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
-                                           'Step 2/4: Executing push order mapping change... <br>'+ 
+                                           'Step 2/4: Executing Push/Breakdown order mapping change... <br>'+ 
                                             '<br><br>'+
-                                            '<b>push order change is usually taking between 1 and 3 minutes</b>';
+                                            '<b>Push/Breakdown order change is usually taking between 1 and 3 minutes</b>';
                         this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
@@ -249,39 +263,61 @@ export class PurchaseOrderPushComponent implements OnInit{
                                 () =>    {  
 
                                     this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
-                                                        'Step 2/4: Executing push order mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                        'Step 2/4: Executing Push/Breakdown order mapping change... &emsp;<b>COMPLETED</b><br>'+ 
                                                         'Step 3/4: Running integration job... <br>'+ 
                                                         '<br><br>'+
-                                                        '<b>push order change is usually taking between 1 and 3 minutes</b>';
+                                                        '<b>Push/Breakdown order change is usually taking between 1 and 3 minutes</b>';
                                     this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 3/4: Executing plan', detail: '"' + this.uploadedFiles[0].name + '" processing plan completed. Collecting  final integration result.'});
                                     this._importService.executePlan(userID, this.toolID).subscribe( 
                                             data => {  },
                                             error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution issue', detail: error }); },
                                             () => { this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
-                                                    this.msgFinalDisplayed = 'push order  ' + this.uploadedFiles[0].name + ' - ' + 
+                                                    this.msgFinalDisplayed = 'Push/Breakdown order  ' + this.uploadedFiles[0].name + ' - ' + 
                                                                             ' has been successfully processed.';
                                                 
                                                     this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
-                                                                        'Step 2/4: Executing push order mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                        'Step 2/4: Executing Push/Breakdown order mapping change... &emsp;<b>COMPLETED</b><br>'+ 
                                                                         'Step 3/4: Running integration job... &emsp;<b>COMPLETED</b><br>'+ 
                                                                         'Step 4/4: Collecting integration result... <br>'+ 
                                                                         '<br><br>'+
-                                                                        '<b>push order change is usually taking between 1 and 3 minutes</b>';
+                                                                        '<b>Push/Breakdown order change is usually taking between 1 and 3 minutes</b>';
                                                     // Collect result in the back
                                                     this._importService.collectResult(executionId.RESULT[0]).subscribe (
-                                                    data => { },
+                                                    data => { 
+                                                        // collectResult returns ONLY error records
+                                                        // Store them separately - don't try to merge into worksheet
+                                                        console.log('collectResult returned:', data);
+                                                        
+                                                        if (data && Array.isArray(data)) {
+                                                            this.executionErrors = data;
+                                                            console.log('Stored', this.executionErrors.length, 'execution errors');
+                                                        } else {
+                                                            this.executionErrors = [];
+                                                            console.log('No execution errors');
+                                                        }
+                                                    },
                                                     error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                                     () => { 
-                                                        this.displayUpdateCompleted = true;
+                                                        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
+                                                        
+                                                        // ONLY NEW CODE: Build recap summary
+                                                        this.buildRecapSummary();
+                                                        
+                                                        this.msgFinalDisplayed = 'Push/Breakdown order  ' + this.uploadedFiles[0].name + ' - ' + 
+                                                                                ' has been successfully processed.';
+
 
                                                         this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
-                                                                            'Step 2/4: Executing push order mapping change... &emsp;<b>COMPLETED</b><br>'+ 
+                                                                            'Step 2/4: Executing Push/Breakdown order mapping change... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             'Step 3/4: Running integration job... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             'Step 4/4: Collecting integration result... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             '<br><br>'+
-                                                                            '<b>push order change is usually taking between 1 and 3 minutes</b>';
-                                                        this.waitMessage = '';
-                                                        this.reset();
+                                                                            '<b>Push/Breakdown order change is usually taking between 1 and 3 minutes</b>';
+                                                        // Show recap dialog instead of simple dialog
+                                                        this.displayRecapDialog = true;
+
+                                                        this.waitMessage ='';
+                                                        // Don't reset here - let user close recap dialog
                                                     });
                                                 });
                                         });                     
@@ -292,6 +328,104 @@ export class PurchaseOrderPushComponent implements OnInit{
                 this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Required data missing', detail: this.missingData }); 
         }
     }
+
+
+  // NEW METHOD: Build recap summary from worksheet data (GENERIC - Reusable as-is)
+  buildRecapSummary() {
+      
+      const columns = this._importService.wb.sheets[0].worksheet.columns;
+      
+      // Total records from original worksheet
+      this.recapSummary.totalRecords = this._importService.wb.sheets[0].worksheet.rows.length;
+      // Error count from collectResult
+      this.recapSummary.errorRecords = this.executionErrors.length;
+      // Success = Total - Errors
+      this.recapSummary.successRecords = this.recapSummary.totalRecords - this.recapSummary.errorRecords;
+      
+      console.log('Summary - Total:', this.recapSummary.totalRecords, 
+                  'Success:', this.recapSummary.successRecords, 
+                  'Errors:', this.recapSummary.errorRecords);
+      
+      // Get column names dynamically (exclude the error field from display)
+      this.recapSummary.columns = columns
+          .map(col => col.field)
+          .filter(field => field !== this.recapErrorFieldName);
+      
+      console.log('Display columns:', this.recapSummary.columns);
+      
+      // Build error details directly from executionErrors
+      this.recapSummary.errorDetails = this.executionErrors.map(errorRecord => {
+          const errorRow: any = {};
+          
+          // Copy all column values from the error record
+          this.recapSummary.columns.forEach(colName => {
+              errorRow[colName] = errorRecord[colName];
+          });
+          
+          // Add error message separately - try multiple possible field names
+          errorRow._errorMessage = errorRecord[this.recapErrorFieldName]
+                                 || errorRecord.ERROR
+                                 || errorRecord.ERROR_MESSAGE
+                                 || errorRecord.MESSAGE
+                                 || 'Error during execution';
+          
+          return errorRow;
+      });
+      
+      console.log('Final recap summary:', this.recapSummary);
+  }
+
+  // NEW METHOD: Close recap and reset (GENERIC - Reusable as-is)
+  onRecapClose() {
+      this.displayRecapDialog = false;
+      this.reset();
+  }
+
+  // NEW METHOD: Export errors to CSV (GENERIC - Reusable as-is)
+  exportErrors() {
+      if (this.recapSummary.errorDetails.length === 0) return;
+      
+      // Build CSV header dynamically from columns
+      const headers = [...this.recapSummary.columns, 'Error Message'];
+      
+      // Build CSV rows dynamically
+      const csvRows = [
+          ['Row', ...headers].join(','), // Header row with Row# first
+          ...this.recapSummary.errorDetails.map((error, i) => {
+              // Build row with all column values
+              const rowData: any[] = [i + 1]; // Row number
+              
+              // Add all column values
+              this.recapSummary.columns.forEach(colName => {
+                  const value = error[colName] || '';
+                  // Escape quotes and wrap in quotes
+                  const escapedValue = '"' + String(value).replace(/"/g, '""') + '"';
+                  rowData.push(escapedValue);
+              });
+              
+              // Add error message
+              const errorMsg = error._errorMessage || '';
+              const escapedMsg = '"' + String(errorMsg).replace(/"/g, '""') + '"';
+              rowData.push(escapedMsg);
+              
+              return rowData.join(',');
+          })
+      ];
+      
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'MassLoad_Errors_' + this.datePipe.transform(new Date(), 'yyyyMMdd_HHmmss') + '.csv';
+      a.click();
+      
+      this._messageService.add({
+          key: 'top',
+          severity: 'success',
+          summary: 'Export Successful',
+          detail: 'Error report downloaded successfully'
+      });
+  }
 
   /**
    * 
@@ -356,7 +490,7 @@ export class PurchaseOrderPushComponent implements OnInit{
     this.globalError=[];
     let result = true; 
     if(this._importService.wb.sheets[0].worksheet.columns.length < 8) {
-        this.globalError.push('push order file must contains the following headers: SITE_CODE, ORDER_DATE, DELIVERY_DATE, ORDER_MODE, URGENCY, ORDER_STATUS, SUPPLIER_CODE, ITEM_CODE, LV_CODE, QTY'); 
+        this.globalError.push('Push/Breakdown order file must contains the following headers: SITE_CODE, ORDER_DATE, DELIVERY_DATE, ORDER_MODE, URGENCY, ORDER_STATUS, SUPPLIER_CODE, ITEM_CODE, LV_CODE, QTY'); 
         return false;
     }
     if (this._importService.wb.sheets[0].worksheet.columns[0].field.toUpperCase() !== 'SITE_CODE') {
@@ -405,6 +539,7 @@ export class PurchaseOrderPushComponent implements OnInit{
 
   reset() {
       this.activeIndex = 0; // Go next step;
+      this.globalValid = [];
       this.uploadedFiles = [];
       this.displayConfirm = false;
       this.indicatorXLSfileLoaded = false;

@@ -49,7 +49,21 @@ export class ItemLogisticCodeComponent implements OnInit{
    displayUpdateCompleted: boolean = false;
    msgFinalDisplayed;
 
+   // NEW: Recap dialog properties (REUSABLE - Just copy/paste to other mass-load screens)
+   displayRecapDialog: boolean = false;
+   recapErrorFieldName: string = 'COMMENTS'; // Configure this: the field name that contains error messages
+   recapSummary = {
+       totalRecords: 0,
+       successRecords: 0,
+       errorRecords: 0,
+       errorDetails: [] as any[], // Array of row objects with all columns
+       columns: [] as string[] // Dynamic column names from worksheet
+   };
+
    missingData;
+   
+   // NEW: Store execution errors separately (don't merge into worksheet)
+   executionErrors: any[] = [];
 
    screenID;
    waitMessage: string = '';
@@ -269,10 +283,28 @@ export class ItemLogisticCodeComponent implements OnInit{
                                                                         '<b>Item logistic code change is usually taking between 1 and 3 minutes</b>';
                                                     // Collect result in the back
                                                     this._importService.collectResult(executionId.RESULT[0]).subscribe (
-                                                    data => { },
+                                                    data => { 
+                                                        // collectResult returns ONLY error records
+                                                        // Store them separately - don't try to merge into worksheet
+                                                        console.log('collectResult returned:', data);
+                                                        
+                                                        if (data && Array.isArray(data)) {
+                                                            this.executionErrors = data;
+                                                            console.log('Stored', this.executionErrors.length, 'execution errors');
+                                                        } else {
+                                                            this.executionErrors = [];
+                                                            console.log('No execution errors');
+                                                        }
+                                                    },
                                                     error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                                     () => { 
-                                                        this.displayUpdateCompleted = true;
+                                                        this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
+                                                        
+                                                        // ONLY NEW CODE: Build recap summary
+                                                        this.buildRecapSummary();
+                                                        
+                                                        this.msgFinalDisplayed = 'Item - Logisctic code  ' + this.uploadedFiles[0].name + ' - ' + 
+                                                                                ' has been successfully processed.';
 
                                                         this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             'Step 2/4: Executing item logistic code mapping change... &emsp;<b>COMPLETED</b><br>'+ 
@@ -280,8 +312,11 @@ export class ItemLogisticCodeComponent implements OnInit{
                                                                             'Step 4/4: Collecting integration result... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             '<br><br>'+
                                                                             '<b>Item logistic code change is usually taking between 1 and 3 minutes</b>';
-                                                        this.waitMessage = '';
-                                                        this.reset();
+                                                        // Show recap dialog instead of simple dialog
+                                                        this.displayRecapDialog = true;
+
+                                                        this.waitMessage ='';
+                                                        // Don't reset here - let user close recap dialog
                                                     });
                                                 });
                                         });                     
@@ -293,6 +328,103 @@ export class ItemLogisticCodeComponent implements OnInit{
         }
     }
 
+
+  // NEW METHOD: Build recap summary from worksheet data (GENERIC - Reusable as-is)
+  buildRecapSummary() {
+      
+      const columns = this._importService.wb.sheets[0].worksheet.columns;
+      
+      // Total records from original worksheet
+      this.recapSummary.totalRecords = this._importService.wb.sheets[0].worksheet.rows.length;
+      // Error count from collectResult
+      this.recapSummary.errorRecords = this.executionErrors.length;
+      // Success = Total - Errors
+      this.recapSummary.successRecords = this.recapSummary.totalRecords - this.recapSummary.errorRecords;
+      
+      console.log('Summary - Total:', this.recapSummary.totalRecords, 
+                  'Success:', this.recapSummary.successRecords, 
+                  'Errors:', this.recapSummary.errorRecords);
+      
+      // Get column names dynamically (exclude the error field from display)
+      this.recapSummary.columns = columns
+          .map(col => col.field)
+          .filter(field => field !== this.recapErrorFieldName);
+      
+      console.log('Display columns:', this.recapSummary.columns);
+      
+      // Build error details directly from executionErrors
+      this.recapSummary.errorDetails = this.executionErrors.map(errorRecord => {
+          const errorRow: any = {};
+          
+          // Copy all column values from the error record
+          this.recapSummary.columns.forEach(colName => {
+              errorRow[colName] = errorRecord[colName];
+          });
+          
+          // Add error message separately - try multiple possible field names
+          errorRow._errorMessage = errorRecord[this.recapErrorFieldName]
+                                 || errorRecord.ERROR
+                                 || errorRecord.ERROR_MESSAGE
+                                 || errorRecord.MESSAGE
+                                 || 'Error during execution';
+          
+          return errorRow;
+      });
+      
+      console.log('Final recap summary:', this.recapSummary);
+  }
+
+  // NEW METHOD: Close recap and reset (GENERIC - Reusable as-is)
+  onRecapClose() {
+      this.displayRecapDialog = false;
+      this.reset();
+  }
+
+  // NEW METHOD: Export errors to CSV (GENERIC - Reusable as-is)
+  exportErrors() {
+      if (this.recapSummary.errorDetails.length === 0) return;
+      
+      // Build CSV header dynamically from columns
+      const headers = [...this.recapSummary.columns, 'Error Message'];
+      
+      // Build CSV rows dynamically
+      const csvRows = [
+          ['Row', ...headers].join(','), // Header row with Row# first
+          ...this.recapSummary.errorDetails.map((error, i) => {
+              // Build row with all column values
+              const rowData: any[] = [i + 1]; // Row number
+              
+              // Add all column values
+              this.recapSummary.columns.forEach(colName => {
+                  const value = error[colName] || '';
+                  // Escape quotes and wrap in quotes
+                  const escapedValue = '"' + String(value).replace(/"/g, '""') + '"';
+                  rowData.push(escapedValue);
+              });
+              
+              // Add error message
+              const errorMsg = error._errorMessage || '';
+              const escapedMsg = '"' + String(errorMsg).replace(/"/g, '""') + '"';
+              rowData.push(escapedMsg);
+              
+              return rowData.join(',');
+          })
+      ];
+      
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'MassLoad_Errors_' + this.datePipe.transform(new Date(), 'yyyyMMdd_HHmmss') + '.csv';
+      a.click();
+      
+      this._messageService.add({
+          key: 'top',
+          severity: 'success',
+          summary: 'Export Successful',
+          detail: 'Error report downloaded successfully'
+      });
+  }
   /**
    * 
    */
@@ -384,6 +516,7 @@ export class ItemLogisticCodeComponent implements OnInit{
 
   reset() {
       this.activeIndex = 0; // Go next step;
+      this.globalValid = [];
       this.uploadedFiles = [];
       this.displayConfirm = false;
       this.indicatorXLSfileLoaded = false;

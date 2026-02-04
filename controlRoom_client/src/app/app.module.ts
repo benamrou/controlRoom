@@ -81,6 +81,7 @@ import { RobotModule } from './pages/robot/robot.module';
 import { SyndigoDownloadModule } from './pages/syndigo/download/syndigo.download.module';
 import { SyndigoProductModule } from './pages/syndigo/product/syndigo.product.module';
 import { SpaceItemReportingModule } from './pages/space.planning/item.reporting/space.item.reporting.module';
+import { ItemRetailModule } from './pages/mass.update/item.retail/item.retail.module';
 
 import { DashboardModule } from './pages/dashboard/dashboard.module';
 import { EDIInvoiceModule } from './pages/finance/edi/ediinvoice.module';
@@ -261,7 +262,8 @@ import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module'
     UnixRunnerModule,
     QueryLibraryModule,
     DictionaryModule,
-    StockLayerModule
+    StockLayerModule,
+    ItemRetailModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

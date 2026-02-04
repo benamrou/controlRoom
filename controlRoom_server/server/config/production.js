@@ -7,32 +7,26 @@ module.exports = {
     maxRows: 5000,  // Batch size for cursor fetching
     provider: "oracledb",
     connAttrs: {
-          //"user": "controlroom",
-          //"password": "controlroom",
-          //"connectString": "10.200.14.230/test",
-          // HEINEN'S
-          "user": "hncustom2",
-          "password": "hncustom2",
-          "connectString": "10.227.100.85/central",
-	  // B&B SYMPHONY
-          //"connectString": "vps145391.vps.ovh.ca/croom.vps.ovh.ca",
-          // S&F PERF
-          //"connectString": "10.1.23.13/xe",
-          //"connectString": "192.168.56.109/xe",
-          //"connectString": "192.168.56.104/xe",
-          //"connectString": "10.0.2.15/xe",
-
-          //"connectString": "10.200.14.230/test",
-          "poolMin": 1,
-          "poolMax": 200,
-          "poolTimeout": 0,
-          "maxRows": 5000,  // Rows per fetch batch
-          "autocommit"  : true,   // default is false
-          "_enableStats"  : false,   // default is false
-          "queueRequests": false,
-          "queueTimeout": 0, // 60 seconds
-          "stmtCacheSize": 0 // 40 by default
-        },
+        // HEINEN'S - TEST
+              //"user": "controlroom",
+              //"password": "controlroom",
+        //"connectString": "10.200.14.230/test",
+              // HEINEN'S - PROD
+        "user": "hncustom2",
+        "password": "hncustom2",
+        "connectString": "10.227.100.85/central",
+        "poolMin": 2,
+        "poolMax": 10,              // High capacity
+        "poolIncrement": 1,
+        "poolTimeout": 300,
+        "maxRows": 5000,
+        "autocommit": true,
+        "queueRequests": true,      // Queue instead of failing
+        "queueMax": 50,            // Allow 500 in queue
+        "queueTimeout": 120000,     // 2 minutes max wait
+        "stmtCacheSize": 100,
+        "enableStatistics": true
+      },
     connAttrs_volume: {
       //"user": "controlroom",
       //"password": "controlroom",

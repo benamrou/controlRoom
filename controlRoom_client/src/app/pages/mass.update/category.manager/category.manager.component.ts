@@ -49,6 +49,20 @@ export class CategoryManagerComponent implements OnInit{
    displayUpdateCompleted: boolean = false;
    msgFinalDisplayed;
 
+   // NEW: Recap dialog properties (REUSABLE - Just copy/paste to other mass-load screens)
+   displayRecapDialog: boolean = false;
+   recapErrorFieldName: string = 'COMMENTS'; // Configure this: the field name that contains error messages
+   recapSummary = {
+       totalRecords: 0,
+       successRecords: 0,
+       errorRecords: 0,
+       errorDetails: [] as any[], // Array of error records from collectResult
+       columns: [] as string[] // Dynamic column names from worksheet
+   };
+   
+   // NEW: Store execution errors separately (don't merge into worksheet)
+   executionErrors: any[] = [];
+
    missingData;
 
    screenID;
@@ -144,7 +158,7 @@ export class CategoryManagerComponent implements OnInit{
         this.displayConfirm = false;
         let formData: FormData = new FormData();
         this.indicatorXLSfileLoaded = false;
-        try {   
+        try {    
             for(let i =0; i < event.currentFiles.length; i++) {
                 //console.log('event.currentFiles:', event.currentFiles[i]);
                 this.uploadedFiles.push(event.currentFiles[i]);
@@ -171,37 +185,44 @@ export class CategoryManagerComponent implements OnInit{
                             );
 
         } catch (error) {
-            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'ERROR file loading message', detail: error }); 
+            console.log('importFile: error : ', error);
+            this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Unexpected Exception', detail: error });
         }
-    }
 
+      }
+      
+ 
     getTemplate() {
     let existTemplate;
     this._importService.getTemplate(this.templateID)
     .subscribe (data => {  
                 existTemplate = data !== -1;
-                console.log('data getTemplate :', data);
+                //console.log('data getTemplate :', data);
                 },
                 error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Template error', detail: error }); },
                 () => { 
                         if (existTemplate) {
                             this._messageService.add({key:'top', sticky:true, severity:'success', summary:'Template file', detail:  
-                                                    'File Item Category Mgr downloaded.' }); 
+                                                    'File purchase order downloaded.' }); 
                         } else {
                             this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Template error', detail: 'Template file ' + this.templateID + ' can not be found' });
                         }
                 }
             );
 
-  }
-
+  }  
+  
   validationChanges() {
-    // To be implemented
+
     //console.log('validationChanges', this._importService.wb.sheets[0]);
 
     let executionId;
     let userID;
     this.displayUpdateCompleted = false;
+    
+    // Store reference to error field name for use in callbacks
+    const errorFieldName = this.recapErrorFieldName;
+    
     if (this.checkGlobal()) {
         this.waitMessage =  'Step 1/4: Posting the execution plan...<br>'+ 
                             '<br><br>'+
@@ -268,10 +289,26 @@ export class CategoryManagerComponent implements OnInit{
                                                                         '<br><br>'+
                                                                         '<b>Category manager change is usually taking between 1 and 2 minutes</b>';
                                                     this._importService.collectResult(executionId.RESULT[0]).subscribe (
-                                                    data => { },
+                                                    data => {
+                                                        // collectResult returns ONLY error records
+                                                        // Store them separately - don't try to merge into worksheet
+                                                        console.log('collectResult returned:', data);
+                                                        
+                                                        if (data && Array.isArray(data)) {
+                                                            this.executionErrors = data;
+                                                            console.log('Stored', this.executionErrors.length, 'execution errors');
+                                                        } else {
+                                                            this.executionErrors = [];
+                                                            console.log('No execution errors');
+                                                        }
+                                                    },
                                                     error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                                     () => { 
                                                         this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
+                                                        
+                                                        // NEW: Build recap summary (now with updated error data)
+                                                        this.buildRecapSummary();
+                                                        
                                                         this.msgFinalDisplayed = 'Item - Category Manager  ' + this.uploadedFiles[0].name + ' - ' + 
                                                                                 ' has been successfully processed.';
 
@@ -281,10 +318,12 @@ export class CategoryManagerComponent implements OnInit{
                                                                             'Step 4/4: Collecting integration result... &emsp;<b>COMPLETED</b><br>'+ 
                                                                             '<br><br>'+
                                                                             '<b>Category manager change is usually taking between 1 and 2 minutes</b>';
-                                                        this.displayUpdateCompleted = true;
+                                                        
+                                                        // Show recap dialog
+                                                        this.displayRecapDialog = true;
 
                                                         this.waitMessage ='';
-                                                        this.reset();
+                                                        // Don't reset here - let user close recap dialog
                                                     });
                                                 });
                                         });                     
@@ -295,6 +334,103 @@ export class CategoryManagerComponent implements OnInit{
                 this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Required data missing', detail: this.missingData }); 
         }
     }
+
+  // NEW METHOD: Build recap summary from execution results (GENERIC - Reusable as-is)
+  buildRecapSummary() {
+      
+      const columns = this._importService.wb.sheets[0].worksheet.columns;
+      
+      // Total records from original worksheet
+      this.recapSummary.totalRecords = this._importService.wb.sheets[0].worksheet.rows.length;
+      // Error count from collectResult
+      this.recapSummary.errorRecords = this.executionErrors.length;
+      // Success = Total - Errors
+      this.recapSummary.successRecords = this.recapSummary.totalRecords - this.recapSummary.errorRecords;
+      
+      console.log('Summary - Total:', this.recapSummary.totalRecords, 
+                  'Success:', this.recapSummary.successRecords, 
+                  'Errors:', this.recapSummary.errorRecords);
+      
+      // Get column names dynamically (exclude the error field from display)
+      this.recapSummary.columns = columns
+          .map(col => col.field)
+          .filter(field => field !== this.recapErrorFieldName);
+      
+      console.log('Display columns:', this.recapSummary.columns);
+      
+      // Build error details directly from executionErrors
+      this.recapSummary.errorDetails = this.executionErrors.map(errorRecord => {
+          const errorRow: any = {};
+          
+          // Copy all column values from the error record
+          this.recapSummary.columns.forEach(colName => {
+              errorRow[colName] = errorRecord[colName];
+          });
+          
+          // Add error message separately - try multiple possible field names
+          errorRow._errorMessage = errorRecord[this.recapErrorFieldName]
+                                 || errorRecord.ERROR
+                                 || errorRecord.ERROR_MESSAGE
+                                 || errorRecord.MESSAGE
+                                 || 'Error during execution';
+          
+          return errorRow;
+      });
+      
+      console.log('Final recap summary:', this.recapSummary);
+  }
+
+  // NEW METHOD: Close recap and reset (GENERIC - Reusable as-is)
+  onRecapClose() {
+      this.displayRecapDialog = false;
+      this.reset();
+  }
+
+  // NEW METHOD: Export errors to CSV (GENERIC - Reusable as-is)
+  exportErrors() {
+      if (this.recapSummary.errorDetails.length === 0) return;
+      
+      // Build CSV header dynamically from columns
+      const headers = [...this.recapSummary.columns, 'Error Message'];
+      
+      // Build CSV rows dynamically
+      const csvRows = [
+          ['Row', ...headers].join(','), // Header row with Row# first
+          ...this.recapSummary.errorDetails.map((error, i) => {
+              // Build row with all column values
+              const rowData: any[] = [i + 1]; // Row number
+              
+              // Add all column values
+              this.recapSummary.columns.forEach(colName => {
+                  const value = error[colName] || '';
+                  // Escape quotes and wrap in quotes
+                  const escapedValue = '"' + String(value).replace(/"/g, '""') + '"';
+                  rowData.push(escapedValue);
+              });
+              
+              // Add error message
+              const errorMsg = error._errorMessage || '';
+              const escapedMsg = '"' + String(errorMsg).replace(/"/g, '""') + '"';
+              rowData.push(escapedMsg);
+              
+              return rowData.join(',');
+          })
+      ];
+      
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'MassLoad_Errors_' + this.datePipe.transform(new Date(), 'yyyyMMdd_HHmmss') + '.csv';
+      a.click();
+      
+      this._messageService.add({
+          key: 'top',
+          severity: 'success',
+          summary: 'Export Successful',
+          detail: 'Error report downloaded successfully'
+      });
+  }
 
   /**
    * 
@@ -369,10 +505,12 @@ export class CategoryManagerComponent implements OnInit{
 
     return result;
   }
+  
   reset() {
       this.activeIndex = 0; // Go next step;
       this.uploadedFiles = [];
       this.displayConfirm = false;
       this.indicatorXLSfileLoaded = false;
+      this.executionErrors = []; // Clear execution errors
   }
 }

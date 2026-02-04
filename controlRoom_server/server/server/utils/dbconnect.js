@@ -1,16 +1,7 @@
 /**
-* This is the description for DBCONNECT API class. This class manages the call and execution of the query.
-* This call return the results of the requested query
-* All the SQLQUERY request are logs.
-*
-* Environment variable used:
-*   > db.maxRows in the configuration file (config folder). Represent the number of max Rows to fetch per batch.
-*
-* @class DBCONNECT
-*
+* DBCONNECT API class - Manages query execution with proper connection pooling
 * @author Ahmed Benamrouche
-* Date: March 2017
-* Updated: January 2026 - Optimized cursor fetching for large datasets
+* Updated: February 2026 - Fixed connection pool management
 */
 
 "use strict"
@@ -22,24 +13,26 @@ let pool;
 let buildupScripts = [];
 let teardownScripts = [];
 
+// Initialize Oracle Client ONCE at module load
 oracledb.initOracleClient();
 
-// Batch size for fetching rows - should be set to 5000 in config
-let numRows = config.db.maxRows || 5000; // Default to 5000 if not set or 0
+let numRows = config.db.maxRows || 5000;
 
 module.exports.OBJECT = oracledb.OBJECT;
 
 function createPool(config) {
     return new Promise(function(resolve, reject) {
-        oracledb.initOracleClient();
+        // DON'T call initOracleClient again - already done at module load
         oracledb.createPool(
             config,
             function(err, p) {
                 if (err) {
                     logger.log('[DB]', 'ERROR - Creating connection pool ' + err, 'internal', 1);
-                    throw err;
+                    reject(err);
+                    return;
                 }
                 pool = p;
+                logger.log('[DB]', `Pool created - Min: ${p.poolMin}, Max: ${p.poolMax}`, 'internal', 0);
                 resolve(pool);
             }
         );
@@ -53,9 +46,11 @@ function terminatePool() {
         if (pool) {
             pool.terminate(function(err) {
                 if (err) {
-                    logger.log('[DB]', '001 - Error while terminatePool()' + err, 'internal', 1);
-                    throw err;
+                    logger.log('[DB]', '001 - Error while terminatePool() ' + err, 'internal', 1);
+                    reject(err);
+                    return;
                 }
+                logger.log('[DB]', 'Pool terminated successfully', 'internal', 0);
                 resolve();
             });
         } else {
@@ -95,18 +90,15 @@ function addTeardownSql(statement) {
 module.exports.addTeardownSql = addTeardownSql;
 
 function getConnection() {
-    oracledb.initOracleClient();
     return new Promise(function(resolve, reject) {
         pool.getConnection(function(err, connection) {
             if (err) {
-                throw err;
+                logger.log('[DB]', 'Error getting connection from pool: ' + err, 'internal', 1);
+                reject(err);
+                return;
             }
             resolve(connection);
         });
-    })
-    .catch(function(err) {
-        logger.log('[DB]', '003 - getConnection rejection ' + err, 'internal', 1);
-        throw err;
     });
 }
 
@@ -119,14 +111,15 @@ function execute(sql, bindParams, options, connection, ticketId, user, callback)
                 if (err) {
                     logger.log(ticketId, '003 - ' + err, user, 3);
                     callback(err, -1);
-                    throw err;
+                    reject(err);
+                    return;
                 } 
-                await resolve(results);
+                resolve(results);
             });
         }
         catch(err) {
             logger.log(ticketId, '004 - ' + err, user, 3);    
-            throw err;
+            reject(err);
         }
     });
 }
@@ -135,90 +128,79 @@ module.exports.execute = execute;
 
 module.exports.releaseConnections = releaseConnections;
 
+// 🔴 FIXED: Now uses pool properly
 async function executeQuery(sql, bindParams, options, ticketId, request, response, user, volume, callback) {
     options.isAutoCommit = true;
 
-    let oracleQuery_config; 
-    if (volume === 0) {
-        oracleQuery_config = config.db.connAttrs;
+    let connection;
+    try {
+        // ✅ GET CONNECTION FROM POOL - not standalone!
+        connection = await pool.getConnection();
+        
+        const result = await execute(sql, bindParams, options, connection, ticketId, user, callback);
+        
+        if (result && result.outBinds && result.outBinds.cursor) {
+            callback(null, result.outBinds.cursor);
+        } else {
+            callback(null, null);
+        }
+        
+        await releaseConnections(connection, null);
+        
+    } catch(err) {
+        logger.log(ticketId, '006 - executeQuery error: ' + err, user, 3);
+        if (connection) {
+            await releaseConnections(connection, null);
+        }
+        callback(err, null);
     }
-    else {
-        oracleQuery_config = config.db.connAttrs_volume;
-    }
-    
-    return await new Promise(async function(resolve, reject) {
-        await oracledb.getConnection()
-            .then(async function(connection){
-                await execute(sql, bindParams, options, connection, ticketId, user, callback)
-                    .then(async function(result) {
-                        let rowsToReturn = [];
-                        callback(null, result.outBinds.cursor);  
-                        await releaseConnections(connection, null);
-                    })
-                    .catch(function(err) {
-                        logger.log(ticketId, '005 - ' + err, user, 3);    
-                        releaseConnections(connection, null);
-                    });
-            })
-            .catch(function(err) {
-                logger.log(ticketId, '006 - ' + err, user, 3);    
-            });
-    });
 }
 
 module.exports.executeQuery = executeQuery;
 
+// ✅ This one is already correct
 async function executeCursor(sql, bindParams, options, ticketId, request, response, user, volume, callback) {
     options.isAutoCommit = true;
     options.outFormat = oracledb.OUT_FORMAT_OBJECT;
     
-    let oracleQuery_config; 
     let fetchBatchSize;
     
     if (volume === 0) {
-        oracleQuery_config = config.db.connAttrs;
-        fetchBatchSize = Math.min(numRows, 1000); // Smaller batch for small queries
-    }
-    else {
-        oracleQuery_config = config.db.connAttrs_volume;
-        fetchBatchSize = numRows; // Full batch size for large queries (5000)
+        fetchBatchSize = Math.min(numRows, 1000);
+    } else {
+        fetchBatchSize = numRows;
     }
     
-    // Ensure we have a valid batch size
     if (!fetchBatchSize || fetchBatchSize <= 0) {
         fetchBatchSize = 5000;
     }
     
-    return await new Promise(async function(resolve, reject) {
-        let connection;
-        try {
-            connection = await oracledb.getConnection(oracleQuery_config);
-            const result = await execute(sql, bindParams, options, connection, ticketId, user, callback);
-            
-            if (result && result.outBinds && result.outBinds.cursor) {
-                let rowsToReturn = [];
-                await fetchRowsFromRS(ticketId, connection, result.outBinds.cursor, fetchBatchSize, user, callback, rowsToReturn);
-            } else {
-                logger.log(ticketId, 'No cursor returned from query', user, 3);
-                await releaseConnections(connection, null);
-                callback(null, []);
-            }
-        } catch (err) {
-            logger.log(ticketId, '007 - ' + err, user, 3);
-            if (connection) {
-                await releaseConnections(connection, null);
-            }
-            callback(err, null);
+    let connection;
+    try {
+        // ✅ USES POOL CORRECTLY
+        connection = await pool.getConnection();
+        
+        const result = await execute(sql, bindParams, options, connection, ticketId, user, callback);
+        
+        if (result && result.outBinds && result.outBinds.cursor) {
+            let rowsToReturn = [];
+            await fetchRowsFromRS(ticketId, connection, result.outBinds.cursor, fetchBatchSize, user, callback, rowsToReturn);
+        } else {
+            logger.log(ticketId, 'No cursor returned from query', user, 3);
+            await releaseConnections(connection, null);
+            callback(null, []);
         }
-    });
+    } catch (err) {
+        logger.log(ticketId, '007 - executeCursor error: ' + err, user, 3);
+        if (connection) {
+            await releaseConnections(connection, null);
+        }
+        callback(err, null);
+    }
 }
 
 module.exports.executeCursor = executeCursor;
 
-/**
- * Optimized row fetching using async/await pattern
- * Fetches rows in batches for memory efficiency
- */
 async function fetchRowsFromRS(ticketId, connection, resultSet, batchSize, user, callback, rowsToReturn) {
     if (resultSet == null) {
         logger.log(ticketId, " Resultset empty...", user);
@@ -231,7 +213,6 @@ async function fetchRowsFromRS(ticketId, connection, resultSet, batchSize, user,
         let totalFetched = 0;
         let rows;
         
-        // Fetch in batches until no more rows
         do {
             rows = await resultSet.getRows(batchSize);
             
@@ -239,7 +220,21 @@ async function fetchRowsFromRS(ticketId, connection, resultSet, batchSize, user,
                 rowsToReturn.push(...rows);
                 totalFetched += rows.length;
                 
-                // Log progress for large datasets
+                const firstRowValues = Object.values(rows[0]);
+                const hasOraError = firstRowValues.some(value => 
+                    value && typeof value === 'string' && value.includes('ORA-')
+                );
+                
+                if (hasOraError) {
+                    const oraError = firstRowValues.find(value => 
+                        value && typeof value === 'string' && value.includes('ORA-')
+                    );
+                    logger.log(ticketId, ` Oracle Error detected: ${oraError}`, user);
+                    await releaseConnections(connection, resultSet);
+                    callback(null, rowsToReturn);
+                    return;
+                }
+                
                 if (totalFetched % 10000 === 0 || rows.length < batchSize) {
                     logger.log(ticketId, `Fetched ${totalFetched} rows so far...`, user);
                 }
@@ -258,11 +253,7 @@ async function fetchRowsFromRS(ticketId, connection, resultSet, batchSize, user,
     }
 }
 
-/**
- * Legacy callback-based row fetching (kept for backward compatibility)
- */
 async function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRowsToFetch, request, response, user, clear, callback, rowsToReturn) {
-    // Ensure valid batch size
     const batchSize = (numRowsToFetch && numRowsToFetch > 0) ? numRowsToFetch : 5000;
     
     if (resultSet == null) {
@@ -276,26 +267,21 @@ async function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRowsT
         const rows = await resultSet.getRows(batchSize);
         
         if (rows.length === 0) {
-            // No more rows, return accumulated results
             await callback(null, rowsToReturn);
             await releaseConnections(connection, resultSet);
             return;
         }
         
-        // Add fetched rows to result array
         rowsToReturn.push(...rows);
         
-        // Log sample for small results
         if (rows.length < 20) {
             logger.log(ticketId, JSON.stringify(rows), user);
         }
         logger.log(ticketId, `${rows.length} Object(s) fetched, total: ${rowsToReturn.length}`, user);
         
-        // If we got a full batch, there might be more rows
         if (rows.length === batchSize) {
             await fetchRowsFromRSCallback(ticketId, connection, resultSet, batchSize, request, response, user, 1, callback, rowsToReturn);
         } else {
-            // Last batch (partial), return results
             await callback(null, rowsToReturn);
             await releaseConnections(connection, resultSet);
         }
@@ -309,18 +295,16 @@ async function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRowsT
 
 module.exports.fetchRowsFromRSCallback = fetchRowsFromRSCallback;
 
-/**
- * Stream-based execution for very large datasets (memory efficient)
- * Use this when expecting 100k+ rows
- */
+// ✅ This one is already correct
 async function executeCursorStream(sql, bindParams, options, ticketId, request, response, user, volume, callback) {
     options.isAutoCommit = true;
     options.outFormat = oracledb.OUT_FORMAT_OBJECT;
     
-    let oracleQuery_config = volume === 0 ? config.db.connAttrs : config.db.connAttrs_volume;
-    
+    let connection;
     try {
-        let connection = await oracledb.getConnection(oracleQuery_config);
+        // ✅ USES POOL CORRECTLY
+        connection = await pool.getConnection();
+        
         const stream = connection.queryStream(sql, bindParams, options);
         
         let rowsToReturn = [];
@@ -330,7 +314,6 @@ async function executeCursorStream(sql, bindParams, options, ticketId, request, 
             rowsToReturn.push(row);
             rowCount++;
             
-            // Log progress every 10000 rows
             if (rowCount % 10000 === 0) {
                 logger.log(ticketId, `Streamed ${rowCount} rows...`, user);
             }
@@ -349,16 +332,13 @@ async function executeCursorStream(sql, bindParams, options, ticketId, request, 
         });
         
     } catch (err) {
-        logger.log(ticketId, '009 - ' + err, user, 3);
+        logger.log(ticketId, '009 - executeCursorStream error: ' + err, user, 3);
         callback(err, null);
     }
 }
 
 module.exports.executeCursorStream = executeCursorStream;
 
-/**
- * Safely release database connections and result sets
- */
 function releaseConnections(connection, resultSet) {
     return new Promise((resolve) => {
         process.nextTick(async () => {

@@ -136,7 +136,8 @@ export class GenerateScheduleComponent implements OnDestroy{
 
       this._messageService.add({severity:'warn', summary:'Schedule getting generated', 
       detail: 'Supplier schedule for supplier ' + supplierCode + ' Year ' + year + ' is now processing.' });
-        this._processService.executeScript('$BIN/shell/generate_fouplan.sh ' + supplierCode + ' ' + dateNowFormat + ' 12/31/' + year.toString().slice(-2))
+       this._supplierService.executeSchedule(supplierCode,dateNowFormat, ' 12/31/' + year.toString().slice(-2))
+        //this._processService.executeScript('$BIN/shell/generate_fouplan.sh ' + supplierCode + ' ' + dateNowFormat + ' 12/31/' + year.toString().slice(-2))
         .subscribe( 
             data => { },
             error => { this._messageService.add({severity:'error', summary:'ERROR Message', detail: error }); },
@@ -150,7 +151,8 @@ export class GenerateScheduleComponent implements OnDestroy{
       this._messageService.add({severity:'warn', summary:'Schedule getting generated', 
       detail: 'Supplier schedule for supplier ' + supplierCode + ' Year ' + year + ' is now processing.' });
 
-      this._processService.executeScript('$BIN/shell/generate_fouplan.sh ' + supplierCode + ' 01/01/' + year.toString().slice(-2) + ' 12/31/' + year.toString().slice(-2))
+      this._supplierService.executeSchedule(supplierCode,'01/01/' + year.toString().slice(-2), ' 12/31/' + year.toString().slice(-2))
+      //this._processService.executeScript('$BIN/shell/generate_fouplan.sh ' + supplierCode + ' 01/01/' + year.toString().slice(-2) + ' 12/31/' + year.toString().slice(-2))
       .subscribe( 
           data => { },
           error => { this._messageService.add({severity:'error', summary:'ERROR Message', detail: error }); },
@@ -159,7 +161,6 @@ export class GenerateScheduleComponent implements OnDestroy{
             this.displayUpdateCompleted = true;
           });
     }
-
   }
 
   ngOnDestroy() {

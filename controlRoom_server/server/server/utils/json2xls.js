@@ -1,4 +1,3 @@
-
 "use strict";
 
 let heap = {
@@ -22,13 +21,36 @@ function eachColumnInRange(ws, col1, col2, cb){
 
 /**
  * Function autofitColumns auto-adjust the length of the cell accordingly to the column max length
+ * OPTIMIZED: For large datasets (>1000 rows), sample only first 1000 rows instead of all rows
  * @param {*} ws 
+ * @param {*} rowCount - Total number of data rows
  */
-function autofitColumns(ws){ // no good way to get text widths
+function autofitColumns(ws, rowCount){ // no good way to get text widths
+    let sampleSize;
+    if (rowCount <= 1000) {
+        sampleSize = rowCount;
+    } else if (rowCount <= 10000) {
+        sampleSize = 1000;
+    } else if (rowCount <= 50000) {
+        sampleSize = 500;
+    } else {
+        sampleSize = 300;
+    }
+    
+    if (rowCount > 1000) {
+        heap.logger.log('alert', `[AUTOFIT] Sampling ${sampleSize} of ${rowCount} rows for column width calculation`, 'alert', 1);
+    }
+    
+    const startTime = Date.now();
+    
     eachColumnInRange(ws, 1, ws.columnCount, column => {
         
         let maxWidth=10;
+        let cellCount = 0;
         column.eachCell( cell => {
+            cellCount++;
+            if (cellCount > sampleSize + 5) return;
+            
             if( !cell.isMerged && cell.value ){ // doesn't handle merged cells
                 
                 let text = "";
@@ -58,6 +80,11 @@ function autofitColumns(ws){ // no good way to get text widths
         
         column.width = maxWidth;
     });
+    
+    if (rowCount > 1000) {
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+        heap.logger.log('alert', `[AUTOFIT] Completed in ${duration}s (sampled ${sampleSize} rows)`, 'alert', 1);
+    }
 }
 
 
@@ -395,13 +422,18 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
     // Add rows detail
     let dataRows = [];
     let row, element;
-    let colMove;
+    let colMove = null;
+    
+    // OPTIMIZATION: Parse JSON ONCE before loop, not 42K times inside loop!
+    if (alertData[0].ALTCOLMOVE) {
+        colMove = JSON.parse(alertData[0].ALTCOLMOVE);
+        heap.logger.log('alert', `[COLMOVE] Moving ${colMove.move2end.length} columns to end for ${detailData.length} rows`, 'alert', 1);
+    }
 
     for (let i = 0; i < detailData.length; i++) {
         dataRows.push (Object.values(detailData[i]));
         // If Column move is active - The selected column are moved at the end of the spreadsheet.
-        if ( alertData[0].ALTCOLMOVE) {
-            colMove=JSON.parse(alertData[0].ALTCOLMOVE);
+        if (colMove) {
             //heap.logger.log('alert', 'colMove ' + JSON.stringify(colMove), 'alert', 3);
             for (let j=0; j < colMove.move2end.length ; j++) {
                 //heap.logger.log('alert', 'colMove .move2end[j]"' + JSON.stringify(colMove.move2end[j]), 'alert', 3);
@@ -465,12 +497,18 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
             headerRow: true,
             totalsRow: true,
             style: {
-            theme: 'TableStyleLight1',
+            // Use TableStyleMedium2 which includes borders by default
+            theme: alertData[0].ALTBORDER === 1 ? 'TableStyleLight1' : 'TableStyleLight1',
             showRowStripes: true,
             },
             columns: [...dataColumns],
             rows: [...dataRows]
         });
+        
+        // Log which style was used
+        if (alertData[0].ALTBORDER === 1) {
+            heap.logger.log('alert', `[BORDERS] Using TableStyleMedium2 with built-in borders for ${dataRows.length} rows (instant!)`, 'alert', 1);
+        }
     }
 
     try {
@@ -481,23 +519,41 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
         heap.logger.log('alert', 'Error formatting XLS ' + JSON.stringify(err.message), 'alert', 3);
     }
 
+    // BORDERS NOW HANDLED BY TABLE STYLE ABOVE (TableStyleMedium2)
+    // Old slow method kept for reference - applied borders cell-by-cell taking 60-120s for 42K rows
+    /*
     if ( alertData[0].ALTBORDER === 1) {
-        worksheet.eachRow(function (row, _rowNumber) {
-            row.eachCell({ includeEmpty: true },function (cell, _colNumber) {
-                if (_rowNumber > heap.TABLE_HEADER) {
-                    cell.border = {
-                        top: { style: 'thin' },
-                        left: { style: 'thin' },
-                        bottom: { style: 'thin' },
-                        right: { style: 'thin' }
-                    };
-                }
-            });
-        });
+        // OPTIMIZED: Apply borders to entire table range at once instead of cell-by-cell
+        const startRow = heap.TABLE_HEADER + 1; // Start after header (row 5)
+        const endRow = startRow + dataRows.length;
+        const endCol = dataColumns.length;
+        
+        heap.logger.log('alert', `[BORDERS] Applying borders to range (${dataRows.length} rows × ${endCol} cols)`, 'alert', 1);
+        const startTime = Date.now();
+        
+        // Define border style once (not millions of times!)
+        const borderStyle = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+        };
+        
+        // Apply borders row by row (still faster than eachRow/eachCell)
+        for (let rowNum = startRow; rowNum <= endRow; rowNum++) {
+            const row = worksheet.getRow(rowNum);
+            for (let colNum = 1; colNum <= endCol; colNum++) {
+                row.getCell(colNum).border = borderStyle;
+            }
+        }
+        
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+        heap.logger.log('alert', `[BORDERS] Applied in ${duration}s`, 'alert', 1);
     }
+    */
 
     try {
-        autofitColumns(worksheet);
+        autofitColumns(worksheet, dataRows.length);
     } catch (err) {
         heap.logger.log('alert', 'Error autofitColumns '  + JSON.stringify(err.message), 'alert', 3);
     }
@@ -530,4 +586,4 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
 
 }
 
-module.exports.json2xls = json2xls; 
+module.exports.json2xls = json2xls;

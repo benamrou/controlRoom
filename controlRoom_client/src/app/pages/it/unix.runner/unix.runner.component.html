@@ -52,13 +52,13 @@ FIXES APPLIED:
 
     <!-- BUTTONS -->
     <div class="button-row">
-      <button pButton label="Run" icon="pi pi-play" class="p-button-success"
+      <button pButton label="Run" icon="pi pi-play"
               (click)="run()" [disabled]="running"></button>
 
-      <button pButton label="Cancel" icon="pi pi-stop" class="p-button-warning"
+      <button pButton label="Cancel" icon="pi pi-stop" 
               (click)="cancel()" [disabled]="!running"></button>
 
-      <button pButton label="Clear" icon="pi pi-trash" class="p-button-secondary"
+      <button pButton label="Clear" icon="pi pi-trash"
               (click)="clearLogs()"></button>
     </div>
 

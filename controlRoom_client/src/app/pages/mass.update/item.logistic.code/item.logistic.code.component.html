@@ -23,6 +23,114 @@
         </p-footer>
 </p-dialog>
 
+<!-- NEW: Generic Recap Dialog (REUSABLE - Just adjust recapErrorFieldName in TS) -->
+<p-dialog header="Execution Recap" 
+          [(visible)]="displayRecapDialog" 
+          [modal]="true" 
+          [style]="{width: '80vw'}" 
+          [maximizable]="true"
+          [closable]="false">
+
+    <div *ngIf="recapSummary.errorRecords === 0" class="alert alert-success" style="padding: 10px;">
+        <i class="fas fa-check-circle"></i>
+        <strong>All records processed successfully!</strong>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <h4 style="border-bottom: 1px black dashed;">Summary Mass-Change</h4>
+        <table style="width: 30%; border-collapse: collapse;float:right;">
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Total Records:</td>
+                <td style="padding: 10px; border: 1px solid #ddd;text-align:center;">{{recapSummary.totalRecords}}</td>
+            </tr>
+            <tr style="background-color: #d4edda;">
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Successfully Loaded:</td>
+                <td style="padding: 10px; border: 1px solid #ddd;text-align:center;">
+                    {{recapSummary.successRecords}} 
+                    <span *ngIf="recapSummary.totalRecords > 0">
+                        ({{(recapSummary.successRecords / recapSummary.totalRecords * 100).toFixed(1)}}%)
+                    </span>
+                </td>
+            </tr>
+            <tr [style.background-color]="recapSummary.errorRecords > 0 ? '#f8d7da' : '#f0f0f0'">
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Records with Errors:</td>
+                <td style="padding: 10px; border: 1px solid #ddd;text-align:center;">
+                    {{recapSummary.errorRecords}} 
+                    <span *ngIf="recapSummary.totalRecords > 0">
+                        ({{(recapSummary.errorRecords / recapSummary.totalRecords * 100).toFixed(1)}}%)
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div *ngIf="recapSummary.errorRecords > 0" style="margin-top: 7em;">
+        <h4>Error Details ({{recapSummary.errorRecords}} record(s))</h4>
+        <p-table [value]="recapSummary.errorDetails"
+                 [rows]="10"
+                 [paginator]="true"
+                 [scrollable]="true"
+                 scrollHeight="350px"
+                 styleClass="p-datatable-sm">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 60px; background-color: #e3f2fd;">#</th>
+                    <!-- Dynamic columns based on worksheet structure -->
+                    <th *ngFor="let col of recapSummary.columns" 
+                        style="background-color: #e3f2fd;"
+                        pResizableColumn>
+                        {{col}}
+                    </th>
+                    <th style="background-color: #ffebee;">Error Message</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-error let-rowIndex="rowIndex">
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">{{rowIndex + 1}}</td>
+                    <!-- Dynamic column values -->
+                    <td *ngFor="let col of recapSummary.columns" 
+                        style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                        [title]="error[col]">
+                        {{error[col]}}
+                    </td>
+                    <td style="color: #d32f2f; font-weight: 500;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {{error._errorMessage}}
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="recapSummary.columns.length + 2" style="text-align: center; padding: 20px;">
+                        No errors found.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <p-footer>
+        <button type="button" 
+                pButton 
+                icon="fas fa-download" 
+                label="Export Errors to CSV" 
+                (click)="exportErrors()"
+                *ngIf="recapSummary.errorRecords > 0"
+                
+                style="margin-right: 10px;">
+        </button>
+        <button type="button" 
+                pButton 
+                icon="fas fa-check" 
+                label="Close & Reset" 
+                (click)="onRecapClose()">
+        </button>
+    </p-footer>
+</p-dialog>
+
 <div style="padding-top: 5%;">
     <!-- Step 0 - File selection -->
     <p-fieldset #step0 legend="{{menuItems[0].title}}" [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder">

@@ -193,9 +193,10 @@ if (argv.length < 1) {
     process.exit();
 }
 
-if (argv[1] === 'CRONTAB') {
-    crontab.process(app, oracledb);
-}
+// ❌ REMOVED: Crontab initialization moved to AFTER pool creation
+// if (argv[1] === 'CRONTAB') {
+//     crontab.process(app, oracledb);
+// }
 
 // Logs file structure is ready
 
@@ -243,10 +244,17 @@ dbConnection.addTeardownSql({
 dbConnection.createPool(config.db.connAttrs)
 	.then(function() {
 		let server = httpServer.listen(argv[0], function () {
-		let host = server.address().address,
-			port = server.address().port;
+			let host = server.address().address,
+				port = server.address().port;
 
-		logger.log(0,' Server is listening at http://' + host + ':' + port, "internal");
+			logger.log(0,' Server is listening at http://' + host + ':' + port, "internal");
+			
+			// ✅ START CRONTAB AFTER POOL IS READY
+			if (argv[1] === 'CRONTAB') {
+				logger.log('internal', 'Initializing crontab scheduler...', 'internal', 0);
+				crontab.process(app, oracledb);
+				logger.log('internal', 'Crontab scheduler started successfully', 'internal', 0);
+			}
 		});
 	})
 	.catch(function(err) {

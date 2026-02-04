@@ -23,6 +23,9 @@
 
 "use strict";
 
+const PQueue = require('p-queue').default;
+const excelQueue = new PQueue({concurrency: 2});
+
 let configuration = {
     nodemailer : require('nodemailer'),
     config : new require("../../config/" + (process.env.NODE_ENV || "development") + ".js")
@@ -37,6 +40,7 @@ const { spawn } = require('child_process');
 
 let heap = {
     logger : require("../utils/logger.js"),
+    dbLogger : require("../utils/db_logger.js"),
     excel : require('exceljs'),
     fs : require('fs'),
     disrequire: require('disrequire'),
@@ -106,7 +110,7 @@ function sendSMS(to, subject, message) {
     // Preview only available when sending through an Ethereal account
 }
 
-function sendEmail(to, emailcc, emailbcc, subject, message) {
+function sendEmail(to, emailcc, emailbcc, subject, message, requestId, requestStartTime, overallTimeout) {
     let mailOptions = {
         from: configuration.config.notification.email_user,
         to,
@@ -121,13 +125,30 @@ function sendEmail(to, emailcc, emailbcc, subject, message) {
             recipient: configuration.config.notification.email_user
         }
     };
-    let infoMessage =  heap.transporter.sendMail(mailOptions, (error) => {
+    let infoMessage =  heap.transporter.sendMail(mailOptions, async (error) => {
         if (error) { 
             heap.logger.log('alert', 'Error sending email function call: ' + to + ' ' + subject + ' ' + 
                                 message , 'alert', 3);
             //logger.log('alert', 'Error sending email BUFFER: ' + JSON.stringify(stream) , 'alert', 3);
             heap.logger.log('alert', 'Error sending email ERROR details: ' + JSON.stringify(error) , 'alert', 3);
-            sendSMS('6789863021@tmomail.net','SPAM alert ' + subject, JSON.stringify(error));
+            
+            // Log failure to database
+            if (requestId && requestStartTime) {
+                const duration = Math.floor((Date.now() - requestStartTime) / 1000);
+                await heap.dbLogger.logFailed(requestId, duration, `Email send failed: ${error.message || JSON.stringify(error)}`);
+            }
+            
+            sendSMS('6789863021@tmomail.net','CRITICAL: SPAM alert ' + subject, `RequestID: ${requestId || 'N/A'}, Error: ${JSON.stringify(error)}`);
+        }
+        else {
+            // Mark request as complete
+            if (requestId && requestStartTime) {
+                const duration = Math.floor((Date.now() - requestStartTime) / 1000);
+                clearTimeout(overallTimeout);
+                
+                await heap.dbLogger.logComplete(requestId, duration);
+                heap.logger.log('alert', `[REQUEST COMPLETE] ${requestId} | Duration: ${duration}s (0 rows, no attachment)`, 'alert', 1);
+            }
         }
     });
     heap.logger.log('alert', 'Email sent to:' + to + ' cc:' +  emailcc + ' bcc:' + emailbcc + ' subject: ' + subject, 'alert', 1);
@@ -145,7 +166,7 @@ function sendEmail(to, emailcc, emailbcc, subject, message) {
     // Preview only available when sending through an Ethereal account
 }
 
-function sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, forceExit, filenameParam) {
+function sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, forceExit, filenameParam, requestId, requestStartTime, overallTimeout) {
     let mailOptions = {
         from: configuration.config.notification.email_user,
         to,
@@ -161,23 +182,39 @@ function sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, 
     };
 
     heap.logger.log('alert', 'Sending email to:' + to + ' cc:' +  emailcc + ' bcc:' + emailbcc + ' subject: ' + subject, 'alert', 1);
-    let infoMessage =  heap.transporter.sendMail(mailOptions, function(error, info) {
+    let infoMessage =  heap.transporter.sendMail(mailOptions, async function(error, info) {
         if (error) { 
             heap.logger.log('alert', 'Error sending email function call: ' + to + ' ' + subject, 'alert', 3);
             //logger.log('alert', 'Error sending email BUFFER: ' + JSON.stringify(stream) , 'alert', 3);
             heap.logger.log('alert', 'Error sending email ERROR details: ' + JSON.stringify(error) , 'alert', 3);
-            sendSMS('6789863021@tmomail.net','SPAM alert ' + subject, JSON.stringify(error));
+            
+            // Log failure to database
+            if (requestId && requestStartTime) {
+                const duration = Math.floor((Date.now() - requestStartTime) / 1000);
+                await heap.dbLogger.logFailed(requestId, duration, `Email send failed: ${error.message || JSON.stringify(error)}`);
+            }
+            
+            sendSMS('6789863021@tmomail.net','CRITICAL: SPAM alert ' + subject, `RequestID: ${requestId || 'N/A'}, Error: ${JSON.stringify(error)}`);
             if (!forceExit) {
                 // If message go to SPAM then send email with preHtml part
                 heap.logger.log('alert', 'Resending email with lower content: ' + 
                                             preHtml + 
                                             'Refer to the attachment for details. Content can not be displayed in the email body.' , 'alert', 3);
                 message =  'Refer to the attachment for details. Content can not be displayed in the email body.';
-                sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, true, FILENAME_EXT);
+                sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, true, filenameParam, requestId, requestStartTime, overallTimeout);
             }
         }
         else {
             heap.logger.log('alert', 'Email sent to:' + to + ' cc:' +  emailcc + ' bcc:' + emailbcc + ' subject: ' + subject, 'alert', 1);
+            
+            // Mark request as complete
+            if (requestId && requestStartTime) {
+                const duration = Math.floor((Date.now() - requestStartTime) / 1000);
+                clearTimeout(overallTimeout);
+                
+                await heap.dbLogger.logComplete(requestId, duration);
+                heap.logger.log('alert', `[REQUEST COMPLETE] ${requestId} | Duration: ${duration}s`, 'alert', 1);
+            }
             // heap.logger.log('alert', 'Message sent: ' + message, 'alert', 1);
             // heap.logger.log('alert', 'Preview URL: ' + configuration.nodemailer.getTestMessageUrl(infoMessage), 'alert', 1);
             // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
@@ -269,6 +306,37 @@ async function safeCleanupScript(filePath) {
 }
 
 async function processContent(SQLProcess, alertData, request, response, result) {
+  // ===== REQUEST MONITORING START =====
+  const requestId = heap.dbLogger.generateRequestId();
+  const requestStartTime = Date.now();
+  request.requestId = requestId;
+  request.requestStartTime = requestStartTime;
+  
+  heap.logger.log('alert', `[REQUEST START] ${requestId} | Alert: ${alertData[0].ALTID} | Email: ${alertData[0].ALTEMAIL}`, 'alert', 1);
+  
+  // Check for SPAM (3+ requests in 10 minutes)
+  const isSpam = await heap.dbLogger.checkSpam(alertData[0].ALTID, alertData[0].ALTEMAIL);
+  if (isSpam) {
+    heap.logger.log('alert', `[SPAM DETECTED] ${requestId} | Alert: ${alertData[0].ALTID}`, 'alert', 3);
+    await heap.dbLogger.logSpamBlocked(requestId, alertData[0].ALTID, alertData[0].ALTEMAIL);
+    sendSMS('6789863021@tmomail.net', `SPAM: ${alertData[0].ALTID}`, `Alert sent 3+ times in 10 min. RequestID: ${requestId}`);
+    return;
+  }
+  
+  // Log request start to database
+  await heap.dbLogger.logStart(requestId, alertData[0].ALTID, alertData[0].ALTEMAIL);
+  
+  // Set overall request timeout (10 minutes)
+  const overallTimeout = setTimeout(async () => {
+    const duration = Math.floor((Date.now() - requestStartTime) / 1000);
+    heap.logger.log('alert', `[REQUEST TIMEOUT] ${requestId} | Duration: ${duration}s | CRITICAL`, 'alert', 3);
+    await heap.dbLogger.logTimeout(requestId, duration);
+    sendSMS('6789863021@tmomail.net', `CRITICAL: Request timeout`, `RequestID: ${requestId}, Alert: ${alertData[0].ALTID}, Duration: ${duration}s`);
+  }, 600000);
+  
+  request.overallTimeout = overallTimeout;
+  // ===== REQUEST MONITORING END =====
+  
   let SUBJECT_EXT = request.header('SUBJECT_EXT') || '';
   let FILENAME_EXT = request.header('FILENAME_EXT') || 'result.xlsx';
 
@@ -448,8 +516,30 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                     heap.logger.log('alert', `dataDetailN empty ${qNode.dataDetailN}`, 'alert', 3);
                     dataDetailN = [];
                   }
+                  
+                    // Update phase to JSON2XLS
+                    await heap.dbLogger.updateRequest(request.requestId, {
+                      phase: 'JSON2XLS',
+                      rowCount: dataDetailN.length
+                    });
+                    
+                    // Set JSON2XLS timeout (2 minutes)
+                    const json2xlsStart = Date.now();
+                    const json2xlsTimeout = setTimeout(async () => {
+                      heap.logger.log('alert', `[JSON2XLS TIMEOUT] ${request.requestId} | Rows: ${dataDetailN.length}`, 'alert', 3);
+                      await heap.dbLogger.updateRequest(request.requestId, {
+                        error: `JSON2XLS timeout: ${dataDetailN.length} rows`
+                      });
+                      sendSMS('6789863021@tmomail.net', `CRITICAL: JSON2XLS timeout`, `RequestID: ${request.requestId}, Rows: ${dataDetailN.length}`);
+                    }, 120000);
+                    
                     const wbxls = heap.json2xls.json2xls(workbook, worksheet, alertData, dataDetailN, SUBJECT_EXT, `ResultTable${qNode.index}`, qNode.sheetFormat +'', renameColumn);
                     workbook = wbxls.wb;
+                    
+                    clearTimeout(json2xlsTimeout);
+                    const json2xlsDuration = ((Date.now() - json2xlsStart) / 1000).toFixed(2);
+                    heap.logger.log('alert', `[JSON2XLS COMPLETE] ${request.requestId} | ${dataDetailN.length} rows in ${json2xlsDuration}s`, 'alert', 1);
+                    
                 } catch (err) {
                   heap.logger.log('alert', `Error in json2xls alert data ${qNode.key}: ` + JSON.stringify(alertData), 'alert', 3);
                   heap.logger.log('alert', `Error in json2xls detail ${qNode.key}: ${dataDetailN}`, 'alert', 3);
@@ -459,6 +549,14 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                   heap.logger.log('alert', `Error in json2xls sheetFormat ${qNode.key}: ${qNode.sheetFormat}`, 'alert', 3);
                   heap.logger.log('alert', `Error in json2xls renameColumn ${qNode.key}: ${renameColumn}`, 'alert', 3);
                   heap.logger.log('alert', `Error in json2xls for ${qNode.key}: ${err}`, 'alert', 3);
+                  
+                  // Log failure to database
+                  await heap.dbLogger.logFailed(
+                    request.requestId,
+                    Math.floor((Date.now() - request.requestStartTime) / 1000),
+                    `JSON2XLS error: ${err.message}`
+                  );
+                  sendSMS('6789863021@tmomail.net', `CRITICAL: JSON2XLS error`, `RequestID: ${request.requestId}, Error: ${err.message}`);
                 }
                 // Store sheet data for archiving (after worksheet processing)
                 archiveData[qNode.sheetName] = dataDetailN || [];
@@ -481,36 +579,178 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
               heap.logger.log('alert', `Emailing workbook real time ${alertData[0].ALTREALTIME} `, 'alert', 1);
           if (alertData[0].ALTREALTIME == '0') {
               heap.logger.log('alert', `Emailing workbook no attachment ${alertData[0].ALTEMAIL} `, 'alert', 1);
+              
+              // Update phase to EMAIL_SEND
+              await heap.dbLogger.updateRequest(request.requestId, {
+                phase: 'EMAIL_SEND'
+              });
+              
               sendEmail(
                 alertData[0].ALTEMAIL,
                 alertData[0].ALTEMAILCC,
                 alertData[0].ALTEMAILBCC,
                 `${alertData[0].ALTSUBJECT} ${SUBJECT_EXT} [0 Object(s)]`,
-                html
+                html,
+                request.requestId,
+                request.requestStartTime,
+                request.overallTimeout
               );
+          }
+          else {
+              // No email sent (ALTREALTIME != '0' and 0 rows)
+              // Mark as complete immediately
+              heap.logger.log('alert', `[NO EMAIL] 0 rows and ALTREALTIME=${alertData[0].ALTREALTIME} - marking complete`, 'alert', 1);
+              const duration = Math.floor((Date.now() - request.requestStartTime) / 1000);
+              clearTimeout(request.overallTimeout);
+              await heap.dbLogger.logComplete(request.requestId, duration);
+              heap.logger.log('alert', `[REQUEST COMPLETE] ${request.requestId} | Duration: ${duration}s (0 rows, no email)`, 'alert', 1);
           }
         }
         else { 
           if (html.indexOf('ERRORDIAGNOSED') < 0) {
-            heap.logger.log('alert', `Emailing workbook ${alertData[0].ALTEMAIL} `, 'alert', 1);
-            workbook.xlsx.writeBuffer().then((buffer) => {
-              sendEmailCSV(
-                alertData[0].ALTEMAIL,
-                alertData[0].ALTEMAILCC,
-                alertData[0].ALTEMAILBCC,
-                `${alertData[0].ALTSUBJECT} ${SUBJECT_EXT} [${detailData.length} Object(s)]`,
-                html,
-                buffer,
-                preHtml,
-                false,
-                FILENAME_EXT
-              );
-              buffer = null;
+            heap.logger.log('alert', `[Excel Generation] Preparing for ${alertData[0].ALTEMAIL} | Rows: ${detailData.length}`, 'alert', 1);
+            const bufferStartTime = Date.now();
+            
+            // Update phase to EXCEL_GEN
+            await heap.dbLogger.updateRequest(request.requestId, {
+              phase: 'EXCEL_GEN'
             });
+            
+            const fs = require('fs');
+            const fsPromises = require('fs').promises;
+            const path = require('path');
+            const tempFile = path.join(process.env.HOME, 'heinensapps', 'controlRoom_server', 'temp', `excel_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.xlsx`);
+            
+            heap.logger.log('alert', `[Excel Generation] Adding to queue (position: ${excelQueue.size + 1})`, 'alert', 1);
+            
+            excelQueue.add(() => {
+              return new Promise((resolve, reject) => {
+                heap.logger.log('alert', `[Excel Generation] Queue processing started for ${alertData[0].ALTEMAIL}`, 'alert', 1);
+                
+                const writeStream = fs.createWriteStream(tempFile);
+                let timeoutId;
+                
+                const cleanup = async () => {
+                  if (timeoutId) clearTimeout(timeoutId);
+                  await fsPromises.unlink(tempFile).catch(() => {});
+                };
+                
+                timeoutId = setTimeout(() => {
+                  heap.logger.log('alert', `[Excel Generation] TIMEOUT after 120 seconds`, 'alert', 3);
+                  writeStream.destroy();
+                  cleanup();
+                  reject(new Error(`Excel generation timeout after 120 seconds for ${detailData.length} rows`));
+                }, 120000);
+                
+                writeStream.on('error', (err) => {
+                  heap.logger.log('alert', `[Excel Generation] Stream error: ${err.message}`, 'alert', 3);
+                  cleanup();
+                  reject(err);
+                });
+                
+                writeStream.on('finish', async () => {
+                  try {
+                    clearTimeout(timeoutId);
+                    heap.logger.log('alert', `[Excel Generation] Stream finished, reading buffer`, 'alert', 1);
+                    const buffer = await fsPromises.readFile(tempFile);
+                    await fsPromises.unlink(tempFile).catch(() => {});
+                    resolve(buffer);
+                  } catch (err) {
+                    await fsPromises.unlink(tempFile).catch(() => {});
+                    reject(err);
+                  }
+                });
+                
+                heap.logger.log('alert', `[Excel Generation] Starting workbook.xlsx.write()`, 'alert', 1);
+                workbook.xlsx.write(writeStream)
+                  .then(() => {
+                    heap.logger.log('alert', `[Excel Generation] Write complete, closing stream`, 'alert', 1);
+                    writeStream.end();
+                  })
+                  .catch((err) => {
+                    heap.logger.log('alert', `[Excel Generation] Write error: ${err.message}`, 'alert', 3);
+                    writeStream.destroy();
+                    cleanup();
+                    reject(err);
+                  });
+              });
+            })
+              .then(async (buffer) => {
+                const bufferEndTime = Date.now();
+                const bufferDuration = ((bufferEndTime - bufferStartTime) / 1000).toFixed(2);
+                const bufferSizeMB = (buffer.length / 1024 / 1024).toFixed(2);
+                
+                heap.logger.log('alert', `[Excel Generated] Size: ${bufferSizeMB}MB | Duration: ${bufferDuration}s | Rows: ${detailData.length}`, 'alert', 1);
+                
+                // Update phase to EMAIL_SEND
+                await heap.dbLogger.updateRequest(request.requestId, {
+                  phase: 'EMAIL_SEND'
+                });
+                
+                sendEmailCSV(
+                  alertData[0].ALTEMAIL,
+                  alertData[0].ALTEMAILCC,
+                  alertData[0].ALTEMAILBCC,
+                  `${alertData[0].ALTSUBJECT} ${SUBJECT_EXT} [${detailData.length} Object(s)]`,
+                  html,
+                  buffer,
+                  preHtml,
+                  false,
+                  FILENAME_EXT,
+                  request.requestId,
+                  request.requestStartTime,
+                  request.overallTimeout
+                );
+                buffer = null;
+              })
+              .catch(async (bufferError) => {
+                const bufferEndTime = Date.now();
+                const bufferDuration = ((bufferEndTime - bufferStartTime) / 1000).toFixed(2);
+                
+                heap.logger.log('alert', `[Excel Generation FAILED] Duration: ${bufferDuration}s | Rows: ${detailData.length}`, 'alert', 3);
+                heap.logger.log('alert', `[Excel Generation ERROR] ${bufferError.message}`, 'alert', 3);
+                
+                // Log failure to database
+                await heap.dbLogger.logFailed(
+                  request.requestId,
+                  Math.floor((Date.now() - request.requestStartTime) / 1000),
+                  `Excel generation failed: ${bufferError.message}`
+                );
+                
+                sendSMS('6789863021@tmomail.net', 
+                  `CRITICAL: Excel generation failed - ${alertData[0].ALTSUBJECT}`, 
+                  `RequestID: ${request.requestId}, Error: ${bufferError.message}, Rows: ${detailData.length}, Duration: ${bufferDuration}s`);
+                
+                const fallbackHtml = preHtml + 
+                  `<p><strong style="color: red;">Excel generation failed for this report</strong></p>` +
+                  `<p>Error: ${bufferError.message}</p>` +
+                  `<p>Rows attempted: ${detailData.length}</p>` +
+                  `<p>Please contact IT support.</p>`;
+                
+                // Send fallback email (request already marked as FAILED above)
+                // Don't pass monitoring params - request is already marked FAILED
+                sendEmail(
+                  'abenamrouche@heinens.com', //alertData[0].ALTEMAIL,
+                  null, //alertData[0].ALTEMAILCC,
+                  null, //alertData[0].ALTEMAILBCC,
+                  `[GENERATION FAILED] ${alertData[0].ALTSUBJECT} ${SUBJECT_EXT}`,
+                  fallbackHtml
+                );
+              });
+          }
+          else {
+            // Case: ERRORDIAGNOSED found or no data to send
+            heap.logger.log('alert', `[NO EMAIL SENT] ${request.requestId} | Reason: ${html.indexOf('ERRORDIAGNOSED') >= 0 ? 'Error in data' : 'No rows'} | Rows: ${detailData.length}`, 'alert', 2);
+            
+            // Mark request as complete (no email sent)
+            const duration = Math.floor((Date.now() - request.requestStartTime) / 1000);
+            clearTimeout(request.overallTimeout);
+            await heap.dbLogger.logComplete(request.requestId, duration);
+            heap.logger.log('alert', `[REQUEST COMPLETE] ${request.requestId} | Duration: ${duration}s | No email sent`, 'alert', 1);
           }
 
         // Optionally send SMS if configured
-        if (alertData[0].ALTSMSCONTENT && html.indexOf('ERRORDIAGNOSED') < 0) {
+        if (alertData[0].ALTSMS == 1 && alertData[0].ALTSMSCONTENT && alertData[0].ALTMOBILE && html.indexOf('ERRORDIAGNOSED') < 0) {
           const newLineSMS = '<br>';
           sendSMS(
             alertData[0].ALTMOBILE,
@@ -530,17 +770,32 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
           try {
             archiveConnection = await oracledb.getConnection(configuration.config.db.connAttrs);
             
-            const insertSql = `INSERT INTO ALERTLOG (LALTID, LALTEDATE, LALTMESS, LALTDCRE, LALTDMAJ, LALTUTIL, LALTROWCOUNT) 
-                               VALUES (:altid, SYSDATE, :blobdata, SYSDATE, SYSDATE, :util, :rowcount)`;
+            // MERGE to update existing row created by logStart, or INSERT if logStart wasn't called
+            const mergeSql = `MERGE INTO ALERTLOG A
+                             USING (SELECT :reqid AS LALTREQID, :altid AS LALTID, 
+                                           :blobdata AS LALTMESS, :rowcount AS LALTROWCOUNT,
+                                           SYSDATE AS LALTDCRE, SYSDATE AS LALTDMAJ, :util AS LALTUTIL
+                                    FROM DUAL) B
+                             ON (A.LALTID = B.LALTID 
+                                 AND (A.LALTREQID = B.LALTREQID OR A.LALTREQID IS NULL)
+                                 AND A.LALTEDATE >= SYSTIMESTAMP - INTERVAL '1' MINUTE)
+                             WHEN MATCHED THEN
+                                UPDATE SET A.LALTMESS = B.LALTMESS,
+                                          A.LALTROWCOUNT = B.LALTROWCOUNT,
+                                          A.LALTDMAJ = B.LALTDMAJ
+                             WHEN NOT MATCHED THEN
+                                INSERT (LALTID, LALTEDATE, LALTMESS, LALTDCRE, LALTDMAJ, LALTUTIL, LALTROWCOUNT, LALTREQID)
+                                VALUES (B.LALTID, SYSDATE, B.LALTMESS, B.LALTDCRE, B.LALTDMAJ, B.LALTUTIL, B.LALTROWCOUNT, B.LALTREQID)`;
             
             const bindParams = {
+              reqid: request.requestId || null,
               altid: alertData[0].ALTID,
               blobdata: Buffer.from(archiveJson, 'utf8'),
               util: 'notification.js',
               rowcount: String(totalArchiveRows)
             };
             
-            await archiveConnection.execute(insertSql, bindParams, { autoCommit: true });
+            await archiveConnection.execute(mergeSql, bindParams, { autoCommit: true });
             heap.logger.log('alert', 'Archive SUCCESS - ALTID: ' + alertData[0].ALTID, 'alert', 1);
             
           } catch (archiveErr) {

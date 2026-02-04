@@ -415,6 +415,7 @@ export class HttpService  {
                 return this.handleError(url,error);
             }) as any);
   }
+  
 
   authentification(url: string, headersOption?:HttpHeaders, paramOtions?: HttpParams): Observable<Response> {
     let content = { body: "" };

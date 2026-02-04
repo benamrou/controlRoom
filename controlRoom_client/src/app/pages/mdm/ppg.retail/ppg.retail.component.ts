@@ -218,16 +218,21 @@ export class PPGRetailComponent {
         let disableTrace = 0;
 
         for(let i=0; i < this.searchResult.length; i++) {
-          this.massUpdateSKURetail.push(
-              {"ITEM_CODE": this.searchResult[i]['Item code'],
-               "SV_CODE": this.searchResult[i]['SV'],
-               "ACTION": 2, /* DELETION*/
-               "PRICE_LIST": this.searchResult[i]['Price list code'],
-               "START_DATE": this.searchResult[i]['Retail start'],
-               "END_DATE": this.searchResult[i]['Retail end'],
-               "RETAIL" : this.searchResult[i]['Retail price']
-              }
-            );
+          if (this.searchResult[i]['Selected']) {
+            this.massUpdateSKURetail.push(
+                {"ITEM_CODE": this.searchResult[i]['Item code'],
+                "PPG": '', // Delete by item/SV not PPG
+                "SV_CODE": this.searchResult[i]['SV'],
+                "ACTION": 2, /* DELETION*/
+                "PRICE_LIST": this.searchResult[i]['Price list code'],
+                "START_DATE": this.searchResult[i]['Retail start'],
+                "END_DATE": this.searchResult[i]['Retail end'],
+                "RETAIL" : this.searchResult[i]['Retail price'],
+                "MULTIPLE" : this.searchResult[i]['Multiple']
+                }
+              );
+
+            }
           }
           
         this.startDate = new Date(this.dateNow.setDate(this.dateNow.getDate() -2));
@@ -269,7 +274,9 @@ export class PPGRetailComponent {
                                   () => {
                                           this.displayCompletion = true;
                                           this._importService.collectResult(executionId.RESULT[0]).subscribe (
-                                          data => { },
+                                          data => { 
+                                            this.search();
+                                          },
                                           error => { this._messageService.add({key:'top', sticky:false, severity:'error', summary:'Invalid file during execution plan load', detail: error }); 
                                                       this.waitMessage='';},
                                           () => { 

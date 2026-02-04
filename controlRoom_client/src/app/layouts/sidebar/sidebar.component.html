@@ -342,6 +342,11 @@
                                 <span><i class="fa fa-camera"></i> {{ 'Item images'}}</span>
                             </a>
                         </li>
+                        <!--li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemretail" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-money-check-dollar"></i> {{ 'Item retail'}}</span>
+                            </a>
+                        </li-->
                         <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/supplieraddress" [routerLinkActive]="['router-link-active']">
                                 <span><i class="fa fa-address-card"></i> {{ 'Supplier address'}}</span>
@@ -354,7 +359,7 @@
                         </li>
                         <li *ngIf="_userService.userInfo.dataIntegrity ==1">
                             <a class="bbs_link_menu" routerLink="/purchaseorderpush" [routerLinkActive]="['router-link-active']">
-                                <span><i class="fa fa-paste"></i> {{ 'Purchase order (Push)'}}</span>
+                                <span><i class="fa fa-paste"></i> {{ 'Push/Breadkown order'}}</span>
                             </a>
                         </li>
                         <li *ngIf="_userService.userInfo.dataIntegrity ==1">
