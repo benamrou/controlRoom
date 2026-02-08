@@ -24,7 +24,7 @@
 "use strict";
 
 const PQueue = require('p-queue').default;
-const excelQueue = new PQueue({concurrency: 2});
+const excelQueue = new PQueue({concurrency: 20});
 
 let configuration = {
     nodemailer : require('nodemailer'),
@@ -146,6 +146,11 @@ function sendEmail(to, emailcc, emailbcc, subject, message, requestId, requestSt
                 const duration = Math.floor((Date.now() - requestStartTime) / 1000);
                 clearTimeout(overallTimeout);
                 
+                await heap.dbLogger.updateRequest(requestId, {
+                  status: 'COMPLETE',
+                  phase: 'NO_EMAIL',
+                  rowCount: 0
+                });
                 await heap.dbLogger.logComplete(requestId, duration);
                 heap.logger.log('alert', `[REQUEST COMPLETE] ${requestId} | Duration: ${duration}s (0 rows, no attachment)`, 'alert', 1);
             }
@@ -315,7 +320,7 @@ async function processContent(SQLProcess, alertData, request, response, result) 
   heap.logger.log('alert', `[REQUEST START] ${requestId} | Alert: ${alertData[0].ALTID} | Email: ${alertData[0].ALTEMAIL}`, 'alert', 1);
   
   // Check for SPAM (3+ requests in 10 minutes)
-  const isSpam = await heap.dbLogger.checkSpam(alertData[0].ALTID, alertData[0].ALTEMAIL);
+  const isSpam = await heap.dbLogger.checkSpam(alertData[0].ALTID, request.requestId, alertData[0].ALTEMAIL);
   if (isSpam) {
     heap.logger.log('alert', `[SPAM DETECTED] ${requestId} | Alert: ${alertData[0].ALTID}`, 'alert', 3);
     await heap.dbLogger.logSpamBlocked(requestId, alertData[0].ALTID, alertData[0].ALTEMAIL);
@@ -324,7 +329,14 @@ async function processContent(SQLProcess, alertData, request, response, result) 
   }
   
   // Log request start to database
-  await heap.dbLogger.logStart(requestId, alertData[0].ALTID, alertData[0].ALTEMAIL);
+    await heap.dbLogger.logStart(
+                      requestId, 
+                      alertData[0].ALTID, 
+                      alertData[0].ALTEMAIL,
+                      request.query.PARAM || '',
+                      request.header('DATABASE_SID') || '',
+                      request.header('LANGUAGE') || ''
+  );
   
   // Set overall request timeout (10 minutes)
   const overallTimeout = setTimeout(async () => {
@@ -332,7 +344,7 @@ async function processContent(SQLProcess, alertData, request, response, result) 
     heap.logger.log('alert', `[REQUEST TIMEOUT] ${requestId} | Duration: ${duration}s | CRITICAL`, 'alert', 3);
     await heap.dbLogger.logTimeout(requestId, duration);
     sendSMS('6789863021@tmomail.net', `CRITICAL: Request timeout`, `RequestID: ${requestId}, Alert: ${alertData[0].ALTID}, Duration: ${duration}s`);
-  }, 600000);
+  }, 6000000);
   
   request.overallTimeout = overallTimeout;
   // ===== REQUEST MONITORING END =====
@@ -531,7 +543,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                         error: `JSON2XLS timeout: ${dataDetailN.length} rows`
                       });
                       sendSMS('6789863021@tmomail.net', `CRITICAL: JSON2XLS timeout`, `RequestID: ${request.requestId}, Rows: ${dataDetailN.length}`);
-                    }, 120000);
+                    }, 600000);
                     
                     const wbxls = heap.json2xls.json2xls(workbook, worksheet, alertData, dataDetailN, SUBJECT_EXT, `ResultTable${qNode.index}`, qNode.sheetFormat +'', renameColumn);
                     workbook = wbxls.wb;
@@ -577,12 +589,19 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
         if (detailData.length === 0) {
               heap.logger.log('alert', `Emailing workbook length main query 0 ${alertData[0].ALTEMAIL} `, 'alert', 1);
               heap.logger.log('alert', `Emailing workbook real time ${alertData[0].ALTREALTIME} `, 'alert', 1);
+
+              await heap.dbLogger.updateRequest(request.requestId, {
+                status: 'COMPLETE',
+                phase: 'NO_EMAIL',
+                rowCount: detailData.length
+              });
           if (alertData[0].ALTREALTIME == '0') {
               heap.logger.log('alert', `Emailing workbook no attachment ${alertData[0].ALTEMAIL} `, 'alert', 1);
               
-              // Update phase to EMAIL_SEND
+              // Update phase to EMAIL_SENT
               await heap.dbLogger.updateRequest(request.requestId, {
-                phase: 'EMAIL_SEND'
+                phase: 'EMAIL_SENT',
+                rowCount: detailData.length
               });
               
               sendEmail(
@@ -602,6 +621,12 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
               heap.logger.log('alert', `[NO EMAIL] 0 rows and ALTREALTIME=${alertData[0].ALTREALTIME} - marking complete`, 'alert', 1);
               const duration = Math.floor((Date.now() - request.requestStartTime) / 1000);
               clearTimeout(request.overallTimeout);
+              // Update phase to JSON2XLS
+              await heap.dbLogger.updateRequest(request.requestId, {
+                status: 'COMPLETE',
+                phase: 'NO_EMAIL',
+                rowCount: dataDetail.length
+              });
               await heap.dbLogger.logComplete(request.requestId, duration);
               heap.logger.log('alert', `[REQUEST COMPLETE] ${request.requestId} | Duration: ${duration}s (0 rows, no email)`, 'alert', 1);
           }
@@ -636,11 +661,11 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                 };
                 
                 timeoutId = setTimeout(() => {
-                  heap.logger.log('alert', `[Excel Generation] TIMEOUT after 120 seconds`, 'alert', 3);
+                  heap.logger.log('alert', `[Excel Generation] TIMEOUT after 600 seconds`, 'alert', 3);
                   writeStream.destroy();
                   cleanup();
-                  reject(new Error(`Excel generation timeout after 120 seconds for ${detailData.length} rows`));
-                }, 120000);
+                  reject(new Error(`Excel generation timeout after 600 seconds for ${detailData.length} rows`));
+                }, 600000);
                 
                 writeStream.on('error', (err) => {
                   heap.logger.log('alert', `[Excel Generation] Stream error: ${err.message}`, 'alert', 3);
@@ -682,9 +707,9 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                 
                 heap.logger.log('alert', `[Excel Generated] Size: ${bufferSizeMB}MB | Duration: ${bufferDuration}s | Rows: ${detailData.length}`, 'alert', 1);
                 
-                // Update phase to EMAIL_SEND
+                // Update phase to EMAIL_SENT
                 await heap.dbLogger.updateRequest(request.requestId, {
-                  phase: 'EMAIL_SEND'
+                  phase: 'EMAIL_SENT'
                 });
                 
                 sendEmailCSV(
@@ -745,6 +770,11 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
             // Mark request as complete (no email sent)
             const duration = Math.floor((Date.now() - request.requestStartTime) / 1000);
             clearTimeout(request.overallTimeout);
+            await heap.dbLogger.updateRequest(request.requestId, {
+              status: 'COMPLETE',
+              phase: 'NO_EMAIL',
+              rowCount: 0
+            });
             await heap.dbLogger.logComplete(request.requestId, duration);
             heap.logger.log('alert', `[REQUEST COMPLETE] ${request.requestId} | Duration: ${duration}s | No email sent`, 'alert', 1);
           }
@@ -774,7 +804,10 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
             const mergeSql = `MERGE INTO ALERTLOG A
                              USING (SELECT :reqid AS LALTREQID, :altid AS LALTID, 
                                            :blobdata AS LALTMESS, :rowcount AS LALTROWCOUNT,
-                                           SYSDATE AS LALTDCRE, SYSDATE AS LALTDMAJ, :util AS LALTUTIL
+                                           SYSDATE AS LALTDCRE, SYSDATE AS LALTDMAJ, :util AS LALTUTIL,
+                                           :altparam LALTPARAM,
+                                           :altdb LALTDB,
+                                           :altlangue LALTLANGUE
                                     FROM DUAL) B
                              ON (A.LALTID = B.LALTID 
                                  AND (A.LALTREQID = B.LALTREQID OR A.LALTREQID IS NULL)
@@ -784,13 +817,20 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                                           A.LALTROWCOUNT = B.LALTROWCOUNT,
                                           A.LALTDMAJ = B.LALTDMAJ
                              WHEN NOT MATCHED THEN
-                                INSERT (LALTID, LALTEDATE, LALTMESS, LALTDCRE, LALTDMAJ, LALTUTIL, LALTROWCOUNT, LALTREQID)
-                                VALUES (B.LALTID, SYSDATE, B.LALTMESS, B.LALTDCRE, B.LALTDMAJ, B.LALTUTIL, B.LALTROWCOUNT, B.LALTREQID)`;
+                                INSERT (LALTID, LALTEDATE, LALTMESS, LALTDCRE, LALTDMAJ, LALTUTIL, LALTROWCOUNT, LALTREQID, LALTPARAM, LALTDB, LALTLANGUE)
+                                VALUES (B.LALTID, SYSDATE, B.LALTMESS, B.LALTDCRE, B.LALTDMAJ, B.LALTUTIL, B.LALTROWCOUNT, B.LALTREQID, B.LALTPARAM, B.LALTDB, B.LALTLANGUE)`;
             
             const bindParams = {
               reqid: request.requestId || null,
               altid: alertData[0].ALTID,
-              blobdata: Buffer.from(archiveJson, 'utf8'),
+              altparam: JSON.stringify(request.query.PARAM),
+              altdb: request.header('DATABASE_SID'),
+              altlangue: request.header('LANGUAGE'),
+              blobdata: {
+                val: Buffer.from(archiveJson, 'utf8'),
+                type: oracledb.BLOB,
+                dir: oracledb.BIND_IN
+              },
               util: 'notification.js',
               rowcount: String(totalArchiveRows)
             };

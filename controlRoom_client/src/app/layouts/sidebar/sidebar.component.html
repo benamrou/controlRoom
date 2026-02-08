@@ -452,6 +452,11 @@
                 <li class="nested" [ngClass]="{'expand' : showMenu === 'alertsicr' }">
                     <ul class="submenu" >
                         <li>
+                            <a class="bbs_link_menu" routerLink="/alerts-journal" [routerLinkActive]="['router-link-active']" >
+                                <span><i class="fas fa-book"></i> {{ 'Journal' }}</span>
+                            </a>
+                        </li>
+                        <li>
                             <a class="bbs_link_menu" routerLink="/alerts-icr" [routerLinkActive]="['router-link-active']" >
                                 <span><i class="fas fa-bullhorn"></i> {{ 'Alerts management' }}</span>
                             </a>

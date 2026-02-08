@@ -7,7 +7,7 @@ import { DOCUMENT } from '@angular/common';
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
-    styleUrls: [ '../themes/superbowl.scss']
+    styleUrls: [ '../themes/winter.scss']
 })
 export class HeaderComponent implements OnInit {
 

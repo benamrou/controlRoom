@@ -160,6 +160,7 @@ import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
 import { PPGRetailModule } from './pages/mdm/ppg.retail/ppg.retail.module';
 import { PalletLabelModule } from './pages/warehouse/toolkit/pallet.label/pallet.label.module';
 import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module';
+import { AlertLogJournalModule } from './pages/alerts/journal/alert.journal.module';
 
 
 @NgModule({
@@ -263,7 +264,8 @@ import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module'
     QueryLibraryModule,
     DictionaryModule,
     StockLayerModule,
-    ItemRetailModule
+    ItemRetailModule,
+    AlertLogJournalModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

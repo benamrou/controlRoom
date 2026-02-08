@@ -1,0 +1,278 @@
+/* ==============================================
+   OHIO WINTER LAYOUT - winter-layout.scss
+   Header & Sidebar styling
+   ============================================== */
+
+// Color Variables - Ohio Winter Palette
+$winter-night: #1a2a3a;
+$winter-blue: #2d4a6e;
+$winter-steel: #4a6d8c;
+$winter-ice: #a8d4e6;
+$winter-frost: #d4eef7;
+$winter-snow: #f0f8ff;
+$winter-white: #ffffff;
+$winter-warm: #e8b87d;
+$winter-success: #6dd4a0;
+
+// ========================================
+// HEADER
+// ========================================
+.winter-header {
+    background: linear-gradient(135deg, $winter-night 0%, $winter-blue 50%, $winter-steel 100%) !important;
+    border-bottom: 2px solid rgba($winter-ice, 0.3) !important;
+    box-shadow: 0 2px 15px rgba($winter-night, 0.3);
+    overflow: visible !important;
+    position: relative;
+
+    .navbar-brand {
+        color: $winter-frost !important;
+        font-weight: 500;
+        
+        &:hover { color: $winter-white !important; }
+    }
+
+    .nav-link {
+        color: rgba($winter-frost, 0.85) !important;
+        transition: all 0.3s ease;
+
+        &:hover { color: $winter-white !important; }
+
+        i {
+            color: $winter-ice;
+            opacity: 0.8;
+        }
+    }
+
+    .winter-badge {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        
+        span {
+            background: linear-gradient(135deg, $winter-ice, $winter-frost);
+            color: $winter-night;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba($winter-night, 0.2);
+        }
+    }
+}
+
+// Dropdown Styling
+.winter-dropdown {
+    background: $winter-night !important;
+    border: 1px solid rgba($winter-ice, 0.25) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba($winter-night, 0.4) !important;
+    margin-top: 8px !important;
+    padding: 8px 0 !important;
+
+    .dropdown-item {
+        color: rgba($winter-frost, 0.85) !important;
+        padding: 10px 20px !important;
+        transition: all 0.2s ease !important;
+
+        i { color: $winter-ice; opacity: 0.7; margin-right: 8px; }
+
+        &:hover {
+            background: rgba($winter-ice, 0.15) !important;
+            color: $winter-white !important;
+            i { opacity: 1; }
+        }
+    }
+}
+
+// ========================================
+// SIDEBAR
+// ========================================
+.winter-sidebar {
+    background: linear-gradient(180deg, $winter-night 0%, darken($winter-blue, 8%) 100%) !important;
+    border-right: 1px solid rgba($winter-ice, 0.15) !important;
+    box-shadow: 2px 0 15px rgba($winter-night, 0.2);
+
+    // Scrollbar
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-track { background: rgba($winter-night, 0.3); }
+    &::-webkit-scrollbar-thumb { 
+        background: rgba($winter-ice, 0.3); 
+        border-radius: 3px;
+        &:hover { background: rgba($winter-ice, 0.5); }
+    }
+
+    // List Items
+    .list-group {
+        a.list-group-item,
+        .list-group-item {
+            background: transparent !important;
+            border: none !important;
+            color: rgba($winter-frost, 0.75) !important;
+            border-left: 3px solid transparent !important;
+            transition: all 0.2s ease;
+            
+            span { color: inherit; }
+
+            i, .fa, .fas, .far, .fab, .pi {
+                color: rgba($winter-ice, 0.6) !important;
+                transition: color 0.2s ease;
+            }
+
+            &:hover {
+                background: rgba($winter-ice, 0.1) !important;
+                color: $winter-frost !important;
+                border-left-color: rgba($winter-ice, 0.4) !important;
+                
+                i, .fa, .fas, .far, .fab, .pi { color: $winter-ice !important; }
+            }
+
+            &.router-link-active {
+                background: rgba($winter-ice, 0.15) !important;
+                color: $winter-white !important;
+                border-left-color: $winter-ice !important;
+                
+                i, .fa, .fas, .far, .fab, .pi { color: $winter-ice !important; }
+            }
+        }
+    }
+
+    // Nested Menus
+    .nested-menu {
+        .list-group-item::after {
+            color: rgba($winter-ice, 0.5) !important;
+        }
+
+        ul.submenu {
+            background: rgba(0, 0, 0, 0.2) !important;
+            padding-left: 0;
+
+            li {
+                a, 
+                a.bbs_link_menu {
+                    color: rgba($winter-frost, 0.65) !important;
+                    padding: 10px 20px 10px 40px;
+                    display: block;
+                    text-decoration: none;
+                    border-left: 3px solid transparent;
+                    transition: all 0.2s ease;
+                    
+                    span { color: inherit; }
+
+                    i, .fa, .fas, .far, .fab, .pi {
+                        color: rgba($winter-ice, 0.5) !important;
+                    }
+
+                    &:hover {
+                        background: rgba($winter-ice, 0.08) !important;
+                        color: $winter-frost !important;
+                        border-left-color: rgba($winter-ice, 0.25);
+                        
+                        i, .fa, .fas, .far, .fab, .pi { color: $winter-ice !important; }
+                    }
+
+                    &.router-link-active {
+                        background: rgba($winter-ice, 0.12) !important;
+                        color: $winter-white !important;
+                        border-left-color: $winter-ice;
+                        
+                        i, .fa, .fas, .far, .fab, .pi { color: $winter-ice !important; }
+                    }
+                }
+            }
+        }
+
+        ul.subsubmenu {
+            background: rgba(0, 0, 0, 0.15) !important;
+            
+            a { padding-left: 52px !important; font-size: 0.9em; }
+        }
+    }
+
+    // Toggle Button
+    .toggle-button {
+        background: $winter-night !important;
+        color: rgba($winter-frost, 0.7) !important;
+        border-top: 1px solid rgba($winter-ice, 0.2) !important;
+        
+        i { color: $winter-ice !important; }
+        
+        &:hover {
+            background: $winter-blue !important;
+            color: $winter-frost !important;
+        }
+    }
+}
+
+// ========================================
+// ADMIN SIDEBAR
+// ========================================
+.winter-sidebar-admin {
+    background: linear-gradient(180deg, darken($winter-night, 3%) 0%, darken($winter-blue, 12%) 100%) !important;
+    border: 1px solid rgba($winter-ice, 0.1) !important;
+    border-top: 2px solid rgba($winter-ice, 0.3) !important;
+
+    .list-group {
+        .list-group-item,
+        a.list-group-item {
+            background: transparent !important;
+            border: none !important;
+            color: rgba($winter-frost, 0.6) !important;
+
+            i, .fa, .fas, .far, .fab { color: rgba($winter-ice, 0.5) !important; }
+
+            &:hover {
+                background: rgba($winter-ice, 0.08) !important;
+                color: $winter-frost !important;
+                i, .fa, .fas, .far, .fab { color: $winter-ice !important; }
+            }
+
+            &.router-link-active {
+                background: rgba($winter-ice, 0.12) !important;
+                color: $winter-white !important;
+            }
+        }
+    }
+
+    .nested-menu ul.submenu {
+        background: rgba(0, 0, 0, 0.15) !important;
+
+        li a {
+            color: rgba($winter-frost, 0.6) !important;
+            padding: 8px 16px 8px 36px;
+            display: block;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: rgba($winter-ice, 0.08) !important;
+                color: $winter-frost !important;
+            }
+
+            &.router-link-active {
+                background: rgba($winter-ice, 0.1) !important;
+                color: $winter-white !important;
+            }
+        }
+    }
+
+    .logo {
+        //background: linear-gradient(135deg, rgba($winter-white, 0.95), rgba($winter-frost, 0.9)) !important;
+        border-top: 1px solid rgba($winter-ice, 0.3) !important;
+        padding: 12px 0 12px 50px;
+    }
+}
+
+// ========================================
+// UTILITY
+// ========================================
+.isDisabled {
+    color: rgba($winter-frost, 0.3) !important;
+    cursor: not-allowed;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+// Responsive - Hide badge on mobile
+@media screen and (max-width: 992px) {
+    .winter-header .winter-badge { display: none; }
+}

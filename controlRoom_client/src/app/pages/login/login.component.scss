@@ -1,705 +1,498 @@
-/* login.component.scss - Super Bowl LX 2026 Theme */
+/* ==============================================
+   OHIO WINTER THEME - winter.scss
+   Cozy Midwest winter feel
+   ============================================== */
 
-.login-page.superbowl-theme {
-    position: relative;
+// Color Variables - Ohio Winter Palette
+$winter-night: #1a2a3a;
+$winter-blue: #2d4a6e;
+$winter-steel: #4a6d8c;
+$winter-ice: #a8d4e6;
+$winter-frost: #d4eef7;
+$winter-snow: #f0f8ff;
+$winter-white: #ffffff;
+$winter-warm: #e8b87d;  // Warm cabin light
+$winter-amber: #d4a056;
+$winter-pine: #2d5a45;
+$winter-success: #6dd4a0;
+
+// ========================================
+// LOGIN PAGE
+// ========================================
+.login-page {
     min-height: 100vh;
+    position: relative;
     overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(180deg, #001a33 0%, #003366 50%, #1a472a 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Stadium Sky Background */
-.stadium-sky {
+// Winter Sky
+.winter-sky {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        radial-gradient(ellipse at 50% 100%, rgba(255, 145, 0, 0.08) 0%, transparent 50%),
-        linear-gradient(180deg, #0a1628 0%, #1e3a5f 30%, #2d5a7b 60%, #1a3d2a 100%);
+    inset: 0;
+    background: linear-gradient(180deg, 
+        $winter-night 0%, 
+        $winter-blue 30%, 
+        $winter-steel 60%,
+        lighten($winter-steel, 10%) 80%,
+        $winter-frost 100%
+    );
     z-index: 0;
 }
 
-/* Stadium Lights */
-.stadium-lights {
+// Snowfall
+.snowfall {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
+    inset: 0;
     pointer-events: none;
-}
-
-.light-beam {
-    position: absolute;
-    top: -10%;
-    width: 150px;
-    height: 120%;
-    background: linear-gradient(180deg, rgba(255, 255, 200, 0.15) 0%, transparent 60%);
-    filter: blur(20px);
-    animation: lightPulse 4s ease-in-out infinite;
-    
-    &.light-1 {
-        left: 15%;
-        animation-delay: 0s;
-    }
-    
-    &.light-2 {
-        left: 40%;
-        animation-delay: 1s;
-    }
-    
-    &.light-3 {
-        left: 60%;
-        animation-delay: 2s;
-    }
-    
-    &.light-4 {
-        left: 85%;
-        animation-delay: 0.5s;
-    }
-}
-
-@keyframes lightPulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.6; }
-}
-
-/* Football Field */
-.football-field {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40%;
-    background: linear-gradient(180deg, #2d5016 0%, #1a3d0a 100%);
-    border-top: 3px solid #ffffff;
-    z-index: 2;
-    
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 48px,
-            rgba(255, 255, 255, 0.05) 48px,
-            rgba(255, 255, 255, 0.05) 50px
-        );
-    }
-}
-
-.yard-line {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    width: 2px;
-    background: rgba(255, 255, 255, 0.4);
-    
-    &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 40px;
-        height: 2px;
-        background: rgba(255, 255, 255, 0.6);
-    }
-}
-
-.endzone {
-    position: absolute;
-    top: 0;
-    width: 15%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    
-    &.endzone-left {
-        left: 0;
-        background: linear-gradient(90deg, #d4af37 0%, rgba(212, 175, 55, 0.5) 100%);
-    }
-    
-    &.endzone-right {
-        right: 0;
-        background: linear-gradient(270deg, #d4af37 0%, rgba(212, 175, 55, 0.5) 100%);
-    }
-}
-
-.endzone-text {
-    color: #ffffff;
-    font-size: 24px;
-    font-weight: 900;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    transform: rotate(-90deg);
-    white-space: nowrap;
-}
-
-/* American Football Goalposts */
-.goalpost {
-    position: absolute;
-    bottom: 42%;
-    z-index: 3;
-    transform: rotate(-90deg);
-    transform-origin: center center;
-    
-    &.goalpost-left {
-        left: 12%;
-    }
-    
-    &.goalpost-right {
-        right: 12%;
-    }
-}
-
-.goalpost-structure {
-    position: relative;
-    width: 80px;
-    height: 120px;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
-}
-
-/* Vertical Uprights */
-.goalpost-upright {
-    position: absolute;
-    width: 4px;
-    height: 60px;
-    background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%);
-    top: 0;
-    
-    &.goalpost-upright-left {
-        left: 0;
-    }
-    
-    &.goalpost-upright-right {
-        right: 0;
-    }
-    
-    /* Top caps for uprights */
-    &::before {
-        content: '';
-        position: absolute;
-        top: -3px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 8px;
-        height: 8px;
-        background: #ffd700;
-        border-radius: 50%;
-        box-shadow: 0 0 6px rgba(255, 215, 0, 0.8);
-    }
-}
-
-/* Horizontal Crossbar */
-.goalpost-crossbar {
-    position: absolute;
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(90deg, #ffd700 0%, #b8860b 50%, #ffd700 100%);
-    top: 60px;
-    left: 0;
-}
-
-/* Vertical Base (Y-shape bottom) */
-.goalpost-base {
-    position: absolute;
-    width: 4px;
-    height: 60px;
-    background: linear-gradient(180deg, #b8860b 0%, #8b6914 100%);
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-/* Sway Animation */
-@keyframes swayHorizontal {
-    0%, 100% { 
-        transform: rotate(-90deg) translateY(-1px); 
-    }
-    50% { 
-        transform: rotate(-90deg) translateY(1px); 
-    }
-}
-
-.goalpost {
-    animation: swayHorizontal 4s ease-in-out infinite;
-}
-
-/* Santa Clara Skyline */
-.santa-clara-skyline {
-    position: absolute;
-    bottom: 40%;
-    left: 0;
-    width: 100%;
-    height: 20%;
     z-index: 1;
-    background: 
-        linear-gradient(to right, 
-            transparent 0%, 
-            rgba(20, 40, 60, 0.3) 20%, 
-            rgba(20, 40, 60, 0.3) 80%, 
-            transparent 100%),
-        repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 80px,
-            rgba(30, 50, 70, 0.4) 80px,
-            rgba(30, 50, 70, 0.4) 100px,
-            transparent 100px,
-            transparent 120px,
-            rgba(40, 60, 80, 0.4) 120px,
-            rgba(40, 60, 80, 0.4) 135px
-        );
+}
+
+.snowflake {
+    position: absolute;
+    top: -20px;
+    color: $winter-white;
+    opacity: 0.8;
+    animation: snowfall 8s linear infinite;
+    text-shadow: 0 0 5px rgba($winter-white, 0.5);
     
-    /* Add some building silhouettes */
-    &::before {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 15%;
-        width: 60px;
-        height: 80px;
-        background: rgba(20, 40, 60, 0.5);
-        clip-path: polygon(0 100%, 0 20%, 20% 20%, 20% 0, 40% 0, 40% 20%, 60% 20%, 60% 0, 80% 0, 80% 20%, 100% 20%, 100% 100%);
+    &:nth-child(odd) {
+        opacity: 0.6;
+        animation-duration: 10s;
     }
     
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        right: 20%;
-        width: 80px;
-        height: 100px;
-        background: rgba(30, 50, 70, 0.5);
-        clip-path: polygon(0 100%, 0 30%, 15% 30%, 15% 15%, 30% 15%, 30% 0, 70% 0, 70% 15%, 85% 15%, 85% 30%, 100% 30%, 100% 100%);
+    &:nth-child(3n) {
+        opacity: 0.4;
+        animation-duration: 12s;
     }
 }
 
-/* Flying Footballs */
-.footballs-animation {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 4;
-    pointer-events: none;
-}
-
-.football-flying {
-    position: absolute;
-    top: -50px;
-    font-size: 20px;
-    animation: footballFall linear infinite;
-    opacity: 0.5;
-}
-
-@keyframes footballFall {
+@keyframes snowfall {
     0% {
-        top: -50px;
-        transform: rotate(0deg);
+        transform: translateY(-20px) rotate(0deg);
         opacity: 0;
     }
     10% {
-        opacity: 0.5;
+        opacity: 0.8;
     }
     90% {
-        opacity: 0.5;
+        opacity: 0.8;
     }
     100% {
-        top: 100vh;
-        transform: rotate(360deg);
+        transform: translateY(100vh) rotate(360deg);
         opacity: 0;
     }
 }
 
-/* Stadium Crowd */
-.crowd-section {
+// Distant Hills
+.distant-hills {
     position: absolute;
-    bottom: 40%;
-    width: 18%;
-    height: 18%;
-    background: linear-gradient(180deg, rgba(30, 50, 80, 0.6) 0%, rgba(15, 25, 40, 0.4) 100%);
+    bottom: 100px;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: 
+        radial-gradient(ellipse 80% 100% at 20% 100%, rgba($winter-steel, 0.3) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 100% at 50% 100%, rgba($winter-steel, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 100% at 80% 100%, rgba($winter-steel, 0.3) 0%, transparent 55%);
     z-index: 1;
-    
-    &.crowd-left {
-        left: 0;
-        clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
-    }
-    
-    &.crowd-right {
-        right: 0;
-        clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
-    }
-    
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: repeating-linear-gradient(
-            0deg,
-            rgba(255, 255, 255, 0.05),
-            rgba(255, 255, 255, 0.05) 3px,
-            transparent 3px,
-            transparent 7px
-        );
-    }
 }
 
-/* Super Bowl Banner */
-.superbowl-banner {
+// Ground Snow
+.snow-ground {
     position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    background: linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #d4af37 100%);
-    padding: 15px 40px;
-    border-radius: 50px;
-    box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    border: 3px solid #ffffff;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(180deg, 
+        transparent 0%,
+        rgba($winter-snow, 0.4) 30%,
+        rgba($winter-snow, 0.7) 60%,
+        $winter-snow 100%
+    );
+    z-index: 2;
 }
 
-.banner-content {
+// Snow Drifts
+.snow-drift {
+    position: absolute;
+    bottom: 0;
+    height: 60px;
+    background: rgba($winter-snow, 0.9);
+    border-radius: 50% 50% 0 0;
+    z-index: 3;
+    
+    &.drift-1 {
+        left: -5%;
+        width: 30%;
+        height: 50px;
+    }
+    &.drift-2 {
+        left: 35%;
+        width: 35%;
+        height: 40px;
+    }
+    &.drift-3 {
+        right: -5%;
+        width: 25%;
+        height: 55px;
+    }
+}
+
+// Pine Trees - Back Row
+.trees-back {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    z-index: 4;
     display: flex;
-    align-items: center;
-    gap: 15px;
+    justify-content: space-around;
+    padding: 0 5%;
+    pointer-events: none;
+    
+    .tree {
+        font-size: 2.5rem;
+        filter: brightness(0.25) saturate(0.4);
+        opacity: 0.5;
+        
+        &:nth-child(odd) { transform: translateY(10px); }
+        &:nth-child(3n) { font-size: 2rem; }
+    }
 }
 
-.nfl-shield {
-    font-size: 36px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+// Pine Trees - Front Row
+.trees-front {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2%;
+    pointer-events: none;
+    
+    .tree {
+        font-size: 4rem;
+        filter: brightness(0.3) saturate(0.5);
+        opacity: 0.7;
+        
+        &:nth-child(odd) { 
+            font-size: 3.5rem;
+            transform: translateY(-5px);
+        }
+        &:nth-child(3n) { 
+            font-size: 5rem; 
+            opacity: 0.8;
+        }
+        &:nth-child(4n) { 
+            font-size: 3rem;
+            transform: translateY(10px);
+        }
+    }
 }
 
-.banner-text {
-    h1 {
-        margin: 0;
-        font-size: 28px;
-        font-weight: 900;
-        color: #001a33;
-        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-        letter-spacing: 2px;
+// Winter Objects
+.winter-objects {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 6;
+    
+    .snowman {
+        position: absolute;
+        bottom: 60px;
+        left: 8%;
+        font-size: 3.5rem;
+        filter: drop-shadow(0 4px 8px rgba($winter-night, 0.3));
+        animation: snowman-sway 4s ease-in-out infinite;
     }
     
-    p {
-        margin: 0;
-        font-size: 14px;
-        font-weight: 600;
-        color: #003366;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+    .cabin {
+        position: absolute;
+        bottom: 55px;
+        right: 12%;
+        font-size: 3rem;
+        filter: drop-shadow(0 4px 8px rgba($winter-night, 0.3));
+        
+        &::after {
+            content: '💨';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            font-size: 1rem;
+            opacity: 0.6;
+            animation: smoke 3s ease-out infinite;
+        }
+    }
+    
+    .deer {
+        position: absolute;
+        bottom: 70px;
+        left: 25%;
+        font-size: 2rem;
+        filter: drop-shadow(0 2px 4px rgba($winter-night, 0.3));
+        animation: deer-walk 8s ease-in-out infinite;
     }
 }
 
-/* Version */
+@keyframes snowman-sway {
+    0%, 100% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
+}
+
+@keyframes smoke {
+    0% { 
+        opacity: 0.6; 
+        transform: translateY(0) scale(1); 
+    }
+    100% { 
+        opacity: 0; 
+        transform: translateY(-20px) scale(1.5); 
+    }
+}
+
+@keyframes deer-walk {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(20px); }
+}
+
+// Version
 .version {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 11px;
+    top: 16px;
+    left: 16px;
+    color: rgba($winter-frost, 0.5);
+    font-size: 0.75rem;
     z-index: 100;
 }
 
-/* Main Content */
+// Main Content
 .main-content {
     position: relative;
-    z-index: 5;
-    min-height: 100vh;
+    z-index: 10;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-/* Login Container */
-.login-container {
+    gap: 24px;
+    padding: 40px 20px;
     width: 100%;
     max-width: 450px;
-    margin: 0 auto;
+}
+
+// Login Container & Card
+.login-container {
+    width: 100%;
 }
 
 .login-card {
     position: relative;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(15px);
-    border-radius: 20px;
-    padding: 40px;
+    background: rgba($winter-white, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 40px 36px;
+    border: 1px solid rgba($winter-white, 0.25);
     box-shadow: 
-        0 15px 50px rgba(0, 0, 0, 0.4),
-        0 0 0 1px rgba(212, 175, 55, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(212, 175, 55, 0.4);
-}
-
-.corner-decoration {
-    position: absolute;
-    font-size: 16px;
-    opacity: 0.5;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        0 8px 32px rgba($winter-night, 0.2),
+        0 0 0 1px rgba($winter-white, 0.1) inset;
     
-    &.corner-tl {
-        top: -8px;
-        left: -8px;
-    }
-    
-    &.corner-tr {
-        top: -8px;
-        right: -8px;
-    }
-    
-    &.corner-bl {
-        bottom: -8px;
-        left: -8px;
-    }
-    
-    &.corner-br {
-        bottom: -8px;
-        right: -8px;
-    }
-}
-
-.logo {
-    text-align: center;
-    margin-bottom: 25px;
-    cursor: pointer;
-    
-    .user-avatar {
-        border-radius: 50%;
-        border: 3px solid rgba(212, 175, 55, 0.5);
-        box-shadow: 0 3px 10px rgba(212, 175, 55, 0.2);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    // Frost corners
+    .frost-corner {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        opacity: 0.4;
+        pointer-events: none;
         
-        &:hover {
-            transform: scale(1.03);
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        &.frost-tl {
+            top: -1px;
+            left: -1px;
+            border-top: 3px solid rgba($winter-white, 0.5);
+            border-left: 3px solid rgba($winter-white, 0.5);
+            border-radius: 16px 0 0 0;
+        }
+        &.frost-tr {
+            top: -1px;
+            right: -1px;
+            border-top: 3px solid rgba($winter-white, 0.5);
+            border-right: 3px solid rgba($winter-white, 0.5);
+            border-radius: 0 16px 0 0;
+        }
+        &.frost-bl {
+            bottom: -1px;
+            left: -1px;
+            border-bottom: 3px solid rgba($winter-white, 0.5);
+            border-left: 3px solid rgba($winter-white, 0.5);
+            border-radius: 0 0 0 16px;
+        }
+        &.frost-br {
+            bottom: -1px;
+            right: -1px;
+            border-bottom: 3px solid rgba($winter-white, 0.5);
+            border-right: 3px solid rgba($winter-white, 0.5);
+            border-radius: 0 0 16px 0;
         }
     }
+    
+    .logo {
+        text-align: center;
+        margin-bottom: 20px;
+        cursor: pointer;
+        
+        .user-avatar {
+            //border-radius: 12px;
+            filter: drop-shadow(0 4px 12px rgba($winter-night, 0.3));
+            transition: transform 0.3s;
+            
+            &:hover { transform: scale(1.03); }
+        }
+    }
+    
+    h1 {
+        text-align: center;
+        color: $winter-white;
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin-bottom: 28px;
+        text-shadow: 0 2px 4px rgba($winter-night, 0.3);
+    }
 }
 
-h1 {
-    text-align: center;
-    color: #001a33;
-    font-size: 26px;
-    font-weight: 600;
-    margin-bottom: 30px;
-    text-shadow: none;
-    letter-spacing: 0.5px;
-}
-
+// Form Styles
 .form-group {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     
     i {
         position: absolute;
-        left: 15px;
+        left: 14px;
         top: 50%;
         transform: translateY(-50%);
-        color: #003366;
-        z-index: 1;
-        opacity: 0.7;
+        color: $winter-steel;
+        font-size: 0.9rem;
+        transition: color 0.3s;
+        z-index: 2;
     }
     
     .form-control {
         width: 100%;
-        padding: 13px 15px 13px 45px;
-        border: 1.5px solid rgba(212, 175, 55, 0.4);
-        border-radius: 25px;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.9);
+        padding: 14px 14px 14px 44px;
+        background: rgba($winter-white, 0.95);
+        border: 2px solid rgba($winter-ice, 0.4);
+        border-radius: 10px;
+        color: $winter-night;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+        box-sizing: border-box;
+        
+        &::placeholder { color: rgba($winter-steel, 0.7); }
         
         &:focus {
             outline: none;
-            border-color: #d4af37;
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
-            background: #ffffff;
-        }
-        
-        &::placeholder {
-            color: #999;
-            font-size: 14px;
+            background: $winter-white;
+            border-color: $winter-steel;
+            box-shadow: 0 0 0 3px rgba($winter-ice, 0.3);
         }
     }
+    
+    &:focus-within i { color: $winter-blue; }
 }
 
 .login-btn {
     width: 100%;
-    padding: 13px;
-    background: linear-gradient(135deg, #013a6b 0%, #01538d 100%);
-    color: #ffffff;
+    padding: 14px;
+    background: linear-gradient(135deg, $winter-blue, $winter-steel);
     border: none;
-    border-radius: 25px;
-    font-size: 15px;
+    border-radius: 10px;
+    color: $winter-white;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(1, 58, 107, 0.3);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 10px;
+    transition: all 0.3s;
+    margin-top: 8px;
     
     &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #01538d 0%, #0173b9 100%);
+        background: linear-gradient(135deg, $winter-steel, $winter-blue);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(1, 83, 141, 0.4);
+        box-shadow: 0 6px 20px rgba($winter-blue, 0.4);
     }
     
-    &:active:not(:disabled) {
-        transform: translateY(0);
-    }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
     
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-    
-    i {
-        margin-right: 8px;
-    }
+    i { margin-right: 8px; }
 }
 
+// Loading Status
 .loading-status {
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 2px solid #e0e0e0;
-}
-
-.status-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    font-size: 14px;
-    color: #666;
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba($winter-white, 0.85);
+    border-radius: 10px;
+    border: 1px solid rgba($winter-ice, 0.3);
     
-    i {
-        color: #d4af37;
+    .status-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        color: $winter-blue;
+        font-size: 0.85rem;
+        border-bottom: 1px solid rgba($winter-ice, 0.3);
         
-        &.fa-spinner {
-            animation: spin 1s linear infinite;
-        }
+        &:last-child { border-bottom: none; }
         
-        &.fa-check {
-            color: #28a745;
-        }
+        i.fa-check { color: $winter-success; }
+        i.fa-spinner { color: $winter-steel; animation: spin 1s linear infinite; }
     }
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 
-/* Game Day Message */
-.gameday-message {
-    position: absolute;
-    bottom: 60px;
-    left: 50%;
-    transform: translateX(-50%);
+// Winter Message
+.winter-message {
     text-align: center;
-    color: #ffffff;
-    z-index: 6;
-    animation: fadeInUp 1s ease-out 0.5s both;
+    margin-top: 16px;
     
-    .trophy-icon {
-        font-size: 40px;
+    .snowflake-icon {
+        font-size: 2rem;
         display: block;
         margin-bottom: 8px;
-        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
-        animation: bounce 2s ease-in-out infinite;
-        opacity: 0.9;
+        animation: snowflake-float 3s ease-in-out infinite;
+        text-shadow: 0 0 10px rgba($winter-ice, 0.8);
     }
     
     h2 {
-        font-size: 28px;
-        font-weight: 700;
-        margin: 0 0 3px 0;
-        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
-        letter-spacing: 1px;
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: $winter-white;
+        margin: 0 0 4px;
+        text-shadow: 0 2px 8px rgba($winter-night, 0.3);
     }
     
     p {
-        font-size: 16px;
+        font-size: 0.9rem;
+        color: rgba($winter-frost, 0.9);
         margin: 0;
-        font-weight: 500;
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
-        opacity: 0.95;
+        font-style: italic;
     }
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
+@keyframes snowflake-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(10deg); }
 }
 
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .superbowl-banner {
-        padding: 10px 20px;
-        
-        .banner-text h1 {
-            font-size: 20px;
-        }
-        
-        .banner-text p {
-            font-size: 11px;
-        }
-        
-        .nfl-shield {
-            font-size: 28px;
-        }
-    }
-    
-    .login-card {
-        padding: 30px 20px;
-    }
-    
-    .gameday-message {
-        h2 {
-            font-size: 24px;
-        }
-        
-        p {
-            font-size: 14px;
-        }
-    }
-    
-    .endzone-text {
-        font-size: 16px;
-    }
-    
-    .goalpost {
-        font-size: 40px;
-    }
+// Responsive
+@media (max-width: 520px) {
+    .main-content { padding: 24px 16px; }
+    .login-card { padding: 32px 24px; }
+    .trees { display: none; }
 }

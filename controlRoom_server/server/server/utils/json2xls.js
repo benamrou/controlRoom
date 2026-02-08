@@ -386,6 +386,7 @@ function setXLSProperties(workbook) {
 function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, tableName, formatingRules, renameColumn) {
     let valueColumns = Object.keys(detailData[0] || {});
     let dataColumns = [];
+    let colMove = null;  // Declare colMove at function start
     renameColumn = renameColumn || [];
     //heap.logger.log('alert', 'valueColumns before ' + JSON.stringify(valueColumns), 'alert', 3);
 
@@ -421,32 +422,56 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
 
     // Add rows detail
     let dataRows = [];
-    let row, element;
-    let colMove = null;
     
     // OPTIMIZATION: Parse JSON ONCE before loop, not 42K times inside loop!
     if (alertData[0].ALTCOLMOVE) {
         colMove = JSON.parse(alertData[0].ALTCOLMOVE);
         heap.logger.log('alert', `[COLMOVE] Moving ${colMove.move2end.length} columns to end for ${detailData.length} rows`, 'alert', 1);
-    }
-
-    for (let i = 0; i < detailData.length; i++) {
-        dataRows.push (Object.values(detailData[i]));
-        // If Column move is active - The selected column are moved at the end of the spreadsheet.
-        if (colMove) {
-            //heap.logger.log('alert', 'colMove ' + JSON.stringify(colMove), 'alert', 3);
-            for (let j=0; j < colMove.move2end.length ; j++) {
-                //heap.logger.log('alert', 'colMove .move2end[j]"' + JSON.stringify(colMove.move2end[j]), 'alert', 3);
-                //heap.logger.log('alert', 'detailData[colMove.move2end[j]] ' + JSON.stringify(detailData[colMove.move2end[j]]), 'alert', 3);
-                row = dataRows[dataRows.length-1];
-                element =row[colMove.move2end[j]-j]; 
-                //heap.logger.log('alert', 'row ' + JSON.stringify(row), 'alert', 3);
-                row.splice(colMove.move2end[j]-j, 1);
-                row.splice(row.length, 0, element);
-                dataRows.splice(dataRows.length-1,1);
-                dataRows.push(row);
-                //heap.logger.log('alert', 'dataRows push additional row.', 'alert', 3);
+        
+        // 🚀 MAJOR OPTIMIZATION: Calculate column reordering ONCE, not per-row
+        const moveIndices = colMove.move2end.map(idx => idx - 1); // Convert to 0-based indices
+        const keepIndices = [];
+        const movedIndices = [];
+        
+        for (let i = 0; i < valueColumns.length; i++) {
+            if (moveIndices.includes(i)) {
+                movedIndices.push(i);
+            } else {
+                keepIndices.push(i);
             }
+        }
+        
+        heap.logger.log('alert', `[COLMOVE] Calculated reordering: ${keepIndices.length} kept, ${movedIndices.length} moved`, 'alert', 1);
+        const startTime = Date.now();
+        
+        // Build rows with reordered columns in SINGLE PASS
+        for (let i = 0; i < detailData.length; i++) {
+            const values = Object.values(detailData[i]);
+            const reordered = [];
+            
+            // Add kept columns first
+            for (const idx of keepIndices) {
+                reordered.push(values[idx]);
+            }
+            // Add moved columns last
+            for (const idx of movedIndices) {
+                reordered.push(values[idx]);
+            }
+            
+            dataRows.push(reordered);
+        }
+        
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+        heap.logger.log('alert', `[COLMOVE] Reordered ${detailData.length} rows in ${duration}s`, 'alert', 1);
+    } else {
+        // No column move - simple case
+        const startTime = Date.now();
+        for (let i = 0; i < detailData.length; i++) {
+            dataRows.push(Object.values(detailData[i]));
+        }
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+        if (detailData.length > 1000) {
+            heap.logger.log('alert', `[ROWS] Built ${detailData.length} rows in ${duration}s`, 'alert', 1);
         }
     }
 
@@ -501,8 +526,8 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
             theme: alertData[0].ALTBORDER === 1 ? 'TableStyleLight1' : 'TableStyleLight1',
             showRowStripes: true,
             },
-            columns: [...dataColumns],
-            rows: [...dataRows]
+            columns: [...dataColumns],  // Spread IS needed - cleanup code empties original arrays!
+            rows: [...dataRows]          // Spread IS needed - cleanup code empties original arrays!
         });
         
         // Log which style was used

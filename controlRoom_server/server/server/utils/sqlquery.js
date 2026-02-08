@@ -206,10 +206,16 @@ async function executeLibQueryCallback(ticketId, queryNum, params, user, databas
             .catch (function(err) {
                 //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
                 heap.logger.log(ticketId,'SQLQuery - executeLibQueryCallback : ' + err, user, 3);
+                // ✅ FIX: Call callback with error to properly propagate it
+                callback(err, null);
                 //app.next(err);
             });
             //return promiseExecution;
-        } catch (error) {};
+        } catch (error) {
+            heap.logger.log(ticketId,'SQLQuery - executeLibQueryCallback try/catch : ' + error, user, 3);
+            // ✅ FIX: Call callback with error in catch block too
+            callback(error, null);
+        };
             
     };
   
@@ -241,11 +247,17 @@ async function executeSQLQueryCallback(ticketId, query, commit, params, user, da
             )
             .catch (function(err) {
                 //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
-                heap.logger.log(ticketId,'SQLQuery - executeCursor : ' + err, user, 1);
+                heap.logger.log(ticketId,'SQLQuery - executeCursor : ' + err, user, 3);
+                // ✅ FIX: Call callback with error to properly propagate it
+                callback(err, null);
                 //app.next(err);
             });
             //return promiseExecution;
-        } catch (error) {};
+        } catch (error) {
+            heap.logger.log(ticketId,'SQLQuery - executeSQLQueryCallback try/catch : ' + error, user, 3);
+            // ✅ FIX: Call callback with error in catch block too
+            callback(error, null);
+        };
             
     };
   
@@ -271,34 +283,42 @@ module.exports.executeSQLQueryCallback = executeSQLQueryCallback;
 */
 async function executeQueryCallback(ticketId, query, params, user, database_sid, language, request, response, volume, callback) {
 
-    let SQLquery = "BEGIN PKREQUESTMANAGER.EXECUTEQUERY(" + ticketId;
+    try {
+        let SQLquery = "BEGIN PKREQUESTMANAGER.EXECUTEQUERY(" + ticketId;
 
-    //heap.logger.log(ticketId, "LIBQUERY with Callback: ", user);
-    SQLquery = SQLquery + ",'" + query + "','" + user + "'," + database_sid + ", " + params  + "," +
-                            language + ", :cursor); END;";
-    heap.logger.log(ticketId, SQLquery, user, 1);
+        //heap.logger.log(ticketId, "LIBQUERY with Callback: ", user);
+        SQLquery = SQLquery + ",'" + query + "','" + user + "'," + database_sid + ", " + params  + "," +
+                                language + ", :cursor); END;";
+        heap.logger.log(ticketId, SQLquery, user, 1);
 
-    heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
-    await heap.dbConnect.executeCursor(
-        SQLquery, 
-        // Bind cursor for the resulset
-        { cursor:  { type: heap.oracledb.CURSOR, dir : heap.oracledb.BIND_OUT }},
-        { autoCommit: true, outFormat: heap.oracledb.OBJECT }, // Return the result as OBJECT
-        ticketId,
-        request,
-        response,
-        user,
-        volume,
-        callback
-        )
-        .catch (function(err) {
-            //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
-            heap.logger.log(ticketId,'SQLQuery - executeQueryCallback : ' + err, user, 1);
-            //app.next(err);
-        });
-        //return promiseExecution;
-        
-        global.gc();
+        heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
+        await heap.dbConnect.executeCursor(
+            SQLquery, 
+            // Bind cursor for the resulset
+            { cursor:  { type: heap.oracledb.CURSOR, dir : heap.oracledb.BIND_OUT }},
+            { autoCommit: true, outFormat: heap.oracledb.OBJECT }, // Return the result as OBJECT
+            ticketId,
+            request,
+            response,
+            user,
+            volume,
+            callback
+            )
+            .catch (function(err) {
+                //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
+                heap.logger.log(ticketId,'SQLQuery - executeQueryCallback : ' + err, user, 3);
+                // ✅ FIX: Call callback with error to properly propagate it
+                callback(err, null);
+                //app.next(err);
+            });
+            //return promiseExecution;
+            
+            global.gc();
+        } catch (error) {
+            heap.logger.log(ticketId,'SQLQuery - executeQueryCallback try/catch : ' + error, user, 3);
+            // ✅ FIX: Call callback with error in catch block too
+            callback(error, null);
+        };
     };
   
 
@@ -319,27 +339,33 @@ module.exports.executeQueryCallback = executeQueryCallback;
 */
 async function executeSQL(ticketId, sql, bindParams, user, request, response, callback)  {
 
-    //heap.logger.log(ticketId, "LIBQUERY with Callback: ", user);
-    heap.logger.log(ticketId, sql + '\n' + JSON.stringify(bindParams), user,1);
+    try {
+        //heap.logger.log(ticketId, "LIBQUERY with Callback: ", user);
+        heap.logger.log(ticketId, sql + '\n' + JSON.stringify(bindParams), user,1);
 
-    heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
-    await heap.dbConnect.executeQuery(sql, bindParams,
-                            { autoCommit: true}, 
-                            ticketId,
-                            request,
-                            response,
-                            user,
-                            0,
-                            callback)
-        .catch (function(err) {
-            //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
-            heap.logger.log(ticketId,'SQLQuery - executeSQL : ' + err, user, 1);
-            //app.next(err);
-        });
-        //return promiseExecution;
-        
+        heap.oracledb.fetchAsString = [ heap.oracledb.CLOB ];
+        await heap.dbConnect.executeQuery(sql, bindParams,
+                                { autoCommit: true}, 
+                                ticketId,
+                                request,
+                                response,
+                                user,
+                                0,
+                                callback)
+            .catch (function(err) {
+                //try { heap.dbConnect.releaseConnections(result, connection) } catch (error ) {};
+                heap.logger.log(ticketId,'SQLQuery - executeSQL : ' + err, user, 3);
+                // ✅ FIX: Call callback with error to properly propagate it
+                callback(err, null);
+                //app.next(err);
+            });
+            //return promiseExecution;
+        } catch (error) {
+            heap.logger.log(ticketId,'SQLQuery - executeSQL try/catch : ' + error, user, 3);
+            // ✅ FIX: Call callback with error in catch block too
+            callback(error, null);
+        };
     };
   
 
-module.exports.executeSQL = executeSQL; 
-
+module.exports.executeSQL = executeSQL;

@@ -1,0 +1,471 @@
+<app-page-header [heading]="'Alerts journal'" [waitMessage]="waitMessage" [screenID]="screenID"
+    [icon]="'fa-book'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+<!-- Detail Dialog -->
+<p-dialog 
+  header="Alert Log Details" 
+  [visible]="displayDetailDialog"
+  (onHide)="onDetailDialogHide()"
+  [modal]="true" 
+  [style]="{width: '800px'}"
+  [maximizable]="true"
+  [draggable]="false"
+  [resizable]="true">
+  
+  <div *ngIf="selectedLog" class="log-detail-container">
+    <!-- Basic Information -->
+    <div class="detail-section">
+      <h3 class="section-title">Basic Information</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Alert ID:</span>
+          <span class="detail-value alert-id-badge">{{selectedLog.LALTID}}</span>
+          <span class="detail-value">{{selectedLog.ALTSUBJECT}}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Request ID:</span>
+          <span class="detail-value monospace">{{selectedLog.LALTREQID}}</span>
+          <span class="detail-value">{{selectedLog.ALTCONTENT}}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Status:</span>
+          <p-tag 
+            [value]="selectedLog.LALTSTATUS" 
+            [severity]="getStatusSeverity(selectedLog.LALTSTATUS)">
+          </p-tag>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Phase:</span>
+          <p-tag  [
+            [value]="selectedLog.LALTPHASE" 
+            [severity]="getStatusSeverity(selectedLog.LALTPHASE)">
+          </p-tag>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timing Information -->
+    <div class="detail-section">
+      <h3 class="section-title">Timing Information</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Execution Date:</span>
+          <span class="detail-value">{{formatDate(selectedLog.LALTEDATE)}}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Start Time:</span>
+          <span class="detail-value">{{formatDate(selectedLog.LALTSTARTTIME)}}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">End Time:</span>
+          <span class="detail-value">{{formatDate(selectedLog.LALTENDTIME)}}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Duration:</span>
+          <span class="detail-value" [class.duration-warning]="selectedLog.LALTDURATION > 60">
+            {{formatDuration(selectedLog.LALTDURATION)}}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processing Information -->
+    <div class="detail-section">
+      <h3 class="section-title">Processing Information</h3>
+      <div class="detail-grid">
+        <div class="detail-item full-width">
+          <span class="detail-label">Email Distribution:</span>
+          <span class="detail-value">{{selectedLog.LALTEMAIL}}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Row Count:</span>
+          <span class="detail-value">{{selectedLog.LALTROWCOUNT | number}}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Utility:</span>
+          <span class="detail-value">{{selectedLog.LALTUTIL || '-'}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Information (if any) -->
+    <div class="detail-section" *ngIf="selectedLog.LALTERROR">
+      <h3 class="section-title error-title">Error Details</h3>
+      <div class="error-box">
+        <i class="pi pi-exclamation-triangle"></i>
+        <span>{{selectedLog.LALTERROR}}</span>
+      </div>
+    </div>
+
+    <!-- No Error Message -->
+    <div class="detail-section" *ngIf="!selectedLog.LALTERROR">
+      <div class="success-box">
+        <i class="pi pi-check-circle"></i>
+        <span>No errors reported</span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button 
+      icon="pi pi-replay" 
+      label="Retry Alert" 
+      *ngIf="selectedLog?.LALTSTATUS === 'FAILED'"
+      (onClick)="retryAlert(selectedLog); onDetailDialogHide()"
+      styleClass="p-button-warning">
+    </p-button>
+    <p-button 
+      icon="pi pi-times" 
+      label="Close" 
+      (onClick)="onDetailDialogHide()"
+      styleClass="p-button-text">
+    </p-button>
+  </ng-template>
+</p-dialog>
+
+<div class="alert-log-journal">
+  <p-card>
+    <ng-template pTemplate="header">
+      <div class="card-header">
+        <h2>Alert Log Journal</h2>
+        <div class="header-actions">
+          <p-button 
+            *ngIf="activeView === 'live'"
+            [icon]="autoRefresh ? 'pi pi-pause' : 'pi pi-play'" 
+            [label]="autoRefresh ? 'Pause' : 'Resume'"
+            (onClick)="toggleAutoRefresh()"
+            styleClass="p-button-sm ">
+          </p-button>
+          <p-button 
+            icon="pi pi-refresh" 
+            label="Refresh" 
+            (onClick)="loadData()"
+            [loading]="loading"
+            styleClass="p-button-sm">
+          </p-button>
+          <p-button 
+            icon="pi pi-download" 
+            label="Export CSV" 
+            (onClick)="exportToCSV()"
+            styleClass="p-button-sm ">
+          </p-button>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- View Tabs -->
+    <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onViewChange($event)">
+      <p-tabPanel header="Live Monitoring" leftIcon="pi pi-chart-line">
+        <!-- Filters - Compact Layout -->
+        <div class="filter-panel-compact">
+          <div class="filter-row-compact">
+            <div class="filter-field-compact">
+              <label for="alertId">Alert ID</label>
+              <p-dropdown 
+                id="alertId"
+                [options]="alertIds" 
+                [(ngModel)]="selectedAlertId"
+                placeholder="All Alerts"
+                [showClear]="true"
+                styleClass="compact-dropdown">
+              </p-dropdown>
+            </div>
+            
+            <div class="filter-field-compact">
+              <label for="status">Status</label>
+              <p-dropdown 
+                id="status"
+                [options]="statuses" 
+                [(ngModel)]="selectedStatus"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="All Statuses"
+                styleClass="compact-dropdown">
+              </p-dropdown>
+            </div>
+            
+            <div class="filter-field-compact">
+              <label for="dateFrom">Date From</label>
+              <p-calendar 
+                id="dateFrom"
+                [(ngModel)]="dateFrom" 
+                [showTime]="true"
+                [showIcon]="true"
+                placeholder="From Date"
+                styleClass="compact-calendar">
+              </p-calendar>
+            </div>
+            
+            <div class="filter-field-compact">
+              <label for="dateTo">Date To</label>
+              <p-calendar 
+                id="dateTo"
+                [(ngModel)]="dateTo" 
+                [showTime]="true"
+                [showIcon]="true"
+                placeholder="To Date"
+                styleClass="compact-calendar">
+              </p-calendar>
+            </div>
+            
+            <div class="filter-actions-compact">
+              <label class="label-hidden">&nbsp;</label>
+              <div class="filter-buttons-compact">
+                <p-button 
+                  icon="pi pi-search" 
+                  label="Apply" 
+                  (onClick)="applyFilters()"
+                  styleClass="p-button-sm">
+                </p-button>
+                <p-button 
+                  icon="pi pi-times" 
+                  (onClick)="clearFilters()"
+                  styleClass="p-button-sm p-button-outlined"
+                  pTooltip="Clear">
+                </p-button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Data Table -->
+        <p-table  #dt
+          [value]="filteredLogs" 
+          [columns]="cols"
+          [paginator]="true" 
+          [rows]="25"
+          [rowsPerPageOptions]="[10, 25, 50, 100]"
+          [loading]="loading"
+          [responsive]="true"
+          [scrollable]="true"
+          scrollHeight="500px"
+          styleClass="p-datatable-striped p-datatable-sm"
+          [globalFilterFields]="['LALTID', 'LALTREQID', 'LALTEMAIL', 'LALTSTATUS']">
+          
+          <ng-template pTemplate="caption">
+            <div class="table-caption">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input 
+                  pInputText 
+                  type="text" 
+                  (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
+                  placeholder="Search all fields..." />
+              </span>
+              <span class="table-stats">
+                Total Records: {{filteredLogs?.length || 0}}
+              </span>
+            </div>
+          </ng-template>
+          
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th *ngFor="let col of columns" 
+                  [pSortableColumn]="col.field" 
+                  [style.width]="col.width"
+                  [ngClass]="{
+                    'text-right': col.field === 'LALTDURATION' || col.field === 'LALTROWCOUNT',
+                    'text-center': col.field === 'LALTSTATUS' || col.field === 'LALTPHASE'
+                  }">
+                {{col.header}}
+                <p-sortIcon [field]="col.field"></p-sortIcon>
+              </th>
+              <th class="text-center" style="width: 120px">Actions</th>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="body" let-log>
+            <tr>
+              <td class="col-date">{{formatDate(log.LALTEDATE)}}</td>
+              <td class="col-alert-id">
+                <span class="alert-id-badge">{{log.LALTID}}</span>
+              </td>
+              <td class="col-desc">
+                <span>{{log.ALTSUBJECT}}</span>
+              </td>
+              <td class="col-request-id">
+                <span class="monospace">{{log.LALTREQID}}</span>
+              </td>
+              <td class="col-email">
+                <span class="email-list" [pTooltip]="log.LALTEMAIL">
+                  {{log.LALTEMAIL | slice:0:30}}{{log.LALTEMAIL?.length > 30 ? '...' : ''}}
+                </span>
+              </td>
+              <td class="text-center col-status">
+                <p-tag 
+                  [value]="log.LALTSTATUS" 
+                  [severity]="getStatusSeverity(log.LALTSTATUS)">
+                </p-tag>
+              </td>
+              <td class="text-center col-phase">
+                <span [ngClass]="getPhaseBadgeClass(log.LALTPHASE)" class="phase-badge">
+                  {{log.LALTPHASE}}
+                </span>
+              </td>
+              <td class="text-right col-duration">
+                <span [class.duration-warning]="log.LALTDURATION > 60">
+                  {{formatDuration(log.LALTDURATION)}}
+                </span>
+              </td>
+              <td class="text-right col-rowcount">{{log.LALTROWCOUNT | number}}</td>
+              <td class="col-error">
+                <span 
+                  *ngIf="log.LALTERROR" 
+                  class="error-text"
+                  [pTooltip]="log.LALTERROR"
+                  tooltipPosition="top">
+                  {{log.LALTERROR | slice:0:30}}...
+                </span>
+                <span *ngIf="!log.LALTERROR" class="text-muted">-</span>
+              </td>
+              <td class="text-center col-actions">
+                <div class="action-buttons">
+                  <p-button 
+                    icon="pi pi-eye" 
+                    (onClick)="viewDetails(log)"
+                    styleClass="p-button-sm p-button-text"
+                    pTooltip="View Details">
+                  </p-button>
+                  <p-button 
+                    *ngIf="log.LALTSTATUS === 'FAILED'"
+                    icon="pi pi-replay" 
+                    (onClick)="retryAlert(log)"
+                    styleClass="p-button-sm p-button-text p-button-warning"
+                    pTooltip="Retry">
+                  </p-button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="(cols?.length || 9) + 1" class="text-center">
+                <div class="empty-state">
+                  <i class="pi pi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                  <p>No alert logs found</p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-tabPanel>
+
+      <!-- Weekly View -->
+      <p-tabPanel header="Weekly Duration" leftIcon="pi pi-calendar">
+        <div class="stats-view">
+          <!-- Duration Chart -->
+          <div class="chart-container">
+            <h3>Weekly Duration Trends</h3>
+            <p-chart 
+              type="line" 
+              [data]="durationChartData" 
+              [options]="durationChartOptions"
+              [style]="{'height': '400px'}">
+            </p-chart>
+          </div>
+
+          <!-- Stats Table -->
+          <div class="stats-table">
+            <h3>Weekly Statistics</h3>
+            <p-table 
+              [value]="weeklyStats" 
+              [responsive]="true"
+              styleClass="p-datatable-striped">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-left">Week</th>
+                  <th class="text-right">Avg Duration (s)</th>
+                  <th class="text-right">Max Duration (s)</th>
+                  <th class="text-right">Min Duration (s)</th>
+                  <th class="text-right">Total Requests</th>
+                  <th class="text-right">Failed</th>
+                  <th class="text-right">Success Rate</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-stat>
+                <tr>
+                  <td><strong>{{stat.period}}</strong></td>
+                  <td class="text-right">{{stat.avgDuration | number:'1.2-2'}}</td>
+                  <td class="text-right">{{stat.maxDuration | number:'1.2-2'}}</td>
+                  <td class="text-right">{{stat.minDuration | number:'1.2-2'}}</td>
+                  <td class="text-right">{{stat.totalRequests}}</td>
+                  <td class="text-right">
+                    <span [class.text-danger]="stat.failedRequests > 0">
+                      {{stat.failedRequests}}
+                    </span>
+                  </td>
+                  <td class="text-right">
+                    <span [class.success-rate]="stat.successRate >= 95" [class.warning-rate]="stat.successRate < 95">
+                      {{stat.successRate | number:'1.1-1'}}%
+                    </span>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </p-tabPanel>
+
+      <!-- Monthly View -->
+      <p-tabPanel header="Monthly Duration" leftIcon="pi pi-chart-bar">
+        <div class="stats-view">
+          <!-- Duration Chart -->
+          <div class="chart-container">
+            <h3>Monthly Duration Trends</h3>
+            <p-chart 
+              type="line" 
+              [data]="durationChartData" 
+              [options]="durationChartOptions"
+              [style]="{'height': '400px'}">
+            </p-chart>
+          </div>
+
+          <!-- Stats Table -->
+          <div class="stats-table">
+            <h3>Monthly Statistics</h3>
+            <p-table 
+              [value]="monthlyStats" 
+              [responsive]="true"
+              styleClass="p-datatable-striped">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-left">Month</th>
+                  <th class="text-right">Avg Duration (s)</th>
+                  <th class="text-right">Max Duration (s)</th>
+                  <th class="text-right">Min Duration (s)</th>
+                  <th class="text-right">Total Requests</th>
+                  <th class="text-right">Failed</th>
+                  <th class="text-right">Success Rate</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-stat>
+                <tr>
+                  <td><strong>{{stat.period}}</strong></td>
+                  <td class="text-right">{{stat.avgDuration | number:'1.2-2'}}</td>
+                  <td class="text-right">{{stat.maxDuration | number:'1.2-2'}}</td>
+                  <td class="text-right">{{stat.minDuration | number:'1.2-2'}}</td>
+                  <td class="text-right">{{stat.totalRequests}}</td>
+                  <td class="text-right">
+                    <span [class.text-danger]="stat.failedRequests > 0">
+                      {{stat.failedRequests}}
+                    </span>
+                  </td>
+                  <td class="text-right">
+                    <span [class.success-rate]="stat.successRate >= 95" [class.warning-rate]="stat.successRate < 95">
+                      {{stat.successRate | number:'1.1-1'}}%
+                    </span>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </p-card>
+</div>

@@ -1,350 +1,278 @@
-$topnav-background-color: #222;
-.sidebar {
-    border-radius: 0;
-    position: fixed;
-    z-index: 1000;
-    top: 56px;
-    left: 235px;
-    width: 235px;
-    margin-left: -235px;
-    margin-bottom: 48px;
-    border: none;
-    border-radius: 0;
-    overflow-y: auto;
-    background-color: $topnav-background-color;
-    bottom: 0;
-    overflow-x: hidden;
-    padding-bottom: 40px;
-    white-space: nowrap;
-    -webkit-transition: all 0.2s ease-in-out;
-    -moz-transition: all 0.2s ease-in-out;
-    -ms-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out;
-    // border-top: 1px solid rgba(255,255,255,0.3);
-    .list-group {
-        a.list-group-item {
-            background: $topnav-background-color;
-            border: 0;
-            border-radius: 0;
-            color: #999;
-            text-decoration: none;
-            .fa {
-                //margin-right: 10px;
-            }
-        }
-        a:hover {
-            background: darken($topnav-background-color, 5%);
-            color: #999;
-        }
-        a.router-link-active {
-            background:  #fff ; //darken($topnav-background-color, 5%);
-            color:  black;
-        }
-        .header-fields {
-            padding-top: 10px;
+/* ==============================================
+   OHIO WINTER LAYOUT - winter-layout.scss
+   Header & Sidebar styling
+   ============================================== */
+
+// Color Variables - Ohio Winter Palette
+$winter-night: #1a2a3a;
+$winter-blue: #2d4a6e;
+$winter-steel: #4a6d8c;
+$winter-ice: #a8d4e6;
+$winter-frost: #d4eef7;
+$winter-snow: #f0f8ff;
+$winter-white: #ffffff;
+$winter-warm: #e8b87d;
+$winter-success: #6dd4a0;
+
+// ========================================
+// HEADER
+// ========================================
+.winter-header {
+    background: linear-gradient(135deg, $winter-night 0%, $winter-blue 50%, $winter-steel 100%) !important;
+    border-bottom: 2px solid rgba($winter-ice, 0.3) !important;
+    box-shadow: 0 2px 15px rgba($winter-night, 0.3);
+    overflow: visible !important;
+    position: relative;
+
+    .navbar-brand {
+        color: $winter-frost !important;
+        font-weight: 500;
         
-            > .list-group-item:first-child {
-                border-top: 1px solid rgba(255, 255, 255, 0.2);
-            }
+        &:hover { color: $winter-white !important; }
+    }
+
+    .nav-link {
+        color: rgba($winter-frost, 0.85) !important;
+        transition: all 0.3s ease;
+
+        &:hover { color: $winter-white !important; }
+
+        i {
+            color: $winter-ice;
+            opacity: 0.8;
         }
     }
-    .sidebar-dropdown {
-        *:focus {
-            border-radius: none;
-            border: none;
-        }
-        .panel-title {
-            font-size: 1rem;
-            font-family: '"Open Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"';
-            height: 50px;
-            margin-bottom: 0;
-            a {
-                color: #999;
-                text-decoration: none;
-                font-weight: 400;
-                background: $topnav-background-color;
-                span {
-                    position: relative;
-                    display: block;
-                    padding: 0.75rem 1.5rem;
-                    padding-top: 1rem;
-                }
-            }
-            a:hover,
-            a:focus {
-                color: #fff;
-                outline: none;
-                outline-offset: -2px;
-            }
-        }
-        .panel-title:hover {
-            background: darken($topnav-background-color, 5%);
-        }
-        .panel-collapse {
-            border-radius: 0;
-            border: none;
-            .panel-body {
-                .list-group-item {
-                    border-radius: 0;
-                    background-color: $topnav-background-color;
-                    border: 0 solid transparent;
-                    a {
-                        color: #999;
-                    }
-                    a:hover {
-                        color: #fff;
-                    }
-                }
-                .list-group-item:hover {
-                    background: darken($topnav-background-color, 5%);
-                }
-            }
+
+    .winter-badge {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        
+        span {
+            background: linear-gradient(135deg, $winter-ice, $winter-frost);
+            color: $winter-night;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba($winter-night, 0.2);
         }
     }
 }
 
-.nested-menu {
-    .list-group-item {
-        cursor: pointer;
+// Dropdown Styling
+.winter-dropdown {
+    background: $winter-night !important;
+    border: 1px solid rgba($winter-ice, 0.25) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba($winter-night, 0.4) !important;
+    margin-top: 8px !important;
+    padding: 8px 0 !important;
+
+    .dropdown-item {
+        color: rgba($winter-frost, 0.85) !important;
+        padding: 10px 20px !important;
+        transition: all 0.2s ease !important;
+
+        i { color: $winter-ice; opacity: 0.7; margin-right: 8px; }
+
+        &:hover {
+            background: rgba($winter-ice, 0.15) !important;
+            color: $winter-white !important;
+            i { opacity: 1; }
+        }
     }
-    .nested {
-        list-style-type: none;
+}
+
+// ========================================
+// SIDEBAR
+// ========================================
+.winter-sidebar {
+    background: linear-gradient(180deg, $winter-night 0%, darken($winter-blue, 8%) 100%) !important;
+    border-right: 1px solid rgba($winter-ice, 0.15) !important;
+    box-shadow: 2px 0 15px rgba($winter-night, 0.2);
+
+    // Scrollbar
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-track { background: rgba($winter-night, 0.3); }
+    &::-webkit-scrollbar-thumb { 
+        background: rgba($winter-ice, 0.3); 
+        border-radius: 3px;
+        &:hover { background: rgba($winter-ice, 0.5); }
     }
-    ul.submenu {
-        display: none;
-        height: 0;
+
+    // List Items
+    .list-group {
+        a.list-group-item,
+        .list-group-item {
+            background: transparent !important;
+            border: none !important;
+            color: rgba($winter-frost, 0.75) !important;
+            border-left: 3px solid transparent !important;
+            transition: all 0.2s ease;
+            
+            span { color: inherit; }
+
+            i, .fa, .fas, .far, .fab, .pi {
+                color: rgba($winter-ice, 0.6) !important;
+                transition: color 0.2s ease;
+            }
+
+            &:hover {
+                background: rgba($winter-ice, 0.1) !important;
+                color: $winter-frost !important;
+                border-left-color: rgba($winter-ice, 0.4) !important;
+                
+                i, .fa, .fas, .far, .fab, .pi { color: $winter-ice !important; }
+            }
+
+            &.router-link-active {
+                background: rgba($winter-ice, 0.15) !important;
+                color: $winter-white !important;
+                border-left-color: $winter-ice !important;
+                
+                i, .fa, .fas, .far, .fab, .pi { color: $winter-ice !important; }
+            }
+        }
     }
-    & .expand {
+
+    // Nested Menus
+    .nested-menu {
+        .list-group-item::after {
+            color: rgba($winter-ice, 0.5) !important;
+        }
+
         ul.submenu {
-            display: block;
-            list-style-type: none;
-            height: auto;
+            background: rgba(0, 0, 0, 0.2) !important;
+            padding-left: 0;
+
             li {
-                a {
-                    color: white;
-                    padding: 10px;
+                a, 
+                a.bbs_link_menu {
+                    color: rgba($winter-frost, 0.65) !important;
+                    padding: 10px 20px 10px 40px;
                     display: block;
                     text-decoration: none;
-                }
-                a.router-link-active {
-                    background:  #fff ; //darken($topnav-background-color, 5%);
-                    color:  black !important;
+                    border-left: 3px solid transparent;
+                    transition: all 0.2s ease;
+                    
+                    span { color: inherit; }
+
+                    i, .fa, .fas, .far, .fab, .pi {
+                        color: rgba($winter-ice, 0.5) !important;
+                    }
+
+                    &:hover {
+                        background: rgba($winter-ice, 0.08) !important;
+                        color: $winter-frost !important;
+                        border-left-color: rgba($winter-ice, 0.25);
+                        
+                        i, .fa, .fas, .far, .fab, .pi { color: $winter-ice !important; }
+                    }
+
+                    &.router-link-active {
+                        background: rgba($winter-ice, 0.12) !important;
+                        color: $winter-white !important;
+                        border-left-color: $winter-ice;
+                        
+                        i, .fa, .fas, .far, .fab, .pi { color: $winter-ice !important; }
+                    }
                 }
             }
         }
+
         ul.subsubmenu {
-            display: none;
-            list-style-type: none;
-            height: auto;
-            li {
-                display: block;
-                a {
-                    color: #999;
-                    padding: 10px;
-                    display: block;
-                }
-                a.router-link-active {
-                    background:  #fff ; //darken($topnav-background-color, 5%);
-                    color:  black;
-                }
-            }
-        }
-        & .expand {
-            ul.subsubmenu {
-                display: block;
-            }
+            background: rgba(0, 0, 0, 0.15) !important;
+            
+            a { padding-left: 52px !important; font-size: 0.9em; }
         }
     }
-}
-@media screen and (max-width: 992px) {
-    .sidebar {
-        top: 54px;
-        left: 0px;
-    }
-}
-@media print {
-    .sidebar {
-        display: none !important;
-    }
-}
-@media (min-width: 992px) {
-    .header-fields {
-        display: none;
-    }
-}
 
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 0px rgba(255, 255, 255, 1);
-    border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 3px;
-    -webkit-box-shadow: inset 0 0 3px rgba(255, 255, 255, 1);
-}
-
-.at-button {
-    position: fixed;
-    width: 236px;
-    cursor: pointer;
-    padding: inherit;
-    bottom: 0;
-    color: #999;
-    background: #212529;
-    i {
-        font-size: 23px;
-    }
-    border: 2px groove #d3d3d3;
-}
-
-.toggle-button {
-    position: fixed;
-    width: 236px;
-    cursor: pointer;
-    padding: 12px;
-    bottom: 0;
-    color: #999;
-    background: #212529;
-    i {
-        font-size: 23px;
-    }
-    &:hover {
-        background: darken($topnav-background-color, 5%);
-        color: #fff;
-    }
-    border-top: 1px solid #999;
-    -webkit-transition: all 0.2s ease-in-out;
-    -moz-transition: all 0.2s ease-in-out;
-    -ms-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out;
-}
-
-.collapsed {
-    width: 50px;
-    span {
-        display: none;
-    }
-}
-
-
-.sidebar_admin {
-    border-radius: 0;
-    bottom:0;
-    border:2px groove #d3d3d3;
-    position: fixed;
-    z-index: 1000;
-    left: 235px;
-    width: 235px;
-    line-height: 1;
-    margin-left: -235px;
-    border-radius: 0;
-    overflow-y: auto;
-    background-color: $topnav-background-color;
-    bottom: 0;
-    overflow-x: hidden;
-    white-space: nowrap;
-    -webkit-transition: all 0.2s ease-in-out;
-    -moz-transition: all 0.2s ease-in-out;
-    -ms-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out;
-    // border-top: 1px solid rgba(255,255,255,0.3);
-    .list-group {
-        a.list-group-item {
-            background: $topnav-background-color;
-            border: 0;
-            border-radius: 0;
-            color: #999;
-            text-decoration: none;
-            .fa {
-                //margin-right: 10px;
-            }
-        }
-        a:hover {
-            background: darken($topnav-background-color, 5%);
-            color: #999;
-        }
-        a.router-link-active {
-            background:  #fff ; //darken($topnav-background-color, 5%);
-            color:  black;
-        }
-        .header-fields {
-            padding-top: 10px;
+    // Toggle Button
+    .toggle-button {
+        background: $winter-night !important;
+        color: rgba($winter-frost, 0.7) !important;
+        border-top: 1px solid rgba($winter-ice, 0.2) !important;
         
-            > .list-group-item:first-child {
-                border-top: 1px solid rgba(255, 255, 255, 0.2);
-            }
-        }
-    }
-    .sidebar-dropdown {
-        *:focus {
-            border-radius: none;
-            border: none;
-        }
-        .panel-title {
-            font-size: 1rem;
-            font-family: '"Open Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"';
-            height: 50px;
-            margin-bottom: 0;
-            a {
-                color: #999;
-                text-decoration: none;
-                font-weight: 400;
-                background: $topnav-background-color;
-                span {
-                    position: relative;
-                    display: block;
-                    padding: 0.75rem 1.5rem;
-                    padding-top: 1rem;
-                }
-            }
-            a:hover,
-            a:focus {
-                color: #fff;
-                outline: none;
-                outline-offset: -2px;
-            }
-        }
-        .panel-title:hover {
-            background: darken($topnav-background-color, 5%);
-        }
-        .panel-collapse {
-            border-radius: 0;
-            border: none;
-            .panel-body {
-                .list-group-item {
-                    border-radius: 0;
-                    background-color: $topnav-background-color;
-                    border: 0 solid transparent;
-                    a {
-                        color: #999;
-                    }
-                    a:hover {
-                        color: #fff;
-                    }
-                }
-                .list-group-item:hover {
-                    background: darken($topnav-background-color, 5%);
-                }
-            }
+        i { color: $winter-ice !important; }
+        
+        &:hover {
+            background: $winter-blue !important;
+            color: $winter-frost !important;
         }
     }
 }
 
-.logo {
-    background-color: #fff;
-    padding: 10px 0 10px 70px;
+// ========================================
+// ADMIN SIDEBAR
+// ========================================
+.winter-sidebar-admin {
+    background: linear-gradient(180deg, darken($winter-night, 3%) 0%, darken($winter-blue, 12%) 100%) !important;
+    border: 1px solid rgba($winter-ice, 0.1) !important;
+    border-top: 2px solid rgba($winter-ice, 0.3) !important;
+
+    .list-group {
+        .list-group-item,
+        a.list-group-item {
+            background: transparent !important;
+            border: none !important;
+            color: rgba($winter-frost, 0.6) !important;
+
+            i, .fa, .fas, .far, .fab { color: rgba($winter-ice, 0.5) !important; }
+
+            &:hover {
+                background: rgba($winter-ice, 0.08) !important;
+                color: $winter-frost !important;
+                i, .fa, .fas, .far, .fab { color: $winter-ice !important; }
+            }
+
+            &.router-link-active {
+                background: rgba($winter-ice, 0.12) !important;
+                color: $winter-white !important;
+            }
+        }
+    }
+
+    .nested-menu ul.submenu {
+        background: rgba(0, 0, 0, 0.15) !important;
+
+        li a {
+            color: rgba($winter-frost, 0.6) !important;
+            padding: 8px 16px 8px 36px;
+            display: block;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: rgba($winter-ice, 0.08) !important;
+                color: $winter-frost !important;
+            }
+
+            &.router-link-active {
+                background: rgba($winter-ice, 0.1) !important;
+                color: $winter-white !important;
+            }
+        }
+    }
+
+    .logo {
+        //background: linear-gradient(135deg, rgba($winter-white, 0.95), rgba($winter-frost, 0.9)) !important;
+        border-top: 1px solid rgba($winter-ice, 0.3) !important;
+        padding: 12px 0 12px 50px;
+    }
 }
 
+// ========================================
+// UTILITY
+// ========================================
 .isDisabled {
-    color: currentColor;
+    color: rgba($winter-frost, 0.3) !important;
     cursor: not-allowed;
-    opacity: 0.5;
-    text-decoration: none;
-  }
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+// Responsive - Hide badge on mobile
+@media screen and (max-width: 992px) {
+    .winter-header .winter-badge { display: none; }
+}

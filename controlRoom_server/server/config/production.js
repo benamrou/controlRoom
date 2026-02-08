@@ -23,7 +23,7 @@ module.exports = {
         "autocommit": true,
         "queueRequests": true,      // Queue instead of failing
         "queueMax": 50,            // Allow 500 in queue
-        "queueTimeout": 120000,     // 2 minutes max wait
+        "queueTimeout": 0,  // ← Unlimited timeout
         "stmtCacheSize": 100,
         "enableStatistics": true
       },

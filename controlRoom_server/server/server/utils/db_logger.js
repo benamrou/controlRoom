@@ -26,7 +26,7 @@ function generateRequestId() {
  * Uses MERGE - if archiving already created row, UPDATE it; otherwise INSERT
  * MUST complete before archiving to avoid race condition
  */
-async function logStart(requestId, altId, email) {
+async function logStart(requestId, altId, email, laltparam, laltdb, laltlangue) {
     const oracledb = require('oracledb');
     let conn;
     try {
@@ -36,33 +36,48 @@ async function logStart(requestId, altId, email) {
             `MERGE INTO ALERTLOG A
              USING (SELECT :reqid AS LALTREQID, :altid AS LALTID, :email AS LALTEMAIL, SYSDATE AS LALTDCRE, SYSDATE AS LALTDMAJ, 'notification.js' AS LALTUTIL,
                            SYSTIMESTAMP AS LALTSTARTTIME, 'INIT' AS LALTPHASE, 'PROCESSING' AS LALTSTATUS,
-                           SYSDATE AS LALTEDATE
+                           SYSDATE AS LALTEDATE,
+                           :altparam as LALTPARAM,
+                           :altlangue as LALTLANGUE,
+                           :altdb as LALTDB
                     FROM DUAL) B
              ON (A.LALTID = B.LALTID 
-                 AND A.LALTEDATE >= SYSTIMESTAMP - INTERVAL '1' MINUTE)
+                 AND A.LALTREQID = B.LALTREQID)
              WHEN MATCHED THEN
                 UPDATE SET A.LALTEMAIL = B.LALTEMAIL,
                           A.LALTSTARTTIME = B.LALTSTARTTIME,
                           A.LALTPHASE = B.LALTPHASE, 
                           A.LALTSTATUS = B.LALTSTATUS,
                           A.LALTDMAJ=B.LALTDMAJ,
-                          A.LALTUTIL=B.LALTUTIL
+                          A.LALTUTIL=B.LALTUTIL,
+                          A.LALTPARAM=B.LALTPARAM,
+                          A.LALTDB=B.LALTDB,
+                          A.LALTLANGUE=B.LALTLANGUE
              WHEN NOT MATCHED THEN
-                INSERT (LALTREQID, LALTID, LALTEMAIL, LALTSTARTTIME, LALTPHASE, LALTSTATUS, LALTEDATE, LALTDCRE, LALTDMAJ, LALTUTIL)
-                VALUES (B.LALTREQID, B.LALTID, B.LALTEMAIL, B.LALTSTARTTIME, B.LALTPHASE, B.LALTSTATUS, B.LALTEDATE, B.LALTDCRE, B.LALTDMAJ, B.LALTUTIL)`,
-            { reqid: requestId, altid: altId, email: email },
+                INSERT (LALTREQID, LALTID, LALTEMAIL, LALTSTARTTIME, LALTPHASE, LALTSTATUS, LALTEDATE, LALTDCRE, LALTDMAJ, LALTUTIL, LALTPARAM, LALTDB, LALTLANGUE)
+                VALUES (B.LALTREQID, B.LALTID, B.LALTEMAIL, B.LALTSTARTTIME, B.LALTPHASE, B.LALTSTATUS, B.LALTEDATE, B.LALTDCRE, B.LALTDMAJ, B.LALTUTIL, B.LALTPARAM, B.LALTDB, B.LALTLANGUE)`,
+            { reqid: requestId, 
+              altid: altId, 
+              altparam: JSON.stringify(laltparam),
+              altdb: laltdb,
+              altlangue: laltlangue,
+
+              email: email },
             { autoCommit: true }
         );
         
         // Verify what was actually created/updated
         const verify = await conn.execute(
-            `SELECT LALTREQID, LALTEMAIL, TO_CHAR(LALTSTARTTIME, 'YYYY-MM-DD HH24:MI:SS') AS LALTSTARTTIME, 
-                    TO_CHAR(LALTEDATE, 'YYYY-MM-DD HH24:MI:SS') AS LALTEDATE
+            `SELECT LALTREQID, LALTEMAIL, 
+                    TO_CHAR(LALTSTARTTIME, 'YYYY-MM-DD HH24:MI:SS') AS LALTSTARTTIME, 
+                    TO_CHAR(LALTEDATE, 'YYYY-MM-DD HH24:MI:SS') AS LALTEDATE,
+                    LALTPARAM, LALTDB, LALTLANGUE
              FROM ALERTLOG 
              WHERE LALTID = :altid 
-             AND LALTEDATE >= SYSTIMESTAMP - INTERVAL '2' MINUTE
+             AND LALTREQID = :reqid
+             AND trunc(LALTDCRE)=trunc(SYSDATE)
              ORDER BY LALTEDATE DESC`,
-            { altid: altId }
+            { altid: altId, reqid: requestId }
         );
         
         configuration.logger.log('alert', `[DB_LOGGER] logStart SUCCESS - ReqID: ${requestId}, Alert: ${altId}, Rows affected: ${result.rowsAffected}`, 'alert', 1);
@@ -84,10 +99,10 @@ async function logStart(requestId, altId, email) {
 
 /**
  * Update request attributes
- * Fire-and-forget pattern - does not block caller
+ * Returns a Promise so caller can await completion
  */
 function updateRequest(requestId, updates) {
-    (async function() {
+    return (async function() {  // ✅ RETURN the promise
         const oracledb = require('oracledb');
         let conn;
         try {
@@ -147,9 +162,10 @@ function updateRequest(requestId, updates) {
 
 /**
  * Log request completion
+ * Returns a Promise so caller can await
  */
 function logComplete(requestId, duration) {
-    updateRequest(requestId, {
+    return updateRequest(requestId, {
         status: 'COMPLETE',
         endTime: true,
         duration: duration
@@ -158,9 +174,10 @@ function logComplete(requestId, duration) {
 
 /**
  * Log request failure
+ * Returns a Promise so caller can await
  */
 function logFailed(requestId, duration, error) {
-    updateRequest(requestId, {
+    return updateRequest(requestId, {
         status: 'FAILED',
         endTime: true,
         duration: duration,
@@ -170,9 +187,10 @@ function logFailed(requestId, duration, error) {
 
 /**
  * Log request timeout
+ * Returns a Promise so caller can await
  */
 function logTimeout(requestId, duration) {
-    updateRequest(requestId, {
+    return updateRequest(requestId, {
         status: 'TIMEOUT',
         endTime: true,
         duration: duration,
@@ -184,7 +202,7 @@ function logTimeout(requestId, duration) {
  * Check for SPAM (3+ requests in 10 minutes)
  * This one needs to be truly async/await because caller needs the result
  */
-async function checkSpam(altId, email) {
+async function checkSpam(altId, reqId,  email) {
     const oracledb = require('oracledb');
     let conn;
     try {
@@ -192,10 +210,10 @@ async function checkSpam(altId, email) {
         
         const result = await conn.execute(
             `SELECT COUNT(*) as CNT FROM ALERTLOG
-             WHERE LALTID = :altid AND LALTEMAIL = :email
-             AND LALTSTARTTIME >= SYSTIMESTAMP - INTERVAL '10' MINUTE
+             WHERE LALTID = :altid AND LALTEMAIL = :email 
+             AND LALTREQID= :reqid
              AND LALTSTATUS IN ('PROCESSING', 'COMPLETE')`,
-            { altid: altId, email: email }
+            { altid: altId, reqid: reqId, email: email }
         );
         
         const count = result.rows[0][0];
@@ -240,7 +258,7 @@ async function logSpamBlocked(requestId, altId, email) {
                            0 AS LALTDURATION, 'SPAM: Alert sent 3+ times in 10 minutes' AS LALTERROR
                     FROM DUAL) B
              ON (A.LALTID = B.LALTID 
-                 AND A.LALTEDATE >= SYSTIMESTAMP - INTERVAL '1' MINUTE)
+                 AND A.LALTREQID = B.LALTREQID)
              WHEN MATCHED THEN
                 UPDATE SET A.LALTEMAIL = B.LALTEMAIL,
                           A.LALTSTARTTIME = B.LALTSTARTTIME,
