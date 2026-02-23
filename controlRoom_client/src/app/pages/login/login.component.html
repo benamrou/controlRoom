@@ -1,67 +1,116 @@
-<!-- login.component.html - Ohio Winter Theme -->
+<!-- login.component.html - Ohio Easter Theme -->
 <div class="login-page">
-    <!-- Winter Sky Background -->
-    <div class="winter-sky"></div>
+    <!-- Easter Sky Background -->
+    <div class="easter-sky"></div>
 
-    <!-- Snowflakes -->
-    <div class="snowfall">
-        <div *ngFor="let flake of snowflakes; let i = index" 
-             class="snowflake"
+    <!-- Sun -->
+    <div class="sun">☀️</div>
+
+    <!-- Floating Petals / Sparkles -->
+    <div class="petals">
+        <div *ngFor="let petal of snowflakes; let i = index"
+             class="petal"
              [style.left.%]="(i * 2) % 100"
-             [style.animation-delay.s]="(i * 0.2) % 8"
-             [style.font-size.px]="8 + (i % 12)">❄</div>
+             [style.animation-delay.s]="(i * 0.25) % 9"
+             [style.font-size.px]="10 + (i % 10)">{{ i % 3 === 0 ? '🌸' : i % 3 === 1 ? '🌼' : '✨' }}</div>
     </div>
 
-    <!-- Distant Hills/Mountains -->
-    <div class="distant-hills"></div>
+    <!-- Rolling Spring Hills -->
+    <div class="rolling-hills"></div>
 
-    <!-- Ground Snow -->
-    <div class="snow-ground"></div>
+    <!-- Grass Ground -->
+    <div class="grass-ground"></div>
 
-    <!-- Snow Drifts -->
-    <div class="snow-drift drift-1"></div>
-    <div class="snow-drift drift-2"></div>
-    <div class="snow-drift drift-3"></div>
+    <!-- Grass Tufts -->
+    <div class="grass-tuft tuft-1"></div>
+    <div class="grass-tuft tuft-2"></div>
+    <div class="grass-tuft tuft-3"></div>
 
-    <!-- Pine Trees - Back Row (smaller, distant) -->
+    <!-- Flower/Bush Back Row -->
     <div class="trees trees-back">
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
     </div>
 
-    <!-- Pine Trees - Front Row (larger, closer) -->
+    <!-- Flower/Bush Front Row -->
     <div class="trees trees-front">
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
-        <div class="tree">🌲</div>
+        <div class="tree">🌷</div>
+        <div class="tree">🌻</div>
+        <div class="tree">🌷</div>
+        <div class="tree">🌻</div>
+        <div class="tree">🌷</div>
+        <div class="tree">🌻</div>
+        <div class="tree">🌷</div>
+        <div class="tree">🌻</div>
+        <div class="tree">🌷</div>
+        <div class="tree">🌻</div>
     </div>
 
-    <!-- Winter Objects -->
-    <div class="winter-objects">
-        <!-- Snowman -->
-        <div class="snowman">⛄</div>
-        <!-- Chalet -->
-        <div class="cabin">🛖</div>
-        <!-- Deer -->
-        <div class="deer">🦌</div>
+    <!-- Pure CSS Rabbits -->
+    <div class="css-rabbit-wrap cr-rabbit-1">
+        <div class="css-rabbit">
+            <div class="cr-ear cr-ear-l"><div class="cr-ear-in"></div></div>
+            <div class="cr-ear cr-ear-r"><div class="cr-ear-in"></div></div>
+            <div class="cr-head">
+                <div class="cr-eye"></div>
+                <div class="cr-nose"></div>
+            </div>
+            <div class="cr-body">
+                <div class="cr-tail"></div>
+            </div>
+            <div class="cr-leg-b2"></div>
+            <div class="cr-leg-b"></div>
+            <div class="cr-leg-f2"></div>
+            <div class="cr-leg-f"></div>
+            <div class="cr-shadow"></div>
+        </div>
+    </div>
+    <!-- Second rabbit — smaller, faster, different delay -->
+    <div class="css-rabbit-wrap cr-rabbit-2">
+        <div class="css-rabbit">
+            <div class="cr-ear cr-ear-l"><div class="cr-ear-in"></div></div>
+            <div class="cr-ear cr-ear-r"><div class="cr-ear-in"></div></div>
+            <div class="cr-head">
+                <div class="cr-eye"></div>
+                <div class="cr-nose"></div>
+            </div>
+            <div class="cr-body">
+                <div class="cr-tail"></div>
+            </div>
+            <div class="cr-leg-b2"></div>
+            <div class="cr-leg-b"></div>
+            <div class="cr-leg-f2"></div>
+            <div class="cr-leg-f"></div>
+            <div class="cr-shadow"></div>
+        </div>
+    </div>
+
+    <!-- Easter Objects -->
+    <div class="easter-objects">
+        <!-- Bunny hiding behind bush -->
+        <div class="bunny">🐰</div>
+        <!-- Easter Eggs -->
+        <div class="egg egg-1">🥚</div>
+        <div class="egg egg-2">🥚</div>
+        <div class="egg egg-3">🥚</div>
+        <!-- Easter Bells -->
+        <div class="bell bell-1">🔔</div>
+        <div class="bell bell-2">🔔</div>
+        <!-- Baby chick -->
+        <div class="chick">🐣</div>
+        <!-- Butterfly -->
+        <div class="butterfly">🦋</div>
     </div>
 
     <!-- Version -->
     <div class="version" #versionDiv [style.visibility]="showVersion ? 'visible' : 'hidden'">
-        vers. 6.0.1b0.10
+        vers. 7.0.1b0.10
     </div>
 
     <!-- Main Content -->
@@ -69,11 +118,11 @@
         <!-- Login Container -->
         <div class="login-container">
             <div class="login-card">
-                <!-- Frost border effect -->
-                <div class="frost-corner frost-tl"></div>
-                <div class="frost-corner frost-tr"></div>
-                <div class="frost-corner frost-bl"></div>
-                <div class="frost-corner frost-br"></div>
+                <!-- Egg corner decorations -->
+                <!--div class="egg-corner egg-tl">🥚</div>
+                <div class="egg-corner egg-tr">🥚</div>
+                <div class="egg-corner egg-bl">🥚</div>
+                <div class="egg-corner egg-br">🥚</div-->
 
                 <div class="logo" (click)="showHideVersion()">
                     <img src="./assets/images/logo.png" width="140px" class="user-avatar" />
@@ -148,11 +197,11 @@
             </div>
         </div>
 
-        <!-- Winter Message -->
-        <div class="winter-message">
-            <span class="snowflake-icon">❄</span>
-            <h2>Welcome to Winter</h2>
-            <p>Stay warm, Ohio!</p>
+        <!-- Easter Message -->
+        <div class="easter-message">
+            <span class="egg-icon">🐣</span>
+            <h2>Easter is just around the corner!</h2>
+            <p>Warm days are on their way, Ohio! 🌸</p>
         </div>
     </div>
 </div>

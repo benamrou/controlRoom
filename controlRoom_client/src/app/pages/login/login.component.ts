@@ -7,7 +7,7 @@ import { LogginService, UserService, LabelService, StructureService, ScreenServi
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss', './SeasonalThemes/winter.scss'],
+    styleUrls: ['./login.component.scss', './SeasonalThemes/easter.scss'],
     animations: [routerTransition()]
 })
 export class LoginComponent implements OnInit {

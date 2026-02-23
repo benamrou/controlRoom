@@ -618,7 +618,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
           else {
               // No email sent (ALTREALTIME != '0' and 0 rows)
               // Mark as complete immediately
-              heap.logger.log('alert', `[NO EMAIL] 0 rows and ALTREALTIME=${alertData[0].ALTREALTIME} - marking complete`, 'alert', 1);
+              heap.logger.log('alert', `[NO EMAIL] ${request.requestId} 0 rows and ALTREALTIME=${alertData[0].ALTREALTIME} - marking complete`, 'alert', 1);
               const duration = Math.floor((Date.now() - request.requestStartTime) / 1000);
               clearTimeout(request.overallTimeout);
               // Update phase to JSON2XLS
@@ -677,14 +677,76 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                   try {
                     clearTimeout(timeoutId);
                     heap.logger.log('alert', `[Excel Generation] Stream finished, reading buffer`, 'alert', 1);
-                    const buffer = await fsPromises.readFile(tempFile);
+                    let buffer = await fsPromises.readFile(tempFile);
                     await fsPromises.unlink(tempFile).catch(() => {});
+
+                    // ── Pre-filter OOXML injection ──────────────────────────────
+                    // If any preFilter was configured via json2xls(), inject the
+                    // native Excel autoFilter XML now — directly into the buffer.
+                    // No row hiding, no scroll lag, works with the stream approach.
+                    if (workbook._preFilterDefs && workbook._preFilterDefs.length > 0) {
+                        heap.logger.log('alert',
+                            `[PREFILTER] Injecting autoFilters for ${workbook._preFilterDefs.length} table(s) into buffer`,
+                            'alert', 1);
+                        try {
+                            buffer = await heap.json2xls.injectAutoFilters(buffer, workbook._preFilterDefs);
+                        } catch (filterErr) {
+                            heap.logger.log('alert',
+                                `[PREFILTER] injectAutoFilters failed: ${filterErr.message} — sending unfiltered buffer`,
+                                'alert', 3);
+                        }
+                    }
+                    // ───────────────────────────────────────────────────────────
+
                     resolve(buffer);
                   } catch (err) {
                     await fsPromises.unlink(tempFile).catch(() => {});
                     reject(err);
                   }
                 });
+                
+                // ==========================================
+                // CRITICAL: Sanitize workbook before writing
+                // ==========================================
+                // Fix Excel corruption by removing invalid values
+                workbook.eachSheet((worksheet) => {
+                  if (worksheet.pageSetup) {
+                    // Fix 1: Remove invalid DPI values (4294967295 = UINT32_MAX)
+                    if (worksheet.pageSetup.horizontalDpi && 
+                        (worksheet.pageSetup.horizontalDpi > 1200 || worksheet.pageSetup.horizontalDpi < 0)) {
+                      delete worksheet.pageSetup.horizontalDpi;
+                    }
+                    if (worksheet.pageSetup.verticalDpi && 
+                        (worksheet.pageSetup.verticalDpi > 1200 || worksheet.pageSetup.verticalDpi < 0)) {
+                      delete worksheet.pageSetup.verticalDpi;
+                    }
+                    
+                    // Fix 2: Convert string margins to numbers
+                    if (worksheet.pageSetup.margins) {
+                      const m = worksheet.pageSetup.margins;
+                      worksheet.pageSetup.margins = {
+                        left: parseFloat(m.left) || 0.7,
+                        right: parseFloat(m.right) || 0.7,
+                        top: parseFloat(m.top) || 0.75,
+                        bottom: parseFloat(m.bottom) || 0.75,
+                        header: parseFloat(m.header) || 0.3,
+                        footer: parseFloat(m.footer) || 0.3
+                      };
+                    }
+                    
+                    // Fix 3: Ensure numeric properties are numbers
+                    if (worksheet.pageSetup.scale) {
+                      worksheet.pageSetup.scale = parseInt(worksheet.pageSetup.scale) || 100;
+                    }
+                    if (worksheet.pageSetup.fitToWidth) {
+                      worksheet.pageSetup.fitToWidth = parseInt(worksheet.pageSetup.fitToWidth) || 1;
+                    }
+                    if (worksheet.pageSetup.fitToHeight) {
+                      worksheet.pageSetup.fitToHeight = parseInt(worksheet.pageSetup.fitToHeight) || 1;
+                    }
+                  }
+                });
+                heap.logger.log('alert', `[Excel Sanitization] Cleaned ${workbook.worksheets.length} worksheets`, 'alert', 1);
                 
                 heap.logger.log('alert', `[Excel Generation] Starting workbook.xlsx.write()`, 'alert', 1);
                 workbook.xlsx.write(writeStream)
@@ -810,8 +872,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                                            :altlangue LALTLANGUE
                                     FROM DUAL) B
                              ON (A.LALTID = B.LALTID 
-                                 AND (A.LALTREQID = B.LALTREQID OR A.LALTREQID IS NULL)
-                                 AND A.LALTEDATE >= SYSTIMESTAMP - INTERVAL '1' MINUTE)
+                                 AND A.LALTREQID = B.LALTREQID)
                              WHEN MATCHED THEN
                                 UPDATE SET A.LALTMESS = B.LALTMESS,
                                           A.LALTROWCOUNT = B.LALTROWCOUNT,

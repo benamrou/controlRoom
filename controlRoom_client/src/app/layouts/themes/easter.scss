@@ -1,0 +1,472 @@
+/* ==============================================
+   OHIO EASTER LAYOUT - easter-layout.scss
+   Header & Sidebar styling — Spring theme
+   ============================================== */
+
+// ========================================
+// STRUCTURAL LAYOUT  (theme-independent)
+// ========================================
+$header-height:   56px;
+$sidebar-width:   240px;
+$sidebar-collapsed-width: 60px;
+
+// Fixed header clearance
+.header,
+.pos-f-t {
+    height: $header-height;
+}
+
+// Logo strip height — main sidebar scrollable area stops here
+$sidebar-logo-height: 72px;
+
+// Main sidebar — scrollable, leaves room for the pinned logo at the bottom
+.sidebar {
+    position: fixed;
+    top: $header-height;
+    left: 0;
+    bottom: $sidebar-logo-height;
+    width: $sidebar-width;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 900;
+    padding-bottom: 8px;
+    transition: width 0.25s ease;
+
+    &.collapsed {
+        width: $sidebar-collapsed-width;
+
+        .list-group-item span,
+        .list-group-item > *:not(i):not(.fa):not(.fas):not(.pi) { display: none; }
+        .nested { display: none; }
+    }
+}
+
+// Logo — pinned permanently to the bottom-left corner, above everything.
+// Sits OUTSIDE sidebar_admin in z-index so it is always visible.
+.sidebar_admin .logo {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: $sidebar-width;
+    height: $sidebar-logo-height;
+    z-index: 902;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img { max-width: 60%; }
+}
+
+// Admin sidebar — fixed to bottom-left, grows UPWARD naturally because
+// it is anchored at bottom:0.  No flex tricks needed.
+// z-index sits between logo (902) and main sidebar (900) so settings
+// items are clickable but never obscure the logo.
+.sidebar_admin {
+    position: fixed;
+    left: 0;
+    bottom: $sidebar-logo-height;   // starts just above the logo strip
+    width: $sidebar-width;
+    z-index: 901;
+    overflow: visible;
+    transition: width 0.25s ease;
+
+    &.collapsed { width: $sidebar-collapsed-width; }
+}
+
+// Main content area — offset so it sits beside the sidebar
+.main-container {
+    margin-left: $sidebar-width;
+    padding-top: $header-height;
+    min-height: 100vh;
+    transition: margin-left 0.25s ease;
+
+    &.collapsed {
+        margin-left: $sidebar-collapsed-width;
+    }
+}
+
+// ── Global link reset inside sidebars ──────────────
+.sidebar a,
+.sidebar_admin a {
+    text-decoration: none !important;
+}
+
+// ── Easter Palette ──────────────────────────────
+$e-purple-deep:   #3B2A5A;   // rich dark purple  (text, depth)
+$e-purple-mid:    #7B4FA6;   // medium violet
+$e-purple-light:  #C3A8E8;   // soft lavender
+$e-green-dark:    #3D8A35;   // deep meadow
+$e-green-mid:     #5DAA55;   // spring grass
+$e-green-light:   #A8D5A2;   // pale mint
+$e-pink:          #FF9EC6;   // cherry blossom
+$e-yellow:        #FFD966;   // daffodil
+$e-white:         #ffffff;
+$e-cream:         #FFF8F0;   // warm off-white
+$e-success:       #27AE60;
+
+// ========================================
+// HEADER
+// ========================================
+.easter-header {
+    background: linear-gradient(135deg,
+        $e-purple-deep  0%,
+        $e-purple-mid   50%,
+        darken($e-green-mid, 10%) 100%
+    ) !important;
+    border-bottom: 2px solid rgba($e-purple-light, 0.4) !important;
+    box-shadow: 0 2px 15px rgba($e-purple-deep, 0.35);
+    overflow: visible !important;
+    position: relative;
+
+    .navbar-brand {
+        color: $e-cream !important;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+
+        &:hover { color: $e-white !important; }
+    }
+
+    .nav-link {
+        color: rgba($e-cream, 0.88) !important;
+        transition: all 0.3s ease;
+
+        &:hover { color: $e-white !important; }
+
+        i {
+            color: $e-purple-light;
+            opacity: 0.85;
+        }
+    }
+
+    // Easter badge — centred in the navbar
+    .easter-badge {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+
+        span {
+            background: linear-gradient(135deg, $e-pink, $e-yellow);
+            color: $e-purple-deep;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba($e-purple-deep, 0.25);
+            letter-spacing: 0.03em;
+        }
+    }
+}
+
+// Dropdown styling
+.easter-dropdown {
+    background: $e-purple-deep !important;
+    border: 1px solid rgba($e-purple-light, 0.3) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba($e-purple-deep, 0.45) !important;
+    margin-top: 8px !important;
+    padding: 8px 0 !important;
+
+    .dropdown-item {
+        color: rgba($e-cream, 0.88) !important;
+        padding: 10px 20px !important;
+        transition: all 0.2s ease !important;
+
+        i { color: $e-purple-light; opacity: 0.75; margin-right: 8px; }
+
+        &:hover {
+            background: rgba($e-purple-light, 0.18) !important;
+            color: $e-white !important;
+            i { opacity: 1; color: $e-pink; }
+        }
+    }
+}
+
+// ========================================
+// SIDEBAR
+// ========================================
+.easter-sidebar {
+    // Soft white-to-cream gradient with a faint spring tint
+    background: linear-gradient(180deg,
+        #F5F0FF 0%,          // pale lavender white
+        #EBF5E9 60%,         // pale mint green
+        #F0FAF0 100%
+    ) !important;
+    border-right: 1px solid rgba($e-purple-light, 0.25) !important;
+    box-shadow: 2px 0 18px rgba($e-purple-deep, 0.08);
+
+    // Scrollbar — spring green
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-track { background: rgba($e-green-light, 0.2); }
+    &::-webkit-scrollbar-thumb {
+        background: rgba($e-green-mid, 0.35);
+        border-radius: 3px;
+        &:hover { background: rgba($e-green-mid, 0.55); }
+    }
+
+    // Top-level list items
+    .list-group {
+        a.list-group-item,
+        .list-group-item {
+            background: transparent !important;
+            border: none !important;
+            color: $e-purple-deep !important;
+            border-left: 3px solid transparent !important;
+            transition: all 0.2s ease;
+            font-weight: 500;
+
+            span { color: inherit; }
+
+            i, .fa, .fas, .far, .fab, .pi {
+                color: $e-purple-mid !important;
+                opacity: 0.7;
+                transition: color 0.2s ease;
+            }
+
+            &:hover {
+                background: rgba($e-purple-light, 0.18) !important;
+                color: $e-purple-deep !important;
+                border-left-color: $e-purple-mid !important;
+
+                i, .fa, .fas, .far, .fab, .pi {
+                    color: $e-purple-mid !important;
+                    opacity: 1;
+                }
+            }
+
+            &.router-link-active {
+                background: rgba($e-green-mid, 0.15) !important;
+                color: $e-green-dark !important;
+                border-left-color: $e-green-mid !important;
+                font-weight: 600;
+
+                i, .fa, .fas, .far, .fab, .pi {
+                    color: $e-green-dark !important;
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    // Nested menus — collapsed by default, expanded on .expand
+    .nested-menu {
+
+        // ── Core collapse rule ──────────────────────────
+        // All nested <li> wrappers are hidden by default.
+        // Angular's [ngClass]="{'expand': showMenu === 'X'}" adds .expand on click.
+        li.nested {
+            display: none;
+
+            &.expand {
+                display: block;
+            }
+        }
+
+        // ── Parent toggle row ───────────────────────────
+        > .list-group-item {
+            cursor: pointer;
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+
+            // Chevron — default (collapsed)
+            &::after {
+                content: '›';
+                font-size: 1.2rem;
+                line-height: 1;
+                color: rgba($e-purple-mid, 0.4);
+                transition: transform 0.2s ease, color 0.2s ease;
+                flex-shrink: 0;
+                padding-left: 8px;
+            }
+
+            // Chevron — active/open state
+            // We can't target a preceding sibling from li.nested.expand in CSS,
+            // so the TypeScript addExpandClass() should also toggle an 'open' class
+            // on the parent .nested-menu div.  Add this to your sidebar TS if desired:
+            //   el.classList.toggle('open')
+            // Then this rule will fire:
+            .nested-menu.open > &::after {
+                transform: rotate(90deg);
+                color: $e-purple-mid;
+            }
+        }
+
+        ul.submenu {
+            background: rgba($e-purple-deep, 0.04) !important;
+            padding-left: 0;
+
+            li {
+                a,
+                a.bbs_link_menu {
+                    color: rgba($e-purple-deep, 0.72) !important;
+                    padding: 10px 20px 10px 40px;
+                    display: block;
+                    text-decoration: none;
+                    border-left: 3px solid transparent;
+                    transition: all 0.2s ease;
+
+                    span { color: inherit; }
+
+                    i, .fa, .fas, .far, .fab, .pi {
+                        color: rgba($e-purple-mid, 0.55) !important;
+                    }
+
+                    &:hover {
+                        background: rgba($e-purple-light, 0.15) !important;
+                        color: $e-purple-deep !important;
+                        border-left-color: rgba($e-purple-mid, 0.35);
+
+                        i, .fa, .fas, .far, .fab, .pi {
+                            color: $e-purple-mid !important;
+                        }
+                    }
+
+                    &.router-link-active {
+                        background: rgba($e-green-mid, 0.12) !important;
+                        color: $e-green-dark !important;
+                        border-left-color: $e-green-mid;
+                        font-weight: 600;
+
+                        i, .fa, .fas, .far, .fab, .pi {
+                            color: $e-green-dark !important;
+                        }
+                    }
+                }
+            }
+        }
+
+        ul.subsubmenu {
+            background: rgba($e-purple-deep, 0.03) !important;
+
+            a {
+                padding-left: 52px !important;
+                font-size: 0.9em;
+            }
+        }
+    }
+
+    // Collapse toggle button
+    .toggle-button {
+        background: rgba($e-purple-deep, 0.06) !important;
+        color: rgba($e-purple-deep, 0.65) !important;
+        border-top: 1px solid rgba($e-purple-light, 0.3) !important;
+
+        i { color: $e-purple-mid !important; }
+
+        &:hover {
+            background: rgba($e-purple-light, 0.2) !important;
+            color: $e-purple-deep !important;
+        }
+    }
+}
+
+// ========================================
+// ADMIN SIDEBAR
+// ========================================
+.easter-sidebar-admin {
+    background: linear-gradient(180deg,
+        #EDF5EB 0%,
+        #F7F0FF 100%
+    ) !important;
+    border: 1px solid rgba($e-purple-light, 0.2) !important;
+    border-top: 2px solid rgba($e-green-mid, 0.4) !important;
+
+    .list-group {
+        .list-group-item,
+        a.list-group-item {
+            background: transparent !important;
+            border: none !important;
+            color: rgba($e-purple-deep, 0.75) !important;
+            font-weight: 500;
+
+            i, .fa, .fas, .far, .fab {
+                color: rgba($e-purple-mid, 0.6) !important;
+            }
+
+            &:hover {
+                background: rgba($e-purple-light, 0.15) !important;
+                color: $e-purple-deep !important;
+                i, .fa, .fas, .far, .fab { color: $e-purple-mid !important; }
+            }
+
+            &.router-link-active {
+                background: rgba($e-green-mid, 0.12) !important;
+                color: $e-green-dark !important;
+            }
+        }
+    }
+
+    .nested-menu {
+
+        // Collapsed by default, open on .expand
+        li.nested {
+            display: none;
+
+            &.expand {
+                display: block;
+            }
+        }
+
+        // Chevron on parent toggle row
+        > .list-group-item {
+            cursor: pointer;
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+
+            &::after {
+                content: '›';
+                font-size: 1.2rem;
+                line-height: 1;
+                color: rgba($e-purple-mid, 0.4);
+                transition: transform 0.2s ease, color 0.2s ease;
+                flex-shrink: 0;
+                padding-left: 8px;
+            }
+        }
+
+        ul.submenu {
+        background: rgba($e-purple-deep, 0.03) !important;
+
+        li a {
+            color: rgba($e-purple-deep, 0.65) !important;
+            padding: 8px 16px 8px 36px;
+            display: block;
+            text-decoration: none !important;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: rgba($e-purple-light, 0.12) !important;
+                color: $e-purple-deep !important;
+            }
+
+            &.router-link-active {
+                background: rgba($e-green-mid, 0.1) !important;
+                color: $e-green-dark !important;
+                font-weight: 600;
+            }
+        }
+        } // end ul.submenu
+    } // end .nested-menu
+
+    .logo {
+        border-top: 1px solid rgba($e-green-mid, 0.3) !important;
+        background: linear-gradient(180deg, #EDF5EB 0%, #F7F0FF 100%);
+    }
+}
+
+// ========================================
+// UTILITY
+// ========================================
+.isDisabled {
+    color: rgba($e-purple-deep, 0.3) !important;
+    cursor: not-allowed;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+// Responsive — hide badge on mobile
+@media screen and (max-width: 992px) {
+    .easter-header .easter-badge { display: none; }
+}

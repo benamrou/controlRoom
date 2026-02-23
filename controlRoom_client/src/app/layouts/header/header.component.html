@@ -11,18 +11,18 @@
     </p-dialog>
 
         <div class="pos-f-t fixed-top header">
-            <nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md winter-header">
+            <nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md easter-header">
 
                 <button class="navbar-toggler navbar-toggler-right" (click)="toggleSidebar()" data-bs-toggle="dropdown">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <a class="navbar-brand" [ngStyle]="{'color': appForegroundColorEnvironment}" style="padding-left: 2%">
-                    ❄ {{appEnvironment}}
+                    🌸 {{appEnvironment}}
                 </a>
 
-                <!-- Winter badge -->
-                <div class="winter-badge">
-                    <span>Winter</span>
+                <!-- Easter badge -->
+                <div class="easter-badge">
+                    <span>🐣 Easter almost here</span>
                 </div>
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02" style="padding-right: 3%">
@@ -33,7 +33,7 @@
                             <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown">
                                 <i class="fa fa-database"></i> <b class="caret"></b><span class="sr-only"></span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right winter-dropdown">
+                            <div class="dropdown-menu dropdown-menu-right easter-dropdown">
                                 <a *ngFor="let environment of environments" class="dropdown-item" 
                                     (click)="environmentChange(environment.label, environment.value.type)">{{environment.label}}
                                 </a>
@@ -45,7 +45,7 @@
                             <a href="javascript:void(0)" class="nav-link dropdown-toggle" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}" data-bs-toggle="dropdown">
                                 <i class="fa fa-language"></i> <b class="caret"></b>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right winter-dropdown">
+                            <div class="dropdown-menu dropdown-menu-right easter-dropdown">
                                 <a class="dropdown-item" (click)="changeLang('us_US')">American</a>
                                 <a class="dropdown-item" (click)="changeLang('en_EN')">English</a>
                                 <a class="dropdown-item" (click)="changeLang('fr_FR')">French</a>
@@ -57,7 +57,7 @@
                             <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                 <i class="fa fa-user"></i> {{_userService.userInfo.userNameDisplay}} <b class="caret"></b>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right winter-dropdown">
+                            <div class="dropdown-menu dropdown-menu-right easter-dropdown">
                                 <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-user"></i> Profile</a>
                                 <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
                                 <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-gear"></i> Settings</a>
