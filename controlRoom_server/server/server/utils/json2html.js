@@ -42,6 +42,10 @@ function buildHtmlTable(arr, document, cellRule) {
                 arr[i][columnSet[j]]= '';
             }
             cellValue = arr[i][columnSet[j]];
+            // Strip floating point noise (e.g. 69.35000000000001 → 69.35) without forcing a fixed decimal format
+            if (typeof cellValue === 'number' && !Number.isInteger(cellValue)) {
+                cellValue = parseFloat(cellValue.toPrecision(12));
+            }
             try {
                 // if cell rules defined applied cell rule
                 if(cellRuleJSON != null) {
@@ -132,4 +136,4 @@ function json2table(data, document, cellRule) {
     return result;
 }
 
-module.exports.json2table = json2table; 
+module.exports.json2table = json2table;

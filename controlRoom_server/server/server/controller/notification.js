@@ -376,7 +376,8 @@ async function processContent(SQLProcess, alertData, request, response, result) 
       }
     });
 
-     heap.logger.log('alert', 'queryNodes :' +JSON.stringify(queryNodes), 'alert', 3);
+     // ── CHANGE: success-path log — demoted 3→1 (was written to file in production every request)
+     heap.logger.log('alert', `queryNodes count: ${queryNodes.length}`, 'alert', 1);
 
     // Sort by index ascending (e.g., QUERY, QUERY2, QUERY3 ...)
     queryNodes.sort((a, b) => parseInt(a.index) - parseInt(b.index));
@@ -1019,7 +1020,8 @@ module.get = async function (request,response) {
                         heap.logger.log('alert', 'Query store in DB : ' + content, 'alert', 1);
 
                         heap.parseXML2JS(content, function (err, result) {
-                            heap.logger.log('alert', 'content XML' + JSON.stringify(result), 'alert', 3);
+                            // ── CHANGE: success-path trace — demoted 3→1 (full XML dump, fired every request)
+                            heap.logger.log('alert', 'content XML parsed OK', 'alert', 1);
                             // Now process the content from XML file
                             processContent(SQL, alertData, request, response, result);
                         });
@@ -1033,7 +1035,8 @@ module.get = async function (request,response) {
                                     return;
                                 }
                                 heap.parseXML2JS(data, function (err, result) {
-                                    heap.logger.log('alert', 'content XML' + JSON.stringify(result), 'alert', 3);
+                                    // ── CHANGE: success-path trace — demoted 3→1
+                                    heap.logger.log('alert', 'content XML parsed OK', 'alert', 1);
                                     // Now process the content from XML file
                                     processContent(SQL, alertData, request, response, result);
                                 });
@@ -1082,7 +1085,8 @@ module.get = async function (request,response) {
                         let content = alertData[0].ALTSQL;
 
                         heap.parseXML2JS(content, function (err, result) {
-                            heap.logger.log('alert', 'content XML' + JSON.stringify(result), 'alert', 3);
+                            // ── CHANGE: success-path trace — demoted 3→1
+                            heap.logger.log('alert', 'content XML parsed OK', 'alert', 1);
                             // Now process the content from XML file
                             processContentNoHTML(SQL, alertData, request, result, response);
                         });
@@ -1096,7 +1100,8 @@ module.get = async function (request,response) {
                                     return;
                                 }
                                 heap.parseXML2JS(data, function (err, result) {
-                                    heap.logger.log('alert', 'content XML' + JSON.stringify(result), 'alert', 3);
+                                    // ── CHANGE: success-path trace — demoted 3→1
+                                    heap.logger.log('alert', 'content XML parsed OK', 'alert', 1);
                                     // Now process the content from XML file
                                     processContentNoHTML(SQL, alertData, request, result, response);
                                 });

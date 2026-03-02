@@ -1,0 +1,337 @@
+<app-page-header [heading]="'Query Runner'" [waitMessage]="waitMessage" [screenID]="screenID"
+    [icon]="'fa-database'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+<div class="qrunner-container">
+
+    <!-- ── Page Header Bar ──────────────────────────────────────────────────── -->
+    <div class="header-section">
+        <div class="title-area">
+            <i class="fas fa-database title-icon"></i>
+            <h2>Query Runner</h2>
+        </div>
+        <div class="header-actions">
+            <span class="record-count" *ngIf="hasExecuted">
+                <i class="pi pi-database mr-1"></i>{{ results.length }} row(s)
+            </span>
+            <span class="exec-time" *ngIf="hasExecuted">
+                <i class="pi pi-clock mr-1"></i>{{ executionTime }}ms
+            </span>
+        </div>
+    </div>
+
+    <!-- ── PrimeNG TabView ──────────────────────────────────────────────────── -->
+    <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)">
+
+        <!-- ══ TAB 1: Preset Queries ═══════════════════════════════════════════ -->
+        <p-tabPanel header="Preset Queries" leftIcon="pi pi-list">
+            <div class="main-layout">
+
+                <!-- LEFT: Preset Catalogue -->
+                <div class="preset-panel">
+                    <div class="preset-panel-header">
+                        <div class="preset-panel-title">
+                            <span><i class="pi pi-list mr-2"></i>Preset Queries</span>
+                            <div class="preset-source-badges">
+                                <span class="source-badge db" *ngIf="presetsLoadedFromDB"
+                                    pTooltip="Loaded from database" tooltipPosition="right">
+                                    <i class="pi pi-database"></i> DB
+                                </span>
+                                <span class="source-badge mock" *ngIf="!presetsLoadedFromDB"
+                                    pTooltip="Using built-in mock data" tooltipPosition="right">
+                                    <i class="pi pi-code"></i> Mock
+                                </span>
+                                <button pButton type="button" icon="pi pi-refresh"
+                                    class="p-button-text p-button-sm reload-presets-btn"
+                                    pTooltip="Reload catalogue" tooltipPosition="right"
+                                    [loading]="loadingPresets"
+                                    (click)="loadPresets()"></button>
+                            </div>
+                        </div>
+                        <p-dropdown [(ngModel)]="selectedCategory" [options]="categoryOptions"
+                            optionLabel="label" optionValue="value"
+                            (onChange)="onCategoryChange()"
+                            placeholder="All Categories"
+                            appendTo="body"
+                            styleClass="category-filter">
+                        </p-dropdown>
+                    </div>
+
+                    <div class="preset-list">
+                        <div *ngFor="let preset of filteredPresets"
+                             class="preset-card"
+                             [class.active]="selectedPreset?.id === preset.id"
+                             (click)="selectPreset(preset)">
+                            <div class="preset-card-icon">
+                                <i [class]="preset.icon"></i>
+                            </div>
+                            <div class="preset-card-body">
+                                <div class="preset-card-title">{{ preset.label }}</div>
+                                <div class="preset-card-meta">
+                                    <p-tag [value]="preset.category" severity="info" styleClass="preset-tag"></p-tag>
+                                    <span class="param-count" *ngIf="preset.params.length > 0">
+                                        <i class="pi pi-sliders-h"></i> {{ preset.params.length }} param(s)
+                                    </span>
+                                    <span class="param-count no-params" *ngIf="preset.params.length === 0">
+                                        <i class="pi pi-bolt"></i> No params
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="filteredPresets.length === 0" class="preset-empty">
+                            <i class="pi pi-inbox"></i>
+                            <p>No queries in this category</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Preset Execution Panel -->
+                <div class="execution-panel">
+
+                    <!-- Empty State -->
+                    <div class="empty-state" *ngIf="!selectedPreset">
+                        <i class="pi pi-arrow-left"></i>
+                        <h3>Select a query from the list</h3>
+                        <p>Choose a preset query on the left to configure parameters and execute it.</p>
+                    </div>
+
+                    <ng-container *ngIf="selectedPreset">
+
+                        <!-- Query Info Card -->
+                        <div class="query-info-card">
+                            <div class="query-info-left">
+                                <div class="query-info-icon">
+                                    <i [class]="selectedPreset.icon"></i>
+                                </div>
+                                <div>
+                                    <div class="query-info-title">{{ selectedPreset.label }}</div>
+                                    <div class="query-info-desc">{{ selectedPreset.description }}</div>
+                                    <div class="query-info-id"><code>{{ selectedPreset.id }}</code></div>
+                                </div>
+                            </div>
+                            <button pButton type="button" icon="pi pi-times" class="p-button-text p-button-sm clear-btn"
+                                pTooltip="Clear selection" tooltipPosition="left"
+                                (click)="clearPreset()"></button>
+                        </div>
+
+                        <!-- Parameter Inputs -->
+                        <div class="params-card" *ngIf="selectedPreset.params.length > 0">
+                            <div class="params-card-header">
+                                <i class="pi pi-sliders-h mr-2"></i>Parameters
+                            </div>
+                            <div class="formgrid grid">
+                                <div *ngFor="let param of selectedPreset.params"
+                                     class="field"
+                                     [ngClass]="selectedPreset.params.length === 1 ? 'col-12' :
+                                                selectedPreset.params.length === 2 ? 'col-6' : 'col-4'">
+                                    <label class="font-bold" [for]="'param_' + param.name">
+                                        {{ param.label }}
+                                        <span class="required-star" *ngIf="param.defaultValue === ''">*</span>
+                                    </label>
+                                    <input [id]="'param_' + param.name"
+                                           pInputText
+                                           [(ngModel)]="paramValues[param.name]"
+                                           [type]="getParamInputType(param.type)"
+                                           [placeholder]="param.placeholder"
+                                           class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                                           (keyup.enter)="executeQuery()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="params-card no-params-notice" *ngIf="selectedPreset.params.length === 0">
+                            <i class="pi pi-bolt mr-2"></i>This query requires no parameters — ready to execute.
+                        </div>
+
+                        <!-- Execute Toolbar -->
+                        <div class="execute-toolbar">
+                            <button pButton type="button" icon="pi pi-play" label="Execute Query"
+                                class="mr-2 execute-btn"
+                                [loading]="loading"
+                                (click)="executeQuery()"></button>
+                            <button pButton type="button" icon="pi pi-eraser" label="Clear Results"
+                                class="p-button-outlined p-button-secondary mr-2"
+                                [disabled]="!hasExecuted"
+                                (click)="clearResults()"></button>
+                            <button pButton type="button" icon="pi pi-download" label="Export CSV"
+                                class="p-button-outlined p-button-help"
+                                [disabled]="results.length === 0"
+                                (click)="exportCSV()"></button>
+                        </div>
+
+                        <ng-container *ngTemplateOutlet="resultsSection"></ng-container>
+
+                    </ng-container>
+                </div>
+            </div>
+        </p-tabPanel>
+
+        <!-- ══ TAB 2: SQL Editor ════════════════════════════════════════════════ -->
+        <p-tabPanel header="SQL Editor" leftIcon="pi pi-code">
+            <div class="sql-layout">
+
+                <!-- Editor Card -->
+                <div class="sql-editor-card">
+
+                    <!-- Editor Toolbar -->
+                    <div class="sql-editor-toolbar">
+                        <div class="sql-editor-toolbar-left">
+                            <i class="pi pi-code mr-2"></i>
+                            <span>SQL Statement</span>
+                        </div>
+                        <div class="sql-editor-toolbar-right">
+                            <p-dropdown *ngIf="sqlHistoryOptions.length > 0"
+                                [options]="sqlHistoryOptions"
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="History"
+                                [showClear]="false"
+                                (onChange)="loadFromHistory($event.value)"
+                                styleClass="sql-history-dropdown">
+                                <ng-template pTemplate="dropdownicon">
+                                    <i class="pi pi-history"></i>
+                                </ng-template>
+                            </p-dropdown>
+                            <button pButton type="button" icon="pi pi-trash" label="Clear"
+                                class="p-button-outlined p-button-sm p-button-secondary"
+                                [disabled]="!sqlText"
+                                (click)="sqlText = ''; showSqlWarning = false"></button>
+                        </div>
+                    </div>
+
+                    <!-- DML Warning Banner -->
+                    <div class="sql-warning-banner" *ngIf="showSqlWarning">
+                        <i class="pi pi-exclamation-triangle mr-2"></i>
+                        {{ sqlWarningMessage }}
+                    </div>
+
+                    <!-- The Textarea -->
+                    <textarea
+                        class="sql-textarea"
+                        [(ngModel)]="sqlText"
+                        (ngModelChange)="onSqlTextChange()"
+                        (keydown)="onSqlKeydown($event)"
+                        placeholder="-- Paste or type your SQL here&#10;-- Press Ctrl+Enter (or ⌘+Enter) to execute&#10;&#10;SELECT * FROM my_table WHERE ...">
+                    </textarea>
+
+                    <!-- Footer -->
+                    <div class="sql-editor-footer">
+                        <span class="sql-stat">{{ sqlText.length }} chars · {{ sqlText.split('\n').length }} line(s)</span>
+                        <span class="sql-hint"><i class="pi pi-info-circle mr-1"></i>Ctrl+Enter to execute · Tab for indent</span>
+                    </div>
+
+                </div>
+
+                <!-- Execute Toolbar -->
+                <div class="execute-toolbar">
+                    <button pButton type="button" icon="pi pi-play" label="Execute SQL"
+                        class="mr-2 execute-btn"
+                        [loading]="loading"
+                        (click)="executeSqlQuery()"></button>
+                    <button pButton type="button" icon="pi pi-eraser" label="Clear Results"
+                        class="p-button-outlined p-button-secondary mr-2"
+                        [disabled]="!hasExecuted"
+                        (click)="clearResults()"></button>
+                    <button pButton type="button" icon="pi pi-download" label="Export CSV"
+                        class="p-button-outlined p-button-help"
+                        [disabled]="results.length === 0"
+                        (click)="exportCSV()"></button>
+                </div>
+
+                <ng-container *ngTemplateOutlet="resultsSection"></ng-container>
+
+            </div>
+        </p-tabPanel>
+
+    </p-tabView>
+
+</div><!-- /qrunner-container -->
+
+<!-- ── Shared: Results Section ──────────────────────────────────────────────── -->
+<ng-template #resultsSection>
+    <ng-container *ngIf="hasExecuted">
+
+        <div class="no-results" *ngIf="results.length === 0 && !loading">
+            <i class="pi pi-inbox"></i>
+            <p>Query executed successfully — no rows returned.</p>
+        </div>
+
+        <div class="results-wrapper" *ngIf="results.length > 0">
+            <div class="results-toolbar">
+                <span class="results-info">
+                    <i class="pi pi-table mr-1"></i>
+                    {{ results.length }} row(s) · {{ dynamicColumns.length }} column(s)
+                    <span class="results-label" *ngIf="activeQueryLabel"
+                        [pTooltip]="activeQueryLabel" tooltipPosition="right">
+                        — {{ activeQueryLabel }}
+                    </span>
+                </span>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-filter"></i>
+                    <input pInputText type="text" #globalFilter
+                        (input)="resultsTable.filterGlobal(globalFilter.value, 'contains')"
+                        placeholder="Filter results..."
+                        style="width: 220px;" />
+                </span>
+            </div>
+
+            <p-table #resultsTable
+                [value]="results"
+                [columns]="dynamicColumns"
+                [paginator]="true"
+                [rows]="20"
+                [rowsPerPageOptions]="[10, 20, 50, 100]"
+                [loading]="loading"
+                [resizableColumns]="true"
+                [scrollable]="true"
+                scrollHeight="420px"
+                [globalFilterFields]="globalFilterFields"
+                styleClass="p-datatable-sm p-datatable-gridlines"
+                responsiveLayout="scroll"
+                [exportFilename]="exportFilename()"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th *ngFor="let col of dynamicColumns; trackBy: trackByField"
+                            [pSortableColumn]="col.field"
+                            pResizableColumn
+                            [style.min-width]="col.width">
+                            {{ col.header }}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td *ngFor="let col of dynamicColumns; trackBy: trackByField"
+                            [style.min-width]="col.width"
+                            [class.numeric-cell]="isNumericValue(row[col.field])">
+                            <span [title]="formatCellValue(row[col.field])">
+                                {{ formatCellValue(row[col.field]) }}
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="dynamicColumns.length" class="text-center p-4">
+                            <i class="pi pi-inbox" style="font-size: 2rem; color: var(--text-color-secondary);"></i>
+                            <p class="mt-2">No records match the current filter</p>
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </ng-container>
+</ng-template>
+
+<p-toast></p-toast>

@@ -1,0 +1,209 @@
+.pqm-container {
+    padding: 1rem;
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary-color);
+
+        .title-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            .title-icon { font-size: 1.75rem; color: var(--primary-color); }
+            h2 { margin: 0; font-size: 1.5rem; color: var(--text-color); }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            .record-count {
+                background: var(--surface-100);
+                padding: 0.5rem 1rem;
+                border-radius: 4px;
+                font-weight: 600;
+                color: var(--text-color-secondary);
+            }
+        }
+    }
+
+    .search-panel {
+        background: var(--surface-50);
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        border: 1px solid var(--surface-200);
+
+        .search-buttons {
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 0.5rem;
+        }
+    }
+
+    .toolbar {
+        margin-bottom: 1rem;
+        padding: 0.5rem 0;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .icon-code {
+        font-size: 0.78rem;
+        color: var(--text-color-secondary);
+        font-family: monospace;
+    }
+
+    .cursor-pointer { cursor: pointer; }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .font-bold {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    ::ng-deep {
+        .p-datatable {
+            .p-datatable-thead > tr > th {
+                background: var(--surface-100);
+                color: var(--text-color);
+                font-weight: 600;
+                padding: 0.75rem;
+                border-color: var(--surface-200);
+                &:hover { background: var(--surface-200); }
+            }
+
+            .p-datatable-tbody > tr {
+                transition: background-color 0.2s;
+                &:hover { background: var(--surface-100) !important; }
+                &.p-highlight { background: var(--primary-100) !important; color: var(--primary-900); }
+                > td {
+                    padding: 0.5rem 0.75rem;
+                    border-color: var(--surface-200);
+                    vertical-align: middle;
+                }
+            }
+
+            .p-paginator {
+                background: var(--surface-50);
+                border: none;
+                padding: 0.75rem;
+            }
+        }
+
+        .p-dialog {
+            .p-dialog-header {
+                background: var(--primary-color);
+                color: white;
+                padding: 1rem 1.5rem;
+                .p-dialog-title { font-weight: 600; }
+                .p-dialog-header-icon {
+                    color: white;
+                    &:hover { background: rgba(255,255,255,0.1); }
+                }
+            }
+            .p-dialog-content { padding: 1.5rem; }
+            .p-dialog-footer {
+                padding: 1rem 1.5rem;
+                background: var(--surface-50);
+                border-top: 1px solid var(--surface-200);
+            }
+        }
+
+        .p-dropdown { width: 100%; }
+        .p-inputtext:focus { border-color: var(--primary-color); box-shadow: 0 0 0 0.2rem var(--primary-100); }
+        .p-inputtextarea { resize: vertical; }
+    }
+}
+
+// ── Dialog: params editor ─────────────────────────────────────────────────────
+::ng-deep .p-dialog-content {
+    .params-editor-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+
+        .font-bold { margin-bottom: 0; font-size: 0.9rem; }
+    }
+
+    .params-empty-notice {
+        background: var(--surface-50);
+        border: 1px dashed var(--surface-300);
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
+        display: flex;
+        align-items: center;
+    }
+
+    .param-rows {
+        border: 1px solid var(--surface-200);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .param-row {
+        display: grid;
+        grid-template-columns: 52px 1fr 1fr 110px 1fr 1fr 44px;
+        gap: 0.4rem;
+        align-items: center;
+        padding: 0.4rem 0.5rem;
+        border-bottom: 1px solid var(--surface-200);
+
+        &:last-child { border-bottom: none; }
+
+        &.param-row-header {
+            background: var(--surface-100);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-color-secondary);
+            padding: 0.5rem 0.5rem;
+        }
+
+        .pcol-order {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+
+            .order-btn {
+                width: 22px;
+                height: 20px;
+                padding: 0;
+                ::ng-deep .p-button-icon { font-size: 0.65rem; }
+            }
+        }
+
+        .param-input {
+            font-size: 0.82rem;
+            padding: 0.3rem 0.5rem;
+            height: 32px;
+        }
+
+        ::ng-deep .param-type-dropdown {
+            .p-dropdown {
+                height: 32px;
+                width: 100%;
+                .p-dropdown-label {
+                    font-size: 0.82rem;
+                    padding: 0.3rem 0.5rem;
+                    line-height: 1.4rem;
+                }
+            }
+        }
+    }
+}

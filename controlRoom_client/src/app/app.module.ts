@@ -137,6 +137,8 @@ import { QueryLibraryModule } from './pages/admin/query.library/query.library.mo
 import { DictionaryModule } from './pages/admin/dictionary/dictionary.module';
 import { PurchaseOrderPushModule } from './pages/mass.update/purchase.order.push/purchase.order.push.module';
 import { StockLayerModule } from './pages/mass.update/stock.layer/stock.layer.module';
+import { QueryRunnerModule } from './pages/it/query.runner/query.runner.module';
+import { PresetQueryManagerModule } from './pages/it/preset.query/preset.query.manager.module';
 
 /* Prime NG */
 import { MessageModule} from 'primeng/message';
@@ -265,7 +267,9 @@ import { AlertLogJournalModule } from './pages/alerts/journal/alert.journal.modu
     DictionaryModule,
     StockLayerModule,
     ItemRetailModule,
-    AlertLogJournalModule
+    AlertLogJournalModule,
+    QueryRunnerModule,
+    PresetQueryManagerModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

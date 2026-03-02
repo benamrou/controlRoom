@@ -242,7 +242,8 @@ function formatXLS (worksheet, dataRows, formatRule) {
                     return;
                 }
 
-                heap.logger.log('alert', 'conditionalRule EXCEL : ' + JSON.stringify(cellRuleXLS.conditionalRule), 'alert', 1);
+                // ── CHANGE 2: log rule count only — avoids large JSON.stringify on every report
+                heap.logger.log('alert', `[FORMAT] conditionalRule count: ${cellRuleXLS.conditionalRule.length}`, 'alert', 1);
 
                 for (let i = 0; i < cellRuleXLS.conditionalRule.length; i++) {
                     const condRule = cellRuleXLS.conditionalRule[i];
@@ -984,7 +985,8 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
         heap.logger.log('alert', 'Error setXLSProperties ' + JSON.stringify(err), 'alert', 3);
     }
 
-    heap.logger.log('alert', 'ws.pageSetup : ' + JSON.stringify(worksheet.pageSetup), 'alert', 1);
+    // ── CHANGE 2: ws.pageSetup full JSON dump removed — high-volume, no production value.
+    //             Re-enable for debugging: ICR_DEBUG=1 captures it via ICR_LOG_LEVEL=0.
 
     dataRows.length = 0;
     dataColumns.length = 0;

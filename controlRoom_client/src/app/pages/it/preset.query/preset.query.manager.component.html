@@ -1,0 +1,294 @@
+<app-page-header [heading]="'Preset Query Manager'" [waitMessage]="waitMessage" [screenID]="screenID"
+    [icon]="'fa-sliders'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+<div class="pqm-container">
+
+    <div class="header-section">
+        <div class="title-area">
+            <i class="fas fa-sliders title-icon"></i>
+            <h2>Preset Query Manager</h2>
+        </div>
+        <div class="header-actions">
+            <span class="record-count">{{ presetList.length }} records</span>
+        </div>
+    </div>
+
+    <!-- Search Panel -->
+    <div class="search-panel">
+        <div class="formgrid grid">
+            <div class="field col-3">
+                <label class="font-bold">Query ID</label>
+                <input pInputText [(ngModel)]="searchId" placeholder="Search by ID..."
+                    class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                    (keyup.enter)="searchData()">
+            </div>
+            <div class="field col-4">
+                <label class="font-bold">Label</label>
+                <input pInputText [(ngModel)]="searchLabel" placeholder="Search by label..."
+                    class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                    (keyup.enter)="searchData()">
+            </div>
+            <div class="field col-3">
+                <label class="font-bold">Category</label>
+                <p-dropdown [(ngModel)]="searchCategory" [options]="categoryOptions"
+                    optionLabel="label" optionValue="value" [showClear]="true"
+                    placeholder="All Categories" class="w-full">
+                </p-dropdown>
+            </div>
+            <div class="field col-2 search-buttons">
+                <button pButton type="button" icon="pi pi-search" label="Search"
+                    class="p-button-outlined mr-2" (click)="searchData()"></button>
+                <button pButton type="button" icon="pi pi-times" label="Clear"
+                    class="p-button-outlined p-button-secondary" (click)="clearSearch()"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar flex justify-content-between align-items-center">
+        <div class="toolbar-left">
+            <button pButton type="button" icon="pi pi-plus" label="New"
+                class="p-button-outlined p-button-success mr-2" (click)="newPreset()"></button>
+            <button pButton type="button" icon="pi pi-refresh" label="Refresh"
+                class="p-button-outlined p-button-info mr-2" (click)="loadData()"></button>
+            <button pButton type="button" icon="pi pi-file-excel" label="Export CSV"
+                class="p-button-outlined p-button-help" (click)="exportCSV()"></button>
+        </div>
+        <div class="toolbar-right">
+            <span class="p-input-icon-left">
+                <i class="pi pi-filter"></i>
+                <input pInputText type="text" #tableFilter
+                    (input)="presetTable.filterGlobal(tableFilter.value, 'contains')"
+                    placeholder="Filter results..." style="width: 250px;" />
+            </span>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <p-table #presetTable [value]="presetList" [columns]="columns"
+        [paginator]="true" [rows]="15" [rowsPerPageOptions]="[10,15,25,50]"
+        [loading]="loading" [resizableColumns]="true"
+        selectionMode="single" [(selection)]="selectedPreset"
+        [globalFilterFields]="['QRUN_ID','QRUN_LABEL','QRUN_CATEGORY','QRUN_DESC']"
+        styleClass="p-datatable-sm p-datatable-gridlines"
+        responsiveLayout="scroll" dataKey="QRUN_ID" [exportFilename]="'preset_queries'">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <ng-container *ngFor="let col of columns">
+                    <th *ngIf="col.display" [pSortableColumn]="col.sortable ? col.field : null"
+                        pResizableColumn [style.width]="col.width">
+                        <span *ngIf="col.field !== 'ACTION'">
+                            {{ col.header }}
+                            <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+                        </span>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-row>
+            <tr [pSelectableRow]="row" (dblclick)="onRowDblClick(row)" class="cursor-pointer">
+                <ng-container *ngFor="let col of columns">
+                    <td *ngIf="col.display" [style.width]="col.width">
+
+                        <span *ngIf="col.field === 'ACTION'" class="action-buttons">
+                            <button pButton pRipple type="button" icon="pi pi-pencil"
+                                (click)="editPreset(row.QRUN_ID); $event.stopPropagation()"
+                                pTooltip="Edit" tooltipPosition="top"
+                                class="p-button-rounded p-button-text p-button-sm"></button>
+                            <button pButton pRipple type="button" icon="pi pi-copy"
+                                (click)="duplicatePreset(row.QRUN_ID); $event.stopPropagation()"
+                                pTooltip="Duplicate" tooltipPosition="top"
+                                class="p-button-rounded p-button-text p-button-sm"></button>
+                            <button pButton pRipple type="button" icon="pi pi-trash"
+                                (click)="deletePreset(row.QRUN_ID, row.QRUN_LABEL); $event.stopPropagation()"
+                                pTooltip="Delete" tooltipPosition="top"
+                                class="p-button-rounded p-button-text p-button-danger p-button-sm"></button>
+                        </span>
+
+                        <span *ngIf="col.field === 'QRUN_ICON'">
+                            <i [class]="row.QRUN_ICON" class="mr-2"></i>
+                            <span class="icon-code">{{ row.QRUN_ICON }}</span>
+                        </span>
+
+                        <span *ngIf="col.field === 'QRUN_PARAMS'">
+                            <p-tag *ngIf="paramCount(row.QRUN_PARAMS) > 0"
+                                [value]="paramCount(row.QRUN_PARAMS) + ' param(s)'"
+                                severity="info"></p-tag>
+                            <p-tag *ngIf="paramCount(row.QRUN_PARAMS) === 0"
+                                value="None" severity="success"></p-tag>
+                        </span>
+
+                        <span *ngIf="col.field === 'QRUN_DMAJ'">
+                            {{ row[col.field] | date:'MM/dd/yyyy' }}
+                        </span>
+
+                        <span *ngIf="col.field !== 'ACTION' && col.field !== 'QRUN_ICON' && col.field !== 'QRUN_PARAMS' && col.field !== 'QRUN_DMAJ'">
+                            {{ row[col.field] }}
+                        </span>
+
+                    </td>
+                </ng-container>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td [attr.colspan]="columns.length" class="text-center p-4">
+                    <i class="pi pi-inbox" style="font-size: 2rem; color: var(--text-color-secondary);"></i>
+                    <p class="mt-2">No preset queries found</p>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+</div>
+
+<!-- ── Edit / New Dialog ──────────────────────────────────────────────────── -->
+<p-dialog [(visible)]="displayDialog" [modal]="true" [style]="{width: '850px'}"
+    [header]="isNew ? 'New Preset Query' : 'Edit Preset Query'"
+    [closable]="true" [draggable]="true" [resizable]="true">
+
+    <div class="formgrid grid">
+
+        <!-- Row 1: ID + Category -->
+        <div class="field col-4">
+            <label class="font-bold">Query ID *</label>
+            <input pInputText [(ngModel)]="presetDisplay.QRUN_ID" [disabled]="!isNew"
+                placeholder="e.g. QRY0000007"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
+                (input)="presetDisplay.QRUN_ID = presetDisplay.QRUN_ID.toUpperCase()">
+        </div>
+        <div class="field col-4">
+            <label class="font-bold">Category *</label>
+            <input pInputText [(ngModel)]="presetDisplay.QRUN_CATEGORY"
+                placeholder="e.g. Pricing, Inventory..."
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+        </div>
+        <div class="field col-4">
+            <label class="font-bold">Icon</label>
+            <p-dropdown [(ngModel)]="presetDisplay.QRUN_ICON" [options]="iconOptions"
+                optionLabel="label" optionValue="value" class="w-full">
+                <ng-template pTemplate="selectedItem">
+                    <span *ngIf="presetDisplay.QRUN_ICON">
+                        <i [class]="presetDisplay.QRUN_ICON" class="mr-2"></i>
+                        {{ presetDisplay.QRUN_ICON }}
+                    </span>
+                </ng-template>
+                <ng-template pTemplate="item" let-opt>
+                    <i [class]="opt.value" class="mr-2"></i>{{ opt.label }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <!-- Row 2: Label -->
+        <div class="field col-12">
+            <label class="font-bold">Label *</label>
+            <input pInputText [(ngModel)]="presetDisplay.QRUN_LABEL"
+                placeholder="Display name shown in the Query Runner"
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+        </div>
+
+        <!-- Row 3: Description -->
+        <div class="field col-12">
+            <label class="font-bold">Description</label>
+            <textarea pInputTextarea [(ngModel)]="presetDisplay.QRUN_DESC" rows="2"
+                placeholder="Brief description of what this query returns..."
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"></textarea>
+        </div>
+
+        <!-- Row 4: Parameters editor -->
+        <div class="field col-12">
+            <p-divider></p-divider>
+            <div class="params-editor-header">
+                <span class="font-bold"><i class="pi pi-sliders-h mr-2"></i>Parameters</span>
+                <button pButton type="button" icon="pi pi-plus" label="Add Parameter"
+                    class="p-button-outlined p-button-sm p-button-success"
+                    (click)="addParam()"></button>
+            </div>
+
+            <div class="params-empty-notice" *ngIf="editParams.length === 0">
+                <i class="pi pi-info-circle mr-2"></i>No parameters — this query runs without user input.
+            </div>
+
+            <div class="param-rows" *ngIf="editParams.length > 0">
+
+                <!-- Header row -->
+                <div class="param-row param-row-header">
+                    <div class="pcol-order"></div>
+                    <div class="pcol-name">Bind Name</div>
+                    <div class="pcol-label">Label</div>
+                    <div class="pcol-type">Type</div>
+                    <div class="pcol-placeholder">Placeholder</div>
+                    <div class="pcol-default">Default (blank = required)</div>
+                    <div class="pcol-action"></div>
+                </div>
+
+                <div *ngFor="let param of editParams; let i = index" class="param-row">
+                    <div class="pcol-order">
+                        <button pButton type="button" icon="pi pi-chevron-up"
+                            class="p-button-text p-button-sm order-btn"
+                            [disabled]="i === 0" (click)="moveParamUp(i)"></button>
+                        <button pButton type="button" icon="pi pi-chevron-down"
+                            class="p-button-text p-button-sm order-btn"
+                            [disabled]="i === editParams.length - 1" (click)="moveParamDown(i)"></button>
+                    </div>
+                    <div class="pcol-name">
+                        <input pInputText [(ngModel)]="param.name" placeholder="STORE_ID"
+                            class="p-inputtext p-component p-element w-full param-input"
+                            (input)="param.name = param.name.toUpperCase()">
+                    </div>
+                    <div class="pcol-label">
+                        <input pInputText [(ngModel)]="param.label" placeholder="Store ID"
+                            class="p-inputtext p-component p-element w-full param-input">
+                    </div>
+                    <div class="pcol-type">
+                        <p-dropdown [(ngModel)]="param.type" [options]="typeOptions"
+                            optionLabel="label" optionValue="value"
+                            appendTo="body"
+                            styleClass="param-type-dropdown"></p-dropdown>
+                    </div>
+                    <div class="pcol-placeholder">
+                        <input pInputText [(ngModel)]="param.placeholder" placeholder="e.g. hint text"
+                            class="p-inputtext p-component p-element w-full param-input">
+                    </div>
+                    <div class="pcol-default">
+                        <input pInputText [(ngModel)]="param.defaultValue" placeholder="blank = required"
+                            class="p-inputtext p-component p-element w-full param-input">
+                    </div>
+                    <div class="pcol-action">
+                        <button pButton pRipple type="button" icon="pi pi-trash"
+                            class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                            pTooltip="Remove" (click)="removeParam(i)"></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Audit -->
+        <div class="field col-12" *ngIf="!isNew">
+            <p-divider></p-divider>
+            <div class="grid">
+                <div class="col-4"><label class="font-bold text-sm">Updated:</label><span class="ml-2">{{ presetDisplay.QRUN_DMAJ | date:'MM/dd/yyyy' }}</span></div>
+                <div class="col-4"><label class="font-bold text-sm">User:</label><span class="ml-2">{{ presetDisplay.QRUN_UTIL }}</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Cancel" icon="pi pi-times"
+            class="p-button-text" (click)="cancelDialog()"></button>
+        <button pButton type="button" label="Save" icon="pi pi-check"
+            class="p-button-outlined" (click)="savePreset()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<p-toast></p-toast>

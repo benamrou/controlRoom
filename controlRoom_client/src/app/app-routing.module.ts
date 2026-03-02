@@ -79,6 +79,8 @@ import { VegaProcessDashboardComponent } from './pages/it/vega/vega-process-dash
 import { UnixRunnerComponent } from './pages/it/unix.runner/unix.runner.component';
 import { PurchaseOrderPushComponent } from './pages/mass.update/purchase.order.push/purchase.order.push.component';
 import { AlertLogJournalComponent } from './pages/alerts/journal/alert.journal.component';
+import { QueryRunnerComponent } from './pages/it/query.runner/query.runner.component';
+import { PresetQueryManagerComponent } from './pages/it/preset.query/preset.query.manager.component';
 
 import { QueryLibraryComponent } from './pages/admin/query.library/query.library.component';
 import { DictionaryComponent } from './pages/admin/dictionary/dictionary.component';
@@ -141,9 +143,9 @@ const routes: Routes = [
   { path: 'batchlist', component: MyBatchListComponent, canActivate: [AuthentificationGuard] },
   { path: 'vega', component: VegaProcessDashboardComponent, canActivate: [AuthentificationGuard] },
   { path: 'unixrunner', component: UnixRunnerComponent, canActivate: [AuthentificationGuard] },
-
+  { path: 'queryrunner', component: QueryRunnerComponent, canActivate: [AuthentificationGuard] },  
+  { path: 'presetquery', component: PresetQueryManagerComponent, canActivate: [AuthentificationGuard] },  
   
-
   /* EDI */
   { path: 'ediasn', component: EdiAsnComponent, canActivate: [AuthentificationGuard] },
 
