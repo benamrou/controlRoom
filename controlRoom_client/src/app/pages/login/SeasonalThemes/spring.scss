@@ -10,15 +10,16 @@ $sky : lighten($blue, 10);
 $yellow : #F3F875;
 $purple : #D9ABFF;
 $pink : #FF89B3;
+
 @mixin animation-duration($t){
   -moz-animation-duration: $t;
   -webkit-animation-duration: $t;
-  -moz-animation-duration: $t;
+  animation-duration: $t;          // ← standard
 }
 @mixin animation-delay($t){
   -moz-animation-delay: $t;
   -webkit-animation-delay: $t;
-  -moz-animation-delay: $t;
+  animation-delay: $t;             // ← standard
 }
 @mixin transform($property: none) {
   transform: $property;
@@ -28,21 +29,26 @@ $pink : #FF89B3;
 }
 
 @mixin animation($name, $duration, $delay: 0s, $fill-mode: forwards){
-  -moz-animation-name: $name; 
-  -webkit-animation-name: $name; 
-  
+  -moz-animation-name: $name;
+  -webkit-animation-name: $name;
+  animation-name: $name;           // ← standard
+
   -webkit-animation-fill-mode: $fill-mode;
   -moz-animation-fill-mode: $fill-mode;
-  
+  animation-fill-mode: $fill-mode; // ← standard
+
   -webkit-animation-delay: $delay;
   -moz-animation-delay: $delay;
+  animation-delay: $delay;         // ← standard
 
-  -moz-animation-duration: $duration; 
-  -webkit-animation-duration: $duration; 
+  -moz-animation-duration: $duration;
+  -webkit-animation-duration: $duration;
+  animation-duration: $duration;   // ← standard
 }
+
 @mixin keyframes($name) {
   @-webkit-keyframes #{$name} {
-    @content; 
+    @content;
   }
   @-moz-keyframes #{$name} {
     @content;
@@ -52,7 +58,7 @@ $pink : #FF89B3;
   }
   @keyframes #{$name} {
     @content;
-  } 
+  }
 }
 
 @include keyframes(grow){
@@ -89,12 +95,22 @@ $pink : #FF89B3;
   background-color: $background;
   border-radius: $w * 5;
   border: $border-width solid $border-color;
-  box-shadow: 0 0 0 .2em darken($border-color, 4), 0 0 0 .2em lighten($background, 4) inset;
-  
+  box-shadow:
+    // ring border + inner glow (original)
+    0 0 0 .2em darken($border-color, 4),
+    0 0 0 .2em lighten($background, 4) inset,
+    // 6 petals in a hexagonal ring around the flower head
+    0             #{-$w * 0.78} 0 #{$w * 0.30} lighten($border-color, 8%),
+    0             #{$w * 0.78}  0 #{$w * 0.30} lighten($border-color, 8%),
+    #{-$w * 0.68} #{-$w * 0.39} 0 #{$w * 0.30} lighten($border-color, 8%),
+    #{$w * 0.68}  #{-$w * 0.39} 0 #{$w * 0.30} lighten($border-color, 8%),
+    #{-$w * 0.68} #{$w * 0.39}  0 #{$w * 0.30} lighten($border-color, 8%),
+    #{$w * 0.68}  #{$w * 0.39}  0 #{$w * 0.30} lighten($border-color, 8%);
+
   span {
     top: $w - $w/5;
     left: $w / 4.5; // Tige de la plante
-    
+
     @if $leaves == 0 {
       &:before {display: none;}
       &:after {display: none;}
@@ -127,27 +143,27 @@ body {
     height: 40em;
     display: block;
     position: absolute;
- 
+
     &:after {
      content: '';
       @include transform(rotateY(-140deg));
      -moz-transform-origin: left;
-     -webkit-transform-origin: left; 
+     -webkit-transform-origin: left;
+     transform-origin: left;
      width: 3em;
-     //height: 3em;
       display: block;
       background: darken($green, 5);
       border-radius: 2em 0em 2em 0em;
       box-shadow: 0 0 0 .2em darken($green, 8) inset;
       z-index: 0;
-      //top: 1em;
       left: .5em;
       position: absolute;
     }
     &:before {
      @include transform(rotateY(140deg));
      -moz-transform-origin: right;
-     -webkit-transform-origin: right; 
+     -webkit-transform-origin: right;
+     transform-origin: right;
      @include animation(turn-left, 4s, 4s);
      content: '';
      width: 3em;
@@ -158,9 +174,8 @@ body {
       box-shadow: 0 0 0 .2em darken($green, 8) inset;
       z-index: 0;
       position: absolute;
-      //left: -3em;
       top: 15em;
-      
+
     }
 
   }
@@ -242,7 +257,7 @@ html:after {
     width:600px;
     height: 600px;
   }
-  
+
   button:last-child {
     margin-right: 0;
   }
@@ -250,4 +265,3 @@ html:after {
     outline: none;
     border: 0;
   }
-  

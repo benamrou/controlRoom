@@ -1,0 +1,1069 @@
+CREATE OR REPLACE PACKAGE BODY "HEI_SPECIFIC" AS
+--@(#) pkg_hei_specific_2_b.sql /main/centr_dev/centr_maint508/HNE01/3 9/20/2013;
+
+/**
+  *  Algorithm: 
+  * If supplier is a GWR/Topase vendor, use GWR package to generate the vendor schedule
+  * If supplier is not a GWR/Topase vendor, use CENTRAL period supplier schedule generation
+  * 
+  * Supplier schedule is generated for a period and a vendor
+  * The start date is used as reference, this procedure is going to start at the latest
+  * order before the start date and generate the schedule. 
+  *      => This to cover bi-weekly, monthly and other frequency schedule.
+  *
+  * Last update: 01/2026
+  */
+PROCEDURE genereFOUPLAN (num_log IN NUMBER, cnuf FOUDGENE.FOUCNUF%TYPE, sDate VARCHAR2, eDate VARCHAR2) IS
+    v_dte_trt DATE;
+    v_dfin DATE;
+    v_retour NUMBER;
+    i_fplsite LIENSERV.LISSITE%TYPE;
+    i_fplcfin LIENSERV.LISCFIN%TYPE;
+    i_fplccin LIENSERV.LISCCIN%TYPE;
+    i_fplnfilf LIENSERV.LISNFILF%TYPE;
+    i_fplcsin LIENSERV.LISCSIN%TYPE;
+    i_fpltop LIENSERV.LISTOP%TYPE;
+    i_classe SITDGENE.SOCCMAG%TYPE;
+    i_prevexist NUMBER;
+    Schema_Name VARCHAR2(50);
+    sqlString VARCHAR2(200);
+   
+
+    CURSOR C_CENTRAL IS
+    SELECT DISTINCT lissite, liscfin, lisccin, lisnfilf, liscsin, listop, soccmag, pkparpostes.get_postvac2(1, 0, 910, 204)
+    FROM lienserv, sitdgene, foudgene
+    WHERE lissite =socsite --AND soccmag=10 -- < 21
+    AND liscfin=foucfin
+    AND trunc(SYSDATE +1) BETWEEN lisddeb AND lisdfin
+    --AND (lissite != 95073 OR (lissite=95073 AND foucnuf LIKE 'HEI%')) -- No Produce except HEI vendor
+    AND foucnuf=cnuf;
+
+BEGIN
+     v_retour := 0;
+     INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+     VALUES ('HEI_SPECIFIC', 2, 1, 1 , 'Start genereFOUPLAN ' ||   cnuf || '/' || sDate || '/' || eDate, SYSDATE, 'SPE'); 
+     COMMIT;
+
+    BEGIN
+      OPEN C_CENTRAL;
+
+      LOOP
+          -- Step 0. Capture the service contract for this vendor.
+          FETCH C_CENTRAL
+          INTO i_fplsite, i_fplcfin,i_fplccin, i_fplnfilf, i_fplcsin, i_fpltop, i_classe, Schema_Name;
+
+          -- dbms_output.put_line('C_CENTRAL, i_fplsite: ' || i_fplsite);
+
+          IF C_CENTRAL%NOTFOUND THEN
+              EXIT;
+          END IF;
+
+          v_dte_trt := to_date(sDate,'MM/DD/RR');
+          v_dfin := to_date(eDate,'MM/DD/RR');
+          
+          BEGIN
+           -- Step 1. Remove existing schedule for the period. 
+             DELETE FROM fouplan
+             WHERE fplsite   = i_fplsite
+              AND fplcfin   = i_fplcfin
+              AND fplccin   = i_fplccin
+              AND fplnfilf  = i_fplnfilf
+              AND fplcsin   = i_fplcsin
+              AND trunc(fpldram) BETWEEN v_dte_trt AND v_dfin;
+
+          EXCEPTION
+          WHEN OTHERS THEN
+               NULL;
+               -- Catch the no data found
+          END;
+
+          -- Step 2. Generate the supplier schedule using generePeriode 
+          --         CENTRAL vs. GWR
+          IF (i_fpltop = 0 ) THEN
+              PKFOUPLAN.generePeriodeFouplan(num_log,
+                                             v_dte_trt,v_dfin,
+                                             i_fplsite,i_fplcfin,
+                                             i_fplccin,i_fplnfilf,
+                                             i_fplcsin, 1 /*i_exception*/,
+                                             i_classe,
+                                             'HN',
+                                             v_retour);
+          ELSE
+              sqlString := 'BEGIN '|| Schema_Name || '.PKFOUPLAN.generePeriodeFouplan(:num_log, :v_dte_trt, :v_dfin, :i_fplsite, :i_fplcfin, :i_fplccin, '
+                          || ':i_fplnfilf, :i_fplcsin, :i_exception, :i_classe, :i_langue, :v_retour); END; ';
+                
+              EXECUTE IMMEDIATE sqlString
+              USING num_log, v_dte_trt, v_dfin, i_fplsite, i_fplcfin, i_fplccin, i_fplnfilf, i_fplcsin, 1, i_classe, 'HN', OUT v_retour;
+
+          END IF;
+          COMMIT;
+
+          -- Step 3 : To allow ordering add a schedule date on 12/31/49 if any supplier schedule that refrain users to be blocked for ordering.
+           INSERT INTO FOUPLAN (SELECT
+                  i_fplsite, i_fplcsin, i_fplcfin,
+                  i_fplccin, i_fplnfilf, NULL,
+                  -- to_date('12/31/49','MM/DD/RR'),'0010',
+                  -- to_date('01/03/50','MM/DD/RR'),'0810',
+                  to_date('12/31/2049','MM/DD/RRRR'),'0010',
+                  to_date('01/03/2050','MM/DD/RRRR'),'0810',
+                  NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,
+                  NULL,SYSDATE,SYSDATE,'ABE',
+                  NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
+                  0,NULL,NULL,NULL,3 /* Manual */,0, null,null,null
+                  FROM dual
+                  WHERE NOT EXISTS (SELECT 1 FROM fouplan WHERE fplcfin=i_fplcfin AND fplsite=i_fplsite
+                                  AND fplcsin=i_fplcsin AND fplccin=i_fplccin AND fplnfilf=i_fplnfilf
+                                  AND fpldram=to_date('12/31/2049','MM/DD/RRRR')));
+
+      END LOOP;
+    EXCEPTION
+      WHEN OTHERS THEN
+        dbms_output.put_line('Error... ' || SQLCODE || SQLERRM );
+        ROLLBACK;
+    END;
+    CLOSE C_CENTRAL;
+     INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+     VALUES ('HEI_SPECIFIC', 8, 1, 1 , 'Completed genereFOUPLAN ' ||   cnuf || '/' || sDate || '/' || eDate, SYSDATE, 'SPE'); 
+     COMMIT;
+end genereFOUPLAN;
+
+
+PROCEDURE UPDATE_WH_CALSITE (num_log IN NUMBER) IS
+begin
+   update calsite
+      set casvrec = 1,
+          casdmaj = sysdate,
+          casutil = 'updWhCalsite'
+    where trunc(casdate) < trunc(CURRENT_DATE)
+      and casvrec = 0
+      and cassite in (select socsite
+                        from sitdgene
+                       where soccmag = 0);
+end UPDATE_WH_CALSITE;
+
+/*
+ * The Maintenance procedure cleans up the specific data :
+ *  => Reception line treated (managed by the trigger HEI_TRG_INTDEREC)
+ *  => Crossdock Delivery order (managed by the trigger HN_SUPPREDS_CD_DO)
+ *  => Crossdock reception order (managed by the trigger HN_SUPPREDS_CD_PO)
+*/
+PROCEDURE MAINTENANCE (num_log IN NUMBER) IS
+  Progname ERREURPRG.ERRPROG%TYPE;
+BEGIN
+
+  Progname := 'MAINTENANCE';
+
+  PKERREURS.fc_erreur(num_log, Progname, 'Start HEI_SPECIFIC.Maintenance... ');
+  PKERREURS.fc_erreur(num_log, Progname, 'Clearing processed receiving. ');
+   -- Reception line flagged
+   DELETE FROM intderec WHERE irdtrt=1;
+
+  PKERREURS.fc_erreur(num_log, Progname, 'Clearing crossdock deivery order. ');
+   -- Crossdock delivery order
+   DELETE FROM ICSDEOL WHERE iolsite = 99999 AND ioldepo = 99 AND iolcent = 99999;
+   delete from icsdeol
+    where ioldmaj is not null
+      and not exists
+    (select 1 from tb_ecde@gstock where cd_numcde = iolcexcde) -- This condition is to make sure delivery order doesn't exist in DO management screen in GOLD stock
+      and exists
+    (select 1 from tb_hecde@gstock where hd_numcde = iolcexcde); -- This condition is to make sure delivery order exist in history table which means that DO is already shipped from GOLD stock and moved to history
+
+  PKERREURS.fc_erreur(num_log, Progname, 'Clearing crossdock receiving order. ');
+   -- Crossdock reception order
+   DELETE FROM ICSDETOR WHERE EXISTS (SELECT 1 FROM ICSENTOR WHERE iercexcde=idrcexcde
+                                      AND iersite=99999 AND ierdepo=99 AND iercent=99999);
+   DELETE FROM ICSENTOR WHERE iersite=99999 AND ierdepo=99 AND iercent=99999;
+
+
+  PKERREURS.fc_erreur(num_log, Progname, 'Clearing item is error and already integrated. ');
+   -- Delete the records in ICSARTICLE if the EAN code is already sent to G.O.L.D. Stock
+   DELETE FROM icsarticle
+   WHERE iardmaj IS NOT NULL -- line in error
+   AND   EXISTS (SELECT 1
+                  FROM tb_ean@gstock
+                  WHERE ea_cproin=iarcexr AND to_number(ea_ilogis)=iarcexvl
+                  AND iarean=ea_ean13);
+
+  PKERREURS.fc_erreur(num_log, Progname, 'Reprocessing item in error. ');
+   -- Relaunch the interface article data rejected
+   UPDATE icsarticle SET iardmaj=NULL WHERE iardmaj IS NOT NULL;
+
+  PKERREURS.fc_erreur(num_log, Progname, 'Clearing shipment with zero qty. ');
+  DELETE FROM n3_mvtex WHERE me3qteexp=0;
+
+  PKERREURS.fc_erreur(num_log, Progname, 'Cleaning up tb_anoint ');
+    delete from tb_anoint@gstock
+     where ai_numano in (select iolnumano
+                           from tb_anool@gstock a
+                          where not exists (select 1
+                                   from icsdeol i
+                                  where CHARTOROWID(i.ROWID) =
+                                        CHARTOROWID(A.IOLROWIDOL)
+                                    and I.IOLCINCDE = A.IOLCINCDE
+                                    AND I.IOLNLIG = A.IOLNLIG
+                                    AND i.ioldmaj is not null));
+
+  PKERREURS.fc_erreur(num_log, Progname, 'Cleaning up tb_anool');
+    delete from tb_anool@gstock a
+     where not exists (select 1
+              from icsdeol i
+             where CHARTOROWID(i.ROWID) = CHARTOROWID(A.IOLROWIDOL)
+               and I.IOLCINCDE = A.IOLCINCDE
+               AND I.IOLNLIG = A.IOLNLIG
+               AND i.ioldmaj is not null);
+
+  PKERREURS.fc_erreur(num_log, Progname, 'End HEI_SPECIFIC.Maintenance. ');
+
+
+end MAINTENANCE;
+
+PROCEDURE RESEND_PO_STOCK  (num_log IN NUMBER) IS
+
+    v_cincde CDEENTCDE.ecdcincde%TYPE;
+    v_site   CDEENTCDE.ecdsite%TYPE;
+
+    CURSOR C_PO IS
+    SELECT ecdcincde, ecdsite
+    FROM cdeentcde
+    WHERE NOT EXISTS
+          (SELECT 1
+          FROM tb_erec@gstock
+          WHERE oe_ncdefo=ecdcexcde
+          UNION
+          SELECT 1
+          FROM tb_herec@gstock
+          WHERE ho_ncdefo=ecdcexcde) and not exists (select 1 from batotrt where botref='PSIEP23P' and botn01=ecdcincde)
+    AND pksitdgene.get_siteclass(1, ecdsite)=0
+    AND ecdetat=5
+    AND TRUNC(ecddcom)< TRUNC(SYSDATE + 1)
+  AND TRUNC(ecddliv) > TRUNC(SYSDATE) and TRUNC(ecddliv) < TRUNC(sysdate)+30;
+
+BEGIN
+
+    BEGIN
+
+        OPEN C_PO;
+
+        v_cincde := -1;
+        v_site := -1;
+
+        LOOP
+            FETCH C_PO
+            INTO v_cincde, v_site;
+
+            IF C_PO%NOTFOUND THEN
+                EXIT;
+            ELSE
+                UPDATE CDEENTCDE
+                SET ecdenvetat=1,
+                    ecdtrans=0
+                WHERE ecdcincde = v_cincde;
+
+                UPDATE CDEDETCDE
+                SET dcdenvetat=1
+                WHERE dcdcincde = v_cincde;
+
+                DELETE BATOTRT
+                WHERE BOTREF = 'PSIEP23P'
+                AND BOTN01 = v_cincde;
+
+                INSERT INTO BATOTRT
+                    (BOTREF, BOTCHRO, BOTSITE,
+                    BOTN01, BOTDCRE, BOTUTIL)
+                VALUES
+                    ('PSIEP23P', SEQBATOTRT.NEXTVAL, v_site,
+                    v_cincde, CURRENT_DATE, 'pk_hei_spe');
+
+            END IF;
+
+        END LOOP;
+
+        CLOSE C_PO;
+
+    END;
+
+END RESEND_PO_STOCK;
+
+/**
+  * OutOfSync maintenance procedure takes care of:
+  *  - Receiving from Stock - with orders recevied in Stock are closed or Awaiting Delivery in Central
+  *  - Deliveries from Stock - with orders recevied in Stock abd closed or Awaiting Delivery in Central
+  */
+PROCEDURE OutofSync (num_log IN NUMBER) IS
+BEGIN
+
+
+
+   /* Order status awaiting Confirmation in Central */
+   -- Order Header
+   UPDATE CDEENTCDE SET ecdetat=5, ecdutil='ABE-5' -- Partially Delivered
+   WHERE ecdetat =4;
+
+   -- Order detail
+   UPDATE CDEDETCDE SET dcdetat=5, dcdutil='ABE-5' -- Partially Delivered
+   WHERE dcdetat=4;
+
+   /* Receiving stuck in Central */
+   -- Order Header
+   UPDATE CDEENTCDE SET ecdetat=6, ecdutil='ABE-6' -- Partially Delivered
+   WHERE EXISTS (SELECT 1 FROM N3_MVTRE WHERE mr3ncdefo=ecdcexcde);
+
+   -- Order detail
+   UPDATE CDEDETCDE SET dcdetat=6, dcdutil='ABE-6'  -- Partially Delivered
+   WHERE EXISTS (SELECT 1 FROM N3_MVTRE WHERE mr3ncdefo=dcdcexcde AND mr3cproin=dcdcode);
+
+
+   /* Shipment stuck in Central */
+    -- Order header
+    INSERT INTO cdeentcde (SELECT  DISTINCT
+    ECDCINCDE,ECDCEXCDE,ECDPROP,ECDSITE,ECDCFIN,ECDCCIN,ECDNFILF,ECDCINGLO,ECDCEXGLO,ECDDCOM,ECDDLIV,ECDDLIM,
+    ECDADLIV,ECDNFILC,ECDETAT,ECDTYPE,ECDURG,ECDCONF,ECDGREL,ECDFRAN,ECDDEVI,ECDTXCH,ECDNEGO,ECDCOMM1,ECDCOMM2,
+    ECDENLEV,ECDDENLEV,ECDTRANS,ECDCOUC,ECDORDR,ECDDBAS,ECDCRED,ECDDARR,ECDDDS,ECDDDEP,ECDJOUR,ECDMREG,ECDDPAI,
+    ECDPORI,ECDINCO,ECDLIEU2,ECDTRSP,ECDVOLI,ECDVOLR,ECDPDSI,ECDPDSR,ECDTYIM,ECDNBJM,ECDDVAL,ECDEIMP,ECDCOMI1,
+    ECDCOMI2,ECDCOMI3,ECDCOMI4,ECDCOMI5,ECDFLUX,ECDSITLI,ECDDCLA,ECDFTYPE,ECDNLIS,ECDESCO,ECDNJESC,ECDCONS,ECDRELE,
+    ECDINTF,ECDORIG,ECDREPL,ECDMESS,ECDDCRE,ECDDMAJ,'ABE-DEL',ECDDPRG,ECDIREM,ECDNLIV,ECDDCPT,ECDCCPT,ECDCDETRSP,
+    ECDETRSP,ECDNATCDE,ECDVCOM,ECDALTF,ECDTPRO,ECDNVALO,ECDCINAP,ECDCEXOGL,ECDDENVOI,ECDAETAT,ECDMOTIF,ECDENVETAT,
+    ECDVALOETAT,ECDMOTIFSOL,ECDNSEQ,ECDDRDV,ECDNROUTE,ECDLIEU,ECDVALOF,ECDDENVR,ECDCINBDV,ECDCSIN,ECDCFINA,
+    ECDCCINA,ECDNFILFA,ECDSITLIA,ECDCONSID,ECDUTILCONS,ECDIRECYC,ECDCRGP,ECDFLIR,ECDDDREC,ECDTCART,ECDREFGPA,
+    ECDREFEXT,ECDFRAP,ECDEDOU,ECDCINCDEOR,ECDSITEOR,ECDRENB,null, null, null,0,null,null,null
+    FROM hei_cdeentcde h WHERE NOT EXISTS (SELECT 1 FROM cdeentcde t WHERE
+    t.ecdcincde=h.ecdcincde) AND ecdetat > 2);
+
+    -- Order detail
+    INSERT INTO cdedetcde (SELECT  DISTINCT
+    DCDCINCDE,DCDCEXCDE,DCDNOLIGN,DCDPROP,DCDSITE,DCDCFIN,DCDCCIN,DCDNFILF,DCDDCOM,DCDDLIV,DCDCTVA,
+    DCDETAT,DCDCINA,DCDCINL,DCDCINR,DCDCODE,DCDTCOD,DCDPCU,DCDUPCU,DCDQTEI,DCDQTEC,DCDQTES,DCDRAL,
+    DCDGRA,DCDPRIX,DCDPBAC,DCDPVSA,DCDPVSR,DCDTYPA,DCDUAUVC,DCDMULC,DCDCOEFA,DCDARAV,DCDQMUL,DCDQDIV,
+    DCDDLC,DCDDEL,DCDDPREC,DCDGRRE,DCDPRFA,DCDMTDR,DCDMTVI,DCDTRAN,DCDNEGO,DCDORDR,DCDPVTTC,DCDGPDS,
+    DCDCOMM1,DCDSPCB,DCDPCB,DCDUVCC,DCDUVCP,DCDUVCS,DCDCLCUS,DCDLINP,DCDTYPUL,DCDSTPR,DCDQPRO,DCDDCRE,
+    DCDDMAJ,DCDUTIL,DCDDPRG,DCDSEQVL,DCDDCPT,DCDCCPT,DCDUAPP,DCDUAUT,DCDLIGPRX,DCDNOPS,DCDCOLI,DCDNLIGP,
+    DCDCOEFQ,DCDCOEFP,DCDCEXTA,DCDAETAT,DCDMOTIF,DCDENVETAT,DCDAQTEC,DCDVALOETAT,DCDPPUBLIC,DCDMUA,DCDMINUA,
+    DCDMAXUA,DCDTPSR,DCDCINLM,DCDSEQVLM,DCDFLGMUT,DCDNOLV,DCDFLIR,DCDCODEA,DCDCEXR,DCDCOCA,DCDCOUL,DCDREFC,
+    DCDCEAN,DCDEDOU,DCDRDOU,DCDCFINA,DCDCCINA,DCDNFILFA,DCDSITLIA,DCDALTF,null, null,null, null
+  ,null, null,null,null, null,null,null, null
+    FROM hei_cdedetcde h WHERE NOT EXISTS (SELECT 1 FROM cdedetcde t WHERE
+    t.dcdcincde=h.dcdcincde
+    AND t.dCDNOLIGN=h.dcdnolign
+    and t.dCDNLIGP=h.dCDNLIGP)
+    AND EXISTS (SELECT 1 FROM cdeentcde WHERE ecdcincde=dcdcincde)
+    AND EXISTS (SELECT 1 FROM hei_cdeentcde WHERE ecdcincde=dcdcincde));
+
+    -- Deals
+    INSERT INTO cderemis (SELECT  DISTINCT
+    RCDCINCDE,RCDNOLIGN,RCDCINREM,RCDORDC,RCDORDA,RCDUNCO,RCDMINI,RCDMAXI,RCDTREM,RCDTTRA,RCDUNIT,
+    RCDBASF,RCDREPF,RCDMTF,RCDCAF,RCDBASS,RCDREPS,RCDMTS,RCDPALI,RCDVACO,RCDUCON,RCDNCON,RCDUGRA,
+    RCDNGRA,RCDVGRA,RCDUAPP,RCDFALO,RCDTDOC,RCDMTUN,RCDBASA,RCDCINGAT,RCDCONTRIB,RCDNERR,RCDDCRE,
+    RCDDMAJ,RCDUTIL,RCDDPRG,RCDNLIGP,RCDDEVI,RCDNPALIF,RCDCTVA,RCDVALPHOM
+    FROM hei_cderemis h WHERE NOT EXISTS (SELECT 1 FROM cderemis t WHERE
+    t.rcdcincde=h.rcdcincde
+    AND t.rCDNOLIGN=h.rcdnolign
+    and t.rCDNLIGP=h.rCDNLIGP
+    and t.rCDcinrem=h.rCDcinrem)
+    AND EXISTS (SELECT 1 FROM cdeentcde WHERE ecdcincde=rcdcincde)
+    AND EXISTS (SELECT 1 FROM hei_cdeentcde WHERE ecdcincde=rcdcincde));
+
+    INSERT INTO cdepied (SELECT  DISTINCT
+    PCDCINCDE,PCDTDOC,PCDRUBR,PCDSRUB,PCDBASE,PCDVALE,PCDUNIT,PCDMONT,PCDJUST,PCDSTAT,PCDNREM,PCDORDC,PCDORDA,
+    PCDBASA,PCDVACO,PCDDCRE,PCDDMAJ,PCDUTIL,PCDDPRG,PCDTREM,PCDCASF,PCDBASS,PCDVALS,PCDMONTS,PCDUNCO,PCDMINI,PCDMAXI
+    FROM hei_cdepied h
+    WHERE NOT EXISTS (SELECT 1 FROM cdepied t WHERE
+    t.Pcdcincde=h.Pcdcincde
+    AND t.PCDTDOC=h.PCDTDOC
+    and t.PCDRUBR=h.PCDRUBR
+    and t.PCDNREM=h.PCDNREM)
+    AND EXISTS (SELECT 1 FROM cdeentcde WHERE ecdcincde=pcdcincde)
+    AND EXISTS (SELECT 1 FROM hei_cdeentcde WHERE ecdcincde=pcdcincde));
+
+
+    INSERT INTO cdedistrib (SELECT  DISTINCT
+
+    LCDCINCDE,LCDNOLIGN,LCDSITE,LCDUACH,LCDUAUVC,LCDQTEC,LCDNCDC,LCDNLCD,LCDNCCL,LCDPRIX,LCDDCRE,LCDDMAJ,LCDUTIL,
+    LCDDPRG,LCDNLIGP,LCDENVETAT,LCDNCLI,LCDFILC,null,null,null,null
+    FROM hei_cdedistrib h
+    WHERE NOT EXISTS (SELECT 1 FROM cdedistrib t WHERE
+    t.lcdcincde=h.lcdcincde
+    AND t.LCDNOLIGN=h.LCDNOLIGN
+    and t.LCDNLIGP=h.LCDNLIGP
+    and t.LCDNCLI=h.LCDNCLI)
+    AND EXISTS (SELECT 1 FROM cdeentcde WHERE ecdcincde=lcdcincde)
+    AND EXISTS (SELECT 1 FROM hei_cdeentcde WHERE ecdcincde=lcdcincde));
+
+
+   -- Clear CCLDETCCL for shortage management
+   -- pspur27p managed this part
+   /*
+  UPDATE ccldetccl SET cclstatus=9, cclutil='ABE-CLE'
+  WHERE EXISTS (SELECT 1
+                FROM cdeentcde WHERE ecdcincde=cclcincde AND ecdetat=7)
+  AND cclstatus IN (3,5)
+  AND cclqtep > 0
+  AND trunc(ccldlivr) < TRUNC (SYSDATE)
+  AND cclnops IS NULL;
+
+  -- Clear the stores orders
+  UPDATE ccldetccl SET cclstatus=9, cclutil='ABE-CLE'
+  WHERE cclstatus IN (3,5)
+  AND trunc(ccldlivr) < TRUNC (SYSDATE)
+  AND cclnops IS NULL
+  AND EXISTS (SELECT 1 FROM foudgene WHERE foucfin=cclcfint AND foucnuf LIKE 'H%');
+  */
+end OutOfSync;
+
+PROCEDURE get_INTCFART(num_log IN NUMBER, TXTVA      INTCFART.CFATXTVA%TYPE,
+                        DETAIL     intcfbl.cfbdetail%type,
+                        FACTURE    in cfdenfac.efarfou%type,
+                        CFABLID    IN INTCFART.CFABLID%TYPE,
+                        cfarefid   IN INTCFART.Cfarefid%TYPE,
+                        cfatype    IN INTCFART.cfatype%TYPE,
+                        cfasite    IN INTCFART.cfasite%TYPE,
+                        cfacfex    IN INTCFART.Cfacfex%TYPE,
+                        CFANCEXCDE IN INTCFART.CFANCEXCDE%TYPE,
+                        Retour     out number) is
+
+  --l_rec intcfart%ROWTYPE;
+  cexr     WINTCFART.cfacexr%TYPE;
+  cexvl    WINTCFART.cfacexvl%TYPE;
+  cexta    WINTCFART.cfacexta%TYPE;
+  refc     WINTCFART.cfarefc%TYPE;
+  cfexlibl WINTCFART.cfacfexlibl%TYPE;
+  codlog   WINTCFART.cfacodlog%TYPE;
+  invid    WINTCFART.cfainvid%TYPE;
+  blid     WINTCFART.cfablid%TYPE;
+  ncexcde  WINTCFART.cfancexcde%TYPE;
+  atype    WINTCFART.cfatype%TYPE;
+  site     WINTCFART.cfasite%TYPE;
+  btprx    WINTCFART.cfabtprx%TYPE;
+  ntprx    WINTCFART.cfantprx%TYPE;
+  qty      WINTCFART.cfaqty%TYPE;
+  atxtva   WINTCFART.cfatxtva%TYPE;
+  dtrt     WINTCFART.cfadtrt%TYPE;
+  dcre     WINTCFART.cfadcre%TYPE;
+  stat     WINTCFART.cfastat%TYPE;
+  nerr     WINTCFART.cfanerr%TYPE;
+  qtg      WINTCFART.cfaqtg%TYPE;
+  util     WINTCFART.cfautil%TYPE;
+  codcai   WINTCFART.cfacodcai%TYPE;
+  UAUVC    WINTCFART.UAUVC%TYPE;
+  GPDS     WINTCFART.GPDS%TYPE;
+  CINLA    WINTCFART.CINLA%TYPE;
+  w_rowid  WINTCFART.wintcfart_rowid%TYPE;
+
+BEGIN
+  RETOUR := 1;
+  DECLARE
+
+    cursor int_Art is
+      select cfacexr,
+             cfacexvl,
+             cfacexta,
+             cfarefc,
+             cfacodlog,
+             cfainvid,
+             cfablid,
+             cfancexcde,
+             cfatype,
+             cfasite,
+             cfabtprx,
+             cfantprx,
+             cfaqty,
+             cfatxtva,
+             cfadtrt,
+             cfadcre,
+             cfastat,
+             cfanerr,
+             cfaqtg,
+             cfautil,
+             cfacodcai,
+       rowid
+        from intcfart
+       where ltrim(rtrim(cfainvid)) = FACTURE
+         and (cfatxtva = TXTVA OR DETAIL = 1)
+         and cfatype = cfatype
+         and (cfablid = CFABLID or CFABLID is NULL)
+         and (cfarefid = cfarefid or cfarefid is NULL)
+     AND (cfasite = cfasite)
+         and (cfancexcde = CFANCEXCDE or CFANCEXCDE is NULL)
+       ORDER BY cfacfex,
+                cfainvid,
+                nvl(cfablid, cfarefid),
+                cfarefc,
+                cfatxtva;
+
+  BEGIN
+    open int_Art;
+    LOOP
+      FETCH int_Art
+        INTO cexr,
+             cexvl,
+             cexta,
+             refc,
+             codlog,
+             invid,
+             blid,
+             ncexcde,
+             atype,
+             site,
+             btprx,
+             ntprx,
+             qty,
+             atxtva,
+             dtrt,
+             dcre,
+             stat,
+             nerr,
+             qtg,
+             util,
+             codcai,
+             w_rowid;
+      EXIT WHEN int_Art%NOTFOUND;
+
+      BEGIN
+        SELECT DCDGPDS, DCDUAUVC, DCDCINA
+          into GPDS, UAUVC, CINLA
+          from CDEENTCDE e ,CDEDETCDE d
+         where e.ecdcincde = d.dcdcincde and ECDCFIN = pkfoudgene.get_CFIN(num_log,'06150')
+         and ecdcfin = DCDCFIN and
+         (DCDCEXCDE = CFANCEXCDE or CFANCEXCDE is null)
+           and ((DCDCODEA = CEXR and DCDCEXTA = CEXTA and
+               pkartvl.Get_Arlcexvl(num_log,DCDSEQVL) = CEXVL) or
+               (DCDCODEA = REFC) or (DCDCODEA = codcai))
+         and rownum=1;
+      Exception
+        When NO_DATA_FOUND THEN
+          BEGIN
+            Select SDRGPDS, SDRUAUVC, SDRCINLA
+              into GPDS, UAUVC, CINLA
+              from STODETRE,STOENTRE
+             where SERBLIV = CFABLID and SERCINREC = SDRCINREC and
+                   (SDRREFC = REFC OR SDRCODE = codcai OR
+                   (SDRCEXR = CEXR and SDRCEXTA = CEXTA and
+                   SDRCEXVL = CEXVL))
+           and rownum=1;
+          Exception
+            When NO_DATA_FOUND THEN
+              BEGIN
+                Select artustk,
+                       DECODE(alltypl,
+                              1,
+                              pkartstock.get_skuunits(num_log,allcinlp),
+                              1),
+                       allcinlp
+                  into GPDS, UAUVC, CINLA
+                  from artrac, artvl, artul, artulul, artuc, artcoca
+                 where ((artcexr = CEXR and aracexta = cexta and
+                       arlcexvl = cexvl) or (refc = ararefc) or
+                       (codcai = arccode))
+                   and arlcinr = artcinr
+                   and aracinr = arlcinr
+                   and aruseqvl = arlseqvl
+                   and araseqvl = arlseqvl
+                   and arucinl = allcinlp
+                   and aracinl = arucinl
+                   and aracfin = pkfoudgene.get_CFIN(num_log, cfacfex)
+                   and aracinr = arccinr
+           and rownum=1;
+              Exception
+                When NO_DATA_FOUND THEN
+                  GPDS := null;
+                  UAUVC := null;
+                  CINLA := null;
+                  RETOUR := -2;
+              END;
+          END;
+      END;
+      INSERT INTO WINTCFART
+        (cfacexr,
+         cfacexvl,
+         CFACEXTA,
+         CFAREFC,
+         CFACFEX,
+         CFACFEXLIBL,
+         CFACODLOG,
+         CFAINVID,
+         CFABLID,
+         CFANCEXCDE,
+         CFATYPE,
+         CFASITE,
+         CFABTPRX,
+         CFANTPRX,
+         CFAQTY,
+         CFATXTVA,
+         CFADTRT,
+         CFADCRE,
+         CFASTAT,
+         CFANERR,
+         CFAQTG,
+         CFAUTIL,
+         CFACODCAI,
+         UAUVC,
+         GPDS,
+         CINLA,
+         wintcfart_rowid)
+      values
+        (CEXR,
+         cexvl,
+         cexta,
+         REFC,
+         cfacfex,
+         cfexlibl,
+         codlog,
+         invid,
+         blid,
+         ncexcde,
+         atype,
+         site,
+         btprx,
+         ntprx,
+         qty,
+         txtva,
+         dtrt,
+         dcre,
+         stat,
+         nerr,
+         qtg,
+         util,
+         codcai,
+         UAUVC,
+         GPDS,
+         CINLA,
+         w_rowid);
+
+    END LOOP;
+  END;
+
+END get_INTCFART;
+
+
+--------------------------------------------------------------------------
+-- UPDATE item type for same merchandise code (806) type                --
+--     Same type are DSD, Warehouse, Ingredient can be switched - Only COMMON MERHANDISE
+-- Query to get the same type
+-- SELECT DISTINCT(arttypp), pkparpostes.get_postlibl(0,1030,arttypp,'HN'), pkparpostes.get_postvan1(0,1030,arttypp),
+--       pkparpostes.get_postlibl(0,1060, pkparpostes.get_postvan1(0,1030,arttypp),'HN')
+-- FROM artrac;
+-- --------------------------------------------------------------------  --
+-- Type| Desc.                | GOLD internal type
+-- --------------------------------------------------------------------  --
+--  0  | Packing              | 0- Packing
+--  12 | DSD                  | 1- Common merchandise
+--  3  | Generic              | 3- Generic
+--  9  | KIT / Heterogen. LU  | 9-KIT / Heterogen. LU
+--  11 | Supply / Ingredient  | 1-Common merchandise
+--  10 | Warehouse            | 1-Common merchandise
+-- --------------------------------------------------------------------  --
+-- on_error = -1 : error procesing                                       --
+--         0 : everything ok                                             --
+--                                                                       --
+---------------------------------------------------------------------------
+FUNCTION change_item_type(num_log IN NUMBER,
+          in_classe IN NUMBER,
+          in_item_code IN VARCHAR2,
+          in_from_type IN NUMBER,
+          in_to_type IN NUMBER) RETURN NUMBER
+IS
+ PRAGMA AUTONOMOUS_TRANSACTION;
+  on_error       NUMBER;
+  pt_1030        NUMBER;
+  parvan1_1030_X NUMBER;
+  Progname ERREURPRG.ERRPROG%TYPE;
+
+BEGIN
+  on_error := 0;
+  pt_1030 := 1030;
+  Progname := 'changeType';
+
+  --recuperation parvan1_2310_3
+  parvan1_1030_X := pkparpostes.get_postvan1(num_log, in_classe,pt_1030,in_to_type);
+
+
+  --verification parametres
+  IF(in_to_type is NULL OR
+     parvan1_1030_X IS NULL OR
+     parvan1_1030_X != 1) THEN
+    on_error := -1;
+    PKERREURS.fc_erreur(num_log, Progname, 'Can''t process item ' || in_item_code || ' trying to switch from ' || in_from_type || ' to ' || in_to_type );
+    RETURN on_error;
+  END IF;
+
+
+  BEGIN
+    UPDATE ARTRAC SET ARTTYPP=in_to_type
+    WHERE ARTCEXR=in_item_code;
+
+    EXCEPTION WHEN no_data_found THEN
+    PKERREURS.fc_erreur(num_log, Progname, 'Item ' || in_item_code || ' not found.' );
+    RETURN on_error;
+  END;
+
+  PKERREURS.fc_erreur(num_log, Progname, 'Item ' || in_item_code || ' switched from  ' || in_from_type || ' to ' || in_to_type );
+  COMMIT;
+  RETURN on_error;
+
+END change_item_type;
+
+FUNCTION fix_invoice(num_log IN NUMBER, invoice_number IN VARCHAR2) RETURN NUMBER
+IS
+ PRAGMA AUTONOMOUS_TRANSACTION;
+  on_error       NUMBER;
+  v_rowcount     NUMBER;
+  v_id           NUMBER;
+  Progname ERREURPRG.ERRPROG%TYPE;
+
+BEGIN
+  on_error := 0;
+  v_id := 0;
+   INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+                VALUES ('FIX_INVOICE', 0, 1, 1 , 'Start session ', SYSDATE, 'PCK'); 
+      COMMIT;
+ -- Fix invalid document amount (net cost is not correct)
+ UPDATE CFDDTDOC 
+ SET DDADPUN = DDADPUB,
+     DDADPNN = DDADPUB,
+     DDAUTIL='FIX_INVOICE',
+     DDADMAJ=SYSDATE
+  WHERE (ddarfou=invoice_number OR invoice_number = '-1')
+  AND abs(ddadpub - ddadpun) >= 0.001 AND abs(ddadpub - ddadpnn) >= 0.001 
+  AND NOT EXISTS (SELECT 1 FROM storemre, cfdendoc, stodetre
+                 WHERE edccfin=ddacfin AND edcrfou=ddarfou AND edcndoc=sdrcinrec 
+                 AND srrcinrec=sdrcinrec AND srrnlrec=sdrnlrec AND sdrcinls=ddacinl)
+ AND trunc(ddadmaj) = trunc(SYSDATE);
+
+ COMMIT;
+ -- Variance detected and updated by user.
+UPDATE CFDDTDOC 
+ SET DDAVPNN = ddafpnn,
+     ddavqte=ddafqte,
+     DDAUTIL='FIX_INVOICE',
+     DDADMAJ=SYSDATE
+ WHERE abs(ddavpnn * ddavqte  - ddafpnn * ddafqte) >= 0.001
+ AND (ddarfou=invoice_number OR invoice_number = '-1')
+ AND ddafqte != 0
+ AND EXISTS (SELECT 1 FROM cfdecart WHERE ectrfou=ddarfou 
+                AND ectcinl=ddacinl AND ectsite=ddasite AND ectcfin=ddacfin AND ecttype IN ('A','B'))
+ AND trunc(ddadmaj) = trunc(SYSDATE);
+
+  COMMIT;
+ v_rowcount := SQL%ROWCOUNT;
+ INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+        VALUES ('FIX_INVOICE', 0, 1, 1 , to_char(v_rowcount)   || ' rows with invalid validated amount variance A and B' , SYSDATE, 'PCK'); 
+          COMMIT;
+
+UPDATE CFDDTDOC 
+ SET DDAVPNN = ddadpnn,
+     ddavqte = ddadqte,
+     DDAUTIL='FIX_INVOICE',
+     DDADMAJ=SYSDATE
+ WHERE abs(ddavpnn * ddavqte  - ddadpnn * ddadqte) >= 0.001
+ AND (ddarfou=invoice_number OR invoice_number = '-1')
+ AND ddadqte != 0 
+ AND EXISTS (SELECT 1 FROM cfdecart WHERE ectrfou=ddarfou 
+                AND ectcinl=ddacinl AND ectsite=ddasite AND ectcfin=ddacfin AND ecttype IN ('C','D'))
+ AND trunc(ddadmaj) = trunc(SYSDATE);
+
+  COMMIT;
+ v_rowcount := SQL%ROWCOUNT;
+ INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+        VALUES ('FIX_INVOICE', 0, 1, 1 , to_char(v_rowcount)   || ' rows with invalid validated amount variance C and D' , SYSDATE, 'PCK'); 
+          COMMIT;
+ -- No Variance use invoice information
+ UPDATE CFDDTDOC 
+ SET DDAVPNN = DDAFPNN,
+     ddavqte = ddafqte,
+     DDAUTIL='FIX_INVOICE',
+     DDADMAJ=SYSDATE
+ WHERE abs(ddavpnn*ddavqte - ddafpnn*ddafqte) >= 0.001 
+ AND (ddarfou=invoice_number OR invoice_number = '-1')
+ AND ddafqte != 0
+ AND NOT EXISTS (SELECT 1 FROM cfdecart WHERE ectrfou=ddarfou 
+                AND ectcinl=ddacinl AND ectsite=ddasite AND ectcfin=ddacfin)
+ AND trunc(ddadmaj) = trunc(SYSDATE);
+            COMMIT;
+ v_rowcount := SQL%ROWCOUNT;
+ INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+        VALUES ('FIX_INVOICE', 0, 1, 1 , to_char(v_rowcount)   || ' rows with invalid validated amount no variance but vendor amount valid' , SYSDATE, 'PCK'); 
+
+
+-- 12/03/19 Fix Sherwood issue (adding remaing to reconcile invalid amount
+ UPDATE CFDDTDOC 
+ SET DDAVQTE = DDADQTE,
+     DDAUTIL='FIX_INVOICE',
+     DDADMAJ=SYSDATE
+ WHERE EXISTS (select 1 
+               FROM cfddtfac, artrac WHERE dfarfou=ddarfou AND dfacfin=ddacfin 
+               AND dfacinl=ddacinl AND dfatdoc=14
+               AND dfacinr=artcinr AND arttypp=3)
+ AND (ddarfou=invoice_number OR invoice_number = '-1')
+ AND EXISTS (SELECT 1 FROM cfdecart WHERE ectrfou=ddarfou 
+               AND ectcinl=ddacinl AND ectsite=ddasite AND ectcfin=ddacfin AND ecttdoc=14)
+ AND trunc(ddadmaj) = trunc(SYSDATE);
+
+ COMMIT;
+ v_rowcount := SQL%ROWCOUNT;
+ INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+        VALUES ('FIX_INVOICE', 0, 1, 1 , to_char(v_rowcount)   || ' rows with invalid remaing amount no variance but document qty valid' , SYSDATE, 'PCK'); 
+
+
+
+  COMMIT;
+
+
+   INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+                VALUES ('FIX_INVOICE', 0, 1, 1 , 'End session ', SYSDATE, 'PCK'); 
+                  COMMIT;
+
+  -- If invoice qty is not set pay what we receive
+  UPDATE cfddtdoc
+  SET ddavpnn=ddafpnn,
+      ddavqte=ddafqte
+  WHERE  ddafqte=0 
+  AND trunc(ddadmaj) = trunc(SYSDATE)
+  AND NOT EXISTS (SELECT 1 FROM cfdecart WHERE ectrfou=ddarfou 
+                AND ectcinl=ddacinl AND ectsite=ddasite AND ectcfin=ddacfin);
+
+  COMMIT;
+
+  RETURN on_error;
+
+END fix_invoice;
+
+-- Create additional placeholder line item for the manufacturing plant
+-- Having the item in order helped the receiver in the warehouse to receive the product even if the item
+-- was not in the Production order
+/*
+PROCEDURE mfgPlaceOrder(num_log IN NUMBER, v_whs IN varchar2, v_mfgVendor in varchar2,
+                       v_intetat in varchar2, v_intrefext in varchar2, v_intnlig in varchar2,
+                       v_intfich in varchar2, v_intutil in varchar2, o_return OUT NUMBER) IS*/
+
+
+PROCEDURE mfgPlaceOrder(o_return OUT VARCHAR) IS
+   v_whs int;
+   v_intid INTCDE.INTID%TYPE;
+   v_mfgVendor varchar2(10);
+   v_intetat int;
+   v_intrefext varchar2(20);
+   v_intnlig int;
+   v_intfich  varchar2(100);
+   v_intutil varchar2(30);
+   v_intori int;
+   v_rowcount int;
+BEGIN
+  o_return := '0';
+  v_rowcount :=0;
+  v_whs := 93080;
+  v_mfgVendor := 'XMF001';
+  v_intetat := 5; /* Status of the order */
+  v_intrefext := '';
+  v_intnlig := 1000;
+  v_intfich := 'JF_ORDERS';
+  v_intutil := 'JF_ORDERS';
+  v_intori := 906; /* External */
+  BEGIN
+
+   INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+                VALUES ('mfgPlaceOrder', 0, 1, 1 , 'Start session ' ||   v_whs || '/' || v_mfgVendor, SYSDATE, 'SPE'); 
+     COMMIT;
+     /* Adjust uauvc *//*
+     UPDATE INTCDE SET INTUAUVC=(SELECT PKARTSTOCK.GET_SKUUNITS( 1, arucinl)
+                                 FROM artul , artvl
+                                 where arlcexr=intcode
+                                 and arlcexvl=intcexvl
+                                 and arlseqvl=aruseqvl
+                                 and arutypul=inttypul),
+                        INTQTEC = (SELECT PKARTSTOCK.GET_SKUUNITS( 1, arucinl)
+                                 FROM artul , artvl
+                                 where arlcexr=intcode
+                                 and arlcexvl=intcexvl
+                                 and arlseqvl=aruseqvl
+                                 and arutypul=inttypul)*INTQTEC
+     WHERE trunc(intdtrt)=trunc(sysdate)
+                  and intstat=0
+                  and intcnuf=v_mfgVendor;*/
+     BEGIN 
+       SELECT intid 
+       INTO v_intid
+       FROM INTCDE
+       WHERE INTCNUF=v_mfgVendor
+       AND trunc(intdcom)=trunc(SYSDATE)
+       AND INTSTAT=0
+       AND rownum=1;
+     EXCEPTION
+      WHEN OTHERS THEN
+        pkgenerencom.generencomext( 1,0, v_whs, v_intid);
+      END;  
+
+     INSERT INTO INTCDE 
+              (INTID, /*External order number*/
+               INTLCDE, /* External order line number */
+               INTSITE, /* Site code */
+               INTCNUF, /* Supplier external code */
+               INTCCOM, /* Commercial contract code */
+               INTNFILF, /* Supplier address chain code */
+               INTFILC,  /* Customer address chain code */
+               INTCONF,  /* To be confirmed (1:yes, 0:no) */
+               INTGREL,  /* Back orders managed (1:yes, 0:no) */
+               INTCOUC,  /* Cover (1:yes, 0:no) */
+               INTENLEV, /* Pick-up  allowed(1:yes, 0:no) */
+               INTDCOM, /* Order date */
+               INTDLIV, /* Order date */
+               INTCODE, /* Article external code*/
+               INTRCOM, /* Code of reference to order */
+               INTCEXVA, /* Purchase variant external code*/
+               INTCEXVL, /* LV external code */
+               INTQTEC, /* Ordered quantity in SKU */
+               INTUAUVC, /* Coefficient for UA conversion in SKU */
+               INTSTAT, /* Interface line status *Table 512 */
+               INTLDIST, /* Presence of a distribution list (1:yes, 0:no) */
+               INTETAT, /* Order status *Table 502 */
+               INTURG, /* Urgency indicator *Table 1406 */
+               INTFRAN, /* Carriage free (1:yes, 0:no) */
+               INTNLIG, /* Line number */
+               INTFICH, /* Loaded file name */
+               INTNERR, /* Error message no */
+               INTMESS, /* Error message */
+               INTDCRE, /* Creation date */
+               INTDMAJ, /* Date of last update */
+               INTUTIL, /* Last user */
+               INTDTRT, /* Processing date */
+               INTALTF, /* Supplier spoiling (1:yes, 0:no) */
+               INTTYPUL, /* Code identifying the LU type *Table 731 */
+               INTIRECYC, /* Recycling activation indicator */
+               INTFLIR, /* Reception Interception Indicator */
+               INTREFEXT, /* External Order reference */
+               INTCOML1, /* Production order number */
+               INTORI)
+          SELECT v_intid, v_intnlig +rownum+1, v_whs,
+              v_mfgVendor, fccnum, aranfilf, 1 /* v_intfilc*/,  0 /*@v_intconf*/,
+              0 /*@v_intgrel*/, 0 /*@v_intcouc*/, 0 /*@v_intenlev*/, trunc(sysdate) /*@v_intdcom*/, trunc(sysdate) /*@v_intdliv*/, 
+              aracexr, nvl(ararefc,'-1'), aracexta, aracexvl,
+              1*PKARTSTOCK.GET_SKUUNITS( 1, arucinl) /* qty */,  PKARTSTOCK.GET_SKUUNITS( 1, arucinl) /*@v_intuauvc*/, 0 /*@v_intstat*/, 0 /*@v_intldist */,
+              v_intetat, 1 /*v_inturg*/, 0 /*@v_intfran*/, v_intnlig +rownum+1,
+              v_intfich, null /*@v_intnerr*/, null /*@v_intmess*/, 
+              sysdate /*@v_intdcre*/, sysdate /*@v_intdmaj*/, v_intutil, trunc(sysdate) /*@v_intdtrt*/,
+              0 /*@v_intaltf*/, arutypul /*@v_inttypul*/, 0 /*@v_intirecyc*/, 0 /*@v_intflir*/,
+              nvl(v_intrefext,''), 'placeholder' /*@v_intcoml1*/,
+              v_intori
+          FROM ARTUC , FOUDGENE ,  FOUCCOM, artul
+          WHERE aracfin=foucfin
+          and foucnuf=v_mfgVendor
+          and araccin=fccccin
+          and aracinl=arucinl
+          and arasite=v_whs
+          and trunc(sysdate) between araddeb and aradfin 
+          and aratcde=1
+          /* 10/18/24: Exclude 199722 */
+          /* 02/17/2025 : Eric put back 199722 */
+          --and aracexr not in ('199722')
+          and not exists (select 1 from INTCDE where trunc(intdtrt)=trunc(sysdate)
+                  and intstat=0
+                  and intcode=aracexr
+                  and intcnuf=v_mfgVendor)
+          /* 01/10/2025: Only on-stock items */
+           AND EXISTS (SELECT 1 from ARTASENT WHERE trunc(sysdate) between  aloddeb and alodfin
+                      and aloseqvl=araseqvl
+                      AND alocomm = 0 /* On-stock */
+                      and alosite =v_whs
+             );
+
+     v_rowcount :=  SQL%ROWCOUNT;
+      INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+          VALUES ('mfgPlaceOrder', 0, 1, 1 , 'Loaded nb placeholder: ' || v_rowcount, SYSDATE, 'SPE'); 
+
+     /* Remove allotment item */     
+     DELETE INTCDE --set intmess='ALLOTMENT'
+     WHERE trunc(intdcom)=trunc(sysdate) 
+     and intutil=v_intutil 
+     and intstat=0 
+     and not exists (select 1 from artasent, artvl
+                     where aloseqvl=arlseqvl
+                     and trunc(sysdate) between aloddeb and alodfin
+                     and alocomm =0 /* No on-stock */
+                     and alosite=93080
+                     and arlcexr=intcode);
+
+     COMMIT;
+    EXCEPTION
+      WHEN OTHERS THEN
+        dbms_output.put_line('Error... ' || SQLCODE || SQLERRM );
+        ROLLBACK;
+        o_return := '-1';
+    END;
+
+   INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+                VALUES ('mfgPlaceOrder', 0, 1, 1 , 'End session ', SYSDATE, 'SPE'); 
+     COMMIT;
+
+END mfgPlaceOrder;
+
+
+FUNCTION deactivateSV(num_log IN NUMBER) RETURN NUMBER
+IS
+ PRAGMA AUTONOMOUS_TRANSACTION;
+  on_error       NUMBER;
+  v_rowcount     NUMBER;
+  v_id           NUMBER;
+  Progname ERREURPRG.ERRPROG%TYPE;
+
+BEGIN
+  on_error := 0;
+  v_id := 0;
+   BEGIN
+   INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+                VALUES ('DEACTIVATESV', 0, 1, 1 , 'Start session ', SYSDATE, 'PKG'); 
+   COMMIT;
+   
+   -- Deactivate SV 
+   UPDATE artuv uv
+   SET    arvetat = 2,
+           arvdmaj = SYSDATE - 2,
+           arvutil = 'deactivate'
+    WHERE  arvetat = 1
+    AND EXISTS (
+        SELECT 1
+        FROM   artvl vl1
+        WHERE  vl1.arlcinluvc = uv.arvcinv
+          /* Not orderable since 6 months */
+          AND NOT EXISTS (
+                SELECT 1
+                FROM   artuc uc
+                WHERE  uc.araseqvl = vl1.arlseqvl
+                  AND  uc.aradfin  > TRUNC(SYSDATE) - 6*30
+              )
+
+          /* Another SV is still orderable */
+          AND EXISTS (
+                SELECT 1
+                FROM   artuc  uc2
+                JOIN   artvl  vl2 ON  vl2.arlseqvl    = uc2.araseqvl
+                                  AND vl2.arlcinr      = vl1.arlcinr
+                                  AND vl2.arlcinluvc  != vl1.arlcinluvc
+                WHERE  uc2.aracinr = vl1.arlcinr
+                  AND  uc2.aradfin > TRUNC(SYSDATE)
+              )
+
+          /* No sale recorded in the last 6 months */
+          AND NOT EXISTS (
+                SELECT 1
+                FROM   stomvt mv
+                WHERE  mv.stmcinl = vl1.arlcinluvc
+                  AND  mv.stmtmvt = 150
+                  AND  mv.stmdmvt >= TRUNC(SYSDATE) - 6*30  -- ← key fix: no TRUNC on column
+              )
+      );
+   COMMIT;
+  
+   v_rowcount := SQL%ROWCOUNT;
+   INSERT INTO ERREURPRG (errprog, errstat, errtrid, errord, errmess, errdcre, errutil)
+          VALUES ('DEACTIVATESV', 0, 1, 1 , to_char(v_rowcount)   || ' items/SV have been deactivated' , SYSDATE, 'PKG'); 
+            COMMIT;
+            
+   EXCEPTION
+      WHEN OTHERS THEN
+        dbms_output.put_line('Error... ' || SQLCODE || SQLERRM );
+        ROLLBACK;
+        on_error := -1;
+    END;
+  RETURN on_error;
+
+END deactivateSV;
+
+END HEI_SPECIFIC;

@@ -230,6 +230,7 @@ export class ItemAddressComponent implements OnInit{
                             + !this.scheduleFlag, // Implicit cast to have 1: True, 0: False
                             this.datePipe.transform(this.scheduleDate,'MM/dd/yy HH:mm'), 
                             JSON.stringify(this._importService.wb.sheets[0].worksheet.rows),
+                            //this.uploadedFiles[0],
                             this._importService.wb.sheets[0].worksheet.rows.length)
                             .subscribe (data => {  
                             executionId = data;
@@ -285,11 +286,11 @@ export class ItemAddressComponent implements OnInit{
                                                     data => { 
                                                         // collectResult returns ONLY error records
                                                         // Store them separately - don't try to merge into worksheet
-                                                        console.log('collectResult returned:', data);
+                                                        //console.log('collectResult returned:', data);
                                                         
                                                         if (data && Array.isArray(data)) {
                                                             this.executionErrors = data;
-                                                            console.log('Stored', this.executionErrors.length, 'execution errors');
+                                                            //console.log('Stored', this.executionErrors.length, 'execution errors');
                                                         } else {
                                                             this.executionErrors = [];
                                                             console.log('No execution errors');
@@ -452,7 +453,7 @@ export class ItemAddressComponent implements OnInit{
                                     this.globalValid.push('<i class="fas fa-thumbs-up" style="padding-right: 1em;"></i> Data file verification SUCCESSFUL ' +
                                                             ' <ul style="margin-bottom: 0px;"> ' +
                                                             ' <li>Columns naming is respected</li>' +
-                                                            ' <li>Item/SV codes are all recognized</li></ul>'); 
+                                                            ' <li>UPC codes are all recognized</li></ul>'); 
                                     this.activeIndex = this.activeIndex + 1; // Enable Configuration
                                     this.activeIndex = this.activeIndex + 1; // Enable schedule
                                     this.activeIndex = this.activeIndex + 1; // Enable Recap
@@ -483,7 +484,7 @@ export class ItemAddressComponent implements OnInit{
     this.globalError=[];
     let result = true;    
     if(this._importService.wb.sheets[0].worksheet.columns.length < 5) {
-        this.globalError.push('item address file must contains the following headers: UPC, STORE, SCHEMATIC, EFFECTIVE_DATE, SHELF_NUMBER, LOCATION_NUMBER, CAPACITY, FACING'); 
+        this.globalError.push('item address file must contains the following headers: UPC, STORE, SCHEMATIC, EFFECTIVE_DATE, BAY_NUMBER, SHELF_NUMBER, LOCATION_NUMBER, CAPACITY, FACING'); 
         return false;
     }
     if (this._importService.wb.sheets[0].worksheet.columns[0].field.toUpperCase() !== 'UPC') {
@@ -502,20 +503,24 @@ export class ItemAddressComponent implements OnInit{
         this.globalError.push('The column D header must be named EFFECTIVE_DATE'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[4].field.toUpperCase() !== 'SHELF_NUMBER') {
-        this.globalError.push('The column E header must be named SHELF_NUMBER'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[4].field.toUpperCase() !== 'BAY_NUMBER') {
+        this.globalError.push('The column E header must be named BAY_NUMBER'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[5].field.toUpperCase() !== 'LOCATION_NUMBER') {
-        this.globalError.push('The column F header must be named LOCATION_NUMBER'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[5].field.toUpperCase() !== 'SHELF_NUMBER') {
+        this.globalError.push('The column F header must be named SHELF_NUMBER'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[6].field.toUpperCase() !== 'CAPACITY') {
-        this.globalError.push('The column G header must be named CAPACITY'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[6].field.toUpperCase() !== 'LOCATION_NUMBER') {
+        this.globalError.push('The column G header must be named LOCATION_NUMBER'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[7].field.toUpperCase() !== 'FACING') {
-        this.globalError.push('The column H header must be named FACING'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[7].field.toUpperCase() !== 'CAPACITY') {
+        this.globalError.push('The column H header must be named CAPACITY'); 
+      result = false;
+    }
+    if (this._importService.wb.sheets[0].worksheet.columns[8].field.toUpperCase() !== 'FACING') {
+        this.globalError.push('The column I header must be named FACING'); 
       result = false;
     }
     return result;

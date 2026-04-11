@@ -1,4 +1,4 @@
-<nav class="sidebar easter-sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" *ngIf="_userService.userInfo" style="padding-top:1%">
+<nav class="sidebar spring-sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" *ngIf="_userService.userInfo" style="padding-top:1%">
         <ul class="list-group">
             <a routerLink="/dashboard" [routerLinkActive]="['router-link-active']" class="list-group-item">
                 <i class="fas fa-tachometer-alt"></i>&nbsp; {{ 'Dashboard' }}
@@ -377,6 +377,11 @@
                                 <span><i class="fa fa-layer-group"></i> {{ 'Stock layer' }}</span>
                             </a>
                         </li>
+                        <li *ngIf="_userService.userInfo.dataIntegrity ==1">
+                            <a class="bbs_link_menu" routerLink="/itemendupc" [routerLinkActive]="['router-link-active']">
+                                <span><i class="fa fa-trash"></i> {{ 'Papyrus UPC' }}</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </div>
@@ -484,7 +489,7 @@
 </nav>
 
 <!-- Administration section -->
-<nav class="sidebar_admin easter-sidebar-admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" *ngIf="_userService.userInfo">
+<nav class="sidebar_admin spring-sidebar-admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}" *ngIf="_userService.userInfo">
     <div class="list-group" *ngIf="this._userService.userInfo.type=='1'">
         <div class="nested-menu">
             <a class="list-group-item" (click)="addExpandClass('settings')" [ngClass]="{'isDisabled': this._userService.userInfo.type != '1'}">

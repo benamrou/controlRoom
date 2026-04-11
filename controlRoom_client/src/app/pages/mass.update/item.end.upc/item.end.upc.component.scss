@@ -1,0 +1,165 @@
+.isOrderDay {
+    color: green;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.rowcolorgray {
+    background-color: #F3F2F2;
+}
+
+.alternateColor div:nth-child(even){
+  background-color: lightgoldenrodyellow;
+}
+.alternateColor div:nth-child(odd){
+  background-color: white;
+}
+
+.createTemporarySchedule {
+  color: darkorange;
+  text-align: center;
+
+}
+input:invalid {
+    border-color: red;
+}
+
+
+#tableContainer {
+  width: 1100px;
+  overflow-x: scroll;
+  //position: relative;
+  text-align:center;
+  //display: inline-block;
+}
+#tableContaine.th {
+  width: 100px;
+}
+.white-background {
+  background-color: white;
+}
+.gray-background {
+  background-color: gray;
+}
+
+.all-table {
+  //width: 1100px;
+  margin-top: 0;
+  table-layout: fixed;
+  border-spacing: 0;
+  font-size: smaller; 
+  text-align:center;
+}
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 3px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: rgba(0, 0, 0, .5);
+  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
+
+.ui-steps.steps-custom .ui-steps-item {
+  width: 25%;
+  height: 0.5px;
+}
+
+.ui-steps.steps-custom {
+  margin-bottom: 30px;
+}
+
+.ui-steps.steps-custom .ui-steps-item .ui-menuitem-link {
+  padding: 0 1em;
+  overflow: visible;
+  margin-top: -11%;
+}
+
+.ui-steps.steps-custom .ui-steps-item .ui-steps-number {
+  background-color: white;
+  border: 0.2px darkgray solid ;
+  color: black;
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: small;
+  padding: 10px
+}
+
+.ui-steps.steps-custom .ui-steps-item.ui-state-highlight .ui-menuitem-link {
+  color: black;
+}
+
+.ui-steps .ui-steps-title {
+  color: grey;
+}
+
+.ui-steps-current {
+  background-color: #0081c2 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+}
+
+fieldSetCustom .ui-fieldset, .ui-fieldset .ui-fieldset-legend, .ui-fieldset-toggleable .ui-fieldset-legend a {
+  font-size: medium; 
+  font-weight: bolder;  
+  background-color: #2f4f4f;
+  border-radius: 10px;
+  color: white;
+  }
+
+.ui-fieldset.ui-fieldset-toggleable .ui-fieldset-legend:hover a {
+  color: yellow !important;
+}
+
+.fieldSetCustomBorder {
+    border: 1px solid darkslategray !important;
+}
+
+.tableCustom {
+  width: auto !important;
+}
+
+.flashing {
+  background-color: #004A7F;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  border: none;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Arial;
+  font-size: 20px;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  -webkit-animation: glowing 3000ms infinite;
+  -moz-animation: glowing 3000ms infinite;
+  -o-animation: glowing 3000ms infinite;
+  animation: glowing 3000ms infinite;
+}
+@-webkit-keyframes glowing {
+  0% { background-color: #2f4f4f; -webkit-box-shadow: 0 0 3px #2f4f4f; }
+  5% { background-color: #5b9999; -webkit-box-shadow: 0 0 40px #5b9999; }
+  100% { background-color: #2f4f4f; -webkit-box-shadow: 0 0 3px #2f4f4f; }
+}
+
+@-moz-keyframes glowing {
+  0% { background-color: #2f4f4f; -moz-box-shadow: 0 0 3px #2f4f4f; }
+  5% { background-color: #5b9999; -moz-box-shadow: 0 0 40px #5b9999; }
+  100% { background-color: #2f4f4f; -moz-box-shadow: 0 0 3px #2f4f4f; }
+}
+
+@-o-keyframes glowing {
+  0% { background-color: #2f4f4f; box-shadow: 0 0 3px #2f4f4f; }
+  5% { background-color: #5b9999; box-shadow: 0 0 40px #5b9999; }
+  100% { background-color: #2f4f4f; box-shadow: 0 0 3px #2f4f4f; }
+}
+
+@keyframes glowing {
+  0% { background-color: #2f4f4f; box-shadow: 0 0 3px #2f4f4f; }
+  5% { background-color: #5b9999; box-shadow: 0 0 40px #5b9999; }
+  100% { background-color: #2f4f4f; box-shadow: 0 0 3px #2f4f4f; }
+}

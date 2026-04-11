@@ -652,32 +652,62 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
             excelQueue.add(() => {
               return new Promise((resolve, reject) => {
                 heap.logger.log('alert', `[Excel Generation] Queue processing started for ${alertData[0].ALTEMAIL}`, 'alert', 1);
-                
+
                 const writeStream = fs.createWriteStream(tempFile);
                 let timeoutId;
-                
+                let progressInterval;
+
+                // DEBUG: log temp file path so disk/file state can be verified externally
+                heap.logger.log('alert', `[Excel Generation] Temp file: ${tempFile} | Rows: ${detailData.length}`, 'alert', 1);
+
                 const cleanup = async () => {
                   if (timeoutId) clearTimeout(timeoutId);
+                  if (progressInterval) clearInterval(progressInterval);
                   await fsPromises.unlink(tempFile).catch(() => {});
                 };
-                
+
+                // DEBUG: confirm the OS fd opened successfully
+                writeStream.on('open', (fd) => {
+                  heap.logger.log('alert', `[Excel Generation] Stream opened OK fd=${fd}`, 'alert', 1);
+                });
+
+                // DEBUG: poll every 30s — shows whether bytes are flowing or completely stalled
+                progressInterval = setInterval(() => {
+                  heap.logger.log('alert',
+                    `[Excel Generation] Progress — bytesWritten=${writeStream.bytesWritten} | destroyed=${writeStream.destroyed} | writableEnded=${writeStream.writableEnded} | writableFinished=${writeStream.writableFinished}`,
+                    'alert', 1);
+                }, 30000);
+
+                // DEBUG: 'close' fires after 'finish' (normal) OR after destroy() (abnormal).
+                // If close fires but finish never did => stream was destroyed mid-write (ENOSPC, OOM, etc.)
+                writeStream.on('close', () => {
+                  heap.logger.log('alert',
+                    `[Excel Generation] Stream CLOSE event | bytesWritten=${writeStream.bytesWritten} | writableFinished=${writeStream.writableFinished}`,
+                    'alert', 1);
+                });
+
                 timeoutId = setTimeout(() => {
-                  heap.logger.log('alert', `[Excel Generation] TIMEOUT after 600 seconds`, 'alert', 3);
+                  heap.logger.log('alert',
+                    `[Excel Generation] TIMEOUT after 600 seconds | bytesWritten=${writeStream.bytesWritten} | destroyed=${writeStream.destroyed}`,
+                    'alert', 3);
                   writeStream.destroy();
                   cleanup();
                   reject(new Error(`Excel generation timeout after 600 seconds for ${detailData.length} rows`));
                 }, 600000);
-                
+
                 writeStream.on('error', (err) => {
-                  heap.logger.log('alert', `[Excel Generation] Stream error: ${err.message}`, 'alert', 3);
+                  heap.logger.log('alert',
+                    `[Excel Generation] Stream error: ${err.message} | code=${err.code} | bytesWritten=${writeStream.bytesWritten}`,
+                    'alert', 3);
                   cleanup();
                   reject(err);
                 });
-                
+
                 writeStream.on('finish', async () => {
+                  if (progressInterval) clearInterval(progressInterval);
                   try {
                     clearTimeout(timeoutId);
-                    heap.logger.log('alert', `[Excel Generation] Stream finished, reading buffer`, 'alert', 1);
+                    heap.logger.log('alert', `[Excel Generation] Stream finished, reading buffer | bytesWritten=${writeStream.bytesWritten}`, 'alert', 1);
                     let buffer = await fsPromises.readFile(tempFile);
                     await fsPromises.unlink(tempFile).catch(() => {});
 
@@ -749,14 +779,14 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                 });
                 heap.logger.log('alert', `[Excel Sanitization] Cleaned ${workbook.worksheets.length} worksheets`, 'alert', 1);
                 
-                heap.logger.log('alert', `[Excel Generation] Starting workbook.xlsx.write()`, 'alert', 1);
+                heap.logger.log('alert', `[Excel Generation] Starting workbook.xlsx.write() | worksheets=${workbook.worksheets.length} | sheetRowCounts=${workbook.worksheets.map(ws => ws.rowCount).join(',')}`, 'alert', 1);
                 workbook.xlsx.write(writeStream)
                   .then(() => {
-                    heap.logger.log('alert', `[Excel Generation] Write complete, closing stream`, 'alert', 1);
+                    heap.logger.log('alert', `[Excel Generation] Write promise resolved — calling writeStream.end() | bytesWritten=${writeStream.bytesWritten} | destroyed=${writeStream.destroyed}`, 'alert', 1);
                     writeStream.end();
                   })
                   .catch((err) => {
-                    heap.logger.log('alert', `[Excel Generation] Write error: ${err.message}`, 'alert', 3);
+                    heap.logger.log('alert', `[Excel Generation] Write error: ${err.message} | code=${err.code} | stack=${err.stack}`, 'alert', 3);
                     writeStream.destroy();
                     cleanup();
                     reject(err);
@@ -790,31 +820,36 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                   request.overallTimeout
                 );
                 buffer = null;
+                // FIX: clearModule/gc moved here — after async work completes —
+                // to avoid racing the active xlsx write stream
+                result = null;
+                clearModule();
+                global.gc();
               })
               .catch(async (bufferError) => {
                 const bufferEndTime = Date.now();
                 const bufferDuration = ((bufferEndTime - bufferStartTime) / 1000).toFixed(2);
-                
+
                 heap.logger.log('alert', `[Excel Generation FAILED] Duration: ${bufferDuration}s | Rows: ${detailData.length}`, 'alert', 3);
-                heap.logger.log('alert', `[Excel Generation ERROR] ${bufferError.message}`, 'alert', 3);
-                
+                heap.logger.log('alert', `[Excel Generation ERROR] ${bufferError.message} | stack: ${bufferError.stack}`, 'alert', 3);
+
                 // Log failure to database
                 await heap.dbLogger.logFailed(
                   request.requestId,
                   Math.floor((Date.now() - request.requestStartTime) / 1000),
                   `Excel generation failed: ${bufferError.message}`
                 );
-                
-                sendSMS('6789863021@tmomail.net', 
-                  `CRITICAL: Excel generation failed - ${alertData[0].ALTSUBJECT}`, 
+
+                sendSMS('6789863021@tmomail.net',
+                  `CRITICAL: Excel generation failed - ${alertData[0].ALTSUBJECT}`,
                   `RequestID: ${request.requestId}, Error: ${bufferError.message}, Rows: ${detailData.length}, Duration: ${bufferDuration}s`);
-                
-                const fallbackHtml = preHtml + 
+
+                const fallbackHtml = preHtml +
                   `<p><strong style="color: red;">Excel generation failed for this report</strong></p>` +
                   `<p>Error: ${bufferError.message}</p>` +
                   `<p>Rows attempted: ${detailData.length}</p>` +
                   `<p>Please contact IT support.</p>`;
-                
+
                 // Send fallback email (request already marked as FAILED above)
                 // Don't pass monitoring params - request is already marked FAILED
                 sendEmail(
@@ -824,6 +859,10 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                   `[GENERATION FAILED] ${alertData[0].ALTSUBJECT} ${SUBJECT_EXT}`,
                   fallbackHtml
                 );
+                // FIX: clearModule/gc moved here — after async work completes
+                result = null;
+                clearModule();
+                global.gc();
               });
           }
           else {
@@ -899,7 +938,34 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
             
             await archiveConnection.execute(mergeSql, bindParams, { autoCommit: true });
             heap.logger.log('alert', 'Archive SUCCESS - ALTID: ' + alertData[0].ALTID, 'alert', 1);
-            
+
+            // ── ALERTARCHIVE: deep-archive Excel JSON when ALTARCHIVE = 1 ──────
+            if (alertData[0].ALTARCHIVE == 1) {
+              heap.logger.log('alert',
+                `[ALERTARCHIVE] Archiving Excel JSON - ALTID: ${alertData[0].ALTID} | ReqID: ${request.requestId} | Rows: ${totalArchiveRows}`,
+                'alert', 1);
+              const archiveSql = `INSERT INTO ALERTARCHIVE
+                                    (arcaltid, arcreq, arcdarch, arcduser, arccontent, arcdcre, arcdmaj, arcutil)
+                                  VALUES
+                                    (:altid, :reqid, SYSTIMESTAMP, :duser, :content, SYSDATE, SYSDATE, :util)`;
+              const archiveBindParams = {
+                altid:   alertData[0].ALTID,
+                reqid:   request.requestId || null,
+                duser:   request.header('USER') || 'notification.js',
+                content: {
+                  val:  Buffer.from(archiveJson, 'utf8'),
+                  type: oracledb.BLOB,
+                  dir:  oracledb.BIND_IN
+                },
+                util: 'notification.js'
+              };
+              await archiveConnection.execute(archiveSql, archiveBindParams, { autoCommit: true });
+              heap.logger.log('alert',
+                `[ALERTARCHIVE] SUCCESS - ALTID: ${alertData[0].ALTID} | ReqID: ${request.requestId}`,
+                'alert', 1);
+            }
+            // ─────────────────────────────────────────────────────────────────
+
           } catch (archiveErr) {
             heap.logger.log('alert', 'Archive ERROR: ' + archiveErr.message, 'alert', 3);
           } finally {
@@ -913,10 +979,8 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
           }
         })();
 
-        // Cleanup
-        result = null;
-        clearModule();
-        global.gc();
+        // NOTE: result/clearModule/global.gc() are now handled inside
+        // excelQueue .then()/.catch() to avoid racing the active xlsx write.
           }
         }
     );

@@ -543,6 +543,13 @@ export class PurchaseOrderPushComponent implements OnInit{
       this.uploadedFiles = [];
       this.displayConfirm = false;
       this.indicatorXLSfileLoaded = false;
+        this.recapSummary = {
+        totalRecords: 0,
+        successRecords: 0,
+        errorRecords: 0,
+        errorDetails: [] as any[], // Array of row objects with all columns
+        columns: [] as string[] // Dynamic column names from worksheet
+    };
   }
  
 }

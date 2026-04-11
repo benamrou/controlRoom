@@ -163,6 +163,7 @@ import { PPGRetailModule } from './pages/mdm/ppg.retail/ppg.retail.module';
 import { PalletLabelModule } from './pages/warehouse/toolkit/pallet.label/pallet.label.module';
 import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module';
 import { AlertLogJournalModule } from './pages/alerts/journal/alert.journal.module';
+import { ItemEndUPCModule } from './pages/mass.update/item.end.upc/item.end.upc.module';
 
 
 @NgModule({
@@ -269,7 +270,8 @@ import { AlertLogJournalModule } from './pages/alerts/journal/alert.journal.modu
     ItemRetailModule,
     AlertLogJournalModule,
     QueryRunnerModule,
-    PresetQueryManagerModule
+    PresetQueryManagerModule,
+    ItemEndUPCModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

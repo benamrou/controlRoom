@@ -1,0 +1,207 @@
+<!-- login.component.html - Ohio Easter Theme -->
+<div class="login-page">
+    <!-- Easter Sky Background -->
+    <div class="easter-sky"></div>
+
+    <!-- Sun -->
+    <div class="sun">☀️</div>
+
+    <!-- Floating Petals / Sparkles -->
+    <div class="petals">
+        <div *ngFor="let petal of snowflakes; let i = index"
+             class="petal"
+             [style.left.%]="(i * 2) % 100"
+             [style.animation-delay.s]="(i * 0.25) % 9"
+             [style.font-size.px]="10 + (i % 10)">{{ i % 3 === 0 ? '🌸' : i % 3 === 1 ? '🌼' : '✨' }}</div>
+    </div>
+
+    <!-- Rolling Spring Hills -->
+    <div class="rolling-hills"></div>
+
+    <!-- Grass Ground -->
+    <div class="grass-ground"></div>
+
+    <!-- Grass Tufts -->
+    <div class="grass-tuft tuft-1"></div>
+    <div class="grass-tuft tuft-2"></div>
+    <div class="grass-tuft tuft-3"></div>
+
+    <!-- Flower/Bush Back Row -->
+    <div class="trees trees-back">
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+        <div class="tree">🌳</div>
+    </div>
+
+    <!-- Flower/Bush Front Row -->
+    <div class="trees trees-front">
+        <div class="tree">🌷</div>
+        <div class="tree">🌻</div>
+        <div class="tree">🌷</div>
+        <div class="tree">🌻</div>
+        <div class="tree">🌷</div>
+        <div class="tree">🌻</div>
+        <div class="tree">🌷</div>
+        <div class="tree">🌻</div>
+        <div class="tree">🌷</div>
+        <div class="tree">🌻</div>
+    </div>
+
+    <!-- Pure CSS Rabbits -->
+    <div class="css-rabbit-wrap cr-rabbit-1">
+        <div class="css-rabbit">
+            <div class="cr-ear cr-ear-l"><div class="cr-ear-in"></div></div>
+            <div class="cr-ear cr-ear-r"><div class="cr-ear-in"></div></div>
+            <div class="cr-head">
+                <div class="cr-eye"></div>
+                <div class="cr-nose"></div>
+            </div>
+            <div class="cr-body">
+                <div class="cr-tail"></div>
+            </div>
+            <div class="cr-leg-b2"></div>
+            <div class="cr-leg-b"></div>
+            <div class="cr-leg-f2"></div>
+            <div class="cr-leg-f"></div>
+            <div class="cr-shadow"></div>
+        </div>
+    </div>
+    <!-- Second rabbit — smaller, faster, different delay -->
+    <div class="css-rabbit-wrap cr-rabbit-2">
+        <div class="css-rabbit">
+            <div class="cr-ear cr-ear-l"><div class="cr-ear-in"></div></div>
+            <div class="cr-ear cr-ear-r"><div class="cr-ear-in"></div></div>
+            <div class="cr-head">
+                <div class="cr-eye"></div>
+                <div class="cr-nose"></div>
+            </div>
+            <div class="cr-body">
+                <div class="cr-tail"></div>
+            </div>
+            <div class="cr-leg-b2"></div>
+            <div class="cr-leg-b"></div>
+            <div class="cr-leg-f2"></div>
+            <div class="cr-leg-f"></div>
+            <div class="cr-shadow"></div>
+        </div>
+    </div>
+
+    <!-- Easter Objects -->
+    <div class="easter-objects">
+        <!-- Bunny hiding behind bush -->
+        <div class="bunny">🐰</div>
+        <!-- Easter Eggs -->
+        <div class="egg egg-1">🥚</div>
+        <div class="egg egg-2">🥚</div>
+        <div class="egg egg-3">🥚</div>
+        <!-- Easter Bells -->
+        <div class="bell bell-1">🔔</div>
+        <div class="bell bell-2">🔔</div>
+        <!-- Baby chick -->
+        <div class="chick">🐣</div>
+        <!-- Butterfly -->
+        <div class="butterfly">🦋</div>
+    </div>
+
+    <!-- Version -->
+    <div class="version" #versionDiv [style.visibility]="showVersion ? 'visible' : 'hidden'">
+        vers. 7.0.1b0.10
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Login Container -->
+        <div class="login-container">
+            <div class="login-card">
+                <!-- Egg corner decorations -->
+                <!--div class="egg-corner egg-tl">🥚</div>
+                <div class="egg-corner egg-tr">🥚</div>
+                <div class="egg-corner egg-bl">🥚</div>
+                <div class="egg-corner egg-br">🥚</div-->
+
+                <div class="logo" (click)="showHideVersion()">
+                    <img src="./assets/images/logo.png" width="140px" class="user-avatar" />
+                </div>
+
+                <h1>Inventory Control Room</h1>
+
+                <p-toast key="top" [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+                <p-toast></p-toast>
+
+                <form role="form" (ngSubmit)="onLoggedin()">
+                    <div class="form-group">
+                        <i class="fas fa-user"></i>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            [(ngModel)]="authentification.username"
+                            class="form-control" 
+                            placeholder="Username"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input 
+                            type="password" 
+                            [(ngModel)]="authentification.password"
+                            name="password"
+                            class="form-control" 
+                            placeholder="Password"
+                            required>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="login-btn" 
+                        [disabled]="authentification.username.length === 0">
+                        <i class="fas fa-sign-in-alt"></i> Log In
+                    </button>
+
+                    <div class="loading-status" *ngIf="canConnect">
+                        <div class="status-item">
+                            <span>User authentication validation</span>
+                            <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Gathering user information</span>
+                            <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Gathering menu access</span>
+                            <i class="fas" [class.fa-check]="userInfoGathered" [class.fa-spinner]="!userInfoGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Loading environment</span>
+                            <i class="fas" [class.fa-check]="environmentGathered" [class.fa-spinner]="!environmentGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Gathering parameters</span>
+                            <i class="fas" [class.fa-check]="parameterGathered" [class.fa-spinner]="!parameterGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Loading language labels</span>
+                            <i class="fas" [class.fa-check]="labelsGathered" [class.fa-spinner]="!labelsGathered"></i>
+                        </div>
+                        <div class="status-item">
+                            <span>Refreshing workspace</span>
+                            <i class="fas" [class.fa-check]="labelsGathered" [class.fa-spinner]="!labelsGathered"></i>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Easter Message -->
+        <div class="easter-message">
+            <span class="egg-icon">🐣</span>
+            <h2>Easter is just around the corner!</h2>
+            <p>Warm days are on their way, Ohio! 🌸</p>
+        </div>
+    </div>
+</div>

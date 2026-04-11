@@ -81,6 +81,7 @@ import { PurchaseOrderPushComponent } from './pages/mass.update/purchase.order.p
 import { AlertLogJournalComponent } from './pages/alerts/journal/alert.journal.component';
 import { QueryRunnerComponent } from './pages/it/query.runner/query.runner.component';
 import { PresetQueryManagerComponent } from './pages/it/preset.query/preset.query.manager.component';
+import { ItemEndUPCComponent } from './pages/mass.update/item.end.upc/item.end.upc.component';
 
 import { QueryLibraryComponent } from './pages/admin/query.library/query.library.component';
 import { DictionaryComponent } from './pages/admin/dictionary/dictionary.component';
@@ -177,6 +178,7 @@ const routes: Routes = [
   { path: 'purchaseorderpush', component: PurchaseOrderPushComponent, canActivate: [AuthentificationGuard] },
   { path: 'stocklayer', component: StockLayerComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemretail', component: ItemRetailComponent, canActivate: [AuthentificationGuard] },
+  { path: 'itemendupc', component: ItemEndUPCComponent, canActivate: [AuthentificationGuard] },
   
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },

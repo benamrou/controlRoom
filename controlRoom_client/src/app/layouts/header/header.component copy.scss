@@ -1,0 +1,195 @@
+/* ==============================================
+   ICR SPRING THEME — header.component.scss
+   Matches login.component.scss spring palette
+   ============================================== */
+
+// ── Spring Color Variables (mirrored from login) ───────────────
+$spring-sky-top:   #A8D8F0;
+$spring-sky-mid:   #C8EAF8;
+$spring-horizon:   #D8F0C0;
+$spring-meadow:    #8DC44A;
+$spring-grass:     #5D9E1F;
+$spring-dark:      #2d5a20;
+
+$spring-white:     #ffffff;
+$spring-card-bg:   rgba(255, 255, 255, 0.84);
+
+$spring-pink:      #FF89B3;
+$spring-blossom:   #FFB7D5;
+$spring-yellow:    #F3F875;
+$spring-gold:      #F8C475;
+$spring-purple:    #D9ABFF;
+$spring-blue:      #75BFF8;
+
+
+// ── Navbar Bar ─────────────────────────────────────────────────
+.spring-header {
+    background: linear-gradient(
+        135deg,
+        rgba($spring-sky-top, 0.92)  0%,
+        rgba($spring-sky-mid, 0.90) 50%,
+        rgba($spring-horizon, 0.88) 100%
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1.5px solid rgba($spring-pink, 0.30);
+    box-shadow:
+        0 2px 16px rgba($spring-dark, 0.10),
+        0 1px 0   rgba($spring-white, 0.60) inset;
+
+    // ── Brand ────────────────────────────────────────────────
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: 0.02em;
+        color: $spring-dark !important;
+        text-shadow: 0 1px 3px rgba($spring-white, 0.70);
+        transition: opacity 0.2s;
+
+        &:hover { opacity: 0.78; }
+    }
+
+    // ── Nav Links ────────────────────────────────────────────
+    .nav-link {
+        color: $spring-dark !important;
+        font-weight: 500;
+        font-size: 0.93rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 8px;
+        transition: background 0.18s, color 0.18s;
+
+        i { margin-right: 4px; }
+
+        &:hover,
+        &:focus {
+            background: rgba($spring-pink, 0.18);
+            color: darken($spring-dark, 8%) !important;
+        }
+
+        &.isDisabled {
+            pointer-events: none;
+            opacity: 0.4;
+        }
+    }
+
+    // spring badge — centred in the navbar
+    .spring-badge {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+
+        span {
+            background: linear-gradient(135deg, $spring-pink, $spring-yellow);
+            //color: $spring-purple;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba($spring-purple, 0.25);
+            letter-spacing: 0.03em;
+        }
+    }
+
+    // ── Hamburger toggler ─────────────────────────────────────
+    .navbar-toggler {
+        border-color: rgba($spring-dark, 0.30);
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%232d5a20' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+    }
+    
+}
+
+
+// ── Spring Badge ───────────────────────────────────────────────
+.spring-badge {
+    display: flex;
+    align-items: center;
+    margin-left: 12px;
+
+    span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        color: darken($spring-dark, 4%);
+        background: linear-gradient(
+            135deg,
+            rgba($spring-blossom, 0.75) 0%,
+            rgba($spring-yellow,  0.65) 100%
+        );
+        border: 1px solid rgba($spring-pink, 0.45);
+        box-shadow:
+            0 1px 6px rgba($spring-pink, 0.20),
+            0 0 0 1px rgba($spring-white, 0.50) inset;
+        animation: badge-sway 4s ease-in-out infinite;
+    }
+}
+
+@keyframes badge-sway {
+    0%, 100% { transform: rotate(-1.5deg); }
+    50%      { transform: rotate(1.5deg);  }
+}
+
+
+// ── Spring Dropdowns ───────────────────────────────────────────
+.spring-dropdown {
+    background: rgba($spring-white, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba($spring-pink, 0.25);
+    border-radius: 14px;
+    box-shadow:
+        0 8px 28px rgba($spring-dark, 0.12),
+        0 0 0 1px rgba($spring-white, 0.70) inset;
+    padding: 6px 4px;
+    min-width: 160px;
+    overflow: hidden;
+
+    .dropdown-item {
+        color: $spring-dark;
+        font-size: 0.88rem;
+        font-weight: 500;
+        padding: 7px 16px;
+        border-radius: 8px;
+        transition: background 0.15s, color 0.15s, padding-left 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        i { color: $spring-grass; min-width: 16px; }
+
+        &:hover,
+        &:focus {
+            background: linear-gradient(
+                90deg,
+                rgba($spring-blossom, 0.45) 0%,
+                rgba($spring-sky-mid,  0.35) 100%
+            );
+            color: darken($spring-dark, 6%);
+            padding-left: 20px;
+        }
+
+        &:active {
+            background: rgba($spring-pink, 0.25);
+            color: $spring-dark;
+        }
+
+        &.isDisabled {
+            pointer-events: none;
+            opacity: 0.38;
+        }
+    }
+
+    // Thin petal-pink divider between groups (optional, targets last profile item)
+    .dropdown-divider {
+        border-color: rgba($spring-pink, 0.22);
+        margin: 4px 10px;
+    }
+}

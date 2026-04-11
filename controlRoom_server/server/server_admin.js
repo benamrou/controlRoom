@@ -41,50 +41,36 @@ module.exports = _.merge({}, defaults, config);
 //process.env.UV_THREADPOOL_SIZE=264;
 
 // parse application/json
-app.use(bodyParser.json({limit: '50mb', type: 'application/json'}), );      // to support JSON-encoded bodies
+app.use(bodyParser.json({limit: '500mb', type: 'application/json'}));      // to support JSON-encoded bodies
 // parse application/x-www-form-urlencoded
-app.use( bodyParser.urlencoded({
-         extended: true
-    }) 
-);
+// ⚠️ Limit raised to 500mb — files with 300k+ rows can exceed 100mb easily
+app.use(bodyParser.urlencoded({
+    extended: true,
+    limit: '500mb'
+}));
+// parse raw binary / multipart bodies (e.g. Excel file uploads sent as raw buffer)
+app.use(bodyParser.raw({ limit: '500mb', type: ['application/octet-stream', 'multipart/form-data'] }));
 
-//app.use(bodyParser());
-
+// ─── CORS Configuration ──────────────────────────────────────────────────────
+// Single, consolidated CORS setup.
+// The manual OPTIONS block that previously existed alongside this was redundant
+// and could conflict with cors() — causing CORS headers to be lost on errors.
 let corsOptions = {
     origin: '*',
     optionsSuccessStatus: 200, // For legacy browser support
-    methods: "*"
+    methods: "GET, HEAD, OPTIONS, POST, PUT, DELETE, PATCH",
+    allowedHeaders: "Origin, Accept, Cache-Control, Pragma, Authorization, " +
+                    "X-Requested-With, Content-Type, " +
+                    "Access-Control-Request-Method, Access-Control-Request-Headers, " +
+                    "USER, PASSWORD, " +
+                    "DATABASE_SID, LANGUAGE, " +
+                    "DSH_ID, QUERY_ID, " +
+                    "MODE, FILENAME, " +
+                    "ENV_ID, ENV_PASS, ENV_IP, ENV_COMMAND",
+    maxAge: 86400 // 24 hours preflight cache
 }
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
-
-app.use(function(req, res, next) {
-	if (req.method === 'OPTIONS') {
-	      let headers = {};
-	      // IE8 does not allow domains to be specified, just the *
-	      headers["Access-Control-Max-Age"] = '86400'; // 24 hours
-	      headers["Access-Control-Allow-Origin"] = "*";
-    	  headers["Access-Control-Allow-Credentials"] = true;
-    	  headers["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, POST, PUT, DELETE, PATCH";
-    	  headers["Access-Control-Allow-Headers"] = "Access-Control-Allow-Headers, Origin,Accept, " +
-                                                    "Cache-Control, Pragma, Origin, Authorization, " +
-                                                    "X-Requested-With, Content-Type, " +
-                                                    "Access-Control-Request-Method, " +
-                                                    "Access-Control-Request-Headers, " +
-                                                    "USER, PASSWORD, " +
-                                                    "DATABASE_SID, LANGUAGE, " +
-                                                    "DSH_ID, QUERY_ID," +  
-                                                    "MODE, FILENAME," +
-                                                    "ENV_ID, ENV_PASS, ENV_IP, ENV_COMMAND";
-	      res.writeHead(200, headers);
-	      res.end();
-          headers = null;
-	}
-	else {
-		next();
-	}
-});
+app.options('*', cors(corsOptions)); // Handle all preflight OPTIONS requests
 
 
 /* Publish the available routes and methodes */
@@ -209,8 +195,23 @@ if(!DEBUG){
 }
 
 
+// ─── Global Error Handler ─────────────────────────────────────────────────────
+// IMPORTANT: Must be registered AFTER all routes.
+// Ensures CORS headers are always present even when a route throws an error.
+// Without this, Express sends a raw 500 response that strips CORS headers,
+// causing the browser to report a CORS error instead of the real problem.
+app.use(function(err, req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT, DELETE, PATCH");
+    logger.log('internal', 'Unhandled route error: ' + err.message, 'internal', 3);
+    res.status(err.status || 500).json({ error: err.message || 'Internal Server Error' });
+});
+
 httpServer = http.Server(app);
 httpServer.timeout = config.server.timeout;
+// ⚠️ Increase max body size at the Node HTTP layer to match bodyParser limits
+// Without this, Node itself can reject large payloads before Express even sees them
+httpServer.maxHeadersCount = 0;  // unlimited headers
 httpServer.on('connection', function(conn) {
         key = conn.remoteAddress + ':' + (conn.remotePort || '');
 
