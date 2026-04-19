@@ -1,0 +1,1593 @@
+<ROOT>
+    <QUERY>
+    WITH CALACTUALWEEK AS (
+select TRUNC(sysdate, ''DAY'') + level - 1 dayWeek
+from  dual
+connect by 7 >= level
+),
+CALWEEKS AS (
+select to_char(SYSDATE- 7*LEVEL,''RRRR'') || 
+        FLOOR((SYSDATE- 7*LEVEL - TRUNC(TRUNC(SYSDATE- 7*LEVEL, ''YYYY'') - MOD(TO_NUMBER(TO_CHAR(TRUNC(SYSDATE- 7*LEVEL, ''YYYY''), ''D'')) - 1, 7))) / 7) + 1 
+       weekNumber, TRUNC(SYSDATE- 7*LEVEL,''D'') "1ST_DAY", TRUNC(SYSDATE- 7*LEVEL,''D'') + 6  "LAST_DAY"
+from  dual
+connect by 12 >= level 
+),
+COUNTEDHOLE AS (
+SELECT DISTINCT einsite "Store #",  TRUNC(eindinv) "Holes date", to_char(dayWeek,''DAY'') "Day of the week",
+                                (SELECT foucnuf 
+                                  FROM (select foucnuf, MAX(aradfin)
+                                        from artuc@heinens_custom_prod, foudgene@heinens_custom_prod 
+                                        where aracfin=foucfin and aracinr=dincinr 
+                                        and aratfou=1 
+                                        AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+                                        GROUP BY foucnuf ORDER BY 2 DESC) 
+                                  where rownum=1) "Supplier code",
+       artcexr
+FROM inventinv@heinens_custom_prod, invdetinv@heinens_custom_prod,
+     invsaisie@heinens_custom_prod, artrac@heinens_custom_prod, CALACTUALWEEK
+WHERE isacininv=dincininv
+AND eincininv=dincininv
+AND eintinv = 22 /* Not PICS/RGIS */
+AND dincinl=isacinl
+AND trunc(eindinv)=dayWeek
+/* AND isaqter=0 */
+AND artcinr=dincinr
+and einsite=:param2),
+LISTCOUNT AS (
+  SELECT :param2 "Store #",  dayWeek "Holes date",  to_char(dayWeek,''DAY'') "Day of the week",
+         SUM(DECODE("Supplier code",''H090061'',1,0)) "Grocery",
+         SUM(DECODE("Supplier code",''H091070'',1,0)) "Dairy",
+         SUM(DECODE("Supplier code",''H091071'',1,0)) "Freezer",
+         SUM(DECODE("Supplier code",''00284'',1,0)) "B.A. Sweetie",
+         SUM(DECODE("Supplier code",''AO1706872'',1,0)) "Carmela",
+         SUM(DECODE("Supplier code",''06190'',1,0)) "Euro",
+         SUM(DECODE("Supplier code",''17383'',1,0)) "East side J.",
+         SUM(DECODE("Supplier code",''00869'',1,0)) "Hillandale",
+         SUM(DECODE("Supplier code",''17244'',1,0)) "Imperial",
+         SUM(DECODE("Supplier code",''06966'',1,0)) "Lipari",
+         SUM(DECODE("Supplier code",''07188'',1,0)) "Midland",
+         SUM(DECODE("Supplier code",''07626'',1,0)) "Pierres",
+         SUM(DECODE("Supplier code",''08313'',1,0)) "Sysco",
+         SUM(DECODE("Supplier code",''08531'',1,0)) "UNFI",
+         SUM(DECODE("Supplier code",''02076'',1,0)) "Wakefern",
+         SUM(CASE WHEN "Supplier code" NOT IN (''H090061'',''H091070'',''H091071'',''17383'',''17244'',''06966'',
+                                               ''00869'',''07188'', ''07626'',''08531'',''02076'', 
+                                               ''08313'', ''06190'',''00284'',''AO1706872'') THEN 1
+                  ELSE 0
+             END)  "Others",
+         COUNT(artcexr) "Counted"
+  FROM CALACTUALWEEK,COUNTEDHOLE t
+  WHERE dayWeek="Holes date"(+)
+  GROUP BY :param2,  dayWeek ,  to_char(dayWeek,''DAY'') 
+  ORDER BY "Holes date" ASC
+),
+/** HISTORY **/
+HISTORY AS (
+        SELECT DISTINCT einsite "Store #",  NULL "Holes date", 
+         to_char(eindinv,''RRRR'') || 
+        FLOOR((eindinv - TRUNC(TRUNC(eindinv, ''YYYY'') - MOD(TO_NUMBER(TO_CHAR(TRUNC(eindinv, ''YYYY''), ''D'')) - 1, 7))) / 7) + 1
+         "Day of the week",
+                to_char(eindinv,''D'') "Holes day",
+                (SELECT foucnuf 
+                  FROM (select foucnuf, MAX(aradfin)
+                        from artuc@heinens_custom_prod, foudgene@heinens_custom_prod 
+                        where aracfin=foucfin and aracinr=dincinr 
+                        and aratfou=1 
+                        AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+                        GROUP BY foucnuf ORDER BY 2 DESC) 
+                  where rownum=1) "Supplier code",
+       artcexr
+FROM inventinv@heinens_custom_prod, invdetinv@heinens_custom_prod,
+     invsaisie@heinens_custom_prod, artrac@heinens_custom_prod, CALWEEKS
+WHERE isacininv=dincininv
+AND eincininv=dincininv
+AND eintinv = 22 /* Not PICS/RGIS */
+AND dincinl=isacinl
+AND TRUNC(eindinv) BETWEEN "1ST_DAY" AND "LAST_DAY"
+/* AND isaqter=0 */
+AND artcinr=dincinr
+and einsite=:param2),
+HISTORYCOUNT AS (
+  SELECT :param2 "Store #",   to_char(weekNumber) "Holes date",  
+         ''WK '' || to_char("1ST_DAY", ''MM/DD'') || ''-'' || to_char("LAST_DAY", ''MM/DD'')  "Day of the week", 
+         SUM(DECODE("Supplier code",''H090061'',1,0)) "Grocery",
+         SUM(DECODE("Supplier code",''H091070'',1,0)) "Dairy",
+         SUM(DECODE("Supplier code",''H091071'',1,0)) "Freezer",
+         SUM(DECODE("Supplier code",''00284'',1,0)) "B.A. Sweetie",
+         SUM(DECODE("Supplier code",''AO1706872'',1,0)) "Carmela",
+         SUM(DECODE("Supplier code",''06190'',1,0)) "Euro",
+         SUM(DECODE("Supplier code",''17383'',1,0)) "East side J.",
+         SUM(DECODE("Supplier code",''00869'',1,0)) "Hillandale",
+         SUM(DECODE("Supplier code",''17244'',1,0)) "Imperial",
+         SUM(DECODE("Supplier code",''06966'',1,0)) "Lipari",
+         SUM(DECODE("Supplier code",''07188'',1,0)) "Midland",
+         SUM(DECODE("Supplier code",''07626'',1,0)) "Pierres",
+         SUM(DECODE("Supplier code",''08313'',1,0)) "Sysco",
+         SUM(DECODE("Supplier code",''08531'',1,0)) "UNFI",
+         SUM(DECODE("Supplier code",''02076'',1,0)) "Wakefern",
+         SUM(CASE WHEN "Supplier code" NOT IN (''H090061'',''H091070'',''H091071'',''17383'',''17244'',''06966'',
+                                               ''00869'',''07188'', ''07626'',''08531'',''02076'', 
+                                               ''08313'',''06190'',''00284'',''AO1706872'') THEN 1
+                  ELSE 0
+             END)  "Others",
+         COUNT(artcexr) "Counted",
+         COUNT(DISTINCT("Holes day")) "Nb days counted" 
+  FROM HISTORY t, CALWEEKS
+  WHERE weekNumber= "Day of the week"(+)
+  GROUP BY :param2, weekNumber, ''WK '' || to_char("1ST_DAY", ''MM/DD'') || ''-'' || to_char("LAST_DAY", ''MM/DD'')
+)
+SELECT "Store #",  to_char("Holes date", ''MM/DD/RR'') "Holes date",   "Day of the week",
+       "Grocery","Dairy","Freezer", "Euro", "B.A. Sweetie", "Carmela", "East side J.", "Hillandale",  "Imperial",
+       "Lipari", "Midland", "Pierres", "Sysco", "UNFI", "Wakefern",  
+       "Others", "Counted", CASE WHEN "Counted" > 0 THEN 1 ELSE 0 END "Nb days counted"  
+  FROM (SELECT * FROM LISTCOUNT ORDER BY  "Holes date" ASC)
+UNION ALL
+SELECT * 
+  FROM (SELECT * FROM HISTORYCOUNT ORDER BY "Holes date" DESC)
+
+</QUERY>
+<NAME>Recap</NAME>
+<NAME2>details</NAME2>
+<NAME3>Persistent Holes (3-Day)</NAME3>
+<NAME4>Persistent Holes (1-Day)</NAME4>
+<NAME5>Printable (1-Day)</NAME5>
+<TABCOLORXLS>BE2528</TABCOLORXLS>
+<TABCOLORXLS3>F04500</TABCOLORXLS3>
+<TABCOLORXLS4>D7CB56</TABCOLORXLS4>
+<TABCOLORXLS5>F9F9EF</TABCOLORXLS5>
+<QUERY2>
+WITH CALWEEKS AS (
+select to_char(SYSDATE- 7*(LEVEL-1),''RRRR'') || 
+        FLOOR((SYSDATE- 7*(LEVEL-1) - TRUNC(TRUNC(SYSDATE- 7*(LEVEL-1), ''YYYY'') - MOD(TO_NUMBER(TO_CHAR(TRUNC(SYSDATE- 7*(LEVEL-1), ''YYYY''), ''D'')) - 1, 7))) / 7) + 1 
+       weekNumber, TRUNC(SYSDATE- 7*(LEVEL-1),''D'') "1ST_DAY", TRUNC(SYSDATE- 7*(LEVEL-1),''D'') + 6  "LAST_DAY"
+from  dual
+connect by 13 >= level 
+)
+  SELECT DISTINCT einsite "Store #",  weekNumber "Holes week",
+                 to_char(eindinv,''MM/DD/RR'') "Holes date", to_char(eindinv,''DAY'') "Day of the week",
+                (SELECT foucnuf || '' | '' || foulibl
+                  FROM (select foucnuf, foulibl, MAX(aradfin)
+                        from artuc@heinens_custom_prod, foudgene@heinens_custom_prod 
+                        where aracfin=foucfin and aracinr=dincinr 
+                        and aratfou=1 
+                        AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+                        GROUP BY foucnuf, foulibl ORDER BY 3 DESC) 
+                  where rownum=1) "Supplier code",
+       artcexr "Item code",
+       pkstrucobj.get_desc@heinens_custom_prod(1, artcinr,''HN'') "Item desc.",
+       pkartcoca.Get_Arccode@heinens_custom_prod(1,dincinl) "UPC",
+       0 "Qty reported"
+  FROM inventinv@heinens_custom_prod, invdetinv@heinens_custom_prod,
+     invsaisie@heinens_custom_prod, artrac@heinens_custom_prod, CALWEEKS
+  WHERE isacininv=dincininv
+  AND eincininv=dincininv
+  AND eintinv = 22 /* Not PICS/RGIS */
+  AND dincinl=isacinl
+  AND trunc(eindinv) between "1ST_DAY" and "LAST_DAY"
+/* AND isaqter=0 */
+  AND artcinr=dincinr
+  AND einsite=:param2
+order by to_char(eindinv,''MM/DD/RR'') desc
+</QUERY2>
+<FORMATXLS>
+{
+  "conditionalRule": [{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "A",
+        "columnEnd": "U"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    }
+  ]
+}
+</FORMATXLS>
+
+<FORMATXLS2>
+{
+  "conditionalRule": [{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "A",
+        "columnEnd": "D"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    },{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "H",
+        "columnEnd": "I"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    }
+  ]
+}
+</FORMATXLS2>
+<QUERY3>
+WITH LASTxHOLEREPORT AS (
+  SELECT * 
+  FROM inventinv@heinens_custom_prod 
+  WHERE eintinv = 22 /* Not PICS/RGIS */
+  AND einsite=:param2
+  AND TRUNC(eindinv) >=TRUNC(SYSDATE-:param3)
+  ORDER BY eindinv DESC
+),
+IDENTIFY_ITEMS AS(
+  SELECT COUNT(DISTINCT(dincinl)) cnt, MAX(TRUNC(eindinv)) maxDinv, dincinl, einsite, dincinr
+  FROM invdetinv@heinens_custom_prod, LASTxHOLEREPORT
+  WHERE dincininv=eincininv
+  AND dinsite=einsite
+  HAVING COUNT(1) >= :param3
+  GROUP BY dincinl, einsite, dincode, dincinr),
+ IDENTIFY_ITEMS_FILTERED AS(
+  SELECT cnt,  maxDinv, dincinl, einsite, dincinr,
+         pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, 1101, ''1'') "CLE",
+         pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, 1102, ''1'') "CHI"
+  FROM IDENTIFY_ITEMS
+  WHERE maxDinv=TRUNC(SYSDATE)
+),
+distinct_dates AS (
+  SELECT DISTINCT det.dincinl item_code, TRUNC(dindinv) AS report_date
+  FROM invdetinv@heinens_custom_prod det, IDENTIFY_ITEMS_FILTERED it
+  WHERE det.dincinl=it.dincinl
+  AND det.dinsite=:param2
+),
+valid_calendar AS (
+  SELECT DISTINCT TRUNC(eindinv) AS report_date
+  FROM inventinv@heinens_custom_prod
+  WHERE TRUNC(eindinv) >= TRUNC(SYSDATE-365)
+  AND einsite=:param2
+),
+calendar_with_pos AS (
+  SELECT
+    report_date,
+    ROW_NUMBER() OVER (ORDER BY report_date) AS calendar_pos
+  FROM valid_calendar
+),
+item_valid_days AS (
+  SELECT DISTINCT det.dincinl AS item_code, TRUNC(dindinv) AS report_date
+  FROM invdetinv@heinens_custom_prod det
+  JOIN IDENTIFY_ITEMS_FILTERED it ON det.dincinl = it.dincinl
+  WHERE det.dinsite = :param2
+),
+joined_ranked AS (
+  SELECT
+    i.item_code,
+    i.report_date,
+    c.calendar_pos,
+    ROW_NUMBER() OVER (PARTITION BY i.item_code ORDER BY c.calendar_pos) AS item_pos
+  FROM item_valid_days i
+  JOIN calendar_with_pos c ON i.report_date = c.report_date
+),
+grouped AS (
+  SELECT
+    item_code,
+    report_date,
+    calendar_pos - item_pos AS group_id
+  FROM joined_ranked
+),
+Enriched_data AS(
+SELECT einsite "Store #", 
+       to_char(maxDinv,''RRRR'') || 
+        FLOOR((maxDinv - TRUNC(TRUNC(maxDinv, ''YYYY'') - MOD(TO_NUMBER(TO_CHAR(TRUNC(maxDinv, ''YYYY''), ''D'')) - 1, 7))) / 7) + 1 
+       weekNumber,
+       to_char(maxDinv,''MM/DD/RRRR'') "Hole date",
+       to_char(maxDinv,''DAY'') "Day of the week",
+       (SELECT "Vendor" 
+        FROM (select foucnuf || ''/'' || fccnum || ''/'' || aranfilf  || '' | '' || foulibl "Vendor", MAX(aradfin)
+              from artuc@heinens_custom_prod, foudgene@heinens_custom_prod, artul@heinens_custom_prod, fouccom@heinens_custom_prod
+              where aracfin=foucfin and aracinr=arucinr  AND arucinl=dincinl
+              AND fccccin=araccin
+              and aratfou=1 
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY foucnuf || ''/'' || fccnum || ''/'' || aranfilf  || '' | '' || foulibl ORDER BY 2 DESC) 
+        where rownum=1) "Supplier code",
+       (SELECT "Supplier type" 
+        FROM (select decode(VENDOR_CODE, null, foutype,0) "Supplier type", MAX(aradfin)
+              from artuc@heinens_custom_prod, foudgene@heinens_custom_prod, artul@heinens_custom_prod, fouccom@heinens_custom_prod, sbt_vendor
+              where aracfin=foucfin and aracinr=arucinr  AND arucinl=dincinl
+              AND fccccin=araccin
+              and aratfou=1 
+              and foucnuf=vendor_code(+)
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY VENDOR_CODE, foutype ORDER BY 2 DESC) 
+        where rownum=1) "Supplier type",
+       (SELECT siteVendorCcomNfilf 
+        FROM (select :param2 || aracfin || araccin || aranfilf siteVendorCcomNfilf,  MAX(aradfin)
+              from artuc@heinens_custom_prod, artul@heinens_custom_prod 
+              WHERE aracinr=arucinr AND arucinl=dincinl
+              and aratfou=1 
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY :param2 || aracfin || araccin || aranfilf ORDER BY 2 DESC) 
+        where rownum=1) siteVendorCcomNfilf,
+        dincinl,
+        (SELECT artcexr FROM artul@heinens_custom_prod, artrac@heinens_custom_prod WHERE arucinl=dincinl AND arucinr=artcinr) "Item code",
+        (SELECT pkstrucobj.get_desc@heinens_custom_prod(1,arucinr,''HN'') FROM artul@heinens_custom_prod WHERE arucinl=dincinl ) "Item desc",
+        pkartcoca.Get_Arccode@heinens_custom_prod(1,dincinl) "UPC",
+        0 "Qty reported",
+        (SELECT consecutive_day_count
+           FROM (SELECT item_code,
+                        MIN(report_date) AS start_date,
+                        MAX(report_date) AS end_date,
+                        COUNT(*) AS consecutive_day_count
+                   FROM grouped nb
+                  WHERE item_code = it.dincinl
+                  GROUP BY item_code, group_id
+                  ORDER BY end_date DESC)
+          WHERE ROWNUM = 1) AS "Nb days",
+          
+       (SELECT case when trunc(sysdate) > aradfin then ''Check if discontinued.''
+                    when aratcde != 1  then ''Check if discontinued.''
+               end
+        FROM (SELECT aratcde,  MAX(aradfin) aradfin
+              from artuc@heinens_custom_prod, artul@heinens_custom_prod 
+              WHERE aracinr=arucinr AND arucinl=dincinl
+              and aratfou=1 
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY aratcde ORDER BY 2 DESC) 
+        where rownum=1) "Comment",
+        (SELECT MAX(dcdcincde) dcdcincde 
+          FROM cdedetcde@heinens_custom_prod
+          WHERE dcdsite=:param2
+          AND dcdcinr=dincinr
+          AND dcdetat >=5 ) "LastPOcincde",
+       (SELECT ''X'' FROM aveprix@heinens_custom_prod, avetar@heinens_custom_prod, avescope@heinens_custom_prod 
+        WHERE avicinv=dincinl AND TRUNC(SYSDATE) BETWEEN aviddeb AND avidfin
+        AND avintar=aventar
+        AND avestat =2 /* temporary */
+        AND avontar=avintar
+        AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, avorescint, ''1'')=1 
+        AND TRUNC(SYSDATE) BETWEEN avoddeb AND avodfin AND ROWNUM=1) "on Promo",
+        DECODE ("CLE",1,
+                 (SELECT tattlibl FROM artattri@heinens_custom_prod,  tra_attrival@heinens_custom_prod
+                  WHERE dincinr=aatcinr AND aatccla=''PRMO'' 
+                  AND TRUNC(SYSDATE) BETWEEN aatddeb AND aatdfin 
+                  AND tattccla=aatccla AND tattcode=aatcatt AND langue=''HN'' AND ROWNUM=1),
+                 (SELECT tattlibl FROM artattri@heinens_custom_prod,  tra_attrival@heinens_custom_prod
+                  WHERE dincinr=aatcinr AND aatccla=''PRM2'' 
+                  AND TRUNC(SYSDATE) BETWEEN aatddeb AND aatdfin 
+                  AND tattccla=aatccla AND tattcode=aatcatt AND langue=''HN'' AND ROWNUM=1)) "Promo type", dincinr,
+       (SELECT sobcext FROM strucobj@heinens_custom_prod, strucrel@heinens_custom_prod 
+        WHERE dincinr=objcint
+        AND TRUNC(SYSDATE) BETWEEN objddeb AND objdfin
+        AND objpere=sobcint) "Merch"
+ FROM IDENTIFY_ITEMS_FILTERED it)
+ SELECT "Store #" , weekNumber "Hole week",
+        "Hole date", "Day of the week",
+        CASE 
+          WHEN "Merch" LIKE ''103%'' THEN ''Grocery''
+          WHEN "Merch" LIKE ''102010%'' THEN ''Dairy''
+          WHEN "Merch" LIKE ''102011%'' THEN ''Frozen''
+          WHEN "Merch" LIKE ''102014%'' THEN ''Ice-cream''
+          WHEN "Merch" LIKE ''101%'' THEN ''Meat''
+          WHEN "Merch" LIKE ''104008%'' THEN ''Fresh Produce''
+          WHEN "Merch" LIKE ''104019%'' THEN ''Floral''
+          WHEN "Merch" LIKE ''104021%'' THEN ''Salad bar''
+          WHEN "Merch" LIKE ''104025%'' THEN ''Bulk Produce''
+          WHEN "Merch" LIKE ''105%'' THEN ''Bakery''
+          WHEN "Merch" LIKE ''106007%'' THEN ''Deli''
+          WHEN "Merch" LIKE ''106015%'' THEN ''PPD''
+          WHEN "Merch" LIKE ''106016%'' THEN ''Cafe''
+          WHEN "Merch" LIKE ''106022%'' THEN ''Speciality Cheese''
+          WHEN "Merch" LIKE ''106033%'' THEN ''Seafood''
+          WHEN "Merch" LIKE ''199%'' THEN ''General''
+          ELSE ''Other''
+        END "Dept.",
+        "Supplier code",
+        /*(SELECT (liscdlu + liscdma + liscdme + liscdje + liscdve + liscdsa + liscddi) || '' times/week''
+         FROM lienserv WHERE (lissite||liscfin ||lisccin ||lisnfilf)=siteVendorCcomNfilf
+         AND lissite=:param2
+         AND TRUNC(SYSDATE) BETWEEN lisddeb AND lisdfin) "Frequency",*/
+         (SELECT (DECODE(liscdlu,0,''X'',''M'') || DECODE(liscdma,0,''X'',''T'') || 
+                  DECODE(liscdme,0,''X'',''W'') || DECODE(liscdje,0,''X'',''T'') || 
+                  DECODE(liscdve,0,''X'',''F'') || DECODE(liscdsa,0,''X'',''S'') ||
+                  DECODE(liscddi,0,''X'',''S'')) 
+         FROM lienserv@heinens_custom_prod WHERE (lissite||liscfin ||lisccin ||lisnfilf)=siteVendorCcomNfilf
+         AND lissite=:param2
+         AND TRUNC(SYSDATE) BETWEEN lisddeb AND lisdfin) "Frequency",
+         (SELECT to_char(MAX(ecddcom),''MM/DD/RR'') FROM cdeentcde@heinens_custom_prod WHERE ecdsite=:param2
+          AND ecdsite || ecdcfin || ecdccin || ecdnfilf =siteVendorCcomNfilf) "Last vendor order",
+         (SELECT to_char(MAX(serdrec),''MM/DD/RR'') FROM stoentre@heinens_custom_prod WHERE sersite=:param2
+          AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf)  "Last receipt",
+         (SELECT to_char(MAX(ecddenvoi),''MM/DD/RR'') 
+          FROM cdedetcde@heinens_custom_prod,
+               cdeentcde@heinens_custom_prod  
+          WHERE ecdsite=:param2
+          AND dcdcinr=dincinr
+          and dcdsite || dcdcfin || dcdccin || dcdnfilf =siteVendorCcomNfilf
+          AND ecdcincde=dcdcincde) "Last item pending order",
+         (SELECT to_char(MAX(dcddliv),''MM/DD/RR'') 
+          FROM cdedetcde@heinens_custom_prod
+          WHERE dcdsite=:param2
+          and dcdsite || dcdcfin || dcdccin || dcdnfilf =siteVendorCcomNfilf
+          AND dcdcinr=dincinr) "Last expected delivery order",
+         (SELECT to_char(MAX(sdrsdrc),''MM/DD/RR'') 
+          FROM stodetre@heinens_custom_prod, stoentre@heinens_custom_prod 
+          WHERE sersite=:param2
+          AND sdrcinr=dincinr
+          AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+          AND sercinrec=sdrcinrec) "Last item receipt order",
+          (SELECT MIN(fpldram) FROM fouplan@heinens_custom_prod WHERE fplsite||fplcfin||fplccin||fplnfilf=siteVendorCcomNfilf
+           AND (TRUNC(fpldram) > TRUNC(SYSDATE) 
+           OR (TRUNC(fpldram)= TRUNC(SYSDATE) AND to_char(SYSDATE,''HH24MI'')>fplhram))) "Next order",
+        /* Order status (1. CUT, 2. AWAITING DELIVERY, 3. NOT ORDERED) */
+         CASE 
+            /* BA Sweetie SBT mgt only */
+            WHEN "Supplier type" = 0 AND "Supplier code" = ''00284'' THEN
+              NVL(
+                  (SELECT CASE 
+                            WHEN TO_CHAR("Hole date", ''D'') IN (''5'',''6'',''7'') THEN ''SBT (CUT)''
+                            ELSE ''SBT (AWAITING DELIVERY)''
+                          END
+                  FROM cdedetcde@heinens_custom_prod d, cdeentcde@heinens_custom_prod ent
+                  WHERE dcdsite=:param2
+                  AND dcdsite || dcdcfin || dcdccin || dcdnfilf = siteVendorCcomNfilf
+                  and dcdcincde="LastPOcincde"
+                  AND dincinr=dcdcinr
+                  AND ecdcincde=dcdcincde
+                  AND dcdetat BETWEEN 3 AND 6                          /* exclude status 7 = cleared */
+                  AND ecdetat between 3 and 6 
+                  AND TRUNC(ecddcre) >=                                /* PO created on or after the relevant Friday */
+                      CASE WHEN TO_CHAR("Hole date", ''D'') IN (''6'',''7'')
+                            THEN NEXT_DAY(TRUNC("Hole date") - 14, ''FRIDAY'')   /* Fri/Sat hole ¿ prev-prev Fri */
+                            ELSE NEXT_DAY(TRUNC("Hole date") - 7,  ''FRIDAY'')   /* Sun¿Thu hole ¿ last Fri      */
+                      END
+                  AND TRUNC("Hole date") >= TRUNC(ecddcre)             /* not a future PO */
+                  AND ROWNUM=1
+                  ),
+                  ''SBT (NOT ORDERED)''
+                )
+            WHEN "Supplier type" = 0 then ''SBT''
+            ELSE NVL((SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''CUT'' 
+                      FROM cdedetcde@heinens_custom_prod   
+                            WHERE dcdsite=:param2
+                            AND dincinr=dcdcinr
+                            and dcdcincde="LastPOcincde"
+                            AND dcdral > 0 
+                            AND dcdetat >=6
+                      UNION
+                      SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''CUT'' 
+                      FROM cdedetcde@heinens_custom_prod   
+                      WHERE dcdsite=:param2
+                      AND dincinr=dcdcinr 
+                      and dcdcincde="LastPOcincde"
+                      AND dcdral = 0 
+                      AND dcdetat=7
+                      AND dcdcomm1 is not null
+                      UNION
+                      SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''CUT'' 
+                    FROM cdedetcde@heinens_custom_prod,  foudgene@HEINENS_CUSTOM_PROD,  stoentre@heinens_custom_prod
+                    WHERE dcdcincde="LastPOcincde"
+                    AND dcdcfin=foucfin
+                    AND foutype =1 /* DSD */
+                    AND dincinr=dcdcinr
+                    AND dcdsite=:param2
+                    AND dcdetat>=5
+                    AND sersite=:param2
+                    AND sercincde=999999999 /* DSD receipt without order */
+                    AND TRUNC(serdrec)>= TRUNC(dcddliv-1) 
+                    AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+                    AND NOT EXISTS (SELECT 1 FROM stodetre@heinens_custom_prod
+                            WHERE sdrcinr=dincinr
+                            AND sercinrec=sdrcinrec)  AND  ROWNUM=1
+                      ), 
+                              
+                              NVL((SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''RECEIVED'' 
+                                  FROM (SELECT MAX(sdrsdrc) receiptDate
+                                          FROM stodetre@heinens_custom_prod, stoentre@heinens_custom_prod 
+                                          WHERE sersite=:param2
+                                          AND sdrcinr=dincinr
+                                          AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+                                          AND sercinrec=sdrcinrec)
+                                  WHERE receiptDate >=TRUNC(SYSDATE-:param3) AND ROWNUM=1
+                                  UNION 
+                                  SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''RECEIVED'' 
+                                  FROM stodetre@heinens_custom_prod,  stoentre@heinens_custom_prod 
+                                  WHERE sersite=:param2
+                                  AND sdrcinr=dincinr
+                                  AND sercincde="LastPOcincde"
+                                  AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+                                  AND trunc(sdrsdrc) >= trunc(SYSDATE-:param3)
+                                  AND sercinrec=sdrcinrec AND ROWNUM=1
+                                  ),
+                                  
+                            NVL((SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''AWAITING DELIVERY'' 
+                                FROM cdedetcde@heinens_custom_prod d, cdeentcde@heinens_custom_prod ent
+                                WHERE dcdsite=:param2
+                              AND dincinr=dcdcinr
+                              AND dcdsite || dcdcfin || dcdccin || dcdnfilf =siteVendorCcomNfilf
+                              AND dcdcincde="LastPOcincde"
+                              AND ecdcincde=dcdcincde
+                              AND dcdetat between 3 and 5
+                              AND ecdetat between 3 and 5 
+                              AND d.dcdral > 0 AND ROWNUM=1),
+                              decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''NOT ORDERED'')))
+                      END "Last delivery status",
+         "Item code", "Item desc", "UPC",
+         decode("on Promo",''X'',NVL("Promo type",''IN STORE'')) "on Promo",
+         /* "Promo type", */
+         "Qty reported",  "Nb days", "Comment"
+ FROM enriched_DATA
+ WHERE "Nb days" >= :param3
+ ORDER BY  "Nb days" DESC
+</QUERY3>
+
+<FORMATXLS3>
+{
+  "conditionalRule": [{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "A",
+        "columnEnd": "E"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    },{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "G",
+        "columnEnd": "O"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    },{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "Q",
+        "columnEnd": "T"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    },
+    {
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "N",
+        "columnEnd": "N"
+      },
+      "rules": [{
+          "ref": "N5:N99999",
+          "rule": [{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"CUT\", $N5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "FFD200"
+                }
+              }
+            }
+          },{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"RECEIVED\", $N5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "B7DEE8"
+                }
+              }
+            }
+          },
+          {
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"NOT ORDERED\", $N5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "FF7E79"
+                }
+              }
+            }
+          },{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"AWAITING DELIVERY\", $N5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "92D050"
+                }
+              }
+            }
+          },{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"SBT\", $N5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "EDE762"
+                }
+              }
+            }
+          }
+          
+          ]
+        }
+      ]
+    }
+  ]
+}
+</FORMATXLS3>
+
+<QUERY4>
+WITH LASTxHOLEREPORT AS (
+  SELECT * 
+  FROM inventinv@heinens_custom_prod 
+  WHERE eintinv = 22 /* Not PICS/RGIS */
+  AND einsite=:param2
+  AND TRUNC(eindinv) >=TRUNC(SYSDATE-:param3)
+  ORDER BY eindinv DESC
+),
+IDENTIFY_ITEMS AS(
+  SELECT COUNT(DISTINCT(dincinl)) cnt, MAX(TRUNC(eindinv)) maxDinv, dincinl, einsite, dincinr
+  FROM invdetinv@heinens_custom_prod, LASTxHOLEREPORT
+  WHERE dincininv=eincininv
+  AND dinsite=einsite
+  HAVING COUNT(1) >= :param4
+  GROUP BY dincinl, einsite, dincode, dincinr),
+ IDENTIFY_ITEMS_FILTERED AS(
+  SELECT cnt,  maxDinv, dincinl, einsite, dincinr,
+         pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, 1101, ''1'') "CLE",
+         pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, 1102, ''1'') "CHI"
+  FROM IDENTIFY_ITEMS
+  WHERE maxDinv=TRUNC(SYSDATE)
+),
+distinct_dates AS (
+  SELECT DISTINCT det.dincinl item_code, TRUNC(dindinv) AS report_date
+  FROM invdetinv@heinens_custom_prod det, IDENTIFY_ITEMS_FILTERED it
+  WHERE det.dincinl=it.dincinl
+  AND det.dinsite=:param2
+),
+valid_calendar AS (
+  SELECT DISTINCT TRUNC(eindinv) AS report_date
+  FROM inventinv@heinens_custom_prod
+  WHERE TRUNC(eindinv) >= TRUNC(SYSDATE-365)
+  AND einsite=:param2
+),
+calendar_with_pos AS (
+  SELECT
+    report_date,
+    ROW_NUMBER() OVER (ORDER BY report_date) AS calendar_pos
+  FROM valid_calendar
+),
+item_valid_days AS (
+  SELECT DISTINCT det.dincinl AS item_code, TRUNC(dindinv) AS report_date
+  FROM invdetinv@heinens_custom_prod det
+  JOIN IDENTIFY_ITEMS_FILTERED it ON det.dincinl = it.dincinl
+  WHERE det.dinsite = :param2
+),
+joined_ranked AS (
+  SELECT
+    i.item_code,
+    i.report_date,
+    c.calendar_pos,
+    ROW_NUMBER() OVER (PARTITION BY i.item_code ORDER BY c.calendar_pos) AS item_pos
+  FROM item_valid_days i
+  JOIN calendar_with_pos c ON i.report_date = c.report_date
+),
+grouped AS (
+  SELECT
+    item_code,
+    report_date,
+    calendar_pos - item_pos AS group_id
+  FROM joined_ranked
+),
+Enriched_data AS(
+SELECT einsite "Store #", 
+       to_char(maxDinv,''RRRR'') || 
+        FLOOR((maxDinv - TRUNC(TRUNC(maxDinv, ''YYYY'') - MOD(TO_NUMBER(TO_CHAR(TRUNC(maxDinv, ''YYYY''), ''D'')) - 1, 7))) / 7) + 1 
+       weekNumber,
+       to_char(maxDinv,''MM/DD/RRRR'') "Hole date",
+       to_char(maxDinv,''DAY'') "Day of the week",
+       (SELECT "Vendor" 
+        FROM (select foucnuf || ''/'' || fccnum || ''/'' || aranfilf  || '' | '' || foulibl "Vendor", MAX(aradfin)
+              from artuc@heinens_custom_prod, foudgene@heinens_custom_prod, artul@heinens_custom_prod, fouccom@heinens_custom_prod
+              where aracfin=foucfin and aracinr=arucinr  AND arucinl=dincinl
+              AND fccccin=araccin
+              and aratfou=1 
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY foucnuf || ''/'' || fccnum || ''/'' || aranfilf  || '' | '' || foulibl ORDER BY 2 DESC) 
+        where rownum=1) "Supplier code",
+       (SELECT "Supplier type" 
+        FROM (select decode(VENDOR_CODE, null, foutype,0) "Supplier type", MAX(aradfin)
+              from artuc@heinens_custom_prod, foudgene@heinens_custom_prod, artul@heinens_custom_prod, fouccom@heinens_custom_prod, sbt_vendor
+              where aracfin=foucfin and aracinr=arucinr  AND arucinl=dincinl
+              AND fccccin=araccin
+              and aratfou=1 
+              and foucnuf=vendor_code(+)
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY VENDOR_CODE, foutype ORDER BY 2 DESC) 
+        where rownum=1) "Supplier type",
+       (SELECT siteVendorCcomNfilf 
+        FROM (select :param2 || aracfin || araccin || aranfilf siteVendorCcomNfilf,  MAX(aradfin)
+              from artuc@heinens_custom_prod, artul@heinens_custom_prod 
+              WHERE aracinr=arucinr AND arucinl=dincinl
+              and aratfou=1 
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY :param2 || aracfin || araccin || aranfilf ORDER BY 2 DESC) 
+        where rownum=1) siteVendorCcomNfilf,
+        dincinl,
+        (SELECT artcexr FROM artul@heinens_custom_prod, artrac@heinens_custom_prod WHERE arucinl=dincinl AND arucinr=artcinr) "Item code",
+        (SELECT pkstrucobj.get_desc@heinens_custom_prod(1,arucinr,''HN'') FROM artul@heinens_custom_prod WHERE arucinl=dincinl ) "Item desc",
+        pkartcoca.Get_Arccode@heinens_custom_prod(1,dincinl) "UPC",
+        0 "Qty reported",
+        (SELECT consecutive_day_count
+           FROM (SELECT item_code,
+                        MIN(report_date) AS start_date,
+                        MAX(report_date) AS end_date,
+                        COUNT(*) AS consecutive_day_count
+                   FROM grouped nb
+                  WHERE item_code = it.dincinl
+                  GROUP BY item_code, group_id
+                  ORDER BY end_date DESC)
+          WHERE ROWNUM = 1) AS "Nb days",
+          
+       (SELECT case when trunc(sysdate) > aradfin then ''Check if discontinued.''
+                    when aratcde != 1  then ''Check if discontinued.''
+               end
+        FROM (SELECT aratcde,  MAX(aradfin) aradfin
+              from artuc@heinens_custom_prod, artul@heinens_custom_prod 
+              WHERE aracinr=arucinr AND arucinl=dincinl
+              and aratfou=1 
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY aratcde ORDER BY 2 DESC) 
+        where rownum=1) "Comment",
+        (SELECT MAX(dcdcincde) dcdcincde 
+          FROM cdedetcde@heinens_custom_prod
+          WHERE dcdsite=:param2
+          AND dcdcinr=dincinr
+          AND dcdetat >=5 ) "LastPOcincde",
+       (SELECT ''X'' FROM aveprix@heinens_custom_prod, avetar@heinens_custom_prod, avescope@heinens_custom_prod 
+        WHERE avicinv=dincinl AND TRUNC(SYSDATE) BETWEEN aviddeb AND avidfin
+        AND avintar=aventar
+        AND avestat =2 /* temporary */
+        AND avontar=avintar
+        AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, avorescint, ''1'')=1 
+        AND TRUNC(SYSDATE) BETWEEN avoddeb AND avodfin AND ROWNUM=1) "on Promo",
+        DECODE ("CLE",1,
+                 (SELECT tattlibl FROM artattri@heinens_custom_prod,  tra_attrival@heinens_custom_prod
+                  WHERE dincinr=aatcinr AND aatccla=''PRMO'' 
+                  AND TRUNC(SYSDATE) BETWEEN aatddeb AND aatdfin 
+                  AND tattccla=aatccla AND tattcode=aatcatt AND langue=''HN'' AND ROWNUM=1),
+                 (SELECT tattlibl FROM artattri@heinens_custom_prod,  tra_attrival@heinens_custom_prod
+                  WHERE dincinr=aatcinr AND aatccla=''PRM2'' 
+                  AND TRUNC(SYSDATE) BETWEEN aatddeb AND aatdfin 
+                  AND tattccla=aatccla AND tattcode=aatcatt AND langue=''HN'' AND ROWNUM=1)) "Promo type", dincinr,
+       (SELECT sobcext FROM strucobj@heinens_custom_prod, strucrel@heinens_custom_prod 
+        WHERE dincinr=objcint
+        AND TRUNC(SYSDATE) BETWEEN objddeb AND objdfin
+        AND objpere=sobcint) "Merch"
+ FROM IDENTIFY_ITEMS_FILTERED it)
+ SELECT "Store #" , weekNumber "Hole week",
+        "Hole date", "Day of the week",
+        CASE 
+          WHEN "Merch" LIKE ''103%'' THEN ''Grocery''
+          WHEN "Merch" LIKE ''102010%'' THEN ''Dairy''
+          WHEN "Merch" LIKE ''102011%'' THEN ''Frozen''
+          WHEN "Merch" LIKE ''102014%'' THEN ''Ice-cream''
+          WHEN "Merch" LIKE ''101%'' THEN ''Meat''
+          WHEN "Merch" LIKE ''104008%'' THEN ''Fresh Produce''
+          WHEN "Merch" LIKE ''104019%'' THEN ''Floral''
+          WHEN "Merch" LIKE ''104021%'' THEN ''Salad bar''
+          WHEN "Merch" LIKE ''104025%'' THEN ''Bulk Produce''
+          WHEN "Merch" LIKE ''105%'' THEN ''Bakery''
+          WHEN "Merch" LIKE ''106007%'' THEN ''Deli''
+          WHEN "Merch" LIKE ''106015%'' THEN ''PPD''
+          WHEN "Merch" LIKE ''106016%'' THEN ''Cafe''
+          WHEN "Merch" LIKE ''106022%'' THEN ''Speciality Cheese''
+          WHEN "Merch" LIKE ''106033%'' THEN ''Seafood''
+          WHEN "Merch" LIKE ''199%'' THEN ''General''
+          ELSE ''Other''
+        END "Dept.",
+        "Supplier code",
+        /*(SELECT (liscdlu + liscdma + liscdme + liscdje + liscdve + liscdsa + liscddi) || '' times/week''
+         FROM lienserv WHERE (lissite||liscfin ||lisccin ||lisnfilf)=siteVendorCcomNfilf
+         AND lissite=:param2
+         AND TRUNC(SYSDATE) BETWEEN lisddeb AND lisdfin) "Frequency",*/
+         (SELECT (DECODE(liscdlu,0,''X'',''M'') || DECODE(liscdma,0,''X'',''T'') || 
+                  DECODE(liscdme,0,''X'',''W'') || DECODE(liscdje,0,''X'',''T'') || 
+                  DECODE(liscdve,0,''X'',''F'') || DECODE(liscdsa,0,''X'',''S'') ||
+                  DECODE(liscddi,0,''X'',''S'')) 
+         FROM lienserv@heinens_custom_prod WHERE (lissite||liscfin ||lisccin ||lisnfilf)=siteVendorCcomNfilf
+         AND lissite=:param2
+         AND TRUNC(SYSDATE) BETWEEN lisddeb AND lisdfin) "Frequency",
+         (SELECT to_char(MAX(ecddcom),''MM/DD/RR'') FROM cdeentcde@heinens_custom_prod WHERE ecdsite=:param2
+          AND ecdsite || ecdcfin || ecdccin || ecdnfilf =siteVendorCcomNfilf) "Last vendor order",
+         (SELECT to_char(MAX(serdrec),''MM/DD/RR'') FROM stoentre@heinens_custom_prod WHERE sersite=:param2
+          AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf)  "Last receipt",
+         (SELECT to_char(MAX(ecddenvoi),''MM/DD/RR'') 
+          FROM cdedetcde@heinens_custom_prod,
+               cdeentcde@heinens_custom_prod  
+          WHERE ecdsite=:param2
+          AND dcdcinr=dincinr
+          and dcdsite || dcdcfin || dcdccin || dcdnfilf =siteVendorCcomNfilf
+          AND ecdcincde=dcdcincde) "Last item pending order",
+         (SELECT to_char(MAX(dcddliv),''MM/DD/RR'') 
+          FROM cdedetcde@heinens_custom_prod
+          WHERE dcdsite=:param2
+          and dcdsite || dcdcfin || dcdccin || dcdnfilf =siteVendorCcomNfilf
+          AND dcdcinr=dincinr) "Last expected delivery order",
+         (SELECT to_char(MAX(sdrsdrc),''MM/DD/RR'') 
+          FROM stodetre@heinens_custom_prod, stoentre@heinens_custom_prod 
+          WHERE sersite=:param2
+          AND sdrcinr=dincinr
+          AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+          AND sercinrec=sdrcinrec) "Last item receipt order",
+          (SELECT MIN(fpldram) FROM fouplan@heinens_custom_prod WHERE fplsite||fplcfin||fplccin||fplnfilf=siteVendorCcomNfilf
+           AND (TRUNC(fpldram) > TRUNC(SYSDATE) 
+           OR (TRUNC(fpldram)= TRUNC(SYSDATE) AND to_char(SYSDATE,''HH24MI'')>fplhram))) "Next order",
+        /* Order status (1. CUT, 2. AWAITING DELIVERY, 3. NOT ORDERED) */
+         CASE 
+            /* BA Sweetie SBT mgt only */
+            WHEN "Supplier type" = 0 AND "Supplier code" = ''00284'' THEN
+              NVL(
+                  (SELECT CASE 
+                            WHEN TO_CHAR("Hole date", ''D'') IN (''5'',''6'',''7'') THEN ''SBT (CUT)''
+                            ELSE ''SBT (AWAITING DELIVERY)''
+                          END
+                  FROM cdedetcde@heinens_custom_prod d, cdeentcde@heinens_custom_prod ent
+                  WHERE dcdsite=:param2
+                  AND dcdsite || dcdcfin || dcdccin || dcdnfilf = siteVendorCcomNfilf
+                  and dcdcincde="LastPOcincde"
+                  AND dincinr=dcdcinr
+                  AND ecdcincde=dcdcincde
+                  AND dcdetat BETWEEN 3 AND 6                          /* exclude status 7 = cleared */
+                  AND TRUNC(ecddcre) >=                                /* PO created on or after the relevant Friday */
+                      CASE WHEN TO_CHAR("Hole date", ''D'') IN (''6'',''7'')
+                            THEN NEXT_DAY(TRUNC("Hole date") - 14, ''FRIDAY'')   /* Fri/Sat hole ¿ prev-prev Fri */
+                            ELSE NEXT_DAY(TRUNC("Hole date") - 7,  ''FRIDAY'')   /* Sun¿Thu hole ¿ last Fri      */
+                      END
+                  AND TRUNC("Hole date") >= TRUNC(ecddcre)             /* not a future PO */
+                  AND ROWNUM=1
+                  ),
+                  ''SBT (NOT ORDERED)''
+                )
+            WHEN "Supplier type" = 0 then ''SBT''
+            ELSE NVL((SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''CUT'' 
+                      FROM cdedetcde@heinens_custom_prod   
+                            WHERE dcdsite=:param2
+                            AND dincinr=dcdcinr 
+                            and dcdcincde="LastPOcincde"
+                            AND dcdral > 0 
+                            AND dcdetat >=6
+                      UNION
+                      SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''CUT'' 
+                      FROM cdedetcde@heinens_custom_prod   
+                      WHERE dcdsite=:param2
+                      AND dincinr=dcdcinr 
+                      and dcdcincde="LastPOcincde"
+                      AND dcdral = 0 
+                      AND dcdetat=7
+                      AND dcdcomm1 is not null
+                      UNION
+                      SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''CUT'' 
+                    FROM cdedetcde@heinens_custom_prod,  foudgene@HEINENS_CUSTOM_PROD,  stoentre@heinens_custom_prod
+                    WHERE dcdcincde="LastPOcincde"
+                    AND dcdcfin=foucfin
+                    AND foutype =1 /* DSD */
+                    AND dincinr=dcdcinr
+                    AND dcdsite=:param2
+                    AND dcdetat>=5
+                    AND sersite=:param2
+                    AND sercincde=999999999 /* DSD receipt without order */
+                    AND TRUNC(serdrec)>= TRUNC(dcddliv-1) 
+                    AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+                    AND NOT EXISTS (SELECT 1 FROM stodetre@heinens_custom_prod
+                            WHERE sdrcinr=dincinr
+                            AND sercinrec=sdrcinrec)  AND  ROWNUM=1
+                      ), 
+
+                              NVL((SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''RECEIVED'' 
+                                  FROM (SELECT MAX(sdrsdrc) receiptDate
+                                          FROM stodetre@heinens_custom_prod, stoentre@heinens_custom_prod 
+                                          WHERE sersite=:param2
+                                          AND sdrcinr=dincinr
+                                          AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+                                          AND sercinrec=sdrcinrec)
+                                  WHERE receiptDate >=TRUNC(SYSDATE-:param3) AND ROWNUM=1
+                                  UNION 
+                                  SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''RECEIVED'' 
+                                  FROM stodetre@heinens_custom_prod,  stoentre@heinens_custom_prod 
+                                  WHERE sersite=:param2
+                                  AND sdrcinr=dincinr
+                                  AND sercincde="LastPOcincde"
+                                  AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+                                  AND trunc(sdrsdrc) >= trunc(SYSDATE-:param3)
+                                  AND sercinrec=sdrcinrec AND ROWNUM=1
+                                  ),
+                                  
+                            NVL((SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''AWAITING DELIVERY'' 
+                                FROM cdedetcde@heinens_custom_prod d, cdeentcde@heinens_custom_prod ent
+                                WHERE dcdsite=:param2
+                                    AND dcdsite || dcdcfin || dcdccin || dcdnfilf =siteVendorCcomNfilf
+                              AND dincinr=dcdcinr
+                              AND dcdsite || dcdcfin || dcdccin || dcdnfilf =siteVendorCcomNfilf
+                              AND dcdcincde="LastPOcincde"
+                              AND ecdcincde=dcdcincde
+                              AND dcdetat between 3 and 5
+                              AND ecdetat between 3 and 5 
+                              AND d.dcdral > 0 AND ROWNUM=1),
+                              decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''NOT ORDERED'')))
+                      END "Last delivery status",
+         "Item code", "Item desc", "UPC",
+         decode("on Promo",''X'',NVL("Promo type",''IN STORE'')) "on Promo",
+         /* "Promo type", */
+         "Qty reported",  "Nb days", "Comment"
+ FROM enriched_DATA
+ WHERE "Nb days" >= :param4
+ ORDER BY  "Nb days" DESC
+</QUERY4>
+
+<FORMATXLS4>
+{
+  "conditionalRule": [{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "A",
+        "columnEnd": "E"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    },{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "G",
+        "columnEnd": "O"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    },{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "Q",
+        "columnEnd": "T"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    },
+    {
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "N",
+        "columnEnd": "N"
+      },
+      "rules": [{
+          "ref": "N5:N99999",
+          "rule": [{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"CUT\", $N5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "FFD200"
+                }
+              }
+            }
+          },{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"RECEIVED\", $N5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "B7DEE8"
+                }
+              }
+            }
+          },
+          {
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"NOT ORDERED\", $N5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "FF7E79"
+                }
+              }
+            }
+          },{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"AWAITING DELIVERY\", $N5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "92D050"
+                }
+              }
+            }
+          },{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"SBT\", $N5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "EDE762"
+                }
+              }
+            }
+          }
+          
+          ]
+        }
+      ]
+    }
+  ]
+}
+</FORMATXLS4>
+
+
+<QUERY5>
+
+WITH LASTxHOLEREPORT AS (
+  SELECT * 
+  FROM inventinv@heinens_custom_prod 
+  WHERE eintinv = 22 /* Not PICS/RGIS */
+  AND einsite=:param2
+  AND TRUNC(eindinv) >=TRUNC(SYSDATE-:param3)
+  ORDER BY eindinv DESC
+),
+IDENTIFY_ITEMS AS(
+  SELECT COUNT(DISTINCT(dincinl)) cnt, MAX(TRUNC(eindinv)) maxDinv, dincinl, einsite, dincinr
+  FROM invdetinv@heinens_custom_prod, LASTxHOLEREPORT,strucobj@heinens_custom_prod
+  WHERE dincininv=eincininv
+  AND dinsite=einsite
+  AND DINSTRCINT=sobcint
+  HAVING COUNT(1) >= :param4
+  GROUP BY dincinl, einsite, dincode,dincinr),
+ IDENTIFY_ITEMS_FILTERED AS(
+  SELECT cnt,  maxDinv, dincinl, einsite, dincinr,
+         pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, 1101, ''1'') "CLE",
+         pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, 1102, ''1'') "CHI"
+  FROM IDENTIFY_ITEMS
+  WHERE maxDinv=TRUNC(SYSDATE)
+),
+distinct_dates AS (
+  SELECT DISTINCT det.dincinl item_code, TRUNC(dindinv) AS report_date
+  FROM invdetinv@heinens_custom_prod det, IDENTIFY_ITEMS_FILTERED it
+  WHERE det.dincinl=it.dincinl
+  AND det.dinsite=:param2
+)
+,
+valid_calendar AS (
+  SELECT DISTINCT TRUNC(eindinv) AS report_date
+  FROM inventinv@heinens_custom_prod
+  WHERE TRUNC(eindinv) >= TRUNC(SYSDATE-365)
+  AND einsite=:param2
+),
+calendar_with_pos AS (
+  SELECT
+    report_date,
+    ROW_NUMBER() OVER (ORDER BY report_date) AS calendar_pos
+  FROM valid_calendar
+),
+item_valid_days AS (
+  SELECT DISTINCT det.dincinl AS item_code, TRUNC(dindinv) AS report_date
+  FROM invdetinv@heinens_custom_prod det
+  JOIN IDENTIFY_ITEMS_FILTERED it ON det.dincinl = it.dincinl
+  WHERE det.dinsite = :param2
+),
+joined_ranked AS (
+  SELECT
+    i.item_code,
+    i.report_date,
+    c.calendar_pos,
+    ROW_NUMBER() OVER (PARTITION BY i.item_code ORDER BY c.calendar_pos) AS item_pos
+  FROM item_valid_days i
+  JOIN calendar_with_pos c ON i.report_date = c.report_date
+),
+grouped AS (
+  SELECT
+    item_code,
+    report_date,
+    calendar_pos - item_pos AS group_id
+  FROM joined_ranked
+),
+Enriched_data AS(
+SELECT einsite "Store #", 
+       to_char(maxDinv,''RRRR'') || 
+        FLOOR((maxDinv - TRUNC(TRUNC(maxDinv, ''YYYY'') - MOD(TO_NUMBER(TO_CHAR(TRUNC(maxDinv, ''YYYY''), ''D'')) - 1, 7))) / 7) + 1 
+       weekNumber,
+       to_char(maxDinv,''MM/DD/RRRR'') "Hole date",
+       to_char(maxDinv,''DAY'') "Day of the week",
+       (SELECT "Vendor" 
+        FROM (select foucnuf || ''/'' || fccnum || ''/'' || aranfilf  || '' | '' || foulibl "Vendor", MAX(aradfin)
+              from artuc@heinens_custom_prod, foudgene@heinens_custom_prod, artul@heinens_custom_prod, fouccom@heinens_custom_prod
+              where aracfin=foucfin and aracinr=arucinr  AND arucinl=dincinl
+              AND fccccin=araccin
+              and aratfou=1 
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY foucnuf || ''/'' || fccnum || ''/'' || aranfilf  || '' | '' || foulibl ORDER BY 2 DESC) 
+        where rownum=1) "Supplier code",
+       (SELECT "Supplier type" 
+        FROM (select decode(VENDOR_CODE, null, foutype,0) "Supplier type", MAX(aradfin)
+              from artuc@heinens_custom_prod, foudgene@heinens_custom_prod, artul@heinens_custom_prod, fouccom@heinens_custom_prod, sbt_vendor
+              where aracfin=foucfin and aracinr=arucinr  AND arucinl=dincinl
+              AND fccccin=araccin
+              and aratfou=1 
+              and foucnuf=vendor_code(+)
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY VENDOR_CODE, foutype ORDER BY 2 DESC) 
+        where rownum=1) "Supplier type",
+       (SELECT siteVendorCcomNfilf 
+        FROM (select :param2 || aracfin || araccin || aranfilf siteVendorCcomNfilf,  MAX(aradfin)
+              from artuc@heinens_custom_prod, artul@heinens_custom_prod 
+              WHERE aracinr=arucinr AND arucinl=dincinl
+              and aratfou=1 
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY :param2 || aracfin || araccin || aranfilf ORDER BY 2 DESC) 
+        where rownum=1) siteVendorCcomNfilf,
+        dincinl,
+        (SELECT artcexr FROM artul@heinens_custom_prod, artrac@heinens_custom_prod WHERE arucinl=dincinl AND arucinr=artcinr) "Item code",
+        (SELECT pkstrucobj.get_desc@heinens_custom_prod(1,arucinr,''HN'') FROM artul@heinens_custom_prod WHERE arucinl=dincinl ) "Item desc",
+        pkartcoca.Get_Arccode@heinens_custom_prod(1,dincinl) "UPC",
+        0 "Qty reported",
+        (SELECT consecutive_day_count
+           FROM (SELECT item_code,
+                        MIN(report_date) AS start_date,
+                        MAX(report_date) AS end_date,
+                        COUNT(*) AS consecutive_day_count
+                   FROM grouped nb
+                  WHERE item_code = it.dincinl
+                  GROUP BY item_code, group_id
+                  ORDER BY end_date DESC)
+          WHERE ROWNUM = 1) AS "Nb days",
+          
+       (SELECT case when trunc(sysdate) > aradfin then ''Check if discontinued.''
+                    when aratcde != 1  then ''Check if discontinued.''
+               end
+        FROM (SELECT aratcde,  MAX(aradfin) aradfin
+              from artuc@heinens_custom_prod, artul@heinens_custom_prod 
+              WHERE aracinr=arucinr AND arucinl=dincinl
+              and aratfou=1 
+              AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, arasite, ''1'')=1 
+              GROUP BY aratcde ORDER BY 2 DESC) 
+        where rownum=1) "Comment",
+        (SELECT MAX(dcdcincde) dcdcincde 
+          FROM cdedetcde@heinens_custom_prod
+          WHERE dcdsite=:param2
+          AND dcdcinr=dincinr
+          AND dcdetat >=5 ) "LastPOcincde",
+       (SELECT ''X'' FROM aveprix@heinens_custom_prod, avetar@heinens_custom_prod, avescope@heinens_custom_prod 
+        WHERE avicinv=dincinl AND TRUNC(SYSDATE) BETWEEN aviddeb AND avidfin
+        AND avintar=aventar
+        AND avestat =2 /* temporary */
+        AND avontar=avintar
+        AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1,:param2, avorescint, ''1'')=1 
+        AND TRUNC(SYSDATE) BETWEEN avoddeb AND avodfin AND ROWNUM=1) "on Promo",
+        DECODE ("CLE",1,
+                 (SELECT tattlibl FROM artattri@heinens_custom_prod,  tra_attrival@heinens_custom_prod
+                  WHERE dincinr=aatcinr AND aatccla=''PRMO'' 
+                  AND TRUNC(SYSDATE) BETWEEN aatddeb AND aatdfin 
+                  AND tattccla=aatccla AND tattcode=aatcatt AND langue=''HN'' AND ROWNUM=1),
+                 (SELECT tattlibl FROM artattri@heinens_custom_prod,  tra_attrival@heinens_custom_prod
+                  WHERE dincinr=aatcinr AND aatccla=''PRM2'' 
+                  AND TRUNC(SYSDATE) BETWEEN aatddeb AND aatdfin 
+                  AND tattccla=aatccla AND tattcode=aatcatt AND langue=''HN'' AND ROWNUM=1)) "Promo type", dincinr,
+       (SELECT sobcext FROM strucobj@heinens_custom_prod, strucrel@heinens_custom_prod 
+        WHERE dincinr=objcint
+        AND TRUNC(SYSDATE) BETWEEN objddeb AND objdfin
+        AND objpere=sobcint) "Merch"
+ FROM IDENTIFY_ITEMS_FILTERED it)
+ SELECT "Store #" , /* weekNumber "Hole week", */
+        "Hole date", "Day of the week",
+        CASE 
+          WHEN "Merch" LIKE ''103002%'' THEN ''Grocery Taxable''
+          WHEN "Merch" LIKE ''103%'' THEN ''Grocery''
+          WHEN "Merch" LIKE ''102010%'' THEN ''Dairy''
+          WHEN "Merch" LIKE ''102011%'' THEN ''Frozen''
+          WHEN "Merch" LIKE ''102014%'' THEN ''Ice-cream''
+          WHEN "Merch" LIKE ''101%'' THEN ''Meat''
+          WHEN "Merch" LIKE ''104008%'' THEN ''Fresh Produce''
+          WHEN "Merch" LIKE ''104019%'' THEN ''Floral''
+          WHEN "Merch" LIKE ''104021%'' THEN ''Salad bar''
+          WHEN "Merch" LIKE ''104025%'' THEN ''Bulk Produce''
+          WHEN "Merch" LIKE ''105%'' THEN ''Bakery''
+          WHEN "Merch" LIKE ''106007%'' THEN ''Deli''
+          WHEN "Merch" LIKE ''106015%'' THEN ''PPD''
+          WHEN "Merch" LIKE ''106016%'' THEN ''Cafe''
+          WHEN "Merch" LIKE ''106022%'' THEN ''Speciality Cheese''
+          WHEN "Merch" LIKE ''106033%'' THEN ''Seafood''
+          WHEN "Merch" LIKE ''199%'' THEN ''General''
+          ELSE ''Other''
+        END "Dept.",
+        "Supplier code",
+         (SELECT to_char(MAX(serdrec),''MM/DD/RR'') FROM stoentre@heinens_custom_prod WHERE sersite=:param2
+          AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf)  "Last receipt",
+        /* Order status (1. CUT, 2. AWAITING DELIVERY, 3. NOT ORDERED) */
+         CASE 
+            /* BA Sweetie SBT mgt only */
+            WHEN "Supplier type" = 0 AND "Supplier code" = ''00284'' THEN
+              NVL(
+                  (SELECT CASE 
+                            WHEN TO_CHAR("Hole date", ''D'') IN (''5'',''6'',''7'') THEN ''SBT (CUT)''
+                            ELSE ''SBT (AWAITING DELIVERY)''
+                          END
+                  FROM cdedetcde@heinens_custom_prod d, cdeentcde@heinens_custom_prod ent
+                  WHERE dcdsite=:param2
+                  AND dcdsite || dcdcfin || dcdccin || dcdnfilf = siteVendorCcomNfilf
+                  and dcdcincde="LastPOcincde"
+                  AND dincinr=dcdcinr
+                  AND ecdcincde=dcdcincde
+                  AND dcdetat BETWEEN 3 AND 6                          /* exclude status 7 = cleared */
+                  AND TRUNC(ecddcre) >=                                /* PO created on or after the relevant Friday */
+                      CASE WHEN TO_CHAR("Hole date", ''D'') IN (''6'',''7'')
+                            THEN NEXT_DAY(TRUNC("Hole date") - 14, ''FRIDAY'')   /* Fri/Sat hole ¿ prev-prev Fri */
+                            ELSE NEXT_DAY(TRUNC("Hole date") - 7,  ''FRIDAY'')   /* Sun¿Thu hole ¿ last Fri      */
+                      END
+                  AND TRUNC("Hole date") >= TRUNC(ecddcre)             /* not a future PO */
+                  AND ROWNUM=1
+                  ),
+                  ''SBT (NOT ORDERED)''
+                )
+            WHEN "Supplier type" = 0 then ''SBT''
+            ELSE NVL((SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''CUT'' 
+                      FROM cdedetcde@heinens_custom_prod   
+                            WHERE dcdsite=:param2
+                            AND dincinr=dcdcinr
+                            and dcdcincde="LastPOcincde"
+                            AND dcdral > 0 
+                            AND dcdetat >=6
+                      UNION
+                      SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''CUT'' 
+                      FROM cdedetcde@heinens_custom_prod   
+                      WHERE dcdsite=:param2
+                      AND dincinr=dcdcinr
+                      and dcdcincde="LastPOcincde"
+                      AND dcdral = 0 
+                      AND dcdetat=7
+                      AND dcdcomm1 is not null
+                      UNION
+                      SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''CUT'' 
+                    FROM cdedetcde@heinens_custom_prod,  foudgene@HEINENS_CUSTOM_PROD,  stoentre@heinens_custom_prod
+                    WHERE dcdcincde="LastPOcincde"
+                    AND dcdcfin=foucfin
+                    AND foutype =1 /* DSD */
+                    AND dincinr=dcdcinr
+                    AND dcdsite=:param2
+                    AND dcdetat>=5
+                    AND sersite=:param2
+                    AND sercincde=999999999 /* DSD receipt without order */
+                    AND TRUNC(serdrec)>= TRUNC(dcddliv-1) 
+                    AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+                    AND NOT EXISTS (SELECT 1 FROM stodetre@heinens_custom_prod
+                            WHERE sdrcinr=dincinr
+                            AND sercinrec=sdrcinrec) AND  ROWNUM=1
+                      ), 
+                              
+                              NVL((SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''RECEIVED'' 
+                                  FROM (SELECT MAX(sdrsdrc) receiptDate
+                                          FROM stodetre@heinens_custom_prod, stoentre@heinens_custom_prod 
+                                          WHERE sersite=:param2
+                                          AND sdrcinr=dincinr
+                                          AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+                                          AND sercinrec=sdrcinrec)
+                                  WHERE receiptDate >=TRUNC(SYSDATE-:param3) AND ROWNUM=1
+                                  UNION 
+                                  SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''RECEIVED'' 
+                                  FROM stodetre@heinens_custom_prod,  stoentre@heinens_custom_prod 
+                                  WHERE sersite=:param2
+                                  AND sdrcinr=dincinr
+                                  AND sercincde="LastPOcincde"
+                                  AND sersite || sercfin || serccin || serfilf =siteVendorCcomNfilf
+                                  AND trunc(sdrsdrc) >= trunc(SYSDATE-:param3)
+                                  AND sercinrec=sdrcinrec AND ROWNUM=1
+                                  ),
+                                  
+                            NVL((SELECT decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''AWAITING DELIVERY'' 
+                                FROM cdedetcde@heinens_custom_prod d, cdeentcde@heinens_custom_prod ent
+                                WHERE dcdsite=:param2
+                                AND dcdsite || dcdcfin || dcdccin || dcdnfilf =siteVendorCcomNfilf
+                                AND dincinr=dcdcinr
+                                AND dcdcincde="LastPOcincde"
+                                AND ecdcincde=dcdcincde
+                                AND dcdetat between 3 and 5
+                                AND ecdetat between 3 and 5 
+                                AND d.dcdral > 0 AND ROWNUM=1),
+                            decode("Supplier type", 1, ''(DSD) '', ''(WHS) '') || ''NOT ORDERED''))) 
+                      END "Last delivery status",
+         "Item code", "Item desc", "UPC",
+         decode("on Promo",''X'',NVL("Promo type",''IN STORE'')) "on Promo",
+         /* "Promo type", */
+         /* "Qty reported", */
+         "Nb days", "Comment"
+ FROM enriched_DATA
+ WHERE "Nb days" >= :param4
+ UNION
+ SELECT to_number(store_num), /* weekNumber "Hole week", */
+        hole_date, day_of_week,dept,
+        supplier_code,  last_receipt, last_delivery_status,
+         item_code, item_desc, UPC, on_promo,
+         to_number(nb_days), comments
+ FROM hole_report@HEINENS_CUSTOM_PROD
+ WHERE store_num=9
+ AND to_date(hole_date,''MM/DD/RR'') >= TRUNC(SYSDATE-5)
+ ORDER BY  "Hole date" DESC,"Nb days" DESC
+</QUERY5>
+
+<FORMATXLS5>
+{
+  "conditionalRule": [{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "A",
+        "columnEnd": "D"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    },{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "F",
+        "columnEnd": "H"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    },{
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "J",
+        "columnEnd": "L"
+      },
+      "rules": [{
+        "ref": "",
+        "rule": [{
+          "type": "containsText",
+          "operator": "notContainsBlanks",
+          "style": {
+            "alignment": {
+              "horizontal": "center"
+            }
+          }
+        }]
+      }]
+    },
+    {
+      "easeRule": {
+        "repeat": "1",
+        "lineStart": "5",
+        "every": "1",
+        "columnStart": "G",
+        "columnEnd": "G"
+      },
+      "rules": [{
+          "ref": "G5:G99999",
+          "rule": [{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"CUT\", $G5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "FFD200"
+                }
+              }
+            }
+          },{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"RECEIVED\", $G5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "B7DEE8"
+                }
+              }
+            }
+          },
+          {
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"NOT ORDERED\", $G5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "FF7E79"
+                }
+              }
+            }
+          },{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"AWAITING DELIVERY\", $G5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "92D050"
+                }
+              }
+            }
+          },{
+            "type": "expression",
+            "formulae": ["ISNUMBER(SEARCH(\"SBT\", $G5))"],
+            "style": {
+              "fill": {
+                "type": "pattern",
+                "pattern": "solid",
+                "bgColor": {
+                  "argb": "EDE762"
+                }
+              }
+            }
+          }
+          ]
+        }
+      ]
+    }
+  ],
+  "preFilter": [
+        {
+         "columnName": "Hole date",
+         "type": "today",
+         "dateFormat": "MM/DD/RRRR"
+        }
+  ]
+}
+</FORMATXLS5>
+
+  <HEADERIFEMPTY>No Holes reported history </HEADERIFEMPTY>
+  <HEADER>Store Holes reported</HEADER>
+
+</ROOT>
