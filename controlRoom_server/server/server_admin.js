@@ -114,6 +114,7 @@ let syndigo = require('./server/controller/syndigo')(app, SQL);
 let logs = require('./server/controller/logs')(app, SQL);
 let oneway = require('./server/controller/oneway')(app, SQL);
 let unix = require('./server/controller/command/unix')(app, SQL);
+let watchdog = require('./server/controller/watchdog')(app, SQL);
 
 
 //dbConnection.createPool('dd');

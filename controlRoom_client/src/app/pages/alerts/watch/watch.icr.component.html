@@ -1,0 +1,508 @@
+<app-page-header [heading]="'Critical Alert Watchdog'" [waitMessage]="waitMessage"
+                 [screenID]="screenID" [icon]="'fa-shield-alt'"></app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+    <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
+</div>
+
+
+<!-- ========================= ABOUT / HELP PANEL ========================= -->
+<div class="watch-help-panel">
+    <div class="watch-help-header" (click)="toggleHelp()">
+        <i class="fas fa-shield-alt" style="margin-right: 8px;"></i>
+        <span class="watch-help-title">About the Critical Alert Watchdog</span>
+        <span class="watch-help-toggle">
+            <i class="fas" [class.fa-chevron-down]="!showHelp" [class.fa-chevron-up]="showHelp"></i>
+            {{ showHelp ? 'Hide' : 'Show' }}
+        </span>
+    </div>
+
+    <div class="watch-help-body" *ngIf="showHelp">
+        <p>
+            This screen lets you protect <b>critical alerts</b> from silent failure. For every
+            <b>watch contract</b> you create here, a background scanner checks
+            <code>ALERTLOG</code> on a schedule. If the expected log row never arrives, the
+            watchdog runs your recovery shell, writes the outcome to
+            <code>ALERTWATCHLOG</code>, and pages an admin by SMS + email.
+        </p>
+
+        <div class="watch-help-grid">
+            <div class="watch-help-section">
+                <h4><i class="fas fa-rocket"></i> Quick start</h4>
+                <ol>
+                    <li>Click <b>CREATE</b>.</li>
+                    <li><b>General</b> tab — pick the <b>Alert</b> (LALTID) and, optionally, a <b>LALTPARAM LIKE</b> pattern (e.g.&nbsp;<code>%CNT0000000004_5%</code>) to target one instance of a fan-out alert.</li>
+                    <li>Use <b>Test pattern</b> to confirm the pattern matches real rows from the last 24 h.</li>
+                    <li><b>Schedule</b> tab — set the cron when the log entry is expected, plus the grace period.</li>
+                    <li><b>Recovery shell</b> tab — edit the pre-filled curl template so it re-fires the missed alert (typically a call to <code>/api/notification/</code>).</li>
+                    <li>Save. The next scan will start enforcing the contract.</li>
+                </ol>
+            </div>
+
+            <div class="watch-help-section">
+                <h4><i class="fas fa-key"></i> Key concepts</h4>
+                <ul>
+                    <li><b>AWTPARAMLIKE</b> — Oracle <code>LIKE</code> pattern matched against <code>ALERTLOG.LALTPARAM</code>. Empty = match by LALTID alone. Required for fan-out alerts that fire many rows per run.</li>
+                    <li><b>Grace (sec)</b> — how long after the expected fire time before declaring it missed. Default 120 s.</li>
+                    <li><b>Max retries / scan</b> — hard cap so a long-broken alert can't trigger a fire-storm. Default 3.</li>
+                    <li><b>Catch up at startup</b> — also evaluate this watch when the Node app restarts.</li>
+                    <li><b>Active</b> — pause/resume the contract without losing it.</li>
+                </ul>
+            </div>
+
+            <div class="watch-help-section">
+                <h4><i class="fas fa-bolt"></i> Day-to-day</h4>
+                <ul>
+                    <li><b>Last recovery</b> column shows the most recent <code>ALERTWATCHLOG</code> status per watch (RECOVERED / FAILED / TIMED_OUT / never).</li>
+                    <li><i class="pi pi-history"></i> opens the recovery <b>history</b> for one watch.</li>
+                    <li><b>RUN NOW</b> in the top-right forces an immediate scan; useful right after creating a contract or to re-check after a system event.</li>
+                    <li>A <b>FAILED</b> row is <em>not</em> auto-retried. To force a retry after fixing the root cause, delete the matching <code>ALERTWATCHLOG</code> row.</li>
+                </ul>
+            </div>
+
+            <div class="watch-help-section">
+                <h4><i class="fas fa-sitemap"></i> Architecture</h4>
+                <ul>
+                    <li><b>ALERTWATCH</b> — the contracts you define here.</li>
+                    <li><b>ALERTWATCHLOG</b> — audit trail of every recovery the watchdog attempted.</li>
+                    <li><b>watchdog.js</b> Node controller, called every 5 min by OS cron and/or a row in <code>ALERTSCHEDULE</code>.</li>
+                    <li>OS cron is the disaster-recovery layer: if the Node app is unreachable, the cron entry pages the admin so the watchdog itself can never silently disappear.</li>
+                </ul>
+            </div>
+        </div>
+
+        <p class="watch-help-footnote">
+            <i class="fas fa-info-circle"></i>
+            Tip: tooltips on each field (the <i class="pi pi-info-circle"></i> icons inside the dialog) explain the underlying database column.
+        </p>
+    </div>
+</div>
+
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"
+                 rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+<!-- Save-completed banner -->
+<p-dialog header="Updates completed" [visible]="displayProcessCompleted" [modal]="true"
+          [style]="{width: '40vw'}">
+    <span>{{msgDisplayed}}</span>
+    <p-footer>
+        <button pButton type="button" icon="fas fa-check" iconPos="right"
+                (click)="displayProcessCompleted=false" label="Ok"></button>
+    </p-footer>
+</p-dialog>
+
+
+<!-- ========================= EDIT / CREATE DIALOG ========================= -->
+<p-dialog *ngIf="watchDisplay" [(visible)]="displayWatch"
+          header="{{isNewWatch ? 'New Watch' : ('Watch — ' + watchDisplay.AWTID)}}"
+          [maximizable]="true" [style]="{width: '85vw'}">
+
+    <div class="flex flex-row-reverse flex-wrap" style="padding-right: 20px;">
+        <span>
+            <button (click)="closeDialog()" pButton icon="fas fa-close" label="CANCEL"
+                    style="margin-right: 15px; height: 35px;"></button>
+            <button (click)="saveChanges()" pButton icon="fas fa-save" label="SAVE"
+                    [disabled]="isNewWatch && !watchDisplay.AWTID"
+                    style="margin-right: 15px; height: 35px;"></button>
+        </span>
+
+        <p-tabView class="watch-tabview" [style]="{'width':'100%'}">
+            <!-- ────── GENERAL ────── -->
+            <p-tabPanel header="General" lefticon="fas fa-id-badge">
+                <div class="formgrid grid">
+                    <div class="field col-3">
+                        <label class="font-bold" for="awtid">Watch ID
+                            <span *ngIf="isNewWatch" style="color: red;">*</span>
+                        </label>
+                        <input id="awtid" pInputText [(ngModel)]="watchDisplay.AWTID"
+                               [disabled]="!isNewWatch" placeholder="e.g. STOREHOLE_005"
+                               class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                    </div>
+                    <div class="field col-9">
+                        <label class="font-bold" for="awtdesc">Description</label>
+                        <input id="awtdesc" pInputText [(ngModel)]="watchDisplay.AWTDESC"
+                               class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                    </div>
+
+                    <div class="field col-6">
+                        <label class="font-bold" for="awtaltid">Watched Alert (LALTID) <span style="color: red;">*</span></label>
+                        <p-dropdown id="awtaltid" [options]="alertOptions" [(ngModel)]="watchDisplay.AWTALTID"
+                                    optionLabel="label" optionValue="value" [filter]="true"
+                                    placeholder="Pick an alert" [showClear]="true" class="w-full"
+                                    appendTo="body" filterBy="label"
+                                    panelStyleClass="awtaltid-panel"
+                                    [panelStyle]="{'min-width':'720px','max-width':'90vw'}"
+                                    [virtualScroll]="alertOptions.length > 50"
+                                    [virtualScrollItemSize]="36">
+                            <ng-template let-alert pTemplate="item">
+                                <div class="awtaltid-item">
+                                    <span class="awtaltid-id">{{alert.label.split(' — ')[0]}}</span>
+                                    <span class="awtaltid-desc">{{alert.label.split(' — ').slice(1).join(' — ')}}</span>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                    </div>
+                    <div class="field col-6">
+                        <label class="font-bold" for="awtparamlike">
+                            LALTPARAM LIKE pattern
+                            <i class="pi pi-info-circle" pTooltip="Oracle LIKE pattern matched against ALERTLOG.LALTPARAM. Leave empty to match by LALTID alone."></i>
+                        </label>
+                        <input id="awtparamlike" pInputText [(ngModel)]="watchDisplay.AWTPARAMLIKE"
+                               placeholder="e.g. %CNT0000000004_5%"
+                               class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                    </div>
+
+                    <div class="field col-12">
+                        <button pButton type="button" icon="fas fa-flask" label="Test pattern against last 24h of ALERTLOG"
+                                class="p-button-secondary p-button-sm" (click)="testParamLike()"
+                                [disabled]="!watchDisplay.AWTALTID || previewLoading">
+                        </button>
+                        <div *ngIf="previewRows && previewRows.length > 0" class="preview-panel">
+                            <strong>{{previewRows.length}} matching ALERTLOG row(s):</strong>
+                            <div *ngFor="let r of previewRows.slice(0, 50)">
+                                {{r.LALTEDATE}} — LALTID={{r.LALTID}} LALTPARAM={{r.LALTPARAM}}
+                            </div>
+                            <div *ngIf="previewRows.length > 50">… (+ {{previewRows.length - 50}} more)</div>
+                        </div>
+                        <div *ngIf="previewRows && previewRows.length === 0 && !previewLoading" class="preview-panel">
+                            <em>No matching rows in the last 24h.</em>
+                        </div>
+                    </div>
+                </div>
+            </p-tabPanel>
+
+            <!-- ────── SCHEDULING ────── -->
+            <p-tabPanel header="Schedule" lefticon="fas fa-clock">
+                <div class="formgrid grid">
+                    <div class="field col-3">
+                        <label class="font-bold" for="awtactivedate">Effective Date</label>
+                        <p-calendar id="awtactivedate" [(ngModel)]="watchDisplay.AWTACTIVEDATE"
+                                    [showIcon]="true" dateFormat="mm/dd/yy" [showButtonBar]="true">
+                        </p-calendar>
+                    </div>
+                    <div class="field col-2">
+                        <label class="font-bold" for="awtgrace">Grace (sec)</label>
+                        <input id="awtgrace" pInputText type="number" [(ngModel)]="watchDisplay.AWTGRACE"
+                               class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                    </div>
+                    <div class="field col-2">
+                        <label class="font-bold" for="awtmaxretry">Max retries / scan</label>
+                        <input id="awtmaxretry" pInputText type="number" [(ngModel)]="watchDisplay.AWTMAXRETRY"
+                               class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                    </div>
+                    <div class="field col-2">
+                        <label class="font-bold" for="awtactiveflag">Active</label>
+                        <p-checkbox id="awtactiveflag" [(ngModel)]="watchDisplay.AWTACTIVEFLAGBOOLEAN" [binary]="true"></p-checkbox>
+                    </div>
+                    <div class="field col-3">
+                        <label class="font-bold" for="awtcatchup">Catch up at startup</label>
+                        <p-checkbox id="awtcatchup" [(ngModel)]="watchDisplay.AWTCATCHUPBOOLEAN" [binary]="true"></p-checkbox>
+                    </div>
+
+                    <!-- Schedule builder -->
+                    <div class="field col-12">
+                        <label class="font-bold"><i class="fas fa-calendar-alt"></i> Expected fire schedule</label>
+                        <div class="formgrid grid" style="margin-top: 10px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <div class="field col-3">
+                                <label class="font-bold" for="freq">Frequency</label>
+                                <p-dropdown id="freq" [options]="frequencyOptions" [(ngModel)]="scheduleFrequency"
+                                            optionLabel="label" optionValue="value"
+                                            (onChange)="onFrequencyChange()" class="w-full"
+                                            appendTo="body"></p-dropdown>
+                            </div>
+                            <div class="field col-2" *ngIf="scheduleFrequency === 'daily' || scheduleFrequency === 'weekly' || scheduleFrequency === 'monthly'">
+                                <label class="font-bold" for="hour">Hour</label>
+                                <p-dropdown id="hour" [options]="hourOptions" [(ngModel)]="scheduleHour"
+                                            (onChange)="buildCronExpression()" class="w-full"
+                                            appendTo="body"></p-dropdown>
+                            </div>
+                            <div class="field col-2" *ngIf="scheduleFrequency !== 'interval_minutes' && scheduleFrequency !== 'custom'">
+                                <label class="font-bold" for="min">Minute</label>
+                                <p-dropdown id="min" [options]="minuteOptions" [(ngModel)]="scheduleMinute"
+                                            (onChange)="buildCronExpression()" class="w-full"
+                                            appendTo="body"></p-dropdown>
+                            </div>
+                            <div class="field col-2" *ngIf="scheduleFrequency === 'hour_range'">
+                                <label class="font-bold" for="hourRange">Hour range</label>
+                                <input id="hourRange" pInputText [(ngModel)]="scheduleHourRange"
+                                       (change)="buildCronExpression()" placeholder="e.g. 8-21"
+                                       class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                            </div>
+                            <div class="field col-2" *ngIf="scheduleFrequency === 'hour_range'">
+                                <label class="font-bold" for="dayRange">Days (opt)</label>
+                                <input id="dayRange" pInputText [(ngModel)]="scheduleDayOfWeekRange"
+                                       (change)="buildCronExpression()" placeholder="e.g. 1-5"
+                                       class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                            </div>
+                            <div class="field col-3" *ngIf="scheduleFrequency === 'weekly'">
+                                <label class="font-bold" for="dow">Day of week</label>
+                                <p-dropdown id="dow" [options]="dayOfWeekOptions" [(ngModel)]="scheduleDayOfWeek"
+                                            optionLabel="label" optionValue="value"
+                                            (onChange)="buildCronExpression()" class="w-full"
+                                            appendTo="body"></p-dropdown>
+                            </div>
+                            <div class="field col-3" *ngIf="scheduleFrequency === 'monthly'">
+                                <label class="font-bold" for="dom">Day of month</label>
+                                <p-dropdown id="dom" [options]="dayOfMonthOptions" [(ngModel)]="scheduleDayOfMonth"
+                                            (onChange)="buildCronExpression()" class="w-full"
+                                            appendTo="body"></p-dropdown>
+                            </div>
+                            <div class="field col-2" *ngIf="scheduleFrequency === 'interval_minutes'">
+                                <label class="font-bold" for="interval">Every (min)</label>
+                                <p-dropdown id="interval" [options]="intervalMinuteOptions" [(ngModel)]="scheduleInterval"
+                                            (onChange)="buildCronExpression()" class="w-full"
+                                            appendTo="body"></p-dropdown>
+                            </div>
+                            <div class="field col-12" style="margin-top: 10px;">
+                                <div style="padding: 10px; background: #e8f5e9; border-radius: 5px; border-left: 4px solid #4caf50;">
+                                    <i class="fas fa-clock" style="margin-right: 8px; color: #4caf50;"></i>
+                                    <span style="font-weight: 500;">{{scheduleReadable}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field col-12">
+                        <label class="font-bold" for="awtcron">Cron expression <span style="color:#888; font-weight:normal;">(advanced)</span></label>
+                        <div class="p-inputgroup">
+                            <input id="awtcron" pInputText [(ngModel)]="watchDisplay.AWTCRON"
+                                   (change)="parseCronExpression()"
+                                   class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                            <button type="button" pButton icon="fas fa-sync" pTooltip="Parse cron"
+                                    (click)="parseCronExpression()" class="p-button-secondary"></button>
+                        </div>
+                    </div>
+                </div>
+            </p-tabPanel>
+
+            <!-- ────── RECOVERY SHELL ────── -->
+            <p-tabPanel header="Recovery shell" lefticon="fas fa-terminal">
+                <div class="formgrid grid">
+                    <div class="field col-12" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <label class="font-bold" for="awtshell" style="margin: 0;">
+                            AWTSHELL
+                            <i class="pi pi-info-circle" pTooltip="Shell script the watchdog runs when a missed occurrence is detected. Same conventions as SALTSHELL — typically calls /api/notification/ for the specific instance."></i>
+                        </label>
+                        <button pButton type="button" icon="fas fa-magic" label="Insert template"
+                                pTooltip="Reset to a curl template you can edit"
+                                class="p-button-secondary p-button-sm"
+                                (click)="insertShellTemplate()"></button>
+                        <button pButton type="button" icon="fas fa-copy" label="Copy"
+                                pTooltip="Copy current AWTSHELL to clipboard"
+                                class="p-button-secondary p-button-sm"
+                                (click)="copyToClipboard(watchDisplay.AWTSHELL)"></button>
+                    </div>
+                    <div class="field col-12">
+                        <textarea id="awtshell" pInputText rows="16" [(ngModel)]="watchDisplay.AWTSHELL"
+                                  spellcheck="false" wrap="off"
+                                  class="text-base p-2 border-3 border-solid surface-border border-round w-full"
+                                  style="font-family: 'Courier New', monospace; font-size: 12px; white-space: pre; overflow: auto;"></textarea>
+                    </div>
+                </div>
+            </p-tabPanel>
+
+            <!-- ────── COMMENT ────── -->
+            <p-tabPanel header="Notes" lefticon="fas fa-sticky-note">
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <label class="font-bold" for="awtcomment">Free-text notes</label>
+                        <textarea id="awtcomment" pInputText rows="6" [(ngModel)]="watchDisplay.AWTCOMMENT"
+                                  class="text-base p-2 border-3 border-solid surface-border border-round w-full"></textarea>
+                    </div>
+                    <div class="field col-3">
+                        <label class="font-bold">Created</label>
+                        <input pInputText value="{{watchDisplay.AWTDCRE}}" disabled
+                               class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                    </div>
+                    <div class="field col-3">
+                        <label class="font-bold">Modified</label>
+                        <input pInputText value="{{watchDisplay.AWTDMAJ}}" disabled
+                               class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                    </div>
+                    <div class="field col-3">
+                        <label class="font-bold">Last user</label>
+                        <input pInputText value="{{watchDisplay.AWTUTIL}}" disabled
+                               class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+                    </div>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+</p-dialog>
+
+
+<!-- ========================= RECOVERY HISTORY DIALOG ========================= -->
+<p-dialog *ngIf="displayHistory" [(visible)]="displayHistory"
+          header="Recovery history — {{historyAwtId}}"
+          [maximizable]="true" [style]="{width: '80vw'}">
+    <div class="formgrid grid" style="margin-bottom: 10px;">
+        <div class="field col-2">
+            <label class="font-bold" for="histDays">Window (days)</label>
+            <input id="histDays" pInputText type="number" [(ngModel)]="historyDays"
+                   (change)="loadHistory()"
+                   class="text-base p-2 border-3 border-solid surface-border border-round w-full">
+        </div>
+        <div class="field col-2" style="align-self: end;">
+            <button pButton icon="fas fa-sync" label="Refresh" (click)="loadHistory()"
+                    class="p-button-secondary"></button>
+        </div>
+    </div>
+
+    <p-table #historyTable [value]="historyRows" [columns]="columnsHistory"
+             [rows]="20" [paginator]="true" [rowsPerPageOptions]="[20,50,100]"
+             [resizableColumns]="true">
+        <ng-template pTemplate="header">
+            <tr style="background: lightyellow;">
+                <th *ngFor="let col of columnsHistory" [pSortableColumn]="col.field">
+                    {{col.header}} <p-sortIcon [field]="col.field"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+            <tr>
+                <td>{{row.AWLEXPECTED}}</td>
+                <td><span class="status-badge" [class]="statusClass(row.AWLSTATUS)">{{row.AWLSTATUS}}</span></td>
+                <td style="text-align: right;">{{row.AWLEXITCODE}}</td>
+                <td>{{row.AWLDDETECTED}}</td>
+                <td>{{row.AWLDFIRED}}</td>
+                <td><pre style="font-size: 11px; white-space: pre-wrap; margin: 0;">{{row.AWLOUTPUT}}</pre></td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr><td colspan="6" style="text-align: center; padding: 20px;">No recovery activity in this window.</td></tr>
+        </ng-template>
+    </p-table>
+    <p-footer>
+        <button pButton (click)="historyTable.exportCSV()" icon="fas fa-file" label="Export CSV"></button>
+        <button pButton (click)="displayHistory=false" icon="fas fa-close" label="Close"></button>
+    </p-footer>
+</p-dialog>
+
+
+<!-- ========================= SEARCH PANEL ========================= -->
+<div class="bbs_search_panel">
+    <span style="margin-right: 1.5em; padding-left: 15px; font-weight: bolder;">Watch ID :</span>
+    <span style="padding-right: .5em; align-self: center;">
+        <input type="text" [(ngModel)]="searchAwtId" placeholder="Filter by AWTID"
+               style="margin-left: 10px; height: 35px;">
+    </span>
+
+    <span style="margin-right: 1.5em; padding-left: 15px; font-weight: bolder;">Alert :</span>
+    <span style="padding-right: .5em; align-self: center;">
+        <input type="text" [(ngModel)]="searchAwtAltId" placeholder="Filter by AWTALTID"
+               style="margin-left: 10px; height: 35px;">
+    </span>
+
+    <span style="margin-right: 1.5em; padding-left: 15px; font-weight: bolder;">Status :</span>
+    <span style="padding-right: .5em; align-self: center;" class="watch-search-dropdown">
+        <p-dropdown [options]="statusFilterOptions" [(ngModel)]="searchStatus"
+                    optionLabel="label" optionValue="value" appendTo="body"></p-dropdown>
+    </span>
+
+    <span class="pull-right" style="padding-right: 20px;">
+        <button pButton (click)="search()" [disabled]="!searchButtonEnable"
+                icon="fas fa-search" label="SEARCH" [style]="{'height': '35px'}"></button>
+        <button pButton (click)="runScanNow()" icon="fas fa-bolt" label="RUN NOW"
+                pTooltip="Force a watchdog scan now" class="p-button-warning"
+                [style]="{'height': '35px', 'margin-left': '10px'}"></button>
+    </span>
+</div>
+
+
+<!-- ========================= RESULT TABLE ========================= -->
+<div item-width="400px" table-layout="fixed" *ngIf="searchResult !== null">
+    <p-table #result [value]="searchResult" sortMode="multiple" [rows]="20"
+             [rowsPerPageOptions]="[20,50,100]" [paginator]="true" [pageLinks]="3"
+             [columns]="columnsResult" selectionMode="single"
+             [(selection)]="selectedElement" [resizableColumns]="true" columnResizeMode="fit"
+             [totalRecords]="searchResult.length" [reorderableColumns]="true"
+             scrollHeight="500px" (onRowSelect)="onRowSelect($event)" [autoLayout]="true">
+
+        <ng-template pTemplate="caption">
+            <div class="table-header grid">
+                <div class="col-1">
+                    <button type="button" pButton icon="fas fa-file" iconPos="left"
+                            class="CSV_Button" pTooltip="{{csvButtonTooltip}}"
+                            *ngIf="searchResult.length>0" label="CSV"
+                            (click)="result.exportCSV()" style="float:left">
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button type="button" pButton icon="pi pi-plus"
+                            class="CREATE_Button p-button-secondary" label="CREATE"
+                            (click)="createWatch()" style="float:left">
+                    </button>
+                </div>
+                <div class="col-9" style="text-align: right;">
+                    <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text"
+                               (input)="result.filterGlobal($any($event.target).value, 'contains')"
+                               placeholder="Type text to filter..." />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr style="background: lightyellow;">
+                <ng-container *ngFor="let col of columnsResult">
+                    <th *ngIf="col.display" [pSortableColumn]="col.field" pReorderableColumn pResizableColumn>
+                        {{col.header}}
+                        <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData>
+            <tr [pSelectableRow]="rowData">
+                <ng-container *ngFor="let col of columnsResult">
+                    <td *ngIf="col.display" [style.justify-content]="col.align">
+                        <ng-container [ngSwitch]="col.field">
+                            <span *ngSwitchCase="'ACTION'">
+                                <button pButton tooltipPosition="bottom" icon="pi pi-pencil"
+                                        (click)="editWatch(rowData['AWTID'])" pTooltip="Edit"
+                                        class="p-button-rounded p-button-sm p-button-secondary"
+                                        style="height: 2.6em; width: 2.6em;"></button>
+                                <button pButton tooltipPosition="bottom" icon="pi pi-copy"
+                                        (click)="duplicateWatch(rowData['AWTID'])" pTooltip="Duplicate"
+                                        class="p-button-rounded p-button-sm p-button-secondary"
+                                        style="height: 2.6em; width: 2.6em;"></button>
+                                <button pButton tooltipPosition="bottom" icon="pi pi-history"
+                                        (click)="openHistory(rowData['AWTID'])" pTooltip="Recovery history"
+                                        class="p-button-rounded p-button-sm p-button-info"
+                                        style="height: 2.6em; width: 2.6em;"></button>
+                                <button pButton tooltipPosition="bottom" icon="pi pi-trash"
+                                        (click)="confirmDeleteWatch(rowData['AWTID'])" pTooltip="Delete"
+                                        class="p-button-rounded p-button-sm p-button-danger"
+                                        style="height: 2.6em; width: 2.6em;"></button>
+                            </span>
+
+                            <span *ngSwitchCase="'AWTACTIVEFLAG'">
+                                <p-tag *ngIf="rowData.AWTACTIVEFLAG == 1" value="Active" severity="success"></p-tag>
+                                <p-tag *ngIf="rowData.AWTACTIVEFLAG != 1" value="Paused" severity="warning"></p-tag>
+                            </span>
+
+                            <span *ngSwitchCase="'LASTSTATUS'">
+                                <span *ngIf="rowData.LASTSTATUS" class="status-badge"
+                                      [class]="statusClass(rowData.LASTSTATUS)">{{rowData.LASTSTATUS}}</span>
+                                <span *ngIf="!rowData.LASTSTATUS" class="status-badge status-NEVER">never</span>
+                            </span>
+
+                            <span *ngSwitchDefault>{{rowData[col.field]}}</span>
+                        </ng-container>
+                    </td>
+                </ng-container>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr><td [attr.colspan]="columnsResult.length" style="text-align: center; padding: 20px;">
+                No watch contracts. Click <b>CREATE</b> to add one.
+            </td></tr>
+        </ng-template>
+    </p-table>
+    <i class="FOOTER_Table">{{searchResult.length}} watch contract(s)</i>
+</div>

@@ -33,4 +33,5 @@ export * from './syndigo/syndigo.service';
 export * from './alerts.icr/alerts.icr.service';
 export * from './order/order.service';
 export * from './unix/unix.runner.service';
+export * from './alerts.icr/watch.icr.service';
 

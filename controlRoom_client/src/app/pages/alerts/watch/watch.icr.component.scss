@@ -1,0 +1,302 @@
+/* ────────────────────────────────────────────────────────────────────────
+   Watchdog screen styles.
+   Component uses encapsulation: ViewEncapsulation.None, so every rule below
+   is global once the component is loaded — no :host / ::ng-deep needed and,
+   crucially, those wrappers would *not* match anything here.
+   ──────────────────────────────────────────────────────────────────────── */
+
+
+/* ─── CREATE button (matches the alerts screen) ──────────────────────────── */
+.CREATE_Button {
+    border-radius: 20px;
+    border: 0;
+    font-size: xx-small;
+    float: left;
+    border-color: white !important;
+    color:        white !important;
+}
+
+/* Distinct dialog header colour so the Watchdog screen reads as different
+   from Alerts (alerts uses darkcyan). */
+.p-dialog .p-dialog-header {
+    background: #b14d00;
+}
+
+/* Match the alerts convention of bold field labels.
+   `display: block` keeps p-checkbox (which is inline-block) on its own row
+   below the label, lining the Active / Catch-up boxes up with the inputs. */
+.field > label {
+    display:       block !important;
+    margin-bottom: 0.5rem !important;
+    font-weight:   700   !important;
+}
+.field > p-checkbox,
+.field > .p-checkbox {
+    display: inline-block;
+    margin-top: 4px;
+}
+
+
+/* ─── Status badges in the result table ──────────────────────────────────── */
+.status-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+}
+.status-RECOVERED { background: #2e7d32; }
+.status-FAILED    { background: #c62828; }
+.status-TIMED_OUT { background: #ef6c00; }
+.status-NO_SCRIPT { background: #6a1b9a; }
+.status-CLAIMED   { background: #1565c0; }
+.status-NEVER     { background: #757575; }
+
+
+/* ─── AWTPARAMLIKE preview panel ─────────────────────────────────────────── */
+.preview-panel {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-left: 4px solid #2196f3;
+    border-radius: 4px;
+    max-height: 250px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+
+/* ─── About / help panel above the search bar ──────────────────────────── */
+.watch-help-panel {
+    margin: 10px 15px 12px 15px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    background: #f5f8fb;
+    overflow: hidden;
+}
+
+.watch-help-header {
+    cursor: pointer;
+    padding: 10px 16px;
+    background: linear-gradient(90deg, #1976d2 0%, #2196f3 100%);
+    color: #ffffff;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    user-select: none;
+}
+
+.watch-help-title {
+    flex: 1;
+}
+
+.watch-help-toggle {
+    font-size: 12px;
+    opacity: 0.9;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.watch-help-toggle:hover {
+    opacity: 1;
+}
+
+.watch-help-body {
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #2c3e50;
+}
+.watch-help-body p { margin: 0 0 12px 0; }
+.watch-help-body code {
+    background: #ffffff;
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid #d0d7de;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #b14d00;
+}
+
+.watch-help-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.watch-help-section h4 {
+    margin: 0 0 8px 0;
+    color: #1976d2;
+    font-size: 14px;
+    font-weight: 700;
+}
+.watch-help-section h4 i {
+    margin-right: 6px;
+}
+.watch-help-section ul,
+.watch-help-section ol {
+    margin: 0;
+    padding-left: 20px;
+}
+.watch-help-section li {
+    margin-bottom: 4px;
+}
+
+.watch-help-footnote {
+    margin-top: 14px !important;
+    padding-top: 10px;
+    border-top: 1px dashed #d0d7de;
+    font-size: 12px;
+    color: #555;
+}
+.watch-help-footnote i.fas { margin-right: 6px; color: #1976d2; }
+
+
+/* The TabView host element defaults to inline-block, which makes it shrink
+   to fit its content inside a flex-row-reverse parent (so all the tab
+   content collapses to the right of the dialog).  Force the host to a
+   full-width block so every tab uses the entire dialog width. */
+.watch-tabview {
+    display:     block !important;
+    width:       100%  !important;
+    flex:        1 1 100%;
+    flex-basis:  100%;
+}
+
+
+/* ─── AWTALTID dropdown overlay — wider panel + 2-column row layout ─────
+   The default overlay inherits the dropdown input width (~half the dialog).
+   This rule lets the body-level overlay grow to fit the full
+   "ALTID — ALTSUBJECT" labels without clipping.  The dropdown is
+   appendTo=body so the panel exists outside the component's DOM — we
+   target it from the global stylesheet via the panelStyleClass we set on
+   the dropdown. */
+.awtaltid-panel {
+    min-width: 720px !important;
+    max-width: 90vw !important;
+}
+.awtaltid-panel .p-dropdown-item {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.awtaltid-panel .p-dropdown-item:hover {
+    background: #e3f2fd;
+}
+.awtaltid-item {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    width: 100%;
+}
+.awtaltid-id {
+    flex: 0 0 180px;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #1976d2;
+}
+.awtaltid-desc {
+    flex: 1 1 auto;
+    color: #2c3e50;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* ─── Search-bar Status dropdown — keep it 35px to match the inputs ─────── */
+.watch-search-dropdown {
+    display: inline-flex;
+    align-items: center;
+}
+.watch-search-dropdown .p-dropdown {
+    height:     35px !important;
+    min-height: 35px !important;
+    max-height: 35px !important;
+    min-width:  150px !important;
+    width:      160px;
+    margin-left: 10px;
+    display:     inline-flex !important;
+    align-items: center !important;
+    border-radius: 6px;
+}
+.watch-search-dropdown .p-dropdown .p-dropdown-label {
+    padding:     0 0.75rem !important;
+    line-height: 33px       !important;
+    height:      33px       !important;
+    display:     inline-flex !important;
+    align-items: center      !important;
+}
+.watch-search-dropdown .p-dropdown .p-dropdown-trigger {
+    width:  2.2rem !important;
+    height: 33px   !important;
+}
+
+
+/* ─── Severity-button readability ────────────────────────────────────────────
+   PrimeNG themes occasionally leave the .p-button-label colour at the dark
+   default, which makes labels disappear on a coloured background.  These
+   rules force a known background and white text on Run-now / Test-pattern /
+   action buttons so the labels are always visible regardless of theme.
+   With ViewEncapsulation.None, the simple `.p-button.x` selector is enough
+   — no `:host ::ng-deep` (which wouldn't match here anyway).
+*/
+.p-button.p-button-warning,
+.p-button.p-button-warning:not(:disabled) {
+    background:   #ef6c00 !important;
+    border-color: #ef6c00 !important;
+    color:        #ffffff !important;
+}
+.p-button.p-button-warning:hover,
+.p-button.p-button-warning:focus {
+    background:   #d65b00 !important;
+    border-color: #d65b00 !important;
+}
+
+.p-button.p-button-secondary,
+.p-button.p-button-secondary:not(:disabled) {
+    background:   #6c757d !important;
+    border-color: #6c757d !important;
+    color:        #ffffff !important;
+}
+.p-button.p-button-secondary:hover,
+.p-button.p-button-secondary:focus {
+    background:   #5a6268 !important;
+    border-color: #5a6268 !important;
+}
+
+.p-button.p-button-info,
+.p-button.p-button-info:not(:disabled) {
+    background:   #1976d2 !important;
+    border-color: #1976d2 !important;
+    color:        #ffffff !important;
+}
+.p-button.p-button-info:hover,
+.p-button.p-button-info:focus {
+    background:   #115293 !important;
+    border-color: #115293 !important;
+}
+
+.p-button.p-button-danger,
+.p-button.p-button-danger:not(:disabled) {
+    background:   #c62828 !important;
+    border-color: #c62828 !important;
+    color:        #ffffff !important;
+}
+.p-button.p-button-danger:hover,
+.p-button.p-button-danger:focus {
+    background:   #a02020 !important;
+    border-color: #a02020 !important;
+}
+
+/* Force label / icon spans to inherit the button's colour so they can't end
+   up dark-on-dark when an external theme overrides .p-button-label. */
+.p-button .p-button-label,
+.p-button .p-button-icon,
+.p-button .p-button-icon-left,
+.p-button .p-button-icon-right {
+    color: inherit !important;
+}

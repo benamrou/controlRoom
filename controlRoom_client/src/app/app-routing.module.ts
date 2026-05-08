@@ -82,6 +82,7 @@ import { AlertLogJournalComponent } from './pages/alerts/journal/alert.journal.c
 import { QueryRunnerComponent } from './pages/it/query.runner/query.runner.component';
 import { PresetQueryManagerComponent } from './pages/it/preset.query/preset.query.manager.component';
 import { ItemEndUPCComponent } from './pages/mass.update/item.end.upc/item.end.upc.component';
+import { WatchICRComponent } from './pages/alerts/watch/watch.icr.component';
 
 import { QueryLibraryComponent } from './pages/admin/query.library/query.library.component';
 import { DictionaryComponent } from './pages/admin/dictionary/dictionary.component';
@@ -195,6 +196,7 @@ const routes: Routes = [
   /** ALERT */
   { path: 'alerts-icr', component: AlertsICRComponent, canActivate: [AuthentificationGuard] },
   { path: 'alerts-journal', component: AlertLogJournalComponent, canActivate: [AuthentificationGuard] },
+  { path: 'alerts-watch', component: WatchICRComponent, canActivate: [AuthentificationGuard] },
 
   /** ADMIN */
   { path: 'settingquery', component: QueryLibraryComponent, canActivate: [AuthentificationGuard] },
