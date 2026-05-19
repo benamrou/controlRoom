@@ -1,0 +1,340 @@
+<app-page-header [heading]="'Menu & access'" [waitMessage]="waitMessage" [screenID]="screenID"
+    [icon]="'fa-sitemap'"></app-page-header>
+
+<div class="content-section implementation settings-crud">
+    <p-toast position="top-right"></p-toast>
+    <p-confirmDialog [style]="{width: '28rem'}"></p-confirmDialog>
+
+    <p-tabView [(activeIndex)]="activeTab" (onChange)="onTabChange($event)">
+        <!-- Menu catalog -->
+        <p-tabPanel header="Menu catalog">
+            <div class="settings-toolbar menu-catalog-toolbar grid align-items-end mb-3">
+                <div class="col-12 md:col-6 lg:col-3 menu-catalog-show-col">
+                    <label class="font-bold block mb-1" for="menuCatalogShowFilter">Show</label>
+                    <p-dropdown inputId="menuCatalogShowFilter"
+                        [options]="catalogFilterOptions" [(ngModel)]="catalogFilter"
+                        styleClass="w-full menu-catalog-show-dropdown"
+                        optionLabel="label" optionValue="value"
+                        (onChange)="loadMenuCatalog()"></p-dropdown>
+                </div>
+            </div>
+            <p-table #menuTable [value]="menuRows" [loading]="loadingMenu" [paginator]="true" [rows]="25"
+                [rowsPerPageOptions]="[20, 50, 100]" [pageLinks]="3"
+                styleClass="p-datatable-sm menu-catalog-table menu-access-table" responsiveLayout="scroll"
+                [globalFilterFields]="['MENU_CODE','LABEL_TEXT','MENU_MODE','PARENT_CODE']">
+                <ng-template pTemplate="caption">
+                    <div class="table-header grid align-items-center">
+                        <div class="col-1">
+                            <button type="button" pButton icon="fas fa-sync-alt" iconPos="left"
+                                pTooltip="Refresh" (click)="loadMenuCatalog()"
+                                [style]="{'height': '35px'}" style="float:left"></button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" pButton icon="pi pi-plus" iconPos="left"
+                                class="CREATE_Button" label="Add entry" (click)="openNewMenu()"
+                                style="float:left"></button>
+                        </div>
+                        <div class="col-9" style="text-align: right;">
+                            <span class="p-input-icon-right">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" #menuFilter
+                                    (input)="menuTable.filterGlobal($any($event.target).value, 'contains')"
+                                    placeholder="Type text to filter..." />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="menu-actions-col">Actions</th>
+                        <th pSortableColumn="MENU_CODE">Code <p-sortIcon field="MENU_CODE"></p-sortIcon></th>
+                        <th pSortableColumn="LABEL_TEXT">Label <p-sortIcon field="LABEL_TEXT"></p-sortIcon></th>
+                        <th>Type</th>
+                        <th>Mode</th>
+                        <th>Parent</th>
+                        <th>Route</th>
+                        <th>Sort</th>
+                        <th>Active</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr [class.text-muted]="row.ACTIVE != 1">
+                        <td class="menu-actions-col">
+                            <span class="action-buttons">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    (click)="openEditMenu(row)"
+                                    pTooltip="Edit" tooltipPosition="top"
+                                    class="p-button-rounded p-button-sm action-btn"></button>
+                                <button pButton pRipple type="button" icon="pi pi-ban"
+                                    *ngIf="row.ACTIVE == 1" (click)="confirmDeactivateMenu(row)"
+                                    pTooltip="Deactivate" tooltipPosition="top"
+                                    class="p-button-rounded p-button-sm action-btn"></button>
+                            </span>
+                        </td>
+                        <td><strong>{{ row.MENU_CODE }}</strong></td>
+                        <td>{{ row.LABEL_TEXT }}</td>
+                        <td>{{ row.MENU_TYPE }}</td>
+                        <td>{{ row.MENU_MODE }}</td>
+                        <td>{{ row.PARENT_CODE }}</td>
+                        <td class="route-cell">{{ row.ROUTE_PATH }}</td>
+                        <td>{{ row.SORT_ORDER }}</td>
+                        <td>{{ row.ACTIVE == 1 ? 'Yes' : 'No' }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <!-- Access rules -->
+        <p-tabPanel header="Flag rules">
+            <div class="mb-3 flex gap-2">
+                <button pButton label="Refresh" icon="pi pi-refresh" (click)="loadRules()"></button>
+                <button pButton label="Add rule" icon="pi pi-plus" (click)="openNewRule()"></button>
+            </div>
+            <p class="text-color-secondary text-sm mb-2">
+                Users also need the flag on
+                <a routerLink="/settingusers">Users &amp; Profiles</a> or an access profile.
+            </p>
+            <p-table #rulesTable [value]="rules" [loading]="loadingRules" [paginator]="true" [rows]="25"
+                [rowsPerPageOptions]="[25, 50, 100]" [pageLinks]="3"
+                styleClass="p-datatable-sm menu-access-table" responsiveLayout="scroll"
+                [globalFilterFields]="rulesTableGlobalFields">
+                <ng-template pTemplate="caption">
+                    <div class="table-header grid align-items-center">
+                        <div class="col-12" style="text-align: right;">
+                            <span class="p-input-icon-right">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="rulesTable.filterGlobal($any($event.target).value, 'contains')"
+                                    placeholder="Type text to filter..." />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="menu-actions-col">Actions</th>
+                        <th pSortableColumn="FLAG_NAME">Flag <p-sortIcon field="FLAG_NAME"></p-sortIcon></th>
+                        <th pSortableColumn="MENU_CODE">Menu <p-sortIcon field="MENU_CODE"></p-sortIcon></th>
+                        <th>Label</th>
+                        <th>Mode</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td class="menu-actions-col">
+                            <span class="action-buttons">
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    (click)="confirmDeleteRule(row)"
+                                    pTooltip="Delete" tooltipPosition="top"
+                                    class="p-button-rounded p-button-sm action-btn"></button>
+                            </span>
+                        </td>
+                        <td><strong>{{ flagLabel(row.FLAG_NAME) }}</strong></td>
+                        <td>{{ row.MENU_CODE }}</td>
+                        <td>{{ row.LABEL_TEXT }}</td>
+                        <td>{{ row.MENU_MODE }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <!-- Profiles -->
+        <p-tabPanel header="Profiles">
+            <div class="mb-3 flex gap-2">
+                <button pButton label="Refresh" icon="pi pi-refresh" (click)="loadProfiles()"></button>
+                <button pButton label="Add profile" icon="pi pi-plus" (click)="openNewProfile()"></button>
+            </div>
+            <p-table [value]="profiles" [loading]="loadingProfiles" [paginator]="true" [rows]="15"
+                styleClass="p-datatable-sm menu-access-table">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="menu-actions-col">Actions</th>
+                        <th>Id</th>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Active</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td class="menu-actions-col">
+                            <span class="action-buttons">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    (click)="openEditProfile(row)"
+                                    pTooltip="Edit" tooltipPosition="top"
+                                    class="p-button-rounded p-button-sm action-btn"></button>
+                            </span>
+                        </td>
+                        <td>{{ row.PROFILE_ID }}</td>
+                        <td>{{ row.PROFILE_CODE }}</td>
+                        <td>{{ row.PROFILE_NAME }}</td>
+                        <td>{{ row.ACTIVE == 1 ? 'Yes' : 'No' }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <!-- Profile → menus -->
+        <p-tabPanel header="Profile menus" [cache]="false">
+            <div class="grid align-items-end mb-3">
+                <div class="col-12 md:col-6">
+                    <label class="font-bold block mb-1">Access profile</label>
+                    <p-dropdown [options]="profileDropdownOptions" [(ngModel)]="profilePickId" styleClass="w-full"
+                        placeholder="Select profile" optionLabel="label" optionValue="value" [showClear]="true"
+                        (onChange)="onProfilePickChange()"></p-dropdown>
+                </div>
+                <div class="col-12 md:col-6 flex gap-2">
+                    <button pButton label="Load" icon="pi pi-download" [disabled]="!profilePickId"
+                        (click)="loadProfileMenus()"></button>
+                    <button pButton label="Save grants" icon="pi pi-save" [disabled]="!profilePickId || !profileMenuRows.length"
+                        [loading]="savingProfileMenus" (click)="saveProfileMenus()"></button>
+                </div>
+            </div>
+            <p class="text-color-secondary text-sm mb-2">
+                Checked menus are granted when <strong>USERPROF</strong> is set on the user (Users &amp; Profiles).
+                Flag rules still apply separately.
+            </p>
+            <p-table [value]="profileMenuRows" [loading]="loadingProfileMenus" [paginator]="true" [rows]="30"
+                [rowTrackBy]="trackProfileMenuRow" styleClass="p-datatable-sm">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width:4rem">Grant</th>
+                        <th>Menu code</th>
+                        <th>Label</th>
+                        <th>Mode</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td>
+                            <p-checkbox [(ngModel)]="row.granted" [binary]="true"
+                                [ngModelOptions]="{standalone: true}"></p-checkbox>
+                        </td>
+                        <td>{{ row.MENU_CODE }}</td>
+                        <td>{{ row.LABEL_TEXT }}</td>
+                        <td>{{ row.MENU_MODE }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+
+<!-- Menu dialog -->
+<p-dialog [(visible)]="menuDialog" [header]="isNewMenu ? 'New menu entry' : 'Edit menu entry'" [modal]="true"
+    [style]="{width: '36rem'}" [draggable]="false">
+    <div class="grid p-fluid">
+        <div class="field col-12">
+            <label>Menu code *</label>
+            <input pInputText [(ngModel)]="menuForm.MENU_CODE" [readonly]="!isNewMenu" style="text-transform:uppercase" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Type *</label>
+            <p-dropdown [options]="menuTypes" [(ngModel)]="menuForm.MENU_TYPE" styleClass="w-full"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Mode *</label>
+            <p-dropdown [options]="menuModes" [(ngModel)]="menuForm.MENU_MODE" styleClass="w-full"></p-dropdown>
+        </div>
+        <div class="field col-12">
+            <label>Label *</label>
+            <input pInputText [(ngModel)]="menuForm.LABEL_TEXT" />
+        </div>
+        <div class="field col-12">
+            <label>Parent group</label>
+            <p-dropdown [options]="parentDropdown" [(ngModel)]="menuForm.PARENT_CODE" styleClass="w-full"
+                optionLabel="label" optionValue="value" [showClear]="true"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Route path</label>
+            <input pInputText [(ngModel)]="menuForm.ROUTE_PATH" placeholder="/myroute" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Expand key</label>
+            <input pInputText [(ngModel)]="menuForm.EXPAND_KEY" placeholder="inventory" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Icon class</label>
+            <input pInputText [(ngModel)]="menuForm.ICON_CLASS" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <label>Sort order</label>
+            <input pInputText type="number" [(ngModel)]="menuForm.SORT_ORDER" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <label>Active</label>
+            <p-dropdown [options]="activeOptions" [(ngModel)]="menuForm.ACTIVE" styleClass="w-full"
+                optionLabel="label" optionValue="value"></p-dropdown>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancel" class="p-button-text" (click)="menuDialog = false"></button>
+        <button pButton label="Save" icon="pi pi-check" (click)="saveMenu()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Rule dialog -->
+<p-dialog [(visible)]="ruleDialog" header="Add access rule" [modal]="true" [style]="{width: '28rem'}"
+    [contentStyle]="{ overflow: 'visible' }">
+    <div class="grid p-fluid menu-access-dialog-fields">
+        <div class="field col-12">
+            <label>Menu</label>
+            <p-dropdown [options]="menuCodeDropdown" [(ngModel)]="ruleForm.MENU_CODE" styleClass="w-full"
+                optionLabel="label" optionValue="value" [filter]="true" filterBy="label"
+                placeholder="Select menu" appendTo="body" panelStyleClass="menu-access-dropdown-panel"
+                scrollHeight="240px">
+                <ng-template let-opt pTemplate="selectedItem">
+                    <span>{{ opt?.label }}</span>
+                </ng-template>
+                <ng-template let-opt pTemplate="item">
+                    <span>{{ opt.label }}</span>
+                </ng-template>
+            </p-dropdown>
+        </div>
+        <div class="field col-12">
+            <label>Flag</label>
+            <p-dropdown [options]="flagOptionItems" [(ngModel)]="ruleForm.FLAG_NAME" styleClass="w-full"
+                optionLabel="label" optionValue="value" placeholder="Select flag"
+                appendTo="body" panelStyleClass="menu-access-dropdown-panel" scrollHeight="240px">
+                <ng-template let-opt pTemplate="selectedItem">
+                    <span>{{ opt?.label }}</span>
+                </ng-template>
+                <ng-template let-opt pTemplate="item">
+                    <span>{{ opt.label }}</span>
+                </ng-template>
+            </p-dropdown>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancel" class="p-button-text" (click)="ruleDialog = false"></button>
+        <button pButton label="Add" icon="pi pi-check" (click)="saveRule()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Profile dialog -->
+<p-dialog [(visible)]="profileDialog" [header]="isNewProfile ? 'New profile' : 'Edit profile'" [modal]="true"
+    [style]="{width: '28rem'}">
+    <div class="grid p-fluid">
+        <div class="field col-12 md:col-4">
+            <label>Profile id *</label>
+            <input pInputText [(ngModel)]="profileForm.PROFILE_ID" [readonly]="!isNewProfile" />
+        </div>
+        <div class="field col-12 md:col-8">
+            <label>Code *</label>
+            <input pInputText [(ngModel)]="profileForm.PROFILE_CODE" style="text-transform:uppercase" />
+        </div>
+        <div class="field col-12">
+            <label>Name *</label>
+            <input pInputText [(ngModel)]="profileForm.PROFILE_NAME" />
+        </div>
+        <div class="field col-12">
+            <label>Active</label>
+            <p-dropdown [options]="activeOptions" [(ngModel)]="profileForm.ACTIVE" styleClass="w-full"
+                optionLabel="label" optionValue="value"></p-dropdown>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancel" class="p-button-text" (click)="profileDialog = false"></button>
+        <button pButton label="Save" icon="pi pi-check" (click)="saveProfile()"></button>
+    </ng-template>
+</p-dialog>

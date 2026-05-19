@@ -1,0 +1,34 @@
+<nav class="sidebar summer-sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
+    *ngIf="_userService.userInfo" style="padding-top:1%">
+    <ul class="list-group">
+        <a routerLink="/dashboard" routerLinkActive="router-link-active" class="list-group-item">
+            <i class="fas fa-tachometer-alt"></i>&nbsp; Dashboard
+        </a>
+
+        <ng-container *ngIf="!_userService.userInfo.aiMenuMode">
+            <app-sidebar-menu [nodes]="menuAccess.standardTree" [showMenu]="showMenu"
+                (expand)="addExpandClass($event)"></app-sidebar-menu>
+        </ng-container>
+
+        <ng-container *ngIf="_userService.userInfo.aiMenuMode">
+            <app-sidebar-menu [nodes]="menuAccess.aiTree" [showMenu]="showMenu"
+                (expand)="addExpandClass($event)"></app-sidebar-menu>
+        </ng-container>
+
+        <li *ngIf="menuAccess.loadFailed" class="p-3 text-muted small">
+            Menu catalog not loaded. Deploy script 35_menu_access_libquery.sql and refresh.
+        </li>
+    </ul>
+</nav>
+
+<nav class="sidebar_admin summer-sidebar-admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
+    *ngIf="_userService.userInfo && menuAccess.adminTree.length">
+    <div class="list-group">
+        <app-sidebar-menu [nodes]="menuAccess.adminTree" [showMenu]="showMenu"
+            (expand)="addExpandClass($event)"></app-sidebar-menu>
+    </div>
+    <div class="logo">
+        <img style="width: 50%" *ngIf="_userService.userInfo.mainEnvironment[0]?.picture"
+            [src]="_userService.userInfo.mainEnvironment[0].picture" alt="Picture">
+    </div>
+</nav>

@@ -1,0 +1,249 @@
+<app-page-header [heading]="'Users & Profiles'" [screenID]="screenID"
+    [icon]="'fa-user'"></app-page-header>
+
+<div class="content-section implementation settings-crud">
+    <p-toast position="top-right"></p-toast>
+    <p-confirmDialog [style]="{width: '28rem'}"></p-confirmDialog>
+
+    <p-tabView [(activeIndex)]="activeTab" (onChange)="onTabChange($event)">
+        <p-tabPanel header="Users">
+            <div class="settings-toolbar users-toolbar grid align-items-end mb-3">
+                <div class="col-12 lg:col-4 flex flex-wrap gap-2 users-toolbar-actions">
+                    <button pButton label="Search" icon="pi pi-search" (click)="searchUsers()"></button>
+                    <button pButton label="Add user" icon="pi pi-plus" class="settings-add-user-btn"
+                        (click)="openNewUser()"></button>
+                </div>
+                <div class="col-12 md:col-6 lg:col-4">
+                    <label class="font-bold block mb-1">Corporate</label>
+                    <p-dropdown [options]="corpsDropdown" [(ngModel)]="userFilterCorp" placeholder="All"
+                        optionLabel="label" optionValue="value" [showClear]="true" styleClass="w-full"></p-dropdown>
+                </div>
+                <div class="col-12 md:col-6 lg:col-4">
+                    <label class="font-bold block mb-1">Status</label>
+                    <p-dropdown [options]="activeOptions" [(ngModel)]="userFilterActive" placeholder="All"
+                        optionLabel="label" optionValue="value" [showClear]="true" styleClass="w-full"></p-dropdown>
+                </div>
+            </div>
+
+            <div class="users-table-panel">
+                <p-table #usersTable [value]="users" [loading]="loadingUsers"
+                    [rows]="20" [rowsPerPageOptions]="[20, 50, 100]" [paginator]="true" [pageLinks]="3"
+                    [globalFilterFields]="userTableGlobalFields"
+                    sortMode="multiple" styleClass="p-datatable-sm users-table"
+                    [totalRecords]="users.length" responsiveLayout="scroll">
+
+                    <ng-template pTemplate="caption">
+                        <div class="table-header grid">
+                            <div class="col-12" style="text-align: right;">
+                                <span class="p-input-icon-right">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text"
+                                        (input)="usersTable.filterGlobal($any($event.target).value, 'contains')"
+                                        placeholder="Type text to filter..." />
+                                </span>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr class="users-table-header-row">
+                        <th class="users-actions-col">Actions</th>
+                        <th pSortableColumn="USERID">User id <p-sortIcon field="USERID"></p-sortIcon></th>
+                        <th pSortableColumn="CORPCODE">Corporate <p-sortIcon field="CORPCODE"></p-sortIcon></th>
+                        <th pSortableColumn="USERFNAME">Name <p-sortIcon field="USERFNAME"></p-sortIcon></th>
+                        <th pSortableColumn="USEREMAIL">Email <p-sortIcon field="USEREMAIL"></p-sortIcon></th>
+                        <th pSortableColumn="USERACTIVE">Active <p-sortIcon field="USERACTIVE"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td class="users-actions-col">
+                            <span class="action-buttons">
+                                <button pButton pRipple type="button" icon="pi pi-key"
+                                    (click)="pickUserForAccess(row)"
+                                    pTooltip="Environment access" tooltipPosition="top"
+                                    class="p-button-rounded p-button-sm action-btn"></button>
+                                <button pButton pRipple type="button" icon="pi pi-copy"
+                                    (click)="duplicateUser(row)"
+                                    pTooltip="Duplicate" tooltipPosition="top"
+                                    class="p-button-rounded p-button-sm action-btn"></button>
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    (click)="openEditUser(row)"
+                                    pTooltip="Edit" tooltipPosition="top"
+                                    class="p-button-rounded p-button-sm action-btn"></button>
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    (click)="confirmDeleteUser(row)"
+                                    pTooltip="Delete" tooltipPosition="top"
+                                    class="p-button-rounded p-button-sm action-btn"></button>
+                            </span>
+                        </td>
+                        <td><strong>{{ row.USERID }}</strong></td>
+                        <td>{{ row.CORPCODE }}</td>
+                        <td>{{ row.USERFNAME }} {{ row.USERLNAME }}</td>
+                        <td>{{ row.USEREMAIL }}</td>
+                        <td>{{ row.USERACTIVE == 1 ? 'Yes' : 'No' }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="6" class="users-empty-message">
+                            <i class="pi pi-users"></i>
+                            <p>No users found. Adjust filters above or click Add user.</p>
+                        </td>
+                    </tr>
+                </ng-template>
+                </p-table>
+                <i class="FOOTER_Table users-table-footer">{{ usersFooterLabel }}</i>
+            </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Environment access">
+            <div class="settings-toolbar grid align-items-end mb-3">
+                <div class="col-12 md:col-4">
+                    <label class="font-bold block mb-1">User id</label>
+                    <input pInputText class="w-full" [(ngModel)]="accessUserId" placeholder="Login id" />
+                </div>
+                <div class="col-12 md:col-4">
+                    <label class="font-bold block mb-1">Corporate</label>
+                    <p-dropdown [options]="corpsDropdown" [(ngModel)]="accessCorpId" styleClass="w-full"
+                        optionLabel="label" optionValue="value" placeholder="Select corporate"></p-dropdown>
+                </div>
+                <div class="col-12 md:col-4 flex justify-content-end">
+                    <button pButton label="Load environments" icon="pi pi-refresh" (click)="loadEnvMatrix()"
+                        [disabled]="!accessUserId || accessCorpId == null"></button>
+                </div>
+            </div>
+
+            <p-table [value]="envMatrix" [loading]="loadingMatrix" styleClass="p-datatable-sm" responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width:4rem">Access</th>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th style="width:6rem">Enabled</th>
+                        <th class="env-default-col-h">Default</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td>
+                            <p-checkbox [(ngModel)]="row.HAS_ACCESS" [binary]="true" (onChange)="onAccessToggle(row)"></p-checkbox>
+                        </td>
+                        <td>{{ row.ENVCODE }}</td>
+                        <td>{{ row.ENVLDESC || row.ENVSDESC }}</td>
+                        <td>
+                            <p-checkbox [(ngModel)]="row.CONACTIVE" [binary]="true" [disabled]="!row.HAS_ACCESS"
+                                (onChange)="onAccessFlagChange(row)"></p-checkbox>
+                        </td>
+                        <td class="env-default-col">
+                            <span class="action-buttons env-default-actions">
+                                <button *ngIf="!row.CONDEFAULT" pButton pRipple type="button" icon="pi pi-star"
+                                    class="p-button-rounded p-button-sm action-btn"
+                                    pTooltip="Set as default" tooltipPosition="top"
+                                    [disabled]="!row.HAS_ACCESS"
+                                    (click)="setDefaultEnv(row)"></button>
+                                <span *ngIf="row.CONDEFAULT" class="env-default-indicator"
+                                    pTooltip="Default environment" tooltipPosition="top">
+                                    <i class="pi pi-check"></i>
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="5">Select a user and corporate, then load environments.</td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+
+<p-dialog [(visible)]="userDialog" [header]="userDialogTitle"
+    [modal]="true" [style]="{width: '44rem'}" [closable]="true"
+    [contentStyle]="{ overflow: 'visible' }" (onHide)="onUserDialogHide()">
+    <div class="formgrid grid p-fluid">
+        <div class="field col-12 md:col-6">
+            <label>User id *</label>
+            <input pInputText [(ngModel)]="userForm.USERID" [disabled]="!isNewUser" maxlength="20" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Corporate</label>
+            <p-dropdown [options]="corpsDropdown" [(ngModel)]="userForm.USERCORPID" styleClass="w-full"
+                optionLabel="label" optionValue="value" [showClear]="true" placeholder="None"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>First name</label>
+            <input pInputText [(ngModel)]="userForm.USERFNAME" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Last name</label>
+            <input pInputText [(ngModel)]="userForm.USERLNAME" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Email</label>
+            <input pInputText [(ngModel)]="userForm.USEREMAIL" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Access profile</label>
+            <p-dropdown [options]="profileDropdown" [(ngModel)]="userForm.USERPROF" styleClass="w-full"
+                optionLabel="label" optionValue="value" placeholder="(none)"
+                [autoDisplayFirst]="false" appendTo="body" panelStyleClass="settings-user-dropdown-panel"
+                scrollHeight="240px" [filter]="true" filterBy="label">
+                <ng-template let-opt pTemplate="selectedItem">
+                    <span>{{ opt?.label || '(none)' }}</span>
+                </ng-template>
+                <ng-template let-opt pTemplate="item">
+                    <span>{{ opt.label }}</span>
+                </ng-template>
+            </p-dropdown>
+            <small class="text-color-secondary">Optional menu bundle on top of access flags.</small>
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Language</label>
+            <p-dropdown [options]="langOptions" [(ngModel)]="userForm.USERLANG" styleClass="w-full"
+                optionLabel="label" optionValue="value"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Active</label>
+            <p-dropdown [options]="activeOptions" [(ngModel)]="userForm.USERACTIVE" styleClass="w-full"
+                optionLabel="label" optionValue="value"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-6" *ngIf="isNewUser || changePassword">
+            <label>{{ isNewUser ? 'Password *' : 'New password' }}</label>
+            <input pInputText type="password" [(ngModel)]="userForm.USERPASS" autocomplete="new-password" />
+            <small class="text-color-secondary">Stored as Base64 in the database (same as login).</small>
+        </div>
+        <div class="field col-12" *ngIf="!isNewUser">
+            <p-checkbox [(ngModel)]="changePassword" [binary]="true" label="Change password"></p-checkbox>
+        </div>
+        <div class="field col-12">
+            <label class="font-bold">Access flags</label>
+            <div class="flex flex-wrap gap-3 mt-2 user-flag-checkboxes">
+                <p-checkbox inputId="flagUserDataIntegrity" [(ngModel)]="userForm.USERDATAINTEGRITY" [binary]="true"
+                    [trueValue]="1" [falseValue]="0" label="Data integrity"></p-checkbox>
+                <p-checkbox inputId="flagUserTech" [(ngModel)]="userForm.USERSTECH" [binary]="true"
+                    [trueValue]="1" [falseValue]="0" label="Tech Services"></p-checkbox>
+                <p-checkbox inputId="flagUserIT" [(ngModel)]="userForm.USERIT" [binary]="true"
+                    [trueValue]="1" [falseValue]="0" label="IT"></p-checkbox>
+                <p-checkbox inputId="flagUserBuyer" [(ngModel)]="userForm.USERBUYER" [binary]="true"
+                    [trueValue]="1" [falseValue]="0" label="Buyer"></p-checkbox>
+                <p-checkbox inputId="flagUserHelpdesk" [(ngModel)]="userForm.USERHELPDESK" [binary]="true"
+                    [trueValue]="1" [falseValue]="0" label="Helpdesk"></p-checkbox>
+                <p-checkbox inputId="flagUserWarehouse" [(ngModel)]="userForm.USERWAREHOUSE" [binary]="true"
+                    [trueValue]="1" [falseValue]="0" label="Warehouse"></p-checkbox>
+                <p-checkbox inputId="flagUserSpace" [(ngModel)]="userForm.USERSPACEPLANNING" [binary]="true"
+                    [trueValue]="1" [falseValue]="0" label="Space planning"></p-checkbox>
+                <p-checkbox inputId="flagUserAiAdmin" [(ngModel)]="userForm.USERAIADMIN" [binary]="true"
+                    [trueValue]="1" [falseValue]="0" label="AI admin"></p-checkbox>
+                <p-checkbox inputId="flagUserAiDesigner" [(ngModel)]="userForm.USERAIDESIGNER" [binary]="true"
+                    [trueValue]="1" [falseValue]="0" label="AI designer"></p-checkbox>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancel" class="p-button-text" (click)="closeUserDialog()"
+            [disabled]="userDialogBusy"></button>
+        <button pButton label="Save" icon="pi pi-check" (click)="saveUser()"
+            [loading]="userDialogBusy" [disabled]="userDialogBusy"></button>
+    </ng-template>
+</p-dialog>

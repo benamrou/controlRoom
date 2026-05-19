@@ -1,0 +1,71 @@
+@import '../setting-users/setting.users.component.scss';
+
+// Match Query Library table caption buttons
+.CREATE_Button {
+    background: transparent !important;
+    border: 1px solid #17a2b8 !important;
+    color: #17a2b8 !important;
+
+    &:hover {
+        background: #17a2b8 !important;
+        color: white !important;
+    }
+}
+
+.menu-catalog-table,
+.menu-access-table {
+    .menu-actions-col {
+        width: 5.5rem;
+        min-width: 5.5rem;
+        white-space: nowrap;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    td.menu-actions-col {
+        padding: 0.35rem 0.5rem;
+    }
+}
+
+.menu-catalog-toolbar {
+    .menu-catalog-show-col {
+        min-width: 10rem;
+        max-width: 14rem;
+    }
+
+    label.font-bold.block.mb-1 {
+        display: block;
+        margin-bottom: 0.35rem;
+        line-height: 1.25;
+    }
+}
+
+.menu-catalog-table {
+    .table-header.grid {
+        margin: 0;
+    }
+}
+
+.route-cell {
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-muted td {
+  opacity: 0.65;
+}
+
+// Dropdown panels inside modals — appendTo="body" + z-index above p-dialog mask
+:host ::ng-deep .menu-access-dropdown-panel.p-dropdown-panel {
+  z-index: 11002 !important;
+
+  .p-dropdown-items .p-dropdown-item {
+    color: #212529;
+  }
+}
+
+.menu-access-dialog-fields {
+  overflow: visible;
+}

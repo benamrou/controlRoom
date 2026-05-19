@@ -1,0 +1,19 @@
+/* Domain Investigation — Supply Chain AI Module */
+.ai-module-container { padding: 1.5rem; }
+.ai-module-container .p-card { margin-bottom: 1rem; }
+.ai-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: .8rem;
+    margin: 1rem 0;
+}
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    label { font-weight: 600; }
+}
+.result-lines { margin: 0; padding-left: 1rem; li { margin-bottom: .35rem; } }
+@media (max-width: 800px) {
+    .ai-form-grid { grid-template-columns: 1fr; }
+}

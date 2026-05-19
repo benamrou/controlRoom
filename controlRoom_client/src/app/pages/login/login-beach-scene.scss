@@ -1,0 +1,872 @@
+// Beach Crusin'–inspired scene (codepen.io/a-trost/pen/VwLYJpR)
+// Fence, rocks, surfboards, rolling ball — palms stay as emoji overlay.
+
+$beach-ocean:       #58ac9d;
+$beach-ocean-deep:  #3d8f82;
+$beach-ocean-stroke:#379;
+$beach-wave-light:  #7ec4b8;
+$beach-wave-foam:   #b7eae0;
+$beach-sand:        #e6d3b0;
+$beach-sand-dark:   #c9b08a;
+$beach-dune:        #486b5c;
+$beach-sun:         #ffb300;
+$beach-sun-glow:    #ffe082;
+$beach-sun-core:    #ff9800;
+$beach-rock-dark:   #4c3d38;
+$beach-rock-mid:    #63524e;
+$beach-wood:        #785c47;
+$beach-wood-dark:   #6a503c;
+
+.beach-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+// ── Sun ────────────────────────────────────────────────────────
+.beach-sun {
+    position: absolute;
+    top: 10%;
+    left: 12%;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%,
+        #fffde7 0%,
+        #ffe082 28%,
+        #ffb300 55%,
+        #ff9800 82%,
+        #f57c00 100%
+    );
+    box-shadow:
+        0 0 55px rgba(#ff9800, 0.55),
+        0 0 110px rgba(#ffb300, 0.38),
+        0 0 160px rgba(#ffe082, 0.22);
+    z-index: 10;
+    pointer-events: auto;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    outline: none;
+    transition: background 0.9s ease, box-shadow 0.9s ease, transform 0.9s ease;
+    animation: beach-sun-pulse 5s ease-in-out infinite;
+
+    &:focus-visible {
+        box-shadow:
+            0 0 55px rgba(#ff9800, 0.55),
+            0 0 110px rgba(#ffb300, 0.38),
+            0 0 0 3px rgba(#fff, 0.85);
+    }
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &::before {
+        width: 150%;
+        height: 150%;
+        background: radial-gradient(circle, rgba(#ffb300, 0.42) 0%, transparent 68%);
+        animation: beach-sun-band 5s ease-in-out infinite;
+    }
+
+    &::after {
+        width: 190%;
+        height: 190%;
+        background: radial-gradient(circle, rgba(#ff9800, 0.22) 0%, transparent 72%);
+        animation: beach-sun-band 5s ease-in-out infinite 0.3s;
+    }
+}
+
+@keyframes beach-sun-pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.05); }
+}
+
+@keyframes beach-sun-band {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.35; }
+    50%      { transform: translate(-50%, -50%) scale(1.25); opacity: 0.55; }
+}
+
+// ── Seagull (Beach Crusin' SVG + GSAP in login.component.ts) ───
+.beach-bird {
+    position: absolute;
+    top: 8%;
+    left: 0;
+    right: auto;
+    width: clamp(100px, 11vw, 150px);
+    z-index: 8;
+    pointer-events: none;
+    overflow: visible;
+    will-change: transform;
+
+    &__svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    &__group {
+        // Flight transform applied to parent .beach-bird — keep group untransformed
+    }
+
+    &__back-wing,
+    &__front-wing {
+        // Pivot set in GSAP via svgOrigin (viewBox coords)
+    }
+}
+
+// ── Ocean + pen-style waves ────────────────────────────────────
+.beach-ocean {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 18%;
+    height: 30%;
+    background: linear-gradient(180deg,
+        $beach-ocean-deep 0%,
+        $beach-ocean 40%,
+        $beach-wave-light 100%
+    );
+    z-index: 3;
+    overflow: hidden;
+    pointer-events: auto;
+    cursor: pointer;
+
+    > *:not(.beach-sharks-layer) {
+        pointer-events: none;
+    }
+
+    // Subtle water depth lines (pen .st14)
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+            180deg,
+            transparent 0,
+            transparent 18%,
+            rgba($beach-ocean-stroke, 0.12) 18%,
+            rgba($beach-ocean-stroke, 0.12) 20%
+        );
+        pointer-events: none;
+    }
+}
+
+.beach-sharks-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 12;
+    pointer-events: none;
+    overflow: visible;
+}
+
+// Montoro "gassy shark" (codepen.io/alvaromontoro/pen/zYKbRgP) — scaled for a small patrol zone
+$beach-shark-gray: #7a8a92;
+
+@keyframes beach-shark-biting {
+    0%, 30%, 100% {
+        clip-path: polygon(-10% -20%, 0% -50%, 100% -50%, 100% 60%, 80% 60%, 100% 60%, 100% 125%, -10% 125%);
+    }
+    15% {
+        clip-path: polygon(-10% -20%, 0% -50%, 100% -50%, 100% 60%, 80% 50%, 100% 100%, 100% 125%, -10% 125%);
+    }
+}
+
+@keyframes beach-shark-patrol-swim {
+    0% {
+        left: 0;
+        transform: scaleX(1);
+    }
+    50% {
+        left: 32%;
+        transform: scaleX(1);
+    }
+    50.1% {
+        left: 32%;
+        transform: scaleX(-1);
+    }
+    100% {
+        left: 0;
+        transform: scaleX(-1);
+    }
+}
+
+.beach-shark-patrol {
+    position: absolute;
+    width: clamp(200px, 40%, 300px);
+    height: clamp(72px, 52%, 104px);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    overflow: visible;
+    z-index: 12;
+
+    &--reduced .beach-shark-montoro {
+        animation: none;
+    }
+}
+
+// Montoro-inspired SVG shark — fins/tail are separate paths (not clipped by body bite)
+.beach-shark-montoro {
+    position: absolute;
+    bottom: 4%;
+    left: 0;
+    width: 72%;
+    height: 90%;
+    overflow: visible;
+    animation: beach-shark-patrol-swim 9s infinite linear;
+    will-change: left, transform;
+    filter: drop-shadow(1px 3px 4px rgba(#070707, 0.18));
+
+    .beach-shark__svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+    }
+
+    .beach-shark__body-wrap {
+        animation: beach-shark-biting 5.25s infinite;
+        transform-origin: 88% 48%;
+    }
+
+    .beach-shark__dorsal-edge {
+        pointer-events: none;
+    }
+}
+
+.beach-waves-svg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(100% - 4px);
+    width: 200%;
+    height: 90px;
+    animation: beach-waves-slide 20s linear infinite;
+    transform-origin: top center;
+}
+
+.beach-waves-svg__layer {
+    &--back {
+        fill: $beach-ocean;
+    }
+
+    &--front {
+        fill: $beach-ocean;
+        stroke: $beach-wave-foam;
+        stroke-width: 8;
+        stroke-miterlimit: 10;
+        animation: beach-waves-bob 5s ease-in-out infinite;
+        transform-origin: top center;
+    }
+}
+
+@keyframes beach-waves-slide {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+@keyframes beach-waves-bob {
+    0%, 100% { transform: scaleY(1); }
+    50%      { transform: scaleY(0.55); }
+}
+
+// ── Sailboat (GSAP drift + wave bob in login.component.ts) ───
+.beach-sailboat {
+    position: absolute;
+    left: -14%;
+    top: 12%;
+    bottom: auto;
+    width: clamp(88px, 11vw, 140px);
+    z-index: 6;
+    pointer-events: none;
+    overflow: visible;
+    will-change: transform;
+    transform-origin: 50% 82%;
+
+    &__svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+        filter: drop-shadow(1px 4px 6px rgba(#070707, 0.14));
+    }
+
+    &__hull-body {
+        // Single curved hull — stripe and cabin sit on deck (y 72)
+    }
+
+    &__rig {
+        transform-origin: 80px 70px;
+    }
+
+    &__wake {
+        transform-origin: 80px 90px;
+    }
+
+    &__bow-light {
+        opacity: 0;
+        transition: opacity 0.7s ease;
+        pointer-events: none;
+    }
+
+    &__bow-light-bracket {
+        fill: #4a4035;
+        stroke: #2a2420;
+        stroke-width: 0.35;
+    }
+
+    &__bow-light-lamp {
+        fill: #fffef2;
+        stroke: #e8d890;
+        stroke-width: 0.4;
+    }
+
+    &__bow-light-beam {
+        opacity: 0;
+    }
+}
+
+// ── Rocks (in water, slow parallax) ───────────────────────────
+.beach-props {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 16%;
+    height: 34%;
+    z-index: 4;
+    overflow: hidden;
+}
+
+.beach-props__svg {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 200%;
+    height: 100%;
+    animation: beach-props-drift 60s linear infinite;
+}
+
+.beach-rocks {
+    animation: beach-rocks-drift 55s linear infinite;
+}
+
+@keyframes beach-props-drift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+@keyframes beach-rocks-drift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+// ── Sand ───────────────────────────────────────────────────────
+.beach-sand {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20%;
+    background: linear-gradient(180deg,
+        $beach-sand 0%,
+        $beach-sand-dark 88%,
+        darken($beach-sand-dark, 5%) 100%
+    );
+    z-index: 5;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 100%;
+        height: 40px;
+        background:
+            radial-gradient(ellipse 45% 100% at 15% 100%, rgba($beach-dune, 0.4) 0%, transparent 70%),
+            radial-gradient(ellipse 40% 100% at 75% 100%, rgba($beach-dune, 0.3) 0%, transparent 65%);
+    }
+
+    // Sand texture bands (pen .st10 / .st11)
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg,
+            rgba(#070707, 0.04) 0%,
+            transparent 12%,
+            rgba(#070707, 0.03) 35%,
+            transparent 100%
+        );
+        pointer-events: none;
+    }
+}
+
+// ── Sun deck chair on sand (mid-left) ───────────────────────────
+.beach-deckchair {
+    position: absolute;
+    left: 22%;
+    bottom: 11%;
+    width: clamp(120px, 17vw, 190px);
+    z-index: 6;
+    transform-origin: bottom center;
+    filter: drop-shadow(3px 6px 12px rgba(40, 35, 30, 0.18))
+        drop-shadow(1px 2px 4px rgba(0, 0, 0, 0.08));
+    animation: deckchair-idle 8s ease-in-out infinite;
+
+    &__svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    &__shadow {
+        fill: #000;
+        opacity: 0.12;
+    }
+}
+
+@keyframes deckchair-idle {
+    0%, 100% { transform: rotate(-1.5deg) translateY(0); }
+    50%      { transform: rotate(0.5deg) translateY(-2px); }
+}
+
+// ── Wood picket fence (foreground on sand) ─────────────────────
+.beach-fence {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 22%;
+    z-index: 7;
+    overflow: hidden;
+
+    &__svg {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+// ── Surfboards leaning on sand ─────────────────────────────────
+.beach-surfboards {
+    position: absolute;
+    right: 5%;
+    bottom: 13%;
+    width: 150px;
+    height: 210px;
+    z-index: 8;
+
+    &__ground {
+        fill: #000;
+        opacity: 0.14;
+    }
+
+    &__board {
+        position: absolute;
+        bottom: 0;
+        transform-origin: bottom center;
+        filter: drop-shadow(3px 6px 10px rgba(30, 45, 55, 0.22))
+            drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.08));
+
+        &--1 {
+            right: 50px;
+            width: 54px;
+            height: 182px;
+            animation: surf-sway-1 6s ease-in-out infinite;
+        }
+
+        &--2 {
+            right: 0;
+            width: 50px;
+            height: 172px;
+            animation: surf-sway-2 7s ease-in-out infinite -1.5s;
+        }
+    }
+}
+
+@keyframes surf-sway-1 {
+    0%, 100% { transform: rotate(-8deg); }
+    50%      { transform: rotate(-5deg); }
+}
+
+@keyframes surf-sway-2 {
+    0%, 100% { transform: rotate(6deg); }
+    50%      { transform: rotate(9deg); }
+}
+
+// ── Bouncing beach ball (right → left on sand) ─────────────────
+.beach-ball-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 11%;
+    height: 72px;
+    z-index: 9;
+    overflow: visible;
+}
+
+.beach-ball-drift {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 52px;
+    height: 52px;
+    will-change: transform;
+    animation: beach-ball-drift-rtl 28s linear infinite;
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.beach-ball-hop {
+    position: relative;
+    width: 48px;
+    height: 48px;
+
+    &--bounce {
+        animation: beach-ball-tap-hop 0.55s ease-out;
+    }
+}
+
+@keyframes beach-ball-tap-hop {
+    0% {
+        transform: translateY(0) scaleY(1);
+    }
+    30% {
+        transform: translateY(-34px) scaleY(1.06);
+        animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1);
+    }
+    55% {
+        transform: translateY(-10px) scaleY(0.94);
+    }
+    75% {
+        transform: translateY(-18px) scaleY(1.02);
+    }
+    100% {
+        transform: translateY(0) scaleY(1);
+    }
+}
+
+.beach-ball-group {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    will-change: transform;
+    animation: beach-ball-bounce-journey 28s linear infinite;
+}
+
+.beach-ball-shadow {
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 44px;
+    height: 10px;
+    margin-left: -22px;
+    background: rgba(#070707, 0.22);
+    border-radius: 50%;
+    animation: beach-ball-shadow-journey 28s linear infinite;
+
+    &--tap {
+        animation: beach-ball-shadow-tap 0.55s ease-out;
+    }
+}
+
+@keyframes beach-ball-shadow-tap {
+    0%, 100% {
+        transform: scaleX(1) scaleY(1);
+        opacity: 0.24;
+    }
+    30%, 75% {
+        transform: scaleX(0.45) scaleY(0.65);
+        opacity: 0.08;
+    }
+}
+
+.beach-ball {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 28%, #fff 0%, #f9f9f9 35%, transparent 36%),
+        conic-gradient(
+            #c1272d 0deg 90deg,
+            #f9f9f9 90deg 180deg,
+            #c1272d 180deg 270deg,
+            #f9f9f9 270deg 360deg
+        );
+    box-shadow: inset -3px -4px 8px rgba(0, 0, 0, 0.12);
+    animation: beach-ball-spin-journey 28s linear infinite;
+}
+
+// Right → left across the sand
+@keyframes beach-ball-drift-rtl {
+    from { transform: translateX(calc(100vw + 70px)); }
+    to   { transform: translateX(-90px); }
+}
+
+// One crossing: big bounces → smaller hops → roll on sand (synced to 28s drift)
+@keyframes beach-ball-bounce-journey {
+    0% {
+        transform: translateY(0) scaleY(0.9);
+        animation-timing-function: cubic-bezier(0.22, 0.55, 0.36, 1);
+    }
+    2% {
+        transform: translateY(-26px) scaleY(1.04);
+        animation-timing-function: cubic-bezier(0.55, 0.08, 0.9, 0.45);
+    }
+    4% { transform: translateY(0) scaleY(0.88); animation-timing-function: cubic-bezier(0.22, 0.55, 0.36, 1); }
+    6% { transform: translateY(-21px) scaleY(1.03); animation-timing-function: cubic-bezier(0.55, 0.08, 0.9, 0.45); }
+    8% { transform: translateY(0) scaleY(0.9); animation-timing-function: cubic-bezier(0.22, 0.55, 0.36, 1); }
+    10% { transform: translateY(-17px) scaleY(1.02); animation-timing-function: cubic-bezier(0.55, 0.08, 0.9, 0.45); }
+    12% { transform: translateY(0) scaleY(0.91); animation-timing-function: cubic-bezier(0.22, 0.55, 0.36, 1); }
+    14.5% { transform: translateY(-13px) scaleY(1.02); animation-timing-function: cubic-bezier(0.55, 0.08, 0.9, 0.45); }
+    16.5% { transform: translateY(0) scaleY(0.92); animation-timing-function: cubic-bezier(0.22, 0.55, 0.36, 1); }
+    19.5% { transform: translateY(-9px) scaleY(1.01); animation-timing-function: cubic-bezier(0.55, 0.08, 0.9, 0.45); }
+    21.5% { transform: translateY(0) scaleY(0.93); animation-timing-function: cubic-bezier(0.22, 0.55, 0.36, 1); }
+    25% { transform: translateY(-5px) scaleY(1.01); animation-timing-function: cubic-bezier(0.55, 0.08, 0.9, 0.45); }
+    27% { transform: translateY(0) scaleY(0.94); animation-timing-function: cubic-bezier(0.22, 0.55, 0.36, 1); }
+    31% { transform: translateY(-3px) scaleY(1); animation-timing-function: cubic-bezier(0.55, 0.08, 0.9, 0.45); }
+    33% { transform: translateY(0) scaleY(0.95); animation-timing-function: cubic-bezier(0.22, 0.55, 0.36, 1); }
+    37.5% { transform: translateY(-1.5px) scaleY(1); animation-timing-function: cubic-bezier(0.55, 0.08, 0.9, 0.45); }
+    39.5% { transform: translateY(0) scaleY(0.96); }
+    // Rolling phase — stays on sand, subtle squash as it rolls
+    42%, 100% { transform: translateY(0) scaleY(0.97); }
+}
+
+@keyframes beach-ball-spin-journey {
+    0% { transform: rotate(0deg); }
+    42% { transform: rotate(-720deg); }
+    100% { transform: rotate(-1980deg); }
+}
+
+@keyframes beach-ball-shadow-journey {
+    0%, 4%, 8%, 12%, 16.5%, 21.5%, 27%, 33%, 39.5%, 42%, 100% {
+        transform: scaleX(1) scaleY(1);
+        opacity: 0.24;
+    }
+    2%, 6%, 10%, 14.5%, 19.5%, 25%, 31%, 37.5% {
+        transform: scaleX(0.55) scaleY(0.68);
+        opacity: 0.1;
+    }
+}
+
+// ── Palm trees (emoji — user preference) ───────────────────────
+.beach-palms {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 36%;
+    z-index: 6;
+    pointer-events: none;
+
+    .palm {
+        position: absolute;
+        bottom: 8%;
+        line-height: 1;
+        filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.18));
+        transform-origin: bottom center;
+        animation: palm-sway 4s ease-in-out infinite;
+
+        &--1 { left: 2%;  font-size: 3.4rem; animation-delay: 0s; }
+        &--2 { left: 14%; font-size: 2.5rem; animation-delay: -1.2s; opacity: 0.88; }
+        &--3 { left: 68%; font-size: 3.8rem; animation-delay: -0.5s; }
+        &--4 { left: 82%; font-size: 2.8rem; animation-delay: -2s; opacity: 0.92; }
+        &--5 { left: 42%; font-size: 2.1rem; animation-delay: -1.6s; opacity: 0.75; }
+    }
+}
+
+@keyframes palm-sway {
+    0%, 100% { transform: rotate(-2deg); }
+    50%      { transform: rotate(2.5deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .beach-sun,
+    .beach-waves-svg,
+    .beach-waves-svg__layer--front,
+    .beach-props__svg,
+    .beach-ball-drift,
+    .beach-ball-group,
+    .beach-ball-hop,
+    .beach-ball,
+    .beach-ball-shadow,
+    .beach-surfboards__board,
+    .beach-deckchair,
+    .beach-palms .palm,
+    .beach-shark-montoro,
+    .beach-shark__body-wrap,
+    .beach-sailboat__bow-light-halo,
+    .beach-sailboat__bow-light-beam,
+    .beach-sailboat__bow-light-lamp {
+        animation: none !important;
+    }
+
+    .beach-ball-drift {
+        transform: translateX(50vw);
+    }
+
+    .beach-bird {
+        top: 10%;
+    }
+
+    .beach-sailboat {
+        top: 18%;
+        left: 20%;
+    }
+}
+
+// ── Night mode (toggle via .login-page--night on sun click) ─────
+.login-page--night {
+    .beach-sun {
+        background: radial-gradient(circle at 42% 38%,
+            #f8fafc 0%,
+            #e2e8f4 45%,
+            #b8c4d8 100%
+        );
+        box-shadow:
+            0 0 28px rgba(#d8e4ff, 0.75),
+            0 0 70px rgba(#8899bb, 0.4),
+            0 0 100px rgba(#5a6a8a, 0.2);
+        animation: beach-moon-glow 6s ease-in-out infinite;
+
+        &::before {
+            width: 82%;
+            height: 82%;
+            left: 58%;
+            top: 44%;
+            background: radial-gradient(circle, #0c1528 0%, #0c1528 72%, transparent 73%);
+            animation: none;
+            opacity: 1;
+        }
+
+        &::after {
+            opacity: 0;
+        }
+    }
+
+    .beach-ocean {
+        background: linear-gradient(180deg,
+            #143840 0%,
+            #1a4a52 38%,
+            #225a62 100%
+        );
+
+        &::before {
+            background: repeating-linear-gradient(
+                180deg,
+                transparent 0,
+                transparent 18%,
+                rgba(#0a2830, 0.35) 18%,
+                rgba(#0a2830, 0.35) 20%
+            );
+        }
+    }
+
+    .beach-waves-svg__layer {
+        &--back { fill: #1a4a52; }
+        &--front {
+            fill: #225a62;
+            stroke: #3a7a88;
+        }
+    }
+
+    .beach-sand {
+        background: linear-gradient(180deg,
+            #3a4555 0%,
+            #2e3848 88%,
+            #252d3a 100%
+        );
+    }
+
+    .beach-sailboat__scene {
+        filter: brightness(0.42) saturate(0.65);
+    }
+
+    .beach-sailboat__bow-light {
+        opacity: 1;
+        filter: drop-shadow(0 0 4px rgba(#ffe9a8, 0.9))
+                drop-shadow(0 0 12px rgba(#ffc85a, 0.55));
+
+        .beach-sailboat__bow-light-halo {
+            animation: beach-bow-light-pulse 3.2s ease-in-out infinite;
+        }
+
+        .beach-sailboat__bow-light-beam {
+            opacity: 1;
+            animation: beach-bow-light-beam 3.2s ease-in-out infinite;
+        }
+
+        .beach-sailboat__bow-light-lamp {
+            animation: beach-bow-light-pulse 3.2s ease-in-out infinite;
+        }
+    }
+
+    .beach-sailboat__wake {
+        fill: #1a4a52;
+        opacity: 0.22;
+    }
+
+    .beach-bird,
+    .beach-deckchair,
+    .beach-fence,
+    .beach-surfboards,
+    .beach-props,
+    .beach-palms .palm {
+        filter: brightness(0.42) saturate(0.65);
+    }
+
+    .beach-ball,
+    .beach-ball-shadow {
+        filter: brightness(0.55);
+    }
+}
+
+@keyframes beach-moon-glow {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.04); }
+}
+
+@keyframes beach-bow-light-pulse {
+    0%, 100% { opacity: 0.88; }
+    50%      { opacity: 1; }
+}
+
+@keyframes beach-bow-light-beam {
+    0%, 100% { opacity: 0.26; }
+    50%      { opacity: 0.44; }
+}
+
+@media (max-width: 768px) {
+    .beach-deckchair {
+        left: 8%;
+        bottom: 10%;
+        width: clamp(88px, 22vw, 120px);
+    }
+
+    .beach-surfboards {
+        right: 2%;
+        transform: scale(0.75);
+        transform-origin: bottom right;
+    }
+
+    .beach-sun {
+        width: 56px;
+        height: 56px;
+        top: 8%;
+        left: 8%;
+    }
+}

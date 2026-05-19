@@ -1,0 +1,16 @@
+-- =============================================================================
+-- Remove template skill GOLD_CEN_ITEM_ART_ALIV_AVEN (PDF corpus experiment)
+-- skill_id F6E2D3C4-B5A6-7890-CDEF-1234567890AB
+-- Run once on DBs where @17_ai_skill_pack_gold_cen_item_art_aliv_aven.sql was applied.
+-- =============================================================================
+
+DELETE FROM AI_SKILL_TEST_CASE      WHERE skill_id = 'F6E2D3C4-B5A6-7890-CDEF-1234567890AB';
+DELETE FROM AI_SKILL_VOCABULARY     WHERE skill_id = 'F6E2D3C4-B5A6-7890-CDEF-1234567890AB';
+DELETE FROM AI_SKILL_SQL_TEMPLATE   WHERE skill_id = 'F6E2D3C4-B5A6-7890-CDEF-1234567890AB';
+DELETE FROM AI_SKILL_PLAYBOOK_STEP  WHERE skill_id = 'F6E2D3C4-B5A6-7890-CDEF-1234567890AB';
+DELETE FROM AI_SKILL_KNOWLEDGE_ITEM WHERE skill_id = 'F6E2D3C4-B5A6-7890-CDEF-1234567890AB';
+DELETE FROM AI_SKILL_VERSION        WHERE skill_id = 'F6E2D3C4-B5A6-7890-CDEF-1234567890AB';
+DELETE FROM AI_SKILL_RETAILER       WHERE skill_id = 'F6E2D3C4-B5A6-7890-CDEF-1234567890AB';
+DELETE FROM AI_SKILL                WHERE skill_id = 'F6E2D3C4-B5A6-7890-CDEF-1234567890AB';
+
+COMMIT;

@@ -114,6 +114,14 @@ $button_background: white;
     position: relative;
     overflow: initial;
 }
+
+/* Login (and brief / before redirect): no sidebar offset — single outlet hosts all routes */
+.login-shell {
+    margin: 0;
+    padding: 0;
+    margin-top: 0;
+    margin-left: 0;
+}
 .collapsed {
     margin-left: 100px;
 }

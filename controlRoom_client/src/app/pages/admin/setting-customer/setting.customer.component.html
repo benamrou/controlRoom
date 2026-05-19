@@ -1,0 +1,220 @@
+<app-page-header [heading]="'Retailer & Access'" [waitMessage]="waitMessage" [screenID]="screenID"
+    [icon]="'fa-th-large'"></app-page-header>
+
+<div class="content-section implementation settings-crud">
+    <p-toast position="top-right"></p-toast>
+    <p-confirmDialog [style]="{width: '28rem'}"></p-confirmDialog>
+
+    <p-tabView (onChange)="onTabChange($event)">
+        <!-- Corporate -->
+        <p-tabPanel header="Corporate">
+            <div class="settings-toolbar grid">
+                <div class="col-12 md:col-3">
+                    <span class="p-input-icon-left w-full">
+                        <i class="pi pi-search"></i>
+                        <input pInputText class="w-full" placeholder="Code" [(ngModel)]="corpSearch.code" (keyup.enter)="searchCorps()" />
+                    </span>
+                </div>
+                <div class="col-12 md:col-4">
+                    <input pInputText class="w-full" placeholder="Description" [(ngModel)]="corpSearch.desc" (keyup.enter)="searchCorps()" />
+                </div>
+                <div class="col-12 md:col-5 flex gap-2 justify-content-end">
+                    <button pButton label="Search" icon="pi pi-search" (click)="searchCorps()"></button>
+                    <button pButton label="Add corporate" icon="pi pi-plus" class="p-button-success" (click)="openNewCorp()"></button>
+                </div>
+            </div>
+
+            <p-table [value]="corps" [loading]="loadingCorps" [rows]="15" [paginator]="true"
+                styleClass="p-datatable-sm" responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Code</th>
+                        <th>Short</th>
+                        <th>Description</th>
+                        <th>City</th>
+                        <th>Email</th>
+                        <th style="width:8rem">Actions</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td>{{ row.CORPCODE }}</td>
+                        <td>{{ row.CORPSDESC }}</td>
+                        <td>{{ row.CORPLDESC }}</td>
+                        <td>{{ row.CORPCITY }}</td>
+                        <td>{{ row.CORPEMAIL }}</td>
+                        <td>
+                            <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditCorp(row)"></button>
+                            <button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm" (click)="confirmDeleteCorp(row)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="6">No corporates found.</td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <!-- Environment -->
+        <p-tabPanel header="Environment">
+            <div class="settings-toolbar grid align-items-end mb-3">
+                <div class="col-12 md:col-4">
+                    <label class="font-bold block mb-1">Corporate</label>
+                    <p-dropdown [options]="corpsDropdown" [(ngModel)]="envCorpFilter" placeholder="All corporates"
+                        optionLabel="label" optionValue="value" [showClear]="true" styleClass="w-full"
+                        (onChange)="loadEnvs()"></p-dropdown>
+                </div>
+                <div class="col-12 md:col-8 flex gap-2 justify-content-end">
+                    <button pButton label="Refresh" icon="pi pi-refresh" (click)="loadEnvs()"></button>
+                    <button pButton label="Add environment" icon="pi pi-plus" class="p-button-success" (click)="openNewEnv()"></button>
+                </div>
+            </div>
+
+            <p-table [value]="envs" [loading]="loadingEnvs" [rows]="15" [paginator]="true"
+                styleClass="p-datatable-sm" responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Corp</th>
+                        <th>Code</th>
+                        <th>Short desc</th>
+                        <th>DB link</th>
+                        <th>GOLD schema</th>
+                        <th>Active</th>
+                        <th style="width:8rem">Actions</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td>{{ row.CORPCODE }}</td>
+                        <td>{{ row.ENVCODE }}</td>
+                        <td>{{ row.ENVSDESC }}</td>
+                        <td><code>{{ row.ENVDBLINK }}</code></td>
+                        <td>{{ row.ENVGOLDSCHEMA }}</td>
+                        <td>{{ row.ENVACTIVE === 1 ? 'Yes' : 'No' }}</td>
+                        <td>
+                            <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditEnv(row)"></button>
+                            <button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm" (click)="confirmDeleteEnv(row)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="7">No environments found.</td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+
+<!-- Corporate dialog -->
+<p-dialog [(visible)]="corpDialog" [header]="isNewCorp ? 'New corporate' : 'Edit corporate'"
+    [modal]="true" [style]="{width: '42rem'}" [maximizable]="true">
+    <div class="formgrid grid p-fluid">
+        <div class="field col-12 md:col-4">
+            <label>Code *</label>
+            <input pInputText [(ngModel)]="corpForm.CORPCODE" maxlength="5" [disabled]="!isNewCorp" />
+        </div>
+        <div class="field col-12 md:col-8">
+            <label>Long description</label>
+            <input pInputText [(ngModel)]="corpForm.CORPLDESC" maxlength="100" />
+        </div>
+        <div class="field col-12 md:col-4">
+            <label>Short description</label>
+            <input pInputText [(ngModel)]="corpForm.CORPSDESC" maxlength="20" />
+        </div>
+        <div class="field col-12 md:col-4">
+            <label>City</label>
+            <input pInputText [(ngModel)]="corpForm.CORPCITY" />
+        </div>
+        <div class="field col-12 md:col-4">
+            <label>Phone</label>
+            <input pInputText [(ngModel)]="corpForm.CORPPHONE" />
+        </div>
+        <div class="field col-12">
+            <label>Address</label>
+            <input pInputText [(ngModel)]="corpForm.CORPSTREET1" class="mb-2" />
+            <input pInputText [(ngModel)]="corpForm.CORPSTREET2" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Contact first name</label>
+            <input pInputText [(ngModel)]="corpForm.CORPFNAME" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Contact last name</label>
+            <input pInputText [(ngModel)]="corpForm.CORPLNAME" />
+        </div>
+        <div class="field col-12">
+            <label>Email</label>
+            <input pInputText [(ngModel)]="corpForm.CORPEMAIL" />
+        </div>
+        <div class="field col-12">
+            <label>Info</label>
+            <textarea pInputTextarea [(ngModel)]="corpForm.CORPINFO" rows="2"></textarea>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancel" class="p-button-text" (click)="corpDialog = false"></button>
+        <button pButton label="Save" icon="pi pi-check" (click)="saveCorp()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Environment dialog -->
+<p-dialog [(visible)]="envDialog" [header]="isNewEnv ? 'New environment' : 'Edit environment'"
+    [modal]="true" [style]="{width: '48rem'}" [maximizable]="true">
+    <div class="formgrid grid p-fluid">
+        <div class="field col-12 md:col-6">
+            <label>Corporate *</label>
+            <p-dropdown [options]="corpsDropdown" [(ngModel)]="envForm.ENVCORPID" styleClass="w-full"
+                optionLabel="label" optionValue="value"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Code *</label>
+            <input pInputText [(ngModel)]="envForm.ENVCODE" maxlength="20" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Short description</label>
+            <input pInputText [(ngModel)]="envForm.ENVSDESC" maxlength="40" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Long description</label>
+            <input pInputText [(ngModel)]="envForm.ENVLDESC" maxlength="100" />
+        </div>
+        <div class="field col-12 md:col-4">
+            <label>Active</label>
+            <p-dropdown [options]="activeOptions" [(ngModel)]="envForm.ENVACTIVE" styleClass="w-full"
+                optionLabel="label" optionValue="value"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-4">
+            <label>Default env</label>
+            <p-dropdown [options]="activeOptions" [(ngModel)]="envForm.ENVDEFAULT" styleClass="w-full"
+                optionLabel="label" optionValue="value"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-4">
+            <label>UI title</label>
+            <input pInputText [(ngModel)]="envForm.ENVTITLE" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>DB link (central)</label>
+            <input pInputText [(ngModel)]="envForm.ENVDBLINK" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>GOLD schema prefix</label>
+            <input pInputText [(ngModel)]="envForm.ENVGOLDSCHEMA" maxlength="10" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>Stock DB link</label>
+            <input pInputText [(ngModel)]="envForm.ENVSTKDBLINK" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <label>IP</label>
+            <input pInputText [(ngModel)]="envForm.ENVIP" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <label>Port</label>
+            <input pInputText type="number" [(ngModel)]="envForm.ENVPORT" />
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancel" class="p-button-text" (click)="envDialog = false"></button>
+        <button pButton label="Save" icon="pi pi-check" (click)="saveEnv()"></button>
+    </ng-template>
+</p-dialog>

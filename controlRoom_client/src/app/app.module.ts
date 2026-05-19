@@ -135,6 +135,9 @@ import { VegaProcessDashboardModule } from './pages/it/vega/vega-process-dashboa
 import { UnixRunnerModule } from './pages/it/unix.runner/unix.runner.module';
 import { QueryLibraryModule } from './pages/admin/query.library/query.library.module';
 import { DictionaryModule } from './pages/admin/dictionary/dictionary.module';
+import { SettingCustomerModule } from './pages/admin/setting-customer/setting.customer.module';
+import { SettingUsersModule } from './pages/admin/setting-users/setting.users.module';
+import { SettingMenuAccessModule } from './pages/admin/setting-menu-access/setting.menu.access.module';
 import { PurchaseOrderPushModule } from './pages/mass.update/purchase.order.push/purchase.order.push.module';
 import { StockLayerModule } from './pages/mass.update/stock.layer/stock.layer.module';
 import { QueryRunnerModule } from './pages/it/query.runner/query.runner.module';
@@ -165,6 +168,20 @@ import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module'
 import { AlertLogJournalModule } from './pages/alerts/journal/alert.journal.module';
 import { ItemEndUPCModule } from './pages/mass.update/item.end.upc/item.end.upc.module';
 import { WatchICRModule } from './pages/alerts/watch/watch.icr.module';
+
+/* ═══════════════════════════════════════════════════════════ */
+/* SUPPLY CHAIN AI MODULE                                       */
+/* ═══════════════════════════════════════════════════════════ */
+import { AiRetailerSetupModule } from './pages/supply-chain-ai/platform/retailer-setup/ai.retailer.setup.module';
+import { AiSchemaDiscoveryModule } from './pages/supply-chain-ai/platform/schema-discovery/ai.schema.discovery.module';
+import { AiContextLearningModule } from './pages/supply-chain-ai/platform/context-learning/ai.context.learning.module';
+import { AiSkillLibraryModule } from './pages/supply-chain-ai/skill-studio/skill-library/ai.skill.library.module';
+import { AiSkillBuilderModule } from './pages/supply-chain-ai/skill-studio/skill-builder/ai.skill.builder.module';
+import { AiPendingPhrasingsModule } from './pages/supply-chain-ai/skill-studio/pending-phrasings/ai.pending.phrasings.module';
+import { AiPhrasingPlaygroundModule } from './pages/supply-chain-ai/skill-studio/phrasing-playground/ai.phrasing.playground.module';
+import { AiAssistantModule } from './pages/supply-chain-ai/inquiry/ai-assistant/ai.assistant.module';
+import { AiDataHealthModule } from './pages/supply-chain-ai/operations/data-health/ai.data.health.module';
+import { AiDataHealthConfigModule } from './pages/supply-chain-ai/operations/data-health/config/ai.data.health.config.module';
 
 
 @NgModule({
@@ -267,13 +284,22 @@ import { WatchICRModule } from './pages/alerts/watch/watch.icr.module';
     UnixRunnerModule,
     QueryLibraryModule,
     DictionaryModule,
+    SettingCustomerModule,
+    SettingUsersModule,
+    SettingMenuAccessModule,
     StockLayerModule,
     ItemRetailModule,
     AlertLogJournalModule,
     QueryRunnerModule,
     PresetQueryManagerModule,
     ItemEndUPCModule,
-    WatchICRModule
+    WatchICRModule,
+
+    /* Supply Chain AI */
+    AiRetailerSetupModule, AiSchemaDiscoveryModule, AiContextLearningModule,
+    AiSkillLibraryModule, AiSkillBuilderModule, AiPendingPhrasingsModule, AiPhrasingPlaygroundModule,
+    AiAssistantModule,
+    AiDataHealthModule, AiDataHealthConfigModule
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

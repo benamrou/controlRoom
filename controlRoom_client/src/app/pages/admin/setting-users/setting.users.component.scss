@@ -1,0 +1,173 @@
+.settings-crud {
+    padding: 0.5rem 1rem 1.5rem;
+
+    .settings-toolbar {
+        margin-bottom: 0.75rem;
+    }
+
+    .users-toolbar-actions {
+        justify-content: flex-start;
+    }
+
+    :host ::ng-deep .settings-add-user-btn.p-button {
+        background: #1565c0;
+        border: 1px solid #0d47a1;
+        color: #fff;
+        font-weight: 600;
+
+        &:enabled:hover {
+            background: #0d47a1;
+            border-color: #0d47a1;
+            color: #fff;
+        }
+
+        &:enabled:active {
+            background: #083a6b;
+            border-color: #083a6b;
+        }
+
+        .p-button-icon,
+        .p-button-label {
+            color: #fff;
+        }
+    }
+
+    .users-table-panel {
+        .table-header {
+            margin: 0;
+
+            input {
+                min-width: 220px;
+            }
+        }
+
+        .FOOTER_Table.users-table-footer {
+            display: block;
+            padding: 10px 15px;
+            color: #6c757d;
+            font-size: 0.9em;
+            font-style: normal;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            text-align: right;
+        }
+    }
+
+    :host ::ng-deep .users-table {
+        .p-datatable-header {
+            background: #f8f9fa;
+            border: none;
+        }
+
+        .p-datatable-thead > tr > th {
+            background: lightyellow;
+            border: 1px solid #dee2e6;
+            font-weight: 600;
+
+            &:hover {
+                background: #fff8dc;
+            }
+        }
+
+        .p-datatable-tbody > tr {
+            &:nth-child(even) {
+                background: #f8f9fa;
+            }
+
+            &:hover {
+                background: #e9ecef;
+            }
+
+            > td {
+                border: 1px solid #dee2e6;
+                vertical-align: middle;
+            }
+        }
+
+        .users-actions-col {
+            width: 8.5rem;
+            white-space: nowrap;
+            text-align: left;
+        }
+
+        .users-empty-message {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: #6c757d;
+
+            .pi-users {
+                font-size: 2.5rem;
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            p {
+                margin: 0;
+            }
+        }
+    }
+}
+
+// Environment access — default column
+.env-default-col-h,
+.env-default-col {
+    width: 4.5rem;
+    text-align: center;
+}
+
+.env-default-actions {
+    justify-content: center;
+}
+
+.env-default-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: #1565c0;
+    font-size: 1rem;
+}
+
+// Action buttons — match Query Library (query.library.component.scss)
+.action-buttons {
+    display: flex;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.action-btn {
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    background: #6c757d !important;
+    border-color: #6c757d !important;
+    color: white !important;
+
+    &:hover {
+        background: #5a6268 !important;
+        border-color: #545b62 !important;
+    }
+
+    &.p-button-info,
+    &.p-button-success,
+    &.p-button-danger,
+    &.p-button-secondary {
+        background: #6c757d !important;
+        border-color: #6c757d !important;
+
+        &:hover {
+            background: #545b62 !important;
+            border-color: #4e555b !important;
+        }
+    }
+}
+
+// Dropdown overlay in user dialog (appendTo="body")
+:host ::ng-deep .settings-user-dropdown-panel.p-dropdown-panel {
+    z-index: 11002 !important;
+
+    .p-dropdown-items .p-dropdown-item {
+        color: #212529;
+    }
+}

@@ -1,12 +1,13 @@
-import { Component, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { UserService, LabelService } from '../../shared/services/index';
-import {RouterModule} from '@angular/router';
+import { MenuAccessService } from '../../shared/services/menu/menu-access.service';
 
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
-    styleUrls: ['./sidebar.component.scss']
+    styleUrls: ['./sidebar.component.scss'],
+    encapsulation: ViewEncapsulation.None,
 })
 export class SidebarComponent {
     isActive: boolean = false;
@@ -16,7 +17,12 @@ export class SidebarComponent {
 
     @Output() collapsedEvent = new EventEmitter<boolean>();
     
-    constructor(public router: Router, public _userService: UserService, private _labelService: LabelService) {
+    constructor(
+        public router: Router,
+        public _userService: UserService,
+        public menuAccess: MenuAccessService,
+        private _labelService: LabelService,
+    ) {
         //this.translate.addLangs(['en', 'fr', 'ur', 'es', 'it', 'fa', 'de']);
         //this.translate.setDefaultLang('en');
         //const browserLang = this.translate.getBrowserLang();

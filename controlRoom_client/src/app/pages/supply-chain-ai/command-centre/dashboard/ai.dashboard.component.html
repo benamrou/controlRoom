@@ -1,0 +1,53 @@
+<app-page-header [heading]="'AI Dashboard'" [icon]="'fas fa-tachometer-alt'"></app-page-header>
+
+<p-toast></p-toast>
+
+<div class="ai-module-container">
+  <div class="ai-topbar">
+    <label><i class="fas fa-store"></i> Retailer</label>
+    <p-dropdown [options]="retailers"
+                [(ngModel)]="selectedRetailer"
+                optionLabel="RETAILER_NAME"
+                placeholder="Select retailer..."
+                [loading]="loadingRetailers"
+                (onChange)="onRetailerChange()">
+    </p-dropdown>
+  </div>
+
+  <div class="ai-wip-notice" *ngIf="!selectedRetailer">
+    <i class="fas fa-tachometer-alt"></i>
+    <h3>Select a retailer</h3>
+    <p>Dashboard KPIs load from existing AI LIBQUERY status endpoints.</p>
+  </div>
+
+  <div *ngIf="selectedRetailer" class="ai-kpi-grid">
+    <p-card header="Context Learning">
+      <div class="kpi-main">{{ lockedContext }} / {{ totalContext }}</div>
+      <div class="kpi-sub">Knowledge items locked</div>
+      <p-tag [value]="requiredReady ? 'Required ready' : 'In progress'"
+             [severity]="requiredReady ? 'success' : 'warning'"></p-tag>
+    </p-card>
+
+    <p-card header="Required Items">
+      <div class="kpi-main">{{ requiredLocked }} / {{ requiredContext }}</div>
+      <div class="kpi-sub">Priority-1 items locked</div>
+    </p-card>
+
+    <p-card header="Avg Confidence">
+      <div class="kpi-main">{{ avgConfidencePct }}%</div>
+      <div class="kpi-sub">Across all catalog items</div>
+    </p-card>
+
+    <p-card header="Active Item View">
+      <div *ngIf="loadingView">Loading...</div>
+      <ng-container *ngIf="!loadingView">
+        <div class="kpi-main" *ngIf="viewStatus?.VIEW_NAME || viewStatus?.view_name">
+          {{ viewStatus?.VIEW_NAME || viewStatus?.view_name }}
+        </div>
+        <div class="kpi-sub" *ngIf="viewStatus?.VIEW_NAME || viewStatus?.view_name">Generated view</div>
+        <p-tag [value]="(viewStatus?.VIEW_NAME || viewStatus?.view_name) ? 'Available' : 'Not generated'"
+               [severity]="(viewStatus?.VIEW_NAME || viewStatus?.view_name) ? 'success' : 'danger'"></p-tag>
+      </ng-container>
+    </p-card>
+  </div>
+</div>

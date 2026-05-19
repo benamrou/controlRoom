@@ -30,6 +30,9 @@ export class User {
     public helpDesk: number;
     public warehouse: number;
     public spaceplanning: number;
+    public aiAdmin: number;
+    public aiDesigner: number;
+    public aiMenuMode: boolean = false;
  
     public envCorporateAccess: Environment[] = [];
     public envUserAccess: Environment[] = [];
@@ -142,6 +145,8 @@ export class User {
                  this.userInfo.helpDesk = data[0].USERHELPDESK;
                  this.userInfo.warehouse = data[0].USERWAREHOUSE;
                  this.userInfo.spaceplanning = data[0].USERSPACEPLANNING;
+                 this.userInfo.aiAdmin = data[0].USERAIADMIN || 0;
+                 this.userInfo.aiDesigner = data[0].USERAIDESIGNER || 0;
                  this.userInfo.status = data[0].USERACTIVE;
                  this.userInfo.createdOn = data[0].USERDCRE;
                  this.userInfo.updatedOn = data[0].USERDMAJ;

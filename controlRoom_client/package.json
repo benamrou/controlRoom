@@ -32,6 +32,7 @@
     "chartjs-plugin-zoom": "^1.2.1",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
+    "gsap": "^3.12.5",
     "install": "^0.13.0",
     "jimp": "^0.22.8",
     "jszip": "^3.10.1",

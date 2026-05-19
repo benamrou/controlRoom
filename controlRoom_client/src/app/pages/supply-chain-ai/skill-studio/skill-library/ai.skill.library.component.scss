@@ -1,0 +1,274 @@
+.ai-module-container { padding: 1.5rem; }
+
+.ai-skill-banner {
+    display: flex;
+    gap: 1.25rem;
+    background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%);
+    border: 1px solid #d6bcfa;
+    border-left: 5px solid #7c3aed;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+
+    .ai-skill-banner-icon {
+        font-size: 1.8rem;
+        color: #7c3aed;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+    strong { display: block; font-size: 1rem; margin-bottom: .4rem; color: #2d3748; }
+    p {
+        margin: 0;
+        font-size: .87rem;
+        color: #4a5568;
+        line-height: 1.7;
+    }
+}
+
+.ai-skill-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--surface-border);
+}
+
+.ai-skill-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    label { font-weight: 600; i { margin-right: .35rem; } }
+    .ai-skill-dd { min-width: 280px; }
+}
+
+.ai-skill-catalog-label {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: .95rem;
+    i { margin-right: .4rem; color: #7c3aed; }
+}
+
+.ai-skill-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+/* High-contrast actions (Prime `success` / `help` read poorly on this theme). */
+.ai-skill-btn-new.p-button {
+    background: #047857;
+    border-color: #047857;
+    color: #fff !important;
+    font-weight: 600;
+    .p-button-icon,
+    .p-button-label,
+    .p-button-icon.pi,
+    .p-button-icon.fas {
+        color: #fff !important;
+    }
+    &:not(:disabled):hover {
+        background: #065f46;
+        border-color: #065f46;
+    }
+    &:not(:disabled):focus {
+        box-shadow: 0 0 0 0.2rem rgba(4, 120, 87, 0.35);
+    }
+}
+
+.ai-skill-btn-submit-review.p-button {
+    background: #4c1d95;
+    border-color: #4c1d95;
+    color: #fff !important;
+    font-weight: 600;
+    .p-button-icon,
+    .p-button-label,
+    .p-button-icon.pi,
+    .p-button-icon.fas {
+        color: #fff !important;
+    }
+    &:not(:disabled):hover {
+        background: #5b21b6;
+        border-color: #5b21b6;
+    }
+    &:not(:disabled):focus {
+        box-shadow: 0 0 0 0.2rem rgba(76, 29, 149, 0.35);
+    }
+}
+
+.ai-skill-status-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: 1rem;
+}
+.ai-skill-status-label {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    margin-right: .25rem;
+}
+.ai-skill-chip {
+    border-radius: 999px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+.ai-skill-chip-label { line-height: 1.2; }
+.ai-skill-chip-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    padding: 0 .35rem;
+    font-size: .72rem;
+    font-weight: 600;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.08);
+    color: inherit;
+}
+.ai-skill-chip--active .ai-skill-chip-count {
+    background: rgba(255, 255, 255, 0.25);
+}
+.ai-skill-chip--active {
+    background: var(--primary-color) !important;
+    color: var(--primary-color-text) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.ai-skill-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1.25rem;
+}
+.ai-skill-search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+}
+.ai-skill-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color-secondary);
+    pointer-events: none;
+}
+.ai-skill-search-input {
+    width: 100%;
+    padding-left: 2.25rem !important;
+}
+.ai-skill-filter-dd { min-width: 160px; }
+
+.ai-skill-loading { margin: 1rem 0; }
+
+.ai-skill-empty {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: var(--surface-card);
+    border: 1px dashed var(--surface-border);
+    border-radius: 8px;
+    .ai-skill-empty-icon { font-size: 2.5rem; color: var(--text-color-secondary); margin-bottom: 1rem; }
+    h3 { margin: 0 0 .5rem; }
+    p { color: var(--text-color-secondary); max-width: 480px; margin: 0 auto 1rem; }
+    code { background: rgba(90, 103, 216, 0.1); padding: 0 .3rem; border-radius: 3px; }
+}
+
+::ng-deep .p-dataview .p-dataview-content {
+    background: transparent;
+}
+.ai-skill-card-col {
+    padding: 0.5rem;
+}
+.ai-skill-card {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    padding: 1.1rem 1.2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.15s ease;
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+}
+.ai-skill-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: .75rem;
+    margin-bottom: .5rem;
+}
+.ai-skill-card-title {
+    h3 {
+        margin: 0.15rem 0 0;
+        font-size: 1.05rem;
+        line-height: 1.3;
+    }
+}
+.ai-skill-code {
+    display: block;
+    font-size: .75rem;
+    font-weight: 600;
+    color: #7c3aed;
+    letter-spacing: 0.02em;
+}
+.ai-skill-card-tags {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .5rem;
+    flex-wrap: wrap;
+}
+.ai-skill-ver {
+    font-size: .75rem;
+    color: var(--text-color-secondary);
+}
+.ai-skill-desc {
+    flex: 1;
+    font-size: .86rem;
+    color: var(--text-color-secondary);
+    line-height: 1.5;
+    margin: 0 0 .75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.ai-skill-card-meta {
+    font-size: .75rem;
+    color: var(--text-color-secondary);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-bottom: .75rem;
+    i { margin-right: .3rem; opacity: 0.8; }
+}
+.ai-skill-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .35rem;
+    border-top: 1px solid var(--surface-border);
+    padding-top: .65rem;
+    margin-top: auto;
+}
+
+.ai-skill-readonly-hint {
+    margin-top: 1.5rem;
+    font-size: .85rem;
+    color: var(--text-color-secondary);
+    i { margin-right: .35rem; }
+}
+
+/* Grid: 3 columns on wide screens */
+::ng-deep .p-dataview.p-dataview-list .p-dataview-content,
+::ng-deep .p-dataview .p-dataview-emptymessage { background: transparent; }

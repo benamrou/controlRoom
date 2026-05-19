@@ -1,0 +1,519 @@
+<app-page-header [heading]="pageHeading" [icon]="'fas fa-tools'"></app-page-header>
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="ai-module-container ai-builder">
+
+    <div class="ai-builder-toolbar">
+        <button pButton type="button" label="Back to library" icon="fas fa-arrow-left" class="p-button-text"
+                (click)="backToLibrary()"></button>
+        <span class="ai-builder-toolbar-spacer"></span>
+        <button *ngIf="canEditForm" pButton type="button" label="Save draft" icon="fas fa-save"
+                class="ai-skill-btn-new" [loading]="saving" [disabled]="saving" (click)="saveDraft()"></button>
+        <button *ngIf="canSubmitReview" pButton type="button" label="Submit for review" icon="fas fa-paper-plane"
+                class="ai-skill-btn-submit-review" [loading]="submitting" [disabled]="submitting"
+                (click)="submitReview()"></button>
+    </div>
+
+    <div *ngIf="loading" class="ai-builder-loading">
+        <p-progressBar mode="indeterminate"></p-progressBar>
+    </div>
+
+    <div *ngIf="!loading" class="ai-builder-banner">
+        <div class="ai-builder-banner-icon"><i class="fas fa-layer-group"></i></div>
+        <div class="ai-builder-banner-body">
+            <p class="ai-builder-banner-lead">
+                <span *ngIf="!model.skillId"><strong>New skill</strong> — set code, name, and domain, then save to create a row in <code>AI_SKILL</code>.</span>
+                <span *ngIf="model.skillId">
+                    <strong>{{ model.code }}</strong>
+                    <p-tag class="ai-builder-status-tag" [value]="formatStatus(model.status)" [severity]="statusSeverity(model.status)"></p-tag>
+                    <span *ngIf="model.version" class="ai-builder-ver">v{{ model.version }}</span>
+                </span>
+            </p>
+            <p class="ai-builder-banner-sub" *ngIf="!isDesigner && !isAdmin">
+                <i class="fas fa-info-circle"></i> View only — designer or admin role is required to edit or submit.
+            </p>
+        </div>
+    </div>
+
+    <div *ngIf="!loading" class="ai-builder-general p-fluid">
+        <div class="p-field">
+            <label for="skillCode">Skill code</label>
+            <input id="skillCode" pInputText [(ngModel)]="model.code" maxlength="64" [disabled]="!canEditForm"
+                   placeholder="e.g. DSD_VENDOR_EVAL" />
+        </div>
+        <div class="p-field">
+            <label for="skillName">Name</label>
+            <input id="skillName" pInputText [(ngModel)]="model.name" maxlength="200" [disabled]="!canEditForm"
+                   placeholder="Display name" />
+        </div>
+        <div class="p-field">
+            <label for="skillDomain">Domain</label>
+            <p-dropdown inputId="skillDomain" [options]="domainOptions" [(ngModel)]="model.domain"
+                        optionLabel="label" optionValue="value" [disabled]="!canEditForm"
+                        styleClass="ai-builder-dd"></p-dropdown>
+        </div>
+        <div class="p-field ai-builder-field-grow">
+            <label for="skillDesc">Description</label>
+                <textarea id="skillDesc" pInputTextarea [(ngModel)]="model.description" rows="4" [disabled]="!canEditForm"
+                      placeholder="What this skill covers, inputs, and expected outcomes…"></textarea>
+        </div>
+        <p class="ai-builder-meta" *ngIf="model.skillId && (model.updatedAt || model.retailerId)">
+            <span *ngIf="model.updatedAt"><i class="fas fa-clock"></i> {{ model.updatedAt }}</span>
+            <span *ngIf="model.retailerId"><i class="fas fa-tag"></i> {{ model.retailerId }}</span>
+        </p>
+    </div>
+
+    <p-tabView *ngIf="!loading" styleClass="ai-builder-tabs" [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)">
+        <p-tabPanel header="Knowledge items">
+            <div class="ai-builder-bundle">
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to attach knowledge items.</p>
+                <ng-container *ngIf="model.skillId">
+                    <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
+                        <div class="p-toolbar-group-start">
+                            <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-sm"
+                                    (click)="openBundleEditor('knowledge')"></button>
+                        </div>
+                    </p-toolbar>
+                    <p-progressBar *ngIf="bundleLoading['knowledge']" mode="indeterminate" styleClass="ai-builder-bundle-bar"></p-progressBar>
+                    <p-table *ngIf="!bundleLoading['knowledge'] && knowledgeCols.length" [value]="knowledgeRows" [paginator]="true" [rows]="8"
+                             styleClass="p-datatable-sm" responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th *ngFor="let c of knowledgeCols">{{ c.header }}</th>
+                                <th *ngIf="canEditForm" class="ai-builder-actions-col">Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td *ngFor="let c of knowledgeCols">{{ formatCell(row, c.field) }}</td>
+                                <td *ngIf="canEditForm" class="ai-builder-actions-cell">
+                                    <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                                            (click)="openBundleEditor('knowledge', row)"></button>
+                                    <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                                            (click)="confirmDeleteBundle('knowledge', row)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td [attr.colspan]="knowledgeCols.length + (canEditForm ? 1 : 0)">No rows yet.</td></tr>
+                        </ng-template>
+                    </p-table>
+                    <p *ngIf="!bundleLoading['knowledge'] && !knowledgeCols.length" class="ai-builder-bundle-empty">No rows returned. Deploy LIBQUERY AI0000046.</p>
+                </ng-container>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Playbook steps">
+            <div class="ai-builder-bundle">
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to load playbook steps.</p>
+                <ng-container *ngIf="model.skillId">
+                    <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
+                        <div class="p-toolbar-group-start">
+                            <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-sm"
+                                    (click)="openBundleEditor('playbook')"></button>
+                        </div>
+                    </p-toolbar>
+                    <p-progressBar *ngIf="bundleLoading['playbook']" mode="indeterminate" styleClass="ai-builder-bundle-bar"></p-progressBar>
+                    <p-table *ngIf="!bundleLoading['playbook'] && playbookCols.length" [value]="playbookRows" [paginator]="true" [rows]="8"
+                             styleClass="p-datatable-sm" responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th *ngFor="let c of playbookCols">{{ c.header }}</th>
+                                <th *ngIf="canEditForm" class="ai-builder-actions-col">Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td *ngFor="let c of playbookCols">{{ formatCell(row, c.field) }}</td>
+                                <td *ngIf="canEditForm" class="ai-builder-actions-cell">
+                                    <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                                            (click)="openBundleEditor('playbook', row)"></button>
+                                    <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                                            (click)="confirmDeleteBundle('playbook', row)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td [attr.colspan]="playbookCols.length + (canEditForm ? 1 : 0)">No rows yet.</td></tr>
+                        </ng-template>
+                    </p-table>
+                    <p *ngIf="!bundleLoading['playbook'] && !playbookCols.length" class="ai-builder-bundle-empty">No rows returned. Deploy LIBQUERY AI0000047.</p>
+                </ng-container>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="SQL templates">
+            <div class="ai-builder-bundle">
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to list SQL templates.</p>
+                <ng-container *ngIf="model.skillId">
+                    <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
+                        <div class="p-toolbar-group-start">
+                            <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-sm"
+                                    (click)="openBundleEditor('sql')"></button>
+                        </div>
+                    </p-toolbar>
+                    <p-progressBar *ngIf="bundleLoading['sql']" mode="indeterminate" styleClass="ai-builder-bundle-bar"></p-progressBar>
+                    <p-table *ngIf="!bundleLoading['sql'] && sqlCols.length" [value]="sqlRows" [paginator]="true" [rows]="8"
+                             styleClass="p-datatable-sm" responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th *ngFor="let c of sqlCols">{{ c.header }}</th>
+                                <th *ngIf="canEditForm" class="ai-builder-actions-col">Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td *ngFor="let c of sqlCols">{{ formatCell(row, c.field) }}</td>
+                                <td *ngIf="canEditForm" class="ai-builder-actions-cell">
+                                    <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                                            (click)="openBundleEditor('sql', row)"></button>
+                                    <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                                            (click)="confirmDeleteBundle('sql', row)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td [attr.colspan]="sqlCols.length + (canEditForm ? 1 : 0)">No rows yet.</td></tr>
+                        </ng-template>
+                    </p-table>
+                    <p *ngIf="!bundleLoading['sql'] && !sqlCols.length" class="ai-builder-bundle-empty">No rows returned. Deploy LIBQUERY AI0000048.</p>
+                </ng-container>
+            </div>
+            <div class="ai-builder-sql-probe" *ngIf="model.skillId">
+                <h4><i class="fas fa-flask"></i> SQL probe (draft)</h4>
+                <p>Paste SQL to review locally. Execution from the builder needs a dedicated read-only LIBQUERY sandbox (not wired yet).</p>
+                <textarea pInputTextarea [(ngModel)]="sqlProbeText" rows="5" [disabled]="!canEditForm"
+                          placeholder="SELECT … (read-only probe — no execute until LIBQUERY is added)"></textarea>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Vocabulary">
+            <div class="ai-builder-bundle">
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to load vocabulary rows.</p>
+                <ng-container *ngIf="model.skillId">
+                    <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
+                        <div class="p-toolbar-group-start">
+                            <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-sm"
+                                    (click)="openBundleEditor('vocab')"></button>
+                        </div>
+                    </p-toolbar>
+                    <p-progressBar *ngIf="bundleLoading['vocab']" mode="indeterminate" styleClass="ai-builder-bundle-bar"></p-progressBar>
+                    <p-table *ngIf="!bundleLoading['vocab'] && vocabCols.length" [value]="vocabRows" [paginator]="true" [rows]="8"
+                             styleClass="p-datatable-sm" responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th *ngFor="let c of vocabCols">{{ c.header }}</th>
+                                <th *ngIf="canEditForm" class="ai-builder-actions-col">Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td *ngFor="let c of vocabCols">{{ formatCell(row, c.field) }}</td>
+                                <td *ngIf="canEditForm" class="ai-builder-actions-cell">
+                                    <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                                            (click)="openBundleEditor('vocab', row)"></button>
+                                    <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                                            (click)="confirmDeleteBundle('vocab', row)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td [attr.colspan]="vocabCols.length + (canEditForm ? 1 : 0)">No rows yet.</td></tr>
+                        </ng-template>
+                    </p-table>
+                    <p *ngIf="!bundleLoading['vocab'] && !vocabCols.length" class="ai-builder-bundle-empty">No rows returned. Deploy LIBQUERY AI0000049.</p>
+                </ng-container>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Test suite">
+            <div class="ai-builder-bundle">
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to load test cases.</p>
+                <ng-container *ngIf="model.skillId">
+                    <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
+                        <div class="p-toolbar-group-start">
+                            <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-sm"
+                                    (click)="openBundleEditor('tests')"></button>
+                        </div>
+                    </p-toolbar>
+                    <p-progressBar *ngIf="bundleLoading['tests']" mode="indeterminate" styleClass="ai-builder-bundle-bar"></p-progressBar>
+                    <p-table *ngIf="!bundleLoading['tests'] && testCols.length" [value]="testRows" [paginator]="true" [rows]="8"
+                             styleClass="p-datatable-sm" responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th *ngFor="let c of testCols">{{ c.header }}</th>
+                                <th *ngIf="canEditForm" class="ai-builder-actions-col">Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td *ngFor="let c of testCols">{{ formatCell(row, c.field) }}</td>
+                                <td *ngIf="canEditForm" class="ai-builder-actions-cell">
+                                    <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                                            (click)="openBundleEditor('tests', row)"></button>
+                                    <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                                            (click)="confirmDeleteBundle('tests', row)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td [attr.colspan]="testCols.length + (canEditForm ? 1 : 0)">No rows yet.</td></tr>
+                        </ng-template>
+                    </p-table>
+                    <p *ngIf="!bundleLoading['tests'] && !testCols.length" class="ai-builder-bundle-empty">No rows returned. Deploy LIBQUERY AI0000050.</p>
+                </ng-container>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Diagnostic chain">
+            <div class="ai-builder-bundle">
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to author diagnostic steps.</p>
+                <ng-container *ngIf="model.skillId">
+
+                    <!-- Steps section -->
+                    <h4 class="ai-diag-section-heading"><i class="fas fa-list-ol"></i> Chain steps</h4>
+                    <p class="ai-diag-hint">Each step runs a SQL template, evaluates a stop condition, and maps to a conclusion key.</p>
+                    <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
+                        <div class="p-toolbar-group-start">
+                            <button pButton type="button" label="Add step" icon="pi pi-plus" class="p-button-sm"
+                                    (click)="openBundleEditor('diagStep')"></button>
+                        </div>
+                    </p-toolbar>
+                    <p-progressBar *ngIf="bundleLoading['diagStep']" mode="indeterminate" styleClass="ai-builder-bundle-bar"></p-progressBar>
+                    <p-table *ngIf="!bundleLoading['diagStep'] && diagStepCols.length" [value]="diagStepRows"
+                             [paginator]="true" [rows]="10" styleClass="p-datatable-sm" responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th *ngFor="let c of diagStepCols">{{ c.header }}</th>
+                                <th *ngIf="canEditForm" class="ai-builder-actions-col">Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td *ngFor="let c of diagStepCols">{{ formatCell(row, c.field) }}</td>
+                                <td *ngIf="canEditForm" class="ai-builder-actions-cell">
+                                    <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                                            (click)="openBundleEditor('diagStep', row)"></button>
+                                    <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                                            (click)="confirmDeleteBundle('diagStep', row)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td [attr.colspan]="diagStepCols.length + (canEditForm ? 1 : 0)">No steps yet — click Add step.</td></tr>
+                        </ng-template>
+                    </p-table>
+                    <p *ngIf="!bundleLoading['diagStep'] && !diagStepCols.length" class="ai-builder-bundle-empty">No rows returned. Deploy LIBQUERY AI0000100 and tables from script 37.</p>
+
+                    <!-- Conclusions section (derived from steps) -->
+                    <h4 class="ai-diag-section-heading" style="margin-top:1.5rem"><i class="fas fa-flag-checkered"></i> Conclusion templates</h4>
+                    <p class="ai-diag-hint">One conclusion template per unique conclusion key referenced in steps above. Click Edit to fill in the summary and evidence text.</p>
+                    <p-table *ngIf="diagConclusionRows.length" [value]="diagConclusionRows"
+                             styleClass="p-datatable-sm" responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Conclusion key</th>
+                                <th>Severity</th>
+                                <th class="ai-builder-actions-col">Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td>{{ row['CONCLUSION_KEY'] }}</td>
+                                <td>{{ row['SEVERITY'] }}</td>
+                                <td class="ai-builder-actions-cell">
+                                    <button pButton type="button" icon="pi pi-pencil" label="Edit conclusion"
+                                            class="p-button-text p-button-sm"
+                                            (click)="openBundleEditor('diagConclusion', row)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr><td colspan="3">Add steps with conclusion keys to populate this list.</td></tr>
+                        </ng-template>
+                    </p-table>
+                    <p *ngIf="!diagConclusionRows.length && !bundleLoading['diagStep']" class="ai-builder-bundle-empty">Add steps first to see conclusion keys.</p>
+
+                    <!-- Test chain panel -->
+                    <h4 class="ai-diag-section-heading" style="margin-top:1.5rem"><i class="fas fa-flask"></i> Test chain</h4>
+                    <p class="ai-diag-hint">Run the diagnostic chain against a real entity and see which conclusion is reached.</p>
+                    <div class="ai-diag-test-panel">
+                        <div class="p-field" style="flex:1">
+                            <label>Entity value (LU code or site id)</label>
+                            <input pInputText [(ngModel)]="diagTestEntity" placeholder="e.g. 100100" maxlength="50" />
+                        </div>
+                        <button pButton type="button" label="Run chain" icon="fas fa-play"
+                                class="p-button-sm ai-diag-run-btn"
+                                [loading]="diagTestLoading" [disabled]="diagTestLoading || !diagTestEntity.trim()"
+                                (click)="runDiagChainTest()"></button>
+                    </div>
+                    <div *ngIf="diagTestResult" class="ai-diag-test-result">
+                        <p *ngIf="diagTestResult.error" class="ai-diag-test-error">{{ diagTestResult.human_summary }}</p>
+                        <ng-container *ngIf="!diagTestResult.error">
+                            <div class="ai-diag-test-summary">
+                                <p-tag [severity]="diagTestResult.severity === 'CRITICAL' ? 'danger' : diagTestResult.severity === 'WARNING' ? 'warning' : 'info'"
+                                       [value]="diagTestResult.severity || 'INFO'"></p-tag>
+                                <span class="ai-diag-test-concl-key">{{ diagTestResult.conclusion_key }}</span>
+                                <p>{{ diagTestResult.human_summary }}</p>
+                            </div>
+                            <div *ngIf="diagTestSteps.length" class="ai-diag-test-steps">
+                                <div *ngFor="let s of diagTestSteps" class="ai-diag-test-step"
+                                     [class.ai-diag-test-step--stopped]="s.stopped_here">
+                                    <span class="ai-diag-test-step-order">{{ s.step_order }}</span>
+                                    <span class="ai-diag-test-step-label">{{ s.step_label || s.template_code }}</span>
+                                    <p-tag *ngIf="s.stopped_here" severity="danger" value="STOPPED"></p-tag>
+                                    <p-tag *ngIf="!s.stopped_here && s.rows?.length" severity="success" value="PASSED"></p-tag>
+                                    <p-tag *ngIf="!s.stopped_here && !s.rows?.length" severity="secondary" value="SKIPPED"></p-tag>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+
+                </ng-container>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+
+<p-dialog [visible]="bundleDialogVisible" (visibleChange)="onBundleVisibilityChange($event)"
+          [modal]="true" [draggable]="false" [resizable]="true"
+          [style]="{ width: 'min(760px, 96vw)' }" [header]="bundleDialogHeader">
+    <div class="p-fluid ai-builder-dialog" *ngIf="bundleDialogKind === 'knowledge'">
+        <div class="p-field"><label>Knowledge key *</label><input pInputText [(ngModel)]="bundleForm.KNOWLEDGE_KEY" maxlength="40" /></div>
+        <div class="p-field"><label>Label *</label><input pInputText [(ngModel)]="bundleForm.LABEL" maxlength="100" /></div>
+        <div class="p-field"><label>Override mode</label>
+            <p-dropdown [options]="overrideModeOptions" [(ngModel)]="bundleForm.OVERRIDE_MODE" optionLabel="label" optionValue="value"></p-dropdown>
+        </div>
+        <div class="p-field"><label>Base catalog key</label><input pInputText [(ngModel)]="bundleForm.BASE_KNOWLEDGE_KEY" maxlength="40" /></div>
+        <div class="p-field"><label>Description</label><textarea pInputTextarea [(ngModel)]="bundleForm.DESCRIPTION" rows="2" maxlength="500"></textarea></div>
+        <div class="p-field"><label>Anchor question *</label><textarea pInputTextarea [(ngModel)]="bundleForm.ANCHOR_QUESTION" rows="3" maxlength="2000"></textarea></div>
+        <div class="p-field"><label>Rounds JSON</label><textarea pInputTextarea [(ngModel)]="bundleForm.ROUNDS_JSON" rows="3" placeholder="[]"></textarea></div>
+        <div class="p-field"><label>Validation SQL</label><textarea pInputTextarea [(ngModel)]="bundleForm.VALIDATION_SQL" rows="2"></textarea></div>
+        <div class="p-field-grid">
+            <div class="p-field"><label>Priority</label><input pInputText [(ngModel)]="bundleForm.PRIORITY" maxlength="1" /></div>
+            <div class="p-field"><label>Mandatory (0/1)</label><input pInputText [(ngModel)]="bundleForm.IS_MANDATORY" maxlength="1" /></div>
+        </div>
+    </div>
+    <div class="p-fluid ai-builder-dialog" *ngIf="bundleDialogKind === 'playbook'">
+        <div class="p-field"><label>Complaint type *</label><input pInputText [(ngModel)]="bundleForm.COMPLAINT_TYPE" maxlength="40" /></div>
+        <div class="p-field-grid">
+            <div class="p-field"><label>Step order *</label><input pInputText [(ngModel)]="bundleForm.STEP_ORDER" maxlength="4" /></div>
+            <div class="p-field"><label>Step code *</label><input pInputText [(ngModel)]="bundleForm.STEP_CODE" maxlength="40" /></div>
+        </div>
+        <div class="p-field"><label>Step label *</label><input pInputText [(ngModel)]="bundleForm.STEP_LABEL" maxlength="100" /></div>
+        <div class="p-field"><label>Hypothesis tested *</label><input pInputText [(ngModel)]="bundleForm.HYPOTHESIS_TESTED" maxlength="200" /></div>
+        <div class="p-field-grid">
+            <div class="p-field"><label>GOLD schema *</label><input pInputText [(ngModel)]="bundleForm.GOLD_SCHEMA" maxlength="20" /></div>
+            <div class="p-field"><label>GOLD table *</label><input pInputText [(ngModel)]="bundleForm.GOLD_TABLE" maxlength="60" /></div>
+        </div>
+        <div class="p-field"><label>Key columns</label><input pInputText [(ngModel)]="bundleForm.KEY_COLUMNS" maxlength="500" /></div>
+        <div class="p-field"><label>Evidence fact type *</label><input pInputText [(ngModel)]="bundleForm.EVIDENCE_FACT_TYPE" maxlength="40" /></div>
+        <div class="p-field-grid">
+            <div class="p-field"><label>Mandatory (0/1)</label><input pInputText [(ngModel)]="bundleForm.IS_MANDATORY" maxlength="1" /></div>
+            <div class="p-field"><label>Insert position</label>
+                <p-dropdown [options]="insertPositionOptions" [(ngModel)]="bundleForm.INSERT_POSITION" optionLabel="label" optionValue="value"></p-dropdown>
+            </div>
+        </div>
+        <div class="p-field"><label>Insert after step</label><input pInputText [(ngModel)]="bundleForm.INSERT_AFTER_STEP" maxlength="40" /></div>
+    </div>
+    <div class="p-fluid ai-builder-dialog" *ngIf="bundleDialogKind === 'sql'">
+        <div class="p-field"><label>Template code *</label><input pInputText [(ngModel)]="bundleForm.TEMPLATE_CODE" maxlength="40" /></div>
+        <div class="p-field"><label>Template label *</label><input pInputText [(ngModel)]="bundleForm.TEMPLATE_LABEL" maxlength="100" /></div>
+        <div class="p-field"><label>Purpose</label><input pInputText [(ngModel)]="bundleForm.PURPOSE" maxlength="200" /></div>
+        <div class="p-field"><label>Tables referenced</label><input pInputText [(ngModel)]="bundleForm.TABLES_REFERENCED" maxlength="500" /></div>
+        <div class="p-field"><label>Parameters JSON</label><textarea pInputTextarea [(ngModel)]="bundleForm.PARAMETERS_JSON" rows="2" placeholder="[]"></textarea></div>
+        <div class="p-field"><label>SQL text *</label><textarea pInputTextarea [(ngModel)]="bundleForm.SQL_TEXT" rows="8" class="ai-builder-sql-editor"></textarea></div>
+    </div>
+    <div class="p-fluid ai-builder-dialog" *ngIf="bundleDialogKind === 'vocab'">
+        <div class="p-field"><label>Term *</label><input pInputText [(ngModel)]="bundleForm.TERM" maxlength="100" /></div>
+        <div class="p-field"><label>Canonical concept *</label><input pInputText [(ngModel)]="bundleForm.CANONICAL_CONCEPT" maxlength="100" /></div>
+        <div class="p-field"><label>Term type</label>
+            <p-dropdown [options]="termTypeOptions" [(ngModel)]="bundleForm.TERM_TYPE" optionLabel="label" optionValue="value"></p-dropdown>
+        </div>
+        <div class="p-field-grid">
+            <div class="p-field"><label>Language</label><input pInputText [(ngModel)]="bundleForm.LANGUAGE_CODE" maxlength="5" /></div>
+            <div class="p-field"><label>Confidence boost</label><input pInputText [(ngModel)]="bundleForm.CONFIDENCE_BOOST" maxlength="6" /></div>
+        </div>
+    </div>
+    <div class="p-fluid ai-builder-dialog" *ngIf="bundleDialogKind === 'tests'">
+        <div class="p-field"><label>Test name *</label><input pInputText [(ngModel)]="bundleForm.TEST_NAME" maxlength="100" /></div>
+        <div class="p-field"><label>Complaint type *</label><input pInputText [(ngModel)]="bundleForm.COMPLAINT_TYPE" maxlength="40" /></div>
+        <div class="p-field"><label>Complaint text *</label><textarea pInputTextarea [(ngModel)]="bundleForm.COMPLAINT_TEXT" rows="4"></textarea></div>
+        <div class="p-field-grid">
+            <div class="p-field"><label>Expected root cause *</label><input pInputText [(ngModel)]="bundleForm.EXPECTED_ROOT_CAUSE" maxlength="40" /></div>
+            <div class="p-field"><label>Expected confidence</label><input pInputText [(ngModel)]="bundleForm.EXPECTED_CONFIDENCE" maxlength="15" /></div>
+        </div>
+        <div class="p-field"><label>Expected steps min</label><input pInputText [(ngModel)]="bundleForm.EXPECTED_STEPS_MIN" maxlength="4" /></div>
+    </div>
+    <div class="p-fluid ai-builder-dialog" *ngIf="bundleDialogKind === 'diagStep'">
+        <div class="p-field-grid">
+            <div class="p-field">
+                <label>Step order *</label>
+                <input pInputText [(ngModel)]="bundleForm.STEP_ORDER" maxlength="3" placeholder="1" />
+            </div>
+            <div class="p-field">
+                <label>Template code * <small>(see SQL templates tab)</small></label>
+                <input pInputText [(ngModel)]="bundleForm.TEMPLATE_CODE" maxlength="100" placeholder="e.g. RANG_CHECK_ARTSITE" />
+            </div>
+        </div>
+        <div class="p-field">
+            <label>Step label</label>
+            <input pInputText [(ngModel)]="bundleForm.STEP_LABEL" maxlength="200" placeholder="Human label shown in evidence chain" />
+        </div>
+        <div class="p-field-grid">
+            <div class="p-field">
+                <label>Stop field</label>
+                <input pInputText [(ngModel)]="bundleForm.STOP_FIELD" maxlength="100" placeholder="e.g. SITE_COUNT or DIAGNOSIS" />
+            </div>
+            <div class="p-field">
+                <label>Stop operator</label>
+                <p-dropdown [options]="operatorOptions" [(ngModel)]="bundleForm.STOP_OPERATOR"
+                            optionLabel="label" optionValue="value"></p-dropdown>
+            </div>
+            <div class="p-field">
+                <label>Stop value</label>
+                <input pInputText [(ngModel)]="bundleForm.STOP_VALUE" maxlength="200" placeholder="e.g. 0 or NOT_RANGED" />
+            </div>
+        </div>
+        <div class="p-field">
+            <label>Conclusion key *</label>
+            <input pInputText [(ngModel)]="bundleForm.CONCLUSION_KEY" maxlength="100" placeholder="e.g. ITEM_NEVER_RANGED" />
+            <small>Must match a row in AI_DIAGNOSTIC_CONCLUSION. Use the Conclusion templates section above to author it.</small>
+        </div>
+    </div>
+    <div class="p-fluid ai-builder-dialog" *ngIf="bundleDialogKind === 'diagConclusion'">
+        <div class="p-field-grid">
+            <div class="p-field">
+                <label>Conclusion key</label>
+                <input pInputText [(ngModel)]="bundleForm.CONCLUSION_KEY" maxlength="100" [disabled]="true" />
+            </div>
+            <div class="p-field">
+                <label>Severity</label>
+                <p-dropdown [options]="diagSeverityOptions" [(ngModel)]="bundleForm.SEVERITY"
+                            optionLabel="label" optionValue="value"></p-dropdown>
+            </div>
+        </div>
+        <div class="p-field">
+            <label>Retailer ID</label>
+            <input pInputText [(ngModel)]="bundleForm.RETAILER_ID" maxlength="50" placeholder="e.g. HNU_PREPROD or TEMPLATE" />
+        </div>
+        <div class="p-field">
+            <label>Summary template *</label>
+            <textarea pInputTextarea [(ngModel)]="bundleForm.SUMMARY_TEMPLATE" rows="3"
+                      placeholder="Item {lu_id} has no ARTSITE row at store {site_id}."></textarea>
+            <small>Wrap field values in braces — available tokens: lu_id, site_id, supplier, stock, po_number, po_date, days, pick_count</small>
+        </div>
+        <div class="p-field">
+            <label>Evidence template</label>
+            <textarea pInputTextarea [(ngModel)]="bundleForm.EVIDENCE_TEMPLATE" rows="4"
+                      placeholder="ARTSITE rows: {site_count}|Store checked: {site_id}"></textarea>
+            <small>Separate evidence bullet points with | (pipe).</small>
+        </div>
+        <div class="p-field">
+            <label>Follow-up hint</label>
+            <input pInputText [(ngModel)]="bundleForm.FOLLOW_UP_TEMPLATE" maxlength="500"
+                   placeholder="Want me to check the ranging pipeline?" />
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Cancel" class="p-button-text" (click)="onBundleVisibilityChange(false)"></button>
+        <button pButton type="button" label="Save" icon="pi pi-check" [loading]="bundleDialogSaving" [disabled]="bundleDialogSaving"
+                (click)="saveBundleForm()"></button>
+    </ng-template>
+</p-dialog>

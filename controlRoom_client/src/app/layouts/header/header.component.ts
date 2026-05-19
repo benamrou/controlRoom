@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
 import { UserService, LogginService, LabelService } from '../../shared/services/index';
+import { MenuAccessService } from '../../shared/services/menu/menu-access.service';
 import { Router } from '@angular/router';
 import { SelectItem } from 'primeng/api';
 import { DOCUMENT } from '@angular/common';
@@ -27,9 +28,14 @@ export class HeaderComponent implements OnInit {
 	displaySwitch: boolean;
 	style: any;
 
-	constructor( private _logginService: LogginService, public _userService: UserService, 
-				 private _labelService: LabelService, public _router: Router,
-				 @Inject(DOCUMENT) private _document: Document) { 
+	constructor(
+        private _logginService: LogginService,
+        public _userService: UserService,
+        public menuAccess: MenuAccessService,
+        private _labelService: LabelService,
+        public _router: Router,
+        @Inject(DOCUMENT) private _document: Document,
+    ) { 
 		this.environments = [];
 
         if (!localStorage.getItem('isLoggedin')) {
@@ -40,31 +46,42 @@ export class HeaderComponent implements OnInit {
 			return;
         }
 
-		//console.log("this._userService.userInfo: " + JSON.stringify(this._userService.userInfo));
-		if (this._userService.userInfo.envUserAccess.length > 0) {
-			for (let i = 0; i < this._userService.userInfo.envUserAccess.length; i ++) {
-				if (this._userService.userInfo.envUserAccess[i].domain == '1') {
-					this.environments.push({label: this._userService.userInfo.envUserAccess[i].shortDescription!,
-											value: {type: this._userService.userInfo.envUserAccess[i].type!, 
-													name: this._userService.userInfo.envUserAccess[i].shortDescription!}! });
-					this.envTypeConnected = this._userService.userInfo.envUserAccess[i].type;
-				}
-			}
-		} else {
-			for (let i = 0; i < this._userService.userInfo.envCorporateAccess.length; i ++) {
-				if (this._userService.userInfo.envUserAccess[i].domain == '1') {
-				this.environments.push({label: this._userService.userInfo.envCorporateAccess[i].shortDescription!,
-										value: {type: this._userService.userInfo.envCorporateAccess[i].type!, 
-												name: this._userService.userInfo.envCorporateAccess[i].shortDescription!}! });
-				}
-			}
-		}
-		//console.log("HEADER - Environments: " + this.environments.length);
 		this.displaySwitch = false;
+		this.loadEnvironments();
 		this.setTopBarDisplay();
 	}
 
     ngOnInit() {}
+
+	private loadEnvironments(): void {
+		this.environments = [];
+		const info = this._userService.userInfo;
+		if (!info) {
+			return;
+		}
+		const userEnv = info.envUserAccess || [];
+		const corpEnv = info.envCorporateAccess || [];
+		if (userEnv.length > 0) {
+			for (let i = 0; i < userEnv.length; i++) {
+				if (userEnv[i]?.domain === '1') {
+					this.environments.push({
+						label: userEnv[i].shortDescription!,
+						value: { type: userEnv[i].type!, name: userEnv[i].shortDescription! },
+					});
+					this.envTypeConnected = userEnv[i].type;
+				}
+			}
+		} else {
+			for (let i = 0; i < corpEnv.length; i++) {
+				if (corpEnv[i]?.domain === '1') {
+					this.environments.push({
+						label: corpEnv[i].shortDescription!,
+						value: { type: corpEnv[i].type!, name: corpEnv[i].shortDescription! },
+					});
+				}
+			}
+		}
+	}
 
     toggleSidebar() {
         const dom: any = document.querySelector('body');
@@ -77,6 +94,7 @@ export class HeaderComponent implements OnInit {
     }
 
     onLoggedout() {
+        this.menuAccess.clear();
         localStorage.removeItem('isLoggedin');
     }
 
@@ -99,12 +117,15 @@ export class HeaderComponent implements OnInit {
 		this.setTopBarDisplay();
 	}
 
-	setTopBarDisplay (){
-		//console.log('envTypeInt : ' + this.envTypeConnected);
-		let envTypeInt = parseInt(this.envTypeConnected);
-		this.appForegroundColorEnvironment = this._userService.userInfo.mainEnvironment[0].titleColor;
-		this.appEnvironment = this._userService.userInfo.mainEnvironment[0].title;
-		//console.log('Aoo environment : ' + this.appEnvironment );
+	setTopBarDisplay(): void {
+		const main = this._userService.userInfo?.mainEnvironment?.[0];
+		if (!main) {
+			this.appEnvironment = 'Inventory Control Room';
+			this.appForegroundColorEnvironment = '';
+			return;
+		}
+		this.appForegroundColorEnvironment = main.titleColor;
+		this.appEnvironment = main.title;
 	}
 
 	sidebarToggle()

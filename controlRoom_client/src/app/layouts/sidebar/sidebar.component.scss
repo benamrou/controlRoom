@@ -1,26 +1,13 @@
 /* ==============================================
-   ICR SPRING THEME — sidebar.component.scss
-   Matches login.component.scss spring palette
+   ICR SUMMER THEME — sidebar.component.scss
+   Matches login.component.scss summer palette
    ============================================== */
 
-// ── Spring Color Variables ─────────────────────────────────────
-$spring-sky-top:   #A8D8F0;
-$spring-sky-mid:   #C8EAF8;
-$spring-horizon:   #D8F0C0;
-$spring-meadow:    #8DC44A;
-$spring-grass:     #5D9E1F;
-$spring-dark:      #2d5a20;
-
-$spring-white:     #ffffff;
-$spring-pink:      #FF89B3;
-$spring-blossom:   #FFB7D5;
-$spring-yellow:    #F3F875;
-$spring-purple:    #D9ABFF;
-$spring-blue:      #75BFF8;
-
+@import '../themes/summer-palette';
 
 // ── Main Sidebar ───────────────────────────────────────────────
-.spring-sidebar {
+// ViewEncapsulation.None — styles apply to app-sidebar-menu children (Bootstrap overrides).
+.summer-sidebar {
     position: fixed;
     top: 56px;                          // below the navbar
     left: 0;
@@ -30,21 +17,21 @@ $spring-blue:      #75BFF8;
     overflow-x: hidden;
     background: linear-gradient(
         180deg,
-        rgba($spring-sky-top, 0.97)  0%,
-        rgba($spring-sky-mid, 0.95) 55%,
-        rgba($spring-horizon, 0.93) 100%
-    );
+        rgba($summer-sky-top, 0.97)  0%,
+        rgba($summer-sky-mid, 0.95) 55%,
+        rgba($summer-horizon, 0.93) 100%
+    ) !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-right: 1.5px solid rgba($spring-pink, 0.22);
-    box-shadow: 2px 0 16px rgba($spring-dark, 0.08);
+    border-right: 1.5px solid rgba($summer-coral, 0.22);
+    box-shadow: 2px 0 16px rgba($summer-deep, 0.08);
     z-index: 100;
 
     // Smooth custom scrollbar
     &::-webkit-scrollbar          { width: 5px; }
     &::-webkit-scrollbar-track    { background: transparent; }
-    &::-webkit-scrollbar-thumb    { background: rgba($spring-pink, 0.40); border-radius: 4px; }
-    &::-webkit-scrollbar-thumb:hover { background: rgba($spring-pink, 0.65); }
+    &::-webkit-scrollbar-thumb    { background: rgba($summer-coral, 0.40); border-radius: 4px; }
+    &::-webkit-scrollbar-thumb:hover { background: rgba($summer-coral, 0.65); }
 
     // ── Top-level list ────────────────────────────────────────
     ul.list-group {
@@ -53,33 +40,52 @@ $spring-blue:      #75BFF8;
         margin: 0;
     }
 
-    // ── Top-level items ───────────────────────────────────────
-    .list-group-item {
+    // ── Top-level items (override Bootstrap white list-group-item) ──
+    .list-group-item,
+    a.list-group-item,
+    .nested-menu > .list-group-item {
         display: block;
         padding: 10px 16px;
         font-size: 0.88rem;
         font-weight: 600;
-        color: $spring-dark;
-        background: transparent;
-        border: none;
+        color: $summer-deep !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        border-top: 1px solid rgba($summer-coral, 0.10) !important;
         border-radius: 0;
         cursor: pointer;
         transition: background 0.16s, padding-left 0.16s;
         text-decoration: none;
 
-        i { color: $spring-grass; margin-right: 6px; width: 16px; }
+        i { color: $summer-palm; margin-right: 6px; width: 16px; }
 
         &:hover {
-            background: rgba($spring-blossom, 0.30);
+            background: rgba($summer-sun, 0.30) !important;
             padding-left: 20px;
+            color: $summer-deep !important;
         }
 
         &.router-link-active {
-            background: linear-gradient(90deg, rgba($spring-pink, 0.22) 0%, rgba($spring-yellow, 0.18) 100%);
-            border-left: 3px solid $spring-pink;
+            background: linear-gradient(90deg, rgba($summer-coral, 0.22) 0%, rgba($summer-sun, 0.18) 100%) !important;
+            border-left: 3px solid $summer-coral !important;
             padding-left: 13px;
-            color: darken($spring-dark, 5%);
+            color: darken($summer-deep, 5%) !important;
         }
+    }
+
+    ul.list-group > a.list-group-item:first-of-type {
+        border-top: none !important;
+    }
+
+    .submenu-group-label span {
+        display: block;
+        padding: 0.35rem 1rem 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: darken($summer-deep, 8%);
+        letter-spacing: 0.03em;
     }
 
     // ── Submenu (1st level) ───────────────────────────────────
@@ -98,8 +104,8 @@ $spring-blue:      #75BFF8;
         list-style: none;
         padding: 2px 0 2px 16px;
         margin: 0;
-        background: rgba($spring-white, 0.35);
-        border-left: 2px solid rgba($spring-pink, 0.25);
+        background: rgba($summer-white, 0.35);
+        border-left: 2px solid rgba($summer-coral, 0.25);
         margin-left: 12px;
 
         li { padding: 0; }
@@ -125,21 +131,21 @@ $spring-blue:      #75BFF8;
         padding: 7px 12px;
         font-size: 0.83rem;
         font-weight: 500;
-        color: darken($spring-dark, 2%);
+        color: darken($summer-deep, 2%);
         text-decoration: none;
         border-radius: 6px;
         transition: background 0.14s, padding-left 0.14s;
 
-        i { color: $spring-grass; margin-right: 6px; width: 14px; font-size: 0.80rem; }
+        i { color: $summer-palm; margin-right: 6px; width: 14px; font-size: 0.80rem; }
 
         &:hover {
-            background: rgba($spring-blossom, 0.35);
+            background: rgba($summer-sun, 0.35);
             padding-left: 16px;
         }
 
         &.router-link-active {
-            background: rgba($spring-pink, 0.20);
-            color: darken($spring-dark, 8%);
+            background: rgba($summer-coral, 0.20);
+            color: darken($summer-deep, 8%);
             font-weight: 700;
         }
     }
@@ -155,39 +161,42 @@ $spring-blue:      #75BFF8;
 
 
 // ── Admin Sidebar ──────────────────────────────────────────────
-.spring-sidebar-admin {
+.summer-sidebar-admin {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 230px;
     background: linear-gradient(
         135deg,
-        rgba($spring-horizon, 0.96) 0%,
-        rgba($spring-meadow,  0.90) 100%
-    );
-    border-top:  1.5px solid rgba($spring-pink, 0.22);
-    border-right: 1.5px solid rgba($spring-pink, 0.22);
-    box-shadow: 2px -2px 12px rgba($spring-dark, 0.07);
+        rgba($summer-horizon, 0.96) 0%,
+        rgba($summer-ocean,  0.90) 100%
+    ) !important;
+    border-top:  1.5px solid rgba($summer-coral, 0.22);
+    border-right: 1.5px solid rgba($summer-coral, 0.22);
+    box-shadow: 2px -2px 12px rgba($summer-deep, 0.07);
     z-index: 100;
     overflow-y: auto;
 
     .list-group { padding: 6px 0 12px 0; }
 
-    .list-group-item {
+    .list-group-item,
+    a.list-group-item,
+    .nested-menu > .list-group-item {
         display: block;
         padding: 10px 16px;
         font-size: 0.85rem;
         font-weight: 600;
-        color: $spring-dark;
-        background: transparent;
-        border: none;
+        color: $summer-deep !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
         cursor: pointer;
         transition: background 0.15s;
         text-decoration: none;
 
-        i { color: $spring-grass; margin-right: 6px; }
+        i { color: $summer-palm; margin-right: 6px; }
 
-        &:hover { background: rgba($spring-blossom, 0.30); }
+        &:hover { background: rgba($summer-sun, 0.30) !important; }
 
         &.isDisabled { pointer-events: none; opacity: 0.40; }
     }
@@ -203,27 +212,27 @@ $spring-blue:      #75BFF8;
         list-style: none;
         padding: 2px 0 2px 16px;
         margin: 0 0 0 12px;
-        background: rgba($spring-white, 0.35);
-        border-left: 2px solid rgba($spring-pink, 0.22);
+        background: rgba($summer-white, 0.35);
+        border-left: 2px solid rgba($summer-coral, 0.22);
 
         li a {
             display: block;
             padding: 7px 10px;
             font-size: 0.82rem;
-            color: $spring-dark;
+            color: $summer-deep;
             text-decoration: none;
             border-radius: 5px;
             transition: background 0.13s;
 
-            i { color: $spring-grass; margin-right: 5px; }
-            &:hover { background: rgba($spring-blossom, 0.30); }
-            &.router-link-active { background: rgba($spring-pink, 0.18); font-weight: 700; }
+            i { color: $summer-palm; margin-right: 5px; }
+            &:hover { background: rgba($summer-sun, 0.30); }
+            &.router-link-active { background: rgba($summer-coral, 0.18); font-weight: 700; }
         }
     }
 
     .logo {
         text-align: center;
         padding: 8px 0 10px;
-        border-top: 1px solid rgba($spring-pink, 0.18);
+        border-top: 1px solid rgba($summer-coral, 0.18);
     }
 }

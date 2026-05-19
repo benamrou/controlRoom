@@ -1,0 +1,343 @@
+.ai-module-container { padding: 1.5rem; }
+
+// ── Purpose banner ────────────────────────────────────────────────────────────
+.ai-setup-banner {
+    display: flex;
+    gap: 1.25rem;
+    background: linear-gradient(135deg, #e8f4fd 0%, #f0f7ff 100%);
+    border: 1px solid #bee3f8;
+    border-left: 5px solid #3182ce;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+
+    .ai-setup-banner-icon {
+        font-size: 1.8rem;
+        color: #3182ce;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    strong { display: block; font-size: 1rem; margin-bottom: .4rem; color: #1a365d; }
+    p      { margin: 0 0 .75rem; font-size: .88rem; color: #2d3748; line-height: 1.7; }
+}
+
+.ai-setup-prereqs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem .75rem;
+    font-size: .8rem;
+}
+
+.ai-prereq-title {
+    font-weight: 700;
+    color: #2d3748;
+    width: 100%;
+}
+
+.ai-prereq-item {
+    color: #2d6a4f;
+    background: #d8f3dc;
+    border: 1px solid #b7e4c7;
+    border-radius: 20px;
+    padding: .2rem .75rem;
+    i { color: #2d6a4f; margin-right: .3rem; }
+    code { background: none; font-weight: 700; }
+}
+
+// ── Stepper ───────────────────────────────────────────────────────────────────
+.ai-steps { margin-bottom: 2rem; }
+
+// ── Step panels ───────────────────────────────────────────────────────────────
+.ai-step-body { min-height: 360px; }
+
+.ai-step-panel {
+    animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.ai-step-header { margin-bottom: 1.5rem; }
+
+.ai-step-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: .6rem;
+    color: var(--primary-color);
+    i { margin-right: .5rem; }
+}
+
+.ai-step-context {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
+    border-radius: 0 6px 6px 0;
+    padding: .7rem 1rem;
+    font-size: .85rem;
+    color: #78350f;
+    line-height: 1.65;
+
+    i { color: #d97706; margin-right: .4rem; }
+    code { background: rgba(0,0,0,.06); padding: 0 .25rem; border-radius: 3px; }
+}
+
+// ── Form ──────────────────────────────────────────────────────────────────────
+.ai-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.5rem;
+}
+
+.ai-field-full { grid-column: 1 / -1; }
+
+.ai-required { color: #e53935; margin-left: 2px; }
+
+.ai-hint {
+    color: #888;
+    font-size: .78rem;
+    display: block;
+    margin-top: 3px;
+    line-height: 1.5;
+    i { margin-right: .2rem; }
+    code { background: rgba(0,0,0,.04); padding: 0 .2rem; border-radius: 2px; }
+}
+
+// ── Env detail card ────────────────────────────────────────────────────────────
+.ai-env-card {
+    background: var(--surface-ground);
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    margin-top: 1.25rem;
+    overflow: hidden;
+}
+
+.ai-env-card-header {
+    background: var(--surface-card);
+    border-bottom: 1px solid var(--surface-border);
+    padding: .6rem 1rem;
+    font-weight: 700;
+    font-size: .88rem;
+    i { margin-right: .4rem; color: var(--primary-color); }
+}
+
+.ai-env-card-grid { padding: .75rem 1rem; display: flex; flex-direction: column; gap: .5rem; }
+
+.ai-env-card-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+    font-size: .88rem;
+}
+
+.ai-card-label {
+    font-weight: 600;
+    min-width: 110px;
+    color: var(--text-color-secondary);
+    flex-shrink: 0;
+}
+
+.ai-card-value {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+.ai-card-note { font-size: .72rem; }
+
+.ai-env-option {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.ai-env-name { font-weight: 600; }
+.ai-env-host { font-size: .8rem; color: var(--text-color-secondary); }
+
+.ai-dropdown-empty {
+    padding: .75rem;
+    text-align: center;
+    color: var(--text-color-secondary);
+    i { color: #f59e0b; margin-right: .3rem; }
+    code { background: rgba(0,0,0,.05); padding: 0 .2rem; border-radius: 2px; }
+}
+
+.ai-step-callout {
+    text-align: center;
+    color: var(--text-color-secondary);
+    padding: 2rem;
+    font-size: .9rem;
+    i { margin-right: .4rem; }
+}
+
+// ── Connection test ────────────────────────────────────────────────────────────
+.ai-test-ready-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    background: var(--surface-ground);
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+}
+
+.ai-test-ready-info { flex: 1; display: flex; flex-direction: column; gap: .4rem; }
+
+.ai-test-ready-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: .88rem;
+}
+
+.ai-test-link { font-size: 1rem; font-weight: 700; color: var(--primary-color); }
+.ai-btn-run   { flex-shrink: 0; }
+
+.ai-test-running {
+    padding: 1.5rem 0;
+    p { margin-bottom: 1rem; color: #555; }
+}
+.ai-progress { height: 6px; }
+
+.ai-test-results-panel { display: flex; flex-direction: column; gap: .5rem; }
+
+.ai-check-row {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .6rem .9rem;
+    background: var(--surface-ground);
+    border-radius: 6px;
+    border: 1px solid var(--surface-border);
+}
+
+.ai-check-tag   { min-width: 56px; text-align: center; }
+.ai-check-label { font-weight: 500; font-size: .9rem; flex: 1; }
+.ai-check-detail { color: var(--text-color-secondary); font-size: .82rem; font-family: monospace; }
+
+.ai-test-success-banner {
+    margin-top: 1rem;
+    background: #f0fff4;
+    border: 1px solid #9ae6b4;
+    border-radius: 6px;
+    padding: .75rem 1rem;
+    color: #276749;
+    font-size: .9rem;
+    i { margin-right: .4rem; color: #38a169; }
+}
+
+.ai-test-fail-banner {
+    margin-top: 1rem;
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 6px;
+    padding: .75rem 1rem;
+    color: #9b2c2c;
+    font-size: .9rem;
+    i { margin-right: .4rem; }
+}
+
+.ai-fail-actions { margin-top: .75rem; }
+
+// ── Confirm & save ─────────────────────────────────────────────────────────────
+.ai-confirm-layout { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.ai-confirm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.ai-confirm-card {
+    background: var(--surface-ground);
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+}
+
+.ai-confirm-card-label {
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-color-secondary);
+    margin-bottom: .4rem;
+    i { margin-right: .3rem; }
+}
+
+.ai-confirm-value {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+// ── What happens next ─────────────────────────────────────────────────────────
+.ai-next-steps-box {
+    background: var(--surface-ground);
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+}
+
+.ai-next-steps-title {
+    font-weight: 700;
+    font-size: .95rem;
+    margin-bottom: 1rem;
+    i { margin-right: .4rem; color: var(--primary-color); }
+}
+
+.ai-next-step-item {
+    display: flex;
+    gap: .9rem;
+    align-items: flex-start;
+    margin-bottom: .85rem;
+
+    &:last-child { margin-bottom: 0; }
+}
+
+.ai-next-num {
+    background: var(--primary-color);
+    color: #fff;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .78rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+// ── Save action ───────────────────────────────────────────────────────────────
+.ai-save-action {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ai-saved-confirm {
+    display: flex;
+    align-items: flex-start;
+    gap: .6rem;
+    color: #276749;
+    font-size: .9rem;
+    i { color: #38a169; font-size: 1.2rem; flex-shrink: 0; }
+    strong { display: block; }
+}
+
+// ── Navigation footer ─────────────────────────────────────────────────────────
+.ai-step-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--surface-border);
+}

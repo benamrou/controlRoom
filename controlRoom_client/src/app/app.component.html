@@ -1,13 +1,12 @@
-<app-header *ngIf="!(_router.url === '/login' || _router.url === '/')" ></app-header>
-<app-sidebar *ngIf="!(_router.url === '/login' || _router.url === '/')"  
+<!-- Single primary router-outlet only. Two sibling outlets (main vs login) can leave the wrong outlet
+     receiving navigations so the URL updates while the dashboard view stays mounted. -->
+<app-header *ngIf="showAppChrome()"></app-header>
+<app-sidebar *ngIf="showAppChrome()"
              (collapsedEvent)="receiveCollapsed($event)"></app-sidebar>
 
-<section #workspace *ngIf="!(_router.url === '/login' || _router.url === '/')" 
-         class="main-container"
-         [ngClass]="{collapsed: collapedSideBar}">
+<section #workspace
+         [class.main-container]="showAppChrome()"
+         [class.collapsed]="showAppChrome() && collapedSideBar"
+         [class.login-shell]="!showAppChrome()">
     <router-outlet (activate)="onActivate($event)"></router-outlet>
 </section>
-
-<router-outlet *ngIf="(_router.url === '/login')">
-</router-outlet>
-

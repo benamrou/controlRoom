@@ -1,0 +1,39 @@
+/* AI Dashboard — Supply Chain AI Module */
+.ai-module-container { padding: 1.5rem; }
+.ai-topbar {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1rem;
+    label { font-weight: 600; }
+    .p-dropdown { min-width: 320px; }
+}
+.ai-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(220px, 1fr));
+    gap: 1rem;
+}
+.kpi-main {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: .25rem;
+}
+.kpi-sub {
+    color: #718096;
+    font-size: .85rem;
+    margin-bottom: .5rem;
+}
+.ai-wip-notice {
+    text-align: center; padding: 4rem 2rem; color: #888;
+    i { font-size: 3rem; display: block; margin-bottom: 1rem; color: #ccc; }
+    h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #555; }
+    p { font-size: 0.9rem; }
+}
+
+@media (max-width: 1200px) {
+    .ai-kpi-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+}
+@media (max-width: 700px) {
+    .ai-kpi-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,417 @@
+.ai-pending-phrasings {
+
+    .pending-banner {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        padding: 18px 22px;
+        margin-bottom: 18px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 100%);
+        border: 1px solid #c7d2fe;
+
+        .pending-banner-icon {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            background: #6366f1;
+            color: #fff;
+            font-size: 22px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+        }
+
+        strong { font-size: 15px; color: #1e293b; }
+        p {
+            margin: 4px 0 0;
+            color: #475569;
+            font-size: 13px;
+            code {
+                background: #fff;
+                padding: 2px 6px;
+                border-radius: 4px;
+                border: 1px solid #e2e8f0;
+                font-size: 12px;
+            }
+        }
+    }
+
+    .pending-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        .pending-count { font-weight: 600; color: #334155; }
+        .pending-toolbar-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+    }
+
+    .pending-loading {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 24px;
+        align-items: center;
+        color: #475569;
+    }
+
+    .pending-empty {
+        text-align: center;
+        padding: 60px 20px;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px dashed #cbd5e1;
+
+        i { font-size: 38px; color: #10b981; }
+        h3 { margin: 12px 0 4px; color: #0f172a; }
+        p  { color: #64748b; margin: 0; }
+    }
+
+    .pending-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .pending-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        overflow: hidden;
+        transition: box-shadow 0.15s, transform 0.15s;
+
+        &:hover { box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08); }
+        &.expanded { box-shadow: 0 8px 28px rgba(15, 23, 42, 0.12); }
+    }
+
+    .pending-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        cursor: pointer;
+        gap: 16px;
+
+        .pending-question {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            min-width: 0;
+
+            i { color: #6366f1; }
+            .question-text {
+                font-size: 14px;
+                color: #0f172a;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .pending-meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-shrink: 0;
+
+            .pending-score {
+                font-size: 12px;
+                color: #64748b;
+                strong { color: #0f172a; }
+            }
+            .pending-when {
+                font-size: 11px;
+                color: #94a3b8;
+                font-family: monospace;
+            }
+            .pending-toggle {
+                color: #94a3b8;
+                font-size: 12px;
+            }
+            .reason-tag {
+                background: #fef3c7;
+            }
+        }
+    }
+
+    .pending-card-body {
+        padding: 18px 22px;
+        border-top: 1px solid #f1f5f9;
+        background: #f8fafc;
+    }
+
+    .pending-override-banner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        margin-bottom: 14px;
+        border-radius: 10px;
+        background: #ecfdf5;
+        border: 1px solid #6ee7b7;
+        color: #064e3b;
+        font-size: 13px;
+
+        i {
+            color: #059669;
+            font-size: 16px;
+        }
+        strong { color: #047857; }
+        em { font-style: italic; color: #475569; }
+    }
+
+    .pending-context {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px 24px;
+        padding-bottom: 14px;
+        margin-bottom: 16px;
+        border-bottom: 1px dashed #e2e8f0;
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            label {
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                color: #94a3b8;
+                margin-bottom: 2px;
+            }
+            span {
+                font-size: 13px;
+                color: #0f172a;
+                &.mono { font-family: monospace; font-size: 12px; }
+            }
+        }
+    }
+
+    .pending-form {
+        .form-row {
+            margin-bottom: 12px;
+            label {
+                display: block;
+                font-size: 12px;
+                color: #475569;
+                margin-bottom: 4px;
+                font-weight: 500;
+            }
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .full-width {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 6px;
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Phase 7 — auto-promote dialog (sits outside .ai-pending-phrasings because
+// PrimeNG appends the dialog to body by default).
+// ─────────────────────────────────────────────────────────────────────────
+.auto-promote-dialog {
+
+    .auto-promote-banner {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #ecfdf5 0%, #fefce8 100%);
+        border: 1px solid #a7f3d0;
+
+        i {
+            color: #f59e0b;
+            font-size: 22px;
+            margin-top: 2px;
+        }
+        strong { color: #064e3b; font-size: 14px; }
+        p {
+            margin: 4px 0 0;
+            color: #475569;
+            font-size: 12px;
+            line-height: 1.5;
+            code {
+                background: #fff;
+                padding: 1px 5px;
+                border-radius: 3px;
+                border: 1px solid #e2e8f0;
+                font-size: 11px;
+            }
+            strong { color: #047857; }
+        }
+    }
+
+    .auto-promote-thresholds {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+        gap: 10px 12px;
+        align-items: end;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+
+        label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .auto-promote-thresholds-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+    }
+
+    .auto-promote-empty {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 18px 22px;
+        background: #fef3c7;
+        border: 1px dashed #fcd34d;
+        border-radius: 10px;
+        color: #78350f;
+        font-size: 13px;
+        i { font-size: 18px; }
+    }
+
+    .auto-promote-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 380px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .auto-promote-list-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 4px;
+        font-size: 12px;
+        color: #475569;
+
+        label {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .auto-promote-counter {
+            font-family: monospace;
+            color: #94a3b8;
+        }
+    }
+
+    .auto-promote-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fff;
+        transition: background 0.15s, border-color 0.15s;
+
+        &.promoted {
+            background: #f0fdf4;
+            border-color: #86efac;
+            opacity: 0.85;
+        }
+        &.failed {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+    }
+
+    .auto-promote-checkbox input {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+
+    .auto-promote-detail {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+
+        .auto-promote-phrase {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+
+            .phrase {
+                font-family: monospace;
+                font-size: 13px;
+                color: #0f172a;
+                word-break: break-word;
+            }
+            .skill-tag {
+                font-size: 11px;
+            }
+        }
+
+        .auto-promote-stats {
+            display: flex;
+            gap: 14px;
+            font-size: 11px;
+            color: #64748b;
+
+            i { margin-right: 4px; color: #6366f1; }
+            .last-seen {
+                font-family: monospace;
+                color: #94a3b8;
+            }
+        }
+
+        .auto-promote-sample {
+            font-size: 12px;
+            color: #475569;
+            font-style: italic;
+
+            i {
+                color: #cbd5e1;
+                margin-right: 4px;
+                font-size: 10px;
+            }
+        }
+    }
+
+    .auto-promote-status {
+        font-size: 12px;
+        white-space: nowrap;
+
+        .status-busy { color: #6366f1; }
+        .status-ok   { color: #047857; font-weight: 600; }
+        .status-ko   { color: #b91c1c; font-weight: 600; }
+    }
+}

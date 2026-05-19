@@ -1,0 +1,335 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<app-page-header [title]="'AI Data Health'" [subtitle]="'Automated data quality monitoring across item, order, receipt, stock and sales'">
+</app-page-header>
+
+<!-- Toolbar -->
+<div class="adh-toolbar p-mb-3">
+  <div class="adh-toolbar-left">
+    <p-dropdown
+      [options]="retailers"
+      [(ngModel)]="selectedRetailer"
+      optionLabel="RETAILER_NAME"
+      placeholder="Select retailer"
+      [showClear]="false"
+      (onChange)="onRetailerChange()"
+      [disabled]="loadingRetailers"
+      styleClass="adh-retailer-dd">
+    </p-dropdown>
+
+    <p-dropdown
+      [options]="tierOptions"
+      [(ngModel)]="selectedTier"
+      optionLabel="label"
+      optionValue="value"
+      (onChange)="onTierChange()"
+      styleClass="adh-tier-dd">
+    </p-dropdown>
+  </div>
+
+  <div class="adh-toolbar-right" *ngIf="selectedRetailer">
+    <button pButton type="button" label="Run all" icon="pi pi-play"
+      class="p-button-sm p-button-outlined"
+      pTooltip="Run every enabled check for the selected tier"
+      tooltipPosition="bottom"
+      [loading]="runningChecks"
+      [disabled]="isAnyRunInProgress() && !runningChecks"
+      (click)="runNow(selectedTier)">
+    </button>
+    <button pButton type="button" icon="pi pi-cog" class="p-button-sm p-button-text"
+      pTooltip="Configure checks" (click)="openConfig()">
+    </button>
+  </div>
+</div>
+
+<!-- Summary bar — click a metric to filter the grid (click again to show all) -->
+<div class="adh-summary p-mb-4" *ngIf="summary">
+  <button type="button" class="adh-summary-card adh-summary-card--filter"
+    [class.adh-summary-card--active]="isStatusFilterActive('ALL')"
+    (click)="setStatusFilter('ALL')"
+    pTooltip="Show all configured checks" tooltipPosition="bottom">
+    <span class="adh-summary-value">{{ summary.TOTAL_CHECKS }}</span>
+    <span class="adh-summary-label">Checks configured</span>
+  </button>
+  <button type="button" class="adh-summary-card adh-summary-card--filter adh-summary-card--ok"
+    [class.adh-summary-card--active]="isStatusFilterActive('PASSING')"
+    (click)="setStatusFilter('PASSING')"
+    pTooltip="Show passing checks only" tooltipPosition="bottom">
+    <span class="adh-summary-value adh-val--ok">{{ summary.CHECKS_OK }}</span>
+    <span class="adh-summary-label">Passing</span>
+  </button>
+  <button type="button" class="adh-summary-card adh-summary-card--filter adh-summary-card--issue"
+    [class.adh-summary-card--active]="isStatusFilterActive('ISSUES')"
+    (click)="setStatusFilter('ISSUES')"
+    pTooltip="Show checks with issues" tooltipPosition="bottom">
+    <span class="adh-summary-value adh-val--issue">{{ summary.CHECKS_WITH_ISSUES }}</span>
+    <span class="adh-summary-label">With issues</span>
+  </button>
+  <button type="button" class="adh-summary-card adh-summary-card--filter adh-summary-card--critical"
+    [class.adh-summary-card--active]="isStatusFilterActive('CRITICAL')"
+    (click)="setStatusFilter('CRITICAL')"
+    pTooltip="Show critical checks only" tooltipPosition="bottom">
+    <span class="adh-summary-value adh-val--critical">{{ summary.CRITICAL_ISSUES }}</span>
+    <span class="adh-summary-label">Critical</span>
+  </button>
+  <div class="adh-summary-meta" *ngIf="summary.LAST_RUN_AT">
+    Last run: {{ summary.LAST_RUN_AT | date:'short' }}
+  </div>
+</div>
+
+<!-- Critical banner -->
+<div class="adh-critical-banner p-mb-3" *ngIf="criticalCards.length">
+  <i class="pi pi-exclamation-triangle"></i>
+  <strong>{{ criticalCards.length }} critical issue{{ criticalCards.length !== 1 ? 's' : '' }} require attention:</strong>
+  <span *ngFor="let c of criticalCards" class="adh-critical-item"
+    (click)="openDetail(c)">{{ c.CHECK_NAME }}</span>
+</div>
+
+<!-- No retailer selected -->
+<div class="adh-empty" *ngIf="!selectedRetailer">
+  <i class="pi pi-database adh-empty-icon"></i>
+  <p>Select a retailer to view data health checks.</p>
+</div>
+
+<!-- Loading -->
+<div class="adh-loading" *ngIf="loadingCards">
+  <i class="pi pi-spin pi-spinner"></i> Loading checks...
+</div>
+
+<!-- Cards grid -->
+<div class="adh-grid" *ngIf="!loadingCards && selectedRetailer">
+
+  <ng-container *ngIf="cardsForDisplay.length === 0">
+    <div class="adh-empty" *ngIf="enabledCards.length === 0">
+      <i class="pi pi-check-circle adh-empty-icon adh-empty-icon--ok"></i>
+      <p>No active checks for this retailer. <a (click)="openConfig()">Add a check</a> in configuration.</p>
+    </div>
+    <div class="adh-empty" *ngIf="enabledCards.length > 0 && statusFilter !== 'ALL'">
+      <i class="pi pi-filter-slash adh-empty-icon"></i>
+      <p>No {{ summaryFilterLabel() }} for this view.
+        <a class="adh-link" (click)="setStatusFilter(statusFilter)">Show all checks</a>
+      </p>
+    </div>
+  </ng-container>
+
+  <p-card *ngFor="let card of cardsForDisplay" class="adh-card"
+    [ngClass]="{
+      'adh-card--ok':       card.STATUS === 'OK',
+      'adh-card--issue':    card.STATUS === 'ISSUE' && card.SEVERITY !== 'CRITICAL',
+      'adh-card--critical': card.STATUS === 'ISSUE' && card.SEVERITY === 'CRITICAL',
+      'adh-card--unknown':  card.STATUS === 'UNKNOWN' || card.STATUS === 'ERROR'
+    }">
+
+    <ng-template pTemplate="header">
+      <div class="adh-card-header">
+        <div class="adh-card-title-row">
+          <span class="adh-card-name">{{ card.CHECK_NAME }}</span>
+          <div class="adh-card-badges">
+            <p-tag [value]="tierLabel(card.TIER)" severity="secondary" styleClass="adh-tag-tier"></p-tag>
+            <p-tag [value]="card.SEVERITY" [severity]="severityTag(card.SEVERITY)" styleClass="adh-tag-sev"></p-tag>
+          </div>
+        </div>
+        <p class="adh-card-desc">{{ card.CHECK_DESCRIPTION }}</p>
+      </div>
+    </ng-template>
+
+    <div class="adh-card-body">
+      <div class="adh-card-status-row">
+        <p-tag [value]="statusLabel(card)" [severity]="statusTag(card)" styleClass="adh-tag-status"></p-tag>
+        <span class="adh-card-run-at" *ngIf="card.LAST_RUN_AT">
+          {{ card.LAST_RUN_AT | date:'shortTime' }}
+        </span>
+      </div>
+
+      <div class="adh-card-trend" *ngIf="card.ISSUE_COUNT > 0 && card.TREND !== 0">
+        <i [class]="card.TREND > 0 ? 'pi pi-arrow-up adh-trend-up' : 'pi pi-arrow-down adh-trend-down'"></i>
+        <span>{{ card.TREND > 0 ? '+' : '' }}{{ card.TREND }} vs yesterday</span>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="adh-card-actions">
+        <button pButton type="button" label="Run" icon="pi pi-play"
+          class="p-button-sm"
+          pTooltip="Run this check only"
+          tooltipPosition="top"
+          [loading]="isCheckRunning(card)"
+          [disabled]="isAnyRunInProgress() && !isCheckRunning(card)"
+          (click)="runCheck(card)">
+        </button>
+        <button pButton type="button" label="History" icon="pi pi-history"
+          class="p-button-sm p-button-outlined"
+          (click)="openDetail(card)">
+        </button>
+        <button pButton type="button" label="Investigate" icon="pi pi-search"
+          class="p-button-sm p-button-outlined p-button-secondary"
+          *ngIf="card.SKILL_CODE"
+          (click)="investigate(card)">
+        </button>
+      </div>
+    </ng-template>
+  </p-card>
+
+</div>
+
+<!-- Run history dialog -->
+<p-dialog [(visible)]="detailVisible"
+  [header]="detailCard?.CHECK_NAME || 'Run history'"
+  [modal]="true"
+  [style]="{ width: '640px' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div *ngIf="detailCard" class="adh-detail-meta p-mb-3">
+    <p-tag [value]="detailCard.SEVERITY" [severity]="severityTag(detailCard.SEVERITY)"></p-tag>
+    <p-tag [value]="tierLabel(detailCard.TIER)" severity="secondary"></p-tag>
+    <span class="adh-detail-desc">{{ detailCard.CHECK_DESCRIPTION }}</span>
+  </div>
+
+  <div *ngIf="loadingHistory" class="adh-loading">
+    <i class="pi pi-spin pi-spinner"></i> Loading history...
+  </div>
+
+  <p-table *ngIf="!loadingHistory" [value]="historyRows"
+    styleClass="p-datatable-sm adh-history-table"
+    [rows]="15">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Run at</th>
+        <th style="text-align:center">Status</th>
+        <th style="text-align:right">Issues</th>
+        <th style="text-align:right">Trend</th>
+        <th style="text-align:right">Duration</th>
+        <th style="width:40px"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr class="adh-history-row" (click)="viewDetailRows(detailCard, row.RUN_AT)"
+        pTooltip="Click to view detail rows">
+        <td>{{ row.RUN_AT | date:'short' }}</td>
+        <td style="text-align:center">
+          <p-tag [value]="row.STATUS" [severity]="historyStatusTag(row.STATUS)"></p-tag>
+        </td>
+        <td style="text-align:right; font-weight:600">
+          <span [class.adh-issues-link]="row.ISSUE_COUNT > 0">{{ row.ISSUE_COUNT }}</span>
+        </td>
+        <td style="text-align:right">
+          <span *ngIf="row.TREND > 0" class="adh-trend-up">▲ {{ row.TREND }}</span>
+          <span *ngIf="row.TREND < 0" class="adh-trend-down">▼ {{ row.TREND * -1 }}</span>
+          <span *ngIf="row.TREND === 0" class="adh-trend-flat">—</span>
+        </td>
+        <td style="text-align:right">{{ durationLabel(row.RUN_DURATION_MS) }}</td>
+        <td style="text-align:center">
+          <i class="pi pi-list adh-detail-icon" *ngIf="row.ISSUE_COUNT > 0"></i>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" style="text-align:center; padding:2rem; color: var(--text-color-secondary)">
+          No run history found for the last 30 days.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Investigate with AI" icon="pi pi-search"
+      class="p-button-sm"
+      *ngIf="detailCard?.SKILL_CODE"
+      (click)="investigate(detailCard); detailVisible = false">
+    </button>
+    <button pButton type="button" label="Close" icon="pi pi-times"
+      class="p-button-sm p-button-text"
+      (click)="detailVisible = false">
+    </button>
+  </ng-template>
+</p-dialog>
+
+<!-- Detail rows dialog -->
+<p-dialog [(visible)]="rowsVisible"
+  [header]="rowsTitle"
+  [modal]="true"
+  [style]="{ width: '90vw', maxWidth: '1100px' }"
+  styleClass="adh-rows-dialog"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div *ngIf="loadingRows" class="adh-loading">
+    <i class="pi pi-spin pi-spinner"></i> Loading rows...
+  </div>
+
+  <!-- Single-table mode (no p-table scrollable): scrollable splits thead/tbody and misaligns columns. -->
+  <div class="adh-rows-table-wrap" *ngIf="!loadingRows">
+    <p-table [value]="detailRows"
+      [paginator]="detailRows.length > 25"
+      [rows]="25"
+      [rowsPerPageOptions]="[25, 50, 100]"
+      [showCurrentPageReport]="detailRows.length > 25"
+      currentPageReportTemplate="{first}–{last} of {totalRecords}"
+      styleClass="p-datatable-sm p-datatable-gridlines adh-rows-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of detailColumns">{{ col }}</th>
+          <th *ngIf="hasResolution(detailExportCard)" class="adh-rows-actions-col">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td *ngFor="let col of detailColumns"
+              [attr.title]="row[col] != null ? row[col] : null">{{ row[col] }}</td>
+          <td *ngIf="hasResolution(detailExportCard)" class="adh-rows-actions-col">
+            <button *ngIf="isRowFixable(row)"
+              pButton type="button" label="Fix" icon="pi pi-wrench"
+              class="p-button-sm p-button-outlined p-button-warning"
+              [loading]="isRowFixing(row)"
+              [disabled]="!!fixingRowKey && !isRowFixing(row)"
+              (click)="confirmFixRow(row, $event)">
+            </button>
+            <span *ngIf="!isRowFixable(row)" class="adh-rows-na">—</span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="(detailColumns.length || 1) + (hasResolution(detailExportCard) ? 1 : 0)"
+            style="text-align:center; padding:2rem; color:var(--text-color-secondary)">
+            No rows returned by the check query.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <span class="adh-rows-count" *ngIf="!loadingRows">
+      {{ detailRows.length }} row{{ detailRows.length !== 1 ? 's' : '' }}
+      <span *ngIf="hasResolution(detailExportCard)" class="adh-rows-mode">
+        · {{ resolutionModeLabel(detailExportCard) }}
+      </span>
+      <span *ngIf="hasResolution(detailExportCard) && fixableRowCount > 0" class="adh-rows-fixable">
+        · {{ fixableRowCount }} fixable
+      </span>
+    </span>
+    <button *ngIf="hasResolution(detailExportCard) && fixableRowCount > 0"
+      pButton type="button" label="Fix all fixable" icon="pi pi-wrench"
+      class="p-button-sm adh-btn-fix-all"
+      [disabled]="!!fixingRowKey"
+      (click)="fixAllFixable()">
+    </button>
+    <button pButton
+            type="button"
+            label="Excel"
+            icon="pi pi-file-excel"
+            class="p-button-sm p-button-outlined p-button-success"
+            pTooltip="Download all rows as Excel (.xlsx)"
+            tooltipPosition="top"
+            [disabled]="!canExportDetailRows()"
+            (click)="exportDetailRowsExcel()"></button>
+    <button pButton type="button" label="Close" icon="pi pi-times"
+      class="p-button-sm p-button-text"
+      (click)="rowsVisible = false">
+    </button>
+  </ng-template>
+</p-dialog>

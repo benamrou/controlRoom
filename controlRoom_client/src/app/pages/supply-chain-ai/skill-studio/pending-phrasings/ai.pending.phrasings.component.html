@@ -1,0 +1,303 @@
+<app-page-header [heading]="'Pending phrasings — vocabulary curation queue'" [icon]="'fas fa-comment-medical'"></app-page-header>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '460px' }"></p-confirmDialog>
+
+<div class="ai-module-container ai-pending-phrasings">
+
+    <div class="pending-banner">
+        <div class="pending-banner-icon"><i class="fas fa-comment-medical"></i></div>
+        <div>
+            <strong>Phrasings the AI engine could not route confidently</strong>
+            <p>
+                Every time an analyst asks a question and the engine routes with low confidence
+                (or the answer gets a thumbs-down), the question lands here. Promote the useful ones
+                into <code>AI_SKILL_VOCABULARY</code> so the engine learns the analyst's wording.
+            </p>
+        </div>
+    </div>
+
+    <div class="pending-toolbar">
+        <span class="pending-count">{{ rows.length }} pending phrasing<span *ngIf="rows.length !== 1">s</span></span>
+        <div class="pending-toolbar-actions">
+            <button pButton type="button"
+                    label="Auto-promote eligible"
+                    icon="fas fa-bolt"
+                    class="p-button-outlined p-button-success"
+                    pTooltip="Find phrasings picked by enough analysts to skip manual review"
+                    [disabled]="!isAdmin"
+                    (click)="openAutoPromote()"></button>
+            <button pButton type="button"
+                    label="Refresh"
+                    icon="fas fa-sync-alt"
+                    class="p-button-outlined"
+                    [loading]="loading"
+                    (click)="refresh()"></button>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="pending-loading">
+        <p-progressBar mode="indeterminate"></p-progressBar>
+        <span>Loading pending phrasings…</span>
+    </div>
+
+    <div *ngIf="!loading && !rows.length" class="pending-empty">
+        <i class="fas fa-check-circle"></i>
+        <h3>No pending phrasings</h3>
+        <p>The engine routed everything with confidence — nothing for the queue right now.</p>
+    </div>
+
+    <p-dialog [(visible)]="autoPromoteOpen"
+              [modal]="true"
+              [style]="{ width: '780px', maxWidth: '95vw' }"
+              [closeOnEscape]="!autoPromoteRunning"
+              [closable]="!autoPromoteRunning"
+              [dismissableMask]="!autoPromoteRunning"
+              styleClass="auto-promote-dialog"
+              header="Auto-promote on repeat — vocabulary candidates">
+
+        <div class="auto-promote-banner">
+            <i class="fas fa-bolt"></i>
+            <div>
+                <strong>USER_OVERRIDE rows ready to graduate.</strong>
+                <p>
+                    These phrasings have been picked by multiple analysts in favour of the
+                    same skill. Auto-promote inserts them into <code>AI_SKILL_VOCABULARY</code>
+                    as <code>INTENT_PHRASE</code> with a conservative boost
+                    (default <strong>1.0</strong>, vs 1.5 for manual). Re-running is a no-op.
+                </p>
+            </div>
+        </div>
+
+        <div class="auto-promote-thresholds">
+            <div>
+                <label>Min distinct analysts</label>
+                <input pInputText type="number" min="1" max="20" step="1"
+                       [(ngModel)]="autoThresholds.minUsers"
+                       [disabled]="autoPromoteRunning" />
+            </div>
+            <div>
+                <label>Min total hits</label>
+                <input pInputText type="number" min="1" max="50" step="1"
+                       [(ngModel)]="autoThresholds.minHits"
+                       [disabled]="autoPromoteRunning" />
+            </div>
+            <div>
+                <label>Lookback (days)</label>
+                <input pInputText type="number" min="1" max="365" step="1"
+                       [(ngModel)]="autoThresholds.lookbackDays"
+                       [disabled]="autoPromoteRunning" />
+            </div>
+            <div>
+                <label>Confidence boost</label>
+                <input pInputText type="number" min="0.5" max="2.0" step="0.1"
+                       [(ngModel)]="autoThresholds.boost"
+                       [disabled]="autoPromoteRunning" />
+            </div>
+            <div class="auto-promote-thresholds-actions">
+                <button pButton type="button"
+                        label="Re-scan"
+                        icon="fas fa-search"
+                        class="p-button-outlined p-button-sm"
+                        [loading]="autoPromoteLoading"
+                        [disabled]="autoPromoteRunning"
+                        (click)="loadAutoPromotable()"></button>
+            </div>
+        </div>
+
+        <div *ngIf="autoPromoteLoading" class="pending-loading">
+            <p-progressBar mode="indeterminate"></p-progressBar>
+            <span>Scanning USER_OVERRIDE history…</span>
+        </div>
+
+        <div *ngIf="!autoPromoteLoading && !autoPromoteCandidates.length" class="auto-promote-empty">
+            <i class="fas fa-info-circle"></i>
+            <span>
+                No eligible phrasings yet. Lower the thresholds (e.g. 1 analyst, 2 hits)
+                or wait until more analysts pick the same skill from the chips.
+            </span>
+        </div>
+
+        <div *ngIf="!autoPromoteLoading && autoPromoteCandidates.length" class="auto-promote-list">
+            <div class="auto-promote-list-head">
+                <label>
+                    <input type="checkbox"
+                           [checked]="autoPromoteSelectedCount() === autoPromoteCandidates.length"
+                           (change)="toggleAutoSelectAll($any($event.target).checked)"
+                           [disabled]="autoPromoteRunning" />
+                    Select all
+                </label>
+                <span class="auto-promote-counter">
+                    {{ autoPromoteSelectedCount() }} of {{ autoPromoteCandidates.length }} selected
+                </span>
+            </div>
+
+            <div *ngFor="let c of autoPromoteCandidates" class="auto-promote-row"
+                 [class.promoted]="c._promoted"
+                 [class.failed]="c._failed">
+                <div class="auto-promote-checkbox">
+                    <input type="checkbox"
+                           [(ngModel)]="c._selected"
+                           [disabled]="autoPromoteRunning || c._promoted" />
+                </div>
+                <div class="auto-promote-detail">
+                    <div class="auto-promote-phrase">
+                        <span class="phrase">{{ c.PHRASE_NORM }}</span>
+                        <p-tag [value]="c.SKILL_CODE" severity="info" styleClass="skill-tag"></p-tag>
+                        <p-tag *ngIf="c.RETAILER_ID" [value]="c.RETAILER_ID" severity="warning"></p-tag>
+                    </div>
+                    <div class="auto-promote-stats">
+                        <span><i class="fas fa-users"></i> {{ c.DISTINCT_USERS }} analysts</span>
+                        <span><i class="fas fa-comments"></i> {{ c.HIT_COUNT }} hits</span>
+                        <span class="last-seen" *ngIf="c.LAST_SEEN">last {{ c.LAST_SEEN }}</span>
+                    </div>
+                    <div class="auto-promote-sample" *ngIf="c.SAMPLE_QUESTION">
+                        <i class="fas fa-quote-left"></i> {{ c.SAMPLE_QUESTION }}
+                    </div>
+                </div>
+                <div class="auto-promote-status">
+                    <span *ngIf="c._busy" class="status-busy"><i class="fas fa-spinner fa-spin"></i></span>
+                    <span *ngIf="c._promoted" class="status-ok"><i class="fas fa-check-circle"></i> promoted</span>
+                    <span *ngIf="c._failed" class="status-ko"><i class="fas fa-exclamation-triangle"></i> failed</span>
+                </div>
+            </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <button pButton type="button"
+                    label="Close"
+                    class="p-button-text"
+                    [disabled]="autoPromoteRunning"
+                    (click)="closeAutoPromote()"></button>
+            <button pButton type="button"
+                    label="Promote selected"
+                    icon="fas fa-arrow-up"
+                    class="p-button-success"
+                    [loading]="autoPromoteRunning"
+                    [disabled]="autoPromoteRunning || !autoPromoteSelectedCount()"
+                    (click)="runAutoPromote()"></button>
+        </ng-template>
+
+    </p-dialog>
+
+    <div *ngIf="!loading && rows.length" class="pending-list">
+        <div *ngFor="let r of rows" class="pending-card" [class.expanded]="r._expanded">
+
+            <div class="pending-card-head" (click)="toggle(r)">
+                <div class="pending-question">
+                    <i class="fas fa-comment"></i>
+                    <span class="question-text">{{ r.QUESTION_TEXT }}</span>
+                </div>
+                <div class="pending-meta">
+                    <p-tag *ngIf="r.REASON"
+                           [value]="r.REASON"
+                           [severity]="r.REASON === 'USER_OVERRIDE' ? 'success' : (r.REASON === 'THUMB_DOWN' ? 'danger' : 'warning')"
+                           styleClass="reason-tag"></p-tag>
+                    <p-tag *ngIf="r.INTENT_TYPE" [value]="r.INTENT_TYPE" severity="info"></p-tag>
+                    <span *ngIf="r.TOP_SCORE != null" class="pending-score">
+                        score <strong>{{ r.TOP_SCORE }}</strong>
+                        <span *ngIf="r.SECOND_SCORE != null">/ {{ r.SECOND_SCORE }}</span>
+                    </span>
+                    <span class="pending-when">{{ r.ASKED_AT }}</span>
+                    <i class="fas pending-toggle" [ngClass]="r._expanded ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                </div>
+            </div>
+
+            <div *ngIf="r._expanded" class="pending-card-body">
+
+                <div *ngIf="r.REASON === 'USER_OVERRIDE'" class="pending-override-banner">
+                    <i class="fas fa-user-check"></i>
+                    The analyst picked <strong>{{ r.SECOND_SKILL_CODE || '?' }}</strong>
+                    instead of the engine's pick (<em>{{ r.TOP_SKILL_CODE || 'unknown' }}</em>).
+                    Pre-filled for your review — just confirm and promote.
+                </div>
+
+                <div class="pending-context">
+                    <div><label>Asked by</label><span>{{ r.ASKED_BY || '-' }}</span></div>
+                    <div><label>Retailer</label><span>{{ r.RETAILER_ID }}</span></div>
+                    <div>
+                        <label>{{ r.REASON === 'USER_OVERRIDE' ? "Engine's pick" : 'Top skill' }}</label>
+                        <span>{{ r.TOP_SKILL_CODE || '-' }}</span>
+                    </div>
+                    <div>
+                        <label>{{ r.REASON === 'USER_OVERRIDE' ? "Analyst's pick" : 'Runner-up' }}</label>
+                        <span>{{ r.SECOND_SKILL_CODE || '-' }}</span>
+                    </div>
+                    <div *ngIf="r.NORMALIZED_TEXT">
+                        <label>Normalized</label><span class="mono">{{ r.NORMALIZED_TEXT }}</span>
+                    </div>
+                </div>
+
+                <div class="pending-form">
+                    <div class="form-row">
+                        <label for="skill-{{ r.UNRES_ID }}">Promote to skill</label>
+                        <p-dropdown id="skill-{{ r.UNRES_ID }}"
+                                    [options]="skillOptions"
+                                    [(ngModel)]="r._targetSkillId"
+                                    placeholder="Select target skill"
+                                    [filter]="true"
+                                    [style]="{ width: '100%' }"></p-dropdown>
+                    </div>
+
+                    <div class="form-row two-col">
+                        <div>
+                            <label for="term-{{ r.UNRES_ID }}">Term / phrase</label>
+                            <input id="term-{{ r.UNRES_ID }}"
+                                   pInputText
+                                   type="text"
+                                   [(ngModel)]="r._term"
+                                   placeholder="lowercase, no punctuation"
+                                   class="full-width" />
+                        </div>
+                        <div>
+                            <label for="type-{{ r.UNRES_ID }}">Term type</label>
+                            <p-dropdown id="type-{{ r.UNRES_ID }}"
+                                        [options]="termTypeOptions"
+                                        [(ngModel)]="r._termType"
+                                        [style]="{ width: '100%' }"></p-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="form-row two-col">
+                        <div>
+                            <label for="concept-{{ r.UNRES_ID }}">Canonical concept</label>
+                            <input id="concept-{{ r.UNRES_ID }}"
+                                   pInputText
+                                   type="text"
+                                   [(ngModel)]="r._concept"
+                                   placeholder="e.g. BUYABLE_ITEMS"
+                                   class="full-width" />
+                        </div>
+                        <div>
+                            <label for="boost-{{ r.UNRES_ID }}">Confidence boost</label>
+                            <input id="boost-{{ r.UNRES_ID }}"
+                                   pInputText
+                                   type="number"
+                                   step="0.1"
+                                   min="0.5"
+                                   max="3.0"
+                                   [(ngModel)]="r._confidenceBoost"
+                                   class="full-width" />
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button pButton type="button"
+                                label="Dismiss"
+                                icon="fas fa-trash-alt"
+                                class="p-button-outlined p-button-secondary"
+                                [disabled]="r._busy"
+                                (click)="dismiss(r)"></button>
+                        <button pButton type="button"
+                                label="Promote to vocabulary"
+                                icon="fas fa-arrow-up"
+                                class="p-button-success"
+                                [loading]="r._busy"
+                                [disabled]="!isAdmin || !r._targetSkillId"
+                                (click)="promote(r)"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

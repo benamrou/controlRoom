@@ -24,6 +24,28 @@ export class AppComponent {
           this._router.navigate(['/dashboard']);
       }
   }
+    /** Path without query or hash — same checks the template used for /login and /. */
+  showAppChrome(): boolean {
+      const p = this.pathOnly(this._router.url);
+      return p !== '/login' && p !== '/';
+  }
+
+  private pathOnly(url: string): string {
+      if (!url) {
+          return '/';
+      }
+      const q = url.indexOf('?');
+      const h = url.indexOf('#');
+      let end = url.length;
+      if (q >= 0) {
+          end = Math.min(end, q);
+      }
+      if (h >= 0) {
+          end = Math.min(end, h);
+      }
+      const path = url.substring(0, end);
+      return path || '/';
+  }
 
   receiveCollapsed($event) {
       this.collapedSideBar = $event;
@@ -33,7 +55,7 @@ export class AppComponent {
       this.doRefresh = true;
   }
 
-  onActivate(e) {
+  onActivate(e: unknown) {    
     //console.log('onActivate : ', e);
   }
 }

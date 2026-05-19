@@ -433,7 +433,49 @@ export class ExportService{
         //this.setPageBreak(worksheet, dataRows, null);
         this.setXLSProperties(workbook);
     }
+    
+    /**
+     * Lightweight XLSX export — just header row + data rows, no report banner.
+     * Used by tools that produce ad-hoc tables (e.g. AI Assistant results).
+     *
+     * @param rawData    array of plain objects; first row defines the columns
+     * @param filename   target file name (without extension); ".xlsx" is appended automatically
+     * @param sheetName  optional worksheet name (default "Results")
+     */
+    saveJsonAsXlsx(rawData: any[], filename: string, sheetName?: string): Promise<void> {
+        const safeName = (filename || 'ai_export').replace(/[\\/:*?"<>|]/g, '_');
+        const workbook = new excel.Workbook();
+        const ws = workbook.addWorksheet(sheetName || 'Results');
 
+        if (Array.isArray(rawData) && rawData.length) {
+            const cols = Object.keys(rawData[0] || {});
+            ws.columns = cols.map(c => ({ header: c, key: c }));
+            rawData.forEach(r => ws.addRow(r));
+
+            // Style header row
+            const headerRow = ws.getRow(1);
+            headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            headerRow.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF1E3A8A' }
+            };
+            headerRow.alignment = { vertical: 'middle', horizontal: 'left' };
+
+            // Freeze the header row + apply autofit
+            ws.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
+            this.autofitColumns(ws);
+        }
+
+        this.setXLSProperties(workbook);
+
+        return workbook.xlsx.writeBuffer().then((data: any) => {
+            const blob = new Blob([data], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+            fs.saveAs(blob, safeName + '.xlsx');
+        });
+    }
     saveCSV(rawData, image, imageWidth, imageHeight,reportId, reportTitle, reportContent, 
             formatStructure ?: any, border?, freeze?, 
             wrksheet2name?, formatStructure2?, wrksheet2data?) {

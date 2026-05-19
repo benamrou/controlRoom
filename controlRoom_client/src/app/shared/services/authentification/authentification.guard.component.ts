@@ -1,22 +1,26 @@
 import { Injectable } from '@angular/core';
-import { Router, CanActivate } from '@angular/router';
+import { Router, CanActivate, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { UserService } from '../user/user.service';
+import { MenuAccessService } from '../menu/menu-access.service';
 
 @Injectable()
 export class AuthentificationGuard implements CanActivate {
 
-    constructor(private router: Router, private _userService: UserService) { }
+    constructor(
+        private router: Router,
+        private _userService: UserService,
+        private _menuAccess: MenuAccessService,
+    ) { }
 
-    canActivate() {
-        //console.log('canActivate() : ' +this._userService.ICRUser!);
-        if (localStorage.getItem('ICRAuthToken')) {
-            // logged in so return true
-            return true;
+    canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        if (!localStorage.getItem('ICRAuthToken')) {
+            this.router.navigate(['/login']);
+            return false;
         }
-
-        
-        // not logged in so redirect to login page
-        this.router.navigate(['/login']);
-        return false;
+        if (this._menuAccess.isReady && !this._menuAccess.canNavigate(state.url)) {
+            this.router.navigate(['/dashboard']);
+            return false;
+        }
+        return true;
     }
 }

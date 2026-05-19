@@ -1,0 +1,264 @@
+<app-page-header [heading]="'Phrasing Playground — engine routing diagnostics'" [icon]="'fas fa-flask'"></app-page-header>
+<p-toast></p-toast>
+
+<div class="ai-module-container ai-phrasing-playground">
+
+    <div class="pp-banner">
+        <div class="pp-banner-icon"><i class="fas fa-flask"></i></div>
+        <div>
+            <strong>How would the engine route this phrase?</strong>
+            <p>
+                Side-effect-free: scores every active skill against the phrase, shows the lexical
+                pipeline (tokens, n-grams, normalized text), the entities the engine extracted,
+                and per-template bind feasibility for the top skill. Useful for tuning
+                <code>AI_SKILL_VOCABULARY</code> without dispatching a real query.
+            </p>
+        </div>
+    </div>
+
+    <!-- ── Input ─────────────────────────────────────────────────────────── -->
+    <div class="pp-input-card">
+        <div class="pp-input-row">
+            <div class="pp-input-retailer">
+                <label>Retailer</label>
+                <p-dropdown [options]="retailers"
+                            [(ngModel)]="selectedRetailerId"
+                            optionLabel="label"
+                            optionValue="id"
+                            placeholder="Select retailer"
+                            [style]="{ width: '100%' }"></p-dropdown>
+            </div>
+            <div class="pp-input-question">
+                <label>Phrase to diagnose</label>
+                <textarea pInputTextarea
+                          rows="2"
+                          [(ngModel)]="questionText"
+                          placeholder="e.g. what items can we buy from lipari for store 7  (Ctrl+Enter to diagnose)"
+                          (keydown.control.enter)="run()"
+                          (keydown.meta.enter)="run()"
+                          class="full-width"></textarea>
+            </div>
+            <div class="pp-input-action">
+                <button pButton type="button"
+                        label="Diagnose"
+                        icon="fas fa-stethoscope"
+                        [loading]="running"
+                        [disabled]="!questionText || !selectedRetailerId"
+                        (click)="run()"></button>
+            </div>
+        </div>
+
+        <div class="pp-samples">
+            <span class="pp-samples-label">Try:</span>
+            <button *ngFor="let s of samples"
+                    type="button"
+                    class="pp-sample-chip"
+                    [disabled]="running"
+                    (click)="seedSample(s)">
+                {{ s }}
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Loading shimmer ─────────────────────────────────────────────────── -->
+    <div *ngIf="running" class="pp-loading">
+        <p-progressBar mode="indeterminate"></p-progressBar>
+        <span>Scoring against active skills…</span>
+    </div>
+
+    <!-- ── Result ──────────────────────────────────────────────────────────── -->
+    <div *ngIf="diag && !running" class="pp-result">
+
+        <!-- Lexical + intent + entities header -->
+        <div class="pp-summary">
+            <div class="pp-summary-block">
+                <label>Intent</label>
+                <p-tag [value]="diag.intent_type" severity="info"></p-tag>
+            </div>
+            <div class="pp-summary-block">
+                <label>Top skill</label>
+                <span *ngIf="diag.top_skill_code; else noTop">
+                    <strong>{{ diag.top_skill_code }}</strong>
+                    <p-tag *ngIf="diag.top_score != null"
+                           [value]="'score ' + diag.top_score"
+                           [severity]="scoreSeverity(diag.top_score)"
+                           styleClass="pp-score-tag"></p-tag>
+                </span>
+                <ng-template #noTop><em class="pp-empty">no skill matched</em></ng-template>
+            </div>
+            <div class="pp-summary-block" *ngIf="diag.low_confidence">
+                <p-tag value="LOW CONFIDENCE — would land in Pending Phrasings"
+                       severity="warning"></p-tag>
+            </div>
+            <div class="pp-summary-block pp-summary-entities" *ngIf="extractedEntityKeys().length">
+                <label>Entities extracted</label>
+                <div class="pp-entity-list">
+                    <span *ngFor="let k of extractedEntityKeys()" class="pp-entity-pill">
+                        <code class="pp-entity-key">{{ k }}</code>
+                        <span class="pp-entity-value">{{ diag.extracted_entities[k] }}</span>
+                    </span>
+                </div>
+            </div>
+            <div class="pp-summary-block" *ngIf="!extractedEntityKeys().length">
+                <label>Entities</label>
+                <em class="pp-empty">none extracted</em>
+            </div>
+        </div>
+
+        <!-- Phase 8 — BIND_HINT-driven extraction audit -->
+        <div *ngIf="diag.bind_hint_extractions?.length" class="pp-bind-hints">
+            <h4>BIND_HINT extractions <small>(designer-driven)</small></h4>
+            <table class="pp-bind-hints-table">
+                <thead>
+                    <tr>
+                        <th>Hint phrase</th>
+                        <th>Concept</th>
+                        <th>Captured value</th>
+                        <th>Kind</th>
+                        <th>Used</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let bh of diag.bind_hint_extractions"
+                        [class.bind-hint-skipped]="!bh.used">
+                        <td><code>{{ bh.term }}</code></td>
+                        <td>
+                            <p-tag [value]="bh.concept" severity="info"
+                                   styleClass="pp-vocab-tag"></p-tag>
+                        </td>
+                        <td><code>{{ bh.value }}</code></td>
+                        <td>
+                            <p-tag [value]="bh.kind"
+                                   [severity]="bindHintKindSeverity(bh.kind)"
+                                   styleClass="pp-vocab-tag"></p-tag>
+                        </td>
+                        <td>
+                            <span *ngIf="bh.used" class="bind-hint-applied">
+                                <i class="fas fa-check-circle"></i> applied
+                            </span>
+                            <span *ngIf="!bh.used" class="bind-hint-skipped-tag"
+                                  pTooltip="{{ bh.skipped_reason || 'not applied (already set or duplicate)' }}">
+                                <i class="fas fa-arrow-up"></i> overridden
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pp-lex-row">
+            <div class="pp-lex-block">
+                <label>Normalized</label>
+                <code>{{ diag.normalized_text }}</code>
+            </div>
+            <div class="pp-lex-block">
+                <label>Stemmed tokens</label>
+                <span class="pp-token-list">
+                    <code *ngFor="let t of diag.tokens">{{ t }}</code>
+                </span>
+            </div>
+        </div>
+
+        <!-- Top templates (bind feasibility) -->
+        <div *ngIf="diag.top_templates?.length" class="pp-templates">
+            <h4>Templates on top skill — bind feasibility</h4>
+            <div class="pp-template-list">
+                <div *ngFor="let tpl of diag.top_templates" class="pp-template-card">
+                    <div class="pp-template-head">
+                        <strong>{{ tpl.template_code }}</strong>
+                        <p-tag [value]="tpl.bind_status"
+                               [severity]="bindStatusSeverity(tpl.bind_status)"></p-tag>
+                    </div>
+                    <div class="pp-template-label" *ngIf="tpl.template_label">
+                        {{ tpl.template_label }}
+                    </div>
+                    <div class="pp-template-binds">
+                        <div *ngIf="tpl.required_binds.length">
+                            <label>Required</label>
+                            <code *ngFor="let b of tpl.required_binds"
+                                  [class.bind-missing]="tpl.missing_binds.indexOf(b) >= 0">
+                                :{{ b }}
+                            </code>
+                        </div>
+                        <div *ngIf="!tpl.required_binds.length" class="pp-empty">
+                            No declared binds.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Per-skill scoring -->
+        <div class="pp-skills">
+            <h4>Per-skill scoring</h4>
+            <div *ngFor="let s of diag.skills" class="pp-skill-card">
+                <div class="pp-skill-head" (click)="toggleSkill(s.skill_id)">
+                    <div class="pp-skill-id">
+                        <strong>{{ s.skill_code || s.skill_id }}</strong>
+                        <span class="pp-domain">{{ s.domain || '—' }}</span>
+                    </div>
+                    <div class="pp-skill-score">
+                        <div class="pp-score-bar"
+                             [class]="'pp-score-bar--' + scoreSeverity(s.score)">
+                            <div class="pp-score-bar-fill"
+                                 [style.width]="scoreBarWidth(s.score)"></div>
+                        </div>
+                        <span class="pp-skill-score-num">{{ s.score }}</span>
+                        <i class="fas pp-skill-toggle"
+                           [ngClass]="expandedSkills[s.skill_id] ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                    </div>
+                </div>
+                <div *ngIf="expandedSkills[s.skill_id]" class="pp-skill-body">
+                    <div *ngIf="s.score_breakdown.length" class="pp-breakdown">
+                        <h5>Score breakdown</h5>
+                        <div *ngFor="let b of s.score_breakdown" class="pp-breakdown-row">
+                            <span class="pp-breakdown-factor">{{ b.factor }}</span>
+                            <span class="pp-breakdown-delta"
+                                  [class.pp-delta-pos]="b.delta > 0"
+                                  [class.pp-delta-neg]="b.delta < 0">
+                                {{ b.delta > 0 ? '+' : '' }}{{ b.delta }}
+                            </span>
+                        </div>
+                    </div>
+                    <div *ngIf="s.vocab_matches.length" class="pp-vocab">
+                        <h5>Vocabulary hits</h5>
+                        <table class="pp-vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>Term</th>
+                                    <th>Type</th>
+                                    <th>Overlap</th>
+                                    <th>Boost</th>
+                                    <th>Δ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let v of s.vocab_matches">
+                                    <td><code>{{ v.term }}</code></td>
+                                    <td>
+                                        <p-tag [value]="v.term_type"
+                                               [severity]="v.term_type === 'INTENT_PHRASE' ? 'success' : (v.term_type === 'BIND_HINT' ? 'info' : 'warning')"
+                                               styleClass="pp-vocab-tag"></p-tag>
+                                    </td>
+                                    <td>{{ v.overlap }}</td>
+                                    <td>×{{ v.confidence_boost }}</td>
+                                    <td class="pp-delta-pos">+{{ v.contribution }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div *ngIf="!s.vocab_matches.length" class="pp-empty">
+                        No vocabulary terms matched this phrase for this skill.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!diag && !running" class="pp-empty-state">
+        <i class="fas fa-flask"></i>
+        <p>Pick a retailer, type a phrase, and click <strong>Diagnose</strong>.</p>
+    </div>
+
+</div>

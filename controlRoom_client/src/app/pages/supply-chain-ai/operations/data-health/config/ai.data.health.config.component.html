@@ -1,0 +1,324 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<app-page-header [title]="'Data Health Configuration'" [subtitle]="'Manage automated data quality checks'">
+</app-page-header>
+
+<!-- Toolbar -->
+<div class="adhc-toolbar p-mb-3">
+  <div class="adhc-toolbar-left">
+    <p-dropdown
+      [options]="retailers"
+      [(ngModel)]="selectedRetailer"
+      optionLabel="RETAILER_NAME"
+      placeholder="Select retailer"
+      (onChange)="onRetailerChange()"
+      [disabled]="loadingRetailers"
+      styleClass="adhc-retailer-dd">
+    </p-dropdown>
+  </div>
+  <div class="adhc-toolbar-right">
+    <button pButton type="button" label="Back to dashboard" icon="pi pi-arrow-left"
+      class="p-button-sm p-button-text" (click)="backToDashboard()">
+    </button>
+    <button pButton type="button" label="Add check" icon="pi pi-plus"
+      class="p-button-sm"
+      [disabled]="!selectedRetailer"
+      (click)="openNew()">
+    </button>
+  </div>
+</div>
+
+<!-- Definitions table -->
+<div *ngIf="selectedRetailer">
+  <p-table [value]="defs" [loading]="loadingDefs" [rows]="25"
+    styleClass="p-datatable-sm adhc-table"
+    dataKey="CHECK_ID">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Check name</th>
+        <th>Code</th>
+        <th>LIBQUERY</th>
+        <th>Tier</th>
+        <th>Severity</th>
+        <th>Skill</th>
+        <th>Resolution</th>
+        <th style="width:80px; text-align:center">Enabled</th>
+        <th style="width:140px"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-def>
+      <tr [ngClass]="{ 'adhc-row--disabled': !def.ENABLED }">
+        <td>
+          <span class="adhc-name">{{ def.CHECK_NAME }}</span>
+          <div class="adhc-desc">{{ def.CHECK_DESCRIPTION }}</div>
+        </td>
+        <td><code class="adhc-code">{{ def.CHECK_CODE }}</code></td>
+        <td><code class="adhc-qnum">{{ def.QUERY_NUM }}</code></td>
+        <td><p-tag [value]="def.TIER" severity="secondary" styleClass="adhc-tag-tier"></p-tag></td>
+        <td><p-tag [value]="def.SEVERITY" [severity]="severityTag(def.SEVERITY)"></p-tag></td>
+        <td>
+          <span *ngIf="def.SKILL_CODE" class="adhc-skill">{{ def.SKILL_CODE }}</span>
+          <span *ngIf="!def.SKILL_CODE" class="adhc-none">—</span>
+        </td>
+        <td>
+          <span *ngIf="def.RESOLUTION_MODE && def.RESOLUTION_MODE !== 'NONE'" class="adhc-resolution">
+            {{ resolutionModeLabel(def.RESOLUTION_MODE) }}
+            <code *ngIf="def.RESOLUTION_QUERY_NUM" class="adhc-qnum">{{ def.RESOLUTION_QUERY_NUM }}</code>
+            <span *ngIf="def.RESOLUTION_JOB_NAME" class="adhc-job" [title]="def.RESOLUTION_JOB_NAME">
+              {{ def.RESOLUTION_JOB_NAME }}
+            </span>
+          </span>
+          <span *ngIf="!def.RESOLUTION_MODE || def.RESOLUTION_MODE === 'NONE'" class="adhc-none">—</span>
+        </td>
+        <td style="text-align:center">
+          <p-inputSwitch [(ngModel)]="def.ENABLED" (onChange)="toggleEnabled(def)"
+            [trueValue]="1" [falseValue]="0">
+          </p-inputSwitch>
+        </td>
+        <td>
+          <div class="adhc-row-actions">
+            <button pButton type="button" icon="pi pi-pencil"
+              class="p-button-sm p-button-text p-button-secondary"
+              pTooltip="Edit" (click)="openEdit(def)">
+            </button>
+            <button pButton type="button" icon="pi pi-copy"
+              class="p-button-sm p-button-text"
+              pTooltip="Duplicate" (click)="openDuplicate(def)">
+            </button>
+            <button pButton type="button" icon="pi pi-trash"
+              class="p-button-sm p-button-text p-button-danger"
+              pTooltip="Delete" (click)="confirmDelete(def)">
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="9" class="adhc-empty">
+          No checks configured. Click <strong>Add check</strong> to get started.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div class="adhc-empty-state" *ngIf="!selectedRetailer">
+  <i class="pi pi-cog"></i>
+  <p>Select a retailer to manage its data health checks.</p>
+</div>
+
+<!-- Add / Edit dialog -->
+<p-dialog [(visible)]="dialogVisible"
+  [header]="dialogTitle"
+  [modal]="true"
+  [style]="{ width: '560px' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div class="adhc-form">
+
+    <div class="adhc-form-row">
+      <label class="adhc-label">Check code <span class="adhc-req">*</span></label>
+      <input pInputText [(ngModel)]="form.CHECK_CODE"
+        placeholder="e.g. ITEM_NO_SUPPLIER"
+        class="adhc-input"
+        [disabled]="isCheckCodeLocked" />
+      <small class="adhc-hint">Uppercase, underscore-separated. Used as identifier.</small>
+    </div>
+
+    <div class="adhc-form-row">
+      <label class="adhc-label">Display name <span class="adhc-req">*</span></label>
+      <input pInputText [(ngModel)]="form.CHECK_NAME"
+        placeholder="e.g. Items without supplier"
+        class="adhc-input" />
+    </div>
+
+    <div class="adhc-form-row">
+      <label class="adhc-label">Description</label>
+      <textarea pInputTextarea [(ngModel)]="form.CHECK_DESCRIPTION"
+        rows="2" class="adhc-input"
+        placeholder="What does this check detect?">
+      </textarea>
+    </div>
+
+    <div class="adhc-form-row">
+      <label class="adhc-label">LIBQUERY number <span class="adhc-req">*</span></label>
+      <div class="adhc-query-row">
+        <input pInputText [(ngModel)]="form.QUERY_NUM"
+          placeholder="e.g. AI0000090"
+          class="adhc-input adhc-input--qnum"
+          (ngModelChange)="verifyState = 'idle'" />
+        <button pButton type="button" label="Verify" icon="pi pi-bolt"
+          class="p-button-sm p-button-outlined"
+          [loading]="verifyState === 'checking'"
+          (click)="verifyQuery()">
+        </button>
+      </div>
+      <div class="adhc-verify-result" [ngClass]="verifyClass" *ngIf="verifyState !== 'idle'">
+        <i [class]="'pi ' + verifyIcon"></i>
+        <span>{{ verifyMessage }}</span>
+      </div>
+      <small class="adhc-hint">
+        The query must return at least a COUNT or list of affected rows.
+        First column named <code>ISSUE_COUNT</code> is read as the check result.
+      </small>
+    </div>
+
+    <div class="adhc-form-row adhc-form-row--2col">
+      <div>
+        <label class="adhc-label">Schedule tier</label>
+        <p-dropdown [options]="tierOptions" [(ngModel)]="form.TIER"
+          optionLabel="label" optionValue="value" styleClass="adhc-input">
+        </p-dropdown>
+      </div>
+      <div>
+        <label class="adhc-label">Severity</label>
+        <p-dropdown [options]="severityOptions" [(ngModel)]="form.SEVERITY"
+          optionLabel="label" optionValue="value" styleClass="adhc-input">
+        </p-dropdown>
+      </div>
+    </div>
+
+    <div class="adhc-form-row adhc-form-row--2col">
+      <div>
+        <label class="adhc-label">Skill code <span class="adhc-hint-inline">(optional — for Investigate)</span></label>
+        <input pInputText [(ngModel)]="form.SKILL_CODE"
+          placeholder="e.g. ITEM_MASTER_RETAIL"
+          class="adhc-input" />
+      </div>
+      <div>
+        <label class="adhc-label">Entity key <span class="adhc-hint-inline">(optional)</span></label>
+        <input pInputText [(ngModel)]="form.ENTITY_KEY"
+          placeholder="e.g. lu_id"
+          class="adhc-input" />
+      </div>
+    </div>
+
+    <div class="adhc-form-section">
+      <div class="adhc-section-title">Resolution (fix)</div>
+      <p class="adhc-section-desc">
+        Choose how the dashboard applies a fix: row-level LIBQUERY, a GOLD batch script (remote
+        <code>executeScript</code>), a scheduler job, or combinations in sequence.
+      </p>
+    </div>
+
+    <div class="adhc-form-row">
+      <label class="adhc-label">Resolution mode</label>
+      <p-dropdown [options]="resolutionModeOptions"
+        [(ngModel)]="form.RESOLUTION_MODE"
+        optionLabel="label" optionValue="value"
+        (onChange)="onResolutionModeChange()"
+        styleClass="adhc-input">
+      </p-dropdown>
+    </div>
+
+    <ng-container *ngIf="showResolutionLibQuery">
+    <div class="adhc-form-row">
+      <label class="adhc-label">Resolution LIBQUERY</label>
+      <div class="adhc-query-row">
+        <input pInputText [(ngModel)]="form.RESOLUTION_QUERY_NUM"
+          placeholder="e.g. DH0000001"
+          class="adhc-input adhc-input--qnum"
+          (ngModelChange)="resolutionVerifyState = 'idle'" />
+        <button pButton type="button" label="Verify" icon="pi pi-bolt"
+          class="p-button-sm p-button-outlined"
+          [loading]="resolutionVerifyState === 'checking'"
+          [disabled]="!form.RESOLUTION_QUERY_NUM?.trim()"
+          (click)="verifyResolutionQuery()">
+        </button>
+      </div>
+      <div class="adhc-verify-result" [ngClass]="resolutionVerifyClass" *ngIf="resolutionVerifyState !== 'idle'">
+        <i [class]="'pi ' + resolutionVerifyIcon"></i>
+        <span>{{ resolutionVerifyMessage }}</span>
+      </div>
+      <small class="adhc-hint">
+        DML LIBQUERY (<code>QUERYUPDATE=1</code>) using <code>JSON_TABLE</code> on
+        <code>$.values[0]</code> with paths matching column names below.
+      </small>
+    </div>
+
+    <div class="adhc-form-row">
+      <label class="adhc-label">Parameter columns</label>
+      <input pInputText [(ngModel)]="form.RESOLUTION_PARAM_MAP"
+        placeholder="STORE,UPC,TRANSFER DATE"
+        class="adhc-input" />
+      <small class="adhc-hint">
+        Comma-separated headers from the detail query, in the same order as binds in the resolution LIBQUERY.
+      </small>
+    </div>
+    </ng-container>
+
+    <ng-container *ngIf="showResolutionScript">
+    <div class="adhc-form-row">
+      <label class="adhc-label">Script template</label>
+      <input pInputText [(ngModel)]="form.RESOLUTION_SCRIPT_TEMPLATE"
+        placeholder="pssti20p pssti20p $USERID :transferNumber HN"
+        class="adhc-input" />
+      <small class="adhc-hint">
+        GOLD batch command sent to <code>ProcessService.executeScript</code>. Keep
+        <code>$USERID</code> literal (expanded on the remote host). Use
+        <code>:name</code> for values taken from each detail row.
+      </small>
+    </div>
+    <div class="adhc-form-row">
+      <label class="adhc-label">Script parameter map</label>
+      <input pInputText [(ngModel)]="form.RESOLUTION_SCRIPT_PARAM_MAP"
+        placeholder="transferNumber=TRANSFER NUMBER"
+        class="adhc-input" />
+      <small class="adhc-hint">
+        Comma-separated <code>placeholder=Column header</code> pairs matching
+        <code>:placeholder</code> tokens in the template (header must match the detail query).
+      </small>
+    </div>
+    </ng-container>
+
+    <div class="adhc-form-row" *ngIf="showResolutionJob">
+      <label class="adhc-label">Scheduler job name</label>
+      <input pInputText [(ngModel)]="form.RESOLUTION_JOB_NAME"
+        placeholder="e.g. MYSCHEMA.PROCESS_INTERDEPT_QUEUE"
+        class="adhc-input" />
+      <small class="adhc-hint">
+        Existing <code>DBMS_SCHEDULER</code> job (schema-qualified if needed). For
+        combined modes, the job runs once after all row-level steps succeed.
+      </small>
+    </div>
+
+    <div class="adhc-form-row adhc-form-row--2col">
+      <div>
+        <label class="adhc-label">Fixable status column</label>
+        <input pInputText [(ngModel)]="form.FIXABLE_STATUS_COLUMN"
+          placeholder="STATUS"
+          class="adhc-input" />
+      </div>
+      <div>
+        <label class="adhc-label">Fixable status value</label>
+        <input pInputText [(ngModel)]="form.FIXABLE_STATUS_VALUE"
+          placeholder="Not processed"
+          class="adhc-input" />
+      </div>
+    </div>
+    <small class="adhc-hint adhc-hint--block p-mb-3" *ngIf="resolutionMode !== 'NONE'">
+      When both are set, only detail rows with that status show a <strong>Fix</strong> action.
+      Leave blank to allow fix on every row when resolution is configured.
+    </small>
+
+    <div class="adhc-form-row">
+      <label class="adhc-label">Display order</label>
+      <p-inputNumber [(ngModel)]="form.DISPLAY_ORDER" [min]="1" [max]="999" styleClass="adhc-input--order">
+      </p-inputNumber>
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancel" icon="pi pi-times"
+      class="p-button-text" (click)="dialogVisible = false">
+    </button>
+    <button pButton type="button" [label]="saveButtonLabel" icon="pi pi-check"
+      [loading]="savingDef"
+      (click)="saveDef()">
+    </button>
+  </ng-template>
+</p-dialog>

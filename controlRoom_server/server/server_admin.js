@@ -97,7 +97,15 @@ let ls = require('./server/controller/patcher/ls')(app, SQL);
 let command = require('./server/controller/command/execute')(app, SQL);
 let logger = require('./server/utils/logger.js');     // Log manager
 let widget = require('./server/controller/widget')(app, SQL);
-let notification = require('./server/controller/notification')(app, SQL);
+let notification = require('./server/controller/notification')(app, SQL);/* ═══════════════════════════════════════════════════════════ */
+/* SUPPLY CHAIN AI MODULE                                       */
+/* All AI controllers are isolated in controller/ai/           */
+/* ═══════════════════════════════════════════════════════════ */
+let aiRetailer      = require('./server/controller/ai/ai.retailer')(app, SQL);
+let aiView          = require('./server/controller/ai/ai.view')(app, SQL);
+let aiSchema        = require('./server/controller/ai/ai.schema')(app, SQL);
+let aiEngine        = require('./server/controller/ai/ai.engine')(app, SQL);
+
 let warehouse = require('./server/controller/warehouse/itemdata')(app, SQL);
 let crontab = require('./server/controller/crontab')(app, SQL);
 let finance = require('./server/controller/finance')(app, SQL);

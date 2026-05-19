@@ -86,10 +86,29 @@ import { WatchICRComponent } from './pages/alerts/watch/watch.icr.component';
 
 import { QueryLibraryComponent } from './pages/admin/query.library/query.library.component';
 import { DictionaryComponent } from './pages/admin/dictionary/dictionary.component';
+import { SettingCustomerComponent } from './pages/admin/setting-customer/setting.customer.component';
+import { SettingUsersComponent } from './pages/admin/setting-users/setting.users.component';
+import { SettingMenuAccessComponent } from './pages/admin/setting-menu-access/setting.menu.access.component';
 
 import { ItemRetailComponent } from './pages/mass.update/item.retail/item.retail.component';
 
+/* ═══════════════════════════════════════════════════════════ */
+/* SUPPLY CHAIN AI MODULE — S01-S21                           */
+/* ═══════════════════════════════════════════════════════════ */
+import { AiRetailerSetupComponent } from './pages/supply-chain-ai/platform/retailer-setup/ai.retailer.setup.component';
+import { AiSchemaDiscoveryComponent } from './pages/supply-chain-ai/platform/schema-discovery/ai.schema.discovery.component';
+import { AiContextLearningComponent } from './pages/supply-chain-ai/platform/context-learning/ai.context.learning.component';
+import { AiSkillLibraryComponent } from './pages/supply-chain-ai/skill-studio/skill-library/ai.skill.library.component';
+import { AiSkillBuilderComponent } from './pages/supply-chain-ai/skill-studio/skill-builder/ai.skill.builder.component';
+import { AiPendingPhrasingsComponent } from './pages/supply-chain-ai/skill-studio/pending-phrasings/ai.pending.phrasings.component';
+import { AiPhrasingPlaygroundComponent } from './pages/supply-chain-ai/skill-studio/phrasing-playground/ai.phrasing.playground.component';
+import { AiAssistantComponent } from './pages/supply-chain-ai/inquiry/ai-assistant/ai.assistant.component';
+import { AiDataHealthComponent } from './pages/supply-chain-ai/operations/data-health/ai.data.health.component';
+import { AiDataHealthConfigComponent } from './pages/supply-chain-ai/operations/data-health/config/ai.data.health.config.component';
+
 const routes: Routes = [
+   /* Root: redirect only (no component on ''). A '' route with component+lazy children has historically kept the dashboard
+   * outlet active for other URLs; /dashboard is the single home route. */
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthentificationGuard] },
@@ -201,6 +220,32 @@ const routes: Routes = [
   /** ADMIN */
   { path: 'settingquery', component: QueryLibraryComponent, canActivate: [AuthentificationGuard] },
   { path: 'settinglabel', component: DictionaryComponent, canActivate: [AuthentificationGuard] },
+  { path: 'settingcustomer', component: SettingCustomerComponent, canActivate: [AuthentificationGuard] },
+  { path: 'settingusers', component: SettingUsersComponent, canActivate: [AuthentificationGuard] },
+  { path: 'settingmenu', component: SettingMenuAccessComponent, canActivate: [AuthentificationGuard] },
+
+  /* ═══════════════════════════════════════════════════════════ */
+  /* SUPPLY CHAIN AI — screens                               */
+  /* ═══════════════════════════════════════════════════════════ */
+  /* Platform setup */
+  { path: 'ai/retailer-setup',       component: AiRetailerSetupComponent,       canActivate: [AuthentificationGuard] },
+  { path: 'ai/schema-discovery',     component: AiSchemaDiscoveryComponent,     canActivate: [AuthentificationGuard] },
+  { path: 'ai/context-learning',     component: AiContextLearningComponent,     canActivate: [AuthentificationGuard] },
+  /* Skill studio — same eager pattern as `ai/retailer-setup` (feature module in AppModule, not loadChildren). */
+  { path: 'ai/skill-studio/library',     component: AiSkillLibraryComponent,     canActivate: [AuthentificationGuard] },
+  { path: 'ai/skill-studio/builder/:id', component: AiSkillBuilderComponent,       canActivate: [AuthentificationGuard] },
+  { path: 'ai/skill-studio/builder',      component: AiSkillBuilderComponent,     canActivate: [AuthentificationGuard] },
+  { path: 'ai/skill-studio/pending-phrasings', component: AiPendingPhrasingsComponent, canActivate: [AuthentificationGuard] },
+  { path: 'ai/skill-studio/playground',         component: AiPhrasingPlaygroundComponent, canActivate: [AuthentificationGuard] },
+  /* Skill studio — legacy URLs */
+  { path: 'ai/skill-library', redirectTo: 'ai/skill-studio/library', pathMatch: 'full' },
+  { path: 'ai/skill-builder', redirectTo: 'ai/skill-studio/builder', pathMatch: 'full' },
+  { path: 'ai/skill-builder/:id', redirectTo: 'ai/skill-studio/builder/:id', pathMatch: 'full' },
+  /* Inquiry */
+  { path: 'ai/assistant',            component: AiAssistantComponent,           canActivate: [AuthentificationGuard] },
+  /* Operations — data health */
+  { path: 'ai/data-health',          component: AiDataHealthComponent,          canActivate: [AuthentificationGuard] },
+  { path: 'ai/data-health/config',   component: AiDataHealthConfigComponent,    canActivate: [AuthentificationGuard] },
 
   /** ERROR */
   { path: 'server-error', component: ServerErrorComponent, canActivate: [AuthentificationGuard] },

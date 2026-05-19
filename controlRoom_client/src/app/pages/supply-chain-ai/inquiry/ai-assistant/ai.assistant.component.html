@@ -1,0 +1,932 @@
+<app-page-header [heading]="'AI Assistant'" [icon]="'fas fa-comments'"></app-page-header>
+<p-toast></p-toast>
+
+<div class="ai-module-container">
+    <div class="ai-assistant-workspace"
+         [class.ai-assistant-workspace--full-chat]="!isAiAdmin && !hasContextEntities()">
+        <div class="ai-chat-panel">
+            <div class="ai-chat-header">
+                <div class="ai-chat-title">
+                    <h3>Supply Chain Assistant</h3>
+                    <span>Ask about items, vendors, orders, or stock in plain language — the AI queries your GOLD data and explains what it finds.</span>
+                </div>
+                <div class="ai-retailer-picker">
+                    <label><i class="fas fa-store"></i> Retailer</label>
+                    <p-dropdown [options]="retailers"
+                                [(ngModel)]="selectedRetailer"
+                                optionLabel="RETAILER_NAME"
+                                placeholder="Select retailer..."
+                                [loading]="loadingRetailers">
+                    </p-dropdown>
+                </div>
+                <div class="ai-chat-header-actions" *ngIf="chatTurns.length">
+                    <button pButton
+                            type="button"
+                            icon="fas fa-plus"
+                            label="New conversation"
+                            class="p-button-sm p-button-outlined p-button-secondary"
+                            pTooltip="Clear chat and session context"
+                            tooltipPosition="bottom"
+                            [disabled]="running"
+                            (click)="startNewConversation()"></button>
+                    <button pButton
+                            type="button"
+                            icon="fas fa-download"
+                            label="Export session"
+                            class="p-button-sm p-button-outlined p-button-secondary"
+                            pTooltip="Export full conversation as a text file"
+                            tooltipPosition="bottom"
+                            (click)="exportConversation()"></button>
+                </div>
+            </div>
+
+            <div class="ai-chat-log ai-chat-log--canvas">
+                <div class="ai-chat-empty" *ngIf="!chatTurns.length">
+                    <p class="ai-chat-empty-lead">Ask about items, vendors, stores, or supply-chain status in plain language.</p>
+                    <div class="ai-example-prompts">
+                        <span class="ai-example-prompts-label">Try an example:</span>
+                        <button *ngFor="let ex of examplePrompts"
+                                type="button"
+                                class="ai-example-prompt-chip"
+                                [disabled]="running"
+                                (click)="useExamplePrompt(ex)">
+                            {{ ex }}
+                        </button>
+                    </div>
+                </div>
+                <div *ngFor="let t of chatTurns; let tIdx = index">
+                    <div *ngIf="t.role === 'separator'" class="ai-chat-separator">
+                        <span>{{ t.text }}</span>
+                    </div>
+                    <div *ngIf="t.role !== 'separator'" class="ai-chat-row" [class.ai-chat-row--user]="t.role === 'user'">
+                        <div class="ai-chat-bubble">
+                            <strong>{{ t.role === 'user' ? 'You' : 'Assistant' }}</strong>
+                            <p>{{ t.text }}</p>
+                            <div *ngIf="t.role === 'assistant' && !isAiAdmin && tIdx === lastAssistantTurnIndex && t.meta?.routing_label && t.meta?.routing_severity !== 'success'"
+                                 class="ai-routing-status">
+                                <p-tag [value]="t.meta.routing_label"
+                                       [severity]="t.meta.routing_severity"></p-tag>
+                            </div>
+                            <!-- Severity badge for diagnostic chain conclusions -->
+                            <div *ngIf="t.role === 'assistant' && t.meta?.is_diagnostic"
+                                 class="ai-diag-severity-row">
+                                <p-tag *ngIf="t.meta.diagnostic_severity === 'CRITICAL'"
+                                       value="CRITICAL"
+                                       severity="danger"
+                                       icon="fas fa-exclamation-circle"></p-tag>
+                                <p-tag *ngIf="t.meta.diagnostic_severity === 'WARNING'"
+                                       value="WARNING"
+                                       severity="warning"
+                                       icon="fas fa-exclamation-triangle"></p-tag>
+                                <p-tag *ngIf="t.meta.diagnostic_severity === 'INFO'"
+                                       value="INFO"
+                                       severity="info"
+                                       icon="fas fa-info-circle"></p-tag>
+                                <small *ngIf="t.meta.conclusion_key" class="ai-diag-conclusion-key">{{ t.meta.conclusion_key }}</small>
+                            </div>
+
+                            <ul *ngIf="t.role === 'assistant' && getTurnEvidenceFacts(t).length"
+                                class="ai-bubble-evidence">
+                                <li *ngFor="let fact of getTurnEvidenceFacts(t)">{{ fact }}</li>
+                            </ul>
+
+                            <!-- Diagnostic chain step audit trail (admin only — collapsible) -->
+                            <div *ngIf="isAiAdmin && t.role === 'assistant' && t.meta?.is_diagnostic && t.meta?.diagnostic_steps?.length"
+                                 class="ai-diag-steps">
+                                <p-accordion>
+                                    <p-accordionTab header="Diagnostic chain — {{ t.meta.diagnostic_steps.length }} step(s)">
+                                        <div *ngFor="let step of t.meta.diagnostic_steps; let si = index"
+                                             class="ai-diag-step"
+                                             [class.ai-diag-step--stopped]="step.stopped_here">
+                                            <div class="ai-diag-step-header">
+                                                <span class="ai-diag-step-num">Step {{ step.step_order }}</span>
+                                                <span class="ai-diag-step-label">{{ step.step_label }}</span>
+                                                <span class="ai-diag-step-tpl">{{ step.template_code }}</span>
+                                                <p-tag *ngIf="step.stopped_here"
+                                                       value="STOP"
+                                                       severity="danger"
+                                                       styleClass="ai-diag-step-stop"></p-tag>
+                                                <p-tag *ngIf="step.skipped"
+                                                       value="SKIPPED"
+                                                       severity="warning"></p-tag>
+                                                <p-tag *ngIf="step.error"
+                                                       value="ERROR"
+                                                       severity="danger"></p-tag>
+                                            </div>
+                                            <div *ngIf="step.matched_conclusion" class="ai-diag-step-conclusion">
+                                                Conclusion: <strong>{{ step.matched_conclusion }}</strong>
+                                            </div>
+                                            <div *ngIf="step.error" class="ai-diag-step-error">{{ step.error }}</div>
+                                            <div *ngIf="step.reason" class="ai-diag-step-error">{{ step.reason }}</div>
+                                        </div>
+                                    </p-accordionTab>
+                                </p-accordion>
+                            </div>
+
+                            <p *ngIf="t.role === 'assistant' && getTurnFollowUpHint(t)"
+                               class="ai-bubble-followup-hint">
+                                <i class="fas fa-arrow-right"></i> {{ getTurnFollowUpHint(t) }}
+                            </p>
+                            <div class="ai-bubble-meta-row">
+                                <small>{{ t.at | date:'shortTime' }}</small>
+                                <button *ngIf="t.role === 'assistant'"
+                                        type="button"
+                                        class="ai-bubble-copy-btn"
+                                        pTooltip="Copy answer text"
+                                        tooltipPosition="top"
+                                        (click)="copyTurnText(t)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+
+                            <!-- Phase 12 — inline result table per turn -->
+                            <div *ngIf="t.role === 'assistant' && (turnHasResults(t) || turnHasError(t))"
+                                 class="ai-chat-results">
+                                <div class="ai-chat-results-head">
+                                    <div class="ai-chat-results-title">
+                                        <i class="fas" [class.fa-table]="!turnHasError(t)" [class.fa-exclamation-triangle]="turnHasError(t)"></i>
+                                        <span *ngIf="!turnHasError(t)">
+                                            {{ t.meta.result_count }} row{{ t.meta.result_count === 1 ? '' : 's' }}
+                                        </span>
+                                        <span *ngIf="turnHasError(t)" class="ai-chat-results-err-label">Oracle error</span>
+                                        <code *ngIf="isAiAdmin && t.meta?.template_code" class="ai-chat-results-tpl">{{ t.meta.template_code }}</code>
+                                        <code *ngIf="isAiAdmin && t.meta?.skill_code" class="ai-chat-results-skill">{{ t.meta.skill_code }}</code>
+                                    </div>
+                                    <div class="ai-chat-results-actions">
+                                        <button *ngIf="canExportTurn(t)"
+                                                pButton
+                                                type="button"
+                                                icon="fas fa-file-csv"
+                                                label="CSV"
+                                                class="p-button-sm p-button-text"
+                                                pTooltip="Download as CSV"
+                                                tooltipPosition="top"
+                                                (click)="downloadTurnCsv(t)"></button>
+                                        <button *ngIf="canExportTurn(t)"
+                                                pButton
+                                                type="button"
+                                                icon="fas fa-file-excel"
+                                                label="Excel"
+                                                class="p-button-sm p-button-text"
+                                                pTooltip="Download as Excel (.xlsx)"
+                                                tooltipPosition="top"
+                                                (click)="downloadTurnExcel(t)"></button>
+                                        <button *ngIf="isAiAdmin && turnHasDebug(t)"
+                                                pButton
+                                                type="button"
+                                                [icon]="t.meta.show_debug ? 'fas fa-eye-slash' : 'fas fa-bug'"
+                                                [label]="t.meta.show_debug ? 'Hide SQL' : 'SQL'"
+                                                class="p-button-sm p-button-text"
+                                                pTooltip="Show / hide the executed SQL and bind context"
+                                                tooltipPosition="top"
+                                                (click)="toggleTurnDebug(t)"></button>
+                                    </div>
+                                </div>
+
+                                <!-- Phase 12 — enrichment indicator. Visible only on ITM_FULL_ATTRIBUTES;
+                                     shows which include_* flags fed the SQL so the user sees how the
+                                     consolidated table was built. -->
+                                <div *ngIf="getTurnEnrichments(t).length"
+                                     class="ai-chat-results-enrichments">
+                                    <i class="fas fa-layer-group"></i>
+                                    <span class="ai-chat-results-enrichments-label">Enriched with:</span>
+                                    <span *ngFor="let chip of getTurnEnrichments(t)"
+                                          class="ai-chat-results-enrichment-chip">
+                                        <i class="fas fa-check"></i> {{ chip }}
+                                    </span>
+                                </div>
+
+                                <!-- Oracle error path -->
+                                <div *ngIf="turnHasError(t)" class="ai-chat-results-error">
+                                    <pre class="ai-debug-pre">{{ getTurnRawError(t) }}</pre>
+                                    <button pButton
+                                            type="button"
+                                            icon="fas fa-copy"
+                                            label="Copy error"
+                                            class="p-button-sm p-button-text"
+                                            (click)="copyTurnError(t)"></button>
+                                </div>
+
+                                <!-- Compact result table.
+                                     NOT scrollable (intentionally): a scrollable p-table renders
+                                     header and body as two separate <table> elements whose column
+                                     widths can drift when cell content varies in length, which
+                                     visually splits multi-token cells like "2 | Nancy Lechner"
+                                     across columns. Single-table mode = guaranteed alignment.
+                                     Horizontal overflow handled by the wrapping container. -->
+                                <div *ngIf="turnHasResults(t) && !turnHasError(t)"
+                                     class="ai-chat-results-table-wrap">
+                                <p-table [value]="t.meta.result_rows"
+                                         [paginator]="t.meta.result_rows.length > 10"
+                                         [rows]="10"
+                                         [rowsPerPageOptions]="[10, 25, 50, 100]"
+                                         [showCurrentPageReport]="true"
+                                         currentPageReportTemplate="{first}–{last} of {totalRecords}"
+                                         responsiveLayout="scroll"
+                                         styleClass="p-datatable-sm p-datatable-gridlines ai-chat-results-table">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th *ngFor="let c of t.meta.result_columns">{{ c }}</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-row>
+                                        <tr>
+                                            <td *ngFor="let c of t.meta.result_columns"
+                                                [attr.title]="row[c]">{{ row[c] }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                                </div>
+
+                                <!-- Data identity footer — retailer + query time -->
+                                <div *ngIf="t.meta?.retailer_name && turnHasResults(t) && !turnHasError(t)"
+                                     class="ai-chat-results-footer">
+                                    <i class="fas fa-database"></i>
+                                    {{ t.meta.retailer_name }} · queried {{ t.at | date:'shortTime' }}
+                                </div>
+
+                                <!-- Per-turn debug panel -->
+                                <div *ngIf="t.meta.show_debug && turnHasDebug(t)" class="ai-chat-results-debug">
+                                    <div class="ai-chat-results-debug-head">
+                                        <span class="ai-chat-results-debug-title">
+                                            <i class="fas fa-code"></i> Executed SQL
+                                        </span>
+                                        <button pButton
+                                                type="button"
+                                                icon="fas fa-copy"
+                                                label="Copy SQL"
+                                                class="p-button-sm p-button-text"
+                                                (click)="copyTurnSql(t)"></button>
+                                    </div>
+                                    <pre class="ai-debug-pre ai-debug-pre--sql">{{ t.meta.executed_sql }}</pre>
+                                    <div *ngIf="t.meta.bind_context" class="ai-chat-results-debug-binds">
+                                        <span class="ai-chat-results-debug-title">
+                                            <i class="fas fa-key"></i> Bind context
+                                        </span>
+                                        <pre class="ai-debug-pre ai-debug-pre--json">{{ getTurnBindContextJson(t) }}</pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="t.role === 'assistant'
+                                       && tIdx === lastAssistantTurnIndex
+                                       && (t.meta?.alternatives?.length || 0) > 0"
+                                 class="ai-clarifications">
+                                <span class="ai-clarifications-prompt">
+                                    <i class="fas fa-route"></i>
+                                    I'm not fully sure — did you mean:
+                                </span>
+                                <button *ngFor="let alt of t.meta.alternatives"
+                                        type="button"
+                                        class="ai-alternative-chip"
+                                        [disabled]="running"
+                                        (click)="tryAlternativeSkill(alt)"
+                                        [pTooltip]="isAiAdmin ? ('Skill ' + alt.skill_code + ' (score ' + alt.score + ')') : 'Try this interpretation'"
+                                        tooltipPosition="top">
+                                    <i class="fas fa-arrow-right"></i>
+                                    <span>{{ getAlternativeChipLabel(alt) }}</span>
+                                </button>
+                            </div>
+                            <div *ngIf="t.role === 'assistant'
+                                       && tIdx === lastAssistantTurnIndex
+                                       && (t.meta?.suggestions?.length || 0) > 0"
+                                 class="ai-followups">
+                                <button *ngFor="let s of t.meta.suggestions"
+                                        type="button"
+                                        class="ai-followup-chip"
+                                        [disabled]="running"
+                                        (click)="askFollowUp(s)">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <span>{{ s }}</span>
+                                </button>
+                            </div>
+                            <div *ngIf="t.role === 'assistant'" class="ai-feedback">
+                                <ng-container *ngIf="!feedbackSent[tIdx]; else feedbackDone">
+                                    <button pButton
+                                            type="button"
+                                            icon="fas fa-thumbs-up"
+                                            class="p-button-rounded p-button-text p-button-sm ai-feedback-btn ai-feedback-btn--up"
+                                            pTooltip="Helpful answer"
+                                            tooltipPosition="top"
+                                            [disabled]="!canSendFeedback(t, tIdx)"
+                                            [loading]="isFeedbackBusy(tIdx)"
+                                            (click)="sendFeedback(t, tIdx, 'up')"
+                                            aria-label="Helpful"></button>
+                                    <button pButton
+                                            type="button"
+                                            icon="fas fa-thumbs-down"
+                                            class="p-button-rounded p-button-text p-button-sm ai-feedback-btn ai-feedback-btn--down"
+                                            pTooltip="Needs improvement"
+                                            tooltipPosition="top"
+                                            [disabled]="!canSendFeedback(t, tIdx)"
+                                            [loading]="isFeedbackBusy(tIdx)"
+                                            (click)="sendFeedback(t, tIdx, 'down')"
+                                            aria-label="Not helpful"></button>
+                                </ng-container>
+                                <ng-template #feedbackDone>
+                                    <span class="ai-feedback-done"
+                                          [class.ai-feedback-done--up]="feedbackSent[tIdx] === 'up'"
+                                          [class.ai-feedback-done--down]="feedbackSent[tIdx] === 'down'">
+                                        <i class="fas"
+                                           [class.fa-thumbs-up]="feedbackSent[tIdx] === 'up'"
+                                           [class.fa-thumbs-down]="feedbackSent[tIdx] === 'down'"></i>
+                                        Thanks — feedback recorded
+                                    </span>
+                                    <!-- LEARN — after thumb-down: offer to teach the correct skill -->
+                                    <button *ngIf="isAiAdmin && feedbackSent[tIdx] === 'down' && !thumbDownTeachDone[tIdx]"
+                                            pButton
+                                            type="button"
+                                            icon="fas fa-graduation-cap"
+                                            label="Teach correct skill"
+                                            class="p-button-sm p-button-text p-button-info ai-teach-trigger-btn"
+                                            pTooltip="Tell the AI which skill should have answered this"
+                                            tooltipPosition="top"
+                                            (click)="thumbDownTeachVisible[tIdx] = !thumbDownTeachVisible[tIdx]"></button>
+                                    <span *ngIf="thumbDownTeachDone[tIdx]" class="ai-teach-done">
+                                        <i class="fas fa-check-circle"></i> Phrase taught
+                                    </span>
+                                </ng-template>
+                                <!-- Teach panel — inline skill picker + confirm -->
+                                <div *ngIf="isAiAdmin && thumbDownTeachVisible[tIdx] && !thumbDownTeachDone[tIdx]"
+                                     class="ai-teach-panel">
+                                    <span class="ai-teach-prompt">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        Which skill should have answered this?
+                                    </span>
+                                    <div class="ai-teach-form">
+                                        <p-dropdown [options]="templateSkills"
+                                                    [(ngModel)]="thumbDownTeachSkill[tIdx]"
+                                                    optionLabel="_label"
+                                                    [filter]="true"
+                                                    filterBy="_label,SKILL_CODE"
+                                                    placeholder="Select the correct skill…"
+                                                    [showClear]="true"
+                                                    styleClass="ai-teach-skill-dd">
+                                        </p-dropdown>
+                                        <button pButton
+                                                type="button"
+                                                label="Teach"
+                                                icon="fas fa-graduation-cap"
+                                                class="p-button-sm p-button-info"
+                                                [disabled]="!thumbDownTeachSkill[tIdx]"
+                                                (click)="submitTeachSkill(t, tIdx)"></button>
+                                        <button pButton
+                                                type="button"
+                                                icon="fas fa-times"
+                                                class="p-button-sm p-button-text p-button-secondary"
+                                                pTooltip="Cancel"
+                                                (click)="thumbDownTeachVisible[tIdx] = false"></button>
+                                    </div>
+                                    <p class="ai-teach-hint">The phrase will be queued in Pending phrasings for admin review.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="awaitingAssistant" class="ai-chat-row">
+                    <div class="ai-chat-bubble ai-chat-bubble--typing">
+                        <strong>Assistant</strong>
+                        <div class="ai-typing-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-composer">
+                <label>Message</label>
+                <textarea pInputTextarea
+                          rows="4"
+                          [ngModel]="getComposerText()"
+                          (ngModelChange)="setComposerText($event)"
+                          (keydown)="onComposerKeydown($event)"
+                          [placeholder]="chatTurns.length
+                            ? 'Add context, choose supplier, or ask a follow-up question...'
+                            : 'Example: What DSD items can we buy from Lipari at store 7?'"></textarea>
+                <p class="ai-composer-hint">
+                    <i class="fas fa-keyboard"></i> Enter to send · Shift+Enter for a new line
+                </p>
+                <div class="ai-composer-actions">
+                    <button pButton
+                            [label]="chatTurns.length ? 'Send follow-up' : 'Start discussion'"
+                            [icon]="chatTurns.length ? 'fas fa-paper-plane' : 'fas fa-play'"
+                            class="p-button-secondary ai-follow-up-btn"
+                            [disabled]="running || !getComposerText() || !selectedRetailer?.RETAILER_ID"
+                            (click)="sendFromComposer()"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-right" *ngIf="isAiAdmin || hasContextEntities()">
+            <p-card header="What we found" *ngIf="isAiAdmin && conclusion">
+                <p-tag [value]="conclusion.label" [severity]="conclusion.severity"></p-tag>
+                <p class="ai-conclusion">{{ conclusion.detail }}</p>
+            </p-card>
+
+            <p-card header="Real-time investigation timeline" *ngIf="isAiAdmin">
+                <div class="ai-confidence" [attr.data-band]="confidenceSeverity">
+                    <svg class="ai-confidence-gauge" viewBox="0 0 120 120" role="img"
+                         [attr.aria-label]="'Routing confidence ' + confidence + ' percent'">
+                        <circle cx="60" cy="60" r="52" class="ai-gauge-track"></circle>
+                        <circle cx="60" cy="60" r="52"
+                                class="ai-gauge-arc"
+                                [attr.stroke]="confidenceColor"
+                                [attr.stroke-dasharray]="gaugeCircumference"
+                                [attr.stroke-dashoffset]="gaugeDashOffset"></circle>
+                        <text x="60" y="66" text-anchor="middle"
+                              class="ai-gauge-text" [attr.fill]="confidenceColor">{{ confidence }}%</text>
+                    </svg>
+                    <div class="ai-confidence-meta">
+                        <span class="ai-confidence-title">Routing confidence</span>
+                        <p-tag [value]="confidenceLabel" [severity]="confidenceSeverity"></p-tag>
+                        <p class="ai-confidence-hint">{{ confidenceHint }}</p>
+                        <ul class="ai-confidence-legend">
+                            <li><span class="dot dot--low"></span>&lt; 50 — not very sure which skill fits</li>
+                            <li><span class="dot dot--mid"></span>50–80 — good match</li>
+                            <li><span class="dot dot--high"></span>&gt; 80 — high confidence</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <p-timeline [value]="timelineEvents" align="left" styleClass="customized-timeline">
+                    <ng-template pTemplate="marker" let-event>
+                        <span class="custom-marker" [style.backgroundColor]="event.done ? event.color : '#cbd5e1'">
+                            <i [class]="event.icon"></i>
+                        </span>
+                    </ng-template>
+                    <ng-template pTemplate="content" let-event>
+                        <div class="ai-event" [class.ai-event--pending]="!event.done">
+                            <strong>{{ event.status }}</strong>
+                            <small *ngIf="event.date">{{ event.date | date:'shortTime' }}</small>
+                        </div>
+                    </ng-template>
+                </p-timeline>
+            </p-card>
+
+            <p-card header="Evidence facts" *ngIf="isAiAdmin">
+                <ul class="ai-evidence">
+                    <li *ngFor="let e of evidenceFacts">{{ e }}</li>
+                    <li *ngIf="!evidenceFacts.length" class="muted">Evidence appears here as steps complete.</li>
+                </ul>
+            </p-card>
+
+            <!-- ADJUST — Active context: shows accumulated session entities with inline edit.
+                 Displayed as soon as the engine extracts at least one entity (supplier, site, dates).
+                 Edits take effect on the next follow-up without retyping the question. -->
+            <p-card header="Active context" *ngIf="hasContextEntities()" styleClass="ai-context-card">
+                <div class="ai-context-chips">
+                    <ng-container *ngFor="let k of getContextEntityKeys()">
+                        <span *ngIf="contextEditKey !== k" class="ai-context-chip">
+                            <strong>{{ humanizeContextKey(k) }}</strong>
+                            <code>{{ currentSessionContext.entities[k] }}</code>
+                            <button type="button"
+                                    class="ai-context-chip-btn"
+                                    pTooltip="Edit"
+                                    tooltipPosition="top"
+                                    (click)="startEditContext(k, currentSessionContext.entities[k])">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button type="button"
+                                    class="ai-context-chip-btn ai-context-chip-btn--remove"
+                                    pTooltip="Remove from context"
+                                    tooltipPosition="top"
+                                    (click)="removeContextEntity(k)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </span>
+                        <span *ngIf="contextEditKey === k" class="ai-context-chip ai-context-chip--editing">
+                            <strong>{{ humanizeContextKey(k) }}</strong>
+                            <input pInputText
+                                   [(ngModel)]="contextEditValue"
+                                   class="ai-context-edit-input"
+                                   (keydown.enter)="commitEditContext()"
+                                   (keydown.escape)="cancelEditContext()" />
+                            <button pButton type="button"
+                                    icon="fas fa-check"
+                                    class="p-button-sm p-button-text p-button-success"
+                                    pTooltip="Confirm"
+                                    (click)="commitEditContext()"></button>
+                            <button pButton type="button"
+                                    icon="fas fa-times"
+                                    class="p-button-sm p-button-text p-button-secondary"
+                                    pTooltip="Cancel"
+                                    (click)="cancelEditContext()"></button>
+                        </span>
+                    </ng-container>
+                </div>
+                <div class="ai-context-add" *ngIf="!contextAddMode">
+                    <button pButton
+                            type="button"
+                            icon="fas fa-plus"
+                            label="Add"
+                            class="p-button-sm p-button-text p-button-secondary"
+                            pTooltip="Inject an extra bind value into the next question"
+                            tooltipPosition="top"
+                            (click)="startAddContext()"></button>
+                </div>
+                <div class="ai-context-add-form" *ngIf="contextAddMode">
+                    <input pInputText
+                           [(ngModel)]="contextAddKey"
+                           placeholder="key (e.g. site_id)"
+                           class="ai-context-add-key" />
+                    <input pInputText
+                           [(ngModel)]="contextAddValue"
+                           placeholder="value"
+                           class="ai-context-add-val"
+                           (keydown.enter)="commitAddContext()" />
+                    <button pButton type="button"
+                            icon="fas fa-check"
+                            class="p-button-sm p-button-success"
+                            (click)="commitAddContext()"></button>
+                    <button pButton type="button"
+                            icon="fas fa-times"
+                            class="p-button-sm p-button-secondary"
+                            (click)="cancelAddContext()"></button>
+                </div>
+                <p class="ai-context-hint">
+                    <i class="fas fa-info-circle"></i>
+                    These values carry into every follow-up question automatically.
+                </p>
+            </p-card>
+
+            <!-- Engine diagnostics — admin only (USERAIADMIN = 1). -->
+            <p-card *ngIf="isAiAdmin && hasDebugInfo()" styleClass="ai-diag-card">
+                <ng-template pTemplate="header">
+                    <div class="ai-diag-card-head">
+                        <div class="ai-diag-card-title">
+                            <i class="fas fa-bug"></i>
+                            <span>Engine diagnostics</span>
+                            <p-tag *ngIf="routeError" value="ROUTE FAILED" severity="danger" styleClass="ai-diag-status-tag"></p-tag>
+                            <p-tag *ngIf="!routeError && executionError" value="EXEC FAILED" severity="danger" styleClass="ai-diag-status-tag"></p-tag>
+                            <p-tag *ngIf="!routeError && !executionError && diagResult?.low_confidence" value="LOW CONFIDENCE" severity="warning" styleClass="ai-diag-status-tag"></p-tag>
+                        </div>
+                        <button pButton
+                                type="button"
+                                icon="fas fa-copy"
+                                label="Copy JSON"
+                                class="p-button-sm p-button-text"
+                                pTooltip="Copy the full routing diagnostics (route + diag + executed SQL + binds)"
+                                tooltipPosition="top"
+                                (click)="copyDiagJson()"></button>
+                    </div>
+                </ng-template>
+
+                <!-- Section 1: Route HTTP error, if any -->
+                <div *ngIf="routeError" class="ai-diag-section ai-diag-section--error">
+                    <div class="ai-diag-section-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Route endpoint error (HTTP {{ routeError.status || '???' }})
+                    </div>
+                    <p class="ai-diag-section-help">
+                        <code>/api/ai/engine/route</code> failed before scoring any skill. Common causes:
+                        <em>AI0000061-AI0000064 LIBQUERY entries missing</em> on the ICR DB,
+                        <em>GOLD DB link unreachable</em> for vendor resolution, or
+                        <em>ENGINE_VENDOR_RESOLVE</em> SQL template absent on the supplier-domain skill.
+                    </p>
+                    <pre class="ai-debug-pre">{{ getRouteErrorJson() }}</pre>
+                </div>
+
+                <!-- Section 2: Why this skill? scored candidates -->
+                <div *ngIf="getDiagSkills().length" class="ai-diag-section">
+                    <div class="ai-diag-section-title">
+                        <i class="fas fa-route"></i>
+                        Why this skill? ({{ diagResult?.skills?.length || 0 }} candidates scored)
+                    </div>
+                    <p *ngIf="!diagResult?.top_skill_code" class="ai-diag-section-help">
+                        No skill scored above the routing threshold.
+                        Add an <code>INTENT_PHRASE</code> for the chosen skill or boost an existing
+                        <code>SYNONYM</code> in <code>AI_SKILL_VOCABULARY</code> so this question reaches it.
+                    </p>
+                    <div *ngFor="let s of getDiagSkills(); let i = index"
+                         class="ai-diag-skill"
+                         [class.ai-diag-skill--top]="i === 0">
+                        <div class="ai-diag-skill-head">
+                            <span class="ai-diag-skill-rank">#{{ i + 1 }}</span>
+                            <code class="ai-diag-skill-code">{{ s.skill_code }}</code>
+                            <span class="ai-diag-skill-domain" *ngIf="s.domain">· {{ s.domain }}</span>
+                            <p-tag [value]="s.score"
+                                   [severity]="scoreSeverity(s.score)"
+                                   styleClass="ai-diag-skill-score"></p-tag>
+                        </div>
+                        <div class="ai-diag-skill-bar">
+                            <div class="ai-diag-skill-bar-fill"
+                                 [style.width]="scoreBarWidth(s.score)"
+                                 [class.ai-diag-skill-bar-fill--low]="scoreSeverity(s.score) === 'danger'"
+                                 [class.ai-diag-skill-bar-fill--mid]="scoreSeverity(s.score) === 'warning'"
+                                 [class.ai-diag-skill-bar-fill--high]="scoreSeverity(s.score) === 'success'"></div>
+                        </div>
+                        <div *ngIf="s.vocab_matches?.length" class="ai-diag-skill-matches">
+                            <span class="ai-diag-skill-matches-title">Matched vocabulary:</span>
+                            <span class="ai-diag-vocab-chip"
+                                  *ngFor="let m of s.vocab_matches"
+                                  [class.ai-diag-vocab-chip--dampened]="m.dampened"
+                                  [attr.title]="'overlap=' + m.overlap + '  boost=' + m.confidence_boost + '  contribution=' + m.contribution + (m.dampened ? '  (dampened: ' + m.dampened + ')' : '')">
+                                <em>{{ m.term_type }}</em>
+                                <strong>{{ m.term }}</strong>
+                                <small>+{{ m.contribution }}</small>
+                                <i *ngIf="m.dampened" class="fas fa-arrow-down ai-diag-vocab-chip-dampen" title="dampened (needs vendor context)"></i>
+                            </span>
+                        </div>
+                        <details *ngIf="s.score_breakdown?.length" class="ai-diag-skill-breakdown">
+                            <summary>Score breakdown ({{ s.score_breakdown.length }} factors)</summary>
+                            <ul>
+                                <li *ngFor="let b of s.score_breakdown">
+                                    <code>{{ b.factor }}</code>
+                                    <span class="ai-diag-delta"
+                                          [class.ai-diag-delta--neg]="b.delta < 0">{{ b.delta >= 0 ? '+' : '' }}{{ b.delta }}</span>
+                                </li>
+                            </ul>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- Section 3: Routing context — intent + entities -->
+                <div *ngIf="diagResult" class="ai-diag-section">
+                    <div class="ai-diag-section-title">
+                        <i class="fas fa-language"></i>
+                        Routing context
+                    </div>
+                    <div class="ai-diag-grid">
+                        <div><span class="ai-diag-label">Intent</span><code>{{ diagResult.intent_type }}</code></div>
+                        <div *ngIf="diagResult.normalized_text"><span class="ai-diag-label">Normalized</span><code>{{ diagResult.normalized_text }}</code></div>
+                        <div *ngIf="diagResult.tokens?.length"><span class="ai-diag-label">Tokens</span><code>{{ diagResult.tokens.join(', ') }}</code></div>
+                    </div>
+                    <div *ngIf="getEntityKeysWithValues().length" class="ai-diag-entities">
+                        <span class="ai-diag-label">Extracted entities</span>
+                        <span class="ai-diag-entity-chip" *ngFor="let k of getEntityKeysWithValues()">
+                            <strong>{{ k }}</strong> = <code>{{ diagResult.extracted_entities[k] }}</code>
+                        </span>
+                    </div>
+                    <div *ngIf="!getEntityKeysWithValues().length" class="ai-diag-section-help">
+                        No entities were extracted. The router will fail to bind any
+                        template parameter — add a <code>BIND_HINT</code> row in
+                        <code>AI_SKILL_VOCABULARY</code> so phrases like "for store 7"
+                        or "item 100100" map to <code>site_id</code> / <code>lu_id</code>.
+                    </div>
+                    <div *ngIf="diagResult.bind_hint_extractions?.length" class="ai-diag-binds">
+                        <span class="ai-diag-label">Bind hint matches</span>
+                        <ul>
+                            <li *ngFor="let m of diagResult.bind_hint_extractions">
+                                <code>{{ m.term }}</code> → <strong>{{ m.concept }}</strong> = <code>{{ m.value }}</code>
+                                <span *ngIf="!m.used" class="ai-diag-skipped">(skipped: {{ m.skipped_reason }})</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section 4: Top skill template feasibility -->
+                <div *ngIf="getDiagTemplates().length" class="ai-diag-section">
+                    <div class="ai-diag-section-title">
+                        <i class="fas fa-project-diagram"></i>
+                        Top skill templates ({{ getDiagTemplates().length }})
+                    </div>
+                    <table class="ai-diag-tpl-table">
+                        <thead>
+                            <tr><th>Template</th><th>Required binds</th><th>Missing</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let t of getDiagTemplates()">
+                                <td>
+                                    <code>{{ t.template_code }}</code>
+                                    <div class="ai-diag-tpl-label" *ngIf="t.template_label">{{ t.template_label }}</div>
+                                </td>
+                                <td>
+                                    <span *ngIf="!t.required_binds?.length" class="muted">—</span>
+                                    <code *ngFor="let b of t.required_binds" class="ai-diag-bind-chip">{{ b }}</code>
+                                </td>
+                                <td>
+                                    <span *ngIf="!t.missing_binds?.length" class="muted">—</span>
+                                    <code *ngFor="let b of t.missing_binds" class="ai-diag-bind-chip ai-diag-bind-chip--missing">{{ b }}</code>
+                                </td>
+                                <td>
+                                    <p-tag [value]="t.bind_status" [severity]="bindStatusSeverity(t.bind_status)"></p-tag>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Section 5: Executed SQL + bind context (when execute did run) -->
+                <div *ngIf="executedSql && executedSql.trim().length" class="ai-diag-section">
+                    <div class="ai-diag-section-title">
+                        <i class="fas fa-code"></i>
+                        Executed SQL
+                        <span class="ai-debug-block-meta" *ngIf="routeResult?.selected_skill_code">
+                            · skill <code>{{ routeResult.selected_skill_code }}</code>
+                        </span>
+                        <button pButton
+                                type="button"
+                                icon="fas fa-copy"
+                                label="Copy SQL"
+                                class="p-button-sm p-button-text ai-diag-section-action"
+                                (click)="copyExecutedSql()"></button>
+                    </div>
+                    <pre class="ai-debug-pre ai-debug-pre--sql">{{ executedSql }}</pre>
+                    <div *ngIf="bindContext" class="ai-diag-binds-pre">
+                        <span class="ai-diag-label"><i class="fas fa-key"></i> Bind context</span>
+                        <pre class="ai-debug-pre ai-debug-pre--json">{{ getBindContextJson() }}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 6: Oracle error -->
+                <div *ngIf="(executionError && executionError.trim().length) || (isOracleErrorRow(resultRows) && getOracleErrorRaw())"
+                     class="ai-diag-section ai-diag-section--error">
+                    <div class="ai-diag-section-title">
+                        <i class="fas fa-database"></i>
+                        Oracle / engine error
+                        <button pButton
+                                type="button"
+                                icon="fas fa-copy"
+                                label="Copy"
+                                class="p-button-sm p-button-text ai-diag-section-action"
+                                (click)="copyOracleError()"></button>
+                    </div>
+                    <pre class="ai-debug-pre">{{ executionError || getOracleErrorRaw() }}</pre>
+                </div>
+            </p-card>
+
+            <p-card header="Requested SQL artifacts" *ngIf="isAiAdmin && requestedSql.length">
+                <ul class="ai-evidence">
+                    <li *ngFor="let r of requestedSql">{{ r }}</li>
+                </ul>
+            </p-card>
+
+            <p-card [header]="requestedSql.length ? 'Designer input required' : 'Adjust & extend'" *ngIf="isAiAdmin && showDesignerPanel">
+                <div class="ai-designer-form">
+                    <label>Skill (existing template catalog)</label>
+                    <p-dropdown [options]="templateSkills"
+                                [(ngModel)]="designerSelectedSkill"
+                                optionLabel="_label"
+                                [filter]="true"
+                                filterBy="_label,SKILL_CODE,SKILL_NAME,DOMAIN"
+                                placeholder="Choose skill to run SQL against (e.g. ITEM_MASTER_RETAIL)…"
+                                [showClear]="true"
+                                [loading]="loadingTemplateSkills"
+                                styleClass="ai-designer-skill-dd">
+                    </p-dropdown>
+                    <p class="ai-designer-hint">Defaults to the last routed skill; change this to use an existing skill and edit its templates in Skill Builder — no new skill required.</p>
+
+                    <label>Template code override (optional)</label>
+                    <input pInputText [(ngModel)]="designerInput.templateCode" placeholder="Example: ITM_ARTICLE_HEADER" />
+
+                    <label>Provide missing bindings (key=value, one per line)</label>
+                    <textarea pInputTextarea rows="4"
+                              [(ngModel)]="designerInput.bindingsText"
+                              placeholder="lu_id=100100&#10;site_id=1042&#10;supplier_id=12345&#10;as_of_date=2026-05-06"></textarea>
+
+                    <label>Designer notes</label>
+                    <textarea pInputTextarea rows="3"
+                              [(ngModel)]="designerInput.notes"
+                              placeholder="Explain business rule / expected output for this question"></textarea>
+
+                    <label>SQL template draft (optional, for skill shaping)</label>
+                    <textarea pInputTextarea rows="5"
+                              [(ngModel)]="designerInput.sqlTemplateDraft"
+                              placeholder="SELECT ... FROM ... WHERE ..."></textarea>
+
+                    <div class="ai-designer-actions">
+                        <button pButton
+                                label="Apply designer input and retry"
+                                icon="fas fa-wrench"
+                                class="p-button-warning"
+                                [disabled]="running"
+                                (click)="applyDesignerInput()"></button>
+                        <button pButton
+                                type="button"
+                                label="Open Skill Builder with draft"
+                                icon="fas fa-external-link-alt"
+                                class="p-button-outlined"
+                                [disabled]="running || !getDesignerSkillId() || (!designerInput.sqlTemplateDraft?.trim() && !designerInput.templateCode?.trim())"
+                                (click)="openSkillBuilderWithDraft()"></button>
+                        <!-- EXTEND — shortcut when no skill exists at all for this question -->
+                        <button *ngIf="!routeResult?.selected_skill_id"
+                                pButton
+                                type="button"
+                                label="Create new skill"
+                                icon="fas fa-plus-circle"
+                                class="p-button-outlined p-button-success"
+                                pTooltip="Open Skill Builder to author a new skill for this question"
+                                tooltipPosition="top"
+                                [disabled]="running"
+                                (click)="createNewSkillFromQuestion()"></button>
+                    </div>
+                    <p class="ai-designer-hint">Skill Builder opens the SQL templates tab with this draft; save there to persist in Oracle (LIBQUERY bundle).</p>
+                </div>
+            </p-card>
+
+            <p-card *ngIf="isAiAdmin && !requestedSql.length && resultColumns.length" styleClass="ai-results-card">
+                <ng-template pTemplate="header">
+                    <div class="ai-results-card-header">
+                        <div class="ai-results-card-title">
+                            <i class="fas fa-table"></i>
+                            <span>Detailed results</span>
+                            <span class="ai-results-card-count" *ngIf="canExportResults()">
+                                {{ resultRows.length }} row{{ resultRows.length === 1 ? '' : 's' }}
+                            </span>
+                        </div>
+                        <div class="ai-results-card-actions">
+                            <button *ngIf="canExportResults()"
+                                    pButton
+                                    type="button"
+                                    icon="fas fa-file-csv"
+                                    label="CSV"
+                                    class="p-button-sm p-button-outlined p-button-secondary"
+                                    pTooltip="Download visible columns and rows as a CSV file"
+                                    tooltipPosition="top"
+                                    (click)="downloadResultsCsv()"></button>
+                            <button *ngIf="canExportResults()"
+                                    pButton
+                                    type="button"
+                                    icon="fas fa-file-excel"
+                                    label="Excel"
+                                    class="p-button-sm p-button-outlined p-button-success"
+                                    pTooltip="Download visible columns and rows as an Excel (.xlsx) file"
+                                    tooltipPosition="top"
+                                    (click)="downloadResultsExcel()"></button>
+                            <button *ngIf="hasDebugInfo()"
+                                    pButton
+                                    type="button"
+                                    [icon]="showDebug ? 'fas fa-eye-slash' : 'fas fa-bug'"
+                                    [label]="showDebug ? 'Hide SQL' : 'Debug'"
+                                    class="p-button-sm p-button-outlined p-button-help"
+                                    pTooltip="Show the executed SQL with bind values substituted"
+                                    tooltipPosition="top"
+                                    (click)="toggleDebug()"></button>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <!-- Oracle error path — show raw error + executed SQL inline so the designer can copy/paste -->
+                <div *ngIf="isOracleErrorRow(resultRows)" class="ai-oracle-error-msg">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{ getOracleErrorFriendly() }}
+                </div>
+                <div *ngIf="isOracleErrorRow(resultRows) && getOracleErrorRaw()" class="ai-debug-block ai-debug-block--error">
+                    <div class="ai-debug-block-head">
+                        <span class="ai-debug-block-title"><i class="fas fa-database"></i> Oracle error</span>
+                        <button pButton
+                                type="button"
+                                icon="fas fa-copy"
+                                label="Copy error"
+                                class="p-button-sm p-button-text"
+                                (click)="copyOracleError()"></button>
+                    </div>
+                    <pre class="ai-debug-pre">{{ getOracleErrorRaw() }}</pre>
+                </div>
+
+                <!-- Successful execution: data table -->
+                <ng-container *ngIf="!isOracleErrorRow(resultRows)">
+                    <p-table [value]="resultRows"
+                             [paginator]="true"
+                             [rows]="50"
+                             [rowsPerPageOptions]="[25, 50, 100, 250, 500]"
+                             [showCurrentPageReport]="true"
+                             currentPageReportTemplate="Showing {first}–{last} of {totalRecords} rows"
+                             [scrollable]="true"
+                             scrollHeight="360px"
+                             responsiveLayout="scroll"
+                             styleClass="p-datatable-sm p-datatable-gridlines">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th *ngFor="let c of resultColumns">{{ c }}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td *ngFor="let c of resultColumns">{{ row[c] }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </ng-container>
+
+                <!-- Debug panel — executed SQL + bind context. Always visible on Oracle errors,
+                     toggleable for successful runs via the "Debug" button in the header. -->
+                <div *ngIf="hasDebugInfo() && (showDebug || isOracleErrorRow(resultRows))" class="ai-debug-block">
+                    <div class="ai-debug-block-head">
+                        <span class="ai-debug-block-title">
+                            <i class="fas fa-code"></i> Executed SQL
+                            <span class="ai-debug-block-meta" *ngIf="routeResult?.selected_skill_code">
+                                · skill <code>{{ routeResult.selected_skill_code }}</code>
+                            </span>
+                        </span>
+                        <button pButton
+                                type="button"
+                                icon="fas fa-copy"
+                                label="Copy SQL"
+                                class="p-button-sm p-button-text"
+                                (click)="copyExecutedSql()"></button>
+                    </div>
+                    <pre class="ai-debug-pre ai-debug-pre--sql">{{ executedSql }}</pre>
+
+                    <div *ngIf="bindContext" class="ai-debug-binds">
+                        <div class="ai-debug-block-title">
+                            <i class="fas fa-key"></i> Bind context
+                        </div>
+                        <pre class="ai-debug-pre ai-debug-pre--json">{{ getBindContextJson() }}</pre>
+                    </div>
+                </div>
+            </p-card>
+                </div>
+    </div>
+</div>
+
