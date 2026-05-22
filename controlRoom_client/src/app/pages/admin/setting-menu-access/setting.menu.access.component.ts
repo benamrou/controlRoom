@@ -10,7 +10,7 @@ import { SettingsAdminService } from '../../../shared/services/settings/settings
   providers: [ConfirmationService, MessageService],
 })
 export class SettingMenuAccessComponent implements OnInit {
-  screenID = 'SETTING_MENU';
+  screenID = 'SCR0000000066';
   waitMessage = '';
   activeTab = 0;
 

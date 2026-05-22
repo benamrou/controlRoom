@@ -11,6 +11,7 @@ import { AiRetailerService } from 'src/app/shared/services/ai/ai.retailer.servic
     providers: [MessageService]
 })
 export class AiSchemaDiscoveryComponent implements OnInit, OnDestroy {
+    screenID = 'SCR0000000054';
     private readonly GOLD_SCHEMA_SUFFIXES = ['CEN', 'GWR', 'STK'];
     // Retailers
     retailers: any[] = [];

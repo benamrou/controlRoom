@@ -1,0 +1,28 @@
+-- User profile dropdown — Documentation (below Change password)
+-- Re-runnable incremental patch. Deploy after 54_header_user_profile_menu.sql.
+-- ROUTE_PATH is the in-app Angular route (Docsify under /icr/documentation/).
+-- Do not use another port (e.g. :9000). Client uses window.location.host + this path.
+
+MERGE INTO ICR_MENU_ENTRY t
+USING (
+  SELECT 'HDR_USER_DOCUMENTATION' MENU_CODE, NULL PARENT_CODE, 'HEADER' MENU_TYPE, 'BOTH' MENU_MODE,
+         '/documentation' ROUTE_PATH, 'fa fa-fw fa-book' ICON_CLASS, 'Documentation' LABEL_TEXT,
+         25 SORT_ORDER, NULL EXPAND_KEY, 1 ACTIVE FROM dual
+) s ON (t.MENU_CODE = s.MENU_CODE)
+WHEN MATCHED THEN UPDATE SET
+  t.PARENT_CODE = s.PARENT_CODE, t.MENU_TYPE = s.MENU_TYPE, t.MENU_MODE = s.MENU_MODE,
+  t.ROUTE_PATH = s.ROUTE_PATH, t.ICON_CLASS = s.ICON_CLASS, t.LABEL_TEXT = s.LABEL_TEXT,
+  t.SORT_ORDER = s.SORT_ORDER, t.ACTIVE = s.ACTIVE
+WHEN NOT MATCHED THEN INSERT (
+  MENU_CODE, PARENT_CODE, MENU_TYPE, MENU_MODE, ROUTE_PATH, ICON_CLASS, LABEL_TEXT, SORT_ORDER, EXPAND_KEY, ACTIVE)
+VALUES (
+  s.MENU_CODE, s.PARENT_CODE, s.MENU_TYPE, s.MENU_MODE, s.ROUTE_PATH, s.ICON_CLASS, s.LABEL_TEXT, s.SORT_ORDER, s.EXPAND_KEY, s.ACTIVE);
+
+INSERT INTO ICR_MENU_ACCESS_RULE (MENU_CODE, FLAG_NAME)
+SELECT 'HDR_USER_DOCUMENTATION', 'ALL' FROM dual
+ WHERE NOT EXISTS (
+       SELECT 1 FROM ICR_MENU_ACCESS_RULE r
+        WHERE r.MENU_CODE = 'HDR_USER_DOCUMENTATION' AND r.FLAG_NAME = 'ALL'
+ );
+
+COMMIT;

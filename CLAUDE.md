@@ -59,7 +59,7 @@ this._query.postQueryResult('AI0000007', [{ COL1: val1, COL2: val2 }]);
 
 **QUERYTYPE rule:** Any LIBQUERY whose body is a `SELECT` (or other SQL text in `QUERYSQL`) executed through `GET /api/request/` or POST DML must set **`QUERYTYPE = 0`**. Do **not** use `QUERYTYPE = 1` for stored SELECT text — that path is for package-resolved queries, not `QUERYSQL` literals. Pair with `QUERYUPDATE`: `0` for reads, `1` for writes.
 
-**USERSROOM (Settings `SET0000020`–`SET0000023`):** Heinens ICR uses **`USERCORPID`** (FK to `CORPORATE.CORPID`). Join `LEFT JOIN CORPORATE c ON c.CORPID = u.USERCORPID`. Legacy `00_usersroom_table.sql` shows `USERCORP` (VARCHAR2 corp code) — do **not** use that on Heinens (ORA-00904). **`USERPASS`** is stored **Base64-encoded** in the DB (`base64_encode`); the Settings UI sends plain text and `SettingsAdminService.encodePassword()` encodes before `SET0000022` MERGE. Never pre-fill or decode password in the form.
+**USERSROOM (Settings `SET0000020`–`SET0000024`):** Heinens ICR uses **`USERCORPID`** (FK to `CORPORATE.CORPID`). Join `LEFT JOIN CORPORATE c ON c.CORPID = u.USERCORPID`. Legacy `00_usersroom_table.sql` shows `USERCORP` (VARCHAR2 corp code) — do **not** use that on Heinens (ORA-00904). **`USERPASS`** is stored **Base64-encoded** in the DB (`base64_encode` / ICR login convention); the Settings UI and the header **Change password** dialog send plain text and `SettingsAdminService.encodePassword()` encodes before POST. Never pre-fill or decode password in the admin form. **`USERTYPE`**: `0` = standard user, `1` = **ICR admin** — unlocks General Settings admin sidebar (`ADMIN` flag rule in `SET0000040` / `USERTYPE = 1`); editable on **Users & Profiles** (`SET0000020`–`0022` include `USERTYPE`). Separate from **IT** flag and **AI admin** flags.
 
 **LIBQUERY deployment pattern (canonical):**
 ```sql
@@ -347,10 +347,13 @@ ai_engine_unresolved_libquery.sql            — Curation queue AI0000071–AI00
                                                Service: src/app/shared/services/ai/ai.data.health.service.ts
 
 ── Phase 14 — ICR menu access + Settings admin ─────────────────────────────
-34_settings_users_corporate_libquery.sql     — SET0000001–0034: corporate, environment, USERSROOM, user–env matrix
-35_menu_access_libquery.sql                  — ICR_MENU_* DDL (commented block, run once), catalog seed, SET0000040–0045
+34_settings_users_corporate_libquery.sql     — SET0000001–0034 + SET0000024: corporate, environment, USERSROOM (incl. USERTYPE), user–env matrix, self-service password change
+35_menu_access_libquery.sql                  — ICR_MENU_* DDL (commented block, run once), catalog seed, SET0000040–0045, HDR_USER_* profile dropdown rows
                                                ⚠️ Full run DELETEs/reseeds ICR_MENU_ENTRY + rules (dev-friendly). Use incremental block at file bottom on prod.
 36_menu_access_admin_libquery.sql            — SET0000046–0054: menu admin CRUD + ROUTE_SET_MENU seed (deploy after 35)
+52_users_usertype_libquery_upgrade.sql       — PATCH: SET0000020–0022 only (USERTYPE on existing DBs that deployed 34 before USERTYPE)
+53_user_change_password_libquery.sql       — PATCH: SET0000024 only (self-service password change)
+54_header_user_profile_menu.sql              — PATCH: HDR_USER_* catalog + FLAG ALL rules + upgraded SET0000041 (ROUTE_PATH, SORT_ORDER, full flag grants)
 
 ── Phase 12 — Conversational enrichment for the item card (continued) ──────
 29_ai_skill_item_master_enriched.sql         — V_GOLD_ITEM gains "Variant CINV" column;
@@ -413,7 +416,7 @@ Do not rely on app.module.ts PrimeNG imports.
 
 | Screen | Route | Component / module | LIBQUERY (via `SettingsAdminService`) |
 |---|---|---|---|
-| Users & Profiles | `/settingusers` | `pages/admin/setting-users/` · `SettingUsersModule` | `SET0000001` (corp dropdown), `SET0000020`–`0023` (users), `SET0000030`–`0034` (env access) |
+| Users & Profiles | `/settingusers` | `pages/admin/setting-users/` · `SettingUsersModule` | `SET0000001` (corp dropdown), `SET0000020`–`0024` (users + admin password MERGE), `SET0000030`–`0034` (env access) |
 | Menu & access | `/settingmenu` | `pages/admin/setting-menu-access/` · `SettingMenuAccessModule` | `SET0000046`–`0054` (catalog, rules, profiles, profile menus) |
 | Customer / Corp / Env | `/settingcustomer`, etc. | existing settings pages | `SET0000001`–`0013` |
 
@@ -423,19 +426,25 @@ No custom Node routes — all reads/writes go through `QueryService` + LIBQUERY.
 
 ## ICR Settings — Menu, Users & Access Profiles
 
-Data-driven navigation replaces the hard-coded sidebar for Heinens ICR. Admins maintain the menu catalog, flag-based rules, and optional access profiles; user records in **`USERSROOM`** supply capability flags and an optional **`USERPROF`** profile id. At login the client loads the **effective menu** and renders three trees (Standard / AI / Admin) plus header actions (e.g. AI mode toggle).
+Data-driven navigation replaces the hard-coded sidebar and **user profile dropdown** for Heinens ICR. Admins maintain the menu catalog, flag-based rules, and optional access profiles; user records in **`USERSROOM`** supply capability flags, optional **`USERPROF`**, and **`USERTYPE`** (ICR admin). At login the client loads the **effective menu** (`SET0000040`) and **header rows** (`SET0000041`), then renders three sidebar trees (Standard / AI / Admin), the **Ahmed B.–style profile menu** (data-driven), and the AI mode toggle button.
 
 ### End-to-end flow
 
 ```
 Login (login.component.ts)
-  → MenuAccessService.load(userId)     SET0000040 (sidebar nodes) + SET0000041 (HEADER rows)
+  → getInfo → getEnvironment → MenuAccessService.load(userId)
+       SET0000040 (sidebar nodes, MENU_TYPE <> HEADER)
+       SET0000041 (HEADER rows — profile dropdown + HDR_AI_TOGGLE)
   → sidebar-menu.component             standardTree | aiTree | adminTree
-  → AuthentificationGuard              canAccessRoute(path) — deep links blocked if not granted
+  → header.component                   profileMenu$ | async (SET0000041, excl. AI toggle)
+  → AuthentificationGuard              canAccessRoute(path)
+
+Browser refresh (app.component.ts)
+  → getInfo → getEnvironment (if sid empty) → menuAccess.load()   — menu not tied to env dropdown switch
 
 Admin changes (Menu & access or Users)
   → LIBQUERY DML on ICR_* / USERSROOM
-  → User must log out and back in for SET0000040 to reflect new grants
+  → User must log out and back in for SET0000040 / SET0000041 to reflect new grants
 ```
 
 ### Database objects (ICR app DB)
@@ -485,18 +494,19 @@ Incremental patches at the bottom of `35_menu_access_libquery.sql` add profiles 
 |---|---|
 | `SET0000001`–`0004` | Corporate list, get, MERGE, delete |
 | `SET0000010`–`0013` | Environment list, get, MERGE, delete |
-| `SET0000020` | User list (`:param1` corp id or `-1`, `:param2` active or `-1`) |
-| `SET0000021` | User by id + `USERAPPLI` |
-| `SET0000022` | User MERGE (`USERSROOM`; password Base64 — see below) |
+| `SET0000020` | User list (`:param1` corp id or `-1`, `:param2` active or `-1`; includes `USERTYPE`) |
+| `SET0000021` | User by id + `USERAPPLI` (includes `USERTYPE`; never pre-fill `USERPASS` in UI) |
+| `SET0000022` | User MERGE (`USERSROOM`; password Base64 when `UPDATE_PASS=1`; includes `USERTYPE`) |
 | `SET0000023` | User delete |
+| `SET0000024` | **Self-service change password** — POST PL/SQL: verify `CURRENT_PASS`, set `NEW_PASS` (both Base64 from client). `QUERYACCESS=1`. Body: `{USERID, USERAPPLI, CURRENT_PASS, NEW_PASS}` |
 | `SET0000030`–`0032`, `0034` | User–environment access list, MERGE, delete, matrix |
 
 **Runtime menu** — `35_menu_access_libquery.sql`:
 
 | QUERYNUM | Operation |
 |---|---|
-| `SET0000040` | Effective sidebar menu for `:param1` = `USERID` |
-| `SET0000041` | Header actions (e.g. `HDR_AI_TOGGLE`) for user |
+| `SET0000040` | Effective sidebar menu for `:param1` = `USERID` (`MENU_TYPE <> 'HEADER'`) |
+| `SET0000041` | **Header menu** for `:param1` = `USERID` — all `MENU_TYPE = 'HEADER'` rows user may see. Returns `MENU_CODE, LABEL_TEXT, ICON_CLASS, ROUTE_PATH, SORT_ORDER`. Same flag/profile OR logic as `SET0000040` |
 | `SET0000042` | Active access profiles list (dropdowns) |
 | `SET0000043` | Full active menu catalog (read-only helper) |
 | `SET0000044` | Profile menu grants for `:param1` = `PROFILE_ID` |
@@ -522,11 +532,11 @@ All admin menu LIBQUERY entries use **`QUERYACCESS = 0`** (admin-only). Runtime 
 
 | Service | Path | Role |
 |---|---|---|
-| `SettingsAdminService` | `shared/services/settings/settings.admin.service.ts` | All `SET00000xx` calls; `toRows()` normalizes LIBQUERY responses; `encodePassword()` Base64 before `SET0000022` |
-| `MenuAccessService` | `shared/services/menu/menu-access.service.ts` | Post-login `load()` → trees + `canAccessRoute()` / `hasHeaderAction()` |
-| `QueryService` | `shared/services/query/query.service.ts` | HTTP to `GET/POST` LIBQUERY (mandatory for all SQL) |
+| `SettingsAdminService` | `shared/services/settings/settings.admin.service.ts` | All `SET00000xx` calls; `toRows()` normalizes LIBQUERY responses; `encodePassword()` Base64 before `SET0000022` / `SET0000024`; `changeOwnPassword()` for header dialog |
+| `MenuAccessService` | `shared/services/menu/menu-access.service.ts` | Post-login `load()` → sidebar trees + `profileMenu$` + `showAiModeToggle()`; `canAccessRoute()` |
+| `QueryService` | `shared/services/query/query.service.ts` | HTTP to `GET/POST` LIBQUERY; `param ?? []`; `DATABASE_SID` / language from `userInfo` or `localStorage` (`ICRSID`, `ICRLanguage`) |
 
-`SettingsAdminService` query id constants include `USER_LIST` (`SET0000020`), `PROFILE_LIST` (`SET0000042`), `MENU_CATALOG` (`SET0000046`), `PROFILE_MENUS_REPLACE` (`SET0000054`), etc.
+`SettingsAdminService` query id constants include `USER_LIST` (`SET0000020`), `USER_CHANGE_PASSWORD` (`SET0000024`), `PROFILE_LIST` (`SET0000042`), `MENU_CATALOG` (`SET0000046`), `PROFILE_MENUS_REPLACE` (`SET0000054`), etc.
 
 ### Screen — Users & Profiles (`/settingusers`)
 
@@ -535,9 +545,10 @@ All admin menu LIBQUERY entries use **`QUERYACCESS = 0`** (admin-only). Runtime 
 **Tabs:**
 
 1. **Users** — Search by corporate + active; table with edit/delete; Add user / duplicate user dialogs.
+   - **User type** dropdown (`USERTYPE`): Standard (0) vs **ICR admin (General Settings)** (1). Re-login required after change. Table column **User type**.
    - Access flags (checkboxes, numeric 0/1): Data integrity, IT, Buyer, Helpdesk, Warehouse, Space planning, Tech Services, AI admin, AI designer.
    - **Access profile** dropdown (`USERPROF`) from `SET0000042` — optional; when set, menu comes from profile grants as well as flags.
-   - Password: plain text in UI; `encodePassword()` + `UPDATE_PASS` on save. Never pre-fill existing password from `SET0000021`.
+   - Password (admin): plain text in UI; `encodePassword()` + `UPDATE_PASS` on save. Never pre-fill existing password from `SET0000021`.
    - Corporate: `USERCORPID` (not legacy `USERCORP` varchar).
 
 2. **Environment access** — Matrix of user × environment (`SET0000034` / `SET0000031` / `SET0000032`).
@@ -559,9 +570,36 @@ All admin menu LIBQUERY entries use **`QUERYACCESS = 0`** (admin-only). Runtime 
 | **Profiles** | `ICR_ACCESS_PROFILE` — profile id/code/name/active |
 | **Profile menus** | Bulk checkbox grid per profile → `SET0000054` replaces all grants; profile dropdown uses cached `profileDropdownOptions` (not a template method — avoids PrimeNG change-detection freeze) |
 
-**Menu types:** `GROUP` (expandable), `ROUTE` (navigates to `ROUTE_PATH`), `LABEL` (section heading in AI menu), `HEADER` (header bar only, not in sidebar tree).
+**Menu types:** `GROUP` (expandable), `ROUTE` (navigates to `ROUTE_PATH`), `LABEL` (section heading in AI menu), `HEADER` (top bar — profile dropdown and toolbar actions; **not** in `SET0000040` sidebar tree).
 
-**UI notes:** Query Library–style `CREATE_Button` on catalog; horizontal `action-buttons` on all tabs; link to Users & Profiles for assigning `USERPROF`.
+**Seeded `HEADER` profile dropdown** (`35_menu_access_libquery.sql` or patch `54_header_user_profile_menu.sql`):
+
+| MENU_CODE | LABEL | SORT | Client action |
+|---|---|---|---|
+| `HDR_AI_TOGGLE` | AI mode toggle | 0 | Toolbar button only (`showAiModeToggle()`); excluded from profile dropdown |
+| `HDR_USER_PROFILE` | Profile | 10 | Placeholder (read-only users: `type == '2'` disabled) |
+| `HDR_USER_CHANGE_PASSWORD` | Change password | 20 | Opens header dialog → `SET0000024` |
+| `HDR_USER_INBOX` | Inbox | 30 | Placeholder |
+| `HDR_USER_SETTINGS` | Settings | 40 | Placeholder |
+| `HDR_USER_SWITCH_MENU` | Switch Menu | 50 | `rltAndLtr()` |
+| `HDR_USER_LOGOUT` | Log Out | 60 | `onLoggedout()` + `/login` (`ROUTE_PATH`) |
+
+Default access: **`ALL`** flag rule on each `HDR_USER_*` row. Admins may add/deactivate/reorder via **Menu catalog** (`MENU_TYPE = HEADER`). If `SET0000041` fails or returns no profile rows, `MenuAccessService` falls back to a built-in list and **always injects** `HDR_USER_CHANGE_PASSWORD` if missing.
+
+**UI notes:** Query Library–style `CREATE_Button` on catalog; horizontal `action-buttons` on all tabs; link to Users & Profiles for assigning `USERPROF` and `USERTYPE`.
+
+### Header — user profile dropdown & change password
+
+**Files:** `controlRoom_client/src/app/layouts/header/header.component.ts|html`
+
+- Profile menu rendered from `menuAccess.profileMenu$ | async` (not hardcoded HTML).
+- **Change password** dialog: current / new / confirm; calls `SettingsAdminService.changeOwnPassword()` → `SET0000024`.
+- Password rules: plain text in UI; Base64 in DB; `SET0000024` verifies `CURRENT_PASS` before update.
+- **Not** the same as admin **Users & Profiles** password field (`SET0000022` + `UPDATE_PASS`, admin-only `QUERYACCESS=0` on user MERGE).
+
+**Deploy:** `53_user_change_password_libquery.sql` + `54_header_user_profile_menu.sql` (or full `34` + `35`). **Angular rebuild required** (`ng serve` restart + hard refresh) — logout alone does not load new client code.
+
+**Troubleshooting:** Console after login should log `[MenuAccess] profile menu { fromDb, shown, codes }` with `HDR_USER_CHANGE_PASSWORD`. If `SET0000041 request failed`, check `ICRSID` in `localStorage`, run `getEnvironment` before menu load (F5 path in `app.component.ts`), and confirm upgraded `SET0000041` `QUERYRESULT` includes `ROUTE_PATH,SORT_ORDER`.
 
 ### Dynamic sidebar
 
@@ -569,15 +607,19 @@ All admin menu LIBQUERY entries use **`QUERYACCESS = 0`** (admin-only). Runtime 
 |---|---|
 | `layouts/sidebar/sidebar-menu/` | Renders `menuAccess.standardTree`, `aiTree`, `adminTree` |
 | `layouts/sidebar/sidebar.component.html` | Host; legacy static HTML kept in `sidebar.legacy.component.html` for reference |
-| `layouts/header/header.component.ts` | AI toggle visibility via `menuAccess.hasHeaderAction('HDR_AI_TOGGLE')` |
-| `pages/login/login.component.ts` | Calls `menuAccess.load()` after successful login |
+| `layouts/header/header.component.ts` | `profileMenu$` dropdown; `showAiModeToggle()` for `HDR_AI_TOGGLE`; change-password dialog |
+| `pages/login/login.component.ts` | `getInfo` → `getEnvironment` → `menuAccess.load()` after login |
+| `app.component.ts` | F5: `getEnvironment` then `menuAccess.load()` if menu not ready (independent of header env switch) |
 | `shared/services/authentification/authentification.guard.component.ts` | Route guard uses `canAccessRoute()` |
 
 Top-level `ROUTE` items use the same `list-group-item` + `<span>` styling as groups; `menuIconClass()` normalizes `fa` → `fas` and strips `fa-fw`.
 
 ### Operational notes
 
-- **Re-login required** after changing flag rules, profile grants, `USERPROF`, or user flags — `MenuAccessService` loads once per session.
+- **Re-login required** after changing flag rules, profile grants, `USERPROF`, `USERTYPE`, or user flags — `MenuAccessService` loads once per session.
+- **Header profile menu** changes (catalog / flag rules for `HDR_USER_*`) also require re-login. **Angular code changes** require `ng serve` restart — not just re-login.
+- **`SET0000041` on existing DBs:** run `54_header_user_profile_menu.sql` if profile dropdown is empty or missing Change password.
+- **`USERTYPE` on existing DBs:** run `52_users_usertype_libquery_upgrade.sql` if `SET0000020`–`0022` lack `USERTYPE`.
 - **`35_menu_access_libquery.sql` full run** wipes `ICR_MENU_ENTRY` / rules and reseeds — use the **incremental block at file bottom** on production when adding profiles/flags only.
 - **`ORA-00942`** on menu load → run DDL block in script 35 once.
 - **`ORA-00904` on users** → deploy `34_settings_users_corporate_libquery.sql`; confirm `USERCORPID` not `USERCORP`.
@@ -1654,8 +1696,10 @@ Strategic layer — optimization signals, trend analysis, financial performance.
 - [x] S25 Data Health Configuration — table CRUD, Add/Edit dialog (check code, name, LIBQUERY #, tier, severity, skill code, entity key), Verify button tests LIBQUERY live before save, inline enable/disable toggle, confirm-before-delete; all via LIBQUERY AI0000085–AI0000089, no backend route
 - [x] LIBQUERY deployment pattern documented — DELETE+INSERT, QUERYID = NVL(MAX(QUERYID),0)+1 subquery, full column list (QUERYID/QUERYNUM/QUERYTITLE/QUERYDESC/QUERYSQL/QUERYPARAM/QUERYRESULT/QUERYACCESS/QUERYTYPE/QUERYUPDATE)
 - [x] ICR dynamic menu — `ICR_MENU_*` tables, `SET0000040`/`0041`, `MenuAccessService`, `app-sidebar-menu`, route guard
-- [x] Users & Profiles admin (`/settingusers`) — `USERSROOM` CRUD `SET0000020`–`0023`, access flags + `USERPROF`, env access matrix
-- [x] Menu & access admin (`/settingmenu`) — catalog, flag rules, profiles, profile menus `SET0000046`–`0054`
+- [x] Users & Profiles admin (`/settingusers`) — `USERSROOM` CRUD `SET0000020`–`0023`, access flags + `USERPROF` + **`USERTYPE`** (ICR admin / General Settings), env access matrix
+- [x] Menu & access admin (`/settingmenu`) — catalog, flag rules, profiles, profile menus `SET0000046`–`0054`; **`MENU_TYPE = HEADER`** for profile dropdown + AI toggle
+- [x] Header profile menu (data-driven) — `HDR_USER_*` seeds in `35` / patch `54`, `SET0000041`, `MenuAccessService.profileMenu$`, `header.component` `*ngFor` (replaces hardcoded Profile/Inbox/… list)
+- [x] Self-service **Change password** — `SET0000024` (`53_user_change_password_libquery.sql`), header dialog, `SettingsAdminService.changeOwnPassword()`; `QueryService` sid/language fallbacks + `param ?? []`
 - [ ] S15 Domain Investigation (and richer assistant UX: template picker)
 - [ ] Phase B skill packs (scripts 42–62) — order depth, supplier depth, pricing depth, inventory depth, receiving depth, warehouse ops (GWR/HNPSTK), warehouse overwatch, cross-store, replenishment depth, sales, financial, logistics, assortment depth, HQ overwatch
 - [ ] Phase B diagnostic chains (scripts 56–60) — ORDER_BLOCKED, STOCK_VARIANCE_ROOT_CAUSE, SUPPLIER_PERFORMANCE_ISSUE, PROMOTION_EXECUTION_FAIL, NETWORK_IMBALANCE_ROOT_CAUSE

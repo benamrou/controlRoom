@@ -105,6 +105,7 @@ import { AiPhrasingPlaygroundComponent } from './pages/supply-chain-ai/skill-stu
 import { AiAssistantComponent } from './pages/supply-chain-ai/inquiry/ai-assistant/ai.assistant.component';
 import { AiDataHealthComponent } from './pages/supply-chain-ai/operations/data-health/ai.data.health.component';
 import { AiDataHealthConfigComponent } from './pages/supply-chain-ai/operations/data-health/config/ai.data.health.config.component';
+import { DocumentationViewerComponent } from './pages/documentation/documentation-viewer.component';
 
 const routes: Routes = [
    /* Root: redirect only (no component on ''). A '' route with component+lazy children has historically kept the dashboard
@@ -112,6 +113,7 @@ const routes: Routes = [
   { path: '', component: DashboardComponent, loadChildren: () => import('./pages/dashboard/dashboard.module').then(module => module.DashboardModule) },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthentificationGuard] },
+  { path: 'documentation', component: DocumentationViewerComponent, canActivate: [AuthentificationGuard] },
 
   /* Cycle count / Inventory */
   { path: 'counting', component: CountingComponent, loadChildren: () => import('./pages/inventory/counting/counting.module').then(module => module.CountingModule) , canActivate: [AuthentificationGuard] },

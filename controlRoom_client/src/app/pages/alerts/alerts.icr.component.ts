@@ -226,6 +226,7 @@ export class AlertsICRComponent implements OnDestroy {
       ALTUTIL: '',
       ALTFILE: '',
       ALTREALTIME: 0,
+      ALTREALTIMEBOOLEAN: false,
       ALTSMSCONTENT: '',
       ALTORIENTATION: 'landscape',
       ALTPRINTAREA: '',
@@ -253,6 +254,7 @@ export class AlertsICRComponent implements OnDestroy {
       ALTFREEZECOLUMN: 0,
       ALTFORMATTAB2XLS: '',
       ALTNOHTML: 0,
+      ALTNOHTMLBOOLEAN: false,
       ALTSQL: ''
     };
 
@@ -318,6 +320,8 @@ export class AlertsICRComponent implements OnDestroy {
     this.searchResult[index].ALTFITPAGEBOOLEAN = this.searchResult[index].ALTFITPAGE == 1;
     this.searchResult[index].ALTFREEZEHEADERBOOLEAN = this.searchResult[index].ALTFREEZEHEADER == 1;
     this.searchResult[index].ALTBORDERBOOLEAN = this.searchResult[index].ALTBORDER == 1;
+    this.searchResult[index].ALTREALTIMEBOOLEAN = this.searchResult[index].ALTREALTIME == 1;
+    this.searchResult[index].ALTNOHTMLBOOLEAN = this.searchResult[index].ALTNOHTML == 1;
 
     this.alertDisplay = { ...this.searchResult[index] };
     
@@ -414,6 +418,8 @@ export class AlertsICRComponent implements OnDestroy {
     this.alertDisplay.ALTFITPAGEBOOLEAN = this.alertDisplay.ALTFITPAGE == 1;
     this.alertDisplay.ALTFREEZEHEADERBOOLEAN = this.alertDisplay.ALTFREEZEHEADER == 1;
     this.alertDisplay.ALTBORDERBOOLEAN = this.alertDisplay.ALTBORDER == 1;
+    this.alertDisplay.ALTREALTIMEBOOLEAN = this.alertDisplay.ALTREALTIME == 1;
+    this.alertDisplay.ALTNOHTMLBOOLEAN = this.alertDisplay.ALTNOHTML == 1;
     
     // Copy distribution data
     if (indexDistribution >= 0) {
@@ -504,6 +510,9 @@ export class AlertsICRComponent implements OnDestroy {
     this.alertDisplay.ALTFITPAGE = this.alertDisplay.ALTFITPAGEBOOLEAN ? 1 : 0;
     this.alertDisplay.ALTFREEZEHEADER = this.alertDisplay.ALTFREEZEHEADERBOOLEAN ? 1 : 0;
     this.alertDisplay.ALTBORDER = this.alertDisplay.ALTBORDERBOOLEAN ? 1 : 0;
+    this.alertDisplay.ALTREALTIME = this.alertDisplay.ALTREALTIMEBOOLEAN ? 1 : 0;
+    this.alertDisplay.ALTNOHTML = this.alertDisplay.ALTNOHTMLBOOLEAN ? 1 : 0;
+    this.alertDisplay.ALTNBPARAM = Number(this.alertDisplay.ALTNBPARAM) || 0;
     this.alertDisplay.ALTDMAJ = new Date();
 
     // Save Alert (MERGE handles both insert and update)

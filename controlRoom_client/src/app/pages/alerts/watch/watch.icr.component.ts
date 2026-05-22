@@ -42,7 +42,7 @@ export class WatchICRComponent implements OnInit, OnDestroy {
     selectedElement: any = {};
 
     columnsResult: any[];
-    screenID: string = 'SCR0000000020';
+    screenID: string = 'SCR0000000052';
 
     // ─── dialog / form state ────────────────────────────────────────────────
     crudMode: 'create' | 'edit' | 'view' = 'view';

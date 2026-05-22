@@ -1,5 +1,7 @@
 <nav class="navbar navbar-expand-lg fixed-top"
      *ngIf="_userService.userInfo">
+    <p-toast position="top-right"></p-toast>
+
     <p-dialog header="Notification" [visible]="displaySwitch"  [style]="{width: '50vw'}"  [maximizable]="false">
         <span>{{msgDisplayed}}</span>
             <p-footer>
@@ -8,6 +10,33 @@
                         label="Ok">
                 </button>
             </p-footer>
+    </p-dialog>
+
+    <p-dialog header="Change password" [(visible)]="changePasswordVisible" [modal]="true"
+        [style]="{width: '26rem'}" [closable]="!changePasswordBusy" (onHide)="closeChangePasswordDialog()">
+        <div class="p-fluid formgrid grid">
+            <div class="field col-12">
+                <label for="hdrPwdCurrent">Current password</label>
+                <input id="hdrPwdCurrent" pInputText type="password" [(ngModel)]="passwordForm.current"
+                    autocomplete="current-password" [disabled]="changePasswordBusy" />
+            </div>
+            <div class="field col-12">
+                <label for="hdrPwdNew">New password</label>
+                <input id="hdrPwdNew" pInputText type="password" [(ngModel)]="passwordForm.newPassword"
+                    autocomplete="new-password" [disabled]="changePasswordBusy" />
+            </div>
+            <div class="field col-12">
+                <label for="hdrPwdConfirm">Confirm new password</label>
+                <input id="hdrPwdConfirm" pInputText type="password" [(ngModel)]="passwordForm.confirm"
+                    autocomplete="new-password" [disabled]="changePasswordBusy" />
+            </div>
+        </div>
+        <p-footer>
+            <button type="button" pButton label="Cancel" class="p-button-text"
+                (click)="closeChangePasswordDialog()" [disabled]="changePasswordBusy"></button>
+            <button type="button" pButton label="Save" icon="pi pi-check"
+                (click)="submitChangePassword()" [loading]="changePasswordBusy"></button>
+        </p-footer>
     </p-dialog>
 
         <div class="pos-f-t fixed-top header">
@@ -41,14 +70,18 @@
                             </button>
                         </li>
 
-        <!-- Panel Environment selection -->
-                        <li *ngIf="environments.length > 1" class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown">
-                                <i class="fa fa-database"></i> <b class="caret"></b><span class="sr-only"></span>
+        <!-- Panel Environment selection (GOLD central — Prod, Preprod, etc.) -->
+                        <li *ngIf="environments.length > 0" class="nav-item dropdown adh-env-dropdown">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown"
+                               [title]="'Database: ' + (selectedEnvironment || 'Environment')">
+                                <i class="fa fa-database"></i>
+                                <span class="env-current-label" *ngIf="selectedEnvironment">{{ selectedEnvironment }}</span>
+                                <b class="caret"></b><span class="sr-only"></span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right summer-dropdown">
                                 <a *ngFor="let environment of environments" class="dropdown-item"
-                                    (click)="environmentChange(environment.label, environment.value.type)">{{environment.label}}
+                                    [class.active]="environment.value?.type === envTypeConnected"
+                                    (click)="environmentChange(environment.label, environment.value.type)">{{ environment.label }}
                                 </a>
                             </div>
                         </li>
@@ -71,11 +104,12 @@
                                 <i class="fa fa-user"></i> {{_userService.userInfo.userNameDisplay}} <b class="caret"></b>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right summer-dropdown">
-                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-user"></i> Profile</a>
-                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
-                                <a class="dropdown-item" href="jvascript:void(0)" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}"><i class="fa fa-fw fa-gear"></i> Settings</a>
-                                <a class="dropdown-item" href="jvascript:void(0)" (click)="rltAndLtr()"><i class="fa fa-fw fa-bars"></i> Switch Menu</a>
-                                <a class="dropdown-item" [routerLink]="['/login']" (click)="onLoggedout()"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                                <a *ngFor="let item of menuAccess.profileMenu$ | async" class="dropdown-item"
+                                    href="javascript:void(0)"
+                                    [ngClass]="{'isDisabled': isProfileMenuDisabled(item)}"
+                                    (click)="onProfileMenuAction(item, $event)">
+                                    <i [ngClass]="menuIconClass(item.ICON_CLASS)"></i> {{ item.LABEL_TEXT }}
+                                </a>
                             </div>
                         </li>
                     </ul>

@@ -1,0 +1,22 @@
+{
+  "name": "icr-documentation",
+  "private": true,
+  "description": "ICR Docsify site + PDF export for operations and SMEs",
+  "scripts": {
+    "serve": "docsify serve . -p 9000",
+    "pdf:director": "bash -c 'md-to-pdf functional/director-summary.md --stylesheet pdf/style.css && mv -f functional/director-summary.pdf pdf/'",
+    "pdf:overview": "bash -c 'md-to-pdf functional/product-overview.md --stylesheet pdf/style.css && mv -f functional/product-overview.pdf pdf/'",
+    "pdf:mass-sme": "bash -c 'md-to-pdf functional/icr-standard/mass-change-sme-reference.md --stylesheet pdf/style.css && mv -f functional/icr-standard/mass-change-sme-reference.pdf pdf/'",
+    "pdf:all": "bash export-pdf.sh",
+    "pdf:html": "node build-printable-html.js",
+    "postinstall": "node -e \"try{require('puppeteer');console.log('PDF: npm run pdf:all (needs Chromium download on first run) or npm run pdf:html (browser print)')}catch(e){}\""
+  },
+  "devDependencies": {
+    "docsify-cli": "^4.4.4",
+    "md-to-pdf": "4.1.0",
+    "puppeteer": "19.11.1"
+  },
+  "overrides": {
+    "puppeteer": "19.11.1"
+  }
+}

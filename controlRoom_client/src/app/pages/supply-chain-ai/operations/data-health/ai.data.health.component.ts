@@ -60,6 +60,7 @@ interface HistoryRow {
   providers: [MessageService, ExportService, ConfirmationService]
 })
 export class AiDataHealthComponent implements OnInit {
+  screenID = 'SCR0000000061';
   retailers: any[] = [];
   selectedRetailer: any = null;
 
@@ -89,6 +90,8 @@ export class AiDataHealthComponent implements OnInit {
 
   rowsVisible = false;
   rowsTitle = '';
+  /** Tracks PrimeNG dialog maximize for detail-rows scroll height. */
+  detailRowsMaximized = false;
   detailRows: any[] = [];
   detailColumns: string[] = [];
   loadingRows = false;
@@ -248,11 +251,29 @@ export class AiDataHealthComponent implements OnInit {
     });
   }
 
+  /** Vertical scroll region for the detail-rows p-table (normal vs maximized dialog). */
+  get detailRowsScrollHeight(): string {
+    return this.detailRowsMaximized ? 'calc(100vh - 14rem)' : 'min(50vh, 480px)';
+  }
+
+  onDetailRowsMaximize(event: unknown): void {
+    if (event && typeof event === 'object' && 'maximized' in event) {
+      this.detailRowsMaximized = !!(event as { maximized: boolean }).maximized;
+    } else {
+      this.detailRowsMaximized = !this.detailRowsMaximized;
+    }
+  }
+
+  onDetailRowsDialogHide(): void {
+    this.detailRowsMaximized = false;
+  }
+
   viewDetailRows(card: CheckCard, runAt: string): void {
     if (!card.QUERY_NUM) {
       this._msg.add({ severity: 'warn', summary: 'No detail query', detail: 'No LIBQUERY configured for this check.' });
       return;
     }
+    this.detailRowsMaximized = false;
     this.detailExportCard = card;
     this.rowsTitle = `${card.CHECK_NAME} — ${runAt}`;
     this.detailRows = [];

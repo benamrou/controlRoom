@@ -163,6 +163,37 @@
                         <input id="altsubject" pInputText [(ngModel)]="alertDisplay.ALTSUBJECT"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
+                    <div class="field col-2">
+                        <label class="font-bold" for="altrealtime">Real-time</label>
+                        <p-checkbox id="altrealtime" [(ngModel)]="alertDisplay.ALTREALTIMEBOOLEAN" [binary]="true"
+                            class="p-element text-base text-color surface-overlay p-2 surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                        </p-checkbox>
+                    </div>
+                    <div class="field col-2">
+                        <label class="font-bold" for="altnohtml">Email plain text only</label>
+                        <p-checkbox id="altnohtml" [(ngModel)]="alertDisplay.ALTNOHTMLBOOLEAN" [binary]="true"
+                            pTooltip="When enabled, ALTNOHTML=1 sends email without HTML body"
+                            class="p-element text-base text-color surface-overlay p-2 surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                        </p-checkbox>
+                    </div>
+                    <div class="field col-2">
+                        <label class="font-bold" for="altnbparam">Parameter count</label>
+                        <input id="altnbparam" pInputText type="number" min="0" [(ngModel)]="alertDisplay.ALTNBPARAM"
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    </div>
+                    <div class="field col-6">
+                        <label class="font-bold" for="altparamdesc">Parameter names</label>
+                        <input id="altparamdesc" pInputText [(ngModel)]="alertDisplay.ALTPARAMDESC"
+                            placeholder="e.g. site_id,vendor_id,as_of_date"
+                            pTooltip="Comma-separated labels shown when running this alert"
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                    </div>
+                    <div class="field col-12">
+                        <label class="font-bold" for="altsmscontent">SMS content</label>
+                        <textarea id="altsmscontent" pInputText rows="3" [(ngModel)]="alertDisplay.ALTSMSCONTENT"
+                            placeholder="Short message body when SMS distribution is enabled"
+                            class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"></textarea>
+                    </div>
                     <div class="field col-12">
                         <label class="font-bold" for="altcontent">Detail description in attachment (EXCEL)</label>
                         <textarea id="altcontent" pInputText rows="4" [(ngModel)]="alertDisplay.ALTCONTENT"
@@ -263,7 +294,7 @@
                     </div>
                     <div class="field col-3">
                         <label class="font-bold" for="altfitheight">Nb rows/page</label>
-                        <input id="altfitheight" pInputText [(ngModel)]="alertDisplay.ALTHEIGHT"
+                        <input id="altfitheight" pInputText [(ngModel)]="alertDisplay.ALTFITHEIGHT"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid ng-star-inserted"><!----><!---->
                     </div>
                     <div class="field col-3">

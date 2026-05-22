@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" font-family="system-ui,sans-serif">
+  <rect width="640" height="260" fill="#f8f9fa"/>
+  <text x="16" y="24" font-size="14" font-weight="600" fill="#1a365d">AI Data Health (S24)</text>
+  <rect x="16" y="36" width="608" height="48" rx="6" fill="#fff5f5" stroke="#fc8181"/>
+  <text x="28" y="58" font-size="11" fill="#c53030">Ï 2 CRITICAL  Ð 9 WARNING  Ë 4 INFO  [Run now]</text>
+  <rect x="16" y="96" width="290" height="70" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <text x="28" y="116" font-size="10" font-weight="600">ITEM MASTER</text>
+  <text x="28" y="134" font-size="9">Ð No supplier  47</text>
+  <text x="28" y="148" font-size="9">[Investigate ’]</text>
+  <rect x="320" y="96" width="290" height="70" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <text x="332" y="116" font-size="10" font-weight="600">SALES</text>
+  <text x="332" y="134" font-size="9">Ï No POS feed  Store 041</text>
+  <rect x="16" y="178" width="290" height="70" rx="6" fill="#fff" stroke="#e2e8f0"/>
+  <text x="28" y="198" font-size="10" font-weight="600">RECEIPTS</text>
+  <text x="28" y="216" font-size="9">Ï Not loaded  3 docs</text>
+</svg>

@@ -37,6 +37,17 @@
         &:hover { opacity: 0.78; }
     }
 
+    .env-current-label {
+        margin-left: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        max-width: 7rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
     // ── Nav Links ────────────────────────────────────────────
     .nav-link {
         color: $summer-deep !important;
@@ -162,6 +173,11 @@
             );
             color: darken($summer-deep, 6%);
             padding-left: 20px;
+        }
+
+        &.active {
+            background: rgba($summer-sky-mid, 0.35);
+            font-weight: 700;
         }
 
         &:active {

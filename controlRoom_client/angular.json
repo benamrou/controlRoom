@@ -29,7 +29,24 @@
             "assets": [
               "./src/favicon.ico",
               "./src/assets",
-              "./src/web.config"
+              "./src/web.config",
+              {
+                "glob": "**/*",
+                "input": "../documentation",
+                "output": "/documentation",
+                "ignore": [
+                  "node_modules/**",
+                  "pdf/**",
+                  ".git/**",
+                  "package.json",
+                  "package-lock.json",
+                  "export-pdf.sh",
+                  "build-printable-html.js",
+                  "deploy*.sh",
+                  "deploy-to-webapps.sh",
+                  "DEPLOY.md"
+                ]
+              }
             ],
             "styles": [
               "./node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",

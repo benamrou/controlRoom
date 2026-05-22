@@ -29,6 +29,7 @@ const CONTEXT_ENTITY_LABELS: Record<string, string> = {
     providers: [MessageService, ExportService]
 })
 export class AiAssistantComponent implements OnInit, OnDestroy {
+    screenID = 'SCR0000000060';
     retailers: any[] = [];
     selectedRetailer: any = null;
     loadingRetailers = false;

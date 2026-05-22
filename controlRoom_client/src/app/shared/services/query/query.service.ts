@@ -3,7 +3,7 @@ import {HttpService} from '../request/html.service';
 import {UserService} from '../user/user.service';
 import {DatePipe} from '@angular/common';
 
-import {Observable} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpParams, HttpHeaders } from '@angular/common/http';
 
@@ -34,19 +34,37 @@ export class QueryService {
    * Get Dashboard data using Smart data extract with the dashboard Id
    * @param queryId 
    */
+  private resolveDatabaseSid(): string {
+    const fromUser = this._userService.userInfo?.sid?.[0];
+    const stored = localStorage.getItem('ICRSID');
+    const sid = fromUser ?? stored;
+    return sid != null && String(sid).trim() !== '' ? String(sid) : '';
+  }
+
+  private resolveLanguage(): string {
+    return (
+      this._userService.userInfo?.envDefaultLanguage
+      || localStorage.getItem('ICRLanguage')
+      || 'us_US'
+    );
+  }
+
   getQueryResult(queryId: string, param?: any[]) {
     this.request = this.baseQueryUrl;
-    let headersSearch = new HttpHeaders();
-    let options = new HttpHeaders();
-    this.params= new HttpParams();
-    for (let i=0; i < param.length;i++) {
-      this.params = this.params.append('PARAM',param[i]);
+    const p = param ?? [];
+    const dbSid = this.resolveDatabaseSid();
+    if (!dbSid) {
+      return throwError(() => new Error(`Query ${queryId}: DATABASE_SID is not set (run getEnvironment or log in again).`));
     }
-    //this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
+    let headersSearch = new HttpHeaders();
+    this.params = new HttpParams();
+    for (let i = 0; i < p.length; i++) {
+      this.params = this.params.append('PARAM', p[i]);
+    }
 
     headersSearch = headersSearch.set('QUERY_ID', queryId);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    headersSearch = headersSearch.set('DATABASE_SID', dbSid);
+    headersSearch = headersSearch.set('LANGUAGE', this.resolveLanguage());
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
             return data;
@@ -61,16 +79,18 @@ export class QueryService {
    */
   postQueryResult(queryId: string, param?: any[]) {
     this.request = this.basePostQueryUrl;
+    const dbSid = this.resolveDatabaseSid();
+    if (!dbSid) {
+      return throwError(() => new Error(`Query ${queryId}: DATABASE_SID is not set (run getEnvironment or log in again).`));
+    }
     let headersSearch = new HttpHeaders();
-    let options = new HttpHeaders();
-    this.params= new HttpParams();
+    this.params = new HttpParams();
 
-    let body = {values : []};
-    body.values = param;
+    const body = { values: param ?? [] };
 
     headersSearch = headersSearch.set('QUERY_ID', queryId);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
+    headersSearch = headersSearch.set('DATABASE_SID', dbSid);
+    headersSearch = headersSearch.set('LANGUAGE', this.resolveLanguage());
     return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
             let data = <any> response;
             return data;

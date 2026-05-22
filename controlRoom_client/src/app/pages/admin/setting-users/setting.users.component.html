@@ -53,6 +53,7 @@
                         <th pSortableColumn="USERFNAME">Name <p-sortIcon field="USERFNAME"></p-sortIcon></th>
                         <th pSortableColumn="USEREMAIL">Email <p-sortIcon field="USEREMAIL"></p-sortIcon></th>
                         <th pSortableColumn="USERACTIVE">Active <p-sortIcon field="USERACTIVE"></p-sortIcon></th>
+                        <th pSortableColumn="USERTYPE">User type <p-sortIcon field="USERTYPE"></p-sortIcon></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row>
@@ -82,11 +83,12 @@
                         <td>{{ row.USERFNAME }} {{ row.USERLNAME }}</td>
                         <td>{{ row.USEREMAIL }}</td>
                         <td>{{ row.USERACTIVE == 1 ? 'Yes' : 'No' }}</td>
+                        <td>{{ userTypeLabel(row) }}</td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="6" class="users-empty-message">
+                        <td colspan="7" class="users-empty-message">
                             <i class="pi pi-users"></i>
                             <p>No users found. Adjust filters above or click Add user.</p>
                         </td>
@@ -182,6 +184,13 @@
         <div class="field col-12 md:col-6">
             <label>Email</label>
             <input pInputText [(ngModel)]="userForm.USEREMAIL" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label>User type</label>
+            <p-dropdown [options]="userTypeOptions" [(ngModel)]="userForm.USERTYPE" styleClass="w-full"
+                optionLabel="label" optionValue="value" appendTo="body" panelStyleClass="settings-user-dropdown-panel">
+            </p-dropdown>
+            <small class="text-color-secondary">ICR admin shows General Settings in the sidebar (re-login required).</small>
         </div>
         <div class="field col-12 md:col-6">
             <label>Access profile</label>

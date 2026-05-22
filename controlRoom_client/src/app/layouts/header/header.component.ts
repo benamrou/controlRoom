@@ -1,14 +1,16 @@
 import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
-import { UserService, LogginService, LabelService } from '../../shared/services/index';
-import { MenuAccessService } from '../../shared/services/menu/menu-access.service';
+import { UserService, LogginService, LabelService, Environment } from '../../shared/services/index';
+import { HeaderMenuRow, MenuAccessService } from '../../shared/services/menu/menu-access.service';
+import { SettingsAdminService } from '../../shared/services/settings/settings.admin.service';
 import { Router } from '@angular/router';
-import { SelectItem } from 'primeng/api';
+import { MessageService, SelectItem } from 'primeng/api';
 import { DOCUMENT } from '@angular/common';
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
-    styleUrls: [ 'header.component.scss']
+    styleUrls: [ 'header.component.scss'],
+    providers: [MessageService],
 })
 export class HeaderComponent implements OnInit {
 
@@ -28,11 +30,21 @@ export class HeaderComponent implements OnInit {
 	displaySwitch: boolean;
 	style: any;
 
+	changePasswordVisible = false;
+	changePasswordBusy = false;
+	passwordForm = {
+		current: '',
+		newPassword: '',
+		confirm: '',
+	};
+
 	constructor(
         private _logginService: LogginService,
         public _userService: UserService,
         public menuAccess: MenuAccessService,
         private _labelService: LabelService,
+        private _settingsAdmin: SettingsAdminService,
+        private _msg: MessageService,
         public _router: Router,
         @Inject(DOCUMENT) private _document: Document,
     ) { 
@@ -40,18 +52,45 @@ export class HeaderComponent implements OnInit {
 
         if (!localStorage.getItem('isLoggedin')) {
 			this._router.navigate(['/login']);
-		}
-        if (typeof this._userService.userInfo === 'undefined') {
-			this._router.navigate(['/login']);
 			return;
-        }
+		}
 
 		this.displaySwitch = false;
-		this.loadEnvironments();
-		this.setTopBarDisplay();
 	}
 
-    ngOnInit() {}
+    ngOnInit(): void {
+		this.refreshEnvironments();
+	}
+
+	/** GOLD environment dropdown only — unrelated to sidebar menu (loaded at login). */
+	refreshEnvironments(): void {
+		this.loadEnvironments();
+		this.setTopBarDisplay();
+		if (this.environments.length > 0) {
+			return;
+		}
+		const icrUser = localStorage.getItem('ICRUser');
+		if (!icrUser || !localStorage.getItem('isLoggedin')) {
+			return;
+		}
+		const hydrate = () => {
+			this._userService.getEnvironment(icrUser).subscribe({
+				next: () => {
+					this.loadEnvironments();
+					this.setTopBarDisplay();
+				},
+			});
+		};
+		if (!this._userService.userInfo?.username) {
+			this._userService.getInfo(icrUser).subscribe({ next: () => hydrate() });
+		} else {
+			hydrate();
+		}
+	}
+
+	private isCentralDomain(domain: unknown): boolean {
+		return domain != null && String(domain) === '1';
+	}
 
 	private loadEnvironments(): void {
 		this.environments = [];
@@ -61,25 +100,40 @@ export class HeaderComponent implements OnInit {
 		}
 		const userEnv = info.envUserAccess || [];
 		const corpEnv = info.envCorporateAccess || [];
-		if (userEnv.length > 0) {
-			for (let i = 0; i < userEnv.length; i++) {
-				if (userEnv[i]?.domain === '1') {
-					this.environments.push({
-						label: userEnv[i].shortDescription!,
-						value: { type: userEnv[i].type!, name: userEnv[i].shortDescription! },
-					});
-					this.envTypeConnected = userEnv[i].type;
-				}
+		const byType = new Map<string, SelectItem>();
+
+		const addEnv = (env: Environment, prefer: boolean): void => {
+			if (!env?.type || !this.isCentralDomain(env.domain)) {
+				return;
 			}
-		} else {
-			for (let i = 0; i < corpEnv.length; i++) {
-				if (corpEnv[i]?.domain === '1') {
-					this.environments.push({
-						label: corpEnv[i].shortDescription!,
-						value: { type: corpEnv[i].type!, name: corpEnv[i].shortDescription! },
-					});
-				}
+			const item: SelectItem = {
+				label: env.shortDescription || env.code || env.type,
+				value: { type: env.type, name: env.shortDescription || env.code || env.type },
+			};
+			if (!byType.has(env.type) || prefer) {
+				byType.set(env.type, item);
 			}
+		};
+
+		for (const e of corpEnv) {
+			addEnv(e, false);
+		}
+		for (const e of userEnv) {
+			addEnv(e, true);
+		}
+
+		this.environments = Array.from(byType.values()).sort((a, b) =>
+			String(a.label).localeCompare(String(b.label))
+		);
+
+		const main = info.mainEnvironment?.[0];
+		if (main?.type) {
+			this.envTypeConnected = main.type;
+			this.selectedEnvironment = main.shortDescription || main.code || main.type;
+		} else if (this.environments.length) {
+			const first = this.environments[0].value;
+			this.envTypeConnected = first.type;
+			this.selectedEnvironment = this.environments[0].label as string;
 		}
 	}
 
@@ -108,9 +162,8 @@ export class HeaderComponent implements OnInit {
 
 	environmentChange(envLabel: any, envType: any) {
 		this.msgDisplayed = this.msgEnvironment + ' ' + envLabel + '.';
-		// switch User main environment to the selected one.
-		
 		this.envTypeConnected = envType;
+		this.selectedEnvironment = envLabel;
 		this._userService.setMainEnvironment(envType);
 		console.log('User env' + JSON.stringify(this._userService.userInfo));
 		this.displaySwitch = true;
@@ -132,5 +185,123 @@ export class HeaderComponent implements OnInit {
 	{
 	  //toggle sidebar function
 	  this._document.body.classList.toggle('toggle-sidebar');
+	}
+
+	menuIconClass(icon: string | null): string {
+		const raw = (icon || 'fa fa-circle').trim();
+		if (/\bfas\b/.test(raw) || /\bfa\b/.test(raw)) {
+			return raw.replace(/\bfa-fw\b/g, '').trim() + ' fa-fw';
+		}
+		return `fa fa-fw ${raw}`;
+	}
+
+	/** Legacy: read-only users cannot use Profile / Inbox / Settings. */
+	isProfileMenuDisabled(item: HeaderMenuRow): boolean {
+		if (this._userService.userInfo?.type !== '2') {
+			return false;
+		}
+		return item.MENU_CODE === 'HDR_USER_PROFILE'
+			|| item.MENU_CODE === 'HDR_USER_INBOX'
+			|| item.MENU_CODE === 'HDR_USER_SETTINGS';
+	}
+
+	onProfileMenuAction(item: HeaderMenuRow, event: Event): void {
+		event.preventDefault();
+		event.stopPropagation();
+		if (this.isProfileMenuDisabled(item)) {
+			return;
+		}
+		switch (item.MENU_CODE) {
+			case 'HDR_USER_CHANGE_PASSWORD':
+				this.openChangePasswordDialog();
+				return;
+			case 'HDR_USER_DOCUMENTATION':
+				this.openDocumentation(item);
+				return;
+			case 'HDR_USER_SWITCH_MENU':
+				this.rltAndLtr();
+				return;
+			case 'HDR_USER_LOGOUT':
+				this.onLoggedout();
+				this._router.navigate(['/login']);
+				return;
+			default:
+				if (item.ROUTE_PATH && /^https?:\/\//i.test(item.ROUTE_PATH)) {
+					this._document.defaultView?.open(item.ROUTE_PATH, '_blank', 'noopener,noreferrer');
+					return;
+				}
+				if (item.ROUTE_PATH) {
+					this._router.navigate([item.ROUTE_PATH]);
+				}
+				return;
+		}
+	}
+
+	/** In-app Docsify site under /icr/documentation/ (bundled with the Angular build). */
+	openDocumentation(item?: HeaderMenuRow): void {
+		const fromMenu = (item?.ROUTE_PATH ?? '/documentation').trim();
+		if (/^https?:\/\//i.test(fromMenu)) {
+			this._document.defaultView?.open(fromMenu, '_blank', 'noopener,noreferrer');
+			return;
+		}
+		const norm = MenuAccessService.normalizePath(fromMenu.split('?')[0]);
+		const segments = norm.replace(/^\//, '').split('/').filter(Boolean);
+		void this._router.navigate(segments.length ? ['/', ...segments] : ['/documentation']);
+	}
+
+	openChangePasswordDialog(): void {
+		this.passwordForm = { current: '', newPassword: '', confirm: '' };
+		this.changePasswordVisible = true;
+	}
+
+	closeChangePasswordDialog(): void {
+		this.changePasswordVisible = false;
+		this.passwordForm = { current: '', newPassword: '', confirm: '' };
+	}
+
+	submitChangePassword(): void {
+		const userId = this._userService.ICRUser || this._userService.userInfo?.username;
+		if (!userId) {
+			this._msg.add({ severity: 'warn', summary: 'Session', detail: 'User id not available. Log in again.' });
+			return;
+		}
+		const current = (this.passwordForm.current ?? '').trim();
+		const newPwd = (this.passwordForm.newPassword ?? '').trim();
+		const confirm = (this.passwordForm.confirm ?? '').trim();
+		if (!current || !newPwd || !confirm) {
+			this._msg.add({ severity: 'warn', summary: 'Validation', detail: 'All password fields are required.' });
+			return;
+		}
+		if (newPwd !== confirm) {
+			this._msg.add({ severity: 'warn', summary: 'Validation', detail: 'New password and confirmation do not match.' });
+			return;
+		}
+		if (newPwd === current) {
+			this._msg.add({ severity: 'warn', summary: 'Validation', detail: 'New password must differ from the current password.' });
+			return;
+		}
+		const appli = Number(this._userService.userInfo?.application) || 1;
+		this.changePasswordBusy = true;
+		this._settingsAdmin.changeOwnPassword(userId, current, newPwd, appli).subscribe({
+			next: () => {
+				this.changePasswordBusy = false;
+				if (this._userService.userInfo) {
+					this._userService.userInfo.password = SettingsAdminService.encodePassword(newPwd);
+				}
+				this.closeChangePasswordDialog();
+				this._msg.add({
+					severity: 'success',
+					summary: 'Password updated',
+					detail: 'Your password was changed successfully.',
+				});
+			},
+			error: (err: unknown) => {
+				this.changePasswordBusy = false;
+				const detail = (err instanceof Error && err.message)
+					? err.message
+					: 'Could not change password. Check your current password and try again.';
+				this._msg.add({ severity: 'error', summary: 'Password change failed', detail });
+			},
+		});
 	}
 }

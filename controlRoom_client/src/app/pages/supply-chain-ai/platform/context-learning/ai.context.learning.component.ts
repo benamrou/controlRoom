@@ -12,6 +12,7 @@ import { AiRetailerService } from 'src/app/shared/services/ai/ai.retailer.servic
 })
 export class AiContextLearningComponent implements OnInit {
 
+    screenID = 'SCR0000000055';
     retailers: any[] = [];
     selectedRetailer: any = null;
     loadingRetailers = false;

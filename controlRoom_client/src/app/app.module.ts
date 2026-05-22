@@ -149,6 +149,7 @@ import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule} from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 import { ChipsModule} from 'primeng/chips';
 import { InputNumberModule } from 'primeng/inputnumber'
 import { TabViewModule } from 'primeng/tabview';
@@ -182,6 +183,7 @@ import { AiPhrasingPlaygroundModule } from './pages/supply-chain-ai/skill-studio
 import { AiAssistantModule } from './pages/supply-chain-ai/inquiry/ai-assistant/ai.assistant.module';
 import { AiDataHealthModule } from './pages/supply-chain-ai/operations/data-health/ai.data.health.module';
 import { AiDataHealthConfigModule } from './pages/supply-chain-ai/operations/data-health/config/ai.data.health.config.module';
+import { DocumentationModule } from './pages/documentation/documentation.module';
 
 
 @NgModule({
@@ -200,7 +202,8 @@ import { AiDataHealthConfigModule } from './pages/supply-chain-ai/operations/dat
     ToastModule,
     MessageModule,
     TableModule,MultiSelectModule,
-    ButtonModule, ChipsModule, 
+    ButtonModule, ChipsModule,
+    InputTextModule,
     InputNumberModule,
     TabViewModule, DialogModule, FullCalendarModule,SelectButtonModule,
     TooltipModule, PanelModule, CalendarModule,TreeModule,DropdownModule,
@@ -299,7 +302,8 @@ import { AiDataHealthConfigModule } from './pages/supply-chain-ai/operations/dat
     AiRetailerSetupModule, AiSchemaDiscoveryModule, AiContextLearningModule,
     AiSkillLibraryModule, AiSkillBuilderModule, AiPendingPhrasingsModule, AiPhrasingPlaygroundModule,
     AiAssistantModule,
-    AiDataHealthModule, AiDataHealthConfigModule
+    AiDataHealthModule, AiDataHealthConfigModule,
+    DocumentationModule,
   ],
   providers: [HttpService, UserService, LogginService, LabelService, WidgetService, MessageService,
               ScreenService, StructureService,

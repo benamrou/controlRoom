@@ -13,7 +13,7 @@ import { UserService } from '../../../shared/services';
 export class SettingUsersComponent implements OnInit {
   @ViewChild('usersTable') usersTable?: Table;
 
-  screenID = 'SETTING_USERS';
+  screenID = 'SCR0000000065';
   activeTab = 0;
   /** In-dialog save/load only — do not use page-header waitMessage (full-page BlockUI hid the navbar). */
   userDialogBusy = false;
@@ -26,6 +26,7 @@ export class SettingUsersComponent implements OnInit {
     'USERLNAME',
     'USEREMAIL',
     'USERACTIVE',
+    'USERTYPE',
   ];
 
   /** Sentinel for Access profile dropdown — PrimeNG mishandles `null` option values in dialogs. */
@@ -61,6 +62,11 @@ export class SettingUsersComponent implements OnInit {
   langOptions = [
     { label: 'English (US)', value: 'us_US' },
     { label: 'French', value: 'fr_FR' },
+  ];
+  /** USERSROOM.USERTYPE — 1 unlocks General Settings (ADMIN menu flag). */
+  userTypeOptions = [
+    { label: 'Standard user', value: 0 },
+    { label: 'ICR admin (General Settings)', value: 1 },
   ];
 
   /** Access-flag columns — PrimeNG checkboxes need numeric 0|1, not string/null from Oracle. */
@@ -195,6 +201,11 @@ export class SettingUsersComponent implements OnInit {
       form.USERAPPLI = Number(form.USERAPPLI) || 1;
     }
     form.USERPROF = SettingUsersComponent.toProfileDropdownValue(form.USERPROF);
+    form.USERTYPE = form.USERTYPE != null && Number(form.USERTYPE) === 1 ? 1 : 0;
+  }
+
+  userTypeLabel(row: { USERTYPE?: unknown }): string {
+    return Number(row?.USERTYPE) === 1 ? 'ICR admin' : 'Standard';
   }
 
   /** Map DB USERPROF → dropdown model (numeric profile id or PROFILE_NONE). */
@@ -240,6 +251,7 @@ export class SettingUsersComponent implements OnInit {
       USERSTECH: 1,
       USERAIADMIN: 0,
       USERAIDESIGNER: 0,
+      USERTYPE: 0,
       USERCORPID: this.userFilterCorp,
       USERPROF: SettingUsersComponent.PROFILE_NONE,
     };

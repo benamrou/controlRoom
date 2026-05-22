@@ -107,7 +107,9 @@ let aiSchema        = require('./server/controller/ai/ai.schema')(app, SQL);
 let aiEngine        = require('./server/controller/ai/ai.engine')(app, SQL);
 
 let warehouse = require('./server/controller/warehouse/itemdata')(app, SQL);
-let crontab = require('./server/controller/crontab')(app, SQL);
+let crontab   = require('./server/controller/crontab')(app, SQL);
+/* Alert Watch — registers GET /api/watchdog/scan (cron: scripts/icr/run_watchdog.sh) */
+let watchdog  = require('./server/controller/watchdog')(app, SQL);
 let finance = require('./server/controller/finance')(app, SQL);
 let scorecard = require('./server/controller/scorecard')(app, SQL);
 let dashboard = require('./server/controller/dashboard')(app, SQL);
@@ -122,7 +124,6 @@ let syndigo = require('./server/controller/syndigo')(app, SQL);
 let logs = require('./server/controller/logs')(app, SQL);
 let oneway = require('./server/controller/oneway')(app, SQL);
 let unix = require('./server/controller/command/unix')(app, SQL);
-let watchdog = require('./server/controller/watchdog')(app, SQL);
 
 
 //dbConnection.createPool('dd');

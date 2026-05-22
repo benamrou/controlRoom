@@ -1,0 +1,136 @@
+/**
+ * ICR global PrimeNG button contrast fixes.
+ * Lara + legacy app rules can render filled severity buttons with label/icon
+ * the same hue as the background (e.g. green on green). Outlined/text variants
+ * keep theme colours except where noted for hover.
+ */
+
+/* Label and icon inherit button text colour on filled severity buttons */
+.p-button.p-button-success:not(.p-button-outlined):not(.p-button-text) .p-button-label,
+.p-button.p-button-success:not(.p-button-outlined):not(.p-button-text) .p-button-icon,
+.p-button.p-button-warning:not(.p-button-outlined):not(.p-button-text) .p-button-label,
+.p-button.p-button-warning:not(.p-button-outlined):not(.p-button-text) .p-button-icon,
+.p-button.p-button-info:not(.p-button-outlined):not(.p-button-text) .p-button-label,
+.p-button.p-button-info:not(.p-button-outlined):not(.p-button-text) .p-button-icon,
+.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) .p-button-label,
+.p-button.p-button-danger:not(.p-button-outlined):not(.p-button-text) .p-button-icon,
+.p-button.p-button-help:not(.p-button-outlined):not(.p-button-text) .p-button-label,
+.p-button.p-button-help:not(.p-button-outlined):not(.p-button-text) .p-button-icon,
+.p-button.p-button-primary:not(.p-button-outlined):not(.p-button-text) .p-button-label,
+.p-button.p-button-primary:not(.p-button-outlined):not(.p-button-text) .p-button-icon {
+  color: inherit !important;
+}
+
+/* Success — filled (Add corporate, Save, etc.) */
+.p-button.p-button-success:not(:disabled):not(.p-button-outlined):not(.p-button-text) {
+  background: #198754 !important;
+  border-color: #198754 !important;
+  color: #ffffff !important;
+}
+.p-button.p-button-success:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:hover,
+.p-button.p-button-success:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:focus {
+  background: #157347 !important;
+  border-color: #146c43 !important;
+  color: #ffffff !important;
+}
+
+/* Success — outlined (Dictionary New, etc.) */
+.p-button.p-button-outlined.p-button-success:not(:disabled) {
+  background: transparent !important;
+  border-color: #198754 !important;
+  color: #198754 !important;
+}
+.p-button.p-button-outlined.p-button-success:not(:disabled) .p-button-label,
+.p-button.p-button-outlined.p-button-success:not(:disabled) .p-button-icon {
+  color: #198754 !important;
+}
+.p-button.p-button-outlined.p-button-success:not(:disabled):enabled:hover,
+.p-button.p-button-outlined.p-button-success:not(:disabled):enabled:focus {
+  background: #198754 !important;
+  border-color: #198754 !important;
+  color: #ffffff !important;
+}
+.p-button.p-button-outlined.p-button-success:not(:disabled):enabled:hover .p-button-label,
+.p-button.p-button-outlined.p-button-success:not(:disabled):enabled:hover .p-button-icon,
+.p-button.p-button-outlined.p-button-success:not(:disabled):enabled:focus .p-button-label,
+.p-button.p-button-outlined.p-button-success:not(:disabled):enabled:focus .p-button-icon {
+  color: #ffffff !important;
+}
+
+/* Warning — filled */
+.p-button.p-button-warning:not(:disabled):not(.p-button-outlined):not(.p-button-text) {
+  background: #ef6c00 !important;
+  border-color: #ef6c00 !important;
+  color: #ffffff !important;
+}
+.p-button.p-button-warning:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:hover,
+.p-button.p-button-warning:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:focus {
+  background: #d65b00 !important;
+  border-color: #d65b00 !important;
+  color: #ffffff !important;
+}
+
+/* Info — filled */
+.p-button.p-button-info:not(:disabled):not(.p-button-outlined):not(.p-button-text) {
+  background: #1976d2 !important;
+  border-color: #1976d2 !important;
+  color: #ffffff !important;
+}
+.p-button.p-button-info:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:hover,
+.p-button.p-button-info:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:focus {
+  background: #115293 !important;
+  border-color: #115293 !important;
+  color: #ffffff !important;
+}
+
+/* Danger — filled */
+.p-button.p-button-danger:not(:disabled):not(.p-button-outlined):not(.p-button-text) {
+  background: #c62828 !important;
+  border-color: #c62828 !important;
+  color: #ffffff !important;
+}
+.p-button.p-button-danger:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:hover,
+.p-button.p-button-danger:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:focus {
+  background: #a02020 !important;
+  border-color: #a02020 !important;
+  color: #ffffff !important;
+}
+
+/* Help — filled */
+.p-button.p-button-help:not(:disabled):not(.p-button-outlined):not(.p-button-text) {
+  background: #6f42c1 !important;
+  border-color: #6f42c1 !important;
+  color: #ffffff !important;
+}
+.p-button.p-button-help:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:hover,
+.p-button.p-button-help:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:focus {
+  background: #5a32a3 !important;
+  border-color: #5a32a3 !important;
+  color: #ffffff !important;
+}
+
+/* Primary — filled (Run scan, etc.) */
+.p-button.p-button-primary:not(:disabled):not(.p-button-outlined):not(.p-button-text) {
+  background: #1565c0 !important;
+  border-color: #1565c0 !important;
+  color: #ffffff !important;
+}
+.p-button.p-button-primary:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:hover,
+.p-button.p-button-primary:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:focus {
+  background: #0d47a1 !important;
+  border-color: #0d47a1 !important;
+  color: #ffffff !important;
+}
+
+/* Secondary — filled */
+.p-button.p-button-secondary:not(:disabled):not(.p-button-outlined):not(.p-button-text) {
+  background: #6c757d !important;
+  border-color: #6c757d !important;
+  color: #ffffff !important;
+}
+.p-button.p-button-secondary:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:hover,
+.p-button.p-button-secondary:not(:disabled):not(.p-button-outlined):not(.p-button-text):enabled:focus {
+  background: #5a6268 !important;
+  border-color: #545b62 !important;
+  color: #ffffff !important;
+}

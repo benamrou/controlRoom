@@ -1,19 +1,24 @@
-import { Component ,ElementRef, Input} from '@angular/core';
+import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from './shared/services/user/user.service';
+import { MenuAccessService } from './shared/services/menu/menu-access.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'controlRoom_client';
 
   @Input() doRefresh: boolean;
   collapedSideBar: boolean;
 
-  constructor(public _router: Router, private _userService: UserService) {
+  constructor(
+    public _router: Router,
+    private _userService: UserService,
+    private _menuAccess: MenuAccessService,
+  ) {
       if(!_userService)    {
           window.location.href = window.location.origin;
       }
@@ -23,6 +28,40 @@ export class AppComponent {
       if (this._router.url === '/') {
           this._router.navigate(['/dashboard']);
       }
+      this.restoreMenuAfterBrowserRefresh();
+  }
+
+  /**
+   * F5 drops in-memory menu trees; reload once from login LIBQUERY (SET0000040).
+   * Independent of header GOLD environment selection.
+   */
+  private restoreMenuAfterBrowserRefresh(): void {
+    if (!localStorage.getItem('isLoggedin')) {
+      return;
+    }
+    const icrUser = localStorage.getItem('ICRUser');
+    if (!icrUser || !localStorage.getItem('ICRSID')) {
+      return;
+    }
+    if (this._menuAccess.isReady) {
+      return;
+    }
+    const loadMenu = () => this._menuAccess.load(icrUser).subscribe();
+    const loadMenuAfterEnv = () => {
+      if (this._userService.userInfo?.sid?.length) {
+        loadMenu();
+        return;
+      }
+      this._userService.getEnvironment(icrUser).subscribe({
+        next: () => loadMenu(),
+        error: () => loadMenu(),
+      });
+    };
+    if (this._userService.userInfo?.username) {
+      loadMenuAfterEnv();
+    } else {
+      this._userService.getInfo(icrUser).subscribe({ next: () => loadMenuAfterEnv() });
+    }
   }
     /** Path without query or hash — same checks the template used for /login and /. */
   showAppChrome(): boolean {

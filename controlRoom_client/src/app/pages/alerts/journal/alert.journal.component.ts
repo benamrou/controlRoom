@@ -18,7 +18,7 @@ export class AlertLogJournalComponent implements OnInit, OnDestroy {
   weeklyStats: DurationStat[] = [];
   monthlyStats: DurationStat[] = [];
   waitMessage: string = '';
-  screenID;
+  screenID = 'SCR0000000063';
   activeTabIndex: number = 0; // 0=live, 1=weekly, 2=monthly
   
   // View state

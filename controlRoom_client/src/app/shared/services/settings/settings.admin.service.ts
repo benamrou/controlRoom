@@ -17,6 +17,7 @@ const Q = {
   USER_GET: 'SET0000021',
   USER_MERGE: 'SET0000022',
   USER_DELETE: 'SET0000023',
+  USER_CHANGE_PASSWORD: 'SET0000024',
   USERENV_LIST: 'SET0000030',
   USERENV_MERGE: 'SET0000031',
   USERENV_DELETE: 'SET0000032',
@@ -42,9 +43,12 @@ export class SettingsAdminService {
 
   /** Unwrap GET /api/request/ payload and uppercase column keys for templates. */
   static toRows(data: unknown): Record<string, unknown>[] {
+    if (data == null) {
+      return [];
+    }
     const raw = Array.isArray(data)
       ? data
-      : (data && typeof data === 'object' && Array.isArray((data as { rows?: unknown[] }).rows)
+      : (typeof data === 'object' && Array.isArray((data as { rows?: unknown[] }).rows)
         ? (data as { rows: unknown[] }).rows
         : []);
     if (raw.length === 1 && SettingsAdminService.isOracleErrorRow(raw[0])) {
@@ -185,6 +189,29 @@ export class SettingsAdminService {
     return this._query.postQueryResult(Q.USER_DELETE, [
       { USERID: userId, USERAPPLI: String(userAppli) },
     ]);
+  }
+
+  /** Self-service password change; plain text is Base64-encoded before POST (same as admin user save). */
+  changeOwnPassword(
+    userId: string,
+    currentPlain: string,
+    newPlain: string,
+    userAppli = 1,
+  ): Observable<unknown> {
+    return this._query.postQueryResult(Q.USER_CHANGE_PASSWORD, [{
+      USERID: userId,
+      USERAPPLI: String(userAppli),
+      CURRENT_PASS: SettingsAdminService.encodePassword(currentPlain),
+      NEW_PASS: SettingsAdminService.encodePassword(newPlain),
+    }]).pipe(
+      map((data) => {
+        const rows = SettingsAdminService.toRows(data);
+        if (rows.length && SettingsAdminService.isOracleErrorRow(rows[0])) {
+          throw new Error(SettingsAdminService.oracleErrorMessage(rows[0]));
+        }
+        return data;
+      }),
+    );
   }
 
   listUserEnvironments(userId: string, corpId: number | string | null = null): Observable<Record<string, unknown>[]> {

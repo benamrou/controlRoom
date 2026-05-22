@@ -12,6 +12,7 @@ import { AiRetailerService } from 'src/app/shared/services/ai/ai.retailer.servic
 })
 export class AiRetailerSetupComponent implements OnInit {
 
+    screenID = 'SCR0000000053';
     steps: MenuItem[];
     activeStep = 0;
 

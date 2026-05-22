@@ -61,6 +61,7 @@ interface DiagnosisResponse {
 })
 export class AiPhrasingPlaygroundComponent implements OnInit {
 
+    screenID = 'SCR0000000059';
     retailers: { id: string; label: string }[] = [];
     selectedRetailerId: string | null = null;
 

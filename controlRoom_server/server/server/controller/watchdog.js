@@ -34,6 +34,9 @@
  *      ?dry=1        detect only, do not re-execute
  *   Driven by OS cron via run_watchdog.sh.
  *
+ * File logs (logger.js, username "watchdog"):
+ *   logs/admin/{M.D.YYYY}/watchdog.log  — same day folder as all other server logs
+ *
  * ── Required schema ──────────────────────────────────────────────────────────
  * Run sql/01_create_alertwatch.sql and sql/02_create_alertwatchlog.sql once.
  * Register sql/03_libquery_WDOG00001.sql as LIBQUERY code WDOG00001.

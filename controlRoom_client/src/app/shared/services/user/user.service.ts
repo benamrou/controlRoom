@@ -182,6 +182,10 @@ export class User {
  
         return this.http.get(this.request, this.params).pipe(map(response => {
                  let data = response as any;
+                 if (!Array.isArray(data)) {
+                   console.warn('[UserService] getEnvironment: expected array, got', data);
+                   data = [];
+                 }
                  //console.log('Environment: ' + data.length + ' => ' + JSON.stringify(data));
                  this.userInfo.sid = [];
                  for(let i=0; i < data.length; i ++) {
@@ -210,7 +214,7 @@ export class User {
                      env.titleColor = data[i].ENVTITLECOLOR;
                      env.title = data[i].ENVTITLE;
                      env.picture = data[i].CORPPIC;
-                     env.domain = data[i].ENVDOMAIN;
+                     env.domain = data[i].ENVDOMAIN != null ? String(data[i].ENVDOMAIN) : '';
                      env.restartcentral = data[i].ENVCENTRALRESTART;
                      env.restartstock = data[i].ENVSTOCKRESTART;
                      env.restartallstock = data[i].ENVALLSTOCKRESTART;
@@ -270,7 +274,7 @@ export class User {
                      env.titleColor = data[i].ENVTITLECOLOR;
                      env.title = data[i].ENVTITLE;
                      env.picture = data[i].CORPPIC;
-                     env.domain = data[i].ENVDOMAIN;
+                     env.domain = data[i].ENVDOMAIN != null ? String(data[i].ENVDOMAIN) : '';
                      env.restartcentral = data[i].ENVCENTRALRESTART;
                      env.restartstock = data[i].ENVSTOCKRESTART;
                      env.restartallstock = data[i].ENVALLSTOCKRESTART;
@@ -308,34 +312,42 @@ export class User {
      setMainEnvironment(envType: string) {
          this.userInfo.mainEnvironment = [];
          this.userInfo.sid = [];
- 
          this.unsetCookiesEnvironment();
-         // Two information - 
-         // INFO 1 - Redefine the main environment using the type
-         // INFO 2 - Redefine the SIDs environment using the type
-         console.log('Switching to type: ',envType, this.userInfo.envUserAccess);
-         if (this.userInfo.envUserAccess.length > 0) {
-             for (let i = 0; i < this.userInfo.envUserAccess.length; i ++) {
-                 if (this.userInfo.envUserAccess[i].type === envType) {
-                     this.userInfo.mainEnvironment.push(this.userInfo.envUserAccess[i]);
-                     this.userInfo.sid.push(this.userInfo.envUserAccess[i].dbLink);
- 
-                     this.setCookiesEnvironment(this.userInfo.envUserAccess[i]);
-                 }
+
+         const pool =
+             this.userInfo.envUserAccess.length > 0
+                 ? this.userInfo.envUserAccess
+                 : this.userInfo.envCorporateAccess;
+
+         // Same as login: refresh batch SSH cookies for every tier on this ENVTYPE (central + stock + …).
+         for (const env of pool) {
+             if (env.type === envType) {
+                 this.setCookiesEnvironment(env);
              }
-         } else {
-             for (let i = 0; i < this.userInfo.envCorporateAccess.length; i ++) {
-                 if (this.userInfo.envUserAccess[i].type === envType) {
-                     this.userInfo.mainEnvironment.push(this.userInfo.envCorporateAccess[i]);
-                     this.userInfo.sid.push(this.userInfo.envUserAccess[i].dbLink);
-                    
-                     this.setCookiesEnvironment(this.userInfo.envUserAccess[i]);
+         }
+
+         // Primary session = central (domain 1) — drives initSH, DATABASE_SID, and http.execute ENV_ID.
+         let primary: Environment | undefined;
+         for (const env of pool) {
+             if (env.type === envType && String(env.domain) === '1') {
+                 primary = env;
+                 break;
+             }
+         }
+         if (!primary) {
+             for (const env of pool) {
+                 if (env.type === envType) {
+                     primary = env;
+                     break;
                  }
              }
          }
-         this.ICRSID =this.userInfo.sid.toString();
-         localStorage.setItem('ICRSID', this.userInfo.sid.toString());
-         this.ICRSID = this.userInfo.sid.toString();
+         if (primary) {
+             this.userInfo.mainEnvironment.push(primary);
+             this.userInfo.sid.push(primary.dbLink);
+             this.ICRSID = String(primary.dbLink);
+             localStorage.setItem('ICRSID', this.ICRSID);
+         }
      }
  
      setMainLanguage (newLanguage: string) {
@@ -355,38 +367,39 @@ export class User {
 
      setCookiesEnvironment (env) {
         console.log('Set cookies: ', env);
-        switch(env.domain) {
-            case 1 /*CENTRAL*/: 
-                localStorage.setItem('ENV_IP',env.ipAddress);
-                localStorage.setItem('ENV_ID',env.connectionID);
-                localStorage.setItem('ENV_PASS',env.connectionPassword);
+        const domain = String(env.domain);
+        switch (domain) {
+            case '1' /* CENTRAL */:
+                localStorage.setItem('ENV_IP', env.ipAddress);
+                localStorage.setItem('ENV_ID', env.connectionID);
+                localStorage.setItem('ENV_PASS', env.connectionPassword);
                 break;
-            case 2 /*STOCK*/: 
-                localStorage.setItem('ENV_IP_STOCK',env.ipAddress);
-                localStorage.setItem('ENV_ID_STOCK',env.connectionID);
-                localStorage.setItem('ENV_PASS_STOCK',env.connectionPassword);
+            case '2' /* STOCK */:
+                localStorage.setItem('ENV_IP_STOCK', env.ipAddress);
+                localStorage.setItem('ENV_ID_STOCK', env.connectionID);
+                localStorage.setItem('ENV_PASS_STOCK', env.connectionPassword);
                 break;
-            case 3 /*GWR*/:
-                localStorage.setItem('ENV_IP_GWR',env.ipAddress);
-                localStorage.setItem('ENV_ID_GWR',env.connectionID);
-                localStorage.setItem('ENV_PASS_GWR',env.connectionPassword);
+            case '3' /* GWR */:
+                localStorage.setItem('ENV_IP_GWR', env.ipAddress);
+                localStorage.setItem('ENV_ID_GWR', env.connectionID);
+                localStorage.setItem('ENV_PASS_GWR', env.connectionPassword);
                 break;
-            case 4 /*MOBILITY*/:
-                localStorage.setItem('ENV_IP_MOB',env.ipAddress);
-                localStorage.setItem('ENV_ID_MOB',env.connectionID);
-                localStorage.setItem('ENV_PASS_MOB',env.connectionPassword);
+            case '4' /* MOBILITY */:
+                localStorage.setItem('ENV_IP_MOB', env.ipAddress);
+                localStorage.setItem('ENV_ID_MOB', env.connectionID);
+                localStorage.setItem('ENV_PASS_MOB', env.connectionPassword);
                 break;
-            case 5 /*GFA*/:
-                localStorage.setItem('ENV_IP_GFA',env.ipAddress);
-                localStorage.setItem('ENV_ID_GFA',env.connectionID);
-                localStorage.setItem('ENV_PASS_GFA',env.connectionPassword);
+            case '5' /* GFA */:
+                localStorage.setItem('ENV_IP_GFA', env.ipAddress);
+                localStorage.setItem('ENV_ID_GFA', env.connectionID);
+                localStorage.setItem('ENV_PASS_GFA', env.connectionPassword);
                 break;
             default:
-                localStorage.setItem('ENV_IP',env.ipAddress);
-                localStorage.setItem('ENV_ID',env.connectionID);
-                localStorage.setItem('ENV_PASS',env.connectionPassword);
+                localStorage.setItem('ENV_IP', env.ipAddress);
+                localStorage.setItem('ENV_ID', env.connectionID);
+                localStorage.setItem('ENV_PASS', env.connectionPassword);
                 break;
-         }   
+         }
      }
 
      unsetCookiesEnvironment() {

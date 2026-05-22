@@ -1,0 +1,5 @@
+node_modules/
+.DS_Store
+pdf/*.pdf
+pdf/icr-print-pack.html
+.pdf-cache/

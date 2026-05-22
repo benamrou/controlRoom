@@ -14,6 +14,7 @@ import { AiSkillEditorModel, AiSkillService } from "src/app/shared/services/ai/a
 })
 export class AiSkillBuilderComponent implements OnInit, OnDestroy {
 
+    screenID = 'SCR0000000057';
     private static readonly ASSISTANT_SQL_DRAFT_KEY = "ICR_AI_ASSISTANT_SQL_DRAFT";
 
     private static readonly COLS_KNOWLEDGE = [

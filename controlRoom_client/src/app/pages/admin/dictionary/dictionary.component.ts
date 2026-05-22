@@ -78,7 +78,7 @@ export class DictionaryComponent implements OnInit {
 
   // Page header properties
   waitMessage: string = '';
-  screenID: string = 'DICTIONARY';
+  screenID: string = 'SCR0000000068';
 
   // Loading states
   loadingTechObj: boolean = false;

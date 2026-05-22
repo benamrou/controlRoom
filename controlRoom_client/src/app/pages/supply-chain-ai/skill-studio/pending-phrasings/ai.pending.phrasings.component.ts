@@ -58,6 +58,7 @@ interface AutoPromoteCandidate {
 })
 export class AiPendingPhrasingsComponent implements OnInit {
 
+    screenID = 'SCR0000000058';
     rows: PendingPhrasingRow[] = [];
     loading = false;
 

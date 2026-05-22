@@ -10,7 +10,7 @@ import { UserService } from '../../../shared/services';
   providers: [ConfirmationService, MessageService],
 })
 export class SettingCustomerComponent implements OnInit {
-  screenID = 'SETTING_CUSTOMER';
+  screenID = 'SCR0000000064';
   waitMessage = '';
   activeTab = 0;
 

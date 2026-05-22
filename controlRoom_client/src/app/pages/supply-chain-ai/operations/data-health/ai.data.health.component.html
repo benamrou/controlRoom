@@ -1,8 +1,7 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
-<app-page-header [title]="'AI Data Health'" [subtitle]="'Automated data quality monitoring across item, order, receipt, stock and sales'">
-</app-page-header>
+<app-page-header [heading]="'AI Data Health'" [screenID]="screenID" [icon]="'fas fa-heartbeat'"></app-page-header>
 
 <!-- Toolbar -->
 <div class="adh-toolbar p-mb-3">
@@ -251,16 +250,19 @@
 <p-dialog [(visible)]="rowsVisible"
   [header]="rowsTitle"
   [modal]="true"
-  [style]="{ width: '90vw', maxWidth: '1100px' }"
+  [style]="{ width: '92vw', maxWidth: '1200px' }"
   styleClass="adh-rows-dialog"
-  [draggable]="false"
-  [resizable]="false">
+  [draggable]="true"
+  [resizable]="true"
+  [maximizable]="true"
+  [contentStyle]="{ overflow: 'hidden' }"
+  (onMaximize)="onDetailRowsMaximize($event)"
+  (onHide)="onDetailRowsDialogHide()">
 
   <div *ngIf="loadingRows" class="adh-loading">
     <i class="pi pi-spin pi-spinner"></i> Loading rows...
   </div>
 
-  <!-- Single-table mode (no p-table scrollable): scrollable splits thead/tbody and misaligns columns. -->
   <div class="adh-rows-table-wrap" *ngIf="!loadingRows">
     <p-table [value]="detailRows"
       [paginator]="detailRows.length > 25"
@@ -268,17 +270,22 @@
       [rowsPerPageOptions]="[25, 50, 100]"
       [showCurrentPageReport]="detailRows.length > 25"
       currentPageReportTemplate="{first}–{last} of {totalRecords}"
+      [resizableColumns]="true"
+      columnResizeMode="expand"
+      [scrollable]="true"
+      [scrollHeight]="detailRowsScrollHeight"
       styleClass="p-datatable-sm p-datatable-gridlines adh-rows-table">
       <ng-template pTemplate="header">
         <tr>
-          <th *ngFor="let col of detailColumns">{{ col }}</th>
-          <th *ngIf="hasResolution(detailExportCard)" class="adh-rows-actions-col">Actions</th>
+          <th *ngFor="let col of detailColumns" pResizableColumn>{{ col }}</th>
+          <th *ngIf="hasResolution(detailExportCard)" pResizableColumn class="adh-rows-actions-col">Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-row>
         <tr>
-          <td *ngFor="let col of detailColumns"
-              [attr.title]="row[col] != null ? row[col] : null">{{ row[col] }}</td>
+          <td *ngFor="let col of detailColumns">
+            <div class="adh-cell-scroll">{{ row[col] }}</div>
+          </td>
           <td *ngIf="hasResolution(detailExportCard)" class="adh-rows-actions-col">
             <button *ngIf="isRowFixable(row)"
               pButton type="button" label="Fix" icon="pi pi-wrench"

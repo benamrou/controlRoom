@@ -43,7 +43,7 @@ export class QueryLibraryComponent implements OnInit {
   @ViewChild('queryTable') queryTable!: Table;
 
   // Screen configuration
-  screenID: string = 'QUERY_LIBRARY';
+  screenID: string = 'SCR0000000067';
   waitMessage: string = '';
 
   // Query Id for search

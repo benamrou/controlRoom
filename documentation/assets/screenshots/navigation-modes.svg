@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" font-family="system-ui,sans-serif">
+  <rect width="640" height="280" fill="#f7fafc"/>
+  <rect x="0" y="0" width="640" height="40" fill="#2d3748"/>
+  <text x="16" y="26" fill="#fff" font-size="13">ICR Header  Environment ¾  |  Profile ¾  |  AI toggle</text>
+  <rect x="0" y="40" width="160" height="240" fill="#edf2f7" stroke="#cbd5e0"/>
+  <text x="12" y="62" font-size="11" font-weight="600" fill="#2d3748">STANDARD menu</text>
+  <text x="12" y="82" font-size="10" fill="#4a5568">Inventory</text>
+  <text x="12" y="98" font-size="10" fill="#4a5568">Mass-change box</text>
+  <text x="12" y="114" font-size="10" fill="#4a5568">Helpdesk</text>
+  <text x="12" y="130" font-size="10" fill="#4a5568">Syndigo</text>
+  <text x="12" y="146" font-size="10" fill="#4a5568">Space Planning</text>
+  <text x="12" y="162" font-size="10" fill="#4a5568">Reporting</text>
+  <rect x="240" y="40" width="160" height="240" fill="#ebf8ff" stroke="#90cdf4"/>
+  <text x="252" y="62" font-size="11" font-weight="600" fill="#2c5282">AI menu</text>
+  <text x="252" y="82" font-size="10" fill="#2b6cb0">Retailer setup</text>
+  <text x="252" y="98" font-size="10" fill="#2b6cb0">Context learning</text>
+  <text x="252" y="114" font-size="10" fill="#2b6cb0">Skill studio</text>
+  <text x="252" y="130" font-size="10" fill="#2b6cb0">Data health</text>
+  <text x="252" y="146" font-size="10" fill="#2b6cb0">AI Assistant</text>
+  <rect x="480" y="40" width="160" height="240" fill="#faf5ff" stroke="#d6bcfa"/>
+  <text x="492" y="62" font-size="11" font-weight="600" fill="#553c9a">ADMIN</text>
+  <text x="492" y="82" font-size="10" fill="#6b46c1">Users &amp; Profiles</text>
+  <text x="492" y="98" font-size="10" fill="#6b46c1">Menu &amp; access</text>
+  <text x="492" y="114" font-size="10" fill="#6b46c1">Query Library</text>
+  <text x="180" y="200" font-size="10" fill="#718096">SET0000040 loads visible routes per user flags / profile</text>
+</svg>

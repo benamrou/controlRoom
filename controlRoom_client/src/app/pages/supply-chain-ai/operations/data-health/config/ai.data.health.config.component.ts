@@ -39,6 +39,7 @@ export type ResolutionMode =
   providers: [MessageService, ConfirmationService]
 })
 export class AiDataHealthConfigComponent implements OnInit {
+  screenID = 'SCR0000000062';
   retailers: any[] = [];
   selectedRetailer: any = null;
 

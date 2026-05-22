@@ -13,6 +13,7 @@ import { AiSkillListItem, AiSkillService } from "src/app/shared/services/ai/ai.s
 })
 export class AiSkillLibraryComponent implements OnInit {
 
+    screenID = 'SCR0000000056';
     skills: AiSkillListItem[] = [];
     loadingSkills = false;
 
