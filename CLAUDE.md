@@ -1256,7 +1256,9 @@ CREATE TABLE AI_DIAGNOSTIC_STEP (
     STOP_VALUE      VARCHAR2(200),            -- value to compare against (e.g. '0', 'WH')
     CONCLUSION_KEY  VARCHAR2(100),            -- FK to AI_DIAGNOSTIC_CONCLUSION if stop condition met
     STEP_LABEL      VARCHAR2(200),            -- human label shown in evidence chain (e.g. 'DC stock check')
-    CONSTRAINT pk_ai_diag_step PRIMARY KEY (SKILL_ID, STEP_ORDER, STOP_FIELD, STOP_VALUE)
+    STEP_TYPE       VARCHAR2(10)   DEFAULT 'HARD' NOT NULL,  -- HARD = abort chain; SOFT = record issue, continue
+    CONSTRAINT pk_ai_diag_step PRIMARY KEY (SKILL_ID, STEP_ORDER, CONCLUSION_KEY),
+    CONSTRAINT chk_diag_step_type CHECK (STEP_TYPE IN ('HARD','SOFT'))
 );
 
 -- Conclusion templates with data field substitution
@@ -1271,7 +1273,7 @@ CREATE TABLE AI_DIAGNOSTIC_CONCLUSION (
 );
 ```
 
-Deploy script: `30_diagnostic_chain_tables.sql` (DDL only, after script 29).
+Deploy script: `37_diagnostic_chain_tables.sql` (DDL only, after script 36). Script includes an idempotent `ALTER TABLE` patch block that adds `STEP_TYPE` to existing DBs that already ran the CREATE TABLE.
 
 ---
 
@@ -1283,64 +1285,75 @@ Deploy script: `30_diagnostic_chain_tables.sql` (DDL only, after script 29).
 POST /api/ai/engine/diagnose-chain
 { question_text, retailer_id, skill_id, entities, site_id, lu_id, … }
   ↓
-readDiagnosticSteps(skill_id)          ← AI0000100 — ordered steps for skill
+readDiagnosticSteps(skill_id)          ← AI0000100 — ordered steps for skill (includes STEP_TYPE)
   ↓
 for each step in order:
     renderTemplateForExecution(step.template_code, ctx)
     runQuery on GOLD
     evaluate stop condition against result rows
-    if condition met → break, record conclusion_key
+    if condition matched:
+        STEP_TYPE = HARD  → record in allIssues[], set chainAborted=true, call finalizeDiagnosis()
+        STEP_TYPE = SOFT  → record in allIssues[], continue to next step
+    else → continue to next step
   ↓
-loadConclusion(conclusion_key)         ← AI0000101
-  ↓
-synthesizeDiagnostic(stepResults, conclusion)   ← ai.composer.js
+finalizeDiagnosis():
+    load AI_DIAGNOSTIC_CONCLUSION for each issue in allIssues[] (series async)    ← AI0000101
+    synthesizeMultipleDiagnostics(stepResults, conclusionPairs, ctx)               ← ai.composer.js
   ↓
 response: {
-    diagnostic_steps: [{ step_label, template_code, rows, stopped_here: bool }],
-    conclusion_key,
-    human_summary,       ← conclusion_template with data substituted
-    evidence_facts[],    ← evidence_template lines with data substituted
+    diagnostic_steps: [{ step_label, template_code, rows,
+                         stopped_here: bool,   ← true only for HARD stops
+                         issue_found: bool,    ← true for both HARD and SOFT matches
+                         issue_type: 'HARD'|'SOFT' }],
+    issues_found,          ← count of matched conditions
+    has_hard_stop,         ← true if any HARD step fired
+    conclusions[],         ← per-issue: { conclusion_key, severity, is_hard_stop, step_label }
+    conclusion_key,        ← null when issues_found > 1 (scalar for backward compat)
+    severity,              ← overall: max severity across all matched conclusions
+    human_summary,         ← numbered list when multiple issues
+    evidence_facts[],      ← combined bullets from all matched conclusion templates
     follow_up_hint,
-    severity
+    bind_context
 }
 ```
+
+**HARD vs SOFT step classification:**
+- **HARD** — aborts the chain immediately. Use when the issue makes all remaining checks meaningless (e.g. item not in ARTRAC — supplier/cost/ranging checks would all return 0 by JOIN cascade, not genuine independent issues).
+- **SOFT** — records the issue and continues. Use when multiple issues can coexist independently (e.g. not ranged + no active supplier + no delivery schedule are three separate root causes that each need their own fix).
+- Default is `HARD` (backward compatible with existing chains that don't set `STEP_TYPE`).
 
 **DIAGNOSTIC intent detection** — added to `detectIntent()` in `ai.engine.js`:
 
 ```javascript
 const DIAGNOSTIC_TRIGGERS = /\b(why|why isn'?t|why aren'?t|what'?s blocking|root cause|
     what happened to|not shipping|not receiving|not ordered|not ranged|
-    blocked|missing|failed|overdue|unresolved)\b/i;
+    blocked|missing|failed|overdue|unresolved|can.?t\s+order|cannot\s+order|
+    order\s+blocked|not\s+orderable)\b/i;
 
 if (DIAGNOSTIC_TRIGGERS.test(question)) return 'DIAGNOSTIC';
 ```
 
-When intent is `DIAGNOSTIC`, the router also checks if the matched skill has any `AI_DIAGNOSTIC_STEP` rows. If yes, it returns `diagnostic_available: true` and `suggested_chain_skill_id` in the `/route` response. The assistant then calls `/diagnose-chain` instead of `/execute`.
+When intent is `DIAGNOSTIC`, the router checks if the matched skill has any `AI_DIAGNOSTIC_STEP` rows. If yes, the assistant calls `/diagnose-chain` instead of `/execute`.
 
 ---
 
 ### Composer changes (`ai.composer.js`)
 
-New function `synthesizeDiagnostic(stepResults, conclusion, ctx)`:
+**`synthesizeDiagnostic(stepResults, conclusion, ctx)`** — single-issue path (still used internally by the multi-issue synthesizer for each individual conclusion):
+1. Builds token map from ctx + all step row fields
+2. Substitutes `{token}` placeholders in `SUMMARY_TEMPLATE`, `EVIDENCE_TEMPLATE` (pipe-split → `evidence_facts[]`), `FOLLOW_UP_TEMPLATE`
+3. Falls back to a generic "no matched conclusion" message if `conclusion` is null
 
-1. Iterates `conclusion.SUMMARY_TEMPLATE`, replaces `{field}` tokens with values from `stepResults` and `ctx`
-2. Splits `conclusion.EVIDENCE_TEMPLATE` on `|`, substitutes tokens per line → `evidence_facts[]`
-3. Substitutes `conclusion.FOLLOW_UP_TEMPLATE` → `follow_up_hint`
-4. If no `conclusion_key` matched (unanticipated combination): returns fallback summary listing which steps ran and what each returned, with severity `INFO` and follow_up_hint "No known root cause matched — review the evidence chain above."
+**`synthesizeMultipleDiagnostics(stepResults, conclusionPairs, ctx)`** — multi-issue path (called by `finalizeDiagnosis()` in the engine):
+- `conclusionPairs`: array of `{ conclusionKey, stepCtx, isHard, stepLabel, conclusion }` — one per matched condition
+- Builds a per-issue token map (shared ctx overridden by each step's own row fields)
+- Labels: HARD stops show `[BLOCKING — SEVERITY]`; SOFT issues show `[SEVERITY]`
+- Summary = intro sentence + numbered list of all issue summaries
+- `evidence_facts[]` = combined bullets from all matched conclusion templates (capped at 12)
+- `overall_severity` = max across all conclusions (`CRITICAL > WARNING > INFO`)
+- `follow_up_hint` = first non-null hint from any conclusion
 
-Token substitution map (same across all templates):
-
-| Token | Source |
-|---|---|
-| `{lu_id}` | ctx.lu_id or step result |
-| `{site_id}` | ctx.site_id |
-| `{supplier}` | ctx.vendor_text or resolved supplier name |
-| `{stock}` | step result row field |
-| `{po_number}` | step result row field |
-| `{po_date}` | step result row field, formatted DD-Mon-YYYY |
-| `{days}` | computed from po_date − SYSDATE |
-| `{pick_count}` | step result row field |
-| `{min_stock}` / `{max_stock}` | ARTREAP step result |
+**Token substitution** — `{field}` is case-insensitive match against the flat token map. Any column returned by a diagnostic step SQL becomes a substitution token automatically (e.g. `{SUPPLIER_CODE}`, `{NEXT_DELIVERY}`, `{COST_AMOUNT}`). Per-issue tokens use the step's own `stepCtx` merged over the shared ctx, so supplier-specific tokens resolve correctly even when multiple steps return different supplier rows.
 
 ---
 
@@ -1351,13 +1364,15 @@ Diagnostic chain infrastructure starts at `AI0000100`.
 
 | QUERYNUM | Operation |
 |---|---|
-| AI0000100 | GET ordered diagnostic steps for skill — `SELECT * FROM AI_DIAGNOSTIC_STEP WHERE SKILL_ID = :param1 ORDER BY STEP_ORDER` |
-| AI0000101 | GET conclusion template — `SELECT * FROM AI_DIAGNOSTIC_CONCLUSION WHERE CONCLUSION_KEY = :param1 AND RETAILER_ID = :param2` |
+| AI0000100 | GET ordered steps for skill — returns `STEP_ORDER, TEMPLATE_CODE, STEP_LABEL, STOP_FIELD, STOP_OPERATOR, STOP_VALUE, CONCLUSION_KEY, NVL(STEP_TYPE,'HARD') AS STEP_TYPE` |
+| AI0000101 | GET conclusion template — `CONCLUSION_KEY = :param1 AND (RETAILER_ID = :param2 OR RETAILER_ID = 'TEMPLATE')` — prefers retailer-specific over TEMPLATE rows |
 | AI0000102 | GET all diagnostic skills (have at least one step) — for S14 skill picker |
-| AI0000103 | POST — MERGE diagnostic step (designer authors via Skill Studio) |
+| AI0000103 | POST — MERGE diagnostic step including `STEP_TYPE` (designer authors via Skill Studio). `NVL(r."STEP_TYPE",'HARD')` guards against older clients that don't send the field. |
 | AI0000104 | POST — MERGE conclusion template (designer authors via Skill Studio) |
 | AI0000105 | POST — DELETE diagnostic step |
 | AI0000106 | POST — log diagnostic chain run result → `AI_ENGINE_INTERACTION_LOG` (same feedback target as S14) |
+
+**Redeploy note:** Re-run `38_diagnostic_chain_libquery.sql` (DELETE+INSERT) to pick up the `STEP_TYPE` additions to `AI0000100` and `AI0000103`.
 
 ---
 
@@ -1394,34 +1409,42 @@ Diagnostic turns render differently from retrieval turns. Instead of a flat resu
 
 Step cards are collapsible (admin sees result rows per step; analyst sees label + outcome only).
 
+**Multi-issue rendering (HARD/SOFT):** When the chain finds multiple issues, the severity row in the chat bubble shows a count badge ("N issues") and a "Hard stop" badge if any HARD condition fired. The step audit trail shows `HARD STOP` (red) or `ISSUE` (amber) per step. The `human_summary` text contains a numbered list of all issues with severity labels (`[CRITICAL]`, `[WARNING]`, `[BLOCKING — CRITICAL]` for HARD stops). Angular component (`handleDiagnosticChainResponse`) reads `chain.issues_found`, `chain.has_hard_stop`, and `chain.conclusions[]`.
+
 ---
 
 ### Skill Studio extension — Diagnostic Branch Authoring (S21)
 
-New tab in Skill Builder: **Diagnostic Steps**. Designer can:
-- Add/reorder steps (each step = a template from the skill's existing SQL templates)
+The Skill Builder **Diagnostic Steps** tab (`ai.skill.builder.component`) lets designers author the chain without a DB deploy:
+- Add/reorder steps (each step = a template from the skill's SQL templates tab)
 - Set stop condition (`field`, `operator`, `value`)
-- Assign conclusion key
+- Set **Step type**: `HARD` (abort chain on match) or `SOFT` (record issue, continue) — dropdown with explanatory copy
+- Assign conclusion key (must match a row in `AI_DIAGNOSTIC_CONCLUSION`)
 - Author/edit conclusion templates (summary + evidence bullets + follow-up)
-- Test the chain against live data with a test entity (lu_id or site_id)
+- Step list table now shows a `Type` column (`HARD` / `SOFT`)
 
-No code deploy required to add a new diagnostic branch. The designer authors it in the UI and it takes effect on the next `/diagnose-chain` call.
+Save calls `AI0000103` which MERGEs `STEP_TYPE` into `AI_DIAGNOSTIC_STEP`. No code deploy required after changing a step's type.
 
 ---
 
 ### Diagnostic skills — deployment order
 
 ```
-30_diagnostic_chain_tables.sql          — DDL: AI_DIAGNOSTIC_STEP + AI_DIAGNOSTIC_CONCLUSION
+37_diagnostic_chain_tables.sql          — DDL: AI_DIAGNOSTIC_STEP (with STEP_TYPE) + AI_DIAGNOSTIC_CONCLUSION
+                                           Includes ALTER TABLE patch for existing DBs (adds STEP_TYPE if missing)
 38_diagnostic_chain_libquery.sql        — LIBQUERY AI0000100–AI0000106
-32_diagnostic_wh_shipping_blocked.sql   — Steps + conclusions: WH_SHIPPING_BLOCKED
-33_diagnostic_replen_not_triggered.sql  — Steps + conclusions: REPLEN_NOT_TRIGGERED
-34_diagnostic_receipt_not_processing.sql — Steps + conclusions: RECEIPT_NOT_PROCESSING
-35_diagnostic_item_not_ranged.sql       — Steps + conclusions: ITEM_NOT_RANGED
-36_diagnostic_price_not_loading.sql     — Steps + conclusions: PRICE_NOT_LOADING
+                                           AI0000100 returns STEP_TYPE; AI0000103 saves STEP_TYPE
+39_diagnostic_wh_shipping_blocked.sql   — Steps + conclusions: WH_SHIPPING_BLOCKED (all HARD — existing chain)
+40_diagnostic_replen_not_triggered.sql  — Steps + conclusions: REPLEN_NOT_TRIGGERED (all HARD)
+41_diagnostic_receipt_not_processing.sql — Steps + conclusions: RECEIPT_NOT_PROCESSING (all HARD)
+42_diagnostic_item_not_ranged.sql       — Steps + conclusions: ITEM_NOT_RANGED (all HARD)
+43_diagnostic_price_not_loading.sql     — Steps + conclusions: PRICE_NOT_LOADING (all HARD)
+50_diagnostic_item_order_blocked.sql    — ITEM_ORDER_BLOCKED: Step 1 HARD (item inactive),
+                                           Steps 2–6 SOFT (ranging, supplier, cost, schedule, orderable assortment)
+                                           Skill ID: DA000002-D100-4A00-8200-D20000000002
 ```
 
-Each script is idempotent (MERGE on PK). Re-running adds or updates branches without dropping existing ones.
+Each script is idempotent (DELETE+INSERT for skill/vocab/template rows; existing chains use all-HARD steps and remain backward compatible — `STEP_TYPE DEFAULT 'HARD'` means the engine treats them identically to before).
 
 ---
 
@@ -1453,10 +1476,10 @@ Covers the analyst's daily morning review. High volume, well-understood queries.
 
 | Component | Status | Script |
 |---|---|---|
-| `AI_DIAGNOSTIC_STEP` + `AI_DIAGNOSTIC_CONCLUSION` tables | Build | 30 |
-| LIBQUERY AI0000100–AI0000106 | Build | 38 |
-| `ai.engine.js` — DIAGNOSTIC intent, `executeDiagnosticChain()` | Build | (Node) |
-| `ai.composer.js` — `synthesizeDiagnostic()`, token substitution | Build | (Node) |
+| `AI_DIAGNOSTIC_STEP` + `AI_DIAGNOSTIC_CONCLUSION` tables (with `STEP_TYPE`) | Done | 37 |
+| LIBQUERY AI0000100–AI0000106 (AI0000100/103 updated for STEP_TYPE) | Done | 38 |
+| `ai.engine.js` — DIAGNOSTIC intent, `module.diagnoseChain()`, HARD/SOFT accumulator | Done | (Node) |
+| `ai.composer.js` — `synthesizeDiagnostic()` + `synthesizeMultipleDiagnostics()` | Done | (Node) |
 | S14 UI — step evidence chain rendering | Build | (Angular) |
 
 **Diagnostic chains (Phase A):**
@@ -1623,10 +1646,11 @@ Strategic layer — optimization signals, trend analysis, financial performance.
 
 ```
 ── Diagnostic chain infrastructure ────────────────────────────────────────
-37_diagnostic_chain_tables.sql          — AI_DIAGNOSTIC_STEP + AI_DIAGNOSTIC_CONCLUSION DDL
-38_diagnostic_chain_libquery.sql        — AI0000100–AI0000106
+37_diagnostic_chain_tables.sql          — AI_DIAGNOSTIC_STEP (STEP_TYPE col) + AI_DIAGNOSTIC_CONCLUSION DDL
+                                           + ALTER TABLE patch for existing DBs
+38_diagnostic_chain_libquery.sql        — AI0000100–AI0000106 (AI0000100/103 include STEP_TYPE)
 
-── Phase A diagnostic seeds ───────────────────────────────────────────────
+── Phase A diagnostic seeds (all-HARD — existing chains) ──────────────────
 39_diagnostic_wh_shipping_blocked.sql
 40_diagnostic_replen_not_triggered.sql
 41_diagnostic_receipt_not_processing.sql
@@ -1640,9 +1664,14 @@ Strategic layer — optimization signals, trend analysis, financial performance.
 47_skill_pack_promotions_active.sql      — PROMOTION_ACTIVE
 48_skill_pack_inbound_receiving.sql      — INBOUND_RECEIVING
 
+── Procurement diagnostic (HARD/SOFT mixed) ───────────────────────────────
+50_diagnostic_item_order_blocked.sql     — ITEM_ORDER_BLOCKED: why can't store X order item Y?
+                                           Step 1 HARD (item active), Steps 2–6 SOFT
+                                           (ranging, supplier, cost, schedule, orderable assortment)
+
 ── Phase B retrieval skill packs ──────────────────────────────────────────
-49_skill_pack_order_depth.sql            — FILL_RATE, REJECTED_LINES, ORDER_HISTORY
-50_skill_pack_supplier_depth.sql         — LEAD_TIME, CONTRACT_STATUS
+49_data_health_resolution_upgrade.sql    — (existing)
+51_skill_pack_supplier_depth.sql         — LEAD_TIME, CONTRACT_STATUS
 51_skill_pack_pricing_depth.sql          — PROMOTION_PIPELINE, PRICE_COMPLIANCE, PRICE_ANOMALY
 52_skill_pack_inventory_depth.sql        — STOCK_NEGATIVE, STOCK_NO_PO, DEAD_STOCK, STOCK_AGING
 53_skill_pack_receiving_depth.sql        — RECEIPT_VS_PO, DOCK_SCHEDULE, RECEIVING_EXCEPTIONS
@@ -1688,10 +1717,11 @@ Strategic layer — optimization signals, trend analysis, financial performance.
 - [x] S23 Phrasing Playground — designer-facing routing diagnostics screen; `POST /api/ai/engine/diagnose` returns score breakdown, vocabulary hits, lexical pipeline, bind feasibility (no DB writes, no resolver, no execution)
 - [x] S14 share/adjust/learn/extend — copy answer, export session, active context editor, teach-correct-skill after thumb-down, showDesignerPanel on low-confidence
 - [ ] S14 result consolidation (Phase 12) — AUGMENT intent: re-execute ITM_FULL_ATTRIBUTES with accumulated include_* flags when analyst says "add retail / EAN / reference to order" on an active item result
-- [x] Diagnostic chain infrastructure — `AI_DIAGNOSTIC_STEP` + `AI_DIAGNOSTIC_CONCLUSION` tables (script 37), LIBQUERY AI0000100–AI0000106 (script 38), `module.diagnoseChain()` in `ai.engine.js`, `synthesizeDiagnostic()` in `ai.composer.js`, DIAGNOSTIC intent detection, S14 step evidence chain UI + severity badge
-- [x] Phase A diagnostic seeds — WH_SHIPPING_BLOCKED (39), REPLEN_NOT_TRIGGERED (40), RECEIPT_NOT_PROCESSING (41), ITEM_NOT_RANGED (42), PRICE_NOT_LOADING (43)
+- [x] Diagnostic chain infrastructure — `AI_DIAGNOSTIC_STEP` (with `STEP_TYPE` HARD/SOFT) + `AI_DIAGNOSTIC_CONCLUSION` tables (script 37), LIBQUERY AI0000100–AI0000106 (script 38, updated AI0000100/103 for STEP_TYPE), `module.diagnoseChain()` in `ai.engine.js` with HARD/SOFT accumulator + `finalizeDiagnosis()`, `synthesizeDiagnostic()` + `synthesizeMultipleDiagnostics()` in `ai.composer.js`, DIAGNOSTIC intent detection, S14 multi-issue rendering (count badge, HARD/SOFT step audit tags, numbered summary)
+- [x] Phase A diagnostic seeds — WH_SHIPPING_BLOCKED (39), REPLEN_NOT_TRIGGERED (40), RECEIPT_NOT_PROCESSING (41), ITEM_NOT_RANGED (42), PRICE_NOT_LOADING (43) — all HARD steps (existing behavior)
+- [x] ITEM_ORDER_BLOCKED diagnostic (50) — procurement chain: Step 1 HARD (item inactive → abort), Steps 2–6 SOFT (ranging, supplier contract, cost, delivery schedule, orderable assortment — all reported simultaneously)
 - [x] Phase A retrieval skill packs — ORDER_STATUS + OPEN_PO_BY_ITEM (44), ITEM_RANGING_STATUS (45), REPLEN_PARAMS (46), PROMOTION_ACTIVE (47), INBOUND_RECEIVING (48)
-- [ ] Skill Studio — Diagnostic Steps tab (S21 extension): step authoring, conclusion template editor, live chain test against real entity
+- [x] Skill Studio — Diagnostic Steps tab (S21): step authoring with STEP_TYPE dropdown (HARD/SOFT), conclusion template editor, step list shows Type column; `AI0000103` saves STEP_TYPE
 - [x] S24 AI Data Health — card grid by check, summary bar (total/passing/issues/critical), critical banner, tier filter, Run now (AI0000084 → AI_RUN_DATA_CHECKS), Investigate bridge to S14 with skill + entity context pre-loaded
 - [x] S25 Data Health Configuration — table CRUD, Add/Edit dialog (check code, name, LIBQUERY #, tier, severity, skill code, entity key), Verify button tests LIBQUERY live before save, inline enable/disable toggle, confirm-before-delete; all via LIBQUERY AI0000085–AI0000089, no backend route
 - [x] LIBQUERY deployment pattern documented — DELETE+INSERT, QUERYID = NVL(MAX(QUERYID),0)+1 subquery, full column list (QUERYID/QUERYNUM/QUERYTITLE/QUERYDESC/QUERYSQL/QUERYPARAM/QUERYRESULT/QUERYACCESS/QUERYTYPE/QUERYUPDATE)

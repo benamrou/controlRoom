@@ -1,33 +1,33 @@
-<app-page-header [heading]="'CAO missing'" [icon]="'fas fa-frog'"
+<app-page-header [heading]="'S05.TITLE' | lbl:'CAO missing'" [icon]="'fas fa-frog'"
                  [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
 
-<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'S05.DLG.UPD' | lbl:'Update completed'" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <ng-template pTemplate="footer">
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </ng-template>
 </p-dialog>
 
 <p-tabView>
     <!-- SEARCH-->
-    <p-tabPanel header="Search" leftIcon="pi pi-calendar" tooltip="Search">
+    <p-tabPanel [header]="'S05.TAB.SRCH' | lbl:'Search'" leftIcon="pi pi-calendar" tooltip="Search">
         <!-- Search Panel -->
         <div class="bbs_search_panel"  >
-            <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Vendor : </span>
+            <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S05.LBL.VEND' | lbl:'Vendor :' }} </span>
             <span style="overflow: hidden; padding-left: 1em; width: 70%; line-height: 25px; align-self: center;">
-                <input type="text"  [(ngModel)]="searchVendorCode" placeholder="  Enter a code or a description" 
+                <input type="text"  [(ngModel)]="searchVendorCode" [placeholder]="'S05.PLH.CODE' | lbl:'  Enter a code or a description'" 
                         style="width: 50%;"/>  
             </span>
 
             <span class="pull-right" style="padding-right: 20px">
-                    <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+                    <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S05.BTN.SRCH' | lbl:'SEARCH'" 
                             [style]="{'height': '35px'}"
                             style="margin-right: 15px">
                     </button>
@@ -36,12 +36,12 @@
             </span>
         </div>
         <div class="bbs_search_sub_panel"  >
-            <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Location : </span>
+            <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">{{ 'S05.LBL.LOC' | lbl:'Location :' }} </span>
             <span style="margin-right:50px; line-height: 25px">
                 <input name="location" type="number" [(ngModel)]="searchSiteCode" placeholder="" maxlength="5"
                     style="width: 5%;margin-left: 10px; text-align: center"/>
             </span>
-            <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Sold last X days : </span>
+            <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">{{ 'S05.LBL.SOLDX' | lbl:'Sold last X days :' }} </span>
             <span style="margin-right:50px; line-height: 25px" >
                 <input type="number" [(ngModel)]="searchLastSaleCode" placeholder="60" maxlength="2"
                     style="width: 5%;margin-left: 10px; text-align: center" required />
@@ -82,14 +82,14 @@
                                 <span>
                                     <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                         class="CSV_Button p-input-icon-left ml-auto"
-                                        label="CSV" (click)="result.exportCSV()" style="float:left">
+                                        [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                                     </button>
                                 </span>
                             </div>
                             <div class="col-9" style="text-align: right;">
                                 <span class="p-input-icon-right">
                                     <i class="pi pi-search"></i>
-                                    <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                                    <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                                 </span>
                             </div>
                         </div>

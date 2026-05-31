@@ -1,5 +1,5 @@
 <div>
-    <app-page-header #pageHeader [heading]="'Item Category Manager change'" [icon]="'fa-list-ul'"
+    <app-page-header #pageHeader [heading]="'S13.CM.TITLE' | lbl:'Item Category Manager change'" [icon]="'fa-list-ul'"
                      [waitMessage]="waitMessage" [screenID]="screenID">
     </app-page-header>
 </div>
@@ -10,9 +10,7 @@
 </div>
 <div>
     <div class="alert alert-warning" role="alert"  style="width: 40%; float: left; font-size:small; border: black 1px solid;">
-             <i class="fas fa-exclamation-circle"></i>
-              Use this functionnality cautiously during business hours. Data integrity are locking items data, putting on-hold the mass update process.
-    </div>
+             <i class="fas fa-exclamation-circle"></i> {{ 'MU.WARN.BH' | lbl:'Use cautiously during business hours.' }}</div>
     <div style="width: 50%; float: right; ">
         <p-steps styleClass="steps-custom" 
                 [model]="menuItems" [(activeIndex)]="activeIndex" [readonly]="true">
@@ -21,18 +19,18 @@
     </div>
 </div>
 <br>
-<p-dialog header="Update completed" [(visible)]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [maximizable]="false">
+<p-dialog [header]="'S13.DLG.UPD' | lbl:'Update completed'" [(visible)]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [maximizable]="false">
     <span>{{msgFinalDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
 </p-dialog>
 
 <!-- NEW: Generic Recap Dialog (REUSABLE - Just adjust recapErrorFieldName in TS) -->
-<p-dialog header="Execution Recap" 
+<p-dialog [header]="'MU.DLG.RCP' | lbl:'Execution Recap'" 
           [(visible)]="displayRecapDialog" 
           [modal]="true" 
           [style]="{width: '80vw'}" 
@@ -41,18 +39,18 @@
 
     <div *ngIf="recapSummary.errorRecords === 0" class="alert alert-success" style="padding: 10px;">
         <i class="fas fa-check-circle"></i>
-        <strong>All records processed successfully!</strong>
+        <strong>{{ 'MU.RCP.OK' | lbl:'All records processed successfully!' }}</strong>
     </div>
     
     <div style="margin-bottom: 20px;">
-        <h4 style="border-bottom: 1px black dashed;">Summary Mass-Change</h4>
+        <h4 style="border-bottom: 1px black dashed;">{{ 'MU.RCP.SUM' | lbl:'Summary Mass-Change' }}</h4>
         <table style="width: 30%; border-collapse: collapse;float:right;">
             <tr>
-                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Total Records:</td>
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">{{ 'MU.RCP.TOT' | lbl:'Total Records:' }}</td>
                 <td style="padding: 10px; border: 1px solid #ddd;text-align:center;">{{recapSummary.totalRecords}}</td>
             </tr>
             <tr style="background-color: #d4edda;">
-                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Successfully Loaded:</td>
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">{{ 'MU.RCP.SUC' | lbl:'Successfully Loaded:' }}</td>
                 <td style="padding: 10px; border: 1px solid #ddd;text-align:center;">
                     {{recapSummary.successRecords}} 
                     <span *ngIf="recapSummary.totalRecords > 0">
@@ -61,7 +59,7 @@
                 </td>
             </tr>
             <tr [style.background-color]="recapSummary.errorRecords > 0 ? '#f8d7da' : '#f0f0f0'">
-                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Records with Errors:</td>
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">{{ 'MU.RCP.ERR2' | lbl:'Records with Errors:' }}</td>
                 <td style="padding: 10px; border: 1px solid #ddd;text-align:center;">
                     {{recapSummary.errorRecords}} 
                     <span *ngIf="recapSummary.totalRecords > 0">
@@ -73,7 +71,7 @@
     </div>
 
     <div *ngIf="recapSummary.errorRecords > 0" style="margin-top: 7em;">
-        <h4>Error Details ({{recapSummary.errorRecords}} record(s))</h4>
+        <h4>{{ 'MU.RCP.ERRDTL' | lbl:'Error Details' }} ({{recapSummary.errorRecords}} record(s))</h4>
         <p-table [value]="recapSummary.errorDetails"
                  [rows]="10"
                  [paginator]="true"
@@ -90,7 +88,7 @@
                         pResizableColumn>
                         {{col}}
                     </th>
-                    <th style="background-color: #ffebee;">Error Message</th>
+                    <th style="background-color: #ffebee;">{{ 'MU.COL.ERRMSG' | lbl:'Error Message' }}</th>
                 </tr>
             </ng-template>
 
@@ -113,7 +111,7 @@
             <ng-template pTemplate="emptymessage">
                 <tr>
                     <td [attr.colspan]="recapSummary.columns.length + 2" style="text-align: center; padding: 20px;">
-                        No errors found.
+                        {{ 'MU.MSG.NOERR' | lbl:'No errors found.' }}
                     </td>
                 </tr>
             </ng-template>
@@ -124,7 +122,7 @@
         <button type="button" 
                 pButton 
                 icon="fas fa-download" 
-                label="Export Errors to CSV" 
+                [label]="'MU.BTN.ERRCSV' | lbl:'Export Errors to CSV'" 
                 (click)="exportErrors()"
                 *ngIf="recapSummary.errorRecords > 0"
                 
@@ -133,7 +131,7 @@
         <button type="button" 
                 pButton 
                 icon="fas fa-check" 
-                label="Close & Reset" 
+                [label]="'MU.BTN.CLSRST' | lbl:'Close & Reset'" 
                 (click)="onRecapClose()">
         </button>
     </p-footer>
@@ -144,17 +142,20 @@
     <p-fieldset #step0 legend="{{menuItems[0].title}}" [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder">
         <div class="row">
             <div class="col">
-                Select your Item-Category Manager file change. The XLS(x) Excel file should contain three columns:
+                {{ 'S13.CM.SEL' | lbl:'Select your Item-Category Manager file change.' }}
+                {{ 'S13.CM.XLS' | lbl:'The XLS(x) Excel file should contain three columns:' }}
                 <ul>
-                    <li>COLUMN A: item code</li>
-                    <li>COLUMN B: New category manager name (for information, not used in the update process)</li>
-                    <li>COLUMN C: New category manager code (parameter table 1032)</li>
+                    <li>{{ 'S13.CM.CA' | lbl:'COLUMN A: item code' }}</li>
+                    <li>{{ 'S13.CM.CB' | lbl:'COLUMN B: New category manager name (for information, not used in the update process)' }}</li>
+                    <li>{{ 'S13.CM.CC' | lbl:'COLUMN C: New category manager code (parameter table 1032)' }}</li>
                 </ul>
+
+
             </div>
             <div class="col">
                 <div class="row">
                     <div class="col">
-                        <button #template type="submit" pButton (click)="getTemplate()" icon="fas fa-file-excel-o" label="TEMPLATE" 
+                        <button #template type="submit" pButton (click)="getTemplate()" icon="fas fa-file-excel-o" [label]="'MU.BTN.TMPL' | lbl:'TEMPLATE'" 
                                 class="CSV_Button"
                                 style="margin-right: 15px; float: right; font-size: x-small;"></button>
                     </div>
@@ -170,7 +171,7 @@
                         <p-fileUpload #fileUpload mode="basic"  name="file"
                                     accept=".xlsx" 
                                     [showUploadButton]="true"
-                                    chooseLabel="Browse"
+                                    [chooseLabel]="'MU.BTN.BRWS' | lbl:'Browse'"
                                     [auto]="true"
                                     (onSelect)="onSelect($event)"
                                     [style]="{'font-size':'smaller','height':'25px'}"
@@ -181,7 +182,7 @@
                 </div>
                 <div class="row">
                     <div class="col" *ngIf="displayConfirm">
-                        <button type="submit" pButton (click)="confirmFile()" icon="fas fa-check" label="Confirm" 
+                        <button type="submit" pButton (click)="confirmFile()" icon="fas fa-check" [label]="'MU.BTN.CNFM' | lbl:'Confirm'" 
                                 class="CSV_Reverse_Button"
                                 style="margin-right: 15px; float: right; font-size: small; 
                                      background-color: darkslategrey; color: white;"></button>
@@ -191,8 +192,7 @@
         </div>
              
         <div class="row" style="padding-left: 15px">
-            You can use the template file as example. Column name A must be ITEM_CODE, column name B must be CATEGORY_MANAGER_DESC, column name C must be CATEGORY_MANAGER_CODE.
-        </div>
+            {{ 'MU.FILE.HINT' | lbl:'Use the template file as example for column headers.' }} {{ 'S13.CM.CNM' | lbl:'Column name A must be ITEM_CODE, column name B must be CATEGORY_MANAGER_DESC, column name C must be CATEGORY_MANAGER_CODE.' }}</div>
 
         <div class="alert alert-danger" role="alert" *ngFor="let message of globalError"
              style="margin-bottom: 1px;">
@@ -225,14 +225,14 @@
                         <span>
                             <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
-                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                             </button>
                         </span>
                     </div>
                     <div class="col-9" style="text-align: right;">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                         </span>
                     </div>
                 </div>
@@ -270,7 +270,7 @@
                     </tr>
                 </ng-template>
             </p-table>
-            <i class="FOOTER_Table" >{{_importService.wb.sheets[0].worksheet.rows.length}} references</i>
+            <i class="FOOTER_Table" >{{_importService.wb.sheets[0].worksheet.rows.length}} {{ 'CMN.REFS' | lbl:'references' }}</i>
         </div>
 
 
@@ -280,7 +280,7 @@
     <p-fieldset #step1 legend="{{menuItems[1].title}}" [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder" *ngIf="activeIndex > 0">
         <div class="row">
             <div style="width: 50%;">
-                <span style="margin-right:1.3em; margin-top: 5px; padding-left: 15px; font-weight: bolder">New Item link start date : </span>
+                <span style="margin-right:1.3em; margin-top: 5px; padding-left: 15px; font-weight: bolder">{{ 'MU.LBL.LNKDT' | lbl:'New link start date :' }} </span>
                 <p-calendar [(ngModel)]="startDate"  
                             [readonlyInput]="true"
                             dateFormat="mm/dd/yy"
@@ -292,12 +292,12 @@
 
             <div style="width: 50%;">
                 <p-checkbox [(ngModel)]="itemTrace" [binary]="true"></p-checkbox>
-                <span style="margin-top: 5px; padding-left: 15px;">Item trace generation </span>
+                <span style="margin-top: 5px; padding-left: 15px;">{{ 'MU.LBL.TRACE' | lbl:'Item trace generation' }} </span>
             </div>
             
         </div>
         <div class="row" style="padding: 1em; ">
-            <span style="font-size: xx-small;">(*) Existing item link will be ended at this date - 1.</span>
+            <span style="font-size: xx-small;">{{ 'MU.NOTE.LINK' | lbl:'(*) Existing link ended at this date - 1.' }}</span>
         </div>
 
     </p-fieldset>
@@ -309,10 +309,10 @@
 
             <div style="width: 50%;">
                 <span style="padding-left: 15px; font-weight: bolder">
-                    When do you want to execute the Item Category Manager changes?
+                    {{ 'S13.CM.WHEN' | lbl:'When do you want to execute the Item Category Manager changes?' }}
                 </span>
                 &nbsp;&nbsp;
-                <p-toggleButton [(ngModel)]="scheduleFlag" onLabel="Schedule-it" offLabel="Now" >
+                <p-toggleButton [(ngModel)]="scheduleFlag" [onLabel]="'MU.TOG.SCHD' | lbl:'Schedule-it'" [offLabel]="'MU.TOG.NOW' | lbl:'Now'" >
 
                 </p-toggleButton>
             </div>
@@ -334,7 +334,7 @@
     <!-- Step 3 - Recap -->
     <p-fieldset #step3 legend="{{menuItems[3].title}}" [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder" *ngIf="activeIndex > 2">
         <div style="text-align:center" *ngIf="activeIndex > 2 && startDate ">
-            <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" (click)="validationChanges()"></button>
+            <button  type="button" pButton icon="fas fa-dot-circle"  [label]="'MU.BTN.VALD' | lbl:'Validate'" (click)="validationChanges()"></button>
         </div>
     </p-fieldset>
 </div>

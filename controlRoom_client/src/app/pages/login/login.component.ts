@@ -5,6 +5,8 @@ import { routerTransition } from '../../router.animations';
 import { MessageService, Message } from 'primeng/api';
 import { LogginService, UserService, LabelService, StructureService, ScreenService } from '../../shared/services/index';
 import { MenuAccessService } from '../../shared/services/menu/menu-access.service';
+import { catchError, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 interface SeaShark {
     id: number;
@@ -341,7 +343,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log('LOGIN : Fetching user configuration');
 
         this.parameterGathered = true;
-        this.labelsGathered = true;
 
         const icrUser = localStorage.getItem('ICRUser')!;
 
@@ -352,14 +353,23 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
                     next: () => {
                         console.log('Environment data gathered', this._userService.userInfo);
                         this.environmentGathered = true;
-                        // Menu LIBQUERY needs DATABASE_SID / LANGUAGE from userInfo (set in getEnvironment)
-                        this._menuAccess.load(icrUser).subscribe({
-                            next: () => this.completeLogin(),
-                            error: () => this.completeLogin(),
+                        this._labelService.loadForLanguage().pipe(
+                            catchError(() => of(undefined)),
+                            switchMap(() => this._menuAccess.load(icrUser)),
+                        ).subscribe({
+                            next: () => {
+                                this.labelsGathered = true;
+                                this.completeLogin();
+                            },
+                            error: () => {
+                                this.labelsGathered = true;
+                                this.completeLogin();
+                            },
                         });
                     },
                     error: () => {
                         this.environmentGathered = true;
+                        this.labelsGathered = true;
                         this.completeLogin();
                     },
                 });

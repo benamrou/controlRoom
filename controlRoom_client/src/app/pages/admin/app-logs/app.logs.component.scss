@@ -1,0 +1,49 @@
+.app-logs-page {
+  padding: 0.5rem 1rem 1.5rem;
+}
+
+.log-root-hint {
+  font-size: 0.9rem;
+  color: var(--text-color-secondary, #6c757d);
+  margin-bottom: 0.75rem;
+
+  code {
+    color: var(--text-color, inherit);
+    word-break: break-all;
+  }
+}
+
+.log-root-note,
+.log-root-warn {
+  font-size: 0.85rem;
+}
+
+.log-root-warn {
+  color: var(--orange-500, #f59e0b);
+}
+
+.server-log-view {
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 12px;
+  white-space: pre;
+  overflow: auto;
+  max-height: 70vh;
+}
+
+.msg-cell,
+.desc-cell {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.croom-actions-col {
+  width: 3rem;
+  text-align: center;
+}
+
+.detail-block textarea {
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 12px;
+}

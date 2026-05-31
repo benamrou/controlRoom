@@ -1,11 +1,11 @@
-<app-page-header [heading]="'Automatic Order Dashboard'" [icon]="'fa-calendar'"></app-page-header>
+<app-page-header [heading]="'RT.AODASH' | lbl:'RT.AODASH'" [icon]="'fa-calendar'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
 
 <div class="bbs_search_panel"  >
-    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Dashboard date : </span>
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">{{ 'RT.AOD.LBL.DATE' | lbl:'Dashboard date :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 90%; line-height: 25px">
         <p-calendar [(ngModel)]="scorecardDate"  name="scorecardDate" 
                     dateFormat="mm/dd/yy" [showIcon]="true" 
@@ -22,7 +22,7 @@
 <p></p>
 
 
-<button type="submit" pButton (click)="clickedOpen()"  label="OPEN" ></button>
+<button type="submit" pButton (click)="clickedOpen()"  [label]="'RT.AOD.BTN.OPEN' | lbl:'OPEN'" ></button>
     <!-- Panel result style="width: 50%;" -->
     <chart-cmp  [chart_id]='chartConfig.id' [chart_type]='chartConfig.type'
                 [axis_labels]='chartConfig.axis_labels' [label_graph]='chartConfig.label_graph'

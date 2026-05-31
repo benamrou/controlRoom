@@ -4,21 +4,66 @@ import { AiRetailerService } from 'src/app/shared/services/ai/ai.retailer.servic
 import { AiSkillService } from 'src/app/shared/services/ai/ai.skill.service';
 import { ExportService } from 'src/app/shared/services/inout/export.service';
 import { UserService } from 'src/app/shared/services';
+import { LabelService } from 'src/app/shared/services/labels/labels.service';
 import { MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
 
 const ASSISTANT_SQL_DRAFT_STORAGE_KEY = 'ICR_AI_ASSISTANT_SQL_DRAFT';
 
-/** Display labels for session entity keys (analyst-facing Active context). */
-const CONTEXT_ENTITY_LABELS: Record<string, string> = {
-    supplier_id: 'Supplier',
-    vendor_text: 'Vendor',
-    site_id: 'Store',
-    lu_id: 'Item (LU)',
-    ean: 'Barcode (EAN)',
-    as_of_date: 'As of date',
-    date_from: 'From date',
-    date_to: 'To date',
-    retailer_id: 'Retailer',
+/** TRA_LABELS keys for session entity keys (analyst-facing Active context). */
+const CONTEXT_ENTITY_LABEL_KEYS: Record<string, [string, string]> = {
+    supplier_id: ['S60.CTX.SUP', 'Supplier'],
+    vendor_text: ['S60.CTX.VND', 'Vendor'],
+    site_id: ['S60.CTX.STO', 'Store'],
+    lu_id: ['S60.CTX.LU', 'Item (LU)'],
+    ean: ['S60.CTX.EAN', 'Barcode (EAN)'],
+};
+
+/**
+ * Issue 7 — recoverable parameter gaps.
+ * Maps entity name → { prompt shown to user, detect() extracts the value from the reply }.
+ * When /execute returns parameter_gaps that contain one of these keys, the assistant
+ * stashes the execute payload and prompts the user; the next reply resumes execution.
+ */
+const RECOVERABLE_GAPS: Record<string, { prompt: string; detect: (t: string) => string | null }> = {
+    lu_id: {
+        prompt: 'Which item (LU code)? Reply with the item code — e.g., `item 100100` or just `100100`.',
+        detect: (t: string) => {
+            const clean = String(t || '').trim();
+            const m = clean.match(/\b(?:item|article|codart|lu|sku|product)\s*(?:code|#|no\.?)?\s*(\d{4,8})\b/i)
+                || clean.match(/^(\d{4,8})$/);
+            return m ? m[1] : null;
+        }
+    },
+    site_id: {
+        prompt: 'For which store? Reply with the store code — e.g., `store 10` or just `10`.',
+        detect: (t: string) => {
+            const clean = String(t || '').trim();
+            const m = clean.match(/\b(?:store|site|at)\s*0*(\d{1,5})\b/i) || clean.match(/^0*(\d{1,5})$/);
+            return m ? m[1] : null;
+        }
+    },
+    supplier_id: {
+        prompt: 'Which supplier? Reply with the supplier code — e.g., `06966`, or name — e.g., `Lipari`.',
+        detect: (t: string) => {
+            const clean = String(t || '').trim();
+            if (/^\d{3,8}$/.test(clean)) { return clean; }
+            if (/^[A-Za-z0-9 &.\-]{2,40}$/.test(clean) && clean.split(/\s+/).length <= 4) { return clean; }
+            return null;
+        }
+    },
+    as_of_date: {
+        prompt: 'As of which date? Reply in YYYY-MM-DD format, or `today` / `yesterday`.',
+        detect: (t: string) => {
+            const clean = String(t || '').trim().toLowerCase();
+            if (clean === 'today') { return new Date().toISOString().slice(0, 10); }
+            if (clean === 'yesterday') {
+                const d = new Date(); d.setDate(d.getDate() - 1); return d.toISOString().slice(0, 10);
+            }
+            const m = clean.match(/\b(\d{4}-\d{2}-\d{2})\b/);
+            return m ? m[1] : null;
+        }
+    }
 };
 
 @Component({
@@ -92,6 +137,32 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         include_order_ref?: 'Y';
         skill_id?: string;
     } | null = null;
+    /**
+     * Issue 7 — stash for gap-entity recovery. Set when /execute returns
+     * parameter_gaps containing a RECOVERABLE_GAPS key. Cleared on the next
+     * turn if the user supplies a matching value; cleared unconditionally on
+     * reset. independend of pendingEnrichment (item-card enrichment has its
+     * own stash because it also tracks include_* flags).
+     */
+    private pendingGapResolution: {
+        execPayload: any;
+        route: any;
+        gapEntity: string;
+    } | null = null;
+    /**
+     * Vendor disambiguation stash. Set when /route returns requires_clarification=true
+     * with candidate_options (ENGINE_VENDOR_RESOLVE found 2+ suppliers). On the next
+     * turn, if the user's reply identifies one candidate (by code "(06966)", name, or
+     * ordinal), we inject supplier_id into the stashed execPayload and re-submit
+     * /execute directly — bypassing /route entirely so the original question context
+     * is preserved. Cleared when a candidate is matched OR when the user types
+     * something unrelated (no match → normal routing proceeds).
+     */
+    private pendingVendorClarification: {
+        execPayload: any;
+        route: any;
+        candidates: any[];
+    } | null = null;
     awaitingAssistant = false;
     private runCounter = 0;
     private activeRunId = 0;
@@ -119,29 +190,54 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     thumbDownTeachDone:    { [idx: number]: boolean } = {};
     thumbDownTeachSkill:   { [idx: number]: any }     = {};
 
+    private labelSub?: Subscription;
+
     constructor(
         private _svc: AiRetailerService,
         private _skillSvc: AiSkillService,
         private _msg: MessageService,
         private _router: Router,
         private _exportService: ExportService,
-        private _userSvc: UserService
+        private _userSvc: UserService,
+        private _labels: LabelService,
     ) {}
 
     isAiAdmin = false;
 
-    /** Empty-state starters — Heinens supply-chain phrasing. */
-    readonly examplePrompts: string[] = [
-        'Tell me about item 100100 at store 7',
-        'What DSD items can we buy from Lipari?',
-        'Who supplies item 100100?',
-        'Lookup barcode 041220185936',
-    ];
+    /** Empty-state starters — rebuilt on label revision. */
+    examplePrompts: string[] = [];
 
     ngOnInit(): void {
         this.isAiAdmin = Number(this._userSvc.userInfo?.aiAdmin) === 1;
+        this.buildExamplePrompts();
+        this.labelSub = this._labels.revision$.subscribe(() => this.buildExamplePrompts());
         this.loadRetailers();
         this.loadTemplateSkills();
+    }
+
+    private L(key: string, fallback: string): string {
+        return this._labels.text(key, fallback);
+    }
+
+    private buildExamplePrompts(): void {
+        this.examplePrompts = [
+            this.L('S60.EX.1', 'Tell me about item 100100 at store 7'),
+            this.L('S60.EX.2', 'What DSD items can we buy from Lipari?'),
+            this.L('S60.EX.3', 'Who supplies item 100100?'),
+            this.L('S60.EX.4', 'Lookup barcode 041220185936'),
+        ];
+    }
+
+    contextEntityLabel(key: string): string {
+        const k = String(key || '').trim();
+        if (!k) { return ''; }
+        const mapped = CONTEXT_ENTITY_LABEL_KEYS[k];
+        if (mapped) { return this.L(mapped[0], mapped[1]); }
+        if (k === 'as_of_date') { return 'As of date'; }
+        if (k === 'date_from') { return 'From date'; }
+        if (k === 'date_to') { return 'To date'; }
+        if (k === 'retailer_id') { return this.L('AI.CMN.RETAIL', 'Retailer'); }
+        return k.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
     }
 
     startNewConversation(): void {
@@ -161,10 +257,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     }
 
     humanizeContextKey(key: string): string {
-        const k = String(key || '').trim();
-        if (!k) { return ''; }
-        if (CONTEXT_ENTITY_LABELS[k]) { return CONTEXT_ENTITY_LABELS[k]; }
-        return k.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+        return this.contextEntityLabel(key);
     }
 
     getTurnEvidenceFacts(t: any): string[] {
@@ -231,6 +324,8 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         this.followUpText = '';
         this.queryText = '';
         this.pendingEnrichment = null;
+        this.pendingGapResolution = null;
+        this.pendingVendorClarification = null;
         this.confidence = 0;
         this.conclusion = null;
         this.evidenceFacts = [];
@@ -344,6 +439,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.labelSub?.unsubscribe();
         if (this.timer) { clearInterval(this.timer); this.timer = null; }
     }
 
@@ -530,9 +626,13 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                 ? this.humanizeBindGaps(missingBindings)
                 : '');
 
-        const assistantText = humanSummary
+        // When the engine is asking the user to pick a vendor (needsClarification + candidates
+        // present), the exec human_summary is from the gap branch ("I couldn't find…") which
+        // is wrong — suppress it so only the clarification question is shown.
+        const suppressExecSummary = needsClarification && clarifications.length > 0;
+        const assistantText = (!suppressExecSummary && humanSummary)
             ? [humanSummary, clarificationText].filter(Boolean).join('\n\n')
-            : [this.conclusion?.detail || '', clarificationText, bindGapText].filter(Boolean).join('\n\n');
+            : [clarificationText, (!suppressExecSummary ? bindGapText : '')].filter(Boolean).join('\n\n');
         const templates = Array.isArray(exec?.templates_available) ? exec.templates_available : [];
         const templateCode = exec?.template_code
             || (templates[0] && (templates[0].template_code || templates[0].TEMPLATE_CODE))
@@ -954,16 +1054,25 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         this.running = false;
         this.awaitingAssistant = false;
 
-        const severity = (chain?.severity || 'INFO').toLowerCase();
-        const severityMap: Record<string, string> = { critical: 'danger', warning: 'warn', info: 'info' };
-        const pSeverity = severityMap[severity] || 'info';
+        // Multi-issue: overall_severity from synthesizer; fallback to chain.severity for single-issue
+        const rawSeverity = (chain?.severity || 'INFO').toUpperCase();
+        const severityMap: Record<string, string> = { CRITICAL: 'danger', WARNING: 'warn', INFO: 'info' };
+        const pSeverity = severityMap[rawSeverity] || 'info';
 
+        const issuesFound: number = chain?.issues_found ?? (chain?.conclusion_key ? 1 : 0);
+        const hasHardStop: boolean = !!chain?.has_hard_stop;
+        const conclusions: any[] = Array.isArray(chain?.conclusions) ? chain.conclusions : [];
         const humanSummary = chain?.human_summary || 'Diagnostic complete.';
         const evidenceFacts: string[] = Array.isArray(chain?.evidence_facts) ? chain.evidence_facts : [];
         const followUpHint = chain?.follow_up_hint ? String(chain.follow_up_hint) : '';
 
+        // Conclusion label — single key or issue count
+        const conclusionLabel = issuesFound > 1
+            ? ('Diagnostic — ' + issuesFound + ' issues found')
+            : ('Diagnostic — ' + (chain?.conclusion_key || 'complete'));
+
         this.conclusion = {
-            label: 'Diagnostic — ' + (chain?.conclusion_key || 'complete'),
+            label: conclusionLabel,
             detail: humanSummary,
             severity: pSeverity
         };
@@ -990,6 +1099,9 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
             is_diagnostic: true,
             diagnostic_severity: chain?.severity || 'INFO',
             conclusion_key: chain?.conclusion_key || '',
+            issues_found: issuesFound,
+            has_hard_stop: hasHardStop,
+            conclusions: conclusions,
             diagnostic_steps: steps,
             result_columns: [],
             result_rows: [],
@@ -1053,7 +1165,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
             route, entities, enrichmentOverride, forcedTemplate || undefined, itemCardOverride
         )) {
             this._svc.executeInquiry(execPayload).subscribe({
-                next: (exec: any) => this.finishExecuteInquiry(route, exec, enrichmentOverride),
+                next: (exec: any) => this.finishExecuteInquiry(route, exec, enrichmentOverride, execPayload),
                 error: () => this.failExecuteInquiry()
             });
             return;
@@ -1062,7 +1174,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         const eanVariants = this.normalizeEanLookupVariants(entities.ean || entities.EAN);
         if (!eanVariants.length) {
             this._svc.executeInquiry(execPayload).subscribe({
-                next: (exec: any) => this.finishExecuteInquiry(route, exec, enrichmentOverride),
+                next: (exec: any) => this.finishExecuteInquiry(route, exec, enrichmentOverride, execPayload),
                 error: () => this.failExecuteInquiry()
             });
             return;
@@ -1164,7 +1276,8 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     private finishExecuteInquiry(
         route: any,
         exec: any,
-        enrichmentOverride: ReturnType<typeof this.buildEnrichmentOverride>
+        enrichmentOverride: ReturnType<typeof this.buildEnrichmentOverride>,
+        execPayload?: any
     ): void {
         this.timelineEvents[3].done = true;
         this.timelineEvents[3].date = new Date();
@@ -1172,6 +1285,41 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         this.timelineEvents[4].date = new Date();
         this.running = false;
         if (enrichmentOverride) { this.pendingEnrichment = null; }
+
+        // Vendor disambiguation — clear the stash once /execute returns real rows.
+        // On 0-result attempts (wrong vendor, inactive supplier) the stash persists
+        // so the user can pick a different candidate without re-routing.
+        if (this.pendingVendorClarification
+                && Array.isArray(exec?.result_rows)
+                && exec.result_rows.length > 0) {
+            this.pendingVendorClarification = null;
+        }
+
+        // Issue 7 — when /execute returns parameter_gaps for a RECOVERABLE_GAPS
+        // entity and we have the original execPayload, stash it and prompt the
+        // user instead of showing a dead-end "I need X" message with no follow-up.
+        // Enrichment turns (pendingEnrichment) already have their own stash path.
+        //
+        // Guard: do NOT prompt for lu_id when:
+        //   - The routed skill is DSD/VENDOR/SUPPLIER domain (wrong entity entirely), OR
+        //   - The session has active vendor_text (user is mid-vendor-disambiguation;
+        //     pendingVendorClarification handles their next reply).
+        if (execPayload && !enrichmentOverride && Array.isArray(exec?.parameter_gaps) && exec.parameter_gaps.length) {
+            const skillCode = String(route?.selected_skill_code || '').toUpperCase();
+            const isVendorDomainSkill = /DSD|VENDOR|SUPPLIER/.test(skillCode);
+            const hasVendorContext = !!(this.currentSessionContext?.entities?.vendor_text);
+            const recoverableGap = exec.parameter_gaps.find((g: string) => {
+                if (!RECOVERABLE_GAPS[g]) { return false; }
+                if (g === 'lu_id' && (isVendorDomainSkill || hasVendorContext)) { return false; }
+                return true;
+            });
+            if (recoverableGap) {
+                this.awaitingAssistant = false;
+                this.promptForGapResolution(route, execPayload, recoverableGap, RECOVERABLE_GAPS[recoverableGap].prompt);
+                return;
+            }
+        }
+
         this.handleExecuteResponse(route, exec);
         this.awaitingAssistant = false;
     }
@@ -1248,6 +1396,91 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         const bare = String(text || '').trim();
         if (/^\d{1,5}$/.test(bare)) { return bare; }
         return null;
+    }
+
+    // ── Issue 7 — gap-entity recovery helpers ────────────────────────────────
+
+    /** Try to extract the requested entity value from the user's gap reply. */
+    private extractEntityValueFromReply(text: string, gapEntity: string): string | null {
+        const gap = RECOVERABLE_GAPS[gapEntity];
+        if (!gap) { return null; }
+        return gap.detect(String(text || '').trim());
+    }
+
+    /**
+     * True when the reply is short and contains the expected entity type.
+     * Prevents a brand-new multi-word question from accidentally resuming the stash.
+     */
+    private looksLikeGapReply(text: string, gapEntity: string): boolean {
+        const t = String(text || '').trim();
+        if (!t) { return false; }
+        if (t.split(/\s+/).length > 8) { return false; }
+        return this.extractEntityValueFromReply(t, gapEntity) !== null;
+    }
+
+    /**
+     * Try to identify which candidate supplier the user selected from the
+     * disambiguation list. Handles three reply patterns:
+     *   1. Explicit code in parens or bare: "(06966)", "06966"
+     *   2. Name substring match (longest wins): "LIPARI FOODS INC."
+     *   3. Ordinal: "the first", "1", "option 2"
+     * Returns the matching supplier_id string, or null if no candidate matched.
+     */
+    private extractSupplierFromCandidates(text: string, candidates: any[]): string | null {
+        const t = String(text || '').trim();
+        if (!candidates?.length || !t) { return null; }
+
+        // 1 — explicit supplier code in parentheses: "(06966)" or "(AO0696672)"
+        //     Also match bare all-digit codes like "06966" as a standalone token.
+        const codeInParens = t.match(/\(([A-Z0-9]{3,12})\)/i);
+        const bareDigitCode = t.match(/\b(\d{5,8})\b/);
+        const codeTokens = [
+            codeInParens ? codeInParens[1] : null,
+            bareDigitCode ? bareDigitCode[1] : null
+        ].filter(Boolean) as string[];
+
+        for (const raw of codeTokens) {
+            const codeNorm = raw.replace(/^0+/, '').toUpperCase();
+            const hit = candidates.find((c: any) => {
+                const id = String(c.supplier_id || c.SUPPLIER_ID || '').trim();
+                const idNorm = id.replace(/^0+/, '').toUpperCase();
+                return idNorm === codeNorm || id.toUpperCase() === raw.toUpperCase();
+            });
+            if (hit) { return String(hit.supplier_id || hit.SUPPLIER_ID); }
+        }
+
+        // 2 — supplier name substring (longest match wins, case-insensitive)
+        const tUp = t.toUpperCase();
+        let bestHit: any = null;
+        let bestLen = 0;
+        for (const c of candidates) {
+            const name = String(c.supplier_name || c.SUPPLIER_NAME || '').trim().toUpperCase();
+            if (name && tUp.includes(name) && name.length > bestLen) {
+                bestHit = c;
+                bestLen = name.length;
+            }
+        }
+        if (bestHit) { return String(bestHit.supplier_id || bestHit.SUPPLIER_ID); }
+
+        // 3 — ordinal selection ("first", "1", "option 1", "second", "2")
+        if (/\b(first|1st|one|option\s*1|#\s*1|\b1\b)\b/i.test(t) && candidates[0]) {
+            return String(candidates[0].supplier_id || candidates[0].SUPPLIER_ID);
+        }
+        if (/\b(second|2nd|two|option\s*2|#\s*2|\b2\b)\b/i.test(t) && candidates[1]) {
+            return String(candidates[1].supplier_id || candidates[1].SUPPLIER_ID);
+        }
+
+        return null;
+    }
+
+    /**
+     * Stash the execute payload, show a targeted prompt, and pause execution.
+     * The next turn in processInquiry will check pendingGapResolution and resume.
+     */
+    private promptForGapResolution(route: any, execPayload: any, gapEntity: string, promptText: string): void {
+        this.pendingGapResolution = { execPayload, route, gapEntity };
+        this.pushTurn('assistant', promptText);
+        this.timelineEvents.forEach((ev: any) => { if (!ev.done) { ev.done = true; ev.date = new Date(); } });
     }
 
     /**
@@ -1453,6 +1686,82 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         this.timelineEvents[1].done = true;
         this.timelineEvents[1].date = new Date();
 
+        // Issue 7 — if a recoverable gap was stashed on the previous turn,
+        // try to extract the requested entity from this reply and resume execute
+        // directly (skip routing entirely). If the reply doesn't match, clear the
+        // stash and let routing proceed normally.
+        if (this.pendingGapResolution && !resetConversation) {
+            const entityValue = this.looksLikeGapReply(questionText, this.pendingGapResolution.gapEntity)
+                ? this.extractEntityValueFromReply(questionText, this.pendingGapResolution.gapEntity)
+                : null;
+            if (entityValue) {
+                const pending = this.pendingGapResolution;
+                this.pendingGapResolution = null;
+                this.timelineEvents[2].done = true;
+                this.timelineEvents[2].date = new Date();
+                this.timelineEvents[3].done = true;
+                this.timelineEvents[3].date = new Date();
+                // Inject the extracted value into the stashed payload.
+                pending.execPayload.entities = {
+                    ...(pending.execPayload.entities || {}),
+                    [pending.gapEntity]: entityValue
+                };
+                pending.execPayload.bindings = {
+                    ...(pending.execPayload.bindings || {}),
+                    [pending.gapEntity]: entityValue
+                };
+                this.currentSessionContext.entities = {
+                    ...(this.currentSessionContext.entities || {}),
+                    [pending.gapEntity]: entityValue
+                };
+                this.submitExecuteInquiry(pending.route, pending.execPayload, null, null);
+                return;
+            }
+            // Reply doesn't look like the expected entity — clear stash and route normally.
+            this.pendingGapResolution = null;
+        }
+
+        // Vendor disambiguation — if the previous turn showed a "which supplier?"
+        // clarification (requires_clarification=true from ENGINE_VENDOR_RESOLVE),
+        // try to match this reply against the candidate list. If it matches,
+        // inject supplier_id into a copy of the stashed execPayload and resume
+        // /execute directly without re-routing (preserving the original context).
+        //
+        // The stash is NOT cleared here — it persists until /execute returns rows
+        // (finishExecuteInquiry clears it on success). This lets the user try the
+        // wrong vendor (0 results), then immediately pick the right one without
+        // re-routing through an ambiguous question that lands on a wrong skill.
+        if (this.pendingVendorClarification && !resetConversation) {
+            const supplierId = this.extractSupplierFromCandidates(
+                questionText, this.pendingVendorClarification.candidates
+            );
+            if (supplierId) {
+                const pending = this.pendingVendorClarification;
+                this.timelineEvents[2].done = true;
+                this.timelineEvents[2].date = new Date();
+                this.timelineEvents[3].done = true;
+                this.timelineEvents[3].date = new Date();
+                // Build a one-time attempt payload (copy — stash stays pristine for retry).
+                // supplier_id goes ONLY into the attempt payload, not into session context.
+                // Keeping it out of session prevents it from bleeding into subsequent
+                // "what about [other vendor]?" questions via the execPayload entity merge.
+                const attemptPayload = {
+                    ...pending.execPayload,
+                    supplier_id: supplierId,
+                    entities: { ...(pending.execPayload.entities || {}), supplier_id: supplierId },
+                    bindings: { ...(pending.execPayload.bindings || {}), supplier_id: supplierId }
+                };
+                // Use a resolved-route copy so handleExecuteResponse does NOT re-render
+                // the clarification text ("Which one did you mean?") after the user
+                // already selected a supplier.
+                const resolvedRoute = { ...pending.route, requires_clarification: false };
+                this.submitExecuteInquiry(resolvedRoute, attemptPayload, null, null);
+                return;
+            }
+            // User typed something unrelated — clear stash and route normally.
+            this.pendingVendorClarification = null;
+        }
+
         const routePayload: any = {
             retailer_id: retailerId,
             question_text: questionText
@@ -1477,10 +1786,28 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                 if (!this.designerSelectedSkill) {
                     this.syncDesignerSkillFromRoute();
                 }
+                // Capture previous vendor before merging so we can detect a vendor switch.
+                const prevVendorText = String(
+                    this.currentSessionContext?.entities?.vendor_text || ''
+                ).toUpperCase();
                 this.currentSessionContext.entities = {
                     ...(this.currentSessionContext.entities || {}),
                     ...(route?.entities || {})
                 };
+                // Vendor-switch guard — if the question mentions a NEW supplier name
+                // (vendor_text changed) but the engine hasn't yet resolved supplier_id,
+                // clear the stale supplier_id from the previous vendor so it doesn't
+                // bleed into this execute context.
+                // e.g. "What about MIDLAND?" after a Lipari session: prevVendor=LIPARI,
+                // newVendor=MIDLAND, route.entities.supplier_id=null → drop "06966".
+                const newVendorText = String(
+                    route?.entities?.vendor_text || ''
+                ).toUpperCase();
+                if (newVendorText
+                        && newVendorText !== prevVendorText
+                        && route?.entities?.supplier_id == null) {
+                    delete this.currentSessionContext.entities.supplier_id;
+                }
                 this.timelineEvents[2].done = true;
                 this.timelineEvents[2].date = new Date();
                 this.evidenceFacts.unshift(
@@ -1536,21 +1863,83 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                         ? executeOverride.skill_id
                         : route?.selected_skill_id,
                     intent_type: route?.intent_type,
-                    supplier_id: route?.entities?.supplier_id || this.currentSessionContext?.entities?.supplier_id || null,
+                    // supplier_id is NOT carried from session context — the engine must
+                    // re-resolve it from vendor_text via ENGINE_VENDOR_RESOLVE each time.
+                    // Carrying it forward caused stale vendor codes to be used for follow-up
+                    // questions about different vendors ("What about Midland?").
+                    // Exception: when executeOverride (enrichment/item-card) supplies it,
+                    // it comes through the override's entities, not here.
+                    supplier_id: route?.entities?.supplier_id || null,
                     retailer_id: retailerId,
                     question_text: questionText,
                     entities: executeOverride
                         ? executeOverride.entities
-                        : {
-                            ...(this.currentSessionContext.entities || {}),
-                            ...(route?.entities || {})
-                        },
+                        : (() => {
+                            // Merge session + route entities, but strip stale supplier_id
+                            // from session — ENGINE_VENDOR_RESOLVE resolves it fresh.
+                            const merged: any = {
+                                ...(this.currentSessionContext.entities || {}),
+                                ...(route?.entities || {})
+                            };
+                            if (!route?.entities?.supplier_id) { delete merged.supplier_id; }
+                            return merged;
+                        })(),
                     bindings: executeOverride
                         ? executeOverride.bindings
                         : (this.currentSessionContext.bindings || {})
                 };
                 if (executeOverride) {
                     execPayload.template_code = executeOverride.template_code;
+                }
+
+                // Vendor disambiguation — when ENGINE_VENDOR_RESOLVE found multiple
+                // candidates the engine sets requires_clarification=true.
+                // Two paths:
+                //   A) The user's question text already contains the supplier code or
+                //      exact name (e.g. "LIPARI FOODS INC. (06966)" after seeing the
+                //      list) → self-resolve immediately: inject supplier_id and let
+                //      execute run without another clarification round.
+                //   B) The name is ambiguous and the text gives no hint → stash the
+                //      execPayload so the NEXT reply can identify the selection and
+                //      resume execute directly (skipping /route entirely).
+                if (route?.requires_clarification
+                        && Array.isArray(route?.candidate_options)
+                        && route.candidate_options.length
+                        && !executeOverride) {
+                    const selfResolvedId = this.extractSupplierFromCandidates(
+                        questionText, route.candidate_options
+                    );
+                    if (selfResolvedId) {
+                        // Path A — inject supplier now; no stash needed.
+                        // Also clear requires_clarification on the route object so
+                        // handleExecuteResponse does not re-render the "Which one?"
+                        // message after the supplier is already resolved.
+                        execPayload.supplier_id = selfResolvedId;
+                        execPayload.entities = {
+                            ...(execPayload.entities || {}),
+                            supplier_id: selfResolvedId
+                        };
+                        execPayload.bindings = {
+                            ...(execPayload.bindings || {}),
+                            supplier_id: selfResolvedId
+                        };
+                        this.currentSessionContext.entities = {
+                            ...(this.currentSessionContext.entities || {}),
+                            supplier_id: selfResolvedId
+                        };
+                        route.requires_clarification = false;
+                        this.pendingVendorClarification = null;
+                    } else {
+                        // Path B — can't resolve from text; stash for the next reply
+                        this.pendingVendorClarification = {
+                            execPayload: { ...execPayload },
+                            route,
+                            candidates: route.candidate_options
+                        };
+                    }
+                } else {
+                    // Clean route (no clarification needed) — clear any stale stash
+                    this.pendingVendorClarification = null;
                 }
 
                 this.submitExecuteInquiry(route, execPayload, enrichmentOverride, itemCardOverride);

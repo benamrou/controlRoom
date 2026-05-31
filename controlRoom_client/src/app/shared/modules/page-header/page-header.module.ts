@@ -8,6 +8,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { BlockUIModule } from 'primeng/blockui';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ButtonModule } from 'primeng/button';
+import { I18nModule } from '../../pipes/i18n.module';
 
 @NgModule({
     imports: [CommonModule, RouterModule, FormsModule, 
@@ -15,10 +16,11 @@ import { ButtonModule } from 'primeng/button';
               ProgressBarModule,
               ScrollPanelModule,
               ButtonModule,
-              BlockUIModule
+              BlockUIModule,
+              I18nModule,
             ],
     declarations: [PageHeaderComponent],
-    exports: [PageHeaderComponent],
+    exports: [PageHeaderComponent, I18nModule],
     bootstrap: [PageHeaderComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

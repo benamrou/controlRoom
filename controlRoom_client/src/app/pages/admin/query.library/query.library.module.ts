@@ -16,6 +16,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { RippleModule } from 'primeng/ripple';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
+import { I18nModule } from 'src/app/shared/pipes/i18n.module';
 
 // Services
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -40,7 +41,8 @@ import { QueryLibraryComponent } from './query.library.component';
                 TooltipModule,
                 RippleModule,
                 PageHeaderModule,
-                InputTextareaModule
+                InputTextareaModule,
+                I18nModule,
              ],
     declarations: [QueryLibraryComponent],
     exports: [QueryLibraryComponent],

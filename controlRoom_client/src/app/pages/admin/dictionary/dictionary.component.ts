@@ -3,6 +3,8 @@ import { Table } from 'primeng/table';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { QueryService } from '../../../shared/services';
 import { UserService } from '../../../shared/services';
+import { SettingsAdminService } from '../../../shared/services/settings/settings.admin.service';
+import { uiLanguageSelectOptions, uiLanguageLabel } from '../../../shared/constants/ui-languages';
 
 // Interfaces for the 4 translation tables
 interface TechObj {
@@ -72,6 +74,7 @@ export class DictionaryComponent implements OnInit {
   @ViewChild('labelsTable') labelsTable!: Table;
   @ViewChild('parametersTable') parametersTable!: Table;
   @ViewChild('entriesTable') entriesTable!: Table;
+  @ViewChild('coverageTable') coverageTable!: Table;
 
   // Active tab index
   activeTabIndex: number = 0;
@@ -125,13 +128,17 @@ export class DictionaryComponent implements OnInit {
   searchParameter: { id: string; desc: string } = { id: '', desc: '' };
   searchEntry: { paramId: string; desc: string } = { paramId: '', desc: '' };
 
-  // Language options
-  languageOptions = [
-    { label: 'English (US)', value: 'us_US' },
-    { label: 'French', value: 'fr_FR' },
-    { label: 'Spanish', value: 'es_ES' },
-    { label: 'English (UK)', value: 'uk_UK' }
-  ];
+  languageOptions = uiLanguageSelectOptions();
+
+  coverageTargetLang = 'us_US';
+  coverageRows: Record<string, unknown>[] = [];
+  coverageFilterText = '';
+  loadingCoverage = false;
+  labelDialogSource: 'labels' | 'coverage' = 'labels';
+  labelDialogLockKeys = false;
+  coverageBaselineDesc = '';
+  labelImportText = '';
+  importingLabels = false;
 
   // Menu options for TRA_LABELS
   menuOptions = [
@@ -195,6 +202,7 @@ export class DictionaryComponent implements OnInit {
   constructor(
     private queryService: QueryService,
     private _userService: UserService,
+    private _settingsAdmin: SettingsAdminService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private cdr: ChangeDetectorRef
@@ -219,6 +227,9 @@ export class DictionaryComponent implements OnInit {
         break;
       case 3:
         if (this.entriesList.length === 0) this.loadEntriesData();
+        break;
+      case 4:
+        if (this.coverageRows.length === 0) this.loadCoverageReport();
         break;
     }
   }
@@ -411,14 +422,22 @@ export class DictionaryComponent implements OnInit {
   }
 
   newLabel(): void {
+    this.labelDialogSource = 'labels';
+    this.labelDialogLockKeys = false;
+    this.coverageBaselineDesc = '';
     this.labelDisplay = this.getEmptyLabel();
     this.isNewLabel = true;
     this.displayLabelDialog = true;
   }
 
-  editLabel(id: string): void {
-    const item = this.labelsList.find(x => x.TLAID === id);
+  editLabel(id: string, lang?: string): void {
+    const item = this.labelsList.find(
+      (x) => x.TLAID === id && (!lang || x.TLALANGUE === lang),
+    );
     if (item) {
+      this.labelDialogSource = 'labels';
+      this.labelDialogLockKeys = false;
+      this.coverageBaselineDesc = '';
       this.labelDisplay = { ...item };
       this.isNewLabel = false;
       this.displayLabelDialog = true;
@@ -455,7 +474,12 @@ export class DictionaryComponent implements OnInit {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: this.isNewLabel ? 'Created successfully' : 'Updated successfully' });
         this.displayLabelDialog = false;
         this.waitMessage = '';
-        this.loadLabelsData();
+        if (this.labelDialogSource === 'coverage') {
+          this.loadCoverageReport();
+        } else {
+          this.loadLabelsData();
+        }
+        this.resetLabelDialogContext();
       },
       error: (err: any) => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Save failed' });
@@ -464,9 +488,10 @@ export class DictionaryComponent implements OnInit {
     });
   }
 
-  deleteLabel(id: string): void {
+  deleteLabel(id: string, lang?: string): void {
+    const langSuffix = lang ? ` (${lang})` : '';
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete Label "${id}"?`,
+      message: `Are you sure you want to delete Label "${id}"${langSuffix}?`,
       header: 'Confirm Delete',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -477,14 +502,19 @@ export class DictionaryComponent implements OnInit {
           "TLADESC":  '',
           "TLAMENU": 0,
           "TLASCREEN": '',
-          "TLALANGUE": '',
+          "TLALANGUE": lang || '',
           "TLAUTIL": this._userService.ICRUser
         }];
         this.queryService.postQueryResult('DIC0000006', params).subscribe({
           next: () => {
             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Deleted successfully' });
             this.waitMessage = '';
-            this.loadLabelsData();
+            if (this.labelDialogSource === 'coverage') {
+              this.loadCoverageReport();
+            } else {
+              this.loadLabelsData();
+            }
+            this.resetLabelDialogContext();
           },
           error: (err: any) => {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Delete failed' });
@@ -861,7 +891,7 @@ export class DictionaryComponent implements OnInit {
   }
 
   onRowDblClickLabel(rowData: Label): void {
-    this.editLabel(rowData.TLAID);
+    this.editLabel(rowData.TLAID, rowData.TLALANGUE);
   }
 
   onRowDblClickParameter(rowData: Parameter): void {
@@ -899,6 +929,55 @@ export class DictionaryComponent implements OnInit {
   cancelLabelDialog(): void {
     this.displayLabelDialog = false;
     this.labelDisplay = this.getEmptyLabel();
+    this.resetLabelDialogContext();
+  }
+
+  resetLabelDialogContext(): void {
+    this.labelDialogSource = 'labels';
+    this.labelDialogLockKeys = false;
+    this.coverageBaselineDesc = '';
+  }
+
+  newCoverageTranslation(): void {
+    this.labelDialogSource = 'coverage';
+    this.labelDialogLockKeys = false;
+    this.coverageBaselineDesc = '';
+    this.labelDisplay = { ...this.getEmptyLabel(), TLALANGUE: this.coverageTargetLang };
+    this.isNewLabel = true;
+    this.displayLabelDialog = true;
+  }
+
+  openCoverageTranslation(row: Record<string, unknown>): void {
+    const hasTarget = +row.HAS_TARGET === 1;
+    this.labelDialogSource = 'coverage';
+    this.labelDialogLockKeys = true;
+    this.coverageBaselineDesc = String(row.BASE_DESC || '');
+    this.labelDisplay = {
+      ...this.getEmptyLabel(),
+      TLAID: String(row.TLAID || ''),
+      TLASCREEN: String(row.TLASCREEN || ''),
+      TLALANGUE: this.coverageTargetLang,
+      TLADESC: hasTarget ? String(row.TARGET_DESC || '') : '',
+    };
+    this.isNewLabel = !hasTarget;
+    this.displayLabelDialog = true;
+  }
+
+  deleteCoverageTranslation(row: Record<string, unknown>): void {
+    this.labelDialogSource = 'coverage';
+    this.deleteLabel(String(row.TLAID || ''), this.coverageTargetLang);
+  }
+
+  coverageTargetLabel(): string {
+    return uiLanguageLabel(this.coverageTargetLang);
+  }
+
+  labelDialogHeader(): string {
+    if (this.labelDialogSource === 'coverage') {
+      const lang = uiLanguageLabel(this.labelDisplay.TLALANGUE || this.coverageTargetLang);
+      return this.isNewLabel ? `Add translation (${lang})` : `Edit translation (${lang})`;
+    }
+    return this.isNewLabel ? 'New Label' : 'Edit Label';
   }
 
   cancelParameterDialog(): void {
@@ -909,5 +988,63 @@ export class DictionaryComponent implements OnInit {
   cancelEntryDialog(): void {
     this.displayEntryDialog = false;
     this.entryDisplay = this.getEmptyEntry();
+  }
+
+  loadCoverageReport(): void {
+    this.loadingCoverage = true;
+    this.coverageFilterText = '';
+    this._settingsAdmin.labelCoverage(this.coverageTargetLang).subscribe({
+      next: (rows) => {
+        this.coverageRows = rows;
+        this.loadingCoverage = false;
+        this.coverageTable?.clear();
+      },
+      error: () => {
+        this.loadingCoverage = false;
+        this.messageService.add({ severity: 'error', summary: 'Coverage', detail: 'Deploy DIC0000015' });
+      },
+    });
+  }
+
+  importLabelsCsv(): void {
+    const lines = (this.labelImportText || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    if (!lines.length) {
+      this.messageService.add({ severity: 'warn', summary: 'Import', detail: 'TLAID,TLADESC,TLASCREEN,TLALANGUE' });
+      return;
+    }
+    const rows: Record<string, unknown>[] = [];
+    for (const line of lines) {
+      const parts = line.split(',').map((p) => p.trim());
+      if (parts.length < 4) {
+        continue;
+      }
+      rows.push({
+        TLAID: parts[0],
+        TLADESC: parts.slice(1, -2).join(',') || parts[1],
+        TLASCREEN: parts[parts.length - 2],
+        TLALANGUE: parts[parts.length - 1],
+        TLAMENU: 0,
+      });
+    }
+    if (!rows.length) {
+      this.messageService.add({ severity: 'warn', summary: 'Import', detail: 'No valid rows' });
+      return;
+    }
+    this.importingLabels = true;
+    this._settingsAdmin.bulkLabels(rows.map((r) => ({
+      ...r,
+      TLAUTIL: this._userService.ICRUser,
+    }))).subscribe({
+      next: () => {
+        this.importingLabels = false;
+        this.labelImportText = '';
+        this.messageService.add({ severity: 'success', summary: 'Import', detail: `${rows.length} label(s) merged` });
+        this.loadLabelsData();
+      },
+      error: (err: any) => {
+        this.importingLabels = false;
+        this.messageService.add({ severity: 'error', summary: 'Import', detail: err?.message || 'Deploy DIC0000014' });
+      },
+    });
   }
 }

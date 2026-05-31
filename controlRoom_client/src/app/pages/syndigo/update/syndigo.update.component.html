@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Syndigo update MDM dimensions'" [icon]="'fa-wrench'"
+<app-page-header [heading]="'S29.TITLE' | lbl:'Syndigo update MDM dimensions'" [icon]="'fa-wrench'"
                  [waitMessage]="waitMessage" [okExit]="okExit" [screenID]="screenID">
 </app-page-header>
 
@@ -111,7 +111,7 @@
         </div>
     </div>
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="displaySetting = false" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (click)="displaySetting = false" [label]="'CMN.OK' | lbl:'Ok'" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 
@@ -182,7 +182,7 @@
                 <div class="col-9" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>
@@ -204,13 +204,13 @@
                     <div class="pull-right p-input-icon-right FILTER_Right_Table">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Global Search" />
+                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.GLBSRH' | lbl:'Global Search'" />
                         </span>
                     </div>
                     <div >
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
-                                label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left"></button>
                     </div>
                 </div>
             </ng-template>

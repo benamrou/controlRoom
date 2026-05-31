@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Item history '" [icon]="'fas fa-timeline'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"
+<app-page-header [heading]="'S31.TITLE' | lbl:'Item history'" [icon]="'fas fa-timeline'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"
   [linkcolor]="'chocolate'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -6,12 +6,12 @@
 </div>
 <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
-<p-dialog header="Updates completed" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'CMN.UPD.COMP' | lbl:'Updates completed'" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
   <span>{{msgDisplayed}}</span>
       <p-footer>
           <button style="float: right; margin-bottom:0.5em" 
                   type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
-                  label="Ok">
+                  [label]="'CMN.OK' | lbl:'Ok'">
           </button>
       </p-footer>
 </p-dialog>
@@ -20,7 +20,7 @@
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >
  <div style="width: 40%">
-  <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Department : </span>
+  <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S31.LBL.DEPT' | lbl:'Department :' }} </span>
   <span style="line-height: 15px;align-self: center;">
     <p-multiSelect 
             [options]="deptList" 
@@ -37,7 +37,7 @@
   </span>
  </div>
 
-  <span style="font-weight: bolder">Sub-Dept. : </span>
+  <span style="font-weight: bolder">{{ 'S31.LBL.SDEPT' | lbl:'Sub-dept :' }} </span>
   <span style="width: 40%;line-height: 15px;align-self: center;">
     <p-multiSelect 
             [options]="subDeptList" 
@@ -53,7 +53,7 @@
   </span>
 
   <span class="pull-right" style="padding-right: 20px">
-      <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+      <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S31.BTN.SRCH' | lbl:'SEARCH'" 
               [style]="{'height': '35px'}"
               [disabled]="periodStart > periodEnd || periodStart === '' || periodEnd === ''" 
               pTooltip="Period start must be greater than period end"
@@ -66,7 +66,7 @@
 
 <div class="bbs_search_sub_panel"  >
     <div style="width: 40%; float: left">
-        <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Category : </span>
+        <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S31.LBL.CAT' | lbl:'Category :' }} </span>
         <span style="line-height: 15px;align-self: center; margin-left: 1em;">
             <p-multiSelect 
                     [options]="catList" 
@@ -101,7 +101,7 @@
 </div>
 
 <div class="bbs_search_sub_panel"  >
-    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Period start : </span>
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S31.LBL.PST' | lbl:'Period start :' }} </span>
     <p-calendar [(ngModel)]="periodStart"  
                 [minDate]="dateTomorrow"
                 [readonlyInput]="true"
@@ -110,7 +110,7 @@
                 name="scheduleStart" [showIcon]="true" 
                 [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
-    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Period end : </span>
+    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">{{ 'S31.LBL.PEN' | lbl:'Period end :' }} </span>
     <p-calendar [(ngModel)]="periodEnd"  
                 [minDate]="dateTomorrow"
                 [readonlyInput]="true"
@@ -128,7 +128,7 @@
       <p-footer>
           <button style="float: right; margin-bottom:0.5em" 
                   type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                  label="Ok">
+                  [label]="'CMN.OK' | lbl:'Ok'">
           </button>
       </p-footer>
 </p-dialog>
@@ -159,20 +159,20 @@
                         class="CSV_Button p-input-icon-left ml-auto"
                         pTooltip="Export to EXCEL" [escape]="false"
                         *ngIf="searchResult.length>0"
-                        label="CSV" (click)="exportExcelRecap()" style="float:left">
+                        [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap()" style="float:left">
                     </button>
                     <button type="button" pButton icon="fas fa-file" iconPos="left" 
                         class="CSV_Button p-input-icon-left ml-auto"
                         pTooltip="Export to EXCEL" [escape]="false"
                         disabled *ngIf="searchResult.length==0"
-                        label="CSV" (click)="exportExcelRecap()" style="float:left">
+                        [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap()" style="float:left">
                     </button>
                 </span>
             </div>
             <div class="col-6" style="text-align: right;">
                 <span class="p-input-icon-right">
                     <i class="pi pi-search"></i>
-                    <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                 </span>
             </div>
         </div>

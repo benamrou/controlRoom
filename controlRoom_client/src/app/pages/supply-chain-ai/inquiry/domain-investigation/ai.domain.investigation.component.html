@@ -1,41 +1,7 @@
-<app-page-header [heading]="'Domain Investigation'" [icon]="'fas fa-search-plus'"></app-page-header>
-
-<div class="ai-module-container">
-  <p-card header="S15 — Domain investigation">
-    <p-steps [model]="domainSteps" [readonly]="false" [(activeIndex)]="activeDomainStep"></p-steps>
-
-    <div class="ai-form-grid">
-      <div class="field">
-        <label>Retailer ID</label>
-        <input pInputText [(ngModel)]="form.retailer_id" placeholder="PREPROD"/>
-      </div>
-      <div class="field">
-        <label>{{ activeDomain }} identifier</label>
-        <input pInputText [(ngModel)]="form.entity_id" placeholder="e.g. item code, supplier code, order no"/>
-      </div>
-      <div class="field">
-        <label>Site (optional)</label>
-        <input pInputText [(ngModel)]="form.site_id" placeholder="Store/DC code"/>
-      </div>
-      <div class="field">
-        <label>Date reference</label>
-        <input pInputText [(ngModel)]="form.date_ref" placeholder="YYYY-MM-DD"/>
-      </div>
-    </div>
-
-    <button pButton label="Run playbook"
-            icon="fas fa-play"
-            [disabled]="running || !form.retailer_id || !form.entity_id"
-            (click)="runPlaybook()"></button>
-  </p-card>
-
-  <p-card header="Playbook results" *ngIf="results.length">
-    <p-accordion [multiple]="true">
-      <p-accordionTab *ngFor="let r of results; let i = index" [header]="r.header" [selected]="i===0">
-        <ul class="result-lines">
-          <li *ngFor="let ln of r.lines">{{ ln }}</li>
-        </ul>
-      </p-accordionTab>
-    </p-accordion>
-  </p-card>
+<app-page-header [heading]="'S79.TITLE' | lbl:'Domain Investigation'" [icon]="'fas fa-search-plus'"></app-page-header>
+<div style="padding:2rem;text-align:center;color:#888">
+  <i class="fas fa-search-plus" style="font-size:3rem;display:block;margin-bottom:1rem;color:#ccc"></i>
+  <h3>{{ 'S79.STUB.H' | lbl:'Domain Investigation' }}</h3>
+  <p>{{ 'S79.STUB.M' | lbl:'Under development' }}</p>
+  <p class="text-muted">{{ 'S79.STUB.D' | lbl:'This screen will be available in a future release.' }}</p>
 </div>

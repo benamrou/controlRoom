@@ -27,7 +27,9 @@ BEGIN
                 STOP_VALUE      VARCHAR2(200)  NOT NULL,
                 CONCLUSION_KEY  VARCHAR2(100)  NOT NULL,
                 STEP_LABEL      VARCHAR2(200),
-                CONSTRAINT pk_ai_diag_step PRIMARY KEY (SKILL_ID, STEP_ORDER, CONCLUSION_KEY)
+                STEP_TYPE       VARCHAR2(10)   DEFAULT 'HARD' NOT NULL,
+                CONSTRAINT pk_ai_diag_step PRIMARY KEY (SKILL_ID, STEP_ORDER, CONCLUSION_KEY),
+                CONSTRAINT chk_diag_step_type CHECK (STEP_TYPE IN ('HARD','SOFT'))
             )
         ]';
         DBMS_OUTPUT.PUT_LINE('AI_DIAGNOSTIC_STEP created.');
@@ -71,8 +73,36 @@ END;
 
 COMMIT;
 
+-- ── PATCH: add STEP_TYPE if column is missing (existing DBs that ran script before this column) ──
+-- Safe to run unconditionally — ALTER TABLE will ORA-00955 guard is not needed
+-- because we check user_tab_columns before executing.
+DECLARE
+    v_exists NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_exists
+    FROM user_tab_columns
+    WHERE table_name  = 'AI_DIAGNOSTIC_STEP'
+      AND column_name = 'STEP_TYPE';
+
+    IF v_exists = 0 THEN
+        EXECUTE IMMEDIATE q'[ALTER TABLE AI_DIAGNOSTIC_STEP ADD (STEP_TYPE VARCHAR2(10) DEFAULT 'HARD' NOT NULL)]';
+        EXECUTE IMMEDIATE q'[ALTER TABLE AI_DIAGNOSTIC_STEP ADD CONSTRAINT chk_diag_step_type CHECK (STEP_TYPE IN ('HARD','SOFT'))]';
+        DBMS_OUTPUT.PUT_LINE('AI_DIAGNOSTIC_STEP.STEP_TYPE column added.');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('AI_DIAGNOSTIC_STEP.STEP_TYPE already exists — skipped.');
+    END IF;
+END;
+/
+
+COMMIT;
+
 -- Verification
 SELECT table_name, num_rows
 FROM user_tables
 WHERE table_name IN ('AI_DIAGNOSTIC_STEP', 'AI_DIAGNOSTIC_CONCLUSION')
 ORDER BY table_name;
+
+SELECT column_name, data_type, data_default, nullable
+FROM user_tab_columns
+WHERE table_name = 'AI_DIAGNOSTIC_STEP'
+ORDER BY column_id;

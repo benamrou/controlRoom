@@ -183,6 +183,20 @@ module.exports = function (app, SQL) {
             vendor_text: body.vendor_text,
             question_text: body.question_text
         };
+        // Issue 4 — relative date normalization. When the user says "last week" or
+        // "past 7 days" and no explicit date range was passed, resolve it so
+        // _date_explicit becomes true and MOVEMENT/HISTORY templates are not wrongly
+        // demoted by the temporal guard in pickExecutionTemplate.
+        if (!ctx._date_explicit && ctx.question_text) {
+            if (typeof lex.extractRelativeDate === "function") {
+                const relDate = lex.extractRelativeDate(ctx.question_text);
+                if (relDate) {
+                    ctx.date_from = relDate.date_from;
+                    ctx.date_to   = relDate.date_to;
+                    ctx._date_explicit = true;
+                }
+            }
+        }
         const skip = { skill_id: 1, intent_type: 1, template_code: 1, bindings: 1, entities: 1 };
         Object.keys(body).forEach(function (k) {
             if (!skip[k] && body[k] != null && body[k] !== "") {
@@ -221,6 +235,7 @@ module.exports = function (app, SQL) {
         bindString(/:supplier_id\b/gi, ctx.supplier_id);
         bindString(/:vendor_text\b/gi, ctx.vendor_text);
         bindString(/:ean\b/gi, ctx.ean);
+        bindString(/:lu_id\b/gi, ctx.lu_id);
         bindString(/:order_ref\b/gi, ctx.order_ref);
         bindString(/:site_id\b/gi, ctx.site_id);
         bindString(/:retailer_id\b/gi, ctx.retailer_id);
@@ -469,7 +484,7 @@ module.exports = function (app, SQL) {
         for (let i = 0; i < RETRIEVAL_PATTERNS.length; i += 1) {
             if (RETRIEVAL_PATTERNS[i].test(t)) { return "RETRIEVAL"; }
         }
-        if (/\b(why|root\s+cause|blocked|issue|problem|failed|short\s+shipment|exception|not\s+received|unconfirmed|mismatch|variance|negative\s+stock)\b/.test(t)) {
+        if (/\b(why|root\s+cause|blocked|issue|problem|failed|short\s+shipment|exception|not\s+received|unconfirmed|mismatch|variance|negative\s+stock|can.?t\s+order|cannot\s+order|unable\s+to\s+order|not\s+orderable|order\s+blocked|can.?t\s+place\s+order|not\s+able\s+to\s+order)\b/.test(t)) {
             return "DIAGNOSTIC";
         }
         if (/\b(how\s+is|performance|fill\s+rate|reliable|reliability|health|status\s+of\s+supplier|on[\-\s]time)\b/.test(t)) {
@@ -488,6 +503,9 @@ module.exports = function (app, SQL) {
         // "how is supplier LIPARI performing", "status of supplier UNILEVER"
         m = raw.match(/(?:supplier|vendor)\s+([a-z0-9\-\s&\.]+?)(?:\s+performing|\s+reliable|\s+health|\?|$)/i);
         if (m && m[1]) { return m[1].trim().replace(/[\s\.]+$/, ""); }
+        // "what about MIDLAND", "how about UNILEVER"
+        m = raw.match(/^(?:what|how)\s+about\s+([a-z0-9\-\s&\.]+?)(?:\s*\?|$)/i);
+        if (m && m[1]) { return m[1].trim().replace(/[\s\.]+$/, ""); }
         return "";
     }
 
@@ -504,6 +522,26 @@ module.exports = function (app, SQL) {
             /\b(?:store|site|warehouse)\s*(?:id|#|=|:)?\s*(\d{1,6})\b/i,
             /\bsite_id\s*(?:=|:)?\s*(\d{1,6})\b/i,
             /\bstore_id\s*(?:=|:)?\s*(\d{1,6})\b/i
+        ];
+        for (let i = 0; i < patterns.length; i += 1) {
+            const m = raw.match(patterns[i]);
+            if (m && m[1]) { return m[1]; }
+        }
+        return "";
+    }
+
+    /**
+     * LU / article code from the question. Recognises:
+     *   "item 100100", "article 100100", "codart 100100", "lu 100100",
+     *   "artrac 100100", "cinr 100100", "product 100100", "sku 100100"
+     * Always requires a keyword prefix so the result doesn't conflict
+     * with site_id (short) or EAN (8–14 digits).
+     */
+    function extractLuId(text) {
+        const raw = String(text || "").trim();
+        const patterns = [
+            /\b(?:item|article|codart|lu|lu_id|artrac|artcexr|cinr|artcexr)\s*(?:code|#|no\.?|=|:)?\s*(\d{4,8})\b/i,
+            /\b(?:product|sku)\s*(?:code|#|no\.?)?\s*[:#=]?\s*(\d{4,8})\b/i
         ];
         for (let i = 0; i < patterns.length; i += 1) {
             const m = raw.match(patterns[i]);
@@ -693,17 +731,19 @@ module.exports = function (app, SQL) {
                         const siteIdFromText = extractSiteId(question_text);
                         const orderRefFromText = extractOrderRef(question_text);
                         const eanFromText = orderRefFromText ? "" : extractEan(question_text);
+                        const luIdFromText = extractLuId(question_text);
                         const questionPhrases = lex.phraseSet(question_text, 3);
 
                         // Phase 8 — designer-driven entity extraction from BIND_HINT vocab.
-                        // Hardcoded extractors (extractVendorText, extractSiteId, extractEan)
-                        // are checked first, so a designer's "for store" row never overrides
-                        // a value already captured by the regex layer.
+                        // Hardcoded extractors (extractVendorText, extractSiteId, extractEan,
+                        // extractLuId) are checked first, so a designer's vocab row never
+                        // overrides a value already captured by the regex layer.
                         const hardcodedExtracted = {
-                            site_id: siteIdFromText || null,
+                            lu_id:      luIdFromText || null,
+                            site_id:    siteIdFromText || null,
                             vendor_text: vendorText || null,
-                            order_ref: orderRefFromText || null,
-                            ean: eanFromText || null
+                            order_ref:  orderRefFromText || null,
+                            ean:        eanFromText || null
                         };
                         const bindHintResult = extractEntitiesFromBindHints(
                             question_text,
@@ -801,6 +841,18 @@ module.exports = function (app, SQL) {
                                 score += 18;
                             }
 
+                            // Issue 2 — entity-presence bonuses. Mirror the vendorText +12
+                            // for supplier-domain skills: give ITEM_MASTER/ITEM_RETAIL a boost
+                            // when an item identifier or store-without-vendor was extracted, so
+                            // they are not beaten by DSD/supplier skills on vocab overlap alone.
+                            const luId = luIdFromText || bindHintEntities.lu_id;
+                            if (luId && /ITEM_MASTER|ITEM_RETAIL/i.test(String(code || ""))) {
+                                score += 15;
+                            }
+                            if (siteIdFromText && !vendorText && /ITEM_MASTER|ITEM_RETAIL/i.test(String(code || ""))) {
+                                score += 8;
+                            }
+
                             return {
                                 skill_id: sidSkill,
                                 skill_code: code,
@@ -853,18 +905,31 @@ module.exports = function (app, SQL) {
                             };
 
                             if (!vendorText) {
-                                return res.status(200).json({
-                                    intent_type: intent,
-                                    confidence,
-                                    selected_skill_id: top.skill_id,
-                                    selected_skill_code: top.skill_code,
-                                    entities: mergeRouteEntities(),
-                                    bind_hint_extractions: bindHintExtractions,
-                                    requires_clarification: false,
-                                    requested_sql_templates: [],
-                                    alternatives: scored.slice(1, 4),
-                                    routing_diagnostics: routingDiagnostics
-                                });
+                                const sendRouteResponse = function (diagAvailable) {
+                                    routingDiagnostics.diagnostic_available = diagAvailable;
+                                    routingDiagnostics.suggested_chain_skill_id = diagAvailable ? top.skill_id : null;
+                                    return res.status(200).json({
+                                        intent_type: intent,
+                                        confidence,
+                                        selected_skill_id: top.skill_id,
+                                        selected_skill_code: top.skill_code,
+                                        entities: mergeRouteEntities(),
+                                        bind_hint_extractions: bindHintExtractions,
+                                        requires_clarification: false,
+                                        requested_sql_templates: [],
+                                        alternatives: scored.slice(1, 4),
+                                        routing_diagnostics: routingDiagnostics
+                                    });
+                                };
+                                // Issue 5 — when DIAGNOSTIC intent, check whether the top skill
+                                // has authored AI_DIAGNOSTIC_STEP rows. If yes, signal the client
+                                // to call /diagnose-chain instead of /execute.
+                                if (intent === "DIAGNOSTIC") {
+                                    return executeLib(Q.DIAG_STEPS, [top.skill_id], user, sid, lang, req, fr, function (dsErr, dsRows) {
+                                        sendRouteResponse(!dsErr && dsRows && dsRows.length > 0);
+                                    });
+                                }
+                                return sendRouteResponse(false);
                             }
 
                             const tplList = firstArray(tplRows).map(function (t) {
@@ -897,7 +962,17 @@ module.exports = function (app, SQL) {
                             const resolveRendered = renderTemplateForExecution(
                                 resolveTpl.sql_text,
                                 resolveTpl.parameters_json,
-                                { vendor_text: vendorText, retailer_id: retailer_id }
+                                {
+                                    vendor_text: vendorText,
+                                    // Pass extracted vendor name as question_text too — older
+                                    // ENGINE_VENDOR_RESOLVE variants use a WITH q CTE that
+                                    // extracts vendor_guess from :question_text via Oracle regex.
+                                    // When vendorText is already clean (e.g. "Midland"), passing
+                                    // it here bypasses the Oracle regex step cleanly.
+                                    // Newer templates that use :vendor_text directly ignore this.
+                                    question_text: vendorText || question_text,
+                                    retailer_id: retailer_id
+                                }
                             );
                             if (resolveRendered.missing.length) {
                                 return res.status(200).json({
@@ -1312,14 +1387,16 @@ module.exports = function (app, SQL) {
                         const siteIdFromText = extractSiteId(question_text);
                         const orderRefFromText = extractOrderRef(question_text);
                         const eanFromText    = orderRefFromText ? "" : extractEan(question_text);
+                        const luIdFromText   = extractLuId(question_text);
                         const questionPhrases = lex.phraseSet(question_text, 3);
 
                         // Phase 8 — bind-hint extraction (audited for the Playground).
                         const hardcodedExtracted = {
-                            site_id: siteIdFromText || null,
+                            lu_id:      luIdFromText || null,
+                            site_id:    siteIdFromText || null,
                             vendor_text: vendorText || null,
-                            order_ref: orderRefFromText || null,
-                            ean: eanFromText || null
+                            order_ref:  orderRefFromText || null,
+                            ean:        eanFromText || null
                         };
                         const bindHintResult = extractEntitiesFromBindHints(
                             question_text,
@@ -1423,6 +1500,17 @@ module.exports = function (app, SQL) {
                                 const bump = Math.min(8, vocabHits * 2);
                                 score += bump;
                                 breakdown.push({ factor: "vocab hits multiplier", delta: bump });
+                            }
+
+                            // Issue 2 (mirrors module.route scorer)
+                            const luId = luIdFromText || bindHintEntities.lu_id;
+                            if (luId && /ITEM_MASTER|ITEM_RETAIL/i.test(String(code || ""))) {
+                                score += 15;
+                                breakdown.push({ factor: "lu_id entity present + item-domain skill", delta: 15 });
+                            }
+                            if (siteIdFromText && !vendorText && /ITEM_MASTER|ITEM_RETAIL/i.test(String(code || ""))) {
+                                score += 8;
+                                breakdown.push({ factor: "site_id present, no vendor, item-domain skill", delta: 8 });
                             }
 
                             return {
@@ -1529,8 +1617,11 @@ module.exports = function (app, SQL) {
         for (const k of Object.keys(row)) {
             if (String(k).toUpperCase() === fieldUp) { rawVal = row[k]; break; }
         }
-        if (rawVal === null || rawVal === undefined) { return false; }
         const op = String(operator || "=").trim().toUpperCase();
+        // IS NULL / IS NOT NULL must be evaluated before the null guard below.
+        if (op === "IS NULL")     { return rawVal === null || rawVal === undefined || String(rawVal).trim() === ""; }
+        if (op === "IS NOT NULL") { return rawVal !== null && rawVal !== undefined && String(rawVal).trim() !== ""; }
+        if (rawVal === null || rawVal === undefined) { return false; }
         const expected = String(value || "").trim();
         const actual = String(rawVal).trim();
         if (op === "="  || op === "EQ") { return actual === expected; }
@@ -1617,22 +1708,120 @@ module.exports = function (app, SQL) {
                         .sort(function (a, b) { return a - b; });
 
                     const diagnosticSteps = [];   // audit trail per step
+                    const allIssues = [];          // {conclusionKey, stepCtx, isHard, stepLabel}
                     let stepIdx = 0;
+                    let chainAborted = false;
 
-                    function runNextOrder() {
-                        if (stepIdx >= sortedOrders.length) {
-                            // All steps exhausted — no condition matched
+                    // Called once all steps are done (or a HARD stop fires).
+                    // Loads every collected issue's conclusion in series, then synthesizes
+                    // a multi-issue response via composer.synthesizeMultipleDiagnostics.
+                    function finalizeDiagnosis() {
+                        if (!allIssues.length) {
                             return res.status(200).json({
                                 success: true,
                                 no_conclusion_reached: true,
-                                human_summary: "The diagnostic chain completed all steps but no specific root cause was identified. The item may be functioning correctly or the issue falls outside this diagnostic's scope.",
+                                issues_found: 0,
+                                human_summary: "The diagnostic chain completed all checks but found no blocking issue. The item appears to be correctly configured for ordering.",
                                 evidence_facts: diagnosticSteps.map(function (ds) {
-                                    return ds.step_label + ": checked — no stop condition matched.";
+                                    return (ds.step_label || ds.template_code) + ": passed.";
                                 }),
-                                follow_up_hint: "Try a different diagnostic skill or check the item-store configuration manually.",
+                                follow_up_hint: "If ordering is still blocked, check the order manually in GOLD or contact the supply chain team.",
                                 diagnostic_steps: diagnosticSteps,
                                 skill_id: skill_id
                             });
+                        }
+
+                        // Load each conclusion template in sequence, then synthesize
+                        const conclusionPairs = [];
+                        let cIdx = 0;
+
+                        function loadNextConclusion() {
+                            if (cIdx >= allIssues.length) {
+                                // All conclusions loaded — synthesize multi-issue response
+                                const synthesized = composer.synthesizeMultipleDiagnostics(
+                                    diagnosticSteps,
+                                    conclusionPairs,
+                                    ctx
+                                );
+                                const hasHardStop = allIssues.some(function (i) { return i.isHard; });
+                                return res.status(200).json({
+                                    success: true,
+                                    skill_id: skill_id,
+                                    issues_found: allIssues.length,
+                                    has_hard_stop: hasHardStop,
+                                    conclusions: conclusionPairs.map(function (cp) {
+                                        return {
+                                            conclusion_key: cp.conclusionKey,
+                                            severity: cp.conclusion
+                                                ? String(cp.conclusion.SEVERITY || cp.conclusion.severity || "INFO")
+                                                : "INFO",
+                                            is_hard_stop: cp.isHard,
+                                            step_label: cp.stepLabel
+                                        };
+                                    }),
+                                    // Scalar fields for backward compat (single-issue path)
+                                    conclusion_key: allIssues.length === 1 ? allIssues[0].conclusionKey : null,
+                                    severity: synthesized.overall_severity || "INFO",
+                                    human_summary: synthesized.summary,
+                                    evidence_facts: synthesized.insights,
+                                    follow_up_hint: synthesized.follow_up_hint,
+                                    diagnostic_steps: diagnosticSteps,
+                                    bind_context: ctx
+                                });
+                            }
+
+                            const issue = allIssues[cIdx];
+                            cIdx++;
+                            executeLib(Q.DIAG_CONCLUSION, [issue.conclusionKey, retailer_id], user, sid, lang, req, fr, function (cErr, conclusionRows) {
+                                let conclusion = null;
+                                if (!cErr && conclusionRows && conclusionRows.length) {
+                                    conclusion = conclusionRows[0];
+                                }
+                                conclusionPairs.push({
+                                    conclusionKey: issue.conclusionKey,
+                                    stepCtx: issue.stepCtx,
+                                    isHard: issue.isHard,
+                                    stepLabel: issue.stepLabel,
+                                    conclusion: conclusion
+                                });
+                                loadNextConclusion();
+                            });
+                        }
+
+                        loadNextConclusion();
+                    }
+
+                    function runNextOrder() {
+                        if (stepIdx >= sortedOrders.length || chainAborted) {
+                            // Distinguish "all steps skipped (missing params)" from normal completion
+                            const allSkipped = diagnosticSteps.length > 0 &&
+                                diagnosticSteps.every(function (ds) { return ds.skipped; });
+                            if (allSkipped) {
+                                const missingSet = {};
+                                diagnosticSteps.forEach(function (ds) {
+                                    if (ds.reason) {
+                                        ds.reason.replace("Missing parameters: ", "").split(", ").forEach(function (p) {
+                                            if (p.trim()) { missingSet[p.trim()] = true; }
+                                        });
+                                    }
+                                });
+                                const missingParams = Object.keys(missingSet);
+                                return res.status(200).json({
+                                    success: false,
+                                    no_conclusion_reached: true,
+                                    missing_params: missingParams,
+                                    human_summary: "The diagnostic chain could not run — required context is missing: " +
+                                        (missingParams.join(", ") || "unknown parameters") +
+                                        ". Include the item code, store number, or other required detail in your question.",
+                                    evidence_facts: [],
+                                    follow_up_hint: "Provide: " + (missingParams.join(", ") || "the required context"),
+                                    diagnostic_steps: diagnosticSteps,
+                                    skill_id: skill_id
+                                });
+                            }
+
+                            // All steps ran (or chain aborted by HARD stop) — collect results
+                            return finalizeDiagnosis();
                         }
 
                         const order = sortedOrders[stepIdx];
@@ -1677,7 +1866,9 @@ module.exports = function (app, SQL) {
                                 rows: rows,
                                 conditions_evaluated: conditions.length,
                                 stopped_here: false,
-                                matched_conclusion: null
+                                issue_found: false,
+                                matched_conclusion: null,
+                                issue_type: null
                             };
 
                             if (qErr) {
@@ -1691,7 +1882,6 @@ module.exports = function (app, SQL) {
                             if (rows && rows.length) {
                                 Object.keys(rows[0]).forEach(function (col) {
                                     stepCtx[col.toLowerCase()] = rows[0][col];
-                                    // Also store under original casing
                                     stepCtx[col] = rows[0][col];
                                 });
                             }
@@ -1704,8 +1894,10 @@ module.exports = function (app, SQL) {
                                 const stopOperator = pick(cond, "STOP_OPERATOR", "stop_operator");
                                 const stopValue    = pick(cond, "STOP_VALUE",    "stop_value");
                                 const conclusionKey = pick(cond, "CONCLUSION_KEY", "conclusion_key");
+                                // STEP_TYPE: HARD = abort chain on match; SOFT = record issue, continue
+                                const stepType = String(pick(cond, "STEP_TYPE", "step_type") || "HARD").toUpperCase();
                                 if (evaluateStopCondition(rows, stopField, stopOperator, stopValue)) {
-                                    matched = { conclusionKey, stepCtx };
+                                    matched = { conclusionKey, stepCtx, stepType };
                                     break;
                                 }
                             }
@@ -1715,33 +1907,28 @@ module.exports = function (app, SQL) {
                                 return runNextOrder();
                             }
 
-                            // Condition matched — load conclusion template
-                            auditEntry.stopped_here = true;
+                            // Condition matched — record issue
+                            const isHard = matched.stepType === "HARD";
+                            auditEntry.issue_found = true;
+                            auditEntry.issue_type = matched.stepType;
                             auditEntry.matched_conclusion = matched.conclusionKey;
+                            auditEntry.stopped_here = isHard;
                             diagnosticSteps.push(auditEntry);
 
-                            executeLib(Q.DIAG_CONCLUSION, [matched.conclusionKey, retailer_id], user, sid, lang, req, fr, function (cErr, conclusionRows) {
-                                let conclusion = null;
-                                if (!cErr && conclusionRows && conclusionRows.length) {
-                                    conclusion = conclusionRows[0];
-                                }
-                                const synthesized = composer.synthesizeDiagnostic(
-                                    diagnosticSteps,
-                                    conclusion,
-                                    matched.stepCtx
-                                );
-                                return res.status(200).json({
-                                    success: true,
-                                    skill_id: skill_id,
-                                    conclusion_key: matched.conclusionKey,
-                                    severity: synthesized.severity || "INFO",
-                                    human_summary: synthesized.summary,
-                                    evidence_facts: synthesized.insights,
-                                    follow_up_hint: synthesized.follow_up_hint,
-                                    diagnostic_steps: diagnosticSteps,
-                                    bind_context: ctx
-                                });
+                            allIssues.push({
+                                conclusionKey: matched.conclusionKey,
+                                stepCtx: matched.stepCtx,
+                                isHard: isHard,
+                                stepLabel: stepLabel
                             });
+
+                            if (isHard) {
+                                // HARD stop — abort remaining steps and finalize
+                                chainAborted = true;
+                                return finalizeDiagnosis();
+                            }
+                            // SOFT issue — record and continue to next step
+                            return runNextOrder();
                         });
                     }
 

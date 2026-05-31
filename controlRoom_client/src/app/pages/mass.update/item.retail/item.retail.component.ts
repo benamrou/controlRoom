@@ -1,6 +1,9 @@
 import {Component, ViewEncapsulation, OnInit, ViewChild} from '@angular/core';
 import { WarehouseService, WidgetService, ExportService, ImportService } from '../../../shared/services';
 import { MenuItem } from 'primeng/api';
+import { buildMassUpdateMenuItems } from '../../../shared/i18n/mass-update-i18n.helper';
+import { LabelService } from '../../../shared/services/labels/labels.service';
+import { Subscription } from 'rxjs';
 import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
 import {DatePipe} from '@angular/common';   
@@ -26,6 +29,7 @@ export class ItemRetailComponent implements OnInit{
    // Menu/Qorkflow list
    activeIndex: number = 0;
    menuItems: MenuItem[] = [];
+  private labelSub?: Subscription;
    uploadedFiles: any[] = [];
 
    templateID = 'ICR_TEMPLATE019';
@@ -80,7 +84,7 @@ export class ItemRetailComponent implements OnInit{
   displayConfirm: boolean;
 
   constructor(private _widgetService: WidgetService, private _messageService: MessageService,
-              private _exportService: ExportService, public _importService: ImportService) {
+              private _exportService: ExportService, public _importService: ImportService, private _labels: LabelService) {
     this.datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
     this.dateTomorrow =  new Date(this.dateNow.setDate(this.dateNow.getDate() + 1));
@@ -100,43 +104,28 @@ export class ItemRetailComponent implements OnInit{
 
 
   ngOnInit() {
-      this.menuItems = [{
-              id: 'step0',
-              label: 'Data selection',
-              title: 'Pick your item retail file',
-              command: (event: any) => {
-                  this.activeIndex = 0;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Pick your data file item retail', detail: event.item.label});
-              }
-          },
-          {
-              id: 'step1',
-              label: 'Configuration',
-              title: 'Define changes parameter',
-              command: (event: any) => {
-                this.activeIndex = 1;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Specify change configuration', detail: event.item.label});
-              }
-          },
-          {
-              id: 'step2',
-              label: 'Execution/Schedule',
-              title: 'Execute now or schedule the change',
-              command: (event: any) => {
-                  this.activeIndex = 2;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Execute or Schedule change', detail: event.item.label});
-              }
-          },
-          {
-              id: 'step3',
-              label: 'Confirmation',
-              title: 'Confirmation for execution/planification',
-              command: (event: any) => {
-                  this.activeIndex = 3;
-                  this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Wrap up', detail: event.item.label});
-              }
-          }
-      ];
+    this.buildMassUpdateSteps();
+    this.labelSub = this._labels.revision$.subscribe(() => this.buildMassUpdateSteps());
+  }
+
+  private buildMassUpdateSteps(): void {
+    this.menuItems = buildMassUpdateMenuItems(this._labels, this._labels.text('S16.RTL.STP0', 'Select your Item retail file change.'));
+    const steps: { i: number; sumKey: string; sumFb: string }[] = [
+      { i: 0, sumKey: 'MU.TOAST.S0', sumFb: 'Pick your data file' },
+      { i: 1, sumKey: 'MU.TOAST.S1', sumFb: 'Specify change configuration' },
+      { i: 2, sumKey: 'MU.TOAST.S2', sumFb: 'Execute or Schedule change' },
+      { i: 3, sumKey: 'MU.TOAST.S3', sumFb: 'Wrap up' },
+    ];
+    steps.forEach((s) => {
+      this.menuItems[s.i].command = (event: any) => {
+        this.activeIndex = s.i;
+        this._messageService.add({
+          key: 'top', sticky: true, severity: 'info',
+          summary: this._labels.text(s.sumKey, s.sumFb),
+          detail: event.item.label,
+        });
+      };
+    });
   }
 
   onBeforeUpload(event) {

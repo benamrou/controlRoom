@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AiDataHealthConfigComponent } from './ai.data.health.config.component';
 import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
+import { I18nModule } from 'src/app/shared/pipes/i18n.module';
 import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -19,7 +20,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   imports: [
-    RouterModule, CommonModule, FormsModule, PageHeaderModule,
+    RouterModule, CommonModule, FormsModule, PageHeaderModule, I18nModule,
     DropdownModule, TableModule, TagModule, ButtonModule,
     InputTextModule, InputTextareaModule, InputNumberModule, InputSwitchModule,
     DialogModule, ToastModule, TooltipModule, ConfirmDialogModule

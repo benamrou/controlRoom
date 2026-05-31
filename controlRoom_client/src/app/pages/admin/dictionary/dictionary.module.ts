@@ -19,6 +19,7 @@ import { TagModule } from 'primeng/tag';
 import { DividerModule } from 'primeng/divider';
 import { RippleModule } from 'primeng/ripple';
 import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
+import { I18nModule } from 'src/app/shared/pipes/i18n.module';
 
 // Services
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -33,7 +34,7 @@ import { DictionaryComponent } from './dictionary.component';
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule,PageHeaderModule,
+    RouterModule,PageHeaderModule, I18nModule,
     // PrimeNG
     TableModule,
     TabViewModule,

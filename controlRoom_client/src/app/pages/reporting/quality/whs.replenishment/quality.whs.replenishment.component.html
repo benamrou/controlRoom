@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Warehouse Replenishment dashboard'" [icon]="'fa-industry'"
+<app-page-header [heading]="'S10.TITLE' | lbl:'Warehouse Replenishment dashboard'" [icon]="'fa-industry'"
                  [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
                  
 <div class="content-section implementation" style="padding: 5px;">
@@ -8,20 +8,20 @@
 
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Warehouse : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S10.LBL.WHS' | lbl:'Warehouse :' }} </span>
     <bbs-multiselect [options]="warehouses" 
                     (shareCheckedList)="shareCheckedList($any($event))" 
                     (shareCheckedCodeList)="shareCheckedCodeList($any($event))" 
                     (shareIndividualCheckedList)="shareIndividualCheckedList($event)">
     </bbs-multiselect>
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S10.LBL.SUP' | lbl:'Supplier :' }} </span>
     <span style="padding-right: .5em;align-self: center;">
-        <input type="text"  [(ngModel)]="searchVendorCode" placeholder="  Enter a code or a description" 
+        <input type="text"  [(ngModel)]="searchVendorCode" [placeholder]="'S10.PLH.CODE' | lbl:'  Enter a code or a description'" 
                style="margin-left: 10px;height: 35px;width: 200%;"/>     
     </span>
 
     <span class="pull-right" style="padding-right: 20px">
-        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S10.BTN.SRCH' | lbl:'SEARCH'" 
                 [disabled]="periodStart == '' || periodEnd === '' " 
                 [style]="{'height': '35px'}"
                 style="margin-right: 15px"></button>
@@ -29,7 +29,7 @@
     </span>
 </div>
 <div class="bbs_search_sub_panel"  >
-    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Period start : </span>
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S10.LBL.PST' | lbl:'Period start :' }} </span>
     <p-calendar [(ngModel)]="periodStart"  
                 [minDate]="dateTomorrow"
                 [readonlyInput]="true"
@@ -38,7 +38,7 @@
                 [style]="{'height': '35px'}"
                 [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
-    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Period end : </span>
+    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">{{ 'S10.LBL.PEN' | lbl:'Period end :' }} </span>
     <p-calendar [(ngModel)]="periodEnd"  
                 [minDate]="dateTomorrow"
                 [readonlyInput]="true"
@@ -49,12 +49,12 @@
 </div>
 <p></p>
 
-<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'S10.DLG.UPD' | lbl:'Update completed'" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
 </p-dialog>
@@ -88,11 +88,11 @@
         <div>
             <button type="button" pButton icon="fas fa-file" iconPos="left" 
                 class="CSV_Button"
-                label="CSV" (click)="result.exportCSV()" style="float:left">
+                [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
             </button>
         </div>
         <div style="padding-left: 80%;">
-            <input  type="text" #gb placeholder="Type text to filter..." 
+            <input  type="text" #gb [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" 
                 style="width: 100%;"
                 (input)="result.filterGlobal($any($event.target).value, 'contains')">
         </div>

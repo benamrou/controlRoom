@@ -11,6 +11,7 @@ import { ToastModule } from 'primeng/toast';
 import { DropdownModule } from 'primeng/dropdown';
 import { TabViewModule } from 'primeng/tabview';
 import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
+import { I18nModule } from 'src/app/shared/pipes/i18n.module';
 import { SettingCustomerComponent } from './setting.customer.component';
 
 @NgModule({
@@ -28,6 +29,7 @@ import { SettingCustomerComponent } from './setting.customer.component';
     DropdownModule,
     TabViewModule,
     PageHeaderModule,
+    I18nModule,
   ],
   exports: [SettingCustomerComponent],
 })

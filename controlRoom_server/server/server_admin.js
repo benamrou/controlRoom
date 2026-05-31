@@ -74,7 +74,7 @@ app.options('*', cors(corsOptions)); // Handle all preflight OPTIONS requests
 
 
 /* Publish the available routes and methodes */
-let dbConnection = require('./server/utils/dbconnect');
+let dbConnection = require('./server/utils/dbconnect.js');
 let SQL = require('./server/utils/sqlquery.js');
 let userprofile=	require('./server/controller/userprofile.js')(app, SQL);
 let authentification=	require('./server/controller/authentification.js')(app, SQL);
@@ -84,46 +84,47 @@ let searchObject = require('./server/controller/searchobject.js')(app, SQL);
 let itemObject = require('./server/controller/item.js')(app, SQL);
 let itemCost = require('./server/controller/itemcost.js')(app, SQL);
 let itemRetail = require('./server/controller/itemretail.js')(app, SQL);
-let itemSubstitution = require('./server/controller/itemsubstitution')(app, SQL);
-let itemInventory = require('./server/controller/iteminventory')(app, SQL);
-let itemCAO = require('./server/controller/itemcao')(app, SQL);
-let supplierSchedule = require('./server/controller/supplierschedule')(app, SQL);
-let counting = require('./server/controller/counting')(app, SQL);
-let batchprocess = require('./server/controller/process')(app, SQL);
-let order = require('./server/controller/order')(app, SQL);
-let labels = require('./server/controller/labels')(app, SQL);
-let upload = require('./server/controller/upload')(app, SQL);
-let ls = require('./server/controller/patcher/ls')(app, SQL);
-let command = require('./server/controller/command/execute')(app, SQL);
+let itemSubstitution = require('./server/controller/itemsubstitution.js')(app, SQL);
+let itemInventory = require('./server/controller/iteminventory.js')(app, SQL);
+let itemCAO = require('./server/controller/itemcao.js')(app, SQL);
+let supplierSchedule = require('./server/controller/supplierschedule.js')(app, SQL);
+let counting = require('./server/controller/counting.js')(app, SQL);
+let batchprocess = require('./server/controller/process.js')(app, SQL);
+let order = require('./server/controller/order.js')(app, SQL);
+let labels = require('./server/controller/labels.js')(app, SQL);
+let upload = require('./server/controller/upload.js')(app, SQL);
+let ls = require('./server/controller/patcher/ls.js')(app, SQL);
+let command = require('./server/controller/command/execute.js')(app, SQL);
 let logger = require('./server/utils/logger.js');     // Log manager
-let widget = require('./server/controller/widget')(app, SQL);
-let notification = require('./server/controller/notification')(app, SQL);/* ═══════════════════════════════════════════════════════════ */
+let widget = require('./server/controller/widget.js')(app, SQL);
+let notification = require('./server/controller/notification.js')(app, SQL);/* ═══════════════════════════════════════════════════════════ */
 /* SUPPLY CHAIN AI MODULE                                       */
 /* All AI controllers are isolated in controller/ai/           */
 /* ═══════════════════════════════════════════════════════════ */
-let aiRetailer      = require('./server/controller/ai/ai.retailer')(app, SQL);
-let aiView          = require('./server/controller/ai/ai.view')(app, SQL);
-let aiSchema        = require('./server/controller/ai/ai.schema')(app, SQL);
-let aiEngine        = require('./server/controller/ai/ai.engine')(app, SQL);
+let aiRetailer      = require('./server/controller/ai/ai.retailer.js')(app, SQL);
+let aiView          = require('./server/controller/ai/ai.view.js')(app, SQL);
+let aiSchema        = require('./server/controller/ai/ai.schema.js')(app, SQL);
+let aiEngine        = require('./server/controller/ai/ai.engine.js')(app, SQL);
 
-let warehouse = require('./server/controller/warehouse/itemdata')(app, SQL);
-let crontab   = require('./server/controller/crontab')(app, SQL);
+let warehouse = require('./server/controller/warehouse/itemdata.js')(app, SQL);
+let crontab   = require('./server/controller/crontab.js')(app, SQL);
 /* Alert Watch — registers GET /api/watchdog/scan (cron: scripts/icr/run_watchdog.sh) */
-let watchdog  = require('./server/controller/watchdog')(app, SQL);
-let finance = require('./server/controller/finance')(app, SQL);
-let scorecard = require('./server/controller/scorecard')(app, SQL);
-let dashboard = require('./server/controller/dashboard')(app, SQL);
-let supplier = require('./server/controller/supplier')(app, SQL);
-let query = require('./server/controller/query')(app, SQL);
-let reporting = require('./server/controller/reporting')(app, SQL);
+let watchdog  = require('./server/controller/watchdog.js')(app, SQL);
+let appLogs   = require('./server/controller/app.logs.js')(app);
+let finance = require('./server/controller/finance.js')(app, SQL);
+let scorecard = require('./server/controller/scorecard.js')(app, SQL);
+let dashboard = require('./server/controller/dashboard.js')(app, SQL);
+let supplier = require('./server/controller/supplier.js')(app, SQL);
+let query = require('./server/controller/query.js')(app, SQL);
+let reporting = require('./server/controller/reporting.js')(app, SQL);
 //let gdrive = require('./server/controller/gdrive')(app, SQL);
-let executeSQL = require('./server/controller/executeSQL')(app, SQL);
-let ubd = require('./server/controller/ubd')(app, SQL);
-let alerts = require('./server/controller/alerts')(app, SQL);
-let syndigo = require('./server/controller/syndigo')(app, SQL);
-let logs = require('./server/controller/logs')(app, SQL);
-let oneway = require('./server/controller/oneway')(app, SQL);
-let unix = require('./server/controller/command/unix')(app, SQL);
+let executeSQL = require('./server/controller/executeSQL.js')(app, SQL);
+let ubd = require('./server/controller/ubd.js')(app, SQL);
+let alerts = require('./server/controller/alerts.js')(app, SQL);
+let syndigo = require('./server/controller/syndigo.js')(app, SQL);
+let logs = require('./server/controller/logs.js')(app, SQL);
+let oneway = require('./server/controller/oneway.js')(app, SQL);
+let unix = require('./server/controller/command/unix.js')(app, SQL);
 
 
 //dbConnection.createPool('dd');

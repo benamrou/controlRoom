@@ -1,7 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { SettingsAdminService } from '../../../shared/services/settings/settings.admin.service';
+import { LabelService } from '../../../shared/services/labels/labels.service';
+
+export interface MenuTranslationRow {
+  MENU_CODE: string;
+  MENU_TYPE: string;
+  LEGACY_LABEL: string;
+  us_US: string;
+  en_GB: string;
+  fr_FR: string;
+  dirty?: boolean;
+}
 
 @Component({
   selector: 'app-setting-menu-access',
@@ -9,49 +20,32 @@ import { SettingsAdminService } from '../../../shared/services/settings/settings
   styleUrls: ['./setting.menu.access.component.scss'],
   providers: [ConfirmationService, MessageService],
 })
-export class SettingMenuAccessComponent implements OnInit {
+export class SettingMenuAccessComponent implements OnInit, OnDestroy {
   screenID = 'SCR0000000066';
   waitMessage = '';
   activeTab = 0;
 
-  readonly flagOptionItems: { label: string; value: string }[] = [
-    { label: 'All users', value: 'ALL' },
-    { label: 'Buyer', value: 'BUYER' },
-    { label: 'Helpdesk', value: 'HELPDESK' },
-    { label: 'IT', value: 'IT' },
-    { label: 'Data integrity', value: 'DATAINTEGRITY' },
-    { label: 'Tech Services', value: 'TECH' },
-    { label: 'Warehouse', value: 'WAREHOUSE' },
-    { label: 'Space planning', value: 'SPACE' },
-    { label: 'AI admin', value: 'AIADMIN' },
-    { label: 'AI designer', value: 'AIDESIGNER' },
-    { label: 'Admin (USERTYPE)', value: 'ADMIN' },
-  ];
-
-  readonly flagLabels: Record<string, string> = {
-    ALL: 'All users',
-    BUYER: 'Buyer',
-    HELPDESK: 'Helpdesk',
-    IT: 'IT',
-    DATAINTEGRITY: 'Data integrity',
-    TECH: 'Tech Services',
-    WAREHOUSE: 'Warehouse',
-    SPACE: 'Space planning',
-    AIADMIN: 'AI admin',
-    AIDESIGNER: 'AI designer',
-    ADMIN: 'Admin (USERTYPE)',
+  private static readonly FLAG_KEYS: Record<string, [string, string]> = {
+    ALL: ['CMN.ALL', 'All users'],
+    BUYER: ['S65.FLG.BUY', 'Buyer'],
+    HELPDESK: ['S65.FLG.HELP', 'Helpdesk'],
+    IT: ['S65.FLG.IT', 'IT'],
+    DATAINTEGRITY: ['S65.FLG.DI', 'Data integrity'],
+    TECH: ['S65.FLG.TECH', 'Tech Services'],
+    WAREHOUSE: ['S65.FLG.WH', 'Warehouse'],
+    SPACE: ['S65.FLG.SP', 'Space planning'],
+    AIADMIN: ['S65.FLG.AIA', 'AI admin'],
+    AIDESIGNER: ['S65.FLG.AID', 'AI designer'],
+    ADMIN: ['S65.UT.ADM', 'ICR admin (General Settings)'],
   };
+
+  flagOptionItems: { label: string; value: string }[] = [];
   readonly menuTypes = ['GROUP', 'ROUTE', 'LABEL', 'HEADER'];
   readonly menuModes = ['STANDARD', 'AI', 'ADMIN', 'BOTH'];
-  readonly activeOptions = [
-    { label: 'Active', value: 1 },
-    { label: 'Inactive', value: 0 },
-  ];
-  readonly catalogFilterOptions = [
-    { label: 'All', value: null as boolean | null },
-    { label: 'Active only', value: true },
-    { label: 'Inactive only', value: false },
-  ];
+  activeOptions: { label: string; value: number }[] = [];
+  catalogFilterOptions: { label: string; value: boolean | null }[] = [];
+
+  private labelSub?: Subscription;
 
   /** Flag rules table — includes FLAG_LABEL for friendly-name search. */
   readonly rulesTableGlobalFields = [
@@ -86,6 +80,11 @@ export class SettingMenuAccessComponent implements OnInit {
   loadingProfileMenus = false;
   savingProfileMenus = false;
 
+  translationRows: MenuTranslationRow[] = [];
+  loadingTranslations = false;
+  savingTranslations = false;
+  translationImportText = '';
+
   parentDropdown: { label: string; value: string | null }[] = [{ label: '(none — top level)', value: null }];
   menuCodeDropdown: { label: string; value: string }[] = [];
 
@@ -93,18 +92,48 @@ export class SettingMenuAccessComponent implements OnInit {
     private _svc: SettingsAdminService,
     private _confirm: ConfirmationService,
     private _msg: MessageService,
+    private _labels: LabelService,
   ) {}
 
   ngOnInit(): void {
+    this.buildLabelOptions();
+    this.labelSub = this._labels.revision$.subscribe(() => this.buildLabelOptions());
     this.loadMenuCatalog();
     this.loadRules();
     this.loadProfiles();
+  }
+
+  ngOnDestroy(): void {
+    this.labelSub?.unsubscribe();
+  }
+
+  private L(key: string, fallback: string): string {
+    return this._labels.text(key, fallback);
+  }
+
+  private buildLabelOptions(): void {
+    this.activeOptions = [
+      { label: this.L('CMN.ACTIVE', 'Active'), value: 1 },
+      { label: this.L('CMN.INACT', 'Inactive'), value: 0 },
+    ];
+    this.catalogFilterOptions = [
+      { label: this.L('S66.FIL.ALL', 'All'), value: null },
+      { label: this.L('S66.FIL.ACT', 'Active only'), value: true },
+      { label: this.L('S66.FIL.INA', 'Inactive only'), value: false },
+    ];
+    this.flagOptionItems = Object.entries(SettingMenuAccessComponent.FLAG_KEYS).map(([value, [key, fb]]) => ({
+      value,
+      label: this.L(key, fb),
+    }));
   }
 
   onTabChange(e: { index: number }): void {
     this.activeTab = e.index;
     if (e.index === 3 && this.profilePickId && this.profileMenuRows.length === 0) {
       this.loadProfileMenus();
+    }
+    if (e.index === 4 && this.translationRows.length === 0) {
+      this.loadTranslations();
     }
   }
 
@@ -397,7 +426,107 @@ export class SettingMenuAccessComponent implements OnInit {
   }
 
   flagLabel(flagName: string): string {
-    return this.flagLabels[flagName] || flagName;
+    const pair = SettingMenuAccessComponent.FLAG_KEYS[flagName];
+    return pair ? this.L(pair[0], pair[1]) : flagName;
+  }
+
+  loadTranslations(): void {
+    this.loadingTranslations = true;
+    forkJoin({
+      us: this._svc.listMenuLabels('us_US'),
+      gb: this._svc.listMenuLabels('en_GB'),
+      fr: this._svc.listMenuLabels('fr_FR'),
+    }).subscribe({
+      next: ({ us, gb, fr }) => {
+        const byCode = (rows: Record<string, unknown>[]) =>
+          new Map(rows.map((r) => [String(r.MENU_CODE), r]));
+        const usMap = byCode(us);
+        const gbMap = byCode(gb);
+        const frMap = byCode(fr);
+        const codes = new Set<string>([
+          ...usMap.keys(),
+          ...gbMap.keys(),
+          ...frMap.keys(),
+        ]);
+        this.translationRows = Array.from(codes).sort().map((code) => {
+          const u = usMap.get(code);
+          const g = gbMap.get(code);
+          const f = frMap.get(code);
+          const base = u || g || f;
+          return {
+            MENU_CODE: code,
+            MENU_TYPE: String(base?.MENU_TYPE ?? ''),
+            LEGACY_LABEL: String(base?.LEGACY_LABEL ?? base?.LABEL_TEXT ?? ''),
+            us_US: String(u?.LABEL_TEXT ?? ''),
+            en_GB: String(g?.LABEL_TEXT ?? ''),
+            fr_FR: String(f?.LABEL_TEXT ?? ''),
+          };
+        });
+        this.loadingTranslations = false;
+      },
+      error: (e) => {
+        this.loadingTranslations = false;
+        this.toast('error', 'Translations', String(e?.message || e));
+      },
+    });
+  }
+
+  saveTranslationRow(row: MenuTranslationRow): void {
+    const payloads = [
+      { MENU_CODE: row.MENU_CODE, MLLANGUE: 'us_US', LABEL_TEXT: row.us_US },
+      { MENU_CODE: row.MENU_CODE, MLLANGUE: 'en_GB', LABEL_TEXT: row.en_GB },
+      { MENU_CODE: row.MENU_CODE, MLLANGUE: 'fr_FR', LABEL_TEXT: row.fr_FR },
+    ].filter((p) => String(p.LABEL_TEXT || '').trim());
+    if (!payloads.length) {
+      this.toast('warn', 'Translations', 'Enter at least one label.');
+      return;
+    }
+    this.savingTranslations = true;
+    this._svc.bulkMenuLabels(payloads).subscribe({
+      next: () => {
+        this.savingTranslations = false;
+        row.dirty = false;
+        this.toast('success', 'Saved', row.MENU_CODE);
+      },
+      error: (e) => {
+        this.savingTranslations = false;
+        this.toast('error', 'Save failed', String(e?.message || e));
+      },
+    });
+  }
+
+  importMenuTranslationsCsv(): void {
+    const lines = (this.translationImportText || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    if (!lines.length) {
+      this.toast('warn', 'Import', 'Paste CSV rows: MENU_CODE,MLLANGUE,LABEL_TEXT');
+      return;
+    }
+    const rows: Record<string, unknown>[] = [];
+    for (const line of lines) {
+      const parts = line.split(',').map((p) => p.trim());
+      if (parts.length < 3) {
+        continue;
+      }
+      rows.push({ MENU_CODE: parts[0], MLLANGUE: parts[1], LABEL_TEXT: parts.slice(2).join(',') });
+    }
+    if (!rows.length) {
+      this.toast('warn', 'Import', 'No valid rows found.');
+      return;
+    }
+    this.savingTranslations = true;
+    this._svc.bulkMenuLabels(rows).subscribe({
+      next: () => {
+        this.savingTranslations = false;
+        this.translationImportText = '';
+        this.toast('success', 'Import', `${rows.length} row(s) merged`);
+        this.translationRows = [];
+        this.loadTranslations();
+      },
+      error: (e) => {
+        this.savingTranslations = false;
+        this.toast('error', 'Import failed', String(e?.message || e));
+      },
+    });
   }
 }
 

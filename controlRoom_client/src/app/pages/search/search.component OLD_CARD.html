@@ -41,12 +41,12 @@
             <div class="table-header">
                 <div class="pull-right p-input-icon-right FILTER_Right_Table">
                     <i class="pi pi-search"></i>
-                    <input pInputText class="FILTER_Button_Table" type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    <input pInputText class="FILTER_Button_Table" type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                 </div>
                 <div >
                     <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left"></button>
                 </div>
             </div>
         </ng-template>

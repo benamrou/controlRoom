@@ -86,15 +86,21 @@
                             </div>
                         </li>
 
-        <!-- Panel Language -->
-                        <li class="nav-item dropdown">
-                            <a href="javascript:void(0)" class="nav-link dropdown-toggle" [ngClass]="{'isDisabled':this._userService.userInfo.type=='2'}" data-bs-toggle="dropdown">
-                                <i class="fa fa-language"></i> <b class="caret"></b>
+        <!-- UI language (TRA_LABELS + ICR_MENU_LABEL) -->
+                        <li class="nav-item dropdown adh-lang-dropdown">
+                            <a href="javascript:void(0)" class="nav-link dropdown-toggle"
+                               [ngClass]="{'isDisabled': _userService.userInfo.type == '2' || languageBusy}"
+                               data-bs-toggle="dropdown"
+                               [title]="'Language: ' + currentLanguageLabel()">
+                                <i class="fa fa-language"></i>
+                                <span class="lang-current-label">{{ currentLanguageLabel() }}</span>
+                                <b class="caret"></b>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right summer-dropdown">
-                                <a class="dropdown-item" (click)="changeLang('us_US')">American</a>
-                                <a class="dropdown-item" (click)="changeLang('en_EN')">English</a>
-                                <a class="dropdown-item" (click)="changeLang('fr_FR')">French</a>
+                                <a *ngFor="let lang of languageOptions" class="dropdown-item"
+                                   [class.active]="isLanguageActive(lang.id)"
+                                   href="javascript:void(0)"
+                                   (click)="changeLang(lang.id)">{{ lang.label }}</a>
                             </div>
                         </li>
 

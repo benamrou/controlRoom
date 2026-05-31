@@ -1,4 +1,4 @@
-<app-page-header [heading]="'eCommerce description'" [icon]="'fa-film'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"
+<app-page-header [heading]="'S36.TITLE' | lbl:'eCommerce description'" [icon]="'fa-film'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"
   [linkcolor]="'chocolate'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -17,7 +17,7 @@
  </div>
 
   <span class="pull-right" style="padding-right: 20px">
-      <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+      <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S36.BTN.SRCH' | lbl:'SEARCH'" 
               [style]="{'height': '35px'}"
               style="margin-right: 15px"></button>
       <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" 
@@ -32,7 +32,7 @@
       <p-footer>
           <button style="float: right; margin-bottom:0.5em" 
                   type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                  label="Ok">
+                  [label]="'CMN.OK' | lbl:'Ok'">
           </button>
       </p-footer>
 </p-dialog>
@@ -63,20 +63,20 @@
                         class="CSV_Button p-input-icon-left ml-auto"
                         pTooltip="Export to EXCEL" [escape]="false"
                         *ngIf="searchResult.length>0"
-                        label="CSV" (click)="exportExcelRecap()" style="float:left">
+                        [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap()" style="float:left">
                     </button>
                     <button type="button" pButton icon="fas fa-file" iconPos="left" 
                         class="CSV_Button p-input-icon-left ml-auto"
                         pTooltip="Export to EXCEL" [escape]="false"
                         disabled *ngIf="searchResult.length==0"
-                        label="CSV" (click)="exportExcelRecap()" style="float:left">
+                        [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap()" style="float:left">
                     </button>
                 </span>
             </div>
             <div class="col-6" style="text-align: right;">
                 <span class="p-input-icon-right">
                     <i class="pi pi-search"></i>
-                    <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                 </span>
             </div>
         </div>

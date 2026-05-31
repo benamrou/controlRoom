@@ -1,16 +1,16 @@
-<app-page-header [heading]="pageHeading" [screenID]="screenID" [icon]="'fas fa-tools'"></app-page-header>
+<app-page-header [heading]="'S57.TITLE' | lbl:'Skill builder'" [screenID]="screenID" [icon]="'fas fa-tools'"></app-page-header>
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
 <div class="ai-module-container ai-builder">
 
     <div class="ai-builder-toolbar">
-        <button pButton type="button" label="Back to library" icon="fas fa-arrow-left" class="p-button-text"
+        <button pButton type="button" [label]="'S57.BACK.LIB' | lbl:'Back to library'" icon="fas fa-arrow-left" class="p-button-text"
                 (click)="backToLibrary()"></button>
         <span class="ai-builder-toolbar-spacer"></span>
-        <button *ngIf="canEditForm" pButton type="button" label="Save draft" icon="fas fa-save"
+        <button *ngIf="canEditForm" pButton type="button" [label]="'S57.SAVE.DRF' | lbl:'Save draft'" icon="fas fa-save"
                 class="ai-skill-btn-new" [loading]="saving" [disabled]="saving" (click)="saveDraft()"></button>
-        <button *ngIf="canSubmitReview" pButton type="button" label="Submit for review" icon="fas fa-paper-plane"
+        <button *ngIf="canSubmitReview" pButton type="button" [label]="'S57.SUBREV' | lbl:'Submit for review'" icon="fas fa-paper-plane"
                 class="ai-skill-btn-submit-review" [loading]="submitting" [disabled]="submitting"
                 (click)="submitReview()"></button>
     </div>
@@ -23,7 +23,7 @@
         <div class="ai-builder-banner-icon"><i class="fas fa-layer-group"></i></div>
         <div class="ai-builder-banner-body">
             <p class="ai-builder-banner-lead">
-                <span *ngIf="!model.skillId"><strong>New skill</strong> — set code, name, and domain, then save to create a row in <code>AI_SKILL</code>.</span>
+                <span *ngIf="!model.skillId">{{ 'S57.NEW.HDR' | lbl:'New skill — set code, name, and domain, then save.' }}</span>
                 <span *ngIf="model.skillId">
                     <strong>{{ model.code }}</strong>
                     <p-tag class="ai-builder-status-tag" [value]="formatStatus(model.status)" [severity]="statusSeverity(model.status)"></p-tag>
@@ -31,30 +31,30 @@
                 </span>
             </p>
             <p class="ai-builder-banner-sub" *ngIf="!isDesigner && !isAdmin">
-                <i class="fas fa-info-circle"></i> View only — designer or admin role is required to edit or submit.
+                <i class="fas fa-info-circle"></i> {{ 'S57.VIEWONLY' | lbl:'View only — designer or admin role is required to edit or submit.' }}
             </p>
         </div>
     </div>
 
     <div *ngIf="!loading" class="ai-builder-general p-fluid">
         <div class="p-field">
-            <label for="skillCode">Skill code</label>
+            <label for="skillCode">{{ 'S57.LBL.CODE' | lbl:'Skill code' }}</label>
             <input id="skillCode" pInputText [(ngModel)]="model.code" maxlength="64" [disabled]="!canEditForm"
                    placeholder="e.g. DSD_VENDOR_EVAL" />
         </div>
         <div class="p-field">
-            <label for="skillName">Name</label>
+            <label for="skillName">{{ 'S57.LBL.NAME' | lbl:'Name' }}</label>
             <input id="skillName" pInputText [(ngModel)]="model.name" maxlength="200" [disabled]="!canEditForm"
                    placeholder="Display name" />
         </div>
         <div class="p-field">
-            <label for="skillDomain">Domain</label>
+            <label for="skillDomain">{{ 'AI.CMN.DOMAIN' | lbl:'Domain' }}</label>
             <p-dropdown inputId="skillDomain" [options]="domainOptions" [(ngModel)]="model.domain"
                         optionLabel="label" optionValue="value" [disabled]="!canEditForm"
                         styleClass="ai-builder-dd"></p-dropdown>
         </div>
         <div class="p-field ai-builder-field-grow">
-            <label for="skillDesc">Description</label>
+            <label for="skillDesc">{{ 'AI.CMN.DESCR' | lbl:'Description' }}</label>
                 <textarea id="skillDesc" pInputTextarea [(ngModel)]="model.description" rows="4" [disabled]="!canEditForm"
                       placeholder="What this skill covers, inputs, and expected outcomes…"></textarea>
         </div>
@@ -65,13 +65,13 @@
     </div>
 
     <p-tabView *ngIf="!loading" styleClass="ai-builder-tabs" [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)">
-        <p-tabPanel header="Knowledge items">
+        <p-tabPanel [header]="'S57.TAB.KNOW' | lbl:'Knowledge items'">
             <div class="ai-builder-bundle">
-                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to attach knowledge items.</p>
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">{{ 'S57.SAVE1ST' | lbl:'Save the skill first to attach bundle rows.' }}</p>
                 <ng-container *ngIf="model.skillId">
                     <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
                         <div class="p-toolbar-group-start">
-                            <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-sm"
+                            <button pButton type="button" [label]="'AI.CMN.ADD' | lbl:'Add'" icon="pi pi-plus" class="p-button-sm"
                                     (click)="openBundleEditor('knowledge')"></button>
                         </div>
                     </p-toolbar>
@@ -103,13 +103,13 @@
                 </ng-container>
             </div>
         </p-tabPanel>
-        <p-tabPanel header="Playbook steps">
+        <p-tabPanel [header]="'S57.TAB.PLAY' | lbl:'Playbook steps'">
             <div class="ai-builder-bundle">
-                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to load playbook steps.</p>
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">{{ 'S57.SAVE1ST' | lbl:'Save the skill first to attach bundle rows.' }}</p>
                 <ng-container *ngIf="model.skillId">
                     <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
                         <div class="p-toolbar-group-start">
-                            <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-sm"
+                            <button pButton type="button" [label]="'AI.CMN.ADD' | lbl:'Add'" icon="pi pi-plus" class="p-button-sm"
                                     (click)="openBundleEditor('playbook')"></button>
                         </div>
                     </p-toolbar>
@@ -141,13 +141,13 @@
                 </ng-container>
             </div>
         </p-tabPanel>
-        <p-tabPanel header="SQL templates">
+        <p-tabPanel [header]="'S57.TAB.SQL' | lbl:'SQL templates'">
             <div class="ai-builder-bundle">
-                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to list SQL templates.</p>
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">{{ 'S57.SAVE1ST' | lbl:'Save the skill first to attach bundle rows.' }}</p>
                 <ng-container *ngIf="model.skillId">
                     <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
                         <div class="p-toolbar-group-start">
-                            <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-sm"
+                            <button pButton type="button" [label]="'AI.CMN.ADD' | lbl:'Add'" icon="pi pi-plus" class="p-button-sm"
                                     (click)="openBundleEditor('sql')"></button>
                         </div>
                     </p-toolbar>
@@ -185,13 +185,13 @@
                           placeholder="SELECT … (read-only probe — no execute until LIBQUERY is added)"></textarea>
             </div>
         </p-tabPanel>
-        <p-tabPanel header="Vocabulary">
+        <p-tabPanel [header]="'S57.TAB.VOC' | lbl:'Vocabulary'">
             <div class="ai-builder-bundle">
-                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to load vocabulary rows.</p>
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">{{ 'S57.SAVE1ST' | lbl:'Save the skill first to attach bundle rows.' }}</p>
                 <ng-container *ngIf="model.skillId">
                     <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
                         <div class="p-toolbar-group-start">
-                            <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-sm"
+                            <button pButton type="button" [label]="'AI.CMN.ADD' | lbl:'Add'" icon="pi pi-plus" class="p-button-sm"
                                     (click)="openBundleEditor('vocab')"></button>
                         </div>
                     </p-toolbar>
@@ -223,13 +223,13 @@
                 </ng-container>
             </div>
         </p-tabPanel>
-        <p-tabPanel header="Test suite">
+        <p-tabPanel [header]="'S57.TAB.TEST' | lbl:'Test suite'">
             <div class="ai-builder-bundle">
-                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to load test cases.</p>
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">{{ 'S57.SAVE1ST' | lbl:'Save the skill first to attach bundle rows.' }}</p>
                 <ng-container *ngIf="model.skillId">
                     <p-toolbar *ngIf="canEditForm" styleClass="ai-builder-bundle-toolbar">
                         <div class="p-toolbar-group-start">
-                            <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-sm"
+                            <button pButton type="button" [label]="'AI.CMN.ADD' | lbl:'Add'" icon="pi pi-plus" class="p-button-sm"
                                     (click)="openBundleEditor('tests')"></button>
                         </div>
                     </p-toolbar>
@@ -261,9 +261,9 @@
                 </ng-container>
             </div>
         </p-tabPanel>
-        <p-tabPanel header="Diagnostic chain">
+        <p-tabPanel [header]="'S57.TAB.DIAG' | lbl:'Diagnostic chain'">
             <div class="ai-builder-bundle">
-                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">Save the skill first to author diagnostic steps.</p>
+                <p *ngIf="!model.skillId" class="ai-builder-bundle-empty">{{ 'S57.SAVE1ST' | lbl:'Save the skill first to attach bundle rows.' }}</p>
                 <ng-container *ngIf="model.skillId">
 
                     <!-- Steps section -->
@@ -475,6 +475,12 @@
             <label>Conclusion key *</label>
             <input pInputText [(ngModel)]="bundleForm.CONCLUSION_KEY" maxlength="100" placeholder="e.g. ITEM_NEVER_RANGED" />
             <small>Must match a row in AI_DIAGNOSTIC_CONCLUSION. Use the Conclusion templates section above to author it.</small>
+        </div>
+        <div class="p-field">
+            <label>Step type</label>
+            <p-dropdown [options]="stepTypeOptions" [(ngModel)]="bundleForm.STEP_TYPE"
+                        optionLabel="label" optionValue="value"></p-dropdown>
+            <small><strong>HARD</strong> — aborts the chain immediately (use when this issue makes further checks meaningless). <strong>SOFT</strong> — records the issue and continues checking remaining steps (use when multiple issues can coexist).</small>
         </div>
     </div>
     <div class="p-fluid ai-builder-dialog" *ngIf="bundleDialogKind === 'diagConclusion'">

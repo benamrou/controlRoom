@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Automatic Order Scorecard'" [icon]="'fa-calendar'"
+<app-page-header [heading]="'S02.TITLE' | lbl:'Automatic Order Scorecard'" [icon]="'fa-calendar'"
                  [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -6,12 +6,12 @@
 </div>
 
 <div class="bbs_search_panel"  >
-    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Location : </span>
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">{{ 'S02.LBL.LOC' | lbl:'Location :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 20%; line-height: 25px; align-self: center;">
         <input name="location" type="number" [(ngModel)]="searchSiteCode" placeholder="" maxlength="5"
                style="width: 20%;margin-left: 10px; text-align: center"/>
     </span>
-    <span style="margin-right:20px; font-weight: bolder">Score card date : </span>
+    <span style="margin-right:20px; font-weight: bolder">{{ 'S02.LBL.SCDT' | lbl:'Score card date :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 30%; line-height: 25px" >
         <p-calendar [(ngModel)]="scorecardDate"  name="scorecardDate" 
                     dateFormat="mm/dd/yy" [showIcon]="true" 
@@ -19,7 +19,7 @@
         </p-calendar>
     </span>
     <span class="pull-right" style="padding-right: 20px">
-        <button type="submit" pButton (click)="openScorecard()" icon="fas fa-search" label="OPEN" 
+        <button type="submit" pButton (click)="openScorecard()" icon="fas fa-search" [label]="'S02.BTN.OPEN' | lbl:'OPEN'" 
                 [disabled]="!scorecardDate || ! searchSiteCode " style="margin-right: 15px"></button>
         <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true"></button>
     </span>
@@ -30,13 +30,13 @@
     <div>
       <div class=" btn-group btn-group-toggle" data-toggle="buttons" style="float: right">
         <label class="font-bold" class=" btn btn-sm btn-danger btn-simple" (click)="clickedDairy=true;clickedGrocery=false;selectedDeptLabel=departmentLabel[0];updateDepartment(departmentCode[0]);" [ngClass]="{'active':clickedDairy===true}">
-          <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block">Dairy</span>
+          <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block">{{ 'S02.DEPT.DAIRY' | lbl:'Dairy' }}</span>
           <span class=" d-block d-sm-none">
             <i class=" tim-icons icon-single-02"> </i>
           </span>
         </label>
         <label class="font-bold" class=" btn btn-sm btn-danger btn-simple" (click)="clickedDairy=false;clickedGrocery=true;selectedDeptLabel=departmentLabel[1];updateDepartment(departmentCode[1])" [ngClass]="{'active':clickedGrocery===true}">
-          <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block" > Grocery </span>
+          <span class=" d-none d-sm-block d-md-block d-lg-block d-xl-block" >{{ 'S02.DEPT.GROC' | lbl:'Grocery' }}</span>
           <span class=" d-block d-sm-none"> <i class=" tim-icons icon-gift-2"> </i> </span>
         </label>
       </div>
@@ -54,13 +54,13 @@
 <!-- Panel result style="width: 50%;" -->
 <div class=" content"  *ngIf="reportCycleCountActivity && reportCycleCountDetail && reportCaoActivity && (searchResultCycleCount.length === 0)" >
   <h6 style="text-align: center;margin-top: 5em;font-weight: bolder;border-bottom: 0.1em black dotted;color: black;border-top: 0.1em black dotted;">
-    No data available - Review the search criteria.
+    {{ 'S02.MSG.NODATA' | lbl:'No data available - Review the search criteria.' }}
   </h6>
 </div>
 <div class=" content"  style="margin-top: 3em;" [ngStyle]="{'visibility': searchLaunched && reportCycleCountActivity && reportCycleCountDetail && dataAvailable ? 'visible':'hidden'}" >
     <div class=" row">
     <div class=" col-sm-12 text-left">
-        <h2 class=" card-title" style="display: inline;">Summary</h2>
+        <h2 class=" card-title" style="display: inline;">{{ 'S02.CARD.SUM' | lbl:'Summary' }}</h2>
         <h6 class=" card-title; pull-right" style="color: lightslategray" >Store # {{searchSiteCode}}    |   {{selectedDeptLabel}} | {{dateNow | date:'medium'}}</h6>
       </div>
     </div>
@@ -68,7 +68,7 @@
         <div class=" col-lg-4">
           <div class=" card card-chart">
             <div class=" card-header">
-              <h5 class=" card-category">Completed Cycle Count</h5>
+              <h5 class=" card-category">{{ 'S02.CARD.CCC' | lbl:'Completed Cycle Count' }}</h5>
               <h3 class=" card-title">
                 <!--i class=" tim-icons icon-delivery-fast text-info">3,500€ </i--> 
                 <!--i class=" tim-icons icon-send text-success"> 12,100K</i--> 

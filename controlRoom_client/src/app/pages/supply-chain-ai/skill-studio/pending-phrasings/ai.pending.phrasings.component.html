@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Pending phrasings — vocabulary curation queue'" [screenID]="screenID" [icon]="'fas fa-comment-medical'"></app-page-header>
+<app-page-header [heading]="'S58.TITLE' | lbl:'Pending phrasings'" [screenID]="screenID" [icon]="'fas fa-comment-medical'"></app-page-header>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '460px' }"></p-confirmDialog>
 
@@ -7,27 +7,25 @@
     <div class="pending-banner">
         <div class="pending-banner-icon"><i class="fas fa-comment-medical"></i></div>
         <div>
-            <strong>Phrasings the AI engine could not route confidently</strong>
+            <strong>{{ 'S58.BAN.TTL' | lbl:'Phrasings the AI engine could not route confidently' }}</strong>
             <p>
-                Every time an analyst asks a question and the engine routes with low confidence
-                (or the answer gets a thumbs-down), the question lands here. Promote the useful ones
-                into <code>AI_SKILL_VOCABULARY</code> so the engine learns the analyst's wording.
+                {{ 'S58.BAN.P1' | lbl:'Low-confidence routes and thumbs-down land here. Promote useful phrasings into AI_SKILL_VOCABULARY.' }}
             </p>
         </div>
     </div>
 
     <div class="pending-toolbar">
-        <span class="pending-count">{{ rows.length }} pending phrasing<span *ngIf="rows.length !== 1">s</span></span>
+        <span class="pending-count">{{ rows.length }} {{ 'S58.COUNT' | lbl:'pending phrasing' }}<span *ngIf="rows.length !== 1">s</span></span>
         <div class="pending-toolbar-actions">
             <button pButton type="button"
-                    label="Auto-promote eligible"
+                    [label]="'S58.BTN.AUTO' | lbl:'Auto-promote eligible'"
                     icon="fas fa-bolt"
                     class="p-button-outlined p-button-success"
                     pTooltip="Find phrasings picked by enough analysts to skip manual review"
                     [disabled]="!isAdmin"
                     (click)="openAutoPromote()"></button>
             <button pButton type="button"
-                    label="Refresh"
+                    [label]="'AI.CMN.REFR' | lbl:'Refresh'"
                     icon="fas fa-sync-alt"
                     class="p-button-outlined"
                     [loading]="loading"
@@ -37,13 +35,13 @@
 
     <div *ngIf="loading" class="pending-loading">
         <p-progressBar mode="indeterminate"></p-progressBar>
-        <span>Loading pending phrasings…</span>
+        <span>{{ 'S58.LOAD' | lbl:'Loading pending phrasings…' }}</span>
     </div>
 
     <div *ngIf="!loading && !rows.length" class="pending-empty">
         <i class="fas fa-check-circle"></i>
-        <h3>No pending phrasings</h3>
-        <p>The engine routed everything with confidence — nothing for the queue right now.</p>
+        <h3>{{ 'S58.EMP.TTL' | lbl:'No pending phrasings' }}</h3>
+        <p>{{ 'S58.EMP.P' | lbl:'The engine routed everything with confidence.' }}</p>
     </div>
 
     <p-dialog [(visible)]="autoPromoteOpen"

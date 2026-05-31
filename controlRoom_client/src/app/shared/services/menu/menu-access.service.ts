@@ -108,9 +108,20 @@ export class MenuAccessService {
     return this._loadFailed;
   }
 
+  /** User UI language for ICR_MENU_LABEL join (:param2 on SET0000040/0041). */
+  private resolveMenuLanguage(): string {
+    return UserService.normalizeLanguageCode(
+      this._user.userInfo?.language
+      || this._user.userInfo?.envDefaultLanguage
+      || localStorage.getItem('ICRLanguage')
+      || 'us_US',
+    );
+  }
+
   /** Load effective menu + header actions (login). Not tied to GOLD environment switching. */
   load(userId?: string): Observable<void> {
     const uid = (userId || this._user.ICRUser || localStorage.getItem('ICRUser') || '').trim();
+    const lang = this.resolveMenuLanguage();
     const sidRaw = this._user.userInfo?.sid?.[0] ?? localStorage.getItem('ICRSID');
     const sid = sidRaw != null ? String(sidRaw).trim() : '';
     if (!uid || !sid) {
@@ -140,14 +151,14 @@ export class MenuAccessService {
     };
 
     return forkJoin([
-      this._query.getQueryResult(Q_EFFECTIVE, [uid]).pipe(
+      this._query.getQueryResult(Q_EFFECTIVE, [uid, lang]).pipe(
         map((data) => safeRows(data) as unknown as MenuRow[]),
         catchError((err) => {
           console.error('[MenuAccess] SET0000040 request failed', err);
           return of([] as MenuRow[]);
         }),
       ),
-      this._query.getQueryResult(Q_HEADER, [uid]).pipe(
+      this._query.getQueryResult(Q_HEADER, [uid, lang]).pipe(
         map((data) => safeRows(data)),
         catchError((err) => {
           console.error('[MenuAccess] SET0000041 request failed', err);

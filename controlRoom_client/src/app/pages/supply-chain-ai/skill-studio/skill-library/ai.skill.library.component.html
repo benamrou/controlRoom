@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Template skill library'" [screenID]="screenID" [icon]="'fas fa-layer-group'"></app-page-header>
+<app-page-header [heading]="'S56.TITLE' | lbl:'Skill Library'" [screenID]="screenID" [icon]="'fas fa-layer-group'"></app-page-header>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '460px' }"></p-confirmDialog>
 
@@ -7,27 +7,26 @@
     <div class="ai-skill-banner">
         <div class="ai-skill-banner-icon"><i class="fas fa-brain"></i></div>
         <div>
-            <strong>Template skill library — reusable GOLD + supply chain packages</strong>
+            <strong>{{ 'S56.BAN.TTL' | lbl:'Template skill library' }}</strong>
             <p>
-                Central catalog of skills that bundle knowledge items, playbook steps, SQL templates, vocabulary, and tests.
-                Retailers inherit from this library; publishing and lifecycle are managed here (draft → review → published).
+                {{ 'S56.BAN.P1' | lbl:'Central catalog of skills: knowledge, playbook, SQL templates, vocabulary, and tests.' }}
             </p>
         </div>
     </div>
 
     <div class="ai-skill-toolbar">
         <div class="ai-skill-toolbar-left">
-            <span class="ai-skill-catalog-label"><i class="fas fa-book"></i> Global template catalog</span>
+            <span class="ai-skill-catalog-label"><i class="fas fa-book"></i> {{ 'S56.CAT' | lbl:'Global template catalog' }}</span>
         </div>
         <div class="ai-skill-toolbar-right">
             <button *ngIf="isDesigner"
                     pButton type="button"
-                    label="New skill"
+                    [label]="'S56.BTN.NEW' | lbl:'New skill'"
                     icon="fas fa-plus"
                     class="ai-skill-btn-new"
                     (click)="createSkill()"></button>
             <button pButton type="button"
-                    label="Refresh"
+                    [label]="'AI.CMN.REFR' | lbl:'Refresh'"
                     icon="fas fa-sync-alt"
                     class="p-button-outlined"
                     [loading]="loadingSkills"
@@ -37,7 +36,7 @@
 
     <!-- Status chips: plain p-button classes — avoid pButton + p-badge inside one host (PrimeNG 14 conflicts / CD churn). -->
     <div class="ai-skill-status-bar">
-        <span class="ai-skill-status-label">By status:</span>
+        <span class="ai-skill-status-label">{{ 'S56.BYSTAT' | lbl:'By status:' }}</span>
         <button *ngFor="let sc of statusChips; trackBy: trackStatusChip"
                 type="button"
                 class="p-button p-component p-button-sm ai-skill-chip"
@@ -52,23 +51,23 @@
     <div class="ai-skill-filters">
         <div class="ai-skill-search-wrap">
             <i class="fas fa-search ai-skill-search-icon"></i>
-            <input pInputText class="ai-skill-search-input" [(ngModel)]="searchText" placeholder="Search name, code, description…" />
+            <input pInputText class="ai-skill-search-input" [(ngModel)]="searchText" [placeholder]="'S56.PLH.SRCH' | lbl:'Search name, code, description…'" />
         </div>
         <p-dropdown [options]="statusOptions"
                     [(ngModel)]="statusFilter"
                     optionLabel="label" optionValue="value"
-                    placeholder="Status"
+                    [placeholder]="'AI.CMN.STATUS' | lbl:'Status'"
                     [showClear]="true"
                     styleClass="ai-skill-filter-dd">
         </p-dropdown>
         <p-dropdown [options]="domainOptions"
                     [(ngModel)]="domainFilter"
                     optionLabel="label" optionValue="value"
-                    placeholder="Domain"
+                    [placeholder]="'AI.CMN.DOMAIN' | lbl:'Domain'"
                     [showClear]="true"
                     styleClass="ai-skill-filter-dd">
         </p-dropdown>
-        <button pButton type="button" label="Clear filters" icon="fas fa-times" class="p-button-text p-button-sm"
+        <button pButton type="button" [label]="'AI.CMN.CLEAR' | lbl:'Clear filters'" icon="fas fa-times" class="p-button-text p-button-sm"
                 (click)="clearFilters()"></button>
     </div>
 
@@ -78,12 +77,12 @@
 
     <div *ngIf="!loadingSkills && filteredSkills.length === 0" class="ai-skill-empty">
         <i class="fas fa-layer-group ai-skill-empty-icon"></i>
-        <h3>No skills match</h3>
+        <h3>{{ 'S56.EMP.TTL' | lbl:'No skills match' }}</h3>
         <p *ngIf="skills.length === 0">
-            No skills returned yet. Deploy <code>AI0000040</code> in LIBQUERY, then refresh — or create a skill if you have designer access.
+            {{ 'S56.EMP.P1' | lbl:'No skills returned yet. Deploy AI0000040 in LIBQUERY, then refresh.' }}
         </p>
-        <p *ngIf="skills.length > 0">Try adjusting filters or search.</p>
-        <button *ngIf="isDesigner && skills.length === 0" pButton label="Create skill" icon="fas fa-plus" class="ai-skill-btn-new"
+        <p *ngIf="skills.length > 0">{{ 'S56.EMP.P2' | lbl:'Try adjusting filters or search.' }}</p>
+        <button *ngIf="isDesigner && skills.length === 0" pButton [label]="'S56.BTN.CRT' | lbl:'Create skill'" icon="fas fa-plus" class="ai-skill-btn-new"
                 (click)="createSkill()"></button>
     </div>
 
@@ -122,17 +121,22 @@
                                 pTooltip="Edit"
                                 (click)="editSkill(skill)"></button>
                         <button *ngIf="canSubmitReview(skill)"
-                                pButton label="Submit for review" icon="fas fa-paper-plane"
+                                pButton [label]="'S56.SUBREV' | lbl:'Submit for review'" icon="fas fa-paper-plane"
                                 class="p-button-sm ai-skill-btn-submit-review"
                                 (click)="submitReview(skill)"></button>
                         <button *ngIf="canPublish(skill)"
-                                pButton label="Publish" icon="fas fa-check-circle"
+                                pButton [label]="'AI.CMN.PUBL' | lbl:'Publish'" icon="fas fa-check-circle"
                                 class="p-button-sm p-button-success"
                                 (click)="publishSkill(skill)"></button>
                         <button *ngIf="canDeprecate(skill)"
-                                pButton label="Deprecate" icon="fas fa-archive"
+                                pButton [label]="'S56.DEPR' | lbl:'Deprecate'" icon="fas fa-archive"
                                 class="p-button-sm p-button-danger p-button-outlined"
                                 (click)="confirmDeprecate(skill)"></button>
+                        <button *ngIf="canDelete(skill)"
+                                pButton [label]="'AI.CMN.DEL' | lbl:'Delete'" icon="fas fa-trash-alt"
+                                class="p-button-sm p-button-danger"
+                                pTooltip="Permanently remove skill and all bundle rows"
+                                (click)="confirmDelete(skill)"></button>
                     </div>
                 </div>
             </div>
@@ -140,6 +144,6 @@
     </p-dataView>
 
     <p *ngIf="!isDesigner && !isAdmin" class="ai-skill-readonly-hint">
-        <i class="fas fa-info-circle"></i> Read-only — designer or admin role required to create or change skills.
+        <i class="fas fa-info-circle"></i> {{ 'S56.READONLY' | lbl:'Read-only — designer or admin role required to create or change skills.' }}
     </p>
 </div>

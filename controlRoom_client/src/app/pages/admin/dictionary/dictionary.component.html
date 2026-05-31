@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Dictionary'" [waitMessage]="waitMessage" [screenID]="screenID"
+<app-page-header [heading]="'S68.TITLE' | lbl:'Dictionary'" [waitMessage]="waitMessage" [screenID]="screenID"
     [icon]="'fa-language'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -9,44 +9,44 @@
     <div class="header-section">
         <div class="title-area">
             <i class="fas fa-language title-icon"></i>
-            <h2>Dictionary Management</h2>
+            <h2>{{ 'S68.HEAD' | lbl:'Dictionary Management' }}</h2>
         </div>
         <div class="header-actions">
-            <span class="record-count" *ngIf="activeTabIndex === 0">{{ techObjList.length }} records</span>
-            <span class="record-count" *ngIf="activeTabIndex === 1">{{ labelsList.length }} records</span>
-            <span class="record-count" *ngIf="activeTabIndex === 2">{{ parametersList.length }} records</span>
-            <span class="record-count" *ngIf="activeTabIndex === 3">{{ entriesList.length }} records</span>
+            <span class="record-count" *ngIf="activeTabIndex === 0">{{ techObjList.length }} {{ 'CMN.RECORDS' | lbl:'records' }}</span>
+            <span class="record-count" *ngIf="activeTabIndex === 1">{{ labelsList.length }} {{ 'CMN.RECORDS' | lbl:'records' }}</span>
+            <span class="record-count" *ngIf="activeTabIndex === 2">{{ parametersList.length }} {{ 'CMN.RECORDS' | lbl:'records' }}</span>
+            <span class="record-count" *ngIf="activeTabIndex === 3">{{ entriesList.length }} {{ 'CMN.RECORDS' | lbl:'records' }}</span>
         </div>
     </div>
 
     <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)">
         
         <!-- TAB 1: Technical Objects -->
-        <p-tabPanel header="Technical Objects" leftIcon="fas fa-cogs">
+        <p-tabPanel [header]="'S68.TAB.TOBJ' | lbl:'Technical Objects'" leftIcon="fas fa-cogs">
             <div class="search-panel">
                 <div class="formgrid grid">
                     <div class="field col-3">
-                        <label class="font-bold" for="searchTobId">Object ID</label>
+                        <label class="font-bold" for="searchTobId">{{ 'S68.LBL.OBJID' | lbl:'Object ID' }}</label>
                         <input id="searchTobId" pInputText [(ngModel)]="searchTechObj.id" placeholder="Search by ID..."
                             class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
                             (keyup.enter)="searchTechObjData()">
                     </div>
                     <div class="field col-3">
-                        <label class="font-bold" for="searchTobCat">Category</label>
+                        <label class="font-bold" for="searchTobCat">{{ 'S68.LBL.CAT' | lbl:'Category' }}</label>
                         <p-dropdown id="searchTobCat" [(ngModel)]="searchTechObj.cat" [options]="categoryOptions" 
-                            optionLabel="label" optionValue="value" [showClear]="true" placeholder="All Categories" class="w-full">
+                            optionLabel="label" optionValue="value" [showClear]="true" [placeholder]="'S68.PLH.CAT' | lbl:'All Categories'" class="w-full">
                         </p-dropdown>
                     </div>
                     <div class="field col-4">
-                        <label class="font-bold" for="searchTobDesc">Description</label>
-                        <input id="searchTobDesc" pInputText [(ngModel)]="searchTechObj.desc" placeholder="Search description..."
+                        <label class="font-bold" for="searchTobDesc">{{ 'S64.PLH.DESC' | lbl:'Description' }}</label>
+                        <input id="searchTobDesc" pInputText [(ngModel)]="searchTechObj.desc" [placeholder]="'S68.PLH.DESC' | lbl:'Search description...'"
                             class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full"
                             (keyup.enter)="searchTechObjData()">
                     </div>
                     <div class="field col-2 search-buttons">
-                        <button pButton type="button" icon="pi pi-search" label="Search"
+                        <button pButton type="button" icon="pi pi-search" [label]="'S64.BTN.SRCH' | lbl:'Search'"
                             class="p-button-outlined mr-2" (click)="searchTechObjData()"></button>
-                        <button pButton type="button" icon="pi pi-times" label="Clear"
+                        <button pButton type="button" icon="pi pi-times" [label]="'CMN.CLEAR' | lbl:'Clear'"
                             class="p-button-outlined p-button-secondary" (click)="clearTechObjSearch()"></button>
                     </div>
                 </div>
@@ -54,11 +54,11 @@
 
             <div class="toolbar flex justify-content-between align-items-center">
                 <div class="toolbar-left">
-                    <button pButton type="button" icon="pi pi-plus" label="New"
+                    <button pButton type="button" icon="pi pi-plus" [label]="'CMN.NEW' | lbl:'New'"
                         class="p-button-outlined p-button-success mr-2" (click)="newTechObj()"></button>
-                    <button pButton type="button" icon="pi pi-refresh" label="Refresh"
+                    <button pButton type="button" icon="pi pi-refresh" [label]="'CMN.REFRESH' | lbl:'Refresh'"
                         class="p-button-outlined p-button-info mr-2" (click)="loadTechObjData()"></button>
-                    <button pButton type="button" icon="pi pi-file-excel" label="Export CSV"
+                    <button pButton type="button" icon="pi pi-file-excel" [label]="'CMN.EXPORT' | lbl:'Export CSV'"
                         class="p-button-outlined p-button-help" (click)="exportCSV('techObj')"></button>
                 </div>
                 <div class="toolbar-right">
@@ -66,7 +66,7 @@
                         <i class="pi pi-filter"></i>
                         <input pInputText type="text" #techObjFilter
                             (input)="techObjTable.filterGlobal(techObjFilter.value, 'contains')" 
-                            placeholder="Filter by ID or Description..." style="width: 250px;" />
+                            [placeholder]="'S68.PLH.FILT' | lbl:'Filter by ID or Description...'" style="width: 250px;" />
                     </span>
                 </div>
             </div>
@@ -120,7 +120,7 @@
         </p-tabPanel>
 
         <!-- TAB 2: Screen Labels -->
-        <p-tabPanel header="Screen Labels" leftIcon="fas fa-tags">
+        <p-tabPanel [header]="'S68.TAB.SCR' | lbl:'Screen Labels'" leftIcon="fas fa-tags">
             <div class="search-panel">
                 <div class="formgrid grid">
                     <div class="field col-3">
@@ -142,9 +142,9 @@
                             (keyup.enter)="searchLabelsData()">
                     </div>
                     <div class="field col-2 search-buttons">
-                        <button pButton type="button" icon="pi pi-search" label="Search"
+                        <button pButton type="button" icon="pi pi-search" [label]="'S64.BTN.SRCH' | lbl:'Search'"
                             class="p-button-outlined mr-2" (click)="searchLabelsData()"></button>
-                        <button pButton type="button" icon="pi pi-times" label="Clear"
+                        <button pButton type="button" icon="pi pi-times" [label]="'CMN.CLEAR' | lbl:'Clear'"
                             class="p-button-outlined p-button-secondary" (click)="clearLabelsSearch()"></button>
                     </div>
                 </div>
@@ -152,19 +152,29 @@
 
             <div class="toolbar flex justify-content-between align-items-center">
                 <div class="toolbar-left">
-                    <button pButton type="button" icon="pi pi-plus" label="New"
+                    <button pButton type="button" icon="pi pi-plus" [label]="'CMN.NEW' | lbl:'New'"
                         class="p-button-outlined p-button-success mr-2" (click)="newLabel()"></button>
-                    <button pButton type="button" icon="pi pi-refresh" label="Refresh"
+                    <button pButton type="button" icon="pi pi-refresh" [label]="'CMN.REFRESH' | lbl:'Refresh'"
                         class="p-button-outlined p-button-info mr-2" (click)="loadLabelsData()"></button>
-                    <button pButton type="button" icon="pi pi-file-excel" label="Export CSV"
+                    <button pButton type="button" icon="pi pi-file-excel" [label]="'CMN.EXPORT' | lbl:'Export CSV'"
                         class="p-button-outlined p-button-help" (click)="exportCSV('labels')"></button>
                 </div>
+            </div>
+            <div class="mb-3">
+                <label class="font-bold block mb-1">Bulk import (CSV: TLAID,TLADESC,TLASCREEN,TLALANGUE)</label>
+                <textarea pInputTextarea [(ngModel)]="labelImportText" rows="2" class="w-full"
+                    placeholder="S65.TITLE,Users and Profiles,SCR0000000065,en_GB"></textarea>
+                <button pButton type="button" icon="pi pi-upload" label="Import labels" class="mt-2"
+                    [loading]="importingLabels" (click)="importLabelsCsv()"></button>
+            </div>
+            <div class="toolbar flex justify-content-between align-items-center mb-2">
+                <div class="toolbar-left"></div>
                 <div class="toolbar-right">
                     <span class="p-input-icon-left">
                         <i class="pi pi-filter"></i>
                         <input pInputText type="text" #labelsFilter
                             (input)="labelsTable.filterGlobal(labelsFilter.value, 'contains')" 
-                            placeholder="Filter by ID or Description..." style="width: 250px;" />
+                            [placeholder]="'S68.PLH.FILT' | lbl:'Filter by ID or Description...'" style="width: 250px;" />
                     </span>
                 </div>
             </div>
@@ -191,11 +201,11 @@
                         <ng-container *ngFor="let col of columnsLabels">
                             <td *ngIf="col.display" [style.width]="col.width">
                                 <span *ngIf="col.field === 'ACTION'" class="action-buttons">
-                                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editLabel(rowData['TLAID']); $event.stopPropagation()"
+                                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="editLabel(rowData['TLAID'], rowData['TLALANGUE']); $event.stopPropagation()"
                                         pTooltip="Edit" tooltipPosition="top" class="p-button-rounded p-button-text p-button-sm"></button>
                                     <button pButton pRipple type="button" icon="pi pi-copy" (click)="duplicateLabel(rowData['TLAID']); $event.stopPropagation()"
                                         pTooltip="Duplicate" tooltipPosition="top" class="p-button-rounded p-button-text p-button-sm"></button>
-                                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteLabel(rowData['TLAID']); $event.stopPropagation()"
+                                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteLabel(rowData['TLAID'], rowData['TLALANGUE']); $event.stopPropagation()"
                                         pTooltip="Delete" tooltipPosition="top" class="p-button-rounded p-button-text p-button-danger p-button-sm"></button>
                                 </span>
                                 <span *ngIf="col.field !== 'ACTION'">
@@ -221,7 +231,7 @@
         </p-tabPanel>
 
         <!-- TAB 3: Parameters -->
-        <p-tabPanel header="Parameters" leftIcon="fas fa-sliders-h">
+        <p-tabPanel [header]="'S68.TAB.PRM' | lbl:'Parameters'" leftIcon="fas fa-sliders-h">
             <div class="search-panel">
                 <div class="formgrid grid">
                     <div class="field col-3">
@@ -237,9 +247,9 @@
                             (keyup.enter)="searchParametersData()">
                     </div>
                     <div class="field col-2 search-buttons">
-                        <button pButton type="button" icon="pi pi-search" label="Search"
+                        <button pButton type="button" icon="pi pi-search" [label]="'S64.BTN.SRCH' | lbl:'Search'"
                             class="p-button-outlined mr-2" (click)="searchParametersData()"></button>
-                        <button pButton type="button" icon="pi pi-times" label="Clear"
+                        <button pButton type="button" icon="pi pi-times" [label]="'CMN.CLEAR' | lbl:'Clear'"
                             class="p-button-outlined p-button-secondary" (click)="clearParametersSearch()"></button>
                     </div>
                 </div>
@@ -247,11 +257,11 @@
 
             <div class="toolbar flex justify-content-between align-items-center">
                 <div class="toolbar-left">
-                    <button pButton type="button" icon="pi pi-plus" label="New"
+                    <button pButton type="button" icon="pi pi-plus" [label]="'CMN.NEW' | lbl:'New'"
                         class="p-button-outlined p-button-success mr-2" (click)="newParameter()"></button>
-                    <button pButton type="button" icon="pi pi-refresh" label="Refresh"
+                    <button pButton type="button" icon="pi pi-refresh" [label]="'CMN.REFRESH' | lbl:'Refresh'"
                         class="p-button-outlined p-button-info mr-2" (click)="loadParametersData()"></button>
-                    <button pButton type="button" icon="pi pi-file-excel" label="Export CSV"
+                    <button pButton type="button" icon="pi pi-file-excel" [label]="'CMN.EXPORT' | lbl:'Export CSV'"
                         class="p-button-outlined p-button-help" (click)="exportCSV('parameters')"></button>
                 </div>
                 <div class="toolbar-right">
@@ -259,7 +269,7 @@
                         <i class="pi pi-filter"></i>
                         <input pInputText type="text" #parametersFilter
                             (input)="parametersTable.filterGlobal(parametersFilter.value, 'contains')" 
-                            placeholder="Filter by ID or Description..." style="width: 250px;" />
+                            [placeholder]="'S68.PLH.FILT' | lbl:'Filter by ID or Description...'" style="width: 250px;" />
                     </span>
                 </div>
             </div>
@@ -313,7 +323,7 @@
         </p-tabPanel>
 
         <!-- TAB 4: Entry Labels -->
-        <p-tabPanel header="Entry Labels" leftIcon="fas fa-list-alt">
+        <p-tabPanel [header]="'S68.TAB.ENT' | lbl:'Entry Labels'" leftIcon="fas fa-list-alt">
             <div class="search-panel">
                 <div class="formgrid grid">
                     <div class="field col-3">
@@ -329,9 +339,9 @@
                             (keyup.enter)="searchEntriesData()">
                     </div>
                     <div class="field col-2 search-buttons">
-                        <button pButton type="button" icon="pi pi-search" label="Search"
+                        <button pButton type="button" icon="pi pi-search" [label]="'S64.BTN.SRCH' | lbl:'Search'"
                             class="p-button-outlined mr-2" (click)="searchEntriesData()"></button>
-                        <button pButton type="button" icon="pi pi-times" label="Clear"
+                        <button pButton type="button" icon="pi pi-times" [label]="'CMN.CLEAR' | lbl:'Clear'"
                             class="p-button-outlined p-button-secondary" (click)="clearEntriesSearch()"></button>
                     </div>
                 </div>
@@ -339,11 +349,11 @@
 
             <div class="toolbar flex justify-content-between align-items-center">
                 <div class="toolbar-left">
-                    <button pButton type="button" icon="pi pi-plus" label="New"
+                    <button pButton type="button" icon="pi pi-plus" [label]="'CMN.NEW' | lbl:'New'"
                         class="p-button-outlined p-button-success mr-2" (click)="newEntry()"></button>
-                    <button pButton type="button" icon="pi pi-refresh" label="Refresh"
+                    <button pButton type="button" icon="pi pi-refresh" [label]="'CMN.REFRESH' | lbl:'Refresh'"
                         class="p-button-outlined p-button-info mr-2" (click)="loadEntriesData()"></button>
-                    <button pButton type="button" icon="pi pi-file-excel" label="Export CSV"
+                    <button pButton type="button" icon="pi pi-file-excel" [label]="'CMN.EXPORT' | lbl:'Export CSV'"
                         class="p-button-outlined p-button-help" (click)="exportCSV('entries')"></button>
                 </div>
                 <div class="toolbar-right">
@@ -351,7 +361,7 @@
                         <i class="pi pi-filter"></i>
                         <input pInputText type="text" #entriesFilter
                             (input)="entriesTable.filterGlobal(entriesFilter.value, 'contains')" 
-                            placeholder="Filter by ID or Description..." style="width: 250px;" />
+                            [placeholder]="'S68.PLH.FILT' | lbl:'Filter by ID or Description...'" style="width: 250px;" />
                     </span>
                 </div>
             </div>
@@ -399,6 +409,86 @@
                     <tr><td [attr.colspan]="columnsEntries.length" class="text-center p-4">
                         <i class="pi pi-inbox" style="font-size: 2rem; color: var(--text-color-secondary);"></i>
                         <p class="mt-2">No entries found</p>
+                    </td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <p-tabPanel [header]="'S68.TAB.COV' | lbl:'Translation coverage'" leftIcon="fas fa-check-double">
+            <div class="search-panel formgrid grid align-items-end mb-3">
+                <div class="field col-12 md:col-4">
+                    <label class="font-bold">{{ 'S68.LBL.TGTLANG' | lbl:'Target language' }}</label>
+                    <p-dropdown [options]="languageOptions" [(ngModel)]="coverageTargetLang"
+                        optionLabel="label" optionValue="value" styleClass="w-full"></p-dropdown>
+                </div>
+                <div class="field col-12 md:col-4">
+                    <button pButton type="button" icon="pi pi-search" [label]="'S68.BTN.COVRPT' | lbl:'Run report'"
+                        class="p-button-outlined" [loading]="loadingCoverage" (click)="loadCoverageReport()"></button>
+                </div>
+            </div>
+            <div class="toolbar flex justify-content-between align-items-center mb-2">
+                <div class="toolbar-left">
+                    <button pButton type="button" icon="pi pi-plus" [label]="'CMN.NEW' | lbl:'New'"
+                        class="p-button-outlined p-button-success mr-2" (click)="newCoverageTranslation()"></button>
+                </div>
+            </div>
+            <p-table #coverageTable [value]="coverageRows" [loading]="loadingCoverage" [paginator]="true" [rows]="25"
+                styleClass="p-datatable-sm" [globalFilterFields]="['TLAID','TLASCREEN','BASE_DESC','TARGET_DESC']"
+                dataKey="TLAID">
+                <ng-template pTemplate="caption">
+                    <div class="flex justify-content-end">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-filter"></i>
+                            <input pInputText type="text" [(ngModel)]="coverageFilterText"
+                                (input)="coverageTable.filterGlobal(coverageFilterText, 'contains')"
+                                [placeholder]="'S68.PLH.COV' | lbl:'Filter by screen or description...'"
+                                style="width: 280px;" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 120px"></th>
+                        <th>TLAID</th>
+                        <th>Screen</th>
+                        <th>us_US (baseline)</th>
+                        <th>{{ coverageTargetLabel() }}</th>
+                        <th>Status</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr [class.text-color-secondary]="+row.HAS_TARGET === 1"
+                        (dblclick)="openCoverageTranslation(row)" class="cursor-pointer">
+                        <td>
+                            <span class="action-buttons">
+                                <button *ngIf="+row.HAS_TARGET !== 1" pButton pRipple type="button" icon="pi pi-plus"
+                                    (click)="openCoverageTranslation(row); $event.stopPropagation()"
+                                    pTooltip="Add translation" tooltipPosition="top"
+                                    class="p-button-rounded p-button-text p-button-success p-button-sm"></button>
+                                <button *ngIf="+row.HAS_TARGET === 1" pButton pRipple type="button" icon="pi pi-pencil"
+                                    (click)="openCoverageTranslation(row); $event.stopPropagation()"
+                                    pTooltip="Edit translation" tooltipPosition="top"
+                                    class="p-button-rounded p-button-text p-button-sm"></button>
+                                <button *ngIf="+row.HAS_TARGET === 1" pButton pRipple type="button" icon="pi pi-trash"
+                                    (click)="deleteCoverageTranslation(row); $event.stopPropagation()"
+                                    pTooltip="Delete translation" tooltipPosition="top"
+                                    class="p-button-rounded p-button-text p-button-danger p-button-sm"></button>
+                            </span>
+                        </td>
+                        <td>{{ row.TLAID }}</td>
+                        <td>{{ row.TLASCREEN }}</td>
+                        <td>{{ row.BASE_DESC }}</td>
+                        <td>{{ row.TARGET_DESC }}</td>
+                        <td>
+                            <span *ngIf="+row.HAS_TARGET === 1">OK</span>
+                            <span *ngIf="+row.HAS_TARGET !== 1" class="text-orange-500">Missing</span>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="6" class="text-center p-4">
+                        <i class="pi pi-inbox" style="font-size: 2rem; color: var(--text-color-secondary);"></i>
+                        <p class="mt-2">Run the report to list translations</p>
                     </td></tr>
                 </ng-template>
             </p-table>
@@ -491,11 +581,17 @@
 
 <!-- DIALOG: Label Edit -->
 <p-dialog [(visible)]="displayLabelDialog" [modal]="true" [style]="{width: '700px'}"
-    [header]="isNewLabel ? 'New Label' : 'Edit Label'" [closable]="true" [draggable]="true" [resizable]="true">
+    [header]="labelDialogHeader()" [closable]="true" [draggable]="true" [resizable]="true">
     <div class="formgrid grid">
+        <div class="field col-12" *ngIf="labelDialogSource === 'coverage' && coverageBaselineDesc">
+            <label class="font-bold">{{ 'S68.LBL.BASEUS' | lbl:'us_US (baseline)' }}</label>
+            <input pInputText [value]="coverageBaselineDesc" disabled
+                class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
+        </div>
         <div class="field col-6">
             <label class="font-bold" for="labelId">Label ID *</label>
-            <input id="labelId" pInputText [(ngModel)]="labelDisplay.TLAID" [disabled]="!isNewLabel"
+            <input id="labelId" pInputText [(ngModel)]="labelDisplay.TLAID"
+                [disabled]="!isNewLabel || labelDialogLockKeys"
                 class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round w-full">
         </div>
         <div class="field col-6">
@@ -516,7 +612,8 @@
         <div class="field col-6">
             <label class="font-bold" for="labelLang">Language</label>
             <p-dropdown id="labelLang" [(ngModel)]="labelDisplay.TLALANGUE" [options]="languageOptions" 
-                optionLabel="label" optionValue="value" placeholder="Select Language" class="w-full"></p-dropdown>
+                optionLabel="label" optionValue="value" placeholder="Select Language" class="w-full"
+                [disabled]="labelDialogSource === 'coverage'"></p-dropdown>
         </div>
         <div class="field col-12" *ngIf="!isNewLabel">
             <p-divider></p-divider>

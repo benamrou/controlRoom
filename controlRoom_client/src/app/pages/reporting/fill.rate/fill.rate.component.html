@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Fill rate'" [icon]="'fa-glass-water'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"></app-page-header>
+<app-page-header [heading]="'S37.TITLE' | lbl:'Fill rate'" [icon]="'fa-glass-water'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
@@ -7,15 +7,15 @@
 
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S37.LBL.SUP' | lbl:'Supplier :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 70%; line-height: 25px; align-self: center;">
-        <input type="text"  [(ngModel)]="searchVendorCode" placeholder="  Enter a code or a description" 
+        <input type="text"  [(ngModel)]="searchVendorCode" [placeholder]="'S37.PLH.CODE' | lbl:'  Enter a code or a description'" 
                style="width: 50%;margin-left: 10px;"/>     
     </span>
 
 
     <span class="pull-right" style="padding-right: 20px">
-        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S37.BTN.SRCH' | lbl:'SEARCH'" 
                 [disabled]="searchVendorCode === '' || periodStart === '' || periodEnd === ''" 
                 [style]="{'height': '35px'}"
                 style="margin-right: 15px"></button>
@@ -24,14 +24,14 @@
     </span>
 </div>
 <div class="bbs_search_sub_panel"  >
-    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Period start : </span>
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S37.LBL.PST' | lbl:'Period start :' }} </span>
     <p-calendar [(ngModel)]="periodStart"  
                 dateFormat="mm/dd/yy"
                 [style]="{'height': '35px'}"
                 name="scheduleStart" [showIcon]="true" 
                 [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
-    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Period end : </span>
+    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">{{ 'S37.LBL.PEN' | lbl:'Period end :' }} </span>
     <p-calendar [(ngModel)]="periodEnd"  
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
@@ -65,13 +65,13 @@
                                 class="CSV_Button p-input-icon-left ml-auto"
                                 pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                 *ngIf="searchResult.length>0"
-                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                             </button>
                             <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
                                 pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                 disabled *ngIf="searchResult.length==0"
-                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                             </button>
                     </span>
                 </div>
@@ -81,20 +81,20 @@
                                 class="CSV_Button p-input-icon-left ml-auto"
                                 pTooltip="{{recapButtonTooltip}}" [escape]="false"
                                 disabled *ngIf="searchResult.length==0"
-                                label="Recap" (click)="exportExcelRecap()" style="float:left">
+                                [label]="'S10.BTN.RECAP' | lbl:'Recap'" (click)="exportExcelRecap()" style="float:left">
                             </button>
                             <button type="button" pButton icon="pi pi-user" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
                                 pTooltip="{{recapButtonTooltip}}" [escape]="false"
                                 *ngIf="searchResult.length>0"
-                                label="Recap" (click)="exportExcelRecap()" style="float:left">
+                                [label]="'S10.BTN.RECAP' | lbl:'Recap'" (click)="exportExcelRecap()" style="float:left">
                             </button>
                     </span>
                 </div>
                 <div class="col-9" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>
@@ -167,13 +167,13 @@ selectionMode="single" [(selection)]="selectedElement"
                             class="CSV_Button p-input-icon-left ml-auto"
                             pTooltip="{{csvButtonTooltip}}" [escape]="false"
                             *ngIf="poNotDelivered.length>0"
-                            label="CSV" (click)="resultPOnotDelivered.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultPOnotDelivered.exportCSV()" style="float:left">
                         </button>
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
                             pTooltip="{{csvButtonTooltip}}" [escape]="false"
                             disabled *ngIf="poNotDelivered.length==0"
-                            label="CSV" (click)="resultPOnotDelivered.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultPOnotDelivered.exportCSV()" style="float:left">
                         </button>
                 </span>
             </div>
@@ -183,14 +183,14 @@ selectionMode="single" [(selection)]="selectedElement"
                             class="CSV_Button p-input-icon-left ml-auto"
                             pTooltip="{{recapButtonTooltip}}" [escape]="false"
                             disabled *ngIf="poNotDelivered.length==0"
-                            label="Recap" (click)="exportExcelRecap()" style="float:left">
+                            [label]="'S10.BTN.RECAP' | lbl:'Recap'" (click)="exportExcelRecap()" style="float:left">
                         </button>
                 </span>
             </div>
             <div class="col-9" style="text-align: right;">
                 <span class="p-input-icon-right">
                     <i class="pi pi-search"></i>
-                    <input pInputText type="text" (input)="resultPOnotDelivered.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    <input pInputText type="text" (input)="resultPOnotDelivered.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                 </span>
             </div>
         </div>

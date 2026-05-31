@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Schema Discovery'" [screenID]="screenID" [icon]="'fas fa-database'"></app-page-header>
+<app-page-header [heading]="'S54.TITLE' | lbl:'Schema Discovery'" [screenID]="screenID" [icon]="'fas fa-database'"></app-page-header>
 <p-toast></p-toast>
 
 <div class="ai-module-container">
@@ -7,20 +7,16 @@
     <div class="ai-schema-banner">
         <div class="ai-schema-banner-icon"><i class="fas fa-database"></i></div>
         <div>
-            <strong>Schema Discovery — GOLD physical catalog</strong>
+            <strong>{{ 'S54.BAN.TTL' | lbl:'Schema Discovery — GOLD physical catalog' }}</strong>
             <p>
-                Scans all tables and columns across the retailer’s GOLD schemas
+                {{ 'S54.BAN.P1' | lbl:'Scans GOLD schemas via CORPENV DB links. The catalog feeds the AI engine for SQL validation.' }}
                 <ng-container *ngIf="expectedGoldSchemaOwners.length; else schemaPlaceholder">
                     (<ng-container *ngFor="let s of expectedGoldSchemaOwners; let last = last"><code>{{ s }}</code><span *ngIf="!last">, </span></ng-container>)
                 </ng-container>
                 <ng-template #schemaPlaceholder>(<code>PREFIX</code>CEN, <code>PREFIX</code>GWR, <code>PREFIX</code>STK — prefix from <code>CORPENV.ENVGOLDSCHEMA</code> / retailer code)</ng-template>
-                via the central and stock DB links from CORPENV. The catalog feeds the AI engine for SQL validation
-                and LLM context.
             </p>
             <p>
-                Once scanned, <strong>aiAdmin</strong> and <strong>aiDesigner</strong> users can annotate key tables
-                with domain tags (ITEM, STOCK, SUPPLIER, etc.) and descriptions.
-                These annotations are included in the AI context sent to the LLM.
+                {{ 'S54.BAN.P2' | lbl:'Designers can annotate tables with domain tags and descriptions for AI context.' }}
             </p>
         </div>
     </div>
@@ -28,11 +24,11 @@
     <!-- Retailer + Scan bar -->
     <div class="ai-schema-topbar">
         <div class="ai-schema-topbar-left">
-            <label><i class="fas fa-store"></i> Retailer</label>
+            <label><i class="fas fa-store"></i> {{ 'AI.CMN.RETAIL' | lbl:'Retailer' }}</label>
             <p-dropdown [options]="retailers"
                         [(ngModel)]="selectedRetailer"
                         optionLabel="RETAILER_NAME"
-                        placeholder="Select retailer..."
+                        [placeholder]="'AI.CMN.SELRET' | lbl:'Select retailer...'"
                         [loading]="loadingRetailers"
                         (onChange)="onRetailerChange()">
             </p-dropdown>
@@ -57,7 +53,7 @@
             <!-- Scan button — admin only -->
             <button *ngIf="isAdmin"
                     pButton
-                    [label]="scanStatus?.STATUS === 'RUNNING' ? 'Scanning...' : scanStatus?.TABLES_SCANNED ? 'Re-scan' : 'Run full scan'"
+                    [label]="scanStatus?.STATUS === 'RUNNING' ? ('S54.SCAN.RUN' | lbl:'Scan in progress...') : (scanStatus?.TABLES_SCANNED ? ('S54.BTN.RESC' | lbl:'Re-scan') : ('S54.BTN.SCAN' | lbl:'Run full scan'))"
                     [icon]="scanning || scanStatus?.STATUS === 'RUNNING' ? 'fas fa-spinner fa-spin' : 'fas fa-sync-alt'"
                     class="p-button-primary"
                     [disabled]="scanning || scanStatus?.STATUS === 'RUNNING'"
@@ -65,7 +61,7 @@
             </button>
             <button *ngIf="isAdmin && scanStatus?.STATUS === 'RUNNING'"
                     pButton
-                    label="Unlock scan"
+                    [label]="'S54.BTN.UNLK' | lbl:'Unlock scan'"
                     icon="fas fa-unlock"
                     class="p-button-outlined p-button-warning"
                     [disabled]="scanning"
@@ -84,25 +80,25 @@
             <!-- Filters -->
             <div class="ai-table-filters">
                 <input pInputText [(ngModel)]="filterText"
-                       placeholder="Search table name or description..."
+                       [placeholder]="'S54.PLH.SRCH' | lbl:'Search table name or description...'"
                        class="ai-filter-search"
                        (ngModelChange)="applyFilter()"/>
                 <p-dropdown [options]="schemaOptions"
                             [(ngModel)]="filterSchema"
                             optionLabel="label" optionValue="value"
-                            placeholder="All schemas"
+                            [placeholder]="'S54.FIL.SCH' | lbl:'All schemas'"
                             [showClear]="true"
                             styleClass="ai-filter-dd"
                             (onChange)="applyFilter()"></p-dropdown>
                 <p-dropdown [options]="domainOptions"
                             [(ngModel)]="filterDomain"
-                            placeholder="All domains"
+                            [placeholder]="'S54.FIL.DOM' | lbl:'All domains'"
                             [showClear]="true"
                             styleClass="ai-filter-dd"
                             (onChange)="applyFilter()"></p-dropdown>
                 <div class="ai-filter-key">
                     <p-inputSwitch [(ngModel)]="filterKey" (onChange)="applyFilter()"></p-inputSwitch>
-                    <span>Key only</span>
+                    <span>{{ 'S54.FIL.KEY' | lbl:'Key only' }}</span>
                 </div>
                 <span class="ai-table-count">{{ filteredTables.length }} / {{ tables.length }}</span>
             </div>
@@ -152,7 +148,7 @@
 
                 <div *ngIf="filteredTables.length === 0" class="ai-empty-filter">
                     <i class="fas fa-filter"></i> No tables match filters.
-                    <button pButton label="Clear filters" class="p-button-text p-button-sm"
+                    <button pButton [label]="'AI.CMN.CLEAR' | lbl:'Clear filters'" class="p-button-text p-button-sm"
                             (click)="clearFilters()"></button>
                 </div>
             </div>
@@ -164,8 +160,8 @@
             <!-- No table selected -->
             <div *ngIf="!selectedTable" class="ai-column-empty">
                 <i class="fas fa-database ai-empty-icon"></i>
-                <h3>Select a table</h3>
-                <p>Click any table on the left to explore its columns, data types, and sampled values.</p>
+                <h3>{{ 'S54.EMP.TBL' | lbl:'Select a table' }}</h3>
+                <p>{{ 'S54.EMP.TP' | lbl:'Click any table on the left to explore its columns.' }}</p>
             </div>
 
             <!-- Table selected -->
@@ -174,7 +170,7 @@
                     <div class="ai-column-header-title">
                         <span class="ai-schema-badge ai-schema-badge--lg">{{ selectedTable.SCHEMA_OWNER }}</span>
                         <strong class="ai-column-table-name">{{ selectedTable.TABLE_NAME }}</strong>
-                        <p-tag *ngIf="selectedTable.IS_KEY_TABLE" value="Key table" severity="warning"></p-tag>
+                        <p-tag *ngIf="selectedTable.IS_KEY_TABLE" [value]="'S54.TAG.KEY' | lbl:'Key table'" severity="warning"></p-tag>
                         <p-tag *ngIf="selectedTable.DOMAIN_TAG"
                                [value]="selectedTable.DOMAIN_TAG"
                                [severity]="getDomainSeverity(selectedTable.DOMAIN_TAG)"></p-tag>
@@ -200,8 +196,8 @@
                     <ng-template pTemplate="header">
                         <tr>
                             <th style="width:32px"></th>
-                            <th pSortableColumn="COLUMN_NAME">Column <p-sortIcon field="COLUMN_NAME"></p-sortIcon></th>
-                            <th>Type</th>
+                            <th pSortableColumn="COLUMN_NAME">{{ 'S54.COL.NAME' | lbl:'Column' }} <p-sortIcon field="COLUMN_NAME"></p-sortIcon></th>
+                            <th>{{ 'S54.COL.TYPE' | lbl:'Type' }}</th>
                             <th style="width:60px">Null</th>
                             <th>Sample values</th>
                             <th>Description</th>
@@ -245,9 +241,9 @@
     <div *ngIf="selectedRetailer && !loadingTables && tables.length === 0 && scanStatus?.STATUS !== 'RUNNING'"
          class="ai-no-scan">
         <i class="fas fa-database ai-no-scan-icon"></i>
-        <h3>No schema data yet</h3>
-        <p>Run a full scan to discover all GOLD tables and columns for this retailer’s CEN / GWR / STK schemas.</p>
-        <button *ngIf="isAdmin" pButton label="Run full scan" icon="fas fa-play"
+        <h3>{{ 'S54.NOSCAN' | lbl:'No schema data yet' }}</h3>
+        <p>{{ 'S54.NOSCAN.P' | lbl:'Run a full scan to discover GOLD tables and columns.' }}</p>
+        <button *ngIf="isAdmin" pButton [label]="'S54.BTN.SCAN' | lbl:'Run full scan'" icon="fas fa-play"
                 class="p-button-primary" (click)="triggerScan()"></button>
     </div>
 
@@ -255,7 +251,7 @@
     <div *ngIf="selectedRetailer && tables.length === 0 && scanStatus?.STATUS === 'RUNNING'"
          class="ai-scanning">
         <i class="fas fa-spinner fa-spin ai-scanning-icon"></i>
-        <h3>Scan in progress...</h3>
+        <h3>{{ 'S54.SCAN.RUN' | lbl:'Scan in progress...' }}</h3>
         <p>Discovering tables and columns via <code>{{ retailerDbLinkHint }}</code>.</p>
         <p-progressBar mode="indeterminate" styleClass="ai-scan-prog"></p-progressBar>
     </div>
@@ -265,11 +261,11 @@
 <!-- Table annotation dialog -->
 <p-dialog [visible]="showTableDialog"
           (visibleChange)="showTableDialog = !!$event"
-          header="Annotate table"
+          [header]="'S54.DLG.TBL' | lbl:'Annotate table'"
           [modal]="true" [style]="{ width: '520px' }">
     <div class="p-fluid ai-dialog-form">
         <div class="p-field">
-            <label>Domain</label>
+            <label>{{ 'AI.CMN.DOMAIN' | lbl:'Domain' }}</label>
             <p-dropdown [options]="domainOptions"
                         [(ngModel)]="editTableForm.domain_tag"
                         placeholder="Select domain..."
@@ -277,23 +273,23 @@
             <small class="ai-hint">Tags this table for the AI engine (ITEM, STOCK, SUPPLIER, etc.)</small>
         </div>
         <div class="p-field">
-            <label>Mark as key table</label>
+            <label>{{ 'S54.TAG.KEY' | lbl:'Key table' }}</label>
             <div class="ai-key-toggle">
                 <p-inputSwitch [(ngModel)]="editTableForm.is_key_table"></p-inputSwitch>
                 <span>Key tables are prioritised in AI context and always included in LLM prompts</span>
             </div>
         </div>
         <div class="p-field">
-            <label>Description</label>
+            <label>{{ 'AI.CMN.DESCR' | lbl:'Description' }}</label>
             <textarea pInputTextarea [(ngModel)]="editTableForm.description"
                       rows="3" style="width:100%"
                       placeholder="What does this table store? When is it used?"></textarea>
         </div>
     </div>
     <ng-template pTemplate="footer">
-        <button pButton label="Cancel" class="p-button-outlined"
+        <button pButton [label]="'AI.CMN.CNCEL' | lbl:'Cancel'" class="p-button-outlined"
                 [disabled]="saving" (click)="showTableDialog = false"></button>
-        <button pButton label="Save" icon="fas fa-save" class="p-button-success"
+        <button pButton [label]="'AI.CMN.SAVE' | lbl:'Save'" icon="fas fa-save" class="p-button-success"
                 [disabled]="saving" (click)="saveTableAnnotation()"></button>
     </ng-template>
 </p-dialog>
@@ -301,7 +297,7 @@
 <!-- Column annotation dialog -->
 <p-dialog [visible]="showColumnDialog"
           (visibleChange)="showColumnDialog = !!$event"
-          header="Annotate column"
+          [header]="'S54.DLG.COL' | lbl:'Annotate column'"
           [modal]="true" [style]="{ width: '480px' }">
     <div class="p-fluid ai-dialog-form">
         <div class="p-field">
@@ -312,16 +308,16 @@
             </div>
         </div>
         <div class="p-field">
-            <label>Description</label>
+            <label>{{ 'AI.CMN.DESCR' | lbl:'Description' }}</label>
             <textarea pInputTextarea [(ngModel)]="editColumnForm.description"
                       rows="3" style="width:100%"
                       placeholder="What does this column represent?"></textarea>
         </div>
     </div>
     <ng-template pTemplate="footer">
-        <button pButton label="Cancel" class="p-button-outlined"
+        <button pButton [label]="'AI.CMN.CNCEL' | lbl:'Cancel'" class="p-button-outlined"
                 [disabled]="saving" (click)="showColumnDialog = false"></button>
-        <button pButton label="Save" icon="fas fa-save" class="p-button-success"
+        <button pButton [label]="'AI.CMN.SAVE' | lbl:'Save'" icon="fas fa-save" class="p-button-success"
                 [disabled]="saving" (click)="saveColumnAnnotation()"></button>
     </ng-template>
 </p-dialog>

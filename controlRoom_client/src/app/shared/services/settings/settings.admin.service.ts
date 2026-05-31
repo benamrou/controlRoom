@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { QueryService } from '../query/query.service';
+import { UserService } from '../user/user.service';
 
 /** LIBQUERY ids — deploy `34_settings_users_corporate_libquery.sql` */
 const Q = {
@@ -22,6 +23,11 @@ const Q = {
   USERENV_MERGE: 'SET0000031',
   USERENV_DELETE: 'SET0000032',
   USERENV_MATRIX: 'SET0000034',
+  USERWIDGET_LIST: 'SET0000035',
+  USERWIDGET_GET: 'SET0000036',
+  USERWIDGET_MERGE: 'SET0000037',
+  USERWIDGET_DELETE: 'SET0000038',
+  WIDGET_CATALOG: 'WDG0000100',
   PROFILE_LIST: 'SET0000042',
   MENU_CATALOG: 'SET0000046',
   MENU_MERGE: 'SET0000047',
@@ -34,6 +40,14 @@ const Q = {
   PROFILE_MENUS_REPLACE: 'SET0000054',
   PROFILE_GRANTS: 'SET0000044',
   PROFILE_GRANT_MERGE: 'SET0000045',
+  LANGUAGE_LIST: 'SET0000055',
+  MENU_LABEL_LIST: 'SET0000058',
+  MENU_LABEL_MERGE: 'SET0000059',
+  MENU_LABEL_BULK: 'SET0000060',
+  USER_SESSION_LANG: 'SET0000061',
+  LABELS_BY_SCREEN: 'DIC0000013',
+  LABELS_BULK: 'DIC0000014',
+  LABELS_COVERAGE: 'DIC0000015',
 } as const;
 
 @Injectable({ providedIn: 'root' })
@@ -108,6 +122,98 @@ export class SettingsAdminService {
     return 'Query failed';
   }
 
+  /** POST DML responses may include Oracle error rows without failing HTTP. */
+  static assertPostOk(data: unknown): void {
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      const o = data as Record<string, unknown>;
+      if (Number(o.RESULT) === -1) {
+        throw new Error(String(o.MESSAGE || 'Request failed'));
+      }
+    }
+    const rows = SettingsAdminService.toRows(data);
+    const errRow = rows.find((r) => SettingsAdminService.isOracleErrorRow(r));
+    if (errRow) {
+      throw new Error(SettingsAdminService.oracleErrorMessage(errRow));
+    }
+  }
+
+  /** USERSROOM.USERUTIL / CONUTIL / UWPUTIL — prefer arg, then localStorage (ICR login). */
+  static resolveCurrentUserId(preferred?: unknown): string {
+    const util = String(preferred ?? localStorage.getItem('ICRUser') ?? '').trim();
+    if (!util) {
+      throw new Error('Current user id (ICRUser) is not set. Log in again.');
+    }
+    return util;
+  }
+
+  /** USER_WIDGET.UWPPARAM — treat null / literal "null" as -1. */
+  static normalizeUwParam(value: unknown): string {
+    if (value == null) {
+      return '-1';
+    }
+    const s = String(value).trim();
+    if (!s || s.toLowerCase() === 'null') {
+      return '-1';
+    }
+    return s;
+  }
+
+  private postDml(queryId: string, values: Record<string, unknown>[]): Observable<unknown> {
+    return this._query.postQueryResult(queryId, values).pipe(
+      tap((raw) => SettingsAdminService.logRawResponse(queryId, [], raw)),
+      map((data) => {
+        SettingsAdminService.assertPostOk(data);
+        return data;
+      }),
+    );
+  }
+
+  /** Fields accepted by SET0000022 JSON_TABLE — avoids stray keys from duplicate spread. */
+  static buildUserMergeRow(row: Record<string, unknown>): Record<string, unknown> {
+    const prof = SettingsAdminService.userProfForSave(row.USERPROF);
+    const out: Record<string, unknown> = {
+      USERID: String(row.USERID ?? '').trim(),
+      USERCORPID: row.USERCORPID,
+      USERAPPLI: row.USERAPPLI ?? 1,
+      USERAUTH: row.USERAUTH ?? 0,
+      USERLANG: row.USERLANG ?? 'us_US',
+      USERFNAME: row.USERFNAME ?? '',
+      USERLNAME: row.USERLNAME ?? '',
+      USEREMAIL: row.USEREMAIL ?? '',
+      USERMOBILE: row.USERMOBILE ?? '',
+      USERTEAM: row.USERTEAM ?? '',
+      USERACTIVE: row.USERACTIVE ?? 1,
+      USERMOBEMAIL: row.USERMOBEMAIL ?? '',
+      USERDATAINTEGRITY: row.USERDATAINTEGRITY ?? 0,
+      USERIT: row.USERIT ?? 0,
+      USERBUYER: row.USERBUYER ?? 0,
+      USERHELPDESK: row.USERHELPDESK ?? 0,
+      USERWAREHOUSE: row.USERWAREHOUSE ?? 0,
+      USERSPACEPLANNING: row.USERSPACEPLANNING ?? 0,
+      USERSTECH: row.USERSTECH ?? 0,
+      USERAIADMIN: row.USERAIADMIN ?? 0,
+      USERAIDESIGNER: row.USERAIDESIGNER ?? 0,
+      USERTYPE: row.USERTYPE ?? 0,
+      USERUTIL: SettingsAdminService.resolveCurrentUserId(row.USERUTIL),
+      UPDATE_PASS: row.UPDATE_PASS ?? '0',
+    };
+    if (prof != null) {
+      out.USERPROF = prof;
+    }
+    if (row.USERPASS != null && String(row.USERPASS).trim() !== '') {
+      out.USERPASS = row.USERPASS;
+    }
+    return out;
+  }
+
+  static userProfForSave(prof: unknown): number | null {
+    const n = Number(prof);
+    if (!Number.isFinite(n) || n <= 0) {
+      return null;
+    }
+    return n;
+  }
+
   private getRows(queryId: string, params: string[]): Observable<Record<string, unknown>[]> {
     return this._query.getQueryResult(queryId, params).pipe(
       tap((raw) => SettingsAdminService.logRawResponse(queryId, params, raw)),
@@ -178,15 +284,15 @@ export class SettingsAdminService {
   }
 
   saveUser(row: Record<string, unknown>): Observable<unknown> {
-    const payload = { ...row };
+    const payload = SettingsAdminService.buildUserMergeRow(row);
     if (payload.USERPASS != null && String(payload.USERPASS).trim() !== '') {
       payload.USERPASS = SettingsAdminService.encodePassword(String(payload.USERPASS));
     }
-    return this._query.postQueryResult(Q.USER_MERGE, [payload]);
+    return this.postDml(Q.USER_MERGE, [payload]);
   }
 
   deleteUser(userId: string, userAppli = 1): Observable<unknown> {
-    return this._query.postQueryResult(Q.USER_DELETE, [
+    return this.postDml(Q.USER_DELETE, [
       { USERID: userId, USERAPPLI: String(userAppli) },
     ]);
   }
@@ -226,7 +332,10 @@ export class SettingsAdminService {
   }
 
   saveUserEnvironment(row: Record<string, unknown>): Observable<unknown> {
-    return this._query.postQueryResult(Q.USERENV_MERGE, [row]);
+    return this.postDml(Q.USERENV_MERGE, [{
+      ...row,
+      CONUTIL: SettingsAdminService.resolveCurrentUserId(row.CONUTIL),
+    }]);
   }
 
   deleteUserEnvironment(
@@ -234,11 +343,108 @@ export class SettingsAdminService {
     envId: number | string,
     corpId: number | string
   ): Observable<unknown> {
-    return this._query.postQueryResult(Q.USERENV_DELETE, [{
+    return this.postDml(Q.USERENV_DELETE, [{
       CONUSERID: userId,
       CONENVID: String(envId),
       CONCORPID: String(corpId),
     }]);
+  }
+
+  listUserWidgets(userId: string): Observable<Record<string, unknown>[]> {
+    return this.getRows(Q.USERWIDGET_LIST, [String(userId || '').trim()]);
+  }
+
+  getUserWidget(userId: string, widid: string, uwparam: string): Observable<Record<string, unknown>[]> {
+    return this.getRows(Q.USERWIDGET_GET, [
+      String(userId || '').trim(),
+      String(widid || '').trim(),
+      String(uwparam ?? '-1').trim() || '-1',
+    ]);
+  }
+
+  saveUserWidget(row: Record<string, unknown>): Observable<unknown> {
+    const payload = {
+      ...row,
+      UWPPARAM: SettingsAdminService.normalizeUwParam(row.UWPPARAM),
+      UWPUTIL: SettingsAdminService.resolveCurrentUserId(row.UWPUTIL),
+    };
+    return this.postDml(Q.USERWIDGET_MERGE, [payload]);
+  }
+
+  deleteUserWidget(userId: string, widid: string, uwparam: string): Observable<unknown> {
+    return this.postDml(Q.USERWIDGET_DELETE, [{
+      UWPUSERID: String(userId || '').trim(),
+      UWPWIDID: String(widid || '').trim(),
+      UWPPARAM: SettingsAdminService.normalizeUwParam(uwparam),
+    }]);
+  }
+
+  /** Widget catalog for USER_WIDGET assignment dropdown (WDG0000100). */
+  listWidgetCatalog(lang?: string): Observable<Record<string, unknown>[]> {
+    const l = (lang || SettingsAdminService.resolveUiLanguage()).trim() || 'us_US';
+    return this.getRows(Q.WIDGET_CATALOG, ['-1', l]);
+  }
+
+  /** Active languages (SET0000055). */
+  listLanguages(): Observable<Record<string, unknown>[]> {
+    return this.getRows(Q.LANGUAGE_LIST, ['-1']);
+  }
+
+  /** Persist USERLANG after header language switch (SET0000061). */
+  saveSessionLanguage(userId: string | number, userAppli: string | number, lang: string): Observable<unknown> {
+    return this.postDml(Q.USER_SESSION_LANG, [{
+      USERID: Number(userId),
+      USERAPPLI: String(userAppli ?? 1),
+      USERLANG: (lang || 'us_US').trim(),
+      USERUTIL: SettingsAdminService.resolveCurrentUserId(),
+    }]);
+  }
+
+  /** Menu labels for one language (SET0000058). */
+  listMenuLabels(language: string): Observable<Record<string, unknown>[]> {
+    return this.getRows(Q.MENU_LABEL_LIST, [(language || 'us_US').trim()]);
+  }
+
+  saveMenuLabel(row: Record<string, unknown>): Observable<unknown> {
+    return this.postDml(Q.MENU_LABEL_MERGE, [{
+      MENU_CODE: row.MENU_CODE,
+      MLLANGUE: row.MLLANGUE ?? 'us_US',
+      LABEL_TEXT: row.LABEL_TEXT ?? ' ',
+      MLUTIL: SettingsAdminService.resolveCurrentUserId(row.MLUTIL),
+    }]);
+  }
+
+  bulkMenuLabels(rows: Record<string, unknown>[]): Observable<unknown> {
+    return this.postDml(Q.MENU_LABEL_BULK, rows.map((r) => ({
+      MENU_CODE: r.MENU_CODE,
+      MLLANGUE: r.MLLANGUE ?? 'us_US',
+      LABEL_TEXT: r.LABEL_TEXT ?? ' ',
+      MLUTIL: SettingsAdminService.resolveCurrentUserId(r.MLUTIL),
+    })));
+  }
+
+  listLabelsByScreen(screen: string, language = '-1'): Observable<Record<string, unknown>[]> {
+    return this.getRows(Q.LABELS_BY_SCREEN, [screen || '-1', language || '-1']);
+  }
+
+  bulkLabels(rows: Record<string, unknown>[]): Observable<unknown> {
+    return this.postDml(Q.LABELS_BULK, rows.map((r) => ({
+      TLAID: r.TLAID,
+      TLADESC: r.TLADESC ?? ' ',
+      TLAMENU: r.TLAMENU ?? 0,
+      TLASCREEN: r.TLASCREEN ?? ' ',
+      TLALANGUE: r.TLALANGUE ?? 'us_US',
+      TLAUTIL: SettingsAdminService.resolveCurrentUserId(r.TLAUTIL),
+    })));
+  }
+
+  labelCoverage(targetLanguage: string): Observable<Record<string, unknown>[]> {
+    return this.getRows(Q.LABELS_COVERAGE, [(targetLanguage || 'en_GB').trim()]);
+  }
+
+  /** USERLANG / ICRLanguage for widget catalog and other admin reads. */
+  static resolveUiLanguage(): string {
+    return UserService.normalizeLanguageCode(localStorage.getItem('ICRLanguage') || 'us_US');
   }
 
   listAccessProfiles(): Observable<Record<string, unknown>[]> {

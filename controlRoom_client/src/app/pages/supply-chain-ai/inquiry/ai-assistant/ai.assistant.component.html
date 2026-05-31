@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Supply Chain Assistant'" [screenID]="screenID" [icon]="'fas fa-comments'"></app-page-header>
+<app-page-header [heading]="'S60.TITLE' | lbl:'Supply Chain Assistant'" [screenID]="screenID" [icon]="'fas fa-comments'"></app-page-header>
 <p-toast></p-toast>
 
 <div class="ai-module-container">
@@ -7,15 +7,15 @@
         <div class="ai-chat-panel">
             <div class="ai-chat-header">
                 <div class="ai-chat-title">
-                    <h3>Supply Chain Assistant</h3>
-                    <span>Ask about items, vendors, orders, or stock in plain language — the AI queries your GOLD data and explains what it finds.</span>
+                    <h3>{{ 'S60.CHAT.TTL' | lbl:'Supply Chain Assistant' }}</h3>
+                    <span>{{ 'S60.CHAT.SUB' | lbl:'Ask about items, vendors, orders, or stock in plain language.' }}</span>
                 </div>
                 <div class="ai-retailer-picker">
-                    <label><i class="fas fa-store"></i> Retailer</label>
+                    <label><i class="fas fa-store"></i> {{ 'AI.CMN.RETAIL' | lbl:'Retailer' }}</label>
                     <p-dropdown [options]="retailers"
                                 [(ngModel)]="selectedRetailer"
                                 optionLabel="RETAILER_NAME"
-                                placeholder="Select retailer..."
+                                [placeholder]="'AI.CMN.SELRET' | lbl:'Select retailer...'"
                                 [loading]="loadingRetailers">
                     </p-dropdown>
                 </div>
@@ -23,7 +23,7 @@
                     <button pButton
                             type="button"
                             icon="fas fa-plus"
-                            label="New conversation"
+                            [label]="'S60.NEWCONV' | lbl:'New conversation'"
                             class="p-button-sm p-button-outlined p-button-secondary"
                             pTooltip="Clear chat and session context"
                             tooltipPosition="bottom"
@@ -32,7 +32,7 @@
                     <button pButton
                             type="button"
                             icon="fas fa-download"
-                            label="Export session"
+                            [label]="'S60.EXPORT' | lbl:'Export session'"
                             class="p-button-sm p-button-outlined p-button-secondary"
                             pTooltip="Export full conversation as a text file"
                             tooltipPosition="bottom"
@@ -42,9 +42,9 @@
 
             <div class="ai-chat-log ai-chat-log--canvas">
                 <div class="ai-chat-empty" *ngIf="!chatTurns.length">
-                    <p class="ai-chat-empty-lead">Ask about items, vendors, stores, or supply-chain status in plain language.</p>
+                    <p class="ai-chat-empty-lead">{{ 'S60.EMPTY' | lbl:'Ask about items, vendors, stores, or supply-chain status in plain language.' }}</p>
                     <div class="ai-example-prompts">
-                        <span class="ai-example-prompts-label">Try an example:</span>
+                        <span class="ai-example-prompts-label">{{ 'S60.EX.LBL' | lbl:'Try an example:' }}</span>
                         <button *ngFor="let ex of examplePrompts"
                                 type="button"
                                 class="ai-example-prompt-chip"
@@ -60,7 +60,7 @@
                     </div>
                     <div *ngIf="t.role !== 'separator'" class="ai-chat-row" [class.ai-chat-row--user]="t.role === 'user'">
                         <div class="ai-chat-bubble">
-                            <strong>{{ t.role === 'user' ? 'You' : 'Assistant' }}</strong>
+                            <strong>{{ t.role === 'user' ? ('AI.CMN.YOU' | lbl:'You') : ('AI.CMN.AST' | lbl:'Assistant') }}</strong>
                             <p>{{ t.text }}</p>
                             <div *ngIf="t.role === 'assistant' && !isAiAdmin && tIdx === lastAssistantTurnIndex && t.meta?.routing_label && t.meta?.routing_severity !== 'success'"
                                  class="ai-routing-status">
@@ -82,7 +82,17 @@
                                        value="INFO"
                                        severity="info"
                                        icon="fas fa-info-circle"></p-tag>
-                                <small *ngIf="t.meta.conclusion_key" class="ai-diag-conclusion-key">{{ t.meta.conclusion_key }}</small>
+                                <!-- Multi-issue: show count badge instead of single conclusion key -->
+                                <p-tag *ngIf="t.meta.issues_found > 1"
+                                       [value]="t.meta.issues_found + ' issues'"
+                                       severity="warning"
+                                       icon="fas fa-layer-group"></p-tag>
+                                <p-tag *ngIf="t.meta.has_hard_stop"
+                                       value="Hard stop"
+                                       severity="danger"
+                                       icon="fas fa-hand-paper"></p-tag>
+                                <small *ngIf="t.meta.issues_found <= 1 && t.meta.conclusion_key"
+                                       class="ai-diag-conclusion-key">{{ t.meta.conclusion_key }}</small>
                             </div>
 
                             <ul *ngIf="t.role === 'assistant' && getTurnEvidenceFacts(t).length"
@@ -97,15 +107,23 @@
                                     <p-accordionTab header="Diagnostic chain — {{ t.meta.diagnostic_steps.length }} step(s)">
                                         <div *ngFor="let step of t.meta.diagnostic_steps; let si = index"
                                              class="ai-diag-step"
-                                             [class.ai-diag-step--stopped]="step.stopped_here">
+                                             [class.ai-diag-step--stopped]="step.stopped_here"
+                                             [class.ai-diag-step--issue]="step.issue_found && !step.stopped_here">
                                             <div class="ai-diag-step-header">
                                                 <span class="ai-diag-step-num">Step {{ step.step_order }}</span>
                                                 <span class="ai-diag-step-label">{{ step.step_label }}</span>
                                                 <span class="ai-diag-step-tpl">{{ step.template_code }}</span>
+                                                <!-- HARD stop — chain aborted -->
                                                 <p-tag *ngIf="step.stopped_here"
-                                                       value="STOP"
+                                                       value="HARD STOP"
                                                        severity="danger"
+                                                       icon="fas fa-hand-paper"
                                                        styleClass="ai-diag-step-stop"></p-tag>
+                                                <!-- SOFT issue — issue logged, chain continued -->
+                                                <p-tag *ngIf="step.issue_found && !step.stopped_here"
+                                                       value="ISSUE"
+                                                       severity="warning"
+                                                       icon="fas fa-exclamation-triangle"></p-tag>
                                                 <p-tag *ngIf="step.skipped"
                                                        value="SKIPPED"
                                                        severity="warning"></p-tag>
@@ -114,7 +132,8 @@
                                                        severity="danger"></p-tag>
                                             </div>
                                             <div *ngIf="step.matched_conclusion" class="ai-diag-step-conclusion">
-                                                Conclusion: <strong>{{ step.matched_conclusion }}</strong>
+                                                {{ step.issue_type === 'HARD' ? 'Hard stop' : 'Issue' }}:
+                                                <strong>{{ step.matched_conclusion }}</strong>
                                             </div>
                                             <div *ngIf="step.error" class="ai-diag-step-error">{{ step.error }}</div>
                                             <div *ngIf="step.reason" class="ai-diag-step-error">{{ step.reason }}</div>
@@ -157,7 +176,7 @@
                                                 pButton
                                                 type="button"
                                                 icon="fas fa-file-csv"
-                                                label="CSV"
+                                                [label]="'CMN.CSV' | lbl:'CSV'"
                                                 class="p-button-sm p-button-text"
                                                 pTooltip="Download as CSV"
                                                 tooltipPosition="top"
@@ -385,7 +404,7 @@
                 </div>
                 <div *ngIf="awaitingAssistant" class="ai-chat-row">
                     <div class="ai-chat-bubble ai-chat-bubble--typing">
-                        <strong>Assistant</strong>
+                        <strong>{{ 'AI.CMN.AST' | lbl:'Assistant' }}</strong>
                         <div class="ai-typing-dots">
                             <span></span><span></span><span></span>
                         </div>
@@ -400,11 +419,9 @@
                           [ngModel]="getComposerText()"
                           (ngModelChange)="setComposerText($event)"
                           (keydown)="onComposerKeydown($event)"
-                          [placeholder]="chatTurns.length
-                            ? 'Add context, choose supplier, or ask a follow-up question...'
-                            : 'Example: What DSD items can we buy from Lipari at store 7?'"></textarea>
+                          [placeholder]="'S60.PLH.ASK' | lbl:'Ask a supply chain question...'"></textarea>
                 <p class="ai-composer-hint">
-                    <i class="fas fa-keyboard"></i> Enter to send · Shift+Enter for a new line
+                    <i class="fas fa-keyboard"></i> {{ 'S60.SEND.HINT' | lbl:'Enter to send · Shift+Enter for newline' }}
                 </p>
                 <div class="ai-composer-actions">
                     <button pButton
@@ -477,7 +494,7 @@
                 <div class="ai-context-chips">
                     <ng-container *ngFor="let k of getContextEntityKeys()">
                         <span *ngIf="contextEditKey !== k" class="ai-context-chip">
-                            <strong>{{ humanizeContextKey(k) }}</strong>
+                            <strong>{{ contextEntityLabel(k) }}</strong>
                             <code>{{ currentSessionContext.entities[k] }}</code>
                             <button type="button"
                                     class="ai-context-chip-btn"
@@ -495,7 +512,7 @@
                             </button>
                         </span>
                         <span *ngIf="contextEditKey === k" class="ai-context-chip ai-context-chip--editing">
-                            <strong>{{ humanizeContextKey(k) }}</strong>
+                            <strong>{{ contextEntityLabel(k) }}</strong>
                             <input pInputText
                                    [(ngModel)]="contextEditValue"
                                    class="ai-context-edit-input"
@@ -829,7 +846,7 @@
                                     pButton
                                     type="button"
                                     icon="fas fa-file-csv"
-                                    label="CSV"
+                                    [label]="'CMN.CSV' | lbl:'CSV'"
                                     class="p-button-sm p-button-outlined p-button-secondary"
                                     pTooltip="Download visible columns and rows as a CSV file"
                                     tooltipPosition="top"

@@ -6,10 +6,10 @@ import { SupplierScheduleServiceContractComponent } from './service.contract.com
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
-
+import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
 
 @NgModule({
-    imports: [ RouterModule,CommonModule,FormsModule, TableModule, DialogModule, ButtonModule ],
+    imports: [ RouterModule, CommonModule, FormsModule, TableModule, DialogModule, ButtonModule, PageHeaderModule ],
     declarations: [SupplierScheduleServiceContractComponent],
     exports: [SupplierScheduleServiceContractComponent],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]

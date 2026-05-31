@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Query Library'" [waitMessage]="waitMessage" [screenID]="screenID"
+<app-page-header [heading]="'S67.TITLE' | lbl:'Query Library'" [waitMessage]="waitMessage" [screenID]="screenID"
     [icon]="'fa-database'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -9,18 +9,18 @@
 <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
 <!-- Process Completed Dialog -->
-<p-dialog header="Process Completed" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '30vw'}" [maximizable]="false">
+<p-dialog [header]="'S67.DLG.DONE' | lbl:'Process Completed'" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '30vw'}" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
     <p-footer>
         <button style="float: right; margin-bottom:0.5em" 
                 type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
-                label="Ok">
+                [label]="'CMN.OK' | lbl:'Ok'">
         </button>
     </p-footer>
 </p-dialog>
 
 <!-- Test Query Result Dialog -->
-<p-dialog *ngIf="displayTestResult" header="Query Test Results" 
+<p-dialog *ngIf="displayTestResult" [header]="'S67.DLG.TEST' | lbl:'Query Test Results'" 
             [(visible)]="displayTestResult"
             [style]="{width: '90vw', height: '85vh'}"
             [maximizable]="true" #testResultDialog>
@@ -38,7 +38,7 @@
                     <div class="col-1">
                         <button type="button" pButton icon="fas fa-file" iconPos="left"
                             class="CSV_Button p-input-icon-left ml-auto" pTooltip="{{csvButtonTooltip}}"
-                            *ngIf="testResultData.length>0" label="CSV" (click)="resultTest.exportCSV()" style="float:left">
+                            *ngIf="testResultData.length>0" [label]="'S67.BTN.CSV' | lbl:'CSV'" (click)="resultTest.exportCSV()" style="float:left">
                         </button>
                     </div>
                     <div class="col-11" style="text-align: right;">
@@ -46,7 +46,7 @@
                             <i class="pi pi-search"></i>
                             <input pInputText type="text"
                                 (input)="resultTest.filterGlobal($any($event.target).value, 'contains')"
-                                placeholder="Type text to filter..." />
+                                [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                         </span>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                 </tr>
             </ng-template>
         </p-table>
-        <i class="FOOTER_Table">{{testResultData.length}} records returned</i>
+        <i class="FOOTER_Table">{{testResultData.length}} {{ 'CMN.RECORDS' | lbl:'records' }}</i>
     </div>
 </p-dialog>
 
@@ -116,16 +116,16 @@
 
     <!-- Action buttons at top right -->
     <div style="display: flex; justify-content: flex-end; padding: 0 20px 10px 0;">
-        <button (click)="displayQuery=false" pButton icon="fas fa-close" label="CANCEL"
+        <button (click)="displayQuery=false" pButton icon="fas fa-close" [label]="'CMN.CANCEL' | lbl:'Cancel'"
             style="margin-right: 15px; height: 35px;"></button>
-        <button (click)="saveChanges()" pButton icon="fas fa-save" label="SAVE"
+        <button (click)="saveChanges()" pButton icon="fas fa-save" [label]="'CMN.SAVE' | lbl:'Save'"
             style="height: 35px;"></button>
     </div>
 
     <!-- Tab View -->
     <p-tabView>
             <!-- General Tab -->
-            <p-tabPanel header="General">
+            <p-tabPanel [header]="'S67.TAB.GEN' | lbl:'General'">
                 <div class="formgrid grid">
                     <!-- Row 1: ID, Query Number, Title -->
                     <div class="field col-2" *ngIf="!isNewQuery">
@@ -223,7 +223,7 @@
             </p-tabPanel>
 
             <!-- Configuration Tab -->
-            <p-tabPanel header="Configuration">
+            <p-tabPanel [header]="'S67.TAB.CFG' | lbl:'Configuration'">
                 <div class="formgrid grid">
                     <!-- Query Type -->
                     <div class="field col-4">
@@ -271,7 +271,7 @@
             </p-tabPanel>
 
             <!-- Audit Tab -->
-            <p-tabPanel header="Audit Info" *ngIf="!isNewQuery">
+            <p-tabPanel [header]="'S67.TAB.AUD' | lbl:'Audit Info'" *ngIf="!isNewQuery">
                 <div class="formgrid grid">
                     <div class="field col-4">
                         <label class="font-bold" for="queryDcre">Created Date</label>
@@ -312,7 +312,7 @@
     </span>
 
     <span class="pull-right" style="padding-right: 20px">
-        <button pButton (click)="search()" icon="fas fa-search" label="SEARCH" [style]="{'height': '35px'}"></button>
+        <button pButton (click)="search()" icon="fas fa-search" [label]="'S67.BTN.SRCH' | lbl:'SEARCH'" [style]="{'height': '35px'}"></button>
         <button pButton (click)="search()" icon="fas fa-sync-alt" pTooltip="Refresh" [style]="{'height': '35px'}"></button>
     </span>
 </div>
@@ -331,12 +331,12 @@
                 <div class="col-1">
                     <button type="button" pButton icon="fas fa-file" iconPos="left"
                         class="CSV_Button" pTooltip="{{csvButtonTooltip}}"
-                        *ngIf="searchResult.length>0" label="CSV" (click)="queryTable.exportCSV()" style="float:left">
+                        *ngIf="searchResult.length>0" [label]="'CMN.CSV' | lbl:'CSV'" (click)="queryTable.exportCSV()" style="float:left">
                     </button>
                 </div>
                 <div class="col-2">
                     <button type="button" pButton icon="pi pi-plus" iconPos="left"
-                        class="CREATE_Button" label="CREATE" (click)="createQuery()"
+                        class="CREATE_Button" [label]="'S67.BTN.CREATE' | lbl:'CREATE'" (click)="createQuery()"
                         style="float:left">
                     </button>
                 </div>
@@ -345,7 +345,7 @@
                         <i class="pi pi-search"></i>
                         <input pInputText type="text"
                             (input)="queryTable.filterGlobal($any($event.target).value, 'contains')"
-                            placeholder="Type text to filter..." />
+                            [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>

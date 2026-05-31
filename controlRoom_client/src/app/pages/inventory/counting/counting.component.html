@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Third-Party counting integration follow-up'" [icon]="'fa-university'"
+<app-page-header [heading]="'S07.TITLE' | lbl:'Third-Party counting integration follow-up'" [icon]="'fa-university'"
                  [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px">
@@ -6,7 +6,7 @@
 </div>
 
 <div class="bbs_search_panel"  >
-    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Counting date : </span>
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">{{ 'S07.LBL.CDATE' | lbl:'Counting date :' }} </span>
     <span style="margin-right:50px; line-height: 25px; align-self: center">
         <p-calendar [(ngModel)]="countingDate"  name="countingDate" 
                     dateFormat="mm/dd/yy" [showIcon]="true" 
@@ -17,7 +17,7 @@
 
 
     <div class="pull-right">
-        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" [disabled]="countingDate === ''" 
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S07.BTN.SRCH' | lbl:'SEARCH'" [disabled]="countingDate === ''" 
                 [style]="{'height': '35px'}"
                 style="margin-right: 15px"></button>
     </div>
@@ -62,14 +62,14 @@
                     <span>
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                         </button>
                     </span>
                 </div>
                 <div class="col-9" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>
@@ -278,14 +278,14 @@
                             <span>
                                 <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                     class="CSV_Button p-input-icon-left ml-auto"
-                                    label="CSV" (click)="resultRejection.exportCSV()" style="float:left">
+                                    [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultRejection.exportCSV()" style="float:left">
                                 </button>
                             </span>
                         </div>
                         <div class="col-9" style="text-align: right;">
                             <span class="p-input-icon-right">
                                 <i class="pi pi-search"></i>
-                                <input pInputText type="text" (input)="resultRejection.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                                <input pInputText type="text" (input)="resultRejection.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                             </span>
                         </div>
                     </div>
@@ -331,14 +331,14 @@
                             <span>
                                 <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                     class="CSV_Button p-input-icon-left ml-auto"
-                                    label="CSV" (click)="resultMVT.exportCSV()" style="float:left">
+                                    [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultMVT.exportCSV()" style="float:left">
                                 </button>
                             </span>
                         </div>
                         <div class="col-9" style="text-align: right;">
                             <span class="p-input-icon-right">
                                 <i class="pi pi-search"></i>
-                                <input pInputText type="text" (input)="resultMVT.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                                <input pInputText type="text" (input)="resultMVT.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                             </span>
                         </div>
                     </div>

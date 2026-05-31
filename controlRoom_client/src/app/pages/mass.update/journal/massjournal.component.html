@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Mass Changes Journal'" [icon]="'fas fa-clipboard-check'"
+<app-page-header [heading]="'S09.TITLE' | lbl:'Mass Changes Journal'" [icon]="'fas fa-clipboard-check'"
                  [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -11,12 +11,12 @@
 <!-- End confirmation boxes -->
 
 <div class="bbs_search_panel"  >
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Mass filename: </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S09.LBL.MASFIL' | lbl:'Mass filename:' }} </span>
     <span style="overflow: hidden; padding-left: 1em; width: 40%;">
-        <input type="text"  [(ngModel)]="searchExecutionID" placeholder=" Key part of the file name " 
+        <input type="text"  [(ngModel)]="searchExecutionID" [placeholder]="'S09.PLH.MASFIL' | lbl:'Key part of the file name'" 
                 style="width: 100%; height:35px"/>  
     </span>
-    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Scope : </span>
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">{{ 'S09.LBL.SCOPE' | lbl:'Scope :' }} </span>
     <span style="margin-right:50px;">
         <input [(ngModel)]="searchScopeCode" placeholder="" 
             list="massTypeList" autocomplete="off"
@@ -29,7 +29,7 @@
     </span>
 
     <span class="pull-right" style="padding-right: 20px">
-            <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+            <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S09.BTN.SRCH' | lbl:'SEARCH'" 
                     [style]="{'height': '35px'}" style="margin-right: 15px">
             </button>
             <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true"
@@ -38,7 +38,7 @@
 </div>
 <div class="bbs_search_sub_panel"  >
 
-    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Loaded : </span>
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S09.LBL.LOADED' | lbl:'Loaded :' }} </span>
     <p-calendar [(ngModel)]="searchLoadingDate"  
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
@@ -46,7 +46,7 @@
                 name="loadingDate" [showIcon]="true" 
                 [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
-    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Execution : </span>
+    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">{{ 'S09.LBL.EXEC' | lbl:'Execution :' }} </span>
     <p-calendar [(ngModel)]="searchExecutionDate"  
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
@@ -60,13 +60,13 @@
 <p></p>
 
 <!-- When validation -->
-<p-dialog header="Update completed" *ngIf="displayUpdateCompleted"
+<p-dialog [header]="'S09.DLG.UPD' | lbl:'Update completed'" *ngIf="displayUpdateCompleted"
     [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
 </p-dialog>
@@ -74,7 +74,7 @@
 <!-- When Edit -->
 <p-dialog *ngIf="displayEdit" [visible]="displayEdit" [modal]="true" [style]="{'width': '50vw'}"  [baseZIndex]="10000">
     <p-header>
-        Execution plan
+        {{ 'S09.DLG.EXECPL' | lbl:'Execution plan' }}
     </p-header>
     <div class="row" style=" border-style: outset; background-color: lightyellow; margin-right: 2em; font-size: smaller">
         <div class="col" >
@@ -94,7 +94,7 @@
     </div>
     <div class="row"  style=" margin-top:2em; margin-right: 2em;font-size: smaller ">
         <div class="col">
-            <span style="margin-right:1.3em; ">New Item link start date : </span>
+            <span style="margin-right:1.3em; ">{{ 'MU.LBL.LNKDT' | lbl:'New link start date :' }} </span>
             <p-calendar [(ngModel)]="searchResult[indexEdit].JSONSTARTDATE"   appendTo="body" 
                         [baseZIndex]="99999"
                         [readonlyInput]="true"
@@ -121,14 +121,14 @@
     <div class="row"  style=" margin-right: 2em;font-size: smaller ">
         <div class="col">
             <p-checkbox [(ngModel)]="searchResult[indexEdit].JSONTRACE" [binary]="true"></p-checkbox>
-            <span style="margin-top: 5px; padding-left: 15px;">Item trace generation </span>
+            <span style="margin-top: 5px; padding-left: 15px;">{{ 'MU.LBL.TRACE' | lbl:'Item trace generation' }} </span>
         </div>
     </div>
     <p-footer>
-        <button pButton icon="fas fa-angle-left" iconPos="left" (click)="displayEdit=false" label="Back" style="float: left; margin-bottom:0.5em" ></button>
-        <button pButton icon="fas fa-play-circle" iconPos="right" (click)="runExecution(indexEdit)" label="Execute" style="float: right; margin-bottom:0.5em" ></button>
-        <button pButton icon="fas fa-check" iconPos="right" (click)="updateExecution(indexEdit)" label="Update" style="float: right; margin-bottom:0.5em" ></button>
-        <button pButton icon="fas fa-times" iconPos="right" (click)="cancelExecution(indexEdit)"  class="ui-button-warning" label="Cancel" style="float: right; margin-bottom:0.5em" ></button>
+        <button pButton icon="fas fa-angle-left" iconPos="left" (click)="displayEdit=false" [label]="'S09.BTN.BACK' | lbl:'Back'" style="float: left; margin-bottom:0.5em" ></button>
+        <button pButton icon="fas fa-play-circle" iconPos="right" (click)="runExecution(indexEdit)" [label]="'S09.BTN.RUN' | lbl:'Execute'" style="float: right; margin-bottom:0.5em" ></button>
+        <button pButton icon="fas fa-check" iconPos="right" (click)="updateExecution(indexEdit)" [label]="'S09.BTN.UPD' | lbl:'Update'" style="float: right; margin-bottom:0.5em" ></button>
+        <button pButton icon="fas fa-times" iconPos="right" (click)="cancelExecution(indexEdit)"  class="ui-button-warning" [label]="'S09.BTN.CANCEL' | lbl:'Cancel'" style="float: right; margin-bottom:0.5em" ></button>
     </p-footer>
 </p-dialog>
 
@@ -156,14 +156,14 @@
                     <span>
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                         </button>
                     </span>
                 </div>
                 <div class="col-9" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>
@@ -263,7 +263,7 @@
                         <td> <!-- Action -->
                             <div *ngIf="rowData['JSONIMMEDIATECODE'] === 0 && rowData['JSONSTATUSCODE'] === 0" style="text-align: center;" >
                                 <button type="submit"   pButton (click)="editExecutionPlan(index)" 
-                                        icon="fas fa-wrench" label="EDIT" 
+                                        icon="fas fa-wrench" [label]="'S09.BTN.EDIT' | lbl:'EDIT'" 
                                         #buttonEDIT_{{index}}
                                         style="margin-right: 15px">
                                 </button>
@@ -272,5 +272,5 @@
                 </tr>
             </ng-template>
         </p-table>
-        <i class="FOOTER_Table" >{{searchResult.length}} references</i>
+        <i class="FOOTER_Table" >{{searchResult.length}} {{ 'CMN.REFS' | lbl:'references' }}</i>
 </div>    

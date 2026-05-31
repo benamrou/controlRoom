@@ -1,17 +1,17 @@
-<app-page-header [heading]="'CGO Setting'" [icon]="'fas fa-robot'"></app-page-header>
+<app-page-header [heading]="'RT.CAOSET' | lbl:'CGO Setting'" [icon]="'fas fa-robot'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
     <p-messages [value]="msgs" sticky="sticky"></p-messages>
 </div>
 
 <div class="bbs_search_panel"  >
-    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Location : </span>
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">{{ 'RT.CAO.LBL.LOC' | lbl:'Location :' }} </span>
     <span style="margin-right:50px; line-height: 25px; align-self: center;">
         <input type="number"  [(ngModel)]="locationCode" placeholder="" maxlength="5"
                style="margin-left: 10px; text-align: center"/>
     </span>
     <span class="pull-right" style="padding-right: 20px">
-        <button type="submit" pButton (click)="search(0)" icon="fas fa-search" label="SEARCH"
+        <button type="submit" pButton (click)="search(0)" icon="fas fa-search" [label]="'RT.CAO.BTN.SRCH' | lbl:'SEARCH'"
                 [style]="{'height': '35px'}"
                 style="margin-right: 15px"></button>
         <button type="submit" pButton (click)="search(1)" icon="fas fa-sync-alt"
@@ -48,14 +48,14 @@
                     <span>
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            label="CSV" (click)="resultCaoItem.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultCaoItem.exportCSV()" style="float:left">
                         </button>
                     </span>
                 </div>
                 <div class="col-9" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="resultCaoItem.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="resultCaoItem.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>
@@ -117,14 +117,14 @@
                     <span>
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            label="CSV" (click)="resultCaoLift.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultCaoLift.exportCSV()" style="float:left">
                         </button>
                     </span>
                 </div>
                 <div class="col-9" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="resultCaoLift.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="resultCaoLift.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>

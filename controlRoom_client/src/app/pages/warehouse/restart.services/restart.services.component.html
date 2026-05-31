@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Restart services'" [icon]="'pi pi-refresh'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"
+<app-page-header [heading]="'S20.TITLE' | lbl:'Restart services'" [icon]="'pi pi-refresh'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"
   [linkcolor]="'chocolate'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -15,7 +15,7 @@
       <p-footer>
           <button style="float: right; margin-bottom:0.5em" 
                   type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
-                  label="Ok">
+                  [label]="'CMN.OK' | lbl:'Ok'">
           </button>
       </p-footer>
 </p-dialog>

@@ -1,0 +1,250 @@
+-- Phase 1 i18n — menu label LIBQUERY + SET0000040/0041 language join
+-- Deploy after 65_language_and_menu_label_ddl.sql
+
+SET DEFINE OFF;
+
+DELETE FROM LIBQUERY WHERE QUERYNUM IN (
+  'SET0000055', 'SET0000056', 'SET0000057', 'SET0000058', 'SET0000059', 'SET0000060'
+);
+
+-- SET0000055 — Language catalog
+INSERT INTO LIBQUERY (QUERYID, QUERYNUM, QUERYTITLE, QUERYDESC, QUERYSQL, QUERYPARAM, QUERYRESULT, QUERYACCESS, QUERYTYPE, QUERYUPDATE)
+SELECT (SELECT NVL(MAX(QUERYID), 0) + 1 FROM LIBQUERY),
+       'SET0000055',
+       'Language - list',
+       'Active languages for dropdowns. :param1=active filter (-1=all).',
+       q'~
+SELECT LANID, LANDESC, LANDCRE, LANDMAJ, LANUTIL
+  FROM LANGUAGE
+ WHERE (:param1 = '-1' OR LANID = :param1)
+ ORDER BY LANID
+~',
+       ':param1=filter',
+       'LANID,LANDESC,LANDCRE,LANDMAJ,LANUTIL',
+       1, 0, 0 FROM dual;
+
+-- SET0000057 — Menu labels for one MENU_CODE (all languages)
+INSERT INTO LIBQUERY (QUERYID, QUERYNUM, QUERYTITLE, QUERYDESC, QUERYSQL, QUERYPARAM, QUERYRESULT, QUERYACCESS, QUERYTYPE, QUERYUPDATE)
+SELECT (SELECT NVL(MAX(QUERYID), 0) + 1 FROM LIBQUERY),
+       'SET0000057',
+       'Menu label - by menu code',
+       'ICR_MENU_LABEL rows for :param1=MENU_CODE.',
+       q'~
+SELECT ml.MENU_CODE, ml.MLLANGUE, ml.LABEL_TEXT, ml.MLDCRE, ml.MLDMAJ, ml.MLUTIL,
+       m.LABEL_TEXT AS LEGACY_LABEL
+  FROM ICR_MENU_ENTRY m
+  LEFT JOIN ICR_MENU_LABEL ml ON ml.MENU_CODE = m.MENU_CODE
+ WHERE m.MENU_CODE = :param1
+ ORDER BY ml.MLLANGUE
+~',
+       ':param1=menu_code',
+       'MENU_CODE,MLLANGUE,LABEL_TEXT,MLDCRE,MLDMAJ,MLUTIL,LEGACY_LABEL',
+       0, 0, 0 FROM dual;
+
+-- SET0000058 — All menu labels for one language (export / grid)
+INSERT INTO LIBQUERY (QUERYID, QUERYNUM, QUERYTITLE, QUERYDESC, QUERYSQL, QUERYPARAM, QUERYRESULT, QUERYACCESS, QUERYTYPE, QUERYUPDATE)
+SELECT (SELECT NVL(MAX(QUERYID), 0) + 1 FROM LIBQUERY),
+       'SET0000058',
+       'Menu label - list by language',
+       'Menu translations for :param1=MLLANGUE. Includes legacy LABEL_TEXT fallback.',
+       q'~
+SELECT m.MENU_CODE, m.MENU_TYPE, m.MENU_MODE, m.PARENT_CODE,
+       NVL(ml.LABEL_TEXT, m.LABEL_TEXT) AS LABEL_TEXT,
+       m.LABEL_TEXT AS LEGACY_LABEL,
+       ml.MLLANGUE
+  FROM ICR_MENU_ENTRY m
+  LEFT JOIN ICR_MENU_LABEL ml
+    ON ml.MENU_CODE = m.MENU_CODE AND ml.MLLANGUE = :param1
+ WHERE m.ACTIVE = 1
+ ORDER BY m.SORT_ORDER, m.MENU_CODE
+~',
+       ':param1=language',
+       'MENU_CODE,MENU_TYPE,MENU_MODE,PARENT_CODE,LABEL_TEXT,LEGACY_LABEL,MLLANGUE',
+       0, 0, 0 FROM dual;
+
+-- SET0000059 — MERGE one menu label row
+INSERT INTO LIBQUERY (QUERYID, QUERYNUM, QUERYTITLE, QUERYDESC, QUERYSQL, QUERYPARAM, QUERYRESULT, QUERYACCESS, QUERYTYPE, QUERYUPDATE)
+SELECT (SELECT NVL(MAX(QUERYID), 0) + 1 FROM LIBQUERY),
+       'SET0000059',
+       'Menu label - MERGE',
+       'POST :param1=REQUESTID. values[]: MENU_CODE, MLLANGUE, LABEL_TEXT, MLUTIL.',
+       q'~
+MERGE INTO ICR_MENU_LABEL t
+USING (
+  SELECT TRIM(j.MENU_CODE) MENU_CODE,
+         NVL(NULLIF(TRIM(j.MLLANGUE), ''), 'us_US') MLLANGUE,
+         SUBSTR(NVL(TRIM(j.LABEL_TEXT), ' '), 1, 120) LABEL_TEXT,
+         TRIM(j.MLUTIL) MLUTIL
+    FROM REQUEST_QUERY_BODY rb,
+         JSON_TABLE(rb.REQUESTBODY, '$.values[0]'
+           COLUMNS (
+             MENU_CODE  VARCHAR2(60)  PATH '$."MENU_CODE"',
+             MLLANGUE   VARCHAR2(10)  PATH '$."MLLANGUE"',
+             LABEL_TEXT VARCHAR2(120) PATH '$."LABEL_TEXT"',
+             MLUTIL     VARCHAR2(20)  PATH '$."MLUTIL"'
+           )
+         ) j
+   WHERE rb.REQUESTID = :param1
+) s
+ON (t.MENU_CODE = s.MENU_CODE AND t.MLLANGUE = s.MLLANGUE)
+WHEN MATCHED THEN UPDATE SET
+  t.LABEL_TEXT = s.LABEL_TEXT, t.MLDMAJ = SYSDATE, t.MLUTIL = s.MLUTIL
+WHEN NOT MATCHED THEN INSERT (MENU_CODE, MLLANGUE, LABEL_TEXT, MLDCRE, MLDMAJ, MLUTIL)
+VALUES (s.MENU_CODE, s.MLLANGUE, s.LABEL_TEXT, SYSDATE, SYSDATE, s.MLUTIL)
+~',
+       ':param1=REQUESTID',
+       '',
+       0, 0, 1 FROM dual;
+
+-- SET0000060 — Bulk MERGE menu labels (CSV import)
+INSERT INTO LIBQUERY (QUERYID, QUERYNUM, QUERYTITLE, QUERYDESC, QUERYSQL, QUERYPARAM, QUERYRESULT, QUERYACCESS, QUERYTYPE, QUERYUPDATE)
+SELECT (SELECT NVL(MAX(QUERYID), 0) + 1 FROM LIBQUERY),
+       'SET0000060',
+       'Menu label - bulk MERGE',
+       'POST :param1=REQUESTID. values[] rows: MENU_CODE, MLLANGUE, LABEL_TEXT, MLUTIL.',
+       q'~
+MERGE INTO ICR_MENU_LABEL t
+USING (
+  SELECT TRIM(j.MENU_CODE) MENU_CODE,
+         NVL(NULLIF(TRIM(j.MLLANGUE), ''), 'us_US') MLLANGUE,
+         SUBSTR(NVL(TRIM(j.LABEL_TEXT), ' '), 1, 120) LABEL_TEXT,
+         TRIM(j.MLUTIL) MLUTIL
+    FROM REQUEST_QUERY_BODY rb,
+         JSON_TABLE(rb.REQUESTBODY, '$.values[*]'
+           COLUMNS (
+             MENU_CODE  VARCHAR2(60)  PATH '$."MENU_CODE"',
+             MLLANGUE   VARCHAR2(10)  PATH '$."MLLANGUE"',
+             LABEL_TEXT VARCHAR2(120) PATH '$."LABEL_TEXT"',
+             MLUTIL     VARCHAR2(20)  PATH '$."MLUTIL"'
+           )
+         ) j
+   WHERE rb.REQUESTID = :param1
+     AND TRIM(j.MENU_CODE) IS NOT NULL
+) s
+ON (t.MENU_CODE = s.MENU_CODE AND t.MLLANGUE = s.MLLANGUE)
+WHEN MATCHED THEN UPDATE SET
+  t.LABEL_TEXT = s.LABEL_TEXT, t.MLDMAJ = SYSDATE, t.MLUTIL = s.MLUTIL
+WHEN NOT MATCHED THEN INSERT (MENU_CODE, MLLANGUE, LABEL_TEXT, MLDCRE, MLDMAJ, MLUTIL)
+VALUES (s.MENU_CODE, s.MLLANGUE, s.LABEL_TEXT, SYSDATE, SYSDATE, s.MLUTIL)
+~',
+       ':param1=REQUESTID',
+       '',
+       0, 0, 1 FROM dual;
+
+-- Patch SET0000040 / SET0000041 — resolved label via ICR_MENU_LABEL (:param2 = user language)
+DELETE FROM LIBQUERY WHERE QUERYNUM IN ('SET0000040', 'SET0000041');
+
+INSERT INTO LIBQUERY (QUERYID, QUERYNUM, QUERYTITLE, QUERYDESC, QUERYSQL, QUERYPARAM, QUERYRESULT, QUERYACCESS, QUERYTYPE, QUERYUPDATE)
+SELECT (SELECT NVL(MAX(QUERYID), 0) + 1 FROM LIBQUERY),
+       'SET0000040',
+       'Menu - effective for user',
+       'Granted menu for :param1=USERID, :param2=MLLANGUE. Label from ICR_MENU_LABEL with us_US then legacy fallback.',
+       q'~
+SELECT m.MENU_CODE, m.PARENT_CODE, m.MENU_TYPE, m.MENU_MODE, m.ROUTE_PATH,
+       m.ICON_CLASS,
+       NVL(
+         (SELECT ml.LABEL_TEXT FROM ICR_MENU_LABEL ml
+           WHERE ml.MENU_CODE = m.MENU_CODE AND ml.MLLANGUE = :param2),
+         NVL(
+           (SELECT ml2.LABEL_TEXT FROM ICR_MENU_LABEL ml2
+             WHERE ml2.MENU_CODE = m.MENU_CODE AND ml2.MLLANGUE = 'us_US'),
+           m.LABEL_TEXT
+         )
+       ) AS LABEL_TEXT,
+       m.SORT_ORDER, m.EXPAND_KEY
+  FROM ICR_MENU_ENTRY m
+  JOIN USERSROOM u ON u.USERID = :param1
+ WHERE m.ACTIVE = 1
+   AND m.MENU_TYPE <> 'HEADER'
+   AND (
+         EXISTS (
+           SELECT 1 FROM ICR_MENU_ACCESS_RULE r
+            WHERE r.MENU_CODE = m.MENU_CODE
+              AND (
+                    r.FLAG_NAME = 'ALL'
+                 OR (r.FLAG_NAME = 'BUYER'          AND NVL(u.USERBUYER, 0) = 1)
+                 OR (r.FLAG_NAME = 'HELPDESK'       AND NVL(u.USERHELPDESK, 0) = 1)
+                 OR (r.FLAG_NAME = 'IT'             AND NVL(u.USERIT, 0) = 1)
+                 OR (r.FLAG_NAME = 'DATAINTEGRITY' AND NVL(u.USERDATAINTEGRITY, 0) = 1)
+                 OR (r.FLAG_NAME = 'TECH'            AND NVL(u.USERSTECH, 0) = 1)
+                 OR (r.FLAG_NAME = 'WAREHOUSE'      AND NVL(u.USERWAREHOUSE, 0) = 1)
+                 OR (r.FLAG_NAME = 'SPACE'          AND NVL(u.USERSPACEPLANNING, 0) = 1)
+                 OR (r.FLAG_NAME = 'AIADMIN'        AND NVL(u.USERAIADMIN, 0) = 1)
+                 OR (r.FLAG_NAME = 'AIDESIGNER'     AND NVL(u.USERAIDESIGNER, 0) = 1)
+                 OR (r.FLAG_NAME = 'ADMIN'          AND NVL(u.USERTYPE, 0) = 1)
+              )
+         )
+         OR (
+           u.USERPROF IS NOT NULL
+           AND EXISTS (
+             SELECT 1 FROM ICR_PROFILE_MENU pm
+              WHERE pm.PROFILE_ID = u.USERPROF
+                AND pm.MENU_CODE = m.MENU_CODE
+                AND pm.GRANTED = 1
+           )
+         )
+       )
+ ORDER BY m.SORT_ORDER, m.LABEL_TEXT
+~',
+       ':param1=user_id,:param2=language',
+       'MENU_CODE,PARENT_CODE,MENU_TYPE,MENU_MODE,ROUTE_PATH,ICON_CLASS,LABEL_TEXT,SORT_ORDER,EXPAND_KEY',
+       1, 0, 0 FROM dual;
+
+INSERT INTO LIBQUERY (QUERYID, QUERYNUM, QUERYTITLE, QUERYDESC, QUERYSQL, QUERYPARAM, QUERYRESULT, QUERYACCESS, QUERYTYPE, QUERYUPDATE)
+SELECT (SELECT NVL(MAX(QUERYID), 0) + 1 FROM LIBQUERY),
+       'SET0000041',
+       'Menu - header actions for user',
+       'HEADER rows for :param1=USERID, :param2=MLLANGUE.',
+       q'~
+SELECT m.MENU_CODE,
+       NVL(
+         (SELECT ml.LABEL_TEXT FROM ICR_MENU_LABEL ml
+           WHERE ml.MENU_CODE = m.MENU_CODE AND ml.MLLANGUE = :param2),
+         NVL(
+           (SELECT ml2.LABEL_TEXT FROM ICR_MENU_LABEL ml2
+             WHERE ml2.MENU_CODE = m.MENU_CODE AND ml2.MLLANGUE = 'us_US'),
+           m.LABEL_TEXT
+         )
+       ) AS LABEL_TEXT,
+       m.ICON_CLASS, m.ROUTE_PATH, m.SORT_ORDER
+  FROM ICR_MENU_ENTRY m
+  JOIN USERSROOM u ON u.USERID = :param1
+ WHERE m.ACTIVE = 1
+   AND m.MENU_TYPE = 'HEADER'
+   AND (
+         EXISTS (
+           SELECT 1 FROM ICR_MENU_ACCESS_RULE r
+            WHERE r.MENU_CODE = m.MENU_CODE
+              AND (
+                    r.FLAG_NAME = 'ALL'
+                 OR (r.FLAG_NAME = 'BUYER'          AND NVL(u.USERBUYER, 0) = 1)
+                 OR (r.FLAG_NAME = 'HELPDESK'       AND NVL(u.USERHELPDESK, 0) = 1)
+                 OR (r.FLAG_NAME = 'IT'             AND NVL(u.USERIT, 0) = 1)
+                 OR (r.FLAG_NAME = 'DATAINTEGRITY' AND NVL(u.USERDATAINTEGRITY, 0) = 1)
+                 OR (r.FLAG_NAME = 'TECH'            AND NVL(u.USERSTECH, 0) = 1)
+                 OR (r.FLAG_NAME = 'WAREHOUSE'      AND NVL(u.USERWAREHOUSE, 0) = 1)
+                 OR (r.FLAG_NAME = 'SPACE'          AND NVL(u.USERSPACEPLANNING, 0) = 1)
+                 OR (r.FLAG_NAME = 'AIADMIN'        AND NVL(u.USERAIADMIN, 0) = 1)
+                 OR (r.FLAG_NAME = 'AIDESIGNER'     AND NVL(u.USERAIDESIGNER, 0) = 1)
+                 OR (r.FLAG_NAME = 'ADMIN'          AND NVL(u.USERTYPE, 0) = 1)
+              )
+         )
+         OR (
+           u.USERPROF IS NOT NULL
+           AND EXISTS (
+             SELECT 1 FROM ICR_PROFILE_MENU pm
+              WHERE pm.PROFILE_ID = u.USERPROF
+                AND pm.MENU_CODE = m.MENU_CODE
+                AND pm.GRANTED = 1
+           )
+         )
+       )
+ ORDER BY m.SORT_ORDER, m.LABEL_TEXT
+~',
+       ':param1=user_id,:param2=language',
+       'MENU_CODE,LABEL_TEXT,ICON_CLASS,ROUTE_PATH,SORT_ORDER',
+       1, 0, 0 FROM dual;
+
+COMMIT;
+
+SET DEFINE ON;

@@ -20,7 +20,7 @@ INSERT INTO AI_SKILL (
     'DA000002-D100-4A00-8100-D10000000002',
     'TEMPLATE',
     'REPLEN_NOT_TRIGGERED',
-    'Replenishment not triggered — root cause',
+    'Replenishment not triggered - root cause',
     'REPLENISHMENT',
     'Diagnoses why no purchase order was generated for an item at a store despite low stock.',
     1.0, 'DRAFT', 'SYSTEM', SYSTIMESTAMP, SYSTIMESTAMP

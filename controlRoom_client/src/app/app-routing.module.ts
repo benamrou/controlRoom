@@ -89,6 +89,7 @@ import { DictionaryComponent } from './pages/admin/dictionary/dictionary.compone
 import { SettingCustomerComponent } from './pages/admin/setting-customer/setting.customer.component';
 import { SettingUsersComponent } from './pages/admin/setting-users/setting.users.component';
 import { SettingMenuAccessComponent } from './pages/admin/setting-menu-access/setting.menu.access.component';
+import { SettingWidgetLibraryComponent } from './pages/admin/setting-widget-library/setting.widget.library.component';
 
 import { ItemRetailComponent } from './pages/mass.update/item.retail/item.retail.component';
 
@@ -225,6 +226,12 @@ const routes: Routes = [
   { path: 'settingcustomer', component: SettingCustomerComponent, canActivate: [AuthentificationGuard] },
   { path: 'settingusers', component: SettingUsersComponent, canActivate: [AuthentificationGuard] },
   { path: 'settingmenu', component: SettingMenuAccessComponent, canActivate: [AuthentificationGuard] },
+  { path: 'settingwidget', component: SettingWidgetLibraryComponent, canActivate: [AuthentificationGuard] },
+  {
+    path: 'app-logs',
+    loadChildren: () => import('./pages/admin/app-logs/app.logs.module').then((m) => m.AppLogsModule),
+    canActivate: [AuthentificationGuard]
+  },
 
   /* ═══════════════════════════════════════════════════════════ */
   /* SUPPLY CHAIN AI — screens                               */

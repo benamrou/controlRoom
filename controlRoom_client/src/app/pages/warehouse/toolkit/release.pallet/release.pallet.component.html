@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Release Pallet'" [icon]="'fa-pallet'"
+<app-page-header [heading]="'S35.TITLE' | lbl:'Release Pallet'" [icon]="'fa-pallet'"
                  [waitMessage]="waitMessage" [okExit]="okExit" [screenID]="screenID"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -18,7 +18,7 @@
   </div>
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >        
-    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Warehouse : </span>
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S35.LBL.WHS' | lbl:'Warehouse :' }} </span>
     <bbs-multiselect [options]="warehouses" 
                     (shareCheckedList)="shareCheckedList($any($event))" 
                     (shareCheckedCodeList)="shareCheckedCodeList($any($event))" 
@@ -27,7 +27,7 @@
        
 
         <span class="pull-right" style="padding-right: 20px">
-                <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+                <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S35.BTN.SRCH' | lbl:'SEARCH'" 
                         [style]="{'height': '35px'}" style="margin-right: 15px">
                 </button>
                 <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true"
@@ -35,13 +35,13 @@
         </span>
 </div>
 <div class="bbs_search_sub_panel"  >
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">SSCC # : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S35.LBL.SSCC' | lbl:'SSCC # :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 70%; line-height: 25px; align-self: center;">
-    <input type="text"  [(ngModel)]="searchSSCC" placeholder="  Enter a SSCC code " 
+    <input type="text"  [(ngModel)]="searchSSCC" [placeholder]="'S35.PLH.SSCC' | lbl:'Enter a SSCC code'" 
             style="width: 50%;margin-left: 10px;"/>     
     </span>
 
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Item # : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S35.LBL.ITEM' | lbl:'Item # :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 10%; line-height: 25px; align-self: center;">
     <input type="text"  [(ngModel)]="searchItem" placeholder="  Enter an item code " 
             style="width: 10%;margin-left: 10px;"/>     
@@ -51,12 +51,12 @@
 
 <p></p>
 
-<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'S35.DLG.UPD' | lbl:'Update completed'" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
 </p-dialog>
@@ -85,14 +85,14 @@
                     <span>
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                         </button>
                     </span>
                 </div>
                 <div class="col-9" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>
@@ -128,6 +128,6 @@
 <br>
 <p style='border-style: solid; border: black'></p>
 <div style="text-align:center" >
-    <button  *ngIf="searchResult.length > 0"  pButton icon="fas fa-dot-circle"  label="Release" (click)="validateChanges()" ></button>
-    <button  *ngIf="searchResult.length == 0" disabled pButton icon="fas fa-dot-circle"  label="Release" (click)="validateChanges()" ></button>
+    <button  *ngIf="searchResult.length > 0"  pButton icon="fas fa-dot-circle"  [label]="'S35.BTN.REL' | lbl:'Release'" (click)="validateChanges()" ></button>
+    <button  *ngIf="searchResult.length == 0" disabled pButton icon="fas fa-dot-circle"  [label]="'S35.BTN.REL' | lbl:'Release'" (click)="validateChanges()" ></button>
 </div>

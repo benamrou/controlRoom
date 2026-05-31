@@ -1,7 +1,9 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { Router } from "@angular/router";
 import { MessageService, ConfirmationService } from "primeng/api";
+import { Subscription } from "rxjs";
 import { UserService } from "src/app/shared/services";
+import { LabelService } from "src/app/shared/services/labels/labels.service";
 import { AiSkillListItem, AiSkillService } from "src/app/shared/services/ai/ai.skill.service";
 
 @Component({
@@ -9,9 +11,9 @@ import { AiSkillListItem, AiSkillService } from "src/app/shared/services/ai/ai.s
     templateUrl: "./ai.skill.library.component.html",
     styleUrls: ["./ai.skill.library.component.scss"],
     encapsulation: ViewEncapsulation.None,
-    providers: [MessageService]
+    providers: [MessageService, ConfirmationService]
 })
-export class AiSkillLibraryComponent implements OnInit {
+export class AiSkillLibraryComponent implements OnInit, OnDestroy {
 
     screenID = 'SCR0000000056';
     skills: AiSkillListItem[] = [];
@@ -24,26 +26,9 @@ export class AiSkillLibraryComponent implements OnInit {
     /** Filled when `skills` changes — avoid a getter returning a new array each CD (breaks *ngFor / nested Prime widgets). */
     statusChips: { key: string; label: string; count: number }[] = [];
 
-    readonly statusOptions = [
-        { label: "All statuses", value: null },
-        { label: "Draft", value: "DRAFT" },
-        { label: "In review", value: "IN_REVIEW" },
-        { label: "Published", value: "PUBLISHED" },
-        { label: "Deprecated", value: "DEPRECATED" }
-    ];
+    statusOptions: { label: string; value: string | null }[] = [];
 
-    readonly domainOptions = [
-        { label: "All domains", value: null },
-        { label: "ITEM", value: "ITEM" },
-        { label: "STOCK", value: "STOCK" },
-        { label: "SUPPLIER", value: "SUPPLIER" },
-        { label: "PROMOTION", value: "PROMOTION" },
-        { label: "MOVEMENT", value: "MOVEMENT" },
-        { label: "SITE", value: "SITE" },
-        { label: "DSD", value: "DSD" },
-        { label: "WAREHOUSE", value: "WAREHOUSE" },
-        { label: "FINANCE", value: "FINANCE" }
-    ];
+    domainOptions: { label: string; value: string | null }[] = [];
 
     readonly domainSeverity: { [k: string]: string } = {
         ITEM: "success",
@@ -57,17 +42,53 @@ export class AiSkillLibraryComponent implements OnInit {
         FINANCE: "danger"
     };
 
+    private labelSub?: Subscription;
+
     constructor(
         public _user: UserService,
         private _skillSvc: AiSkillService,
         private _router: Router,
         private _msg: MessageService,
-        private _confirm: ConfirmationService
+        private _confirm: ConfirmationService,
+        private _labels: LabelService,
     ) {}
 
     ngOnInit(): void {
+        this.buildLabelOptions();
+        this.labelSub = this._labels.revision$.subscribe(() => this.buildLabelOptions());
         this.refreshStatusChips();
         this.loadSkills();
+    }
+
+    ngOnDestroy(): void {
+        this.labelSub?.unsubscribe();
+    }
+
+    private L(key: string, fallback: string): string {
+        return this._labels.text(key, fallback);
+    }
+
+    private buildLabelOptions(): void {
+        this.statusOptions = [
+            { label: this.L("S56.ST.ALL", "All statuses"), value: null },
+            { label: this.L("S56.ST.DRF", "Draft"), value: "DRAFT" },
+            { label: this.L("S56.ST.REV", "In review"), value: "IN_REVIEW" },
+            { label: this.L("S56.ST.PUB", "Published"), value: "PUBLISHED" },
+            { label: this.L("S56.ST.DEP", "Deprecated"), value: "DEPRECATED" },
+        ];
+        this.domainOptions = [
+            { label: this.L("S56.DOM.ALL", "All domains"), value: null },
+            { label: "ITEM", value: "ITEM" },
+            { label: "STOCK", value: "STOCK" },
+            { label: "SUPPLIER", value: "SUPPLIER" },
+            { label: "PROMOTION", value: "PROMOTION" },
+            { label: "MOVEMENT", value: "MOVEMENT" },
+            { label: "SITE", value: "SITE" },
+            { label: "DSD", value: "DSD" },
+            { label: "WAREHOUSE", value: "WAREHOUSE" },
+            { label: "FINANCE", value: "FINANCE" },
+        ];
+        this.refreshStatusChips();
     }
 
     get isAdmin(): boolean {
@@ -99,15 +120,15 @@ export class AiSkillLibraryComponent implements OnInit {
 
     private refreshStatusChips(): void {
         const keys = ["DRAFT", "IN_REVIEW", "PUBLISHED", "DEPRECATED"];
-        const labels: { [k: string]: string } = {
-            DRAFT: "Draft",
-            IN_REVIEW: "In review",
-            PUBLISHED: "Published",
-            DEPRECATED: "Deprecated"
+        const labelKeys: { [k: string]: [string, string] } = {
+            DRAFT: ["S56.ST.DRF", "Draft"],
+            IN_REVIEW: ["S56.ST.REV", "In review"],
+            PUBLISHED: ["S56.ST.PUB", "Published"],
+            DEPRECATED: ["S56.ST.DEP", "Deprecated"],
         };
         this.statusChips = keys.map((key) => ({
             key,
-            label: labels[key],
+            label: this.L(labelKeys[key][0], labelKeys[key][1]),
             count: this.skills.filter((s) => s.status === key).length
         }));
     }
@@ -245,6 +266,30 @@ export class AiSkillLibraryComponent implements OnInit {
         });
     }
 
+    confirmDelete(s: AiSkillListItem): void {
+        this._confirm.confirm({
+            message: `Permanently delete skill "${s.name}" (${s.code})? All knowledge, SQL templates, vocabulary, and tests for this skill will be removed. This cannot be undone.`,
+            header: "Delete skill",
+            icon: "fas fa-trash-alt",
+            acceptButtonStyleClass: "p-button-danger",
+            accept: () => this.deleteSkill(s)
+        });
+    }
+
+    private deleteSkill(s: AiSkillListItem): void {
+        this._skillSvc.deleteSkill(s.skillId).subscribe({
+            next: () => {
+                this._msg.add({ severity: "success", summary: "Deleted", detail: s.name });
+                this.loadSkills();
+            },
+            error: (err: any) => {
+                const detail = err?.error?.message || err?.message
+                    || "Deploy LIBQUERY AI0000065 or check permissions. Published skills must be deprecated first.";
+                this._msg.add({ severity: "error", summary: "Delete failed", detail });
+            }
+        });
+    }
+
     canSubmitReview(s: AiSkillListItem): boolean {
         return this.isDesigner && s.status === "DRAFT";
     }
@@ -255,6 +300,16 @@ export class AiSkillLibraryComponent implements OnInit {
 
     canDeprecate(s: AiSkillListItem): boolean {
         return this.isAdmin && s.status === "PUBLISHED";
+    }
+
+    canDelete(s: AiSkillListItem): boolean {
+        if (s.status === "PUBLISHED") {
+            return false;
+        }
+        if (this.isAdmin) {
+            return ["DRAFT", "REJECTED", "IN_REVIEW", "DEPRECATED"].includes(s.status);
+        }
+        return this.isDesigner && (s.status === "DRAFT" || s.status === "REJECTED");
     }
 
     canEdit(s: AiSkillListItem): boolean {

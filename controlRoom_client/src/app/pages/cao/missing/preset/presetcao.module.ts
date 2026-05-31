@@ -5,12 +5,13 @@ import { FormsModule }  from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
 
 // Toolkit component
 import { PresetCAOComponent} from './presetcao.component';
 
 @NgModule({
-    imports: [ RouterModule,CommonModule,FormsModule, TableModule, ButtonModule, InputTextModule ],
+    imports: [ RouterModule, CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, PageHeaderModule ],
     declarations: [ PresetCAOComponent],
     exports: [PresetCAOComponent],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]

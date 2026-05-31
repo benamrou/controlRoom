@@ -1,0 +1,237 @@
+<app-page-header [heading]="'S70.TITLE' | lbl:'App logs'" [waitMessage]="waitMessage" [screenID]="screenID"
+    [icon]="'fa-file-alt'"></app-page-header>
+
+<div class="content-section implementation app-logs-page">
+    <p-toast position="top-right"></p-toast>
+
+    <p class="log-root-hint" *ngIf="serverLogPath">
+        <i class="fas fa-folder-open"></i>
+        <span *ngIf="selectedFile">{{ 'S70.READ' | lbl:'Reading:' }}</span>
+        <span *ngIf="!selectedFile">{{ 'S70.FOLDER' | lbl:'Log folder:' }}</span>
+        <code>{{ serverLogPath }}</code>
+        <span class="log-root-note" *ngIf="selectedFile"> · {{ 'S70.NEWEST' | lbl:'newest first' }}</span>
+        <span class="log-root-warn" *ngIf="serverTailTruncated"> · large file — showing last {{ tailLines }} lines only</span>
+    </p>
+
+    <p-tabView [(activeIndex)]="activeTabIndex">
+        <!-- Server files -->
+        <p-tabPanel [header]="'S70.TAB.SRV' | lbl:'Server files'" leftIcon="fas fa-server">
+            <div class="toolbar formgrid grid">
+                <div class="field col-12 md:col-3">
+                    <label class="font-bold">{{ 'S70.LBL.DAY' | lbl:'Day folder' }}</label>
+                    <p-dropdown [options]="serverDayOptions" [(ngModel)]="selectedDay" optionLabel="label"
+                        optionValue="value" (onChange)="onServerDayChange()"
+                        placeholder="Select day" [style]="{ width: '100%' }"></p-dropdown>
+                </div>
+                <div class="field col-12 md:col-4">
+                    <label class="font-bold">{{ 'S70.LBL.FILE' | lbl:'Log file' }}</label>
+                    <p-dropdown [options]="serverFiles" [(ngModel)]="selectedFile" optionLabel="name" optionValue="name"
+                        (onChange)="loadServerTail()" placeholder="Select file" [style]="{ width: '100%' }">
+                        <ng-template let-f pTemplate="item">
+                            {{ f.name }} ({{ formatBytes(f.size_bytes) }})
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label class="font-bold">{{ 'S70.LBL.LINES' | lbl:'Lines' }}</label>
+                    <input pInputText type="number" [(ngModel)]="tailLines" min="50" max="5000" class="w-full" />
+                </div>
+                <div class="field col-12 md:col-3 flex align-items-end gap-2">
+                    <button pButton type="button" icon="fas fa-sync" [label]="'S70.BTN.RDAYS' | lbl:'Refresh days'"
+                        (click)="loadServerDays()" [loading]="serverLoading"></button>
+                    <button pButton type="button" icon="fas fa-file-download" [label]="'S70.BTN.TAIL' | lbl:'Load tail'"
+                        (click)="loadServerTail()" [loading]="serverLoading"></button>
+                </div>
+            </div>
+            <textarea pInputText readonly rows="24" class="server-log-view w-full"
+                [value]="serverContent" [placeholder]="'S70.PLH.TAIL' | lbl:'Select a day and file, then Load tail.'"></textarea>
+        </p-tabPanel>
+
+        <!-- CROOMLOG -->
+        <p-tabPanel [header]="'S70.TAB.CRM' | lbl:'CROOMLOG'" leftIcon="fas fa-database">
+            <div class="toolbar formgrid grid">
+                <div class="field col-12 md:col-3">
+                    <label class="font-bold">{{ 'S70.LBL.QNUM' | lbl:'Query #' }}</label>
+                    <input pInputText [(ngModel)]="croomQueryNum" [placeholder]="'S70.PLH.ALL' | lbl:'-1 = all'" class="w-full" />
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label class="font-bold">{{ 'CMN.USER' | lbl:'User' }}</label>
+                    <input pInputText [(ngModel)]="croomUserId" [placeholder]="'S70.PLH.ALL' | lbl:'-1 = all'" class="w-full" />
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label class="font-bold">{{ 'CMN.FROM' | lbl:'From' }}</label>
+                    <p-calendar [(ngModel)]="croomDateFrom" dateFormat="mm/dd/yy" [showIcon]="true"
+                        [style]="{ width: '100%' }"></p-calendar>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label class="font-bold">{{ 'CMN.TO' | lbl:'To' }}</label>
+                    <p-calendar [(ngModel)]="croomDateTo" dateFormat="mm/dd/yy" [showIcon]="true"
+                        [style]="{ width: '100%' }"></p-calendar>
+                </div>
+                <div class="field col-12 md:col-3 flex align-items-end">
+                    <button pButton type="button" icon="fas fa-search" [label]="'S64.BTN.SRCH' | lbl:'Search'"
+                        (click)="searchCroom()" [loading]="croomLoading"></button>
+                </div>
+            </div>
+            <p-table #croomTable [value]="croomRows" [loading]="croomLoading" [paginator]="true" [rows]="25"
+                [rowsPerPageOptions]="[25, 50, 100]" responsiveLayout="scroll" styleClass="p-datatable-sm"
+                sortMode="multiple" [globalFilterFields]="croomGlobalFilterFields">
+                <ng-template pTemplate="caption">
+                    <div class="table-header grid align-items-center">
+                        <div class="col-12 md:col-6">
+                            <span class="text-muted">{{ croomRows.length }} {{ 'S70.ROWS.CNT' | lbl:'row(s) loaded (max 500)' }}</span>
+                        </div>
+                        <div class="col-12 md:col-6" style="text-align: right;">
+                            <span class="p-input-icon-right">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="croomTable.filterGlobal($any($event.target).value, 'contains')"
+                                    [placeholder]="'S70.FIL.ROWS' | lbl:'Filter loaded rows...'" />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="LOGQUERYNUM">Query <p-sortIcon field="LOGQUERYNUM"></p-sortIcon></th>
+                        <th pSortableColumn="QUERYTITLE">{{ 'S70.COL.TITLE' | lbl:'Title' }} <p-sortIcon field="QUERYTITLE"></p-sortIcon></th>
+                        <th pSortableColumn="QUERYDESC">{{ 'S64.PLH.DESC' | lbl:'Description' }} <p-sortIcon field="QUERYDESC"></p-sortIcon></th>
+                        <th pSortableColumn="LOGUSERID">{{ 'CMN.USER' | lbl:'User' }} <p-sortIcon field="LOGUSERID"></p-sortIcon></th>
+                        <th pSortableColumn="LOGDCRE">{{ 'S70.COL.CRE' | lbl:'Created' }} <p-sortIcon field="LOGDCRE"></p-sortIcon></th>
+                        <th pSortableColumn="LOGSID">SID <p-sortIcon field="LOGSID"></p-sortIcon></th>
+                        <th pSortableColumn="LOGMESSAGE">{{ 'S70.COL.MSG' | lbl:'Message' }} <p-sortIcon field="LOGMESSAGE"></p-sortIcon></th>
+                        <th class="croom-actions-col"></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td><strong>{{ row.LOGQUERYNUM }}</strong></td>
+                        <td class="desc-cell" [title]="row.QUERYTITLE">{{ row.QUERYTITLE | slice:0:40 }}</td>
+                        <td class="desc-cell" [title]="row.QUERYDESC">{{ row.QUERYDESC | slice:0:60 }}</td>
+                        <td>{{ row.LOGUSERID }}</td>
+                        <td>{{ row.LOGDCRE | date:'short' }}</td>
+                        <td>{{ row.LOGSID }}</td>
+                        <td class="msg-cell" [title]="row.LOGMESSAGE">{{ row.LOGMESSAGE | slice:0:80 }}</td>
+                        <td class="croom-actions-col">
+                            <button pButton type="button" icon="pi pi-eye" class="p-button-text p-button-sm"
+                                (click)="viewCroom(row)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="8" class="text-center">{{ 'S70.EMP.CRM' | lbl:'No rows — run Search.' }}</td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <!-- ALERTLOG -->
+        <p-tabPanel [header]="'S70.TAB.ALR' | lbl:'ALERTLOG'" leftIcon="fas fa-bell">
+            <div class="toolbar formgrid grid">
+                <div class="field col-12 md:col-3">
+                    <label class="font-bold">{{ 'S70.LBL.ALERT' | lbl:'Alert ID' }}</label>
+                    <input pInputText [(ngModel)]="alertId" [placeholder]="'S70.PLH.ALL' | lbl:'-1 = all'" class="w-full" />
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label class="font-bold">{{ 'S65.LBL.STAT' | lbl:'Status' }}</label>
+                    <p-dropdown [options]="statusOptions" [(ngModel)]="alertStatus" optionLabel="label"
+                        optionValue="value" [style]="{ width: '100%' }"></p-dropdown>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label class="font-bold">{{ 'CMN.FROM' | lbl:'From' }}</label>
+                    <p-calendar [(ngModel)]="alertDateFrom" dateFormat="mm/dd/yy" [showIcon]="true"
+                        [style]="{ width: '100%' }"></p-calendar>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label class="font-bold">{{ 'CMN.TO' | lbl:'To' }}</label>
+                    <p-calendar [(ngModel)]="alertDateTo" dateFormat="mm/dd/yy" [showIcon]="true"
+                        [style]="{ width: '100%' }"></p-calendar>
+                </div>
+                <div class="field col-12 md:col-3 flex align-items-end">
+                    <button pButton type="button" icon="fas fa-search" [label]="'S64.BTN.SRCH' | lbl:'Search'"
+                        (click)="searchAlert()" [loading]="alertLoading"></button>
+                </div>
+            </div>
+            <p-table #alertTable [value]="alertRows" [loading]="alertLoading" [paginator]="true" [rows]="25"
+                [rowsPerPageOptions]="[25, 50, 100]" responsiveLayout="scroll" styleClass="p-datatable-sm"
+                sortMode="multiple" [globalFilterFields]="alertGlobalFilterFields">
+                <ng-template pTemplate="caption">
+                    <div class="table-header grid align-items-center">
+                        <div class="col-12 md:col-6">
+                            <span class="text-muted">{{ alertRows.length }} {{ 'S70.ROWS.CNT' | lbl:'row(s) loaded (max 500)' }}</span>
+                        </div>
+                        <div class="col-12 md:col-6" style="text-align: right;">
+                            <span class="p-input-icon-right">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="alertTable.filterGlobal($any($event.target).value, 'contains')"
+                                    [placeholder]="'S70.FIL.ROWS' | lbl:'Filter loaded rows...'" />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="LALTID">Alert <p-sortIcon field="LALTID"></p-sortIcon></th>
+                        <th pSortableColumn="ALTSUBJECT">{{ 'S70.COL.SUBJ' | lbl:'Subject' }} <p-sortIcon field="ALTSUBJECT"></p-sortIcon></th>
+                        <th pSortableColumn="ALTCONTENT">{{ 'S64.PLH.DESC' | lbl:'Description' }} <p-sortIcon field="ALTCONTENT"></p-sortIcon></th>
+                        <th pSortableColumn="LALTEDATE">{{ 'S70.COL.EXEC' | lbl:'Executed' }} <p-sortIcon field="LALTEDATE"></p-sortIcon></th>
+                        <th pSortableColumn="LALTSTATUS">{{ 'S65.LBL.STAT' | lbl:'Status' }} <p-sortIcon field="LALTSTATUS"></p-sortIcon></th>
+                        <th pSortableColumn="LALTPHASE">{{ 'S70.COL.PHASE' | lbl:'Phase' }} <p-sortIcon field="LALTPHASE"></p-sortIcon></th>
+                        <th pSortableColumn="LALTDURATION">{{ 'S70.COL.DUR' | lbl:'Duration' }} <p-sortIcon field="LALTDURATION"></p-sortIcon></th>
+                        <th pSortableColumn="LALTROWCOUNT">{{ 'CMN.ROWS' | lbl:'Rows' }} <p-sortIcon field="LALTROWCOUNT"></p-sortIcon></th>
+                        <th pSortableColumn="LALTERROR">{{ 'S70.COL.ERR' | lbl:'Error' }} <p-sortIcon field="LALTERROR"></p-sortIcon></th>
+                        <th class="croom-actions-col"></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td><strong>{{ row.LALTID }}</strong></td>
+                        <td class="desc-cell" [title]="row.ALTSUBJECT">{{ row.ALTSUBJECT | slice:0:40 }}</td>
+                        <td class="desc-cell" [title]="row.ALTCONTENT">{{ row.ALTCONTENT | slice:0:60 }}</td>
+                        <td>{{ row.LALTEDATE | date:'short' }}</td>
+                        <td><p-tag [value]="row.LALTSTATUS" [severity]="statusSeverity(row.LALTSTATUS)"></p-tag></td>
+                        <td>{{ row.LALTPHASE }}</td>
+                        <td>{{ row.LALTDURATION }}s</td>
+                        <td>{{ row.LALTROWCOUNT }}</td>
+                        <td class="msg-cell" [title]="row.LALTERROR">{{ row.LALTERROR | slice:0:40 }}</td>
+                        <td class="croom-actions-col">
+                            <button pButton type="button" icon="pi pi-eye" class="p-button-text p-button-sm"
+                                (click)="viewAlert(row)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="10" class="text-center">{{ 'S70.EMP.ALR' | lbl:'No rows — run Search.' }}</td></tr>
+                </ng-template>
+            </p-table>
+            <p class="mt-2 text-muted">
+                For charts and retry actions, use <a routerLink="/alerts-journal">Alerts journal</a>.
+            </p>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+
+<p-dialog [header]="'S70.DLG.CRM' | lbl:'CROOMLOG detail'" [(visible)]="displayCroomDetail" [modal]="true"
+    [style]="{ width: '90vw', maxWidth: '900px' }" [maximizable]="true">
+    <div *ngIf="selectedCroom" class="detail-block">
+        <p><b>Query:</b> {{ selectedCroom.LOGQUERYNUM }} &nbsp; <b>User:</b> {{ selectedCroom.LOGUSERID }}</p>
+        <p *ngIf="selectedCroom.QUERYTITLE"><b>LIBQUERY title:</b> {{ selectedCroom.QUERYTITLE }}</p>
+        <p *ngIf="selectedCroom.QUERYDESC"><b>LIBQUERY description:</b> {{ selectedCroom.QUERYDESC }}</p>
+        <p><b>Params:</b> {{ selectedCroom.LOGPARAM }}</p>
+        <p><b>SID:</b> {{ selectedCroom.LOGSID }} &nbsp; <b>Util:</b> {{ selectedCroom.LOGUTIL }}</p>
+        <textarea pInputText readonly rows="16" class="w-full">{{ selectedCroom.LOGMESSAGE }}</textarea>
+    </div>
+</p-dialog>
+
+<p-dialog [header]="'S70.DLG.ALR' | lbl:'ALERTLOG detail'" [(visible)]="displayAlertDetail" [modal]="true"
+    [style]="{ width: '90vw', maxWidth: '900px' }" [maximizable]="true">
+    <div *ngIf="selectedAlert" class="detail-block">
+        <p><b>Alert:</b> {{ selectedAlert.LALTID }} &nbsp; <b>Request:</b> {{ selectedAlert.LALTREQID }}</p>
+        <p *ngIf="selectedAlert.ALTSUBJECT"><b>Subject:</b> {{ selectedAlert.ALTSUBJECT }}</p>
+        <p *ngIf="selectedAlert.ALTCONTENT"><b>Description:</b> {{ selectedAlert.ALTCONTENT }}</p>
+        <p><b>Status:</b> {{ selectedAlert.LALTSTATUS }} &nbsp; <b>Phase:</b> {{ selectedAlert.LALTPHASE }}</p>
+        <p><b>Email:</b> {{ selectedAlert.LALTEMAIL }}</p>
+        <p><b>Params:</b> {{ selectedAlert.LALTPARAM }}</p>
+        <p *ngIf="selectedAlert.LALTERROR"><b>Error:</b> {{ selectedAlert.LALTERROR }}</p>
+    </div>
+</p-dialog>

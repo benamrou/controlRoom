@@ -1,10 +1,13 @@
-import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
+import { ApplicationRef, Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
 import { UserService, LogginService, LabelService, Environment } from '../../shared/services/index';
 import { HeaderMenuRow, MenuAccessService } from '../../shared/services/menu/menu-access.service';
 import { SettingsAdminService } from '../../shared/services/settings/settings.admin.service';
 import { Router } from '@angular/router';
 import { MessageService, SelectItem } from 'primeng/api';
 import { DOCUMENT } from '@angular/common';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
+import { uiLanguageLabel, uiLanguageOptions } from '../../shared/constants/ui-languages';
 
 @Component({
     selector: 'app-header',
@@ -38,6 +41,9 @@ export class HeaderComponent implements OnInit {
 		confirm: '',
 	};
 
+	languageBusy = false;
+	languageOptions = uiLanguageOptions();
+
 	constructor(
         private _logginService: LogginService,
         public _userService: UserService,
@@ -46,6 +52,7 @@ export class HeaderComponent implements OnInit {
         private _settingsAdmin: SettingsAdminService,
         private _msg: MessageService,
         public _router: Router,
+        private _appRef: ApplicationRef,
         @Inject(DOCUMENT) private _document: Document,
     ) { 
 		this.environments = [];
@@ -60,6 +67,18 @@ export class HeaderComponent implements OnInit {
 
     ngOnInit(): void {
 		this.refreshEnvironments();
+	}
+
+	get currentUiLanguage(): string {
+		return this._labelService.resolveLanguage();
+	}
+
+	currentLanguageLabel(): string {
+		return uiLanguageLabel(this.currentUiLanguage);
+	}
+
+	isLanguageActive(langId: string): boolean {
+		return UserService.normalizeLanguageCode(langId) === this.currentUiLanguage;
 	}
 
 	/** GOLD environment dropdown only — unrelated to sidebar menu (loaded at login). */
@@ -152,12 +171,48 @@ export class HeaderComponent implements OnInit {
         localStorage.removeItem('isLoggedin');
     }
 
-    changeLang(language: string) {
-        this._labelService.use(language);
-        this.languageSwitched.next(language);
-        
-        //this._userService.userInfo.language = language;
-        //window.location.reload();
+    changeLang(language: string): void {
+		if (this.languageBusy || this._userService.userInfo?.type === '2') {
+			return;
+		}
+		const lang = UserService.normalizeLanguageCode(language);
+		if (lang === this.currentUiLanguage) {
+			return;
+		}
+		const userId = this._userService.ICRUser || this._userService.userInfo?.username;
+		const userAppli = Number(this._userService.userInfo?.application) || 1;
+		if (!userId) {
+			this._msg.add({ severity: 'warn', summary: 'Language', detail: 'User id not available. Log in again.' });
+			return;
+		}
+		this.languageBusy = true;
+		forkJoin([
+			this._labelService.use(lang),
+			this.menuAccess.load(String(userId)),
+		]).pipe(
+			catchError((err: unknown) => {
+				const detail = err instanceof Error ? err.message : 'Could not switch language.';
+				this._msg.add({ severity: 'error', summary: 'Language', detail });
+				return of(null);
+			}),
+			finalize(() => {
+				this.languageBusy = false;
+			}),
+		).subscribe({
+			next: () => {
+				this._settingsAdmin.saveSessionLanguage(userId, userAppli, lang).pipe(
+					catchError(() => of(null)),
+				).subscribe();
+				this._appRef.tick();
+				this.languageSwitched.emit(lang);
+				this._msg.add({
+					severity: 'success',
+					summary: 'Language',
+					detail: `UI language set to ${this.currentLanguageLabel()}.`,
+					life: 2500,
+				});
+			},
+		});
     }
 
 	environmentChange(envLabel: any, envType: any) {

@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Context Learning'" [screenID]="screenID" [icon]="'fas fa-graduation-cap'"></app-page-header>
+<app-page-header [heading]="'S55.TITLE' | lbl:'Context Learning'" [screenID]="screenID" [icon]="'fas fa-graduation-cap'"></app-page-header>
 <p-toast></p-toast>
 
 <div class="ai-module-container">
@@ -7,23 +7,18 @@
     <div class="ai-purpose-banner">
         <i class="fas fa-info-circle"></i>
         <div>
-            <strong>What is Context Learning?</strong>
-            The AI engine needs to understand how your GOLD ERP instance defines key business concepts
-            (active items, stock availability, promotions, etc.). This screen guides you through a
-            Q&amp;A session for each concept. Your answers are translated into SQL conditions that are
-            permanently stored and used to generate retailer-specific views and drive all AI decisions.
-            Start with <strong>P1 — Required</strong> items. All five must be locked before the
-            active item view can be generated.
+            <strong>{{ 'S55.BAN.TTL' | lbl:'What is Context Learning?' }}</strong>
+            {{ 'S55.BAN.P1' | lbl:'The AI engine learns how your GOLD instance defines key business concepts through guided Q&A. Answers become SQL conditions for retailer-specific views.' }}
         </div>
     </div>
 
     <!-- Retailer selector -->
     <div class="ai-retailer-bar">
-        <label><i class="fas fa-store"></i> Retailer</label>
+        <label><i class="fas fa-store"></i> {{ 'AI.CMN.RETAIL' | lbl:'Retailer' }}</label>
         <p-dropdown [options]="retailers"
                     [(ngModel)]="selectedRetailer"
                     optionLabel="RETAILER_NAME"
-                    placeholder="Select retailer..."
+                    [placeholder]="'AI.CMN.SELRET' | lbl:'Select retailer...'"
                     [loading]="loadingRetailers"
                     (onChange)="onRetailerChange()">
             <ng-template pTemplate="item" let-r>
@@ -34,7 +29,7 @@
     </div>
 
     <div *ngIf="!selectedRetailer" class="ai-no-retailer">
-        <i class="fas fa-arrow-up"></i> Select a retailer above to begin.
+        <i class="fas fa-arrow-up"></i> {{ 'S55.SEL.HINT' | lbl:'Select a retailer above to begin.' }}
     </div>
 
     <div *ngIf="selectedRetailer" class="ai-context-layout">
@@ -43,9 +38,9 @@
         <div class="ai-catalog-panel">
 
             <div class="ai-panel-header">
-                <span class="ai-panel-title"><i class="fas fa-list-check"></i> Knowledge items</span>
+                <span class="ai-panel-title"><i class="fas fa-list-check"></i> {{ 'S55.CAT.TTL' | lbl:'Knowledge items' }}</span>
                 <p-tag *ngIf="p1AllLocked()"
-                       value="P1 Complete — view ready"
+                       [value]="'S55.P1.OK' | lbl:'P1 Complete — view ready'"
                        severity="success"
                        styleClass="ai-p1-badge"></p-tag>
             </div>
@@ -57,8 +52,8 @@
             <!-- P1 -->
             <div class="ai-priority-group">
                 <div class="ai-group-header">
-                    <p-tag value="P1 — Required" severity="danger"></p-tag>
-                    <span class="ai-group-note">All must be locked to generate the active item view</span>
+                    <p-tag [value]="'S55.P1.TAG' | lbl:'P1 — Required'" severity="danger"></p-tag>
+                    <span class="ai-group-note">{{ 'S55.P1.NOTE' | lbl:'All must be locked to generate the active item view' }}</span>
                 </div>
                 <div *ngFor="let item of p1Items" class="ai-catalog-item"
                      [class.ai-catalog-item--locked]="item.IS_LOCKED"
@@ -83,7 +78,7 @@
             <!-- P2 -->
             <div class="ai-priority-group">
                 <div class="ai-group-header">
-                    <p-tag value="P2 — Core" severity="warning"></p-tag>
+                    <p-tag [value]="'S55.P2.TAG' | lbl:'P2 — Core'" severity="warning"></p-tag>
                     <span class="ai-group-note">Extended context for blockers & replenishment</span>
                 </div>
                 <div *ngFor="let item of p2Items" class="ai-catalog-item"
@@ -106,7 +101,7 @@
             <!-- P3 -->
             <div class="ai-priority-group">
                 <div class="ai-group-header">
-                    <p-tag value="P3 — Enhanced" severity="info"></p-tag>
+                    <p-tag [value]="'S55.P3.TAG' | lbl:'P3 — Enhanced'" severity="info"></p-tag>
                     <span class="ai-group-note">Intelligence & forecasting context</span>
                 </div>
                 <div *ngFor="let item of p3Items" class="ai-catalog-item"
@@ -133,15 +128,15 @@
             <!-- Empty state -->
             <div *ngIf="!activeItem" class="ai-session-empty">
                 <div class="ai-empty-icon"><i class="fas fa-graduation-cap"></i></div>
-                <h3>Start a learning session</h3>
-                <p>Click any knowledge item on the left to open a Q&amp;A session.</p>
+                <h3>{{ 'S55.SESS.EMP' | lbl:'Start a learning session' }}</h3>
+                <p>{{ 'S55.SESS.HINT' | lbl:'Click any knowledge item on the left to open a Q&A session.' }}</p>
                 <p class="ai-empty-sub">The AI engine will ask you questions about how your GOLD
                 instance defines each concept, then propose a SQL condition for your confirmation.</p>
 
                 <!-- View status -->
                 <div class="ai-view-box">
                     <div class="ai-view-box-header">
-                        <i class="fas fa-eye"></i> Active item view
+                        <i class="fas fa-eye"></i> {{ 'S55.VIEW.TTL' | lbl:'Active item view' }}
                     </div>
                     <ng-container *ngIf="!viewLoading && viewStatus">
                         <div class="ai-view-row">
@@ -163,7 +158,7 @@
                         </div>
                         <div class="ai-view-actions">
                             <button pButton
-                                    [label]="viewStatus.view_exists ? 'Regenerate view' : 'Generate view'"
+                                    [label]="viewStatus.view_exists ? ('S55.VIEW.REG' | lbl:'Regenerate view') : ('S55.VIEW.GEN' | lbl:'Generate view')"
                                     icon="fas fa-sync"
                                     class="p-button-outlined p-button-sm"
                                     [disabled]="viewGenerating || !viewStatus.can_generate"
@@ -192,7 +187,7 @@
                     </div>
                     <div class="ai-session-description">{{ activeItem.DESCRIPTION }}</div>
                     <div class="ai-confidence-row">
-                        <span class="ai-conf-label">Confidence</span>
+                        <span class="ai-conf-label">{{ 'S55.CONF' | lbl:'Confidence' }}</span>
                         <p-progressBar [value]="confidenceRoundedPct()"
                                        [showValue]="true"
                                        styleClass="ai-session-confidence"
@@ -206,7 +201,7 @@
 
                 <!-- Locked -->
                 <div *ngIf="activeItem.IS_LOCKED" class="ai-locked-panel">
-                    <div class="ai-locked-badge"><i class="fas fa-lock"></i> Locked</div>
+                    <div class="ai-locked-badge"><i class="fas fa-lock"></i> {{ 'S55.LOCKED' | lbl:'Locked' }}</div>
                     <div class="ai-sql-display">
                         <label>Locked SQL condition:</label>
                         <pre class="ai-sql-code">{{ activeItem.SQL_CONDITION }}</pre>
@@ -222,13 +217,13 @@
                             <p>{{ currentQuestion }}</p>
                         </div>
                         <div class="p-field ai-answer-field">
-                            <label>Your answer</label>
+                            <label>{{ 'S55.ANS.LBL' | lbl:'Your answer' }}</label>
                             <textarea pInputTextarea [(ngModel)]="currentAnswer"
                                       rows="4" style="width:100%"
-                                      placeholder="Describe in plain business terms..."></textarea>
+                                      [placeholder]="'S55.ANS.PLH' | lbl:'Describe in plain business terms...'"></textarea>
                         </div>
                         <div class="ai-phase-actions">
-                            <button pButton label="Submit answer" icon="fas fa-paper-plane"
+                            <button pButton [label]="'S55.BTN.ANS' | lbl:'Submit answer'" icon="fas fa-paper-plane"
                                     class="p-button-primary"
                                     [disabled]="!currentAnswer.trim() || sessionLoading"
                                     (click)="submitAnswer()"></button>
@@ -293,7 +288,7 @@
                         </div>
                     </div>
                     <div class="ai-phase-actions">
-                        <button pButton label="Submit SQL" icon="fas fa-code"
+                        <button pButton [label]="'S55.BTN.SQL' | lbl:'Submit SQL'" icon="fas fa-code"
                                 class="p-button-primary"
                                 [disabled]="!proposedSql.trim() || isSqlInvalid() || sessionLoading"
                                 (click)="proposeSqlCondition()"></button>
@@ -333,7 +328,7 @@
                                    <code>V_GOLD_ACTIVE_ITEM_{{ selectedRetailer.RETAILER_ID }}</code>.</p>
                             </div>
                         </div>
-                        <button pButton label="Lock &amp; generate view" icon="fas fa-lock"
+                        <button pButton [label]="'S55.BTN.LOCK' | lbl:'Lock and generate view'" icon="fas fa-lock"
                                 class="p-button-warning"
                                 [disabled]="sessionLoading"
                                 (click)="lockItem()"></button>

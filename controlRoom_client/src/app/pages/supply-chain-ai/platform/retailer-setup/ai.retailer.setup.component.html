@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Retailer & GOLD Setup'" [screenID]="screenID" [icon]="'fas fa-plug'"></app-page-header>
+<app-page-header [heading]="'S53.TITLE' | lbl:'Retailer and GOLD Setup'" [screenID]="screenID" [icon]="'fas fa-plug'"></app-page-header>
 <p-toast></p-toast>
 
 <div class="ai-module-container">
@@ -7,17 +7,13 @@
     <div class="ai-setup-banner">
         <div class="ai-setup-banner-icon"><i class="fas fa-plug"></i></div>
         <div>
-            <strong>What is this setup?</strong>
-            <p>
-                This screen registers a GOLD ERP environment as a retailer in the Supply Chain AI engine.
-                Once saved, the AI engine can connect to the GOLD database, learn its business rules through
-                Context Learning, and generate per-retailer views used for replenishment intelligence.
-            </p>
+            <strong>{{ 'S53.BAN.TTL' | lbl:'What is this setup?' }}</strong>
+            <p>{{ 'S53.BAN.P1' | lbl:'This screen registers a GOLD ERP environment as a retailer in the Supply Chain AI engine.' }}</p>
             <div class="ai-setup-prereqs">
-                <span class="ai-prereq-title">Before you begin:</span>
-                <span class="ai-prereq-item"><i class="fas fa-check-circle"></i> CORPENV row exists with <code>ENVDBLINK</code> and <code>ENVGOLDSCHEMA</code> set</span>
-                <span class="ai-prereq-item"><i class="fas fa-check-circle"></i> DB link is active and reachable from the ICR app DB</span>
-                <span class="ai-prereq-item"><i class="fas fa-check-circle"></i> Your user has <code>USERAIADMIN = 1</code></span>
+                <span class="ai-prereq-title">{{ 'S53.PRQ.TTL' | lbl:'Before you begin:' }}</span>
+                <span class="ai-prereq-item"><i class="fas fa-check-circle"></i> {{ 'S53.PRQ.1' | lbl:'CORPENV row exists with ENVGOLDSCHEMA set' }}</span>
+                <span class="ai-prereq-item"><i class="fas fa-check-circle"></i> {{ 'S53.PRQ.2' | lbl:'DB link is active and reachable from the ICR app DB' }}</span>
+                <span class="ai-prereq-item"><i class="fas fa-check-circle"></i> {{ 'S53.PRQ.3' | lbl:'Your user has USERAIADMIN = 1' }}</span>
             </div>
         </div>
     </div>
@@ -31,22 +27,20 @@
         <div *ngIf="activeStep === 0" class="ai-step-panel">
 
             <div class="ai-step-header">
-                <div class="ai-step-title"><i class="fas fa-server"></i> Select GOLD environment</div>
+                <div class="ai-step-title"><i class="fas fa-server"></i> {{ 'S53.ST0.TTL' | lbl:'Select GOLD environment' }}</div>
                 <div class="ai-step-context">
                     <i class="fas fa-lightbulb"></i>
-                    The AI engine connects to GOLD via an Oracle DB link defined in CORPENV.
-                    Each GOLD environment (pre-production, production, UAT) must be registered separately
-                    so the AI can maintain distinct learned contexts and views per environment.
+                    {{ 'S53.ST0.CTX' | lbl:'The AI engine connects to GOLD via an Oracle DB link defined in CORPENV.' }}
                 </div>
             </div>
 
             <div class="p-fluid ai-form-grid">
                 <div class="p-field ai-field-full">
-                    <label>GOLD environment <span class="ai-required">*</span></label>
+                    <label>{{ 'S53.LBL.ENV' | lbl:'GOLD environment' }} <span class="ai-required">*</span></label>
                     <p-dropdown [options]="corpEnvList"
                                 [(ngModel)]="selectedEnv"
                                 optionLabel="dropdownLabel"
-                                placeholder="Select environment..."
+                                [placeholder]="'S53.PLH.ENV' | lbl:'Select environment...'"
                                 [showClear]="true"
                                 [loading]="loadingEnvs"
                                 (onChange)="onEnvSelect()">
@@ -61,7 +55,7 @@
                         <ng-template pTemplate="empty">
                             <div class="ai-dropdown-empty">
                                 <i class="fas fa-exclamation-triangle"></i>
-                                No GOLD environments found.<br>
+                                {{ 'S53.ENV.NF' | lbl:'No GOLD environments found.' }}<br>
                                 <small>Set <code>ENVGOLDSCHEMA</code> on a CORPENV row (e.g. HNU or HNP) to make it appear here.</small>
                             </div>
                         </ng-template>
@@ -72,7 +66,7 @@
             <!-- Selected env detail card -->
             <div *ngIf="selectedEnv" class="ai-env-card">
                 <div class="ai-env-card-header">
-                    <i class="fas fa-info-circle"></i> Environment details
+                    <i class="fas fa-info-circle"></i> {{ 'S53.ENV.DTL' | lbl:'Environment details' }}
                 </div>
                 <div class="ai-env-card-grid">
                     <div class="ai-env-card-row">
@@ -108,7 +102,7 @@
             </div>
 
             <div *ngIf="!selectedEnv && !loadingEnvs" class="ai-step-callout">
-                <i class="fas fa-arrow-up"></i> Select a GOLD environment above to continue.
+                <i class="fas fa-arrow-up"></i> {{ 'S53.ENV.SEL' | lbl:'Select a GOLD environment above to continue.' }}
             </div>
         </div>
 
@@ -116,19 +110,16 @@
         <div *ngIf="activeStep === 1" class="ai-step-panel">
 
             <div class="ai-step-header">
-                <div class="ai-step-title"><i class="fas fa-building"></i> Retailer identity</div>
+                <div class="ai-step-title"><i class="fas fa-building"></i> {{ 'S53.ST1.TTL' | lbl:'Retailer identity' }}</div>
                 <div class="ai-step-context">
                     <i class="fas fa-lightbulb"></i>
-                    The Retailer ID is a permanent unique key used across all AI tables, views, and logs.
-                    It cannot be changed after saving — choose it carefully.
-                    Typically it combines the GOLD schema prefix with the environment name
-                    (e.g. <code>HNUCEN_PREPROD</code>, <code>HNUCEN_PROD</code>).
+                    {{ 'S53.ST1.CTX' | lbl:'The Retailer ID is a permanent unique key used across all AI tables. It cannot be changed after saving.' }}
                 </div>
             </div>
 
             <div class="p-fluid ai-form-grid">
                 <div class="p-field ai-field-full">
-                    <label>Retailer ID <span class="ai-required">*</span></label>
+                    <label>{{ 'S53.LBL.RID' | lbl:'Retailer ID' }} <span class="ai-required">*</span></label>
                     <input pInputText [(ngModel)]="retailerId"
                            placeholder="e.g. HNUCEN_PREPROD" maxlength="30" />
                     <small class="ai-hint">
@@ -138,13 +129,13 @@
                     </small>
                 </div>
                 <div class="p-field">
-                    <label>Retailer code <span class="ai-required">*</span></label>
+                    <label>{{ 'S53.LBL.RCODE' | lbl:'Retailer code' }} <span class="ai-required">*</span></label>
                     <input pInputText [(ngModel)]="retailerCode"
                            placeholder="e.g. HNU" maxlength="10" />
                     <small class="ai-hint">Short uppercase code matching the GOLD schema prefix.</small>
                 </div>
                 <div class="p-field">
-                    <label>Retailer name <span class="ai-required">*</span></label>
+                    <label>{{ 'S53.LBL.RNAME' | lbl:'Retailer name' }} <span class="ai-required">*</span></label>
                     <input pInputText [(ngModel)]="retailerName"
                            placeholder="e.g. Heinens Grocery Store" />
                     <small class="ai-hint">Full display name shown in dropdowns and reports.</small>
@@ -156,13 +147,10 @@
         <div *ngIf="activeStep === 2" class="ai-step-panel">
 
             <div class="ai-step-header">
-                <div class="ai-step-title"><i class="fas fa-vial"></i> Connection test</div>
+                <div class="ai-step-title"><i class="fas fa-vial"></i> {{ 'S53.ST2.TTL' | lbl:'Connection test' }}</div>
                 <div class="ai-step-context">
                     <i class="fas fa-lightbulb"></i>
-                    Verifies that the Oracle DB link is reachable and that core GOLD tables are accessible.
-                    <strong>No data is modified.</strong> The test queries <code>ALL_TABLES@{{ selectedEnv?.GOLD_DBLINK || selectedEnv?.ENVDBLINK }}</code>
-                    for 5 known GOLD tables (ARTUL, ARTRAC, ARTSITE, STOCOUCH, STOMVT).
-                    A result of 3+ tables found means the connection is healthy.
+                    {{ 'S53.ST2.CTX' | lbl:'Verifies that the Oracle DB link is reachable. No data is modified.' }}
                 </div>
             </div>
 
@@ -182,7 +170,7 @@
                         Run <code>SELECT 1 FROM DUAL@{{ selectedEnv?.GOLD_DBLINK || selectedEnv?.ENVDBLINK }}</code> in SQL*Plus to verify manually.
                     </small>
                 </div>
-                <button pButton label="Run connection test" icon="fas fa-play"
+                <button pButton [label]="'S53.BTN.TEST' | lbl:'Run connection test'" icon="fas fa-play"
                         class="p-button-primary ai-btn-run"
                         (click)="runConnectionTest()"></button>
             </div>
@@ -203,15 +191,14 @@
 
                 <div *ngIf="testSuccess" class="ai-test-success-banner">
                     <i class="fas fa-check-circle"></i>
-                    Connection verified — GOLD is reachable and tables are accessible.
-                    Click <strong>Next</strong> to review and save.
+                    {{ 'S53.TEST.OK' | lbl:'Connection verified — GOLD is reachable.' }}
                 </div>
 
                 <div *ngIf="!testSuccess" class="ai-test-fail-banner">
                     <i class="fas fa-times-circle"></i>
-                    Connection failed. Check the DB link configuration and ensure the remote database is running.
+                    {{ 'S53.TEST.FAIL' | lbl:'Connection failed. Check the DB link and remote database.' }}
                     <div class="ai-fail-actions">
-                        <button pButton label="Retry test" icon="fas fa-redo"
+                        <button pButton [label]="'AI.CMN.RETRY' | lbl:'Retry'" icon="fas fa-redo"
                                 class="p-button-outlined p-button-warning"
                                 (click)="resetTest()"></button>
                     </div>
@@ -223,12 +210,10 @@
         <div *ngIf="activeStep === 3" class="ai-step-panel">
 
             <div class="ai-step-header">
-                <div class="ai-step-title"><i class="fas fa-check-circle"></i> Confirm & save</div>
+                <div class="ai-step-title"><i class="fas fa-check-circle"></i> {{ 'S53.ST3.TTL' | lbl:'Confirm and save' }}</div>
                 <div class="ai-step-context">
                     <i class="fas fa-lightbulb"></i>
-                    Saving will register this retailer in <code>AI_RETAILER_CONFIG</code> and mark the connection as tested.
-                    After saving, proceed to <strong>Context Learning</strong> to teach the AI engine how your GOLD instance
-                    defines active items, stock, promotions, and other key concepts.
+                    {{ 'S53.ST3.CTX' | lbl:'Saving registers this retailer in AI_RETAILER_CONFIG.' }}
                 </div>
             </div>
 
@@ -289,7 +274,7 @@
             <p-divider></p-divider>
             <div class="ai-save-action">
                 <button pButton
-                        [label]="saving ? 'Saving...' : 'Save retailer'"
+                        [label]="saving ? ('S53.BTN.SVG' | lbl:'Saving...') : ('S53.BTN.SAVE' | lbl:'Save retailer')"
                         [icon]="saving ? 'fas fa-spinner fa-spin' : 'fas fa-save'"
                         class="p-button-success"
                         [disabled]="setupComplete || saving"
@@ -297,7 +282,7 @@
                 <div *ngIf="setupComplete" class="ai-saved-confirm">
                     <i class="fas fa-check-circle"></i>
                     <div>
-                        <strong>{{ retailerName }} saved successfully.</strong><br>
+                        <strong>{{ retailerName }} {{ 'S53.SAVED' | lbl:'saved successfully.' }}</strong><br>
                         <small>Proceed to Context Learning to configure the AI engine for this retailer.</small>
                     </div>
                 </div>
@@ -308,12 +293,12 @@
 
     <!-- Navigation footer -->
     <div class="ai-step-nav">
-        <button pButton label="Back" icon="fas fa-arrow-left" class="p-button-outlined"
+        <button pButton [label]="'AI.CMN.BACK' | lbl:'Back'" icon="fas fa-arrow-left" class="p-button-outlined"
                 [disabled]="activeStep === 0 || testRunning || saving"
                 (click)="prevStep()"></button>
 
         <button pButton
-                [label]="activeStep === 3 && setupComplete ? 'Go to Context Learning' : 'Next'"
+                [label]="activeStep === 3 && setupComplete ? ('S53.GO.CTX' | lbl:'Go to Context Learning') : ('AI.CMN.NEXT' | lbl:'Next')"
                 icon="fas fa-arrow-right" iconPos="right"
                 [disabled]="!canProceed() || testRunning || saving"
                 (click)="nextStep()"

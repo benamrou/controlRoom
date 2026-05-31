@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Diagnostic tool'"  [icon]="'fa-robot'"
+<app-page-header [heading]="'S14.TITLE' | lbl:'Diagnostic tool'"  [icon]="'fa-robot'"
                  [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'" [linkcolor]="'chocolate'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -171,7 +171,7 @@
       <p-footer>
         <button style="float: right; margin-bottom:0.5em" 
                 type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayPopup.display=false" 
-                label="Ok">
+                [label]="'CMN.OK' | lbl:'Ok'">
         </button>
     </p-footer>
 </p-dialog>

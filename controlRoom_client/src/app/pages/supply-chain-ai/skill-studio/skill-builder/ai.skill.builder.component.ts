@@ -3,6 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Observable, Subscription } from "rxjs";
 import { UserService } from "src/app/shared/services";
+import { LabelService } from "src/app/shared/services/labels/labels.service";
 import { AiSkillEditorModel, AiSkillService } from "src/app/shared/services/ai/ai.skill.service";
 
 @Component({
@@ -56,14 +57,15 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
         { field: "STOP_FIELD", header: "Field" },
         { field: "STOP_OPERATOR", header: "Op" },
         { field: "STOP_VALUE", header: "Value" },
-        { field: "CONCLUSION_KEY", header: "Conclusion" }
+        { field: "CONCLUSION_KEY", header: "Conclusion" },
+        { field: "STEP_TYPE", header: "Type" }
     ];
     private static readonly COLS_DIAG_CONCL = [
         { field: "CONCLUSION_KEY", header: "Key" },
         { field: "SEVERITY", header: "Severity" }
     ];
 
-    pageHeading = "Skill builder";
+    pageHeading = "";
     routeSkillId: string | null = null;
 
     loading = false;
@@ -165,6 +167,10 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
         { label: "Warning", value: "WARNING" },
         { label: "Info", value: "INFO" }
     ];
+    readonly stepTypeOptions = [
+        { label: "HARD — abort chain on match", value: "HARD" },
+        { label: "SOFT — record issue, continue", value: "SOFT" }
+    ];
 
     private subs = new Subscription();
 
@@ -175,10 +181,34 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
         private _router: Router,
         private _msg: MessageService,
         private _confirm: ConfirmationService,
-        private _cdr: ChangeDetectorRef
+        private _cdr: ChangeDetectorRef,
+        private _labels: LabelService,
     ) {}
 
+    private setPageHeading(mode: "default" | "new" | "edit", skillName?: string): void {
+        if (mode === "edit" && skillName) {
+            this.pageHeading = `Edit: ${skillName}`;
+            return;
+        }
+        if (mode === "new") {
+            this.pageHeading = this._labels.text("S57.TITLE.NEW", "New template skill");
+            return;
+        }
+        this.pageHeading = this._labels.text("S57.TITLE", "Skill Builder");
+    }
+
     ngOnInit(): void {
+        this.subs.add(
+            this._labels.revision$.subscribe(() => {
+                if (this.routeSkillId && this.model?.name) {
+                    this.setPageHeading("edit", this.model.name);
+                } else if (!this.routeSkillId) {
+                    this.setPageHeading("new");
+                } else {
+                    this.setPageHeading("default");
+                }
+            }),
+        );
         this.subs.add(
             this._route.paramMap.subscribe((pm: ParamMap) => {
                 const id = pm.get("id");
@@ -188,7 +218,7 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
                     this.loadSkill(this.routeSkillId);
                 } else {
                     this.model = this.emptyModel();
-                    this.pageHeading = "New template skill";
+                    this.setPageHeading("new");
                     this.loading = false;
                 }
             })
@@ -369,7 +399,10 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
                     return;
                 }
                 this.model = this.mapSkillRow(rows[0]);
-                this.pageHeading = this.model.name ? `Edit: ${this.model.name}` : "Skill builder";
+                this.setPageHeading(
+                    this.model.name ? "edit" : "default",
+                    this.model.name || undefined,
+                );
                 this.loading = false;
                 this.resetBundleState();
                 this.ensureBundle("knowledge", () => this.loadKnowledge());
@@ -592,7 +625,8 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
                         STOP_FIELD: this.cell(r, "STOP_FIELD", "stop_field"),
                         STOP_OPERATOR: this.cell(r, "STOP_OPERATOR", "stop_operator") || "=",
                         STOP_VALUE: this.cell(r, "STOP_VALUE", "stop_value"),
-                        CONCLUSION_KEY: this.cell(r, "CONCLUSION_KEY", "conclusion_key")
+                        CONCLUSION_KEY: this.cell(r, "CONCLUSION_KEY", "conclusion_key"),
+                        STEP_TYPE: this.cell(r, "STEP_TYPE", "step_type") || "HARD"
                     };
                     break;
                 case "diagConclusion": {
@@ -708,7 +742,8 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
                         STOP_FIELD: "",
                         STOP_OPERATOR: "=",
                         STOP_VALUE: "",
-                        CONCLUSION_KEY: ""
+                        CONCLUSION_KEY: "",
+                        STEP_TYPE: "HARD"
                     };
                     break;
                 case "diagConclusion":

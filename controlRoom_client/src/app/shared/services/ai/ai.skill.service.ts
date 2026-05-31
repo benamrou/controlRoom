@@ -50,6 +50,8 @@ export class AiSkillService {
     private Q_SKILL_PUBLISH = "AI0000042";
     /** Deprecate (Admin). */
     private Q_SKILL_DEPRECATE = "AI0000043";
+    /** Delete template skill + bundle (Admin or draft owner workflow). */
+    private Q_SKILL_DELETE = "AI0000065";
     private Q_BUNDLE_KI_SAVE = "AI0000051";
     private Q_BUNDLE_KI_DEL = "AI0000052";
     private Q_BUNDLE_PS_SAVE = "AI0000053";
@@ -231,6 +233,13 @@ export class AiSkillService {
 
     deprecate(skillId: string) {
         return this._query.postQueryResult(this.Q_SKILL_DEPRECATE, [{
+            SKILL_ID: skillId,
+            ACTOR: this._user.ICRUser
+        }]);
+    }
+
+    deleteSkill(skillId: string) {
+        return this._query.postQueryResult(this.Q_SKILL_DELETE, [{
             SKILL_ID: skillId,
             ACTOR: this._user.ICRUser
         }]);

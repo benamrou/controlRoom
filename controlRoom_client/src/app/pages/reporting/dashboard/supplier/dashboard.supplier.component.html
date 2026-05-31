@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Supplier dashboard'" [icon]="'fa-industry'"
+<app-page-header [heading]="'S11.TITLE' | lbl:'Supplier dashboard'" [icon]="'fa-industry'"
                  [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
                  
 <div class="content-section implementation" style="padding: 5px;">
@@ -8,20 +8,20 @@
 
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Warehouse : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S11.LBL.WHS' | lbl:'Warehouse :' }} </span>
     <bbs-multiselect [options]="warehouses" 
                     (shareCheckedList)="shareCheckedList($any($event))" 
                     (shareCheckedCodeList)="shareCheckedCodeList($any($event))" 
                     (shareIndividualCheckedList)="shareIndividualCheckedList($event)">
     </bbs-multiselect>
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S11.LBL.SUP' | lbl:'Supplier :' }} </span>
     <span style="padding-right: .5em;align-self: center;">
-        <input type="text"  [(ngModel)]="searchVendorCode" placeholder="  Enter a code or a description" 
+        <input type="text"  [(ngModel)]="searchVendorCode" [placeholder]="'S11.PLH.CODE' | lbl:'  Enter a code or a description'" 
                style="margin-left: 10px;height: 35px;width: 200%;"/>     
     </span>
 
     <span class="pull-right" style="padding-right: 20px">
-        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S11.BTN.SRCH' | lbl:'SEARCH'" 
                 [style]="{'height': '35px'}"
                 [disabled]="searchVendorCode == '' " 
                 style="margin-right: 15px"></button>
@@ -47,7 +47,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">Information</h5>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">{{ 'S11.CRD.INFO' | lbl:'Information' }}</h5>
                                     <span class="h2 font-weight-bold mb-0">{{selectedVendorCode}}</span>
                                     <span class="h2 font-weight-bold mb-0" style="font-size: smaller;padding-left: 10px;">{{selectedVendorCDesc}}</span>
                                 </div>
@@ -69,17 +69,17 @@
                         <div class="card-body">
                             <div class="row"  >
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">Assortment</h5>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">{{ 'S11.CRD.ASSORT' | lbl:'Assortment' }}</h5>
                                     <div>
-                                        <small class="mb-0">Nb. references: </small>
+                                        <small class="mb-0">{{ 'S11.LBL.NBREF' | lbl:'Nb. references:' }} </small>
                                         <span class="h6 font-weight-bold mb-0">{{nbReference}}</span>
                                     </div>
                                     <div  (mouseenter)="overlayDealsVisible=true" (mouseout)="overlayDealsVisible=false" >
-                                        <small class="mb-0">Nb. deals: </small>
+                                        <small class="mb-0">{{ 'S11.LBL.NBDEAL' | lbl:'Nb. deals:' }} </small>
                                         <span class="h6 font-weight-bold mb-0" >{{itemUniqueDeals.length}} </span>
                                         <p-overlayPanel  *ngIf="overlayDealsVisible" #overlayDeals [dismissable]="true" appendTo="'body'"  >
                                             <ng-container *ngIf="itemUniqueDeals.length > 0">
-                                                List of <i class="bbs-keywords">active deals</i> :
+                                                {{ 'S11.LBL.ACTDEAL' | lbl:'List of active deals' }} <i class="bbs-keywords">active deals</i> :
                                                     <ul *ngIf="itemUniqueDeals.length > 0" >
                                                             <li *ngFor="let uniqueDeal of itemUniqueDeals">
                                                                 {{uniqueDeal.DEAL_ID}} : {{uniqueDeal.DEAL_TYPE}} deal type  {{uniqueDeal.AMOUNT}} {{uniqueDeal.DEAL_UNIT}} 
@@ -103,7 +103,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">CTD Service rate</h5>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">{{ 'S11.CRD.CTDSVC' | lbl:'CTD Service rate' }}</h5>
                                     <p class="h2 font-weight-bold mb-0" style="text-align:center">{{serviceRateYearly | percent}}</p>
                                 </div>
                                 <div class="col-auto" style="width: 17%;text-align: center; ">
@@ -116,7 +116,7 @@
                                 <span *ngIf=" serviceRateYearly > serviceRateLast " class="text-warning mr-2"><i class="fas fa-arrow-down"></i> {{serviceRateLast | percent }}</span>
                                 <span *ngIf=" serviceRateLast == serviceRateYearly " ><i class="fas fa-arrow-right"></i> {{serviceRateLast | percent }}</span>
                                 <span *ngIf=" serviceRateLast >= serviceRateYearly " class="text-success mr-2"><i class="fas fa-arrow-up"></i> {{serviceRateLast | percent }}</span>
-                                <span class="text-nowrap">was last receipt service rate</span>
+                                <span class="text-nowrap">{{ 'S11.LBL.LASTSVC' | lbl:'was last receipt service rate' }}</span>
                             </p>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">CTD Fill rate</h5>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">{{ 'S11.CRD.CTDFIL' | lbl:'CTD Fill rate' }}</h5>
                                     <p class="h2 font-weight-bold mb-0" style="text-align:center">{{fillRateYearly | percent}}</p>
                                 </div>
                                 <div class="col-auto" style="width: 17%;text-align: center; ">
@@ -139,7 +139,7 @@
                             <span *ngIf=" fillRateYearly > fillRateLast " class="text-warning mr-2"><i class="fas fa-arrow-down"></i> {{fillRateLast | percent }}</span>
                             <span *ngIf=" serviceRateLast == serviceRateYearly " ><i class="fas fa-arrow-right"></i> {{serviceRateLast | percent }}</span>
                             <span *ngIf=" fillRateLast >= fillRateYearly " class="text-success mr-2"><i class="fas fa-arrow-up"></i> {{fillRateLast | percent }}</span>
-                                <span class="text-nowrap">was last fill rate</span>
+                                <span class="text-nowrap">{{ 'S11.LBL.LASTFIL' | lbl:'was last fill rate' }}</span>
                             </p>
                         </div>
                     </div>
@@ -150,7 +150,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">Margin</h5>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">{{ 'S11.CRD.MARGIN' | lbl:'Margin' }}</h5>
                                     <p class="h2 font-weight-bold mb-0" style="text-align:center">{{averageMargin | percent}}</p>
                                 </div>
                                 <div class="col-auto" style="width: 17%;text-align: center; ">
@@ -189,12 +189,12 @@
         <div class="table-header">
             <span class="p-input-icon-right" style="padding-left: 70%">
                 <i class="pi pi-search"></i>
-                <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
             </span>
             <span style="float: left">
                     <button type="button" pButton icon="fas fa-file" iconPos="left" 
                         class="CSV_Button p-input-icon-left ml-auto"
-                        label="CSV" (click)="result.exportCSV()" style="float:left">
+                        [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                     </button>
             </span>
         </div>
@@ -376,7 +376,7 @@
             <div class=" card">
                 <div class=" card-header"  style="background: unset">
                    <i class="fas fa-cubes" style="padding-right: 1em;"> </i>
-                       Fill rate history
+                       {{ 'S11.CHT.FILHIS' | lbl:'Fill rate history' }}
                </div>
             <!-- CHART FILL RATE ITEM -->
             <div class="chart-area" style="border: 1px solid darkgray; border-radius: 0.%;">
@@ -403,7 +403,7 @@
             <div class=" card">
                 <div class=" card-header"  style="background: unset">
                    <i class="fas fa-cubes" style="padding-right: 1em;"> </i>
-                       Service rate history
+                       {{ 'S11.CHT.SVCHIS' | lbl:'Service rate history' }}
                </div>
             <div class="chart-area" style="border: 1px solid darkgray; border-radius: 0.%;">
               <chart-cmp *ngIf="chartServiceRateHistory.refreshChart > 0"
@@ -473,7 +473,7 @@
                     </div>
                     <p-footer>
                         <div style="text-align: center">
-                            <button type="button" pButton icon="fa-close" (click)="closeRetail()" label="Close"></button>
+                            <button type="button" pButton icon="fa-close" (click)="closeRetail()" [label]="'S11.BTN.CLOSE' | lbl:'Close'"></button>
                         </div>
                     </p-footer>
             </p-dialog>

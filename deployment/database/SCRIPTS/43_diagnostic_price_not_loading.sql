@@ -20,7 +20,7 @@ INSERT INTO AI_SKILL (
     'DA000005-D100-4A00-8100-D10000000005',
     'TEMPLATE',
     'PRICE_NOT_LOADING',
-    'Retail price not loading — root cause',
+    'Retail price not loading - root cause',
     'PRICING',
     'Diagnoses why no retail price appears for an item at a store. Checks variant existence, active AVEPRIX rows, tariff validity, and AVESCOPE site coverage.',
     1.0, 'DRAFT', 'SYSTEM', SYSTIMESTAMP, SYSTIMESTAMP

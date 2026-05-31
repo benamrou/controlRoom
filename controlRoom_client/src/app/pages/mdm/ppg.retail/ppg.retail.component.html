@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Retail by PPG (deletion)'" [icon]="'fa-money-check-dollar'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"
+<app-page-header [heading]="'S32.TITLE' | lbl:'Retail by PPG (deletion)'" [icon]="'fa-money-check-dollar'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"
   [linkcolor]="'chocolate'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -29,7 +29,7 @@
 
 
   <span class="pull-right" style="padding-right: 20px">
-      <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+      <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S32.BTN.SRCH' | lbl:'SEARCH'" 
               [style]="{'height': '35px'}"
               [disabled]="periodStart > periodEnd || periodStart === '' || periodEnd === ''" 
               pTooltip="Period start must be greater than period end"
@@ -41,7 +41,7 @@
 
 
 <div class="bbs_search_sub_panel"  >
-    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Period start : </span>
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S32.LBL.PST' | lbl:'Period start :' }} </span>
     <p-calendar [(ngModel)]="periodStart"  
                 [minDate]="dateTomorrow"
                 [readonlyInput]="true"
@@ -50,7 +50,7 @@
                 name="scheduleStart" [showIcon]="true" 
                 [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
-    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Period end : </span>
+    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">{{ 'S32.LBL.PEN' | lbl:'Period end :' }} </span>
     <p-calendar [(ngModel)]="periodEnd"  
                 [minDate]="dateTomorrow"
                 [readonlyInput]="true"
@@ -68,7 +68,7 @@
       <p-footer>
           <button style="float: right; margin-bottom:0.5em" 
                   type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                  label="Ok">
+                  [label]="'CMN.OK' | lbl:'Ok'">
           </button>
       </p-footer>
 </p-dialog>
@@ -99,13 +99,13 @@
                         class="CSV_Button p-input-icon-left ml-auto"
                         pTooltip="Export to EXCEL" [escape]="false"
                         *ngIf="searchResult.length>0"
-                        label="CSV" (click)="exportExcelRecap()" style="float:left">
+                        [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap()" style="float:left">
                     </button>
                     <button type="button" pButton icon="fas fa-file" iconPos="left" 
                         class="CSV_Button p-input-icon-left ml-auto"
                         pTooltip="Export to EXCEL" [escape]="false"
                         disabled *ngIf="searchResult.length==0"
-                        label="CSV" (click)="exportExcelRecap()" style="float:left">
+                        [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap()" style="float:left">
                     </button>
 
                     <button type="button" pButton iconPos="left" 
@@ -128,7 +128,7 @@
             <div class="col-6" style="text-align: right;">
                 <span class="p-input-icon-right">
                     <i class="pi pi-search"></i>
-                    <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                 </span>
             </div>
         </div>

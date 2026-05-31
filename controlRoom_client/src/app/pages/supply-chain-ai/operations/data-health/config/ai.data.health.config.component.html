@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
-<app-page-header [heading]="'Data Health Configuration'" [screenID]="screenID" [icon]="'fas fa-cog'"></app-page-header>
+<app-page-header [heading]="'S62.TITLE' | lbl:'Data Health Configuration'" [screenID]="screenID" [icon]="'fas fa-cog'"></app-page-header>
 
 <!-- Toolbar -->
 <div class="adhc-toolbar p-mb-3">
@@ -10,17 +10,17 @@
       [options]="retailers"
       [(ngModel)]="selectedRetailer"
       optionLabel="RETAILER_NAME"
-      placeholder="Select retailer"
+      [placeholder]="'AI.CMN.SELRET' | lbl:'Select retailer...'"
       (onChange)="onRetailerChange()"
       [disabled]="loadingRetailers"
       styleClass="adhc-retailer-dd">
     </p-dropdown>
   </div>
   <div class="adhc-toolbar-right">
-    <button pButton type="button" label="Back to dashboard" icon="pi pi-arrow-left"
+    <button pButton type="button" [label]="'S62.BACK' | lbl:'Back to dashboard'" icon="pi pi-arrow-left"
       class="p-button-sm p-button-text" (click)="backToDashboard()">
     </button>
-    <button pButton type="button" label="Add check" icon="pi pi-plus"
+    <button pButton type="button" [label]="'S62.ADD' | lbl:'Add check'" icon="pi pi-plus"
       class="p-button-sm"
       [disabled]="!selectedRetailer"
       (click)="openNew()">
@@ -35,14 +35,14 @@
     dataKey="CHECK_ID">
     <ng-template pTemplate="header">
       <tr>
-        <th>Check name</th>
-        <th>Code</th>
+        <th>{{ 'S62.COL.NAME' | lbl:'Check name' }}</th>
+        <th>{{ 'S62.COL.CODE' | lbl:'Code' }}</th>
         <th>LIBQUERY</th>
-        <th>Tier</th>
-        <th>Severity</th>
-        <th>Skill</th>
-        <th>Resolution</th>
-        <th style="width:80px; text-align:center">Enabled</th>
+        <th>{{ 'S62.COL.TIER' | lbl:'Tier' }}</th>
+        <th>{{ 'S62.COL.SEV' | lbl:'Severity' }}</th>
+        <th>{{ 'S62.COL.SKILL' | lbl:'Skill' }}</th>
+        <th>{{ 'S62.COL.RES' | lbl:'Resolution' }}</th>
+        <th style="width:80px; text-align:center">{{ 'S62.COL.EN' | lbl:'Enabled' }}</th>
         <th style="width:140px"></th>
       </tr>
     </ng-template>
@@ -79,15 +79,15 @@
           <div class="adhc-row-actions">
             <button pButton type="button" icon="pi pi-pencil"
               class="p-button-sm p-button-text p-button-secondary"
-              pTooltip="Edit" (click)="openEdit(def)">
+              [pTooltip]="'AI.CMN.EDIT' | lbl:'Edit'" (click)="openEdit(def)">
             </button>
             <button pButton type="button" icon="pi pi-copy"
               class="p-button-sm p-button-text"
-              pTooltip="Duplicate" (click)="openDuplicate(def)">
+              [pTooltip]="'S62.DUP' | lbl:'Duplicate'" (click)="openDuplicate(def)">
             </button>
             <button pButton type="button" icon="pi pi-trash"
               class="p-button-sm p-button-text p-button-danger"
-              pTooltip="Delete" (click)="confirmDelete(def)">
+              [pTooltip]="'AI.CMN.DEL' | lbl:'Delete'" (click)="confirmDelete(def)">
             </button>
           </div>
         </td>
@@ -96,7 +96,7 @@
     <ng-template pTemplate="emptymessage">
       <tr>
         <td colspan="9" class="adhc-empty">
-          No checks configured. Click <strong>Add check</strong> to get started.
+          {{ 'S62.EMP' | lbl:'No checks configured. Click Add check to get started.' }}
         </td>
       </tr>
     </ng-template>
@@ -105,7 +105,7 @@
 
 <div class="adhc-empty-state" *ngIf="!selectedRetailer">
   <i class="pi pi-cog"></i>
-  <p>Select a retailer to manage its data health checks.</p>
+  <p>{{ 'S62.SELRET' | lbl:'Select a retailer to manage its data health checks.' }}</p>
 </div>
 
 <!-- Add / Edit dialog -->
@@ -149,7 +149,7 @@
           placeholder="e.g. AI0000090"
           class="adhc-input adhc-input--qnum"
           (ngModelChange)="verifyState = 'idle'" />
-        <button pButton type="button" label="Verify" icon="pi pi-bolt"
+        <button pButton type="button" [label]="'S62.VERIFY' | lbl:'Verify'" icon="pi pi-bolt"
           class="p-button-sm p-button-outlined"
           [loading]="verifyState === 'checking'"
           (click)="verifyQuery()">
@@ -221,7 +221,7 @@
           placeholder="e.g. DH0000001"
           class="adhc-input adhc-input--qnum"
           (ngModelChange)="resolutionVerifyState = 'idle'" />
-        <button pButton type="button" label="Verify" icon="pi pi-bolt"
+        <button pButton type="button" [label]="'S62.VERIFY' | lbl:'Verify'" icon="pi pi-bolt"
           class="p-button-sm p-button-outlined"
           [loading]="resolutionVerifyState === 'checking'"
           [disabled]="!form.RESOLUTION_QUERY_NUM?.trim()"
@@ -312,7 +312,7 @@
   </div>
 
   <ng-template pTemplate="footer">
-    <button pButton type="button" label="Cancel" icon="pi pi-times"
+    <button pButton type="button" [label]="'AI.CMN.CNCEL' | lbl:'Cancel'" icon="pi pi-times"
       class="p-button-text" (click)="dialogVisible = false">
     </button>
     <button pButton type="button" [label]="saveButtonLabel" icon="pi pi-check"

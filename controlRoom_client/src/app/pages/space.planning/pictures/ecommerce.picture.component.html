@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Ecommerce picture'" [icon]="'fa-camera'"
+<app-page-header [heading]="'S23.TITLE' | lbl:'Ecommerce picture'" [icon]="'fa-camera'"
                  [waitMessage]="waitMessage" [okExit]="okExit" [screenID]="screenID"></app-page-header>
 
 <br>
@@ -32,7 +32,7 @@
     </div>
   </div>
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="displaySetting = false" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (click)="displaySetting = false" [label]="'CMN.OK' | lbl:'Ok'" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 

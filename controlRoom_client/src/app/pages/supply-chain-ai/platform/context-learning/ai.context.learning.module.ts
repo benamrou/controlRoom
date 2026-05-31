@@ -18,13 +18,14 @@ import { DialogModule }        from 'primeng/dialog';
 import { TooltipModule }       from 'primeng/tooltip';
 
 import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
+import { I18nModule } from 'src/app/shared/pipes/i18n.module';
 
 @NgModule({
     imports: [
         RouterModule, CommonModule, FormsModule,
         DropdownModule, ProgressBarModule, ButtonModule, TagModule,
         DividerModule, ToastModule, InputTextModule, InputTextareaModule,
-        PageHeaderModule
+        PageHeaderModule, I18nModule,
     ],
     declarations: [AiContextLearningComponent],
     exports: [AiContextLearningComponent],

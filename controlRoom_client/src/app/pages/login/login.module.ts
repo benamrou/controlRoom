@@ -6,9 +6,10 @@ import { LoginComponent } from './login.component';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
+import { I18nModule } from 'src/app/shared/pipes/i18n.module';
 
 @NgModule({
-    imports: [ RouterModule,CommonModule,FormsModule, ButtonModule, ToastModule, MessagesModule ],
+    imports: [ RouterModule, CommonModule, FormsModule, ButtonModule, ToastModule, MessagesModule, I18nModule ],
     declarations: [LoginComponent],
     exports: [LoginComponent],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]

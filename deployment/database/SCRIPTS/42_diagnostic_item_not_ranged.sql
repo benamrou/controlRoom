@@ -20,7 +20,7 @@ INSERT INTO AI_SKILL (
     'DA000004-D100-4A00-8100-D10000000004',
     'TEMPLATE',
     'ITEM_NOT_RANGED',
-    'Item not ranged at store — root cause',
+    'Item not ranged at store - root cause',
     'ASSORTMENT',
     'Diagnoses why an item does not appear in the store assortment. Checks item master existence, ARTSITE ranging, and whether item was previously listed.',
     1.0, 'DRAFT', 'SYSTEM', SYSTIMESTAMP, SYSTIMESTAMP

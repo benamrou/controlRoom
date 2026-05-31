@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Alerts management'" [waitMessage]="waitMessage" [screenID]="screenID"
+<app-page-header [heading]="'S19.TITLE' | lbl:'Alerts management'" [waitMessage]="waitMessage" [screenID]="screenID"
     [icon]="'fa-bell'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -10,12 +10,12 @@
 
 
 <!-- Dialog for saving change -->
-<p-dialog header="Updates completed" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'CMN.UPD.COMP' | lbl:'Updates completed'" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
   </p-dialog>
@@ -39,11 +39,11 @@
                     <span>
                         <button type="button" pButton icon="fas fa-file" iconPos="left"
                             class="CSV_Button p-input-icon-left ml-auto" pTooltip="{{csvButtonTooltip}}"
-                            *ngIf="executionDataResult.length>0" label="CSV" (click)="resultExecution.exportCSV()" style="float:left">
+                            *ngIf="executionDataResult.length>0" [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultExecution.exportCSV()" style="float:left">
                         </button>
                         <button type="button" pButton icon="fas fa-file" iconPos="left"
                             class="CSV_Button p-input-icon-left ml-auto" pTooltip="{{csvButtonTooltip}}" disabled
-                            *ngIf="executionDataResult.length==0" label="CSV" (click)="resultExecution.exportCSV()" style="float:left">
+                            *ngIf="executionDataResult.length==0" [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultExecution.exportCSV()" style="float:left">
                         </button>
                     </span>
                 </div>
@@ -52,7 +52,7 @@
                         <i class="pi pi-search"></i>
                         <input pInputText type="text"
                             (input)="resultExecution.filterGlobal($any($event.target).value, 'contains')"
-                            placeholder="Type text to filter..." />
+                            [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>
@@ -77,12 +77,12 @@
                             <i class="pi pi-search"></i>
                             <input pInputText type="text"
                                 (input)="resultExecution.filterGlobal($any($event.target).value, 'contains')"
-                                placeholder="Global Search" />
+                                [placeholder]="'CMN.GLBSRH' | lbl:'Global Search'" />
                         </span>
                     </div>
                     <div>
                         <button type="button" pButton icon="fas fa-file" iconPos="left"
-                            class="CSV_Button p-input-icon-left ml-auto" label="CSV" (click)="resultExecution.exportCSV()"
+                            class="CSV_Button p-input-icon-left ml-auto" [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultExecution.exportCSV()"
                             style="float:left"></button>
                     </div>
                 </div>
@@ -117,8 +117,8 @@
         </ng-container>
     </div>
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" *ngIf="runReportDialog == 2" (click)="captureParamDialog = false; executeLocalQuery(executionAlertParam)" label="Ok" styleClass="p-button-text"></p-button>
-        <p-button icon="pi pi-check" *ngIf="runReportDialog == 1" (click)="captureParamDialog = false; runReport(executionAlertParam)" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" *ngIf="runReportDialog == 2" (click)="captureParamDialog = false; executeLocalQuery(executionAlertParam)" [label]="'CMN.OK' | lbl:'Ok'" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" *ngIf="runReportDialog == 1" (click)="captureParamDialog = false; runReport(executionAlertParam)" [label]="'CMN.OK' | lbl:'Ok'" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 
@@ -132,7 +132,7 @@
         </textarea>
     </div>
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="alertSQLFileDisplay = false" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (click)="alertSQLFileDisplay = false" [label]="'CMN.OK' | lbl:'Ok'" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 
@@ -142,24 +142,24 @@
 
     <div class="flex flex-row-reverse flex-wrap" style="padding-right: 20px;">
         <span>
-            <button (click)="displayAlert=false" pButton="" icon="fas fa-close" label="CANCEL"
+            <button (click)="displayAlert=false" pButton="" icon="fas fa-close" [label]="'CMN.CANCEL' | lbl:'CANCEL'"
                 style="margin-right: 15px; height: 35px;"></button>
-            <button (click)="saveChanges()" pButton="" icon="fas fa-save" label="SAVE"
+            <button (click)="saveChanges()" pButton="" icon="fas fa-save" [label]="'CMN.SAVE' | lbl:'SAVE'"
                     [disabled]="isNewAlert && !alertDisplay.ALTID"
                     style="margin-right: 15px; height: 35px;"></button>
         </span>
 
         <p-tabView style="width: 100%;">
-            <p-tabPanel header="General" lefticon="fas fa-file-invoice">
+            <p-tabPanel [header]="'S19.TAB.GEN' | lbl:'General'" lefticon="fas fa-file-invoice">
                 <div class="formgrid grid">
                     <div class="field col-6">
-                        <label class="font-bold" for="alertid">ID <span *ngIf="isNewAlert" style="color: red;">*</span></label>
+                        <label class="font-bold" for="alertid">{{ 'S19.LBL.ID' | lbl:'ID' }} <span *ngIf="isNewAlert" style="color: red;">*</span></label>
                         <input id="alertid" pInputText [(ngModel)]="alertDisplay.ALTID" [disabled]="!isNewAlert"
                             placeholder="e.g., QRY0000001"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
                     <div class="field col-6">
-                        <label class="font-bold" for="altsubject">Title/Subject</label>
+                        <label class="font-bold" for="altsubject">{{ 'S19.LBL.SUBJ' | lbl:'Title/Subject' }}</label>
                         <input id="altsubject" pInputText [(ngModel)]="alertDisplay.ALTSUBJECT"
                             class="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full ng-untouched ng-pristine ng-valid">
                     </div>
@@ -235,7 +235,7 @@
                     </div>
                 </div>
             </p-tabPanel>
-            <p-tabPanel header="Distribution list" lefticon="fas fa-envelope-open">
+            <p-tabPanel [header]="'S19.TAB.DLST' | lbl:'Distribution list'" lefticon="fas fa-envelope-open">
                 <div class="formgrid grid">
                     <div class="field col-3">
                         <label class="font-bold" for="daltemail">Email sent to:</label>
@@ -257,7 +257,7 @@
                     </div>
                 </div>
             </p-tabPanel>
-            <p-tabPanel header="Printing" lefticon="fas fa-print">
+            <p-tabPanel [header]="'S19.TAB.PRNT' | lbl:'Printing'" lefticon="fas fa-print">
                 <div class="formgrid grid">
                     <div class="field col-6">
                         <label class="font-bold" for="alertorientation">Orientation</label>
@@ -345,7 +345,7 @@
                     </div>
                 </div>
             </p-tabPanel>
-            <p-tabPanel header="Scheduling" lefticon="fas fa-clock">
+            <p-tabPanel [header]="'S19.TAB.SCHD' | lbl:'Scheduling'" lefticon="fas fa-clock">
                 <div class="formgrid grid" *ngIf="alertSheduleDisplay">
                     <!-- Row 1: ID, Description, Active Date -->
                     <div class="field col-3">
@@ -570,7 +570,7 @@
     </span>
 
     <span class="pull-right" style="padding-right: 20px">
-        <button pButton (click)="search()" icon="fas fa-search" label="SEARCH" [style]="{'height': '35px'}"></button>
+        <button pButton (click)="search()" icon="fas fa-search" [label]="'S19.BTN.SRCH' | lbl:'SEARCH'" [style]="{'height': '35px'}"></button>
         <button pButton (click)="search()" icon="fas fa-sync-alt" [style]="{'height': '35px'}"></button>
     </span>
 </div>
@@ -597,11 +597,11 @@
                     <span>
                         <button type="button" pButton icon="fas fa-file" iconPos="left"
                             class="CSV_Button p-input-icon-left ml-auto" pTooltip="{{csvButtonTooltip}}"
-                            *ngIf="searchResult.length>0" label="CSV" (click)="result.exportCSV()" style="float:left">
+                            *ngIf="searchResult.length>0" [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                         </button>
                         <button type="button" pButton icon="fas fa-file" iconPos="left"
                             class="CSV_Button p-input-icon-left ml-auto" pTooltip="{{csvButtonTooltip}}" disabled
-                            *ngIf="searchResult.length==0" label="CSV" (click)="result.exportCSV()" style="float:left">
+                            *ngIf="searchResult.length==0" [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                         </button>
                     </span>
                 </div>
@@ -618,7 +618,7 @@
                         <i class="pi pi-search"></i>
                         <input pInputText type="text"
                             (input)="result.filterGlobal($any($event.target).value, 'contains')"
-                            placeholder="Type text to filter..." />
+                            [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>
@@ -643,12 +643,12 @@
                             <i class="pi pi-search"></i>
                             <input pInputText type="text"
                                 (input)="result.filterGlobal($any($event.target).value, 'contains')"
-                                placeholder="Global Search" />
+                                [placeholder]="'CMN.GLBSRH' | lbl:'Global Search'" />
                         </span>
                     </div>
                     <div>
                         <button type="button" pButton icon="fas fa-file" iconPos="left"
-                            class="CSV_Button p-input-icon-left ml-auto" label="CSV" (click)="result.exportCSV()"
+                            class="CSV_Button p-input-icon-left ml-auto" [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()"
                             style="float:left"></button>
                     </div>
                 </div>

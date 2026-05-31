@@ -383,7 +383,7 @@
                 </div>
 
                 <!-- Title -->
-                <h1>Inventory Control Room</h1>
+                <h1>{{ 'LG.TITLE' | lbl:'Inventory Control Room' }}</h1>
 
                 <!-- Login Form -->
                 <form role="form" (ngSubmit)="onLoggedin()">
@@ -394,7 +394,7 @@
                                name="username"
                                [(ngModel)]="authentification.username"
                                class="form-control"
-                               placeholder="Username" />
+                               [placeholder]="'LG.USER' | lbl:'Username'" />
                     </div>
 
                     <div class="form-group">
@@ -403,13 +403,13 @@
                                name="password"
                                [(ngModel)]="authentification.password"
                                class="form-control"
-                               placeholder="Password" />
+                               [placeholder]="'LG.PASS' | lbl:'Password'" />
                     </div>
 
                     <button class="login-btn"
                             type="submit"
                             [disabled]="authentification.username.length === 0">
-                        <i class="fa fa-sign-in-alt"></i> Log in
+                        <i class="fa fa-sign-in-alt"></i> {{ 'LG.SIGNIN' | lbl:'Log in' }}
                     </button>
 
                 </form>

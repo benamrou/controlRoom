@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Menu & access'" [waitMessage]="waitMessage" [screenID]="screenID"
+<app-page-header [heading]="'S66.TITLE' | lbl:'Menu & access'" [waitMessage]="waitMessage" [screenID]="screenID"
     [icon]="'fa-sitemap'"></app-page-header>
 
 <div class="content-section implementation settings-crud">
@@ -7,10 +7,10 @@
 
     <p-tabView [(activeIndex)]="activeTab" (onChange)="onTabChange($event)">
         <!-- Menu catalog -->
-        <p-tabPanel header="Menu catalog">
+        <p-tabPanel [header]="'S66.TAB.CAT' | lbl:'Menu catalog'">
             <div class="settings-toolbar menu-catalog-toolbar grid align-items-end mb-3">
                 <div class="col-12 md:col-6 lg:col-3 menu-catalog-show-col">
-                    <label class="font-bold block mb-1" for="menuCatalogShowFilter">Show</label>
+                    <label class="font-bold block mb-1" for="menuCatalogShowFilter">{{ 'S66.LBL.SHOW' | lbl:'Show' }}</label>
                     <p-dropdown inputId="menuCatalogShowFilter"
                         [options]="catalogFilterOptions" [(ngModel)]="catalogFilter"
                         styleClass="w-full menu-catalog-show-dropdown"
@@ -26,12 +26,12 @@
                     <div class="table-header grid align-items-center">
                         <div class="col-1">
                             <button type="button" pButton icon="fas fa-sync-alt" iconPos="left"
-                                pTooltip="Refresh" (click)="loadMenuCatalog()"
+                                [pTooltip]="'CMN.REFRESH' | lbl:'Refresh'" (click)="loadMenuCatalog()"
                                 [style]="{'height': '35px'}" style="float:left"></button>
                         </div>
                         <div class="col-2">
                             <button type="button" pButton icon="pi pi-plus" iconPos="left"
-                                class="CREATE_Button" label="Add entry" (click)="openNewMenu()"
+                                class="CREATE_Button" [label]="'S66.BTN.ADDM' | lbl:'Add entry'" (click)="openNewMenu()"
                                 style="float:left"></button>
                         </div>
                         <div class="col-9" style="text-align: right;">
@@ -39,22 +39,22 @@
                                 <i class="pi pi-search"></i>
                                 <input pInputText type="text" #menuFilter
                                     (input)="menuTable.filterGlobal($any($event.target).value, 'contains')"
-                                    placeholder="Type text to filter..." />
+                                    [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                             </span>
                         </div>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th class="menu-actions-col">Actions</th>
-                        <th pSortableColumn="MENU_CODE">Code <p-sortIcon field="MENU_CODE"></p-sortIcon></th>
-                        <th pSortableColumn="LABEL_TEXT">Label <p-sortIcon field="LABEL_TEXT"></p-sortIcon></th>
-                        <th>Type</th>
-                        <th>Mode</th>
-                        <th>Parent</th>
-                        <th>Route</th>
-                        <th>Sort</th>
-                        <th>Active</th>
+                        <th class="menu-actions-col">{{ 'CMN.ACTIONS' | lbl:'Actions' }}</th>
+                        <th pSortableColumn="MENU_CODE">{{ 'CMN.CODE' | lbl:'Code' }} <p-sortIcon field="MENU_CODE"></p-sortIcon></th>
+                        <th pSortableColumn="LABEL_TEXT">{{ 'CMN.LABEL' | lbl:'Label' }} <p-sortIcon field="LABEL_TEXT"></p-sortIcon></th>
+                        <th>{{ 'CMN.TYPE' | lbl:'Type' }}</th>
+                        <th>{{ 'CMN.MODE' | lbl:'Mode' }}</th>
+                        <th>{{ 'CMN.PARENT' | lbl:'Parent' }}</th>
+                        <th>{{ 'CMN.ROUTE' | lbl:'Route' }}</th>
+                        <th>{{ 'CMN.SORT' | lbl:'Sort' }}</th>
+                        <th>{{ 'CMN.ACTIVE' | lbl:'Active' }}</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row>
@@ -67,7 +67,7 @@
                                     class="p-button-rounded p-button-sm action-btn"></button>
                                 <button pButton pRipple type="button" icon="pi pi-ban"
                                     *ngIf="row.ACTIVE == 1" (click)="confirmDeactivateMenu(row)"
-                                    pTooltip="Deactivate" tooltipPosition="top"
+                                    [pTooltip]="'CMN.DEACT' | lbl:'Deactivate'" tooltipPosition="top"
                                     class="p-button-rounded p-button-sm action-btn"></button>
                             </span>
                         </td>
@@ -78,21 +78,21 @@
                         <td>{{ row.PARENT_CODE }}</td>
                         <td class="route-cell">{{ row.ROUTE_PATH }}</td>
                         <td>{{ row.SORT_ORDER }}</td>
-                        <td>{{ row.ACTIVE == 1 ? 'Yes' : 'No' }}</td>
+                        <td>{{ row.ACTIVE == 1 ? ('CMN.YES' | lbl:'Yes') : ('CMN.NO' | lbl:'No') }}</td>
                     </tr>
                 </ng-template>
             </p-table>
         </p-tabPanel>
 
         <!-- Access rules -->
-        <p-tabPanel header="Flag rules">
+        <p-tabPanel [header]="'S66.TAB.RULES' | lbl:'Flag rules'">
             <div class="mb-3 flex gap-2">
-                <button pButton label="Refresh" icon="pi pi-refresh" (click)="loadRules()"></button>
-                <button pButton label="Add rule" icon="pi pi-plus" (click)="openNewRule()"></button>
+                <button pButton [label]="'CMN.REFRESH' | lbl:'Refresh'" icon="pi pi-refresh" (click)="loadRules()"></button>
+                <button pButton [label]="'S66.BTN.ADDR' | lbl:'Add rule'" icon="pi pi-plus" (click)="openNewRule()"></button>
             </div>
             <p class="text-color-secondary text-sm mb-2">
-                Users also need the flag on
-                <a routerLink="/settingusers">Users &amp; Profiles</a> or an access profile.
+                {{ 'S66.RULE.HINT' | lbl:'Users also need the flag on Users and Profiles or an access profile.' }}
+                <a routerLink="/settingusers">{{ 'S66.LNK.USERS' | lbl:'Users and Profiles' }}</a>
             </p>
             <p-table #rulesTable [value]="rules" [loading]="loadingRules" [paginator]="true" [rows]="25"
                 [rowsPerPageOptions]="[25, 50, 100]" [pageLinks]="3"
@@ -105,18 +105,18 @@
                                 <i class="pi pi-search"></i>
                                 <input pInputText type="text"
                                     (input)="rulesTable.filterGlobal($any($event.target).value, 'contains')"
-                                    placeholder="Type text to filter..." />
+                                    [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                             </span>
                         </div>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th class="menu-actions-col">Actions</th>
-                        <th pSortableColumn="FLAG_NAME">Flag <p-sortIcon field="FLAG_NAME"></p-sortIcon></th>
+                        <th class="menu-actions-col">{{ 'CMN.ACTIONS' | lbl:'Actions' }}</th>
+                        <th pSortableColumn="FLAG_NAME">{{ 'CMN.FLAG' | lbl:'Flag' }} <p-sortIcon field="FLAG_NAME"></p-sortIcon></th>
                         <th pSortableColumn="MENU_CODE">Menu <p-sortIcon field="MENU_CODE"></p-sortIcon></th>
-                        <th>Label</th>
-                        <th>Mode</th>
+                        <th>{{ 'CMN.LABEL' | lbl:'Label' }}</th>
+                        <th>{{ 'CMN.MODE' | lbl:'Mode' }}</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row>
@@ -139,20 +139,20 @@
         </p-tabPanel>
 
         <!-- Profiles -->
-        <p-tabPanel header="Profiles">
+        <p-tabPanel [header]="'S66.TAB.PROF' | lbl:'Profiles'">
             <div class="mb-3 flex gap-2">
-                <button pButton label="Refresh" icon="pi pi-refresh" (click)="loadProfiles()"></button>
-                <button pButton label="Add profile" icon="pi pi-plus" (click)="openNewProfile()"></button>
+                <button pButton [label]="'CMN.REFRESH' | lbl:'Refresh'" icon="pi pi-refresh" (click)="loadProfiles()"></button>
+                <button pButton [label]="'S66.BTN.ADDP' | lbl:'Add profile'" icon="pi pi-plus" (click)="openNewProfile()"></button>
             </div>
             <p-table [value]="profiles" [loading]="loadingProfiles" [paginator]="true" [rows]="15"
                 styleClass="p-datatable-sm menu-access-table">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th class="menu-actions-col">Actions</th>
+                        <th class="menu-actions-col">{{ 'CMN.ACTIONS' | lbl:'Actions' }}</th>
                         <th>Id</th>
-                        <th>Code</th>
-                        <th>Name</th>
-                        <th>Active</th>
+                        <th>{{ 'CMN.CODE' | lbl:'Code' }}</th>
+                        <th>{{ 'S65.COL.NAME' | lbl:'Name' }}</th>
+                        <th>{{ 'CMN.ACTIVE' | lbl:'Active' }}</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row>
@@ -168,14 +168,14 @@
                         <td>{{ row.PROFILE_ID }}</td>
                         <td>{{ row.PROFILE_CODE }}</td>
                         <td>{{ row.PROFILE_NAME }}</td>
-                        <td>{{ row.ACTIVE == 1 ? 'Yes' : 'No' }}</td>
+                        <td>{{ row.ACTIVE == 1 ? ('CMN.YES' | lbl:'Yes') : ('CMN.NO' | lbl:'No') }}</td>
                     </tr>
                 </ng-template>
             </p-table>
         </p-tabPanel>
 
         <!-- Profile → menus -->
-        <p-tabPanel header="Profile menus" [cache]="false">
+        <p-tabPanel [header]="'S66.TAB.PMNU' | lbl:'Profile menus'" [cache]="false">
             <div class="grid align-items-end mb-3">
                 <div class="col-12 md:col-6">
                     <label class="font-bold block mb-1">Access profile</label>
@@ -184,9 +184,9 @@
                         (onChange)="onProfilePickChange()"></p-dropdown>
                 </div>
                 <div class="col-12 md:col-6 flex gap-2">
-                    <button pButton label="Load" icon="pi pi-download" [disabled]="!profilePickId"
+                    <button pButton [label]="'CMN.LOAD' | lbl:'Load'" icon="pi pi-download" [disabled]="!profilePickId"
                         (click)="loadProfileMenus()"></button>
-                    <button pButton label="Save grants" icon="pi pi-save" [disabled]="!profilePickId || !profileMenuRows.length"
+                    <button pButton [label]="'CMN.SAVE' | lbl:'Save'" icon="pi pi-save" [disabled]="!profilePickId || !profileMenuRows.length"
                         [loading]="savingProfileMenus" (click)="saveProfileMenus()"></button>
                 </div>
             </div>
@@ -213,6 +213,67 @@
                         <td>{{ row.MENU_CODE }}</td>
                         <td>{{ row.LABEL_TEXT }}</td>
                         <td>{{ row.MENU_MODE }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <p-tabPanel [header]="'S66.TAB.TRN' | lbl:'Translations'" [cache]="false">
+            <div class="settings-toolbar grid align-items-end mb-3">
+                <div class="col-12 md:col-6 flex gap-2">
+                    <button pButton type="button" icon="fas fa-sync-alt" label="Refresh"
+                        class="p-button-outlined" (click)="loadTranslations()" [loading]="loadingTranslations"></button>
+                </div>
+            </div>
+            <p class="text-color-secondary text-sm mb-2">
+                Menu text is stored in <code>ICR_MENU_LABEL</code> (not TRA_LABELS). Users must re-login after changes.
+                CSV import format: <code>MENU_CODE,MLLANGUE,LABEL_TEXT</code> (one row per line).
+            </p>
+            <p-table #translationTable [value]="translationRows" [loading]="loadingTranslations" [paginator]="true" [rows]="25"
+                [rowsPerPageOptions]="[25, 50, 100]" responsiveLayout="scroll"
+                styleClass="p-datatable-sm menu-access-table"
+                [globalFilterFields]="['MENU_CODE','LEGACY_LABEL','us_US','en_GB','fr_FR']">
+                <ng-template pTemplate="caption">
+                    <div class="grid align-items-center">
+                        <div class="col-12 md:col-6">
+                            <textarea pInputTextarea [(ngModel)]="translationImportText" rows="3" class="w-full"
+                                placeholder="MENU_CODE,us_US,My label&#10;MENU_CODE,fr_FR,Mon libelle"></textarea>
+                            <button pButton type="button" label="Import CSV" icon="pi pi-upload" class="mt-2"
+                                [loading]="savingTranslations" (click)="importMenuTranslationsCsv()"></button>
+                        </div>
+                        <div class="col-12 md:col-6" style="text-align: right;">
+                            <span class="p-input-icon-right">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" #trFilter
+                                    (input)="translationTable.filterGlobal($any($event.target).value, 'contains')"
+                                    placeholder="Type text to filter..." />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="menu-actions-col">Save</th>
+                        <th pSortableColumn="MENU_CODE">Code <p-sortIcon field="MENU_CODE"></p-sortIcon></th>
+                        <th>Type</th>
+                        <th>Legacy</th>
+                        <th>us_US</th>
+                        <th>en_GB</th>
+                        <th>fr_FR</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td>
+                            <button pButton type="button" icon="pi pi-save" class="p-button-sm p-button-outlined"
+                                [loading]="savingTranslations" (click)="saveTranslationRow(row)"></button>
+                        </td>
+                        <td><strong>{{ row.MENU_CODE }}</strong></td>
+                        <td>{{ row.MENU_TYPE }}</td>
+                        <td class="text-color-secondary">{{ row.LEGACY_LABEL }}</td>
+                        <td><input pInputText [(ngModel)]="row.us_US" class="w-full" /></td>
+                        <td><input pInputText [(ngModel)]="row.en_GB" class="w-full" /></td>
+                        <td><input pInputText [(ngModel)]="row.fr_FR" class="w-full" /></td>
                     </tr>
                 </ng-template>
             </p-table>
@@ -268,8 +329,8 @@
         </div>
     </div>
     <ng-template pTemplate="footer">
-        <button pButton label="Cancel" class="p-button-text" (click)="menuDialog = false"></button>
-        <button pButton label="Save" icon="pi pi-check" (click)="saveMenu()"></button>
+        <button pButton [label]="'CMN.CANCEL' | lbl:'Cancel'" class="p-button-text" (click)="menuDialog = false"></button>
+        <button pButton [label]="'CMN.SAVE' | lbl:'Save'" icon="pi pi-check" (click)="saveMenu()"></button>
     </ng-template>
 </p-dialog>
 
@@ -306,8 +367,8 @@
         </div>
     </div>
     <ng-template pTemplate="footer">
-        <button pButton label="Cancel" class="p-button-text" (click)="ruleDialog = false"></button>
-        <button pButton label="Add" icon="pi pi-check" (click)="saveRule()"></button>
+        <button pButton [label]="'CMN.CANCEL' | lbl:'Cancel'" class="p-button-text" (click)="ruleDialog = false"></button>
+        <button pButton [label]="'CMN.ADD' | lbl:'Add'" icon="pi pi-check" (click)="saveRule()"></button>
     </ng-template>
 </p-dialog>
 

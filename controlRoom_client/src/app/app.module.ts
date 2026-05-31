@@ -138,6 +138,7 @@ import { DictionaryModule } from './pages/admin/dictionary/dictionary.module';
 import { SettingCustomerModule } from './pages/admin/setting-customer/setting.customer.module';
 import { SettingUsersModule } from './pages/admin/setting-users/setting.users.module';
 import { SettingMenuAccessModule } from './pages/admin/setting-menu-access/setting.menu.access.module';
+import { SettingWidgetLibraryModule } from './pages/admin/setting-widget-library/setting.widget.library.module';
 import { PurchaseOrderPushModule } from './pages/mass.update/purchase.order.push/purchase.order.push.module';
 import { StockLayerModule } from './pages/mass.update/stock.layer/stock.layer.module';
 import { QueryRunnerModule } from './pages/it/query.runner/query.runner.module';
@@ -290,6 +291,7 @@ import { DocumentationModule } from './pages/documentation/documentation.module'
     SettingCustomerModule,
     SettingUsersModule,
     SettingMenuAccessModule,
+    SettingWidgetLibraryModule,
     StockLayerModule,
     ItemRetailModule,
     AlertLogJournalModule,

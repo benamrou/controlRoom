@@ -1,5 +1,5 @@
 <div>
-    <app-page-header #pageHeader [heading]="'Item Hierarchy change'" [icon]="'fa-tools'"
+    <app-page-header #pageHeader [heading]="'S08.TITLE' | lbl:'Item Hierarchy change'" [icon]="'fa-tools'"
                      [waitMessage]="waitMessage" [screenID]="screenID">
     </app-page-header>
 </div>
@@ -14,12 +14,12 @@
     </p-steps>
 </div>
 
-<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'S08.DLG.UPD' | lbl:'Update completed'" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgFinalDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
 </p-dialog>
@@ -32,16 +32,19 @@
         </p-header>
         <div class="row">
             <div class="col">
-                Select your Item-Merchandise Hierarchy file change. The XLS(x) Excel file should contains two columns:
+                {{ 'S08.MU.SEL' | lbl:'Select your Item-Merchandise Hierarchy file change.' }}
+                {{ 'S08.MU.XLS' | lbl:'The XLS(x) Excel file should contain two columns:' }}
                 <ul>
-                    <li>COLUMN A: item code</li>
-                    <li>COLUMN B: New merchandise hierarchy node code</li>
+                    <li>{{ 'S08.MU.CA' | lbl:'COLUMN A: item code' }}</li>
+                    <li>{{ 'S08.MU.CB' | lbl:'COLUMN B: New merchandise hierarchy node code' }}</li>
                 </ul>
+
+
             </div>
             <div class="col">
                 <div class="row">
                     <div class="col">
-                        <button #template type="submit" pButton (click)="getTemplate()" icon="fas fa-file-excel-o" label="TEMPLATE" 
+                        <button #template type="submit" pButton (click)="getTemplate()" icon="fas fa-file-excel-o" [label]="'MU.BTN.TMPL' | lbl:'TEMPLATE'" 
                                 class="CSV_Button"
                                 style="margin-right: 15px; float: right; font-size: x-small;"></button>
                     </div>
@@ -57,7 +60,7 @@
                         <p-fileUpload #fileUpload mode="basic"  name="file"
                                     accept=".xlsx" 
                                     [showUploadButton]="true"
-                                    chooseLabel="Browse"
+                                    [chooseLabel]="'MU.BTN.BRWS' | lbl:'Browse'"
                                     [auto]="true"
                                     [style]="{'font-size':'smaller','height':'25px'}"
                                     (onSelect)="onSelect($event)"
@@ -68,7 +71,7 @@
                 </div>
                 <div class="row">
                     <div class="col" *ngIf="displayConfirm" style="margin-top: 5px">
-                        <button type="submit" pButton (click)="confirmFile()" icon="fas fa-check" label="Confirm" 
+                        <button type="submit" pButton (click)="confirmFile()" icon="fas fa-check" [label]="'MU.BTN.CNFM' | lbl:'Confirm'" 
                                 class="CSV_Button"
                                 style="margin-right: 15px; float: right; font-size: small; 
                                      background-color: darkslategrey; color: white;"></button>
@@ -78,8 +81,7 @@
         </div>
              
         <div class="row" style="padding-left: 15px">
-            You can use the template file as example. Column name A must be ITEM_CODE, column name B must be NEW_HIERARCHY.
-        </div>
+            {{ 'MU.FILE.HINT' | lbl:'Use the template file as example for column headers.' }} {{ 'S08.MU.CNM' | lbl:'Column name A must be ITEM_CODE, column name B must be NEW_HIERARCHY.' }}</div>
 
         <div class="alert alert-danger" role="alert" *ngFor="let message of globalError"
              style="margin-bottom: 1px;">
@@ -112,14 +114,14 @@
                         <span>
                             <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
-                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                             </button>
                         </span>
                     </div>
                     <div class="col-9" style="text-align: right;">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                         </span>
                     </div>
                 </div>
@@ -157,7 +159,7 @@
                     </tr>
                 </ng-template>
             </p-table>
-            <i class="FOOTER_Table" >{{_importService.wb.sheets[0].worksheet.rows.length}} references</i>
+            <i class="FOOTER_Table" >{{_importService.wb.sheets[0].worksheet.rows.length}} {{ 'CMN.REFS' | lbl:'references' }}</i>
         </div>
 
 
@@ -170,7 +172,7 @@
         </p-header>
         <div class="row">
             <div style="width: 50%;">
-                <span style="margin-right:1.3em; margin-top: 5px; padding-left: 15px; font-weight: bolder">New Item link start date : </span>
+                <span style="margin-right:1.3em; margin-top: 5px; padding-left: 15px; font-weight: bolder">{{ 'MU.LBL.LNKDT' | lbl:'New link start date :' }} </span>
                 <p-calendar [(ngModel)]="startDate"  
                             [readonlyInput]="true"
                             dateFormat="mm/dd/yy"
@@ -182,12 +184,12 @@
 
             <div style="width: 50%;">
                 <p-checkbox [(ngModel)]="itemTrace" [binary]="true"></p-checkbox>
-                <span style="margin-top: 5px; padding-left: 15px;">Item trace generation </span>
+                <span style="margin-top: 5px; padding-left: 15px;">{{ 'MU.LBL.TRACE' | lbl:'Item trace generation' }} </span>
             </div>
             
         </div>
         <div class="row" style="padding: 1em; ">
-            <span style="font-size: xx-small;">(*) Existing item link will be ended at this date - 1.</span>
+            <span style="font-size: xx-small;">{{ 'MU.NOTE.LINK' | lbl:'(*) Existing link ended at this date - 1.' }}</span>
         </div>
 
     </p-fieldset>
@@ -203,10 +205,10 @@
 
             <div style="width: 50%;">
                 <span style="padding-left: 15px; font-weight: bolder">
-                    When do you want to execute the item hierarchy changes?
+                    {{ 'S08.MU.WHEN' | lbl:'When do you want to execute the item hierarchy changes?' }}
                 </span>
                 &nbsp;&nbsp;
-                <p-toggleButton [(ngModel)]="scheduleFlag" onLabel="Schedule-it" offLabel="Now" >
+                <p-toggleButton [(ngModel)]="scheduleFlag" [onLabel]="'MU.TOG.SCHD' | lbl:'Schedule-it'" [offLabel]="'MU.TOG.NOW' | lbl:'Now'" >
 
                 </p-toggleButton>
             </div>
@@ -231,7 +233,7 @@
             {{menuItems[3].title}}
         </p-header>
         <div style="text-align:center" *ngIf="activeIndex > 2 && startDate ">
-            <button  type="button" pButton icon="fas fa-dot-circle"  label="Validate" (click)="validationChanges()"></button>
+            <button  type="button" pButton icon="fas fa-dot-circle"  [label]="'MU.BTN.VALD' | lbl:'Validate'" (click)="validationChanges()"></button>
         </div>
     </p-fieldset>
 </div>

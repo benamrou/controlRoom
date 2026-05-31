@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Phrasing Playground — engine routing diagnostics'" [screenID]="screenID" [icon]="'fas fa-flask'"></app-page-header>
+<app-page-header [heading]="'S59.TITLE' | lbl:'Phrasing Playground'" [screenID]="screenID" [icon]="'fas fa-flask'"></app-page-header>
 <p-toast></p-toast>
 
 <div class="ai-module-container ai-phrasing-playground">
@@ -6,12 +6,9 @@
     <div class="pp-banner">
         <div class="pp-banner-icon"><i class="fas fa-flask"></i></div>
         <div>
-            <strong>How would the engine route this phrase?</strong>
+            <strong>{{ 'S59.BAN.TTL' | lbl:'How would the engine route this phrase?' }}</strong>
             <p>
-                Side-effect-free: scores every active skill against the phrase, shows the lexical
-                pipeline (tokens, n-grams, normalized text), the entities the engine extracted,
-                and per-template bind feasibility for the top skill. Useful for tuning
-                <code>AI_SKILL_VOCABULARY</code> without dispatching a real query.
+                {{ 'S59.BAN.P1' | lbl:'Side-effect-free scoring: lexical pipeline, entities, and bind feasibility. No SQL execution.' }}
             </p>
         </div>
     </div>
@@ -20,16 +17,16 @@
     <div class="pp-input-card">
         <div class="pp-input-row">
             <div class="pp-input-retailer">
-                <label>Retailer</label>
+                <label>{{ 'AI.CMN.RETAIL' | lbl:'Retailer' }}</label>
                 <p-dropdown [options]="retailers"
                             [(ngModel)]="selectedRetailerId"
                             optionLabel="label"
                             optionValue="id"
-                            placeholder="Select retailer"
+                            [placeholder]="'AI.CMN.SELRET' | lbl:'Select retailer...'"
                             [style]="{ width: '100%' }"></p-dropdown>
             </div>
             <div class="pp-input-question">
-                <label>Phrase to diagnose</label>
+                <label>{{ 'S59.LBL.PHR' | lbl:'Phrase to diagnose' }}</label>
                 <textarea pInputTextarea
                           rows="2"
                           [(ngModel)]="questionText"
@@ -40,7 +37,7 @@
             </div>
             <div class="pp-input-action">
                 <button pButton type="button"
-                        label="Diagnose"
+                        [label]="'S59.BTN.DIAG' | lbl:'Diagnose'"
                         icon="fas fa-stethoscope"
                         [loading]="running"
                         [disabled]="!questionText || !selectedRetailerId"
@@ -49,7 +46,7 @@
         </div>
 
         <div class="pp-samples">
-            <span class="pp-samples-label">Try:</span>
+            <span class="pp-samples-label">{{ 'S59.TRY' | lbl:'Try:' }}</span>
             <button *ngFor="let s of samples"
                     type="button"
                     class="pp-sample-chip"
@@ -63,7 +60,7 @@
     <!-- ── Loading shimmer ─────────────────────────────────────────────────── -->
     <div *ngIf="running" class="pp-loading">
         <p-progressBar mode="indeterminate"></p-progressBar>
-        <span>Scoring against active skills…</span>
+        <span>{{ 'S59.SCORING' | lbl:'Scoring against active skills…' }}</span>
     </div>
 
     <!-- ── Result ──────────────────────────────────────────────────────────── -->
@@ -72,11 +69,11 @@
         <!-- Lexical + intent + entities header -->
         <div class="pp-summary">
             <div class="pp-summary-block">
-                <label>Intent</label>
+                <label>{{ 'S59.INTENT' | lbl:'Intent' }}</label>
                 <p-tag [value]="diag.intent_type" severity="info"></p-tag>
             </div>
             <div class="pp-summary-block">
-                <label>Top skill</label>
+                <label>{{ 'S59.TOP' | lbl:'Top skill' }}</label>
                 <span *ngIf="diag.top_skill_code; else noTop">
                     <strong>{{ diag.top_skill_code }}</strong>
                     <p-tag *ngIf="diag.top_score != null"
@@ -87,11 +84,11 @@
                 <ng-template #noTop><em class="pp-empty">no skill matched</em></ng-template>
             </div>
             <div class="pp-summary-block" *ngIf="diag.low_confidence">
-                <p-tag value="LOW CONFIDENCE — would land in Pending Phrasings"
+                <p-tag [value]="'S59.LOWCONF' | lbl:'LOW CONFIDENCE — would land in Pending Phrasings'"
                        severity="warning"></p-tag>
             </div>
             <div class="pp-summary-block pp-summary-entities" *ngIf="extractedEntityKeys().length">
-                <label>Entities extracted</label>
+                <label>{{ 'S59.ENT' | lbl:'Entities extracted' }}</label>
                 <div class="pp-entity-list">
                     <span *ngFor="let k of extractedEntityKeys()" class="pp-entity-pill">
                         <code class="pp-entity-key">{{ k }}</code>

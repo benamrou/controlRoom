@@ -1,0 +1,328 @@
+<app-page-header [heading]="'S69.TITLE' | lbl:'Widget Library'" [waitMessage]="waitMessage" [screenID]="screenID"
+    [icon]="'fa-chart-bar'"></app-page-header>
+
+<div class="content-section implementation settings-crud widget-library">
+    <p-toast position="top-right"></p-toast>
+    <p-confirmDialog [style]="{width: '28rem'}"></p-confirmDialog>
+
+    <p-tabView [(activeIndex)]="activeTab" (onChange)="onTabChange($event)">
+        <p-tabPanel [header]="'S69.TAB.WDG' | lbl:'Widgets'">
+            <div class="settings-toolbar grid align-items-end mb-3">
+                <div class="col-12 md:col-6">
+                    <button pButton type="button" icon="fas fa-sync-alt" [label]="'CMN.REFRESH' | lbl:'Refresh'"
+                        class="p-button-outlined" (click)="loadWidgets()" [loading]="loadingWidgets"></button>
+                    <button pButton type="button" icon="pi pi-plus" [label]="'S69.BTN.ADDW' | lbl:'Add widget'"
+                        class="CREATE_Button ml-2" (click)="openNewWidget()"></button>
+                </div>
+            </div>
+
+            <p-table #wTable [value]="widgets" [loading]="loadingWidgets" [paginator]="true" [rows]="25"
+                [rowsPerPageOptions]="[25, 50, 100]" responsiveLayout="scroll"
+                styleClass="p-datatable-sm menu-access-table" sortMode="multiple"
+                [globalFilterFields]="['WIDID','WIDNAME','WIDDESC','WIDNAME_DESC','WIDDESC_DESC']">
+                <ng-template pTemplate="caption">
+                    <div class="table-header grid align-items-center">
+                        <div class="col-6">
+                            <span class="text-muted">{{ widgets.length }} {{ 'S69.CNT.WDG' | lbl:'widget(s)' }}</span>
+                        </div>
+                        <div class="col-6" style="text-align:right">
+                            <span class="p-input-icon-right">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                    (input)="wTable.filterGlobal($any($event.target).value, 'contains')"
+                                    [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="actions-col">{{ 'CMN.ACTIONS' | lbl:'Actions' }}</th>
+                        <th pSortableColumn="WIDID">ID <p-sortIcon field="WIDID"></p-sortIcon></th>
+                        <th pSortableColumn="WIDNAME_DESC">{{ 'S69.COL.WNAME' | lbl:'Name (us_US)' }} <p-sortIcon field="WIDNAME_DESC"></p-sortIcon></th>
+                        <th pSortableColumn="WIDDESC_DESC">{{ 'S69.COL.WDESC' | lbl:'Description (us_US)' }} <p-sortIcon field="WIDDESC_DESC"></p-sortIcon></th>
+                        <th pSortableColumn="WIDBEHAVIOR">{{ 'CMN.BEHAVIOR' | lbl:'Behavior' }} <p-sortIcon field="WIDBEHAVIOR"></p-sortIcon></th>
+                        <th pSortableColumn="WIDWIDTH">W <p-sortIcon field="WIDWIDTH"></p-sortIcon></th>
+                        <th pSortableColumn="WIDHEIGHT">H <p-sortIcon field="WIDHEIGHT"></p-sortIcon></th>
+                        <th pSortableColumn="WIDROWS">{{ 'CMN.ROWS' | lbl:'Rows' }} <p-sortIcon field="WIDROWS"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td class="actions-col">
+                            <span class="action-buttons">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-sm action-btn"
+                                    (click)="openEditWidget(row)"></button>
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-rounded p-button-sm p-button-danger action-btn"
+                                    (click)="confirmDeleteWidget(row)"></button>
+                            </span>
+                        </td>
+                        <td><strong>{{ row.WIDID }}</strong></td>
+                        <td class="desc-cell" [title]="row.WIDNAME_DESC">{{ row.WIDNAME_DESC }}</td>
+                        <td class="desc-cell" [title]="row.WIDDESC_DESC">{{ row.WIDDESC_DESC }}</td>
+                        <td>{{ row.WIDBEHAVIOR }}</td>
+                        <td>{{ row.WIDWIDTH }}</td>
+                        <td>{{ row.WIDHEIGHT }}</td>
+                        <td>{{ row.WIDROWS }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="8" class="text-center">No widgets found.</td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <p-tabPanel [header]="'S69.TAB.RSLT' | lbl:'Result columns'">
+            <div class="settings-toolbar grid align-items-end mb-3">
+                <div class="col-12 md:col-4">
+                    <label class="font-bold block mb-1">Widget</label>
+                    <p-dropdown [options]="widgets" [(ngModel)]="selectedWidgetId"
+                        optionLabel="WIDNAME_DESC" optionValue="WIDID"
+                        [filter]="true" filterBy="WIDID,WIDNAME_DESC"
+                        placeholder="Select widget" styleClass="w-full"
+                        (onChange)="loadResultColumns()"></p-dropdown>
+                </div>
+                <div class="col-12 md:col-8 flex align-items-end gap-2">
+                    <button pButton type="button" icon="fas fa-sync-alt" label="Refresh"
+                        class="p-button-outlined" (click)="loadResultColumns()" [loading]="loadingResultCols"></button>
+                    <button pButton type="button" icon="pi pi-plus" label="Add column"
+                        class="CREATE_Button" (click)="openNewResult()"></button>
+                </div>
+            </div>
+
+            <p-table [value]="resultCols" [loading]="loadingResultCols" [paginator]="true" [rows]="25"
+                [rowsPerPageOptions]="[25, 50, 100]" responsiveLayout="scroll"
+                styleClass="p-datatable-sm menu-access-table" sortMode="multiple">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="actions-col">Actions</th>
+                        <th pSortableColumn="WRSFIELD">Field <p-sortIcon field="WRSFIELD"></p-sortIcon></th>
+                        <th pSortableColumn="WRSHEADER">Header <p-sortIcon field="WRSHEADER"></p-sortIcon></th>
+                        <th pSortableColumn="WRSPOSITION">Position <p-sortIcon field="WRSPOSITION"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td class="actions-col">
+                            <span class="action-buttons">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-sm action-btn"
+                                    (click)="openEditResult(row)"></button>
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-rounded p-button-sm p-button-danger action-btn"
+                                    (click)="confirmDeleteResult(row)"></button>
+                            </span>
+                        </td>
+                        <td><strong>{{ row.WRSFIELD }}</strong></td>
+                        <td>{{ row.WRSHEADER }}</td>
+                        <td>{{ row.WRSPOSITION }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="4" class="text-center">No columns.</td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+
+        <p-tabPanel [header]="'S69.TAB.LINK' | lbl:'Links'">
+            <div class="settings-toolbar grid align-items-end mb-3">
+                <div class="col-12 md:col-6">
+                    <button pButton type="button" icon="fas fa-sync-alt" label="Refresh"
+                        class="p-button-outlined" (click)="loadLinks()" [loading]="loadingLinks"></button>
+                    <button pButton type="button" icon="pi pi-plus" label="Add link"
+                        class="CREATE_Button ml-2" (click)="openNewLink()"></button>
+                </div>
+            </div>
+
+            <p-table [value]="links" [loading]="loadingLinks" [paginator]="true" [rows]="25"
+                [rowsPerPageOptions]="[25, 50, 100]" responsiveLayout="scroll"
+                styleClass="p-datatable-sm menu-access-table" sortMode="multiple"
+                [globalFilterFields]="['LWQMWIDID','LWQCWIDID','LWQMFIELD','LWQCFIELD']">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="actions-col">Actions</th>
+                        <th pSortableColumn="LWQMWIDID">Main <p-sortIcon field="LWQMWIDID"></p-sortIcon></th>
+                        <th pSortableColumn="LWQCWIDID">Controlled <p-sortIcon field="LWQCWIDID"></p-sortIcon></th>
+                        <th pSortableColumn="LWQMFIELD">Main field <p-sortIcon field="LWQMFIELD"></p-sortIcon></th>
+                        <th pSortableColumn="LWQCFIELD">Controlled field <p-sortIcon field="LWQCFIELD"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td class="actions-col">
+                            <span class="action-buttons">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-sm action-btn"
+                                    (click)="openEditLink(row)"></button>
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-rounded p-button-sm p-button-danger action-btn"
+                                    (click)="confirmDeleteLink(row)"></button>
+                            </span>
+                        </td>
+                        <td><strong>{{ row.LWQMWIDID }}</strong></td>
+                        <td>{{ row.LWQCWIDID }}</td>
+                        <td>{{ row.LWQMFIELD }}</td>
+                        <td>{{ row.LWQCFIELD }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr><td colspan="5" class="text-center">No links.</td></tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+
+<!-- Widget dialog -->
+<p-dialog header="{{ isNewWidget ? 'New widget' : 'Edit widget' }}" [(visible)]="displayWidgetDialog" [modal]="true"
+    [style]="{ width: '900px', maxWidth: '95vw' }" [maximizable]="true">
+    <div class="formgrid grid">
+        <div class="field col-12 md:col-3">
+            <label class="font-bold">ID</label>
+            <input pInputText [(ngModel)]="widgetForm.WIDID" [disabled]="!isNewWidget" class="w-full"
+                (ngModelChange)="onWidgetIdChange($event)" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <label class="font-bold">Name TRA id</label>
+            <input pInputText [(ngModel)]="widgetForm.WIDNAME" class="w-full" />
+            <small class="text-muted">WIDGET.WIDNAME → TRA_WIDGETS.TWLAID</small>
+        </div>
+        <div class="field col-12 md:col-3">
+            <label class="font-bold">Name (us_US)</label>
+            <input pInputText [(ngModel)]="widgetForm.WIDNAME_DESC" maxlength="100" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <label class="font-bold">Name (en_GB)</label>
+            <input pInputText [(ngModel)]="widgetForm.WIDNAME_DESC_GB" maxlength="100" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <label class="font-bold">Name (fr_FR)</label>
+            <input pInputText [(ngModel)]="widgetForm.WIDNAME_DESC_FR" maxlength="100" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <label class="font-bold">Desc TRA id</label>
+            <input pInputText [(ngModel)]="widgetForm.WIDDESC" class="w-full" />
+            <small class="text-muted">WIDGET.WIDDESC → TRA_WIDGETS.TWLAID</small>
+        </div>
+        <div class="field col-12 md:col-3">
+            <label class="font-bold">Description (us_US)</label>
+            <input pInputText [(ngModel)]="widgetForm.WIDDESC_DESC" maxlength="100" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <label class="font-bold">Description (en_GB)</label>
+            <input pInputText [(ngModel)]="widgetForm.WIDDESC_DESC_GB" maxlength="100" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <label class="font-bold">Description (fr_FR)</label>
+            <input pInputText [(ngModel)]="widgetForm.WIDDESC_DESC_FR" maxlength="100" class="w-full" />
+        </div>
+
+        <div class="field col-12 md:col-2">
+            <label class="font-bold">Behavior</label>
+            <input pInputText type="number" [(ngModel)]="widgetForm.WIDBEHAVIOR" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-2">
+            <label class="font-bold">Table</label>
+            <input pInputText type="number" [(ngModel)]="widgetForm.WIDTABLE" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-2">
+            <label class="font-bold">RSS</label>
+            <input pInputText type="number" [(ngModel)]="widgetForm.WIDRSS" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-2">
+            <label class="font-bold">Chart</label>
+            <input pInputText type="number" [(ngModel)]="widgetForm.WIDCHART" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-2">
+            <label class="font-bold">Info</label>
+            <input pInputText type="number" [(ngModel)]="widgetForm.WIDINFO" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-2">
+            <label class="font-bold">Card</label>
+            <input pInputText type="number" [(ngModel)]="widgetForm.WIDCARD" class="w-full" />
+        </div>
+
+        <div class="field col-12 md:col-2">
+            <label class="font-bold">Width</label>
+            <input pInputText type="number" [(ngModel)]="widgetForm.WIDWIDTH" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-2">
+            <label class="font-bold">Height</label>
+            <input pInputText type="number" [(ngModel)]="widgetForm.WIDHEIGHT" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-2">
+            <label class="font-bold">Rows</label>
+            <input pInputText type="number" [(ngModel)]="widgetForm.WIDROWS" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label class="font-bold">Main widget id (derived)</label>
+            <input pInputText [(ngModel)]="widgetForm.WIDMAINID" class="w-full" />
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Cancel" class="p-button-text" (click)="displayWidgetDialog=false"></button>
+        <button pButton type="button" label="Save" icon="pi pi-check" (click)="saveWidget()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Result column dialog -->
+<p-dialog header="{{ isNewResult ? 'New result column' : 'Edit result column' }}" [(visible)]="displayResultDialog" [modal]="true"
+    [style]="{ width: '700px', maxWidth: '95vw' }">
+    <div class="formgrid grid">
+        <div class="field col-12 md:col-4">
+            <label class="font-bold">Widget</label>
+            <input pInputText [(ngModel)]="resultForm.WRSID" [disabled]="true" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-4">
+            <label class="font-bold">Field</label>
+            <input pInputText [(ngModel)]="resultForm.WRSFIELD" [disabled]="!isNewResult" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-4">
+            <label class="font-bold">Position</label>
+            <input pInputText type="number" [(ngModel)]="resultForm.WRSPOSITION" class="w-full" />
+        </div>
+        <div class="field col-12">
+            <label class="font-bold">Header</label>
+            <input pInputText [(ngModel)]="resultForm.WRSHEADER" class="w-full" />
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Cancel" class="p-button-text" (click)="displayResultDialog=false"></button>
+        <button pButton type="button" label="Save" icon="pi pi-check" (click)="saveResult()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Link dialog -->
+<p-dialog header="{{ isNewLink ? 'New link' : 'Edit link' }}" [(visible)]="displayLinkDialog" [modal]="true"
+    [style]="{ width: '800px', maxWidth: '95vw' }">
+    <div class="formgrid grid">
+        <div class="field col-12 md:col-6">
+            <label class="font-bold">Main widget</label>
+            <p-dropdown [options]="widgets" [(ngModel)]="linkForm.LWQMWIDID"
+                optionLabel="WIDNAME_DESC" optionValue="WIDID" [filter]="true" filterBy="WIDID,WIDNAME_DESC"
+                placeholder="Select main widget" styleClass="w-full"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-6">
+            <label class="font-bold">Controlled widget</label>
+            <p-dropdown [options]="widgets" [(ngModel)]="linkForm.LWQCWIDID"
+                optionLabel="WIDNAME_DESC" optionValue="WIDID" [filter]="true" filterBy="WIDID,WIDNAME_DESC"
+                placeholder="Select controlled widget" styleClass="w-full"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-6">
+            <label class="font-bold">Main field</label>
+            <input pInputText [(ngModel)]="linkForm.LWQMFIELD" class="w-full" />
+        </div>
+        <div class="field col-12 md:col-6">
+            <label class="font-bold">Controlled field</label>
+            <input pInputText [(ngModel)]="linkForm.LWQCFIELD" class="w-full" />
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Cancel" class="p-button-text" (click)="displayLinkDialog=false"></button>
+        <button pButton type="button" label="Save" icon="pi pi-check" (click)="saveLink()"></button>
+    </ng-template>
+</p-dialog>
+

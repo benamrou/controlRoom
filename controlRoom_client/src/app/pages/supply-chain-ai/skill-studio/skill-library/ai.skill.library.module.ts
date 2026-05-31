@@ -16,6 +16,7 @@ import { DataViewModule } from "primeng/dataview";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 
 import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header.module";
+import { I18nModule } from "src/app/shared/pipes/i18n.module";
 
 /** Same pattern as `AiRetailerSetupModule` — eager route in `AppRoutingModule`, no lazy `loadChildren`. */
 @NgModule({
@@ -23,7 +24,7 @@ import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header
         RouterModule, CommonModule, FormsModule,
         DropdownModule, ButtonModule, TagModule, InputTextModule,
         ToastModule, TooltipModule, ProgressBarModule, DataViewModule,
-        ConfirmDialogModule, PageHeaderModule
+        ConfirmDialogModule, PageHeaderModule, I18nModule,
     ],
     declarations: [AiSkillLibraryComponent],
     exports: [AiSkillLibraryComponent],

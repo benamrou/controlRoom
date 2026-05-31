@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Corporate Inquiry'" [icon]="'fa-search'"></app-page-header>
+<app-page-header [heading]="'RT.SEARCH' | lbl:'Corporate Inquiry'" [icon]="'fa-search'"></app-page-header>
 
 <br>
 <div class="content-section implementation">
@@ -8,7 +8,7 @@
 
 <div id="wrapper" class="center" style="text-align: center">
     <div style="width:70%; display: inline-block; text-align: left; box-shadow:1px 1px 1px 2px darkgrey" ui-grid-responsive ui-fluid ui-grid-pad>
-        <p-chips [(ngModel)]="values" pTooltip="Enter elements to look for, add the keywords @item, @ean, @supplier, @order, @invoice to precise your lookup" 
+        <p-chips [(ngModel)]="values" [pTooltip]="'RT.SRCH.TIP' | lbl:'Enter terms; use @item @ean @supplier @order @invoice'" 
                  tooltipPosition="right"
                  (keydown)="onKeyDown($event)"
                  (paste)="onPaste($event)"> </p-chips>
@@ -16,7 +16,7 @@
 </div>
 <br>
 <div style="text-align: center;" >
-    <button type="text" pButton (click)="search()" label="Search" [disabled]="!searchButtonEnable"></button>
+    <button type="text" pButton (click)="search()" [label]="'CMN.SRCHBTN' | lbl:'Search'" [disabled]="!searchButtonEnable"></button>
     <p></p>
 </div>
 
@@ -39,12 +39,12 @@
             {{result["ITEM_CODE_DESC"]}}
         </h4>
         <div class="grid">
-            <div class="col-2 header_cell">Department</div>
-            <div class="col-2 header_cell">Sub-department</div>
-            <div class="col-2 header_cell">Category</div>
-            <div class="col-2 header_cell">Sub-Category</div>
-            <div class="col-2 header_cell">Category Mgr</div>
-            <div class="col-2 header_cell">Status</div>
+            <div class="col-2 header_cell">{{ 'RT.SRCH.DEPT' | lbl:'Department' }}</div>
+            <div class="col-2 header_cell">{{ 'RT.SRCH.SDEPT' | lbl:'Sub-department' }}</div>
+            <div class="col-2 header_cell">{{ 'RT.SRCH.CAT' | lbl:'Category' }}</div>
+            <div class="col-2 header_cell">{{ 'RT.SRCH.SCAT' | lbl:'Sub-Category' }}</div>
+            <div class="col-2 header_cell">{{ 'RT.SRCH.CMGR' | lbl:'Category Mgr' }}</div>
+            <div class="col-2 header_cell">{{ 'RT.SRCH.STAT' | lbl:'Status' }}</div>
             <div class="col-2 line_cell">{{result["Dep"]}}</div>
             <div class="col-2 line_cell">{{result["Sdep"]}}</div>
             <div class="col-2 line_cell">{{result["Cat"]}}</div>
@@ -52,7 +52,7 @@
             <div class="col-2 line_cell">{{result["ARTGEST"]}}</div>
             <div class="col-2 line_cell">{{result["ARTETAT"]}}</div>
 
-            <div class="col-2 header_cell">Brand</div>
+            <div class="col-2 header_cell">{{ 'RT.SRCH.BRND' | lbl:'Brand' }}</div>
             <div class="col-2 header_cell">Seasonality</div>
             <div class="col-2 header_cell">Promo</div>
             <div class="col-2 header_cell">Club FX</div>

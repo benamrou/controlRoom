@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AiAssistantComponent } from './ai.assistant.component';
 import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
+import { I18nModule } from 'src/app/shared/pipes/i18n.module';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -17,7 +18,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { AccordionModule } from 'primeng/accordion';
 
 @NgModule({
-    imports: [RouterModule, CommonModule, FormsModule, PageHeaderModule, InputTextareaModule, InputTextModule, ButtonModule, CardModule, TimelineModule, TagModule, ToastModule, DropdownModule, TableModule, TooltipModule, AccordionModule],
+    imports: [RouterModule, CommonModule, FormsModule, PageHeaderModule, I18nModule, InputTextareaModule, InputTextModule, ButtonModule, CardModule, TimelineModule, TagModule, ToastModule, DropdownModule, TableModule, TooltipModule, AccordionModule],
     declarations: [AiAssistantComponent],
     exports: [AiAssistantComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]

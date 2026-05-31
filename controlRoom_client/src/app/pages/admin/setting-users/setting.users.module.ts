@@ -13,6 +13,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { TooltipModule } from 'primeng/tooltip';
 import { RippleModule } from 'primeng/ripple';
 import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
+import { I18nModule } from 'src/app/shared/pipes/i18n.module';
 import { SettingUsersComponent } from './setting.users.component';
 
 @NgModule({
@@ -32,6 +33,7 @@ import { SettingUsersComponent } from './setting.users.component';
     TooltipModule,
     RippleModule,
     PageHeaderModule,
+    I18nModule,
   ],
   exports: [SettingUsersComponent],
 })

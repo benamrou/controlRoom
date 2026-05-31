@@ -1,8 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
+import { Subscription } from 'rxjs';
 import { SettingsAdminService } from '../../../shared/services/settings/settings.admin.service';
 import { UserService } from '../../../shared/services';
+import { uiLanguageSelectOptions } from '../../../shared/constants/ui-languages';
+import { LabelService } from '../../../shared/services/labels/labels.service';
 
 @Component({
   selector: 'app-setting-users',
@@ -10,7 +13,7 @@ import { UserService } from '../../../shared/services';
   styleUrls: ['./setting.users.component.scss'],
   providers: [ConfirmationService, MessageService],
 })
-export class SettingUsersComponent implements OnInit {
+export class SettingUsersComponent implements OnInit, OnDestroy {
   @ViewChild('usersTable') usersTable?: Table;
 
   screenID = 'SCR0000000065';
@@ -51,23 +54,22 @@ export class SettingUsersComponent implements OnInit {
   envMatrix: any[] = [];
   loadingMatrix = false;
 
-  activeOptions = [
-    { label: 'Active', value: 1 },
-    { label: 'Inactive', value: 0 },
-  ];
-  yesNo = [
-    { label: 'Yes', value: 1 },
-    { label: 'No', value: 0 },
-  ];
-  langOptions = [
-    { label: 'English (US)', value: 'us_US' },
-    { label: 'French', value: 'fr_FR' },
-  ];
+  widgetUserId = '';
+  userWidgets: any[] = [];
+  loadingUserWidgets = false;
+  widgetCatalog: { label: string; value: string }[] = [];
+  displayUserWidgetDialog = false;
+  isNewUserWidget = true;
+  userWidgetForm: any = {};
+
+  activeOptions: { label: string; value: number }[] = [];
+  yesNo: { label: string; value: number }[] = [];
+  langOptions: { label: string; value: string }[] = [];
   /** USERSROOM.USERTYPE — 1 unlocks General Settings (ADMIN menu flag). */
-  userTypeOptions = [
-    { label: 'Standard user', value: 0 },
-    { label: 'ICR admin (General Settings)', value: 1 },
-  ];
+  userTypeOptions: { label: string; value: number }[] = [];
+  collapseOptions: { label: string; value: string }[] = [];
+
+  private labelSub?: Subscription;
 
   /** Access-flag columns — PrimeNG checkboxes need numeric 0|1, not string/null from Oracle. */
   private static readonly USER_FLAG_KEYS = [
@@ -87,12 +89,55 @@ export class SettingUsersComponent implements OnInit {
     private _user: UserService,
     private _confirm: ConfirmationService,
     private _msg: MessageService,
+    private _labels: LabelService,
   ) {}
 
   ngOnInit(): void {
+    this.buildLabelOptions();
+    this.labelSub = this._labels.revision$.subscribe(() => this.buildLabelOptions());
     this.loadCorpsDropdown();
     this.loadProfileDropdown();
+    this.loadLanguageDropdown();
+    this.loadWidgetCatalog();
     this.searchUsers();
+  }
+
+  ngOnDestroy(): void {
+    this.labelSub?.unsubscribe();
+  }
+
+  private L(key: string, fallback: string): string {
+    return this._labels.text(key, fallback);
+  }
+
+  private buildLabelOptions(): void {
+    this.activeOptions = [
+      { label: this.L('CMN.ACTIVE', 'Active'), value: 1 },
+      { label: this.L('CMN.INACT', 'Inactive'), value: 0 },
+    ];
+    this.yesNo = [
+      { label: this.L('CMN.YES', 'Yes'), value: 1 },
+      { label: this.L('CMN.NO', 'No'), value: 0 },
+    ];
+    this.userTypeOptions = [
+      { label: this.L('S65.UT.STD', 'Standard user'), value: 0 },
+      { label: this.L('S65.UT.ADM', 'ICR admin (General Settings)'), value: 1 },
+    ];
+    this.collapseOptions = [
+      { label: 'expand', value: 'expand' },
+      { label: 'collapse', value: 'collapse' },
+    ];
+    const noneLabel = this.L('CMN.NONE', '(none)');
+    if (this.profileDropdown.length) {
+      const none = this.profileDropdown.find((o) => o.value === SettingUsersComponent.PROFILE_NONE);
+      if (none) {
+        none.label = noneLabel;
+      }
+    }
+  }
+
+  loadLanguageDropdown(): void {
+    this.langOptions = uiLanguageSelectOptions();
   }
 
   loadProfileDropdown(): void {
@@ -103,12 +148,12 @@ export class SettingUsersComponent implements OnInit {
           value: Number(p.PROFILE_ID),
         })).filter((o) => o.value > 0);
         this.profileDropdown = [
-          { label: '(none)', value: SettingUsersComponent.PROFILE_NONE },
+          { label: this.L('CMN.NONE', '(none)'), value: SettingUsersComponent.PROFILE_NONE },
           ...opts,
         ];
       },
       error: () => {
-        this.profileDropdown = [{ label: '(none)', value: SettingUsersComponent.PROFILE_NONE }];
+        this.profileDropdown = [{ label: this.L('CMN.NONE', '(none)'), value: SettingUsersComponent.PROFILE_NONE }];
       },
     });
   }
@@ -205,7 +250,9 @@ export class SettingUsersComponent implements OnInit {
   }
 
   userTypeLabel(row: { USERTYPE?: unknown }): string {
-    return Number(row?.USERTYPE) === 1 ? 'ICR admin' : 'Standard';
+    return Number(row?.USERTYPE) === 1
+      ? this.L('S65.UT.ADM', 'ICR admin (General Settings)')
+      : this.L('S65.UT.STD', 'Standard user');
   }
 
   /** Map DB USERPROF → dropdown model (numeric profile id or PROFILE_NONE). */
@@ -218,14 +265,6 @@ export class SettingUsersComponent implements OnInit {
   }
 
   /** Map dropdown model → value for USERSROOM.USERPROF on save. */
-  private static userProfForSave(prof: unknown): number | null {
-    const n = Number(prof);
-    if (!Number.isFinite(n) || n <= 0 || n === SettingUsersComponent.PROFILE_NONE) {
-      return null;
-    }
-    return n;
-  }
-
   get userDialogTitle(): string {
     if (!this.isNewUser) {
       return 'Edit user';
@@ -291,7 +330,7 @@ export class SettingUsersComponent implements OnInit {
         this._msg.add({
           severity: 'info',
           summary: 'Duplicate',
-          detail: 'Enter a new user id and password. Profile and access flags are copied from the source user.',
+          detail: 'Enter a new user id and password. Profile, flags, environment access, and dashboard widgets are copied from the source user.',
         });
       },
       error: () => {
@@ -333,33 +372,35 @@ export class SettingUsersComponent implements OnInit {
     }
     this.userDialogBusy = true;
     this.normalizeUserForm(this.userForm);
-    const payload = {
-      ...this.userForm,
-      USERAPPLI: this.userForm.USERAPPLI || 1,
-      USERPROF: SettingUsersComponent.userProfForSave(this.userForm.USERPROF),
-      UPDATE_PASS: this.changePassword && this.userForm.USERPASS ? '1' : '0',
-      USERUTIL: this._user.ICRUser,
-    };
-    if (!this.changePassword) {
-      delete payload.USERPASS;
-    }
     const sourceId = this.duplicateSourceUserId;
     const newId = this.userForm.USERID?.trim();
+    const userAppli = Number(this.userForm.USERAPPLI) || 1;
+    const payload = {
+      ...this.userForm,
+      USERAPPLI: userAppli,
+      UPDATE_PASS: this.changePassword && this.userForm.USERPASS ? '1' : '0',
+      USERPASS: this.changePassword && this.userForm.USERPASS ? this.userForm.USERPASS : undefined,
+    };
     this._svc.saveUser(payload).subscribe({
       next: () => {
         this.userDialogBusy = false;
         this.closeUserDialog();
+        const dupSource = sourceId;
         this.duplicateSourceUserId = null;
-        if (sourceId && newId) {
-          this.copyEnvAccessFromUser(sourceId, newId);
+        if (dupSource && newId) {
+          this.copyDuplicateUserData(dupSource, newId, userAppli);
         } else {
           this._msg.add({ severity: 'success', summary: 'Saved', detail: 'User saved.' });
           this.searchUsers();
         }
       },
-      error: () => {
+      error: (err: { message?: string }) => {
         this.userDialogBusy = false;
-        this._msg.add({ severity: 'error', summary: 'Error', detail: 'Save failed.' });
+        this._msg.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err?.message || 'Save failed.',
+        });
       },
     });
   }
@@ -384,6 +425,132 @@ export class SettingUsersComponent implements OnInit {
     this.accessCorpId = row.USERCORPID ? Number(row.USERCORPID) : this.userFilterCorp;
     this.activeTab = 1;
     this.loadEnvMatrix();
+  }
+
+  pickUserForWidgets(row: any): void {
+    this.widgetUserId = row.USERID;
+    this.activeTab = 2;
+    this.loadUserWidgets();
+  }
+
+  loadWidgetCatalog(): void {
+    this._svc.listWidgetCatalog().subscribe({
+      next: (rows) => {
+        this.widgetCatalog = rows.map((w) => {
+          const id = String(w.WIDID || '').trim();
+          const name = String(w.WIDNAME_DESC || w.WIDID || '').trim();
+          return { label: `${id} — ${name}`, value: id };
+        }).filter((o) => o.value);
+      },
+      error: () => {
+        this.widgetCatalog = [];
+      },
+    });
+  }
+
+  loadUserWidgets(): void {
+    if (!this.widgetUserId?.trim()) {
+      this.userWidgets = [];
+      return;
+    }
+    this.loadingUserWidgets = true;
+    this._svc.listUserWidgets(this.widgetUserId).subscribe({
+      next: (rows) => {
+        this.userWidgets = rows;
+        this.loadingUserWidgets = false;
+      },
+      error: (err: any) => {
+        this.userWidgets = [];
+        this.loadingUserWidgets = false;
+        this._msg.add({
+          severity: 'error',
+          summary: 'Dashboard widgets',
+          detail: err?.message || 'Could not load. Deploy SET0000035.',
+        });
+      },
+    });
+  }
+
+  openNewUserWidget(): void {
+    if (!this.widgetUserId?.trim()) {
+      this._msg.add({ severity: 'warn', summary: 'Dashboard widgets', detail: 'Enter or select a user id first.' });
+      return;
+    }
+    this.isNewUserWidget = true;
+    this.userWidgetForm = {
+      UWPUSERID: this.widgetUserId,
+      UWPWIDID: '',
+      UWPPARAM: '-1',
+      UWPDESC: '',
+      UWPW_X: 0,
+      UWPW_Y: 0,
+      UWPWIDTH: 4,
+      UWPHEIGHT: 3,
+      UWPROWS: 0,
+      UWPCOLLAPSE: 'expand',
+      UWPENABLE: 1,
+    };
+    this.displayUserWidgetDialog = true;
+  }
+
+  openEditUserWidget(row: any): void {
+    this.isNewUserWidget = false;
+    this.userWidgetForm = {
+      ...row,
+      UWPPARAM: row.UWPPARAM ?? '-1',
+      UWPW_X: Number(row.UWPW_X ?? 0),
+      UWPW_Y: Number(row.UWPW_Y ?? 0),
+      UWPWIDTH: Number(row.UWPWIDTH ?? 4),
+      UWPHEIGHT: Number(row.UWPHEIGHT ?? 3),
+      UWPROWS: Number(row.UWPROWS ?? 0),
+      UWPCOLLAPSE: row.UWPCOLLAPSE || 'expand',
+      UWPENABLE: Number(row.UWPENABLE ?? 1) === 1 ? 1 : 0,
+    };
+    this.displayUserWidgetDialog = true;
+  }
+
+  saveUserWidget(): void {
+    const row = { ...this.userWidgetForm };
+    if (!row.UWPUSERID?.trim() || !row.UWPWIDID?.trim()) {
+      this._msg.add({ severity: 'warn', summary: 'Dashboard widgets', detail: 'User and widget id are required.' });
+      return;
+    }
+    row.UWPUTIL = SettingsAdminService.resolveCurrentUserId(this._user.ICRUser);
+    this._svc.saveUserWidget(row).subscribe({
+      next: () => {
+        this.displayUserWidgetDialog = false;
+        this._msg.add({ severity: 'success', summary: 'Saved', detail: 'Widget assignment saved.' });
+        this.loadUserWidgets();
+      },
+      error: (err: any) => {
+        this._msg.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err?.message || 'Save failed. Deploy SET0000037.',
+        });
+      },
+    });
+  }
+
+  confirmDeleteUserWidget(row: any): void {
+    this._confirm.confirm({
+      message: `Remove widget ${row.UWPWIDID} (${row.UWPPARAM}) from ${row.UWPUSERID}?`,
+      accept: () => {
+        this._svc.deleteUserWidget(row.UWPUSERID, row.UWPWIDID, row.UWPPARAM).subscribe({
+          next: () => {
+            this._msg.add({ severity: 'success', summary: 'Deleted', detail: 'Assignment removed.' });
+            this.loadUserWidgets();
+          },
+          error: (err: any) => {
+            this._msg.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: err?.message || 'Delete failed. Deploy SET0000038.',
+            });
+          },
+        });
+      },
+    });
   }
 
   loadEnvMatrix(): void {
@@ -419,7 +586,7 @@ export class SettingUsersComponent implements OnInit {
         CONCORPID: this.accessCorpId,
         CONACTIVE: row.CONACTIVE ? 1 : 0,
         CONDEFAULT: row.CONDEFAULT ? 1 : 0,
-        CONUTIL: this._user.ICRUser,
+        CONUTIL: SettingsAdminService.resolveCurrentUserId(this._user.ICRUser),
       }).subscribe({
         next: () => this._msg.add({ severity: 'success', summary: 'Saved', detail: `Access granted: ${row.ENVCODE}` }),
         error: () => {
@@ -447,7 +614,7 @@ export class SettingUsersComponent implements OnInit {
       CONCORPID: this.accessCorpId,
       CONACTIVE: row.CONACTIVE ? 1 : 0,
       CONDEFAULT: row.CONDEFAULT ? 1 : 0,
-      CONUTIL: this._user.ICRUser,
+      CONUTIL: SettingsAdminService.resolveCurrentUserId(this._user.ICRUser),
     }).subscribe({
       error: () => this._msg.add({ severity: 'error', summary: 'Error', detail: 'Could not update flags.' }),
     });
@@ -460,13 +627,60 @@ export class SettingUsersComponent implements OnInit {
     this.onAccessFlagChange(row);
   }
 
-  /** After duplicate save — copy USERSENV rows from source to new user id. */
-  private copyEnvAccessFromUser(sourceUserId: string, newUserId: string): void {
+  /** After duplicate save — copy USERSENV and USER_WIDGET from source to new user id. */
+  private copyDuplicateUserData(sourceUserId: string, newUserId: string, userAppli: number): void {
+    this._svc.getUser(newUserId, userAppli).subscribe({
+      next: (rows) => {
+        if (!rows.length) {
+          this._msg.add({
+            severity: 'error',
+            summary: 'Save failed',
+            detail: `User "${newUserId}" was not created. Environment and dashboard widgets were not copied.`,
+          });
+          this.searchUsers();
+          return;
+        }
+        this.copyEnvAccessFromUser(sourceUserId, newUserId, (envCopied, envTotal) => {
+          this.copyUserWidgetsFromUser(sourceUserId, newUserId, (widgetCopied, widgetTotal, widgetFailed) => {
+            const parts = ['User created.'];
+            if (envTotal > 0) {
+              parts.push(`${envCopied} environment assignment(s) copied.`);
+            }
+            if (widgetTotal > 0) {
+              parts.push(`${widgetCopied} dashboard widget(s) copied.`);
+            }
+            if (widgetFailed > 0) {
+              parts.push(`${widgetFailed} widget(s) could not be copied.`);
+            }
+            if (envTotal === 0 && widgetTotal === 0) {
+              parts.push('No environment or dashboard widgets to copy.');
+            }
+            const severity = widgetFailed > 0 && widgetCopied === 0 && widgetTotal > 0 ? 'warn' : 'success';
+            this._msg.add({ severity, summary: 'Saved', detail: parts.join(' ') });
+            this.searchUsers();
+          });
+        });
+      },
+      error: () => {
+        this._msg.add({
+          severity: 'error',
+          summary: 'Save failed',
+          detail: `Could not verify user "${newUserId}". Environment and widgets were not copied.`,
+        });
+        this.searchUsers();
+      },
+    });
+  }
+
+  private copyEnvAccessFromUser(
+    sourceUserId: string,
+    newUserId: string,
+    onDone: (copied: number, total: number) => void
+  ): void {
     this._svc.listUserEnvironments(sourceUserId, '-1').subscribe({
       next: (rows) => {
         if (!rows.length) {
-          this._msg.add({ severity: 'success', summary: 'Saved', detail: 'User created (no environment access to copy).' });
-          this.searchUsers();
+          onDone(0, 0);
           return;
         }
         let pending = rows.length;
@@ -474,12 +688,7 @@ export class SettingUsersComponent implements OnInit {
         const done = () => {
           pending -= 1;
           if (pending === 0) {
-            this._msg.add({
-              severity: 'success',
-              summary: 'Saved',
-              detail: `User created. ${copied} environment assignment(s) copied.`,
-            });
-            this.searchUsers();
+            onDone(copied, rows.length);
           }
         };
         rows.forEach((row) => {
@@ -489,17 +698,63 @@ export class SettingUsersComponent implements OnInit {
             CONCORPID: row.CONCORPID,
             CONACTIVE: row.CONACTIVE ?? 1,
             CONDEFAULT: row.CONDEFAULT ?? 0,
-            CONUTIL: this._user.ICRUser,
+            CONUTIL: SettingsAdminService.resolveCurrentUserId(this._user.ICRUser),
           }).subscribe({
             next: () => { copied += 1; done(); },
             error: () => done(),
           });
         });
       },
-      error: () => {
-        this._msg.add({ severity: 'success', summary: 'Saved', detail: 'User created. Environment access could not be copied.' });
-        this.searchUsers();
+      error: () => onDone(0, 0),
+    });
+  }
+
+  private copyUserWidgetsFromUser(
+    sourceUserId: string,
+    newUserId: string,
+    onDone: (copied: number, total: number, failed: number) => void
+  ): void {
+    this._svc.listUserWidgets(sourceUserId).subscribe({
+      next: (rows) => {
+        if (!rows.length) {
+          onDone(0, 0, 0);
+          return;
+        }
+        let copied = 0;
+        let failed = 0;
+        const copyNext = (index: number) => {
+          if (index >= rows.length) {
+            onDone(copied, rows.length, failed);
+            return;
+          }
+          const row = rows[index];
+          this._svc.saveUserWidget({
+            UWPUSERID: newUserId,
+            UWPWIDID: row.UWPWIDID,
+            UWPPARAM: SettingsAdminService.normalizeUwParam(row.UWPPARAM),
+            UWPDESC: row.UWPDESC ?? '',
+            UWPW_X: row.UWPW_X ?? 0,
+            UWPW_Y: row.UWPW_Y ?? 0,
+            UWPWIDTH: row.UWPWIDTH ?? 4,
+            UWPHEIGHT: row.UWPHEIGHT ?? 3,
+            UWPROWS: row.UWPROWS ?? 0,
+            UWPCOLLAPSE: row.UWPCOLLAPSE ?? 'expand',
+            UWPENABLE: row.UWPENABLE ?? 1,
+            UWPUTIL: SettingsAdminService.resolveCurrentUserId(this._user.ICRUser),
+          }).subscribe({
+            next: () => {
+              copied += 1;
+              copyNext(index + 1);
+            },
+            error: () => {
+              failed += 1;
+              copyNext(index + 1);
+            },
+          });
+        };
+        copyNext(0);
       },
+      error: () => onDone(0, 0, 0),
     });
   }
 }

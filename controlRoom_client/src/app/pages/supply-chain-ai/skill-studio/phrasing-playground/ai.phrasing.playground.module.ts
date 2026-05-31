@@ -15,6 +15,7 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { TooltipModule } from "primeng/tooltip";
 
 import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header.module";
+import { I18nModule } from "src/app/shared/pipes/i18n.module";
 
 /**
  * Phase 6 — Phrasing Playground (Skill Studio).  Same eager-routing pattern
@@ -29,7 +30,7 @@ import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header
         RouterModule, CommonModule, FormsModule,
         ButtonModule, DropdownModule, InputTextModule, InputTextareaModule,
         TagModule, ToastModule, ProgressBarModule, TooltipModule,
-        PageHeaderModule
+        PageHeaderModule, I18nModule,
     ],
     declarations: [AiPhrasingPlaygroundComponent],
     exports: [AiPhrasingPlaygroundComponent],

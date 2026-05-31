@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Holiday schedule calendar'" [icon]="'fa-sun'"
+<app-page-header [heading]="'S03.TITLE' | lbl:'Holiday schedule calendar'" [icon]="'fa-sun'"
                  [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
                  
 
@@ -8,12 +8,12 @@
 
 
 <!-- Panel add new holiday schedule -->
-<p-dialog header="Add new holiday schedule" [visible]="displayAddHoliday" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'S03.DLG.ADD' | lbl:'Add new holiday schedule'" [visible]="displayAddHoliday" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <form [formGroup]="newHolidayForm" (ngSubmit)="addHoliday()">
         <div class="row">
             <div class="form-group row">
                 <span class="p-inputgroup-addon col-2" style="justify-content: left;">
-                    Holiday date
+                    {{ 'S03.LBL.HDATE' | lbl:'Holiday date' }}
                 </span>
                 <p-calendar [(ngModel)]="newHolidayDate"  
                             class="form-control col-10"
@@ -27,7 +27,7 @@
         </div>
         <div class="row">
             <div class="form-group col-6 row">
-                <span class="p-inputgroup-addon col-4" style="justify-content: left;">Period start
+                <span class="p-inputgroup-addon col-4" style="justify-content: left;">{{ 'S03.LBL.PSTART' | lbl:'Period start' }}
                 </span>
                 <p-calendar [(ngModel)]="newHolidayStart"  
                             class="form-control col-7"
@@ -40,7 +40,7 @@
             </div>
 
             <div class="form-group col-6 row">
-                <span class="p-inputgroup-addon col-4" style="justify-content: left;">Period end
+                <span class="p-inputgroup-addon col-4" style="justify-content: left;">{{ 'S03.LBL.PEND' | lbl:'Period end' }}
                 </span>
                 <p-calendar [(ngModel)]="newHolidayEnd"  
                             class="form-control col-8"
@@ -121,7 +121,7 @@
         <div class="row">
             <div class="form-group row">
                 <span class="p-inputgroup-addon col-2" style="justify-content: left;">
-                    Holiday date
+                    {{ 'S03.LBL.HDATE' | lbl:'Holiday date' }}
                 </span>
                 <p-calendar [(ngModel)]="removeHolidayDate"  
                             class="form-control col-10"
@@ -179,9 +179,9 @@
 
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S03.LBL.SUP' | lbl:'Supplier :' }} </span>
     <span style="overflow: hidden;width: 28%;line-height: 25px;align-self: center;">
-        <input type="text"  [(ngModel)]="searchCode" placeholder="  Enter a code or a description" 
+        <input type="text"  [(ngModel)]="searchCode" [placeholder]="'S03.PLH.CODE' | lbl:'  Enter a code or a description'" 
                style="width: 90%;margin-left: 10px;"/>     
     </span>
 
@@ -194,7 +194,7 @@
                 [showOnFocus]="true" [showOtherMonths]="true" ></p-calendar>
 
     <span class="pull-right" style="padding-right: 20px">
-        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S03.BTN.SRCH' | lbl:'SEARCH'" 
                 [style]="{'height': '35px'}"
                 style="margin-right: 15px"></button>
         <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" 
@@ -202,7 +202,7 @@
     </span>
 </div>
 <div class="bbs_search_sub_panel"  >
-    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Period start : </span>
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S03.LBL.PST' | lbl:'Period start :' }} </span>
     <p-calendar [(ngModel)]="periodStart"  
                 [minDate]="dateTomorrow"
                 [readonlyInput]="true"
@@ -211,7 +211,7 @@
                 name="scheduleStart" [showIcon]="true" 
                 [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
-    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">Period end : </span>
+    <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">{{ 'S03.LBL.PEN' | lbl:'Period end :' }} </span>
     <p-calendar [(ngModel)]="periodEnd"  
                 [minDate]="dateTomorrow"
                 [readonlyInput]="true"
@@ -222,12 +222,12 @@
 </div>
 <p></p>
 
-<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'S03.DLG.UPD' | lbl:'Update completed'" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
 </p-dialog>
@@ -259,13 +259,13 @@
                             class="CSV_Button p-input-icon-left ml-auto"
                             pTooltip="Export to EXCEL" [escape]="false"
                             *ngIf="searchResult.length>0"
-                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                         </button>
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
                             pTooltip="Export to EXCEL" [escape]="false"
                             disabled *ngIf="searchResult.length==0"
-                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                         </button>
                         <button type="button" pButton  iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
@@ -285,7 +285,7 @@
                 <div class="col-6" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>

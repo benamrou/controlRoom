@@ -6,6 +6,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
+import { I18nModule } from 'src/app/shared/pipes/i18n.module';
 import { PanelModule } from 'primeng/panel';
 import { ChartModule } from 'src/app/shared/graph';
 import { TooltipModule } from 'primeng/tooltip';
@@ -17,7 +18,7 @@ import { DialogModule } from 'primeng/dialog';
 @NgModule({
     imports: [
         CommonModule,
-        FormsModule, TableModule, ButtonModule, OverlayPanelModule, PageHeaderModule,
+        FormsModule, TableModule, ButtonModule, OverlayPanelModule, PageHeaderModule, I18nModule,
         ProgressSpinnerModule, DialogModule,
         PanelModule, ChartModule, TooltipModule, GridsterModule, ToastModule,
     ],

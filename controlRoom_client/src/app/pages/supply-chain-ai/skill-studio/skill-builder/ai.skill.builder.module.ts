@@ -20,6 +20,7 @@ import { ToolbarModule } from "primeng/toolbar";
 import { TooltipModule } from "primeng/tooltip";
 
 import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header.module";
+import { I18nModule } from "src/app/shared/pipes/i18n.module";
 
 @NgModule({
     imports: [
@@ -39,7 +40,7 @@ import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header
         ToastModule,
         ToolbarModule,
         TooltipModule,
-        PageHeaderModule
+        PageHeaderModule, I18nModule,
     ],
     declarations: [AiSkillBuilderComponent],
     exports: [AiSkillBuilderComponent],

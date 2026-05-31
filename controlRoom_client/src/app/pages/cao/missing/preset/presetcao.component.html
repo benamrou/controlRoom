@@ -34,14 +34,14 @@
                         <span>
                             <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
-                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                             </button>
                         </span>
                     </div>
                     <div class="col-9" style="text-align: right;">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                         </span>
                     </div>
                 </div>
@@ -88,12 +88,12 @@
                 <div class="table-header">
                     <span class="p-input-icon-right" style="padding-left: 70%">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="resultStore.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="resultStore.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                     <span style="float: left">
                     <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            label="CSV" (click)="resultStore.exportCSV()" style="float:left"></button>
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultStore.exportCSV()" style="float:left"></button>
                     </span>
                 </div>
             </ng-template>

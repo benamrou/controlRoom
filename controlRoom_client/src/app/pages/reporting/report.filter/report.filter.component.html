@@ -1,30 +1,30 @@
-<app-page-header [heading]="'Filter management'" [icon]="'fa-filter'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"></app-page-header>
+<app-page-header [heading]="'S41.TITLE' | lbl:'Filter management'" [icon]="'fa-filter'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
 
-<p-dialog header="Updates completed" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'CMN.UPD.COMP' | lbl:'Updates completed'" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
   </p-dialog>
   
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Report id : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S41.LBL.RPTID' | lbl:'Report id :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 70%; line-height: 25px; align-self: center;">
-        <input type="text"  [(ngModel)]="searchReportCode" placeholder="  Enter a report code" 
+        <input type="text"  [(ngModel)]="searchReportCode" [placeholder]="'S41.PLH.RPTID' | lbl:'Enter a report code'" 
                style="width: 50%;margin-left: 10px;"/>     
     </span>
 
 
     <span class="pull-right" style="padding-right: 20px">
-        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S41.BTN.SRCH' | lbl:'SEARCH'" 
                 [style]="{'height': '35px'}"
                 style="margin-right: 15px"></button>
         <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" 
@@ -58,13 +58,13 @@
                                     class="CSV_Button p-input-icon-left ml-auto"
                                     pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                     *ngIf="searchResult.length>0"
-                                    label="CSV" (click)="resultTable.exportCSV()" style="float:left">
+                                    [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultTable.exportCSV()" style="float:left">
                                 </button>
                                 <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                     class="CSV_Button p-input-icon-left ml-auto"
                                     pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                     disabled *ngIf="searchResult.length==0"
-                                    label="CSV" (click)="resultTable.exportCSV()" style="float:left">
+                                    [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultTable.exportCSV()" style="float:left">
                                 </button>
                         </span>
                     </div>
@@ -73,7 +73,7 @@
                     <div class="col-9" style="text-align: right;">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="resultTable.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                            <input pInputText type="text" (input)="resultTable.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                         </span>
                     </div>
                 </div>
@@ -135,7 +135,7 @@
                     <div class="col-9" style="display: flex;">
                         <button type="button" pButton icon="pi pi-save" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto mini-button"
-                            label="SAVE"
+                            [label]="'CMN.SAVE' | lbl:'SAVE'"
                             (click)="updateFilter()"
                              style="float:left">
                         </button>

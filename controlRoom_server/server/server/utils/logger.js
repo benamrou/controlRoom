@@ -35,6 +35,9 @@
 
 "use strict";
 
+const path = require("path");
+const logPaths = require("./log.paths.js");
+
 let heap = {
     fs : require('fs-extra'), // File management
     _: require("lodash")
@@ -93,17 +96,20 @@ function folderDateLog() {
 
 function buildLogStructure() {
     const timestamp = folderDateLog();
+    const logRoot = logPaths.resolveLogRoot();
+    const adminRoot = logPaths.adminLogDir(logRoot);
+    const serverRoot = path.join(logRoot, "server");
+    const dayDir = path.join(adminRoot, timestamp);
 
-    if (!heap.fs.existsSync('logs/')) {
-        heap.fs.mkdirSync('logs');
+    if (!heap.fs.existsSync(logRoot)) {
+        heap.fs.mkdirSync(logRoot);
     }
-    if (!heap.fs.existsSync('logs/admin/')) {
-        heap.fs.mkdirSync('logs/admin/');
+    if (!heap.fs.existsSync(adminRoot)) {
+        heap.fs.mkdirSync(adminRoot);
     }
-    if (!heap.fs.existsSync('logs/server/')) {
-        heap.fs.mkdirSync('logs/server/');
+    if (!heap.fs.existsSync(serverRoot)) {
+        heap.fs.mkdirSync(serverRoot);
     }
-    const dayDir = 'logs/admin/' + timestamp;
     if (!heap.fs.existsSync(dayDir)) {
         heap.fs.mkdirSync(dayDir);
     }
@@ -147,7 +153,7 @@ function logFile(uniqueId, message, username) {
 
     // ── CHANGE 3: use cached WriteStream instead of openSync per call ─────────
     const safeUser = String(username || 'unknown').replace(/[^A-Za-z0-9_.-]/g, '_');
-    const filePath = dayDir + '/' + safeUser + '.log';
+    const filePath = path.join(dayDir, safeUser + '.log');
     const stream = _getStream(filePath);
     stream.write(truncatedMessage);
     // ─────────────────────────────────────────────────────────────────────────

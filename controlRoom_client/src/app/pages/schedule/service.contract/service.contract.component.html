@@ -1,18 +1,18 @@
-<app-page-header [heading]="'Supplier schedule by contract'" [icon]="'fa-calendar'"></app-page-header>
+<app-page-header [heading]="'RT.SCHCTR' | lbl:'Supplier schedule by contract'" [icon]="'fa-calendar'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
 
 <div class="bbs_search_panel"  >
-    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Supplier : </span>
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">{{ 'RT.SCH.LBL.SUP' | lbl:'Supplier :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 90%; line-height: 25px">
-        <input type="text"  [(ngModel)]="searchCode" placeholder="  Enter a code or a description" 
+        <input type="text"  [(ngModel)]="searchCode" [placeholder]="'RT.SCH.PLH.COD' | lbl:'  Enter a code or a description'" 
                style="width: 50%;margin-left: 10px;"/>     
     </span>
 
     <span class="pull-right" style="padding-right: 20px">
-        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" [disabled]="searchCode === ''" 
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'RT.SCH.BTN.SRCH' | lbl:'SEARCH'" [disabled]="searchCode === ''" 
                 [style]="{'height': '35px'}" style="margin-right: 15px"></button>
         <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true" 
                 [style]="{'height': '35px'}"></button>
@@ -20,12 +20,12 @@
 </div>
 <p></p>
 
-<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'RT.SCH.DLG.UPD' | lbl:'Update completed'" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
 </p-dialog>
@@ -52,12 +52,12 @@
             <div class="table-header">
                 <div class="pull-right p-input-icon-right FILTER_Right_Table">
                     <i class="pi pi-search"></i>
-                    <input pInputText class="FILTER_Button_Table" type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                    <input pInputText class="FILTER_Button_Table" type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                 </div>
                 <div >
                     <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left"></button>
                 </div>
             </div>
         </ng-template>

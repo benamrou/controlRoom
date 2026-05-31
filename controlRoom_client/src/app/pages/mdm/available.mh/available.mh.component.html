@@ -1,15 +1,15 @@
-<app-page-header [heading]="'Available node'" [icon]="'fa-code-merge'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"></app-page-header>
+<app-page-header [heading]="'S42.TITLE' | lbl:'Available node'" [icon]="'fa-code-merge'" [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
 
-<p-dialog header="Updates completed" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'CMN.UPD.COMP' | lbl:'Updates completed'" [visible]="displayProcessCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayProcessCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
   </p-dialog>
@@ -51,13 +51,13 @@
                                     class="CSV_Button p-input-icon-left ml-auto"
                                     pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                     *ngIf="searchResult.length>0"
-                                    label="CSV" (click)="resultTable.exportCSV()" style="float:left">
+                                    [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultTable.exportCSV()" style="float:left">
                                 </button>
                                 <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                     class="CSV_Button p-input-icon-left ml-auto"
                                     pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                     disabled *ngIf="searchResult.length==0"
-                                    label="CSV" (click)="resultTable.exportCSV()" style="float:left">
+                                    [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultTable.exportCSV()" style="float:left">
                                 </button>
                         </span>
                     </div>
@@ -66,7 +66,7 @@
                     <div class="col-9" style="text-align: right;">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="resultTable.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                            <input pInputText type="text" (input)="resultTable.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                         </span>
                     </div>
                 </div>
@@ -121,13 +121,13 @@
                                     class="CSV_Button p-input-icon-left ml-auto"
                                     pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                     *ngIf="searchCategoryResult.length>0"
-                                    label="CSV" (click)="resultCategoryTable.exportCSV()" style="float:left">
+                                    [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultCategoryTable.exportCSV()" style="float:left">
                                 </button>
                                 <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                     class="CSV_Button p-input-icon-left ml-auto"
                                     pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                     disabled *ngIf="searchCategoryResult.length==0"
-                                    label="CSV" (click)="resultCategoryTable.exportCSV()" style="float:left">
+                                    [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultCategoryTable.exportCSV()" style="float:left">
                                 </button>
                             </span>
                         </div>
@@ -177,13 +177,13 @@
                                     class="CSV_Button p-input-icon-left ml-auto"
                                     pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                     *ngIf="searchSubCategoryResult.length>0"
-                                    label="CSV" (click)="resultSubCategoryTable.exportCSV()" style="float:left">
+                                    [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultSubCategoryTable.exportCSV()" style="float:left">
                                 </button>
                                 <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                     class="CSV_Button p-input-icon-left ml-auto"
                                     pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                     disabled *ngIf="searchSubCategoryResult.length==0"
-                                    label="CSV" (click)="resultSubCategoryTable.exportCSV()" style="float:left">
+                                    [label]="'CMN.CSV' | lbl:'CSV'" (click)="resultSubCategoryTable.exportCSV()" style="float:left">
                                 </button>
                             </span>
                         </div>

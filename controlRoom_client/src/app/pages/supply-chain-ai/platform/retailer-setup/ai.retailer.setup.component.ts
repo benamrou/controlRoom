@@ -1,6 +1,8 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MessageService, MenuItem } from 'primeng/api';
+import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/shared/services';
+import { LabelService } from 'src/app/shared/services/labels/labels.service';
 import { AiRetailerService } from 'src/app/shared/services/ai/ai.retailer.service';
 
 @Component({
@@ -10,7 +12,7 @@ import { AiRetailerService } from 'src/app/shared/services/ai/ai.retailer.servic
     encapsulation: ViewEncapsulation.None,
     providers: [MessageService]
 })
-export class AiRetailerSetupComponent implements OnInit {
+export class AiRetailerSetupComponent implements OnInit, OnDestroy {
 
     screenID = 'SCR0000000053';
     steps: MenuItem[];
@@ -36,20 +38,36 @@ export class AiRetailerSetupComponent implements OnInit {
     saving       = false;
     setupComplete = false;
 
+    private labelSub?: Subscription;
+
     constructor(
         public _userService: UserService,
         private _svc: AiRetailerService,
-        private _msg: MessageService
+        private _msg: MessageService,
+        private _labels: LabelService,
     ) {}
 
     ngOnInit(): void {
-        this.steps = [
-            { label: 'Environment' },
-            { label: 'Retailer identity' },
-            { label: 'Connection test' },
-            { label: 'Confirm & save' }
-        ];
+        this.buildSteps();
+        this.labelSub = this._labels.revision$.subscribe(() => this.buildSteps());
         this.loadCorpEnvs();
+    }
+
+    ngOnDestroy(): void {
+        this.labelSub?.unsubscribe();
+    }
+
+    private L(key: string, fallback: string): string {
+        return this._labels.text(key, fallback);
+    }
+
+    private buildSteps(): void {
+        this.steps = [
+            { label: this.L('S53.STP.0', 'Environment') },
+            { label: this.L('S53.STP.1', 'Retailer identity') },
+            { label: this.L('S53.STP.2', 'Connection test') },
+            { label: this.L('S53.STP.3', 'Confirm and save') },
+        ];
     }
 
     // ── Step 0 ───────────────────────────────────────────────────────────────

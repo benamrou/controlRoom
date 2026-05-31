@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Corporate Inquiry'" [icon]="'fa-search'"></app-page-header>
+<app-page-header [heading]="'RT.SEARCH' | lbl:'Corporate Inquiry'" [icon]="'fa-search'"></app-page-header>
 
 <br>
 <div class="content-section implementation">
@@ -38,14 +38,14 @@
                     <span>
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                         </button>
                     </span>
                 </div>
                 <div class="col-9" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>

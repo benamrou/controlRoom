@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Unarchive invoice'" [icon]="'fa-cash-register'"
+<app-page-header [heading]="'S40.TITLE' | lbl:'Unarchive invoice'" [icon]="'fa-cash-register'"
                  [waitMessage]="waitMessage" [okExit]="okExit" [screenID]="screenID"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -18,14 +18,14 @@
   </div>
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >        
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier # : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S40.LBL.SUPN' | lbl:'Supplier # :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 70%; line-height: 25px; align-self: center;">
     <input type="text"  [(ngModel)]="searchVendor" placeholder="  Enter a supplier code desc" 
             style="width: 50%;margin-left: 10px;"/>     
     </span>
 
     <span class="pull-right" style="padding-right: 20px">
-            <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+            <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S40.BTN.SRCH' | lbl:'SEARCH'" 
                     [style]="{'height': '35px'}" style="margin-right: 15px">
             </button>
             <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true"
@@ -34,7 +34,7 @@
 </div>
 
 <div class="bbs_search_sub_panel"  >
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Invoice # : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S40.LBL.INVNUM' | lbl:'Invoice # :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 30%; line-height: 25px; align-self: center;">
     <input type="text"  [(ngModel)]="searchInvoice" placeholder="  Enter an invoice # " 
             style="margin-left: 10px;"/>     
@@ -44,12 +44,12 @@
 
 <p></p>
 
-<p-dialog header="Update completed" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
+<p-dialog [header]="'S40.DLG.UPD' | lbl:'Update completed'" [visible]="displayUpdateCompleted" [modal]="true" [style]="{width: '50vw'}" [responsive]="true" [maximizable]="false">
     <span>{{msgDisplayed}}</span>
         <p-footer>
             <button style="float: right; margin-bottom:0.5em" 
                     type="button" pButton icon="fas fa-check" iconPos="right" (click)="displayUpdateCompleted=false" 
-                    label="Ok">
+                    [label]="'CMN.OK' | lbl:'Ok'">
             </button>
         </p-footer>
 </p-dialog>
@@ -78,14 +78,14 @@
                     <span>
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                             class="CSV_Button p-input-icon-left ml-auto"
-                            label="CSV" (click)="result.exportCSV()" style="float:left">
+                            [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                         </button>
                     </span>
                 </div>
                 <div class="col-9" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>

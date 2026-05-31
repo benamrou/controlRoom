@@ -37,7 +37,8 @@
         &:hover { opacity: 0.78; }
     }
 
-    .env-current-label {
+    .env-current-label,
+    .lang-current-label {
         margin-left: 4px;
         font-size: 0.8rem;
         font-weight: 600;
@@ -46,6 +47,11 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         vertical-align: middle;
+    }
+
+    .adh-lang-dropdown .dropdown-item.active {
+        font-weight: 700;
+        background: rgba($summer-coral, 0.12);
     }
 
     // ── Nav Links ────────────────────────────────────────────

@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
 import { SettingsAdminService } from '../../../shared/services/settings/settings.admin.service';
 import { UserService } from '../../../shared/services';
+import { LabelService } from '../../../shared/services/labels/labels.service';
 
 @Component({
   selector: 'app-setting-customer',
@@ -9,7 +11,7 @@ import { UserService } from '../../../shared/services';
   styleUrls: ['./setting.customer.component.scss'],
   providers: [ConfirmationService, MessageService],
 })
-export class SettingCustomerComponent implements OnInit {
+export class SettingCustomerComponent implements OnInit, OnDestroy {
   screenID = 'SCR0000000064';
   waitMessage = '';
   activeTab = 0;
@@ -29,20 +31,37 @@ export class SettingCustomerComponent implements OnInit {
   isNewEnv = false;
   envForm: any = {};
 
-  activeOptions = [
-    { label: 'Active', value: 1 },
-    { label: 'Inactive', value: 0 },
-  ];
+  activeOptions: { label: string; value: number }[] = [];
+
+  private labelSub?: Subscription;
 
   constructor(
     private _svc: SettingsAdminService,
     private _user: UserService,
     private _confirm: ConfirmationService,
     private _msg: MessageService,
+    private _labels: LabelService,
   ) {}
 
   ngOnInit(): void {
+    this.buildActiveOptions();
+    this.labelSub = this._labels.revision$.subscribe(() => this.buildActiveOptions());
     this.searchCorps();
+  }
+
+  ngOnDestroy(): void {
+    this.labelSub?.unsubscribe();
+  }
+
+  private L(key: string, fallback: string): string {
+    return this._labels.text(key, fallback);
+  }
+
+  private buildActiveOptions(): void {
+    this.activeOptions = [
+      { label: this.L('CMN.ACTIVE', 'Active'), value: 1 },
+      { label: this.L('CMN.INACT', 'Inactive'), value: 0 },
+    ];
   }
 
   onTabChange(e: { index: number }): void {

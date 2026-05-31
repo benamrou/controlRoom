@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Critical Alert Watchdog'" [waitMessage]="waitMessage"
+<app-page-header [heading]="'S52.TITLE' | lbl:'Critical Alert Watchdog'" [waitMessage]="waitMessage"
                  [screenID]="screenID" [icon]="'fa-shield-alt'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -82,12 +82,12 @@
                  rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
 <!-- Save-completed banner -->
-<p-dialog header="Updates completed" [visible]="displayProcessCompleted" [modal]="true"
+<p-dialog [header]="'CMN.UPD.COMP' | lbl:'Updates completed'" [visible]="displayProcessCompleted" [modal]="true"
           [style]="{width: '40vw'}">
     <span>{{msgDisplayed}}</span>
     <p-footer>
         <button pButton type="button" icon="fas fa-check" iconPos="right"
-                (click)="displayProcessCompleted=false" label="Ok"></button>
+                (click)="displayProcessCompleted=false" [label]="'CMN.OK' | lbl:'Ok'"></button>
     </p-footer>
 </p-dialog>
 
@@ -99,9 +99,9 @@
 
     <div class="flex flex-row-reverse flex-wrap" style="padding-right: 20px;">
         <span>
-            <button (click)="closeDialog()" pButton icon="fas fa-close" label="CANCEL"
+            <button (click)="closeDialog()" pButton icon="fas fa-close" [label]="'CMN.CANCEL' | lbl:'CANCEL'"
                     style="margin-right: 15px; height: 35px;"></button>
-            <button (click)="saveChanges()" pButton icon="fas fa-save" label="SAVE"
+            <button (click)="saveChanges()" pButton icon="fas fa-save" [label]="'CMN.SAVE' | lbl:'SAVE'"
                     [disabled]="isNewWatch && !watchDisplay.AWTID"
                     style="margin-right: 15px; height: 35px;"></button>
         </span>
@@ -401,7 +401,7 @@
 
     <span class="pull-right" style="padding-right: 20px;">
         <button pButton (click)="search()" [disabled]="!searchButtonEnable"
-                icon="fas fa-search" label="SEARCH" [style]="{'height': '35px'}"></button>
+                icon="fas fa-search" [label]="'S52.BTN.SRCH' | lbl:'SEARCH'" [style]="{'height': '35px'}"></button>
         <button pButton (click)="runScanNow()" icon="fas fa-bolt" label="RUN NOW"
                 pTooltip="Force a watchdog scan now" class="p-button-warning"
                 [style]="{'height': '35px', 'margin-left': '10px'}"></button>
@@ -423,7 +423,7 @@
                 <div class="col-1">
                     <button type="button" pButton icon="fas fa-file" iconPos="left"
                             class="CSV_Button" pTooltip="{{csvButtonTooltip}}"
-                            *ngIf="searchResult.length>0" label="CSV"
+                            *ngIf="searchResult.length>0" [label]="'CMN.CSV' | lbl:'CSV'"
                             (click)="result.exportCSV()" style="float:left">
                     </button>
                 </div>
@@ -438,7 +438,7 @@
                         <i class="pi pi-search"></i>
                         <input pInputText type="text"
                                (input)="result.filterGlobal($any($event.target).value, 'contains')"
-                               placeholder="Type text to filter..." />
+                               [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>

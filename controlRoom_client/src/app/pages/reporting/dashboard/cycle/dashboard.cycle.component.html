@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Cycle Count Dashboard'" [icon]="'fa-calendar'"
+<app-page-header [heading]="'S04.TITLE' | lbl:'Cycle Count Dashboard'" [icon]="'fa-calendar'"
                  [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -26,7 +26,7 @@
 <!-- Panel result style="width: 50%;" -->
 <div class=" content"  *ngIf="reportCycleCountActivity  && (searchResultCycleCount.length === 0)" style="margin-top: 7em;">
   <h6 style="text-align: center;margin-top: 5em;font-weight: bolder;border-bottom: 0.1em black dotted;color: black;border-top: 0.1em black dotted;">
-      No data available
+      {{ 'S04.MSG.NODATA' | lbl:'No data available' }}
   </h6>
 </div>
 
@@ -35,8 +35,8 @@
     <div class=" card-header">
       <div class=" row">
         <div class=" col-sm-6 text-left">
-          <h6 class=" card-category">Inventory Adjustments</h6>
-          <h4 class=" card-title">Volume Neg./zero</h4>
+          <h6 class=" card-category">{{ 'S04.CARD.ADJ' | lbl:'Inventory Adjustments' }}</h6>
+          <h4 class=" card-title">{{ 'S04.CARD.VOL' | lbl:'Volume Neg./zero' }}</h4>
         </div>
         <div class=" col-sm-6">
           <div class=" btn-group btn-group-toggle float-right" data-toggle="buttons">
@@ -93,7 +93,7 @@
     <div class=" card-header">
       <div class=" row">
         <div class=" col-sm-6 text-left">
-          <h6 class=" card-category">Inventory Adjustments</h6>
+          <h6 class=" card-category">{{ 'S04.CARD.ADJ' | lbl:'Inventory Adjustments' }}</h6>
           <h4 class=" card-title">Performance - % Negative coverage</h4>
         </div>
       </div>

@@ -16,6 +16,7 @@ import { DialogModule } from "primeng/dialog";
 import { TooltipModule } from "primeng/tooltip";
 
 import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header.module";
+import { I18nModule } from "src/app/shared/pipes/i18n.module";
 
 /**
  * Phase 4b — "Pending phrasings" admin screen for the Supply Chain AI engine.
@@ -29,7 +30,7 @@ import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header
         ButtonModule, DropdownModule, InputTextModule, TagModule,
         ToastModule, ConfirmDialogModule, ProgressBarModule,
         DialogModule, TooltipModule,
-        PageHeaderModule
+        PageHeaderModule, I18nModule,
     ],
     declarations: [AiPendingPhrasingsComponent],
     exports: [AiPendingPhrasingsComponent],

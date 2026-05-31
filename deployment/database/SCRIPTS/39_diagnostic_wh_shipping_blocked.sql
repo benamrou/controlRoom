@@ -29,7 +29,7 @@ INSERT INTO AI_SKILL (
     'DA000001-D100-4A00-8100-D10000000001',
     'TEMPLATE',
     'WH_SHIPPING_BLOCKED',
-    'Warehouse shipping blocked — root cause',
+    'Warehouse shipping blocked - root cause',
     'WAREHOUSE',
     'Diagnoses why an item is not being shipped from the warehouse to a store. Checks ranging, DC stock, open PO coverage, and pick order generation.',
     1.0, 'DRAFT', 'SYSTEM', SYSTIMESTAMP, SYSTIMESTAMP

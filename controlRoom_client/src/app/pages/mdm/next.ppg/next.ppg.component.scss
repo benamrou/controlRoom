@@ -288,14 +288,13 @@ $border-weight: 3px;
   width: 100%;
 }
 
-.p-tabview .p-tabview-nav li .p-tabview-nav-link {
+:host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
     background-color: dimgrey !important;
 }
-.p-tabview .p-tabview-nav {
+:host ::ng-deep .p-tabview .p-tabview-nav {
     background-color: dimgrey !important;
-
 }
 
-.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+:host ::ng-deep .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
   background-color: crimson !important;
 }

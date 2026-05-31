@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { AiDataHealthService } from 'src/app/shared/services/ai/ai.data.health.service';
 import { AiRetailerService } from 'src/app/shared/services/ai/ai.retailer.service';
 import { QueryService } from 'src/app/shared/services/query/query.service';
 import { ExportService } from 'src/app/shared/services/inout/export.service';
+import { LabelService } from 'src/app/shared/services/labels/labels.service';
+import { Subscription } from 'rxjs';
 
 type Tier = 'ALL' | 'REALTIME' | 'HOURLY' | 'NIGHTLY';
 type Severity = 'CRITICAL' | 'WARNING' | 'INFO';
@@ -59,18 +61,13 @@ interface HistoryRow {
   encapsulation: ViewEncapsulation.None,
   providers: [MessageService, ExportService, ConfirmationService]
 })
-export class AiDataHealthComponent implements OnInit {
+export class AiDataHealthComponent implements OnInit, OnDestroy {
   screenID = 'SCR0000000061';
   retailers: any[] = [];
   selectedRetailer: any = null;
 
   selectedTier: Tier = 'ALL';
-  tierOptions = [
-    { label: 'All tiers', value: 'ALL' },
-    { label: 'Real-time (5 min)', value: 'REALTIME' },
-    { label: 'Hourly', value: 'HOURLY' },
-    { label: 'Nightly', value: 'NIGHTLY' }
-  ];
+  tierOptions: { label: string; value: Tier }[] = [];
 
   cards: CheckCard[] = [];
   summary: Summary | null = null;
@@ -99,6 +96,8 @@ export class AiDataHealthComponent implements OnInit {
   detailExportCard: CheckCard | null = null;
   fixingRowKey: string | null = null;
 
+  private labelSub?: Subscription;
+
   constructor(
     private _svc: AiDataHealthService,
     private _retailer: AiRetailerService,
@@ -106,11 +105,31 @@ export class AiDataHealthComponent implements OnInit {
     private _msg: MessageService,
     private _router: Router,
     private _exportService: ExportService,
-    private _confirm: ConfirmationService
+    private _confirm: ConfirmationService,
+    private _labels: LabelService,
   ) {}
 
   ngOnInit(): void {
+    this.buildTierOptions();
+    this.labelSub = this._labels.revision$.subscribe(() => this.buildTierOptions());
     this.loadRetailers();
+  }
+
+  ngOnDestroy(): void {
+    this.labelSub?.unsubscribe();
+  }
+
+  private L(key: string, fallback: string): string {
+    return this._labels.text(key, fallback);
+  }
+
+  private buildTierOptions(): void {
+    this.tierOptions = [
+      { label: this.L('S61.TIER.ALL', 'All tiers'), value: 'ALL' },
+      { label: this.L('S61.TIER.RT', 'Real-time (5 min)'), value: 'REALTIME' },
+      { label: this.L('S61.TIER.HR', 'Hourly'), value: 'HOURLY' },
+      { label: this.L('S61.TIER.NT', 'Nightly'), value: 'NIGHTLY' },
+    ];
   }
 
   loadRetailers(): void {

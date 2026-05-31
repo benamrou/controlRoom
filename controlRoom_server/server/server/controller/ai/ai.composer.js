@@ -542,9 +542,104 @@ module.exports = (function () {
         };
     }
 
+    /**
+     * Multi-issue diagnostic synthesis.
+     *
+     * Called when the HARD/SOFT chain collects more than one stop condition.
+     * Each entry in conclusionPairs has: { conclusionKey, stepCtx, isHard, stepLabel, conclusion }.
+     *
+     * Returns the same outer shape as synthesizeDiagnostic() plus overall_severity.
+     */
+    function synthesizeMultipleDiagnostics(stepResults, conclusionPairs, ctx) {
+        if (!conclusionPairs || !conclusionPairs.length) {
+            return {
+                summary: "The diagnostic chain completed but no specific blocking issue was identified.",
+                insights: [],
+                follow_up_hint: null,
+                overall_severity: "INFO"
+            };
+        }
+
+        // Build shared token map from ctx + all step rows (later rows overwrite earlier)
+        var tokenMap = {};
+        Object.keys(ctx || {}).forEach(function (k) {
+            if (ctx[k] != null && ctx[k] !== "") { tokenMap[k.toLowerCase()] = String(ctx[k]); }
+        });
+        (stepResults || []).forEach(function (s) {
+            (s.rows || []).forEach(function (row) {
+                Object.keys(row).forEach(function (col) {
+                    if (row[col] != null) { tokenMap[col.toLowerCase()] = String(row[col]); }
+                });
+            });
+        });
+
+        var severityRank = { CRITICAL: 3, WARNING: 2, INFO: 1 };
+        var overallSeverity = "INFO";
+        var allInsights = [];
+        var summaryParts = [];
+        var firstFollowUp = null;
+
+        conclusionPairs.forEach(function (cp, idx) {
+            // Per-issue token map merges shared map with this step's own ctx fields
+            var localMap = Object.assign({}, tokenMap);
+            Object.keys(cp.stepCtx || {}).forEach(function (k) {
+                if (cp.stepCtx[k] != null) { localMap[k.toLowerCase()] = String(cp.stepCtx[k]); }
+            });
+
+            function sub(template) {
+                if (!template) { return ""; }
+                return String(template).replace(/\{([^}]+)\}/g, function (m, key) {
+                    var v = localMap[key.toLowerCase()];
+                    return v != null ? v : m;
+                });
+            }
+
+            var conclusion = cp.conclusion;
+            if (!conclusion) {
+                summaryParts.push((idx + 1) + ". Issue at \"" + (cp.stepLabel || cp.conclusionKey) + "\" — no conclusion template found.");
+                return;
+            }
+
+            function col(obj, up, low) { return obj && (obj[up] != null ? obj[up] : obj[low]); }
+            var sev         = String(col(conclusion, "SEVERITY",          "severity")         || "INFO").toUpperCase();
+            var summaryTmpl = col(conclusion, "SUMMARY_TEMPLATE",  "summary_template")  || "";
+            var evidTmpl    = col(conclusion, "EVIDENCE_TEMPLATE",  "evidence_template") || "";
+            var fuTmpl      = col(conclusion, "FOLLOW_UP_TEMPLATE", "follow_up_template") || "";
+
+            if ((severityRank[sev] || 0) > (severityRank[overallSeverity] || 0)) {
+                overallSeverity = sev;
+            }
+
+            var label = cp.isHard ? "[BLOCKING — " + sev + "] " : "[" + sev + "] ";
+            summaryParts.push((idx + 1) + ". " + label + sub(summaryTmpl));
+
+            if (evidTmpl) {
+                sub(evidTmpl).split("|").map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (e) {
+                    allInsights.push(e);
+                });
+            }
+            if (fuTmpl && !firstFollowUp) { firstFollowUp = sub(fuTmpl); }
+        });
+
+        var luId   = tokenMap["lu_id"]   || "the item";
+        var siteId = tokenMap["site_id"] || "the store";
+        var n = conclusionPairs.length;
+        var intro = n === 1
+            ? "1 ordering issue found for item " + luId + " at store " + siteId + ":"
+            : n + " ordering issues found for item " + luId + " at store " + siteId + ":";
+
+        return {
+            summary: intro + "\n\n" + summaryParts.join("\n\n"),
+            insights: allInsights.slice(0, 12),
+            follow_up_hint: firstFollowUp,
+            overall_severity: overallSeverity
+        };
+    }
+
     return {
         synthesize: synthesize,
         synthesizeDiagnostic: synthesizeDiagnostic,
+        synthesizeMultipleDiagnostics: synthesizeMultipleDiagnostics,
         humanizeParameterGaps: humanizeParameterGaps,
         buildClarificationQuestion: buildClarificationQuestion
     };

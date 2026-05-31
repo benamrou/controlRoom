@@ -23,6 +23,7 @@ import { ChipModule } from 'primeng/chip';
 
 /* ICR Shared */
 import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header.module';
+import { I18nModule } from 'src/app/shared/pipes/i18n.module';
 
 @NgModule({
     imports: [
@@ -30,7 +31,7 @@ import { PageHeaderModule } from 'src/app/shared/modules/page-header/page-header
         StepsModule, InputTextModule, InputNumberModule, PasswordModule,
         ButtonModule, DropdownModule, MessageModule, MessagesModule,
         ProgressBarModule, ToastModule, DividerModule, TagModule,
-        CardModule, ChipModule, PageHeaderModule
+        CardModule, ChipModule, PageHeaderModule, I18nModule,
     ],
     declarations: [AiRetailerSetupComponent],
     exports: [AiRetailerSetupComponent],

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpService} from '../request/html.service';
-import {UserService} from '../user/user.service';
+import { UserService } from '../user/user.service';
 import {DatePipe} from '@angular/common';
 
 import {Observable, throwError} from 'rxjs';
@@ -42,10 +42,11 @@ export class QueryService {
   }
 
   private resolveLanguage(): string {
-    return (
-      this._userService.userInfo?.envDefaultLanguage
+    return UserService.normalizeLanguageCode(
+      this._userService.userInfo?.language
+      || this._userService.userInfo?.envDefaultLanguage
       || localStorage.getItem('ICRLanguage')
-      || 'us_US'
+      || 'us_US',
     );
   }
 

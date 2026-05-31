@@ -1,4 +1,6 @@
-import {Component, ViewEncapsulation, ViewChild, OnInit, Inject} from '@angular/core';
+import {Component, ViewEncapsulation, ViewChild, OnInit, OnDestroy, Inject} from '@angular/core';
+import { LabelService } from '../../../../shared/services/labels/labels.service';
+import { Subscription } from 'rxjs';
 import { SupplierService, ReportingReplenishmentService, ItemService, Pricing , Retail} from '../../../../shared/services';
 import {DatePipe, DOCUMENT} from '@angular/common';
 import { ICRChart } from 'src/app/shared/graph/chart/chart.component';
@@ -37,7 +39,7 @@ import { exit } from 'process';
     encapsulation: ViewEncapsulation.None
 })
 
-export class DashboardSupplierComponent {
+export class DashboardSupplierComponent implements OnInit, OnDestroy {
    
   @ViewChild('fc') fc!: FullCalendar;
 
@@ -133,12 +135,15 @@ export class DashboardSupplierComponent {
   focussedRetail: any;
 
   _document;
+  private _labelSub?: Subscription;
+
   constructor(@Inject(DOCUMENT) document: any,
               private datePipe: DatePipe,
               private _supplierService: SupplierService,
               private _reporting: ReportingReplenishmentService,
               private _itemService: ItemService,
-              private _messageService: MessageService) {
+              private _messageService: MessageService,
+              private _labels: LabelService) {
     this.screenID =  'SCR0000000011';
     datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
@@ -221,10 +226,65 @@ export class DashboardSupplierComponent {
       {label:'95074 - Floral', name: 'Produce', code: '95074'}
     ];
 
+    this.refreshTableLabels();
+
     for(let i=0; i < this.columsCollapse.length; i ++) {
       this.expandColumn(i);
     }
     this.displayResult = false;
+  }
+
+  ngOnInit(): void {
+    this._labelSub = this._labels.revision$.subscribe(() => this.refreshTableLabels());
+  }
+
+  private lbl(key: string, fallback: string): string {
+    return this._labels.text(key, fallback);
+  }
+
+  private refreshTableLabels(): void {
+    const h = (key: string, fb: string) => this.lbl(key, fb);
+    this.columsCollapse[0].header = h('S11.COL.WHS', 'Whs code');
+    this.columsCollapse[1].header = h('S11.COL.SUP', 'Supplier');
+    this.columsCollapse[2].header = h('S11.COL.ITEM', 'Item');
+    this.columsCollapse[3].header = h('S11.COL.PROMO', 'Promotion');
+    this.columsCollapse[4].header = h('S11.COL.INV', 'Inventory (Cases)');
+    this.columsCollapse[5].header = h('S11.COL.SVC', 'Service rate');
+    this.columsCollapse[6].header = h('S11.COL.FILL', 'Fill rate');
+    this.columsCollapse[7].header = h('S11.COL.REPL', 'Replenishment');
+    this.columsCollapse[8].header = h('S11.COL.STRDLV', 'Store delivery');
+    this.columsCollapse[9].header = h('S11.COL.ORD', 'Orderable');
+    this.columsCollapse[10].header = h('S11.COL.COST', 'Cost/Retail');
+
+    const cols = this.columnsResult;
+    cols[0].header = h('S11.C.WHS', 'Whs code');
+    cols[0].placeholder = h('S11.PH.WHS', 'Filter on warehouse');
+    cols[1].header = h('S11.C.VCODE', 'Supplier code');
+    cols[1].placeholder = h('S11.PH.VEND', 'Search by vendor');
+    cols[2].header = h('S11.C.VDESC', 'Supplier desc.');
+    cols[2].placeholder = h('S11.C.VDESC', 'Supplier desc.');
+    cols[3].header = h('S11.C.ICODE', 'Item code');
+    cols[3].placeholder = h('S11.PH.ITEM', 'Item code');
+    cols[4].header = h('S11.C.IDESC', 'Item desc.');
+    cols[4].placeholder = h('S11.PH.IDESC', 'Search by description');
+    cols[5].header = h('S11.C.CLASS', 'Class');
+    cols[6].header = h('S11.C.PROMO', 'Promo');
+    cols[7].header = h('S11.C.INV', 'Inventory');
+    cols[8].header = h('S11.C.LASTRCV', 'Last reception');
+    cols[9].header = h('S11.C.YEARLY', 'Yearly');
+    cols[10].header = h('S11.C.LASTSHP', 'Last shipment');
+    cols[11].header = h('S11.C.YEARLY', 'Yearly');
+    cols[12].header = h('S11.C.ORDON', 'Order on');
+    cols[13].header = h('S11.C.PLANDLV', 'Planned delivery');
+    cols[14].header = h('S11.C.RCVON', 'Received on');
+    cols[15].header = h('S11.C.QTYCSE', 'Qty (cases)');
+    cols[16].header = h('S11.C.STRDMD', 'Last store demand');
+    cols[17].header = h('S11.C.ORDABL', 'Orderable');
+    cols[18].header = h('S11.C.COSTU', 'Cost unit');
+    cols[19].header = h('S11.C.UNITDL', 'Unit deal');
+    cols[20].header = h('S11.C.NETCST', 'Net unit cost');
+    cols[21].header = h('S11.C.RETAIL', 'Retail');
+    cols[22].header = h('S11.C.MARGIN', 'Margin');
   }
 
   search() {
@@ -456,7 +516,7 @@ export class DashboardSupplierComponent {
   }
 
   selectItemFillRateHistory() {
-    this.chartFillRateHistory.label_graph = ['Item #' + this.focussedItem + ' Fill rate history'];
+    this.chartFillRateHistory.label_graph = ['Item #' + this.focussedItem + ' ' + this.lbl('S11.CHT.FILHIS', 'Fill rate history')];
 
     let dataItemFill = this.rawDataFillItem.filter((item: { ITEM_CODE: any; }) => item.ITEM_CODE === this.focussedItem);
     let data_labels = _.uniqBy(dataItemFill, 'X_LABELS');
@@ -475,7 +535,7 @@ export class DashboardSupplierComponent {
 
   selectItemServiceRateHistory (){
 
-    this.chartServiceRateHistory.label_graph = ['Item #' + this.focussedItem + ' Service rate history'];
+    this.chartServiceRateHistory.label_graph = ['Item #' + this.focussedItem + ' ' + this.lbl('S11.CHT.SVCHIS', 'Service rate history')];
 
     let dataItemService = this.rawDataServiceItem.filter((item: { ITEM_CODE: any; }) => item.ITEM_CODE === this.focussedItem);
     let data_labels = _.uniqBy(dataItemService, 'X_LABELS');
@@ -493,6 +553,7 @@ export class DashboardSupplierComponent {
   }
 
   ngOnDestroy() {
+    this._labelSub?.unsubscribe();
     for(let i=0; i< this.subscription.length; i++) {
       this.subscription[i].unsubscribe();
     }

@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
-<app-page-header [heading]="'AI Data Health'" [screenID]="screenID" [icon]="'fas fa-heartbeat'"></app-page-header>
+<app-page-header [heading]="'S61.TITLE' | lbl:'AI Data Health'" [screenID]="screenID" [icon]="'fas fa-heartbeat'"></app-page-header>
 
 <!-- Toolbar -->
 <div class="adh-toolbar p-mb-3">
@@ -10,7 +10,7 @@
       [options]="retailers"
       [(ngModel)]="selectedRetailer"
       optionLabel="RETAILER_NAME"
-      placeholder="Select retailer"
+      [placeholder]="'AI.CMN.SELRET' | lbl:'Select retailer...'"
       [showClear]="false"
       (onChange)="onRetailerChange()"
       [disabled]="loadingRetailers"
@@ -28,7 +28,7 @@
   </div>
 
   <div class="adh-toolbar-right" *ngIf="selectedRetailer">
-    <button pButton type="button" label="Run all" icon="pi pi-play"
+    <button pButton type="button" [label]="'S61.BTN.RUN' | lbl:'Run all'" icon="pi pi-play"
       class="p-button-sm p-button-outlined"
       pTooltip="Run every enabled check for the selected tier"
       tooltipPosition="bottom"
@@ -37,7 +37,7 @@
       (click)="runNow(selectedTier)">
     </button>
     <button pButton type="button" icon="pi pi-cog" class="p-button-sm p-button-text"
-      pTooltip="Configure checks" (click)="openConfig()">
+      [pTooltip]="'S61.BTN.CFG' | lbl:'Configure checks'" (click)="openConfig()">
     </button>
   </div>
 </div>
@@ -49,31 +49,31 @@
     (click)="setStatusFilter('ALL')"
     pTooltip="Show all configured checks" tooltipPosition="bottom">
     <span class="adh-summary-value">{{ summary.TOTAL_CHECKS }}</span>
-    <span class="adh-summary-label">Checks configured</span>
+    <span class="adh-summary-label">{{ 'S61.SUM.TOT' | lbl:'Checks configured' }}</span>
   </button>
   <button type="button" class="adh-summary-card adh-summary-card--filter adh-summary-card--ok"
     [class.adh-summary-card--active]="isStatusFilterActive('PASSING')"
     (click)="setStatusFilter('PASSING')"
     pTooltip="Show passing checks only" tooltipPosition="bottom">
     <span class="adh-summary-value adh-val--ok">{{ summary.CHECKS_OK }}</span>
-    <span class="adh-summary-label">Passing</span>
+    <span class="adh-summary-label">{{ 'S61.SUM.OK' | lbl:'Passing' }}</span>
   </button>
   <button type="button" class="adh-summary-card adh-summary-card--filter adh-summary-card--issue"
     [class.adh-summary-card--active]="isStatusFilterActive('ISSUES')"
     (click)="setStatusFilter('ISSUES')"
     pTooltip="Show checks with issues" tooltipPosition="bottom">
     <span class="adh-summary-value adh-val--issue">{{ summary.CHECKS_WITH_ISSUES }}</span>
-    <span class="adh-summary-label">With issues</span>
+    <span class="adh-summary-label">{{ 'S61.SUM.ISS' | lbl:'With issues' }}</span>
   </button>
   <button type="button" class="adh-summary-card adh-summary-card--filter adh-summary-card--critical"
     [class.adh-summary-card--active]="isStatusFilterActive('CRITICAL')"
     (click)="setStatusFilter('CRITICAL')"
     pTooltip="Show critical checks only" tooltipPosition="bottom">
     <span class="adh-summary-value adh-val--critical">{{ summary.CRITICAL_ISSUES }}</span>
-    <span class="adh-summary-label">Critical</span>
+    <span class="adh-summary-label">{{ 'S61.SUM.CRI' | lbl:'Critical' }}</span>
   </button>
   <div class="adh-summary-meta" *ngIf="summary.LAST_RUN_AT">
-    Last run: {{ summary.LAST_RUN_AT | date:'short' }}
+    {{ 'S61.LASTRUN' | lbl:'Last run:' }} {{ summary.LAST_RUN_AT | date:'short' }}
   </div>
 </div>
 
@@ -88,12 +88,12 @@
 <!-- No retailer selected -->
 <div class="adh-empty" *ngIf="!selectedRetailer">
   <i class="pi pi-database adh-empty-icon"></i>
-  <p>Select a retailer to view data health checks.</p>
+  <p>{{ 'S61.SELRET' | lbl:'Select a retailer to view data health checks.' }}</p>
 </div>
 
 <!-- Loading -->
 <div class="adh-loading" *ngIf="loadingCards">
-  <i class="pi pi-spin pi-spinner"></i> Loading checks...
+  <i class="pi pi-spin pi-spinner"></i> {{ 'S61.LOAD' | lbl:'Loading checks...' }}
 </div>
 
 <!-- Cards grid -->
@@ -161,7 +161,7 @@
           class="p-button-sm p-button-outlined"
           (click)="openDetail(card)">
         </button>
-        <button pButton type="button" label="Investigate" icon="pi pi-search"
+        <button pButton type="button" [label]="'S61.INVEST' | lbl:'Investigate'" icon="pi pi-search"
           class="p-button-sm p-button-outlined p-button-secondary"
           *ngIf="card.SKILL_CODE"
           (click)="investigate(card)">

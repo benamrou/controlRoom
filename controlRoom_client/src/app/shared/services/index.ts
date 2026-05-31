@@ -16,6 +16,7 @@ export * from './process/process.service';
 export * from './labels/labels.service';
 export * from './labels/labels.resolver.service';
 export * from './widget/widget.service';
+export * from './widget/widget.admin.service';
 export * from './finance/finance.service';
 export * from './scorecard/cao/scorecard.cao.service';
 export * from './query/query.service';
@@ -35,4 +36,5 @@ export * from './order/order.service';
 export * from './unix/unix.runner.service';
 export * from './alerts.icr/watch.icr.service';
 export * from './menu/menu-access.service';
+export * from './app-logs/app.logs.service';
 

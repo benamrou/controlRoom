@@ -1,0 +1,14 @@
+.widget-library {
+  .actions-col {
+    width: 7rem;
+    white-space: nowrap;
+  }
+
+  .desc-cell {
+    max-width: 420px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+

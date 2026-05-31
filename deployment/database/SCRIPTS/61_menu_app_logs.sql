@@ -1,0 +1,79 @@
+-- App logs screen — menu + ADMIN access (incremental; safe on existing DBs)
+SET DEFINE OFF;
+
+MERGE INTO ICR_MENU_ENTRY t
+USING (
+  SELECT 'ROUTE_APP_LOGS' AS MENU_CODE,
+         'GRP_SETTINGS' AS PARENT_CODE,
+         'ROUTE' AS MENU_TYPE,
+         'ADMIN' AS MENU_MODE,
+         '/app-logs' AS ROUTE_PATH,
+         'fas fa-file-alt' AS ICON_CLASS,
+         'App logs' AS LABEL_TEXT,
+         407 AS SORT_ORDER,
+         NULL AS EXPAND_KEY,
+         1 AS ACTIVE
+    FROM dual
+) s
+ON (t.MENU_CODE = s.MENU_CODE)
+WHEN MATCHED THEN UPDATE SET
+  t.PARENT_CODE = s.PARENT_CODE,
+  t.MENU_TYPE = s.MENU_TYPE,
+  t.MENU_MODE = s.MENU_MODE,
+  t.ROUTE_PATH = s.ROUTE_PATH,
+  t.ICON_CLASS = s.ICON_CLASS,
+  t.LABEL_TEXT = s.LABEL_TEXT,
+  t.SORT_ORDER = s.SORT_ORDER,
+  t.ACTIVE = s.ACTIVE
+WHEN NOT MATCHED THEN INSERT (
+  MENU_CODE, PARENT_CODE, MENU_TYPE, MENU_MODE, ROUTE_PATH,
+  ICON_CLASS, LABEL_TEXT, SORT_ORDER, EXPAND_KEY, ACTIVE
+) VALUES (
+  s.MENU_CODE, s.PARENT_CODE, s.MENU_TYPE, s.MENU_MODE, s.ROUTE_PATH,
+  s.ICON_CLASS, s.LABEL_TEXT, s.SORT_ORDER, s.EXPAND_KEY, s.ACTIVE
+);
+
+INSERT INTO ICR_MENU_ACCESS_RULE (MENU_CODE, FLAG_NAME)
+SELECT 'ROUTE_APP_LOGS', 'ADMIN'
+  FROM dual
+ WHERE NOT EXISTS (
+       SELECT 1 FROM ICR_MENU_ACCESS_RULE r
+        WHERE r.MENU_CODE = 'ROUTE_APP_LOGS' AND r.FLAG_NAME = 'ADMIN'
+ );
+
+INSERT INTO ICR_MENU_ACCESS_RULE (MENU_CODE, FLAG_NAME)
+SELECT 'ROUTE_APP_LOGS', 'IT'
+  FROM dual
+ WHERE NOT EXISTS (
+       SELECT 1 FROM ICR_MENU_ACCESS_RULE r
+        WHERE r.MENU_CODE = 'ROUTE_APP_LOGS' AND r.FLAG_NAME = 'IT'
+ );
+
+INSERT INTO ICR_PROFILE_MENU (PROFILE_ID, MENU_CODE, GRANTED)
+SELECT 1, 'ROUTE_APP_LOGS', 1
+  FROM dual
+ WHERE NOT EXISTS (
+       SELECT 1 FROM ICR_PROFILE_MENU pm
+        WHERE pm.PROFILE_ID = 1 AND pm.MENU_CODE = 'ROUTE_APP_LOGS'
+ );
+
+COMMIT;
+
+-- Screen help (optional)
+MERGE INTO TRA_TECHOBJ t
+USING (
+  SELECT 'SCR0000000070' AS TOBID,
+         'App logs' AS TOBCAT,
+         q'[<div><i class="bbs-keywords">What is it : </i>Unified operational logs for ICR: <b>server files</b> under <code>logs/admin/{date}/</code>, <b>CROOMLOG</b> (LIBQUERY / API audit), and <b>ALERTLOG</b> (alert runs).</div>]' AS TOBDESC,
+         q'[<div><i class="bbs-keywords">When to use : </i>Troubleshoot failed queries, alert notifications, watchdog/crontab activity, and per-user server traces. Retention is typically 30 days (maintenance job).</div>]' AS TOBDESC2
+    FROM dual
+) s
+ON (t.TOBID = s.TOBID)
+WHEN MATCHED THEN UPDATE SET
+  TOBCAT = s.TOBCAT, TOBDESC = s.TOBDESC, TOBDESC2 = s.TOBDESC2, TOBDMAJ = SYSDATE, TOBUTIL = 'admin'
+WHEN NOT MATCHED THEN INSERT (TOBID, TOBCAT, TOBDESC, TOBDESC2, TOBLANGUE, TOBDCRE, TOBDMAJ, TOBUTIL)
+VALUES (s.TOBID, s.TOBCAT, s.TOBDESC, s.TOBDESC2, 'us_US', SYSDATE, SYSDATE, 'admin');
+
+COMMIT;
+
+SET DEFINE ON;

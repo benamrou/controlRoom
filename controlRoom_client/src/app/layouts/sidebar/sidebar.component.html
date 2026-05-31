@@ -1,6 +1,6 @@
 <nav class="sidebar summer-sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
     *ngIf="_userService.userInfo" style="padding-top:1%">
-    <ul class="list-group">
+        <ul class="list-group">
         <a routerLink="/dashboard" routerLinkActive="router-link-active" class="list-group-item">
             <i class="fas fa-tachometer-alt"></i>&nbsp; Dashboard
         </a>
@@ -18,8 +18,8 @@
         <li *ngIf="menuAccess.loadFailed" class="p-3 text-muted small">
             Menu catalog not loaded. Run <strong>35_menu_access_libquery.sql</strong> (DDL block if needed),
             log out, and log in again.
-        </li>
-    </ul>
+                        </li>
+        </ul>
 </nav>
 
 <nav class="sidebar_admin summer-sidebar-admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
@@ -27,7 +27,7 @@
     <ul class="list-group" *ngIf="_userService.userInfo.type == '1' && menuAccess.adminTree.length">
         <app-sidebar-menu [nodes]="menuAccess.adminTree" [showMenu]="showMenu"
             (expand)="addExpandClass($event)"></app-sidebar-menu>
-    </ul>
+                    </ul>
     <div class="logo">
         <img style="width: 50%" *ngIf="_userService.userInfo.mainEnvironment[0]?.picture"
             [src]="_userService.userInfo.mainEnvironment[0].picture" alt="Picture">

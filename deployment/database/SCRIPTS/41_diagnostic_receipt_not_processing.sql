@@ -21,7 +21,7 @@ INSERT INTO AI_SKILL (
     'DA000003-D100-4A00-8100-D10000000003',
     'TEMPLATE',
     'RECEIPT_NOT_PROCESSING',
-    'Delivery receipt not processing — root cause',
+    'Delivery receipt not processing - root cause',
     'RECEIVING',
     'Diagnoses why a supplier delivery is not being confirmed or posted in GOLD. Checks PO existence, PO status, and STOMVT receipt movements.',
     1.0, 'DRAFT', 'SYSTEM', SYSTIMESTAMP, SYSTIMESTAMP

@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Smart UBD'" [icon]="'fa-clock'"
+<app-page-header [heading]="'S17.TITLE' | lbl:'Smart UBD'" [icon]="'fa-clock'"
                  [waitMessage]="waitMessage" [screenID]="screenID"></app-page-header>
                        
 <div class="content-section implementation" style="padding: 5px;">
@@ -11,8 +11,8 @@
                   pInputTextarea [autoResize]="true" style="margin-top: 1em; width:'100%'">
         </textarea>
         <ng-template pTemplate="footer">
-            <p-button icon="pi pi-times" (click)="displayComment=false" label="CANCEL" styleClass="p-button-warning"></p-button>
-            <p-button icon="pi pi-check" (click)="saveAddComment($any($event))" label="SAVE" styleClass="p-button-text"></p-button>
+            <p-button icon="pi pi-times" (click)="displayComment=false" [label]="'CMN.CANCEL' | lbl:'CANCEL'" styleClass="p-button-warning"></p-button>
+            <p-button icon="pi pi-check" (click)="saveAddComment($any($event))" [label]="'CMN.SAVE' | lbl:'SAVE'" styleClass="p-button-text"></p-button>
         </ng-template>
     </p-dialog>
 </div>
@@ -21,20 +21,20 @@
 
 <!-- Search Panel -->
 <div class="bbs_search_panel"  >
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Warehouse : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S17.LBL.WHS' | lbl:'Warehouse :' }} </span>
     <bbs-multiselect [options]="warehouses" 
                     (shareCheckedList)="shareCheckedList($any($event))" 
                     (shareCheckedCodeList)="shareCheckedCodeList($any($event))" 
                     (shareIndividualCheckedList)="shareIndividualCheckedList($event)">
     </bbs-multiselect>
-    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">Supplier : </span>
+    <span style="margin-right:2.2em; padding-left: 15px; font-weight: bolder">{{ 'S17.LBL.SUP' | lbl:'Supplier :' }} </span>
     <span style="padding-right: .5em;align-self: center;">
-        <input type="text"  [(ngModel)]="searchVendorCode" placeholder="  Enter a code or a description" 
+        <input type="text"  [(ngModel)]="searchVendorCode" [placeholder]="'S17.PLH.CODE' | lbl:'  Enter a code or a description'" 
                style="margin-left: 10px;height: 35px;width: 200%;"/>     
     </span>
 
     <span class="pull-right" style="padding-right: 20px">
-        <button type="submit" pButton (click)="search()" icon="fas fa-search" label="SEARCH" 
+        <button type="submit" pButton (click)="search()" icon="fas fa-search" [label]="'S17.BTN.SRCH' | lbl:'SEARCH'" 
                 [style]="{'height': '35px'}"
                 [disabled]="searchVendorCode == '' && selectedWarehouse.length === 0" 
                 style="margin-right: 15px"></button>
@@ -44,12 +44,12 @@
 </div>
 
 <div class="bbs_search_sub_panel"  >
-    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Nb days UBD ending : </span>
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S17.LBL.UBDEND' | lbl:'Nb days UBD ending :' }} </span>
     <p-inputNumber inputId="integeronly" [(ngModel)]="searchUBDend" style="height: 35px;"
                     [size]="3"  [max]="300" [maxlength]="3">
     </p-inputNumber>
 
-    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Nb days "Closed" UBD: </span>
+    <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S17.LBL.UBDCLS' | lbl:'Nb days Closed UBD:' }} </span>
     <p-inputNumber inputId="integeronly" [(ngModel)]="searchClosedUBD" style="height: 35px;"
                     [size]="3"  [max]="300" [maxlength]="3">
     </p-inputNumber>
@@ -80,13 +80,13 @@
                                 class="CSV_Button p-input-icon-left ml-auto"
                                 pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                 *ngIf="searchResult.length>0"
-                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                             </button>
                             <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
                                 pTooltip="{{csvButtonTooltip}}" [escape]="false"
                                 disabled *ngIf="searchResult.length==0"
-                                label="CSV" (click)="result.exportCSV()" style="float:left">
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left">
                             </button>
                     </span>
                 </div>
@@ -96,20 +96,20 @@
                                 class="CSV_Button p-input-icon-left ml-auto"
                                 pTooltip="{{recapButtonTooltip}}" [escape]="false"
                                 disabled *ngIf="searchResult.length==0"
-                                label="Recap" (click)="exportExcelRecap()" style="float:left">
+                                [label]="'S17.BTN.RECAP' | lbl:'Recap'" (click)="exportExcelRecap()" style="float:left">
                             </button>
                             <button type="button" pButton icon="pi pi-user" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
                                 pTooltip="{{recapButtonTooltip}}" [escape]="false"
                                 *ngIf="searchResult.length>0"
-                                label="Recap" (click)="exportExcelRecap()" style="float:left">
+                                [label]="'S17.BTN.RECAP' | lbl:'Recap'" (click)="exportExcelRecap()" style="float:left">
                             </button>
                     </span>
                 </div>
                 <div class="col-9" style="text-align: right;">
                     <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                        <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                     </span>
                 </div>
             </div>
@@ -139,13 +139,13 @@
                     <div class="pull-right p-input-icon-right FILTER_Right_Table">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Global Search" />
+                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.GLBSRH' | lbl:'Global Search'" />
                         </span>
                     </div>
                     <div >
                         <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
-                                label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left"></button>
                     </div>
                 </div>
             </ng-template>

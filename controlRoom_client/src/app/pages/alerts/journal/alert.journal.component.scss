@@ -762,24 +762,27 @@
     padding: 0;
 }
 
-/* Tab View Styling */
-:host ::ng-deep .p-tabview .p-tabview-nav {
-    background: #f8f9fa;
+/* Tab View Styling — scoped under .alert-log-journal (avoids global .p-tabview leaks) */
+:host ::ng-deep .alert-log-journal .p-tabview .p-tabview-nav {
+    background: #f8f9fa !important;
     border-bottom: 2px solid #dee2e6;
 }
 
-:host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+:host ::ng-deep .alert-log-journal .p-tabview .p-tabview-nav li .p-tabview-nav-link {
     padding: 12px 20px;
     font-weight: 600;
-    color: #495057;
+    color: #495057 !important;
+    background: transparent !important;
+    border: none;
 }
 
-:host ::ng-deep .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
-    color: #667eea;
+:host ::ng-deep .alert-log-journal .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    color: #667eea !important;
+    background: #fff !important;
     border-bottom: 3px solid #667eea;
 }
 
-:host ::ng-deep .p-tabview .p-tabview-panels {
+:host ::ng-deep .alert-log-journal .p-tabview .p-tabview-panels {
     padding: 15px;
     background: #f8f9fa;
 }

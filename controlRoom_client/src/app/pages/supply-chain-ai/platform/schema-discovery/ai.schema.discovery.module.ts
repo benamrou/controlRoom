@@ -18,6 +18,7 @@ import { ToastModule }        from "primeng/toast";
 import { TooltipModule }      from "primeng/tooltip";
 
 import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header.module";
+import { I18nModule } from "src/app/shared/pipes/i18n.module";
 
 @NgModule({
     imports: [
@@ -25,7 +26,7 @@ import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header
         DropdownModule, ButtonModule, TagModule, TableModule,
         DialogModule, ProgressBarModule, InputTextModule,
         InputTextareaModule, InputSwitchModule, ToastModule,
-        TooltipModule, PageHeaderModule
+        TooltipModule, PageHeaderModule, I18nModule,
     ],
     declarations: [AiSchemaDiscoveryComponent],
     exports: [AiSchemaDiscoveryComponent],

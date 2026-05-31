@@ -1,4 +1,4 @@
-<app-page-header [heading]="'Next PPG'"  [icon]="'fa-list-ol'"
+<app-page-header [heading]="'S33.TITLE' | lbl:'Next PPG'"  [icon]="'fa-list-ol'"
                  [waitMessage]="waitMessage" [screenID]="screenID" [headcolor]="'gold'" [linkcolor]="'chocolate'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
@@ -34,13 +34,13 @@
             class="CSV_Button p-input-icon-left ml-auto"
             pTooltip="Export to EXCEL" [escape]="false"
             *ngIf="searchResult.length>0"
-            label="CSV" (click)="exportExcelRecap(availablePPG,3)" style="float:left">
+            [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap(availablePPG,3)" style="float:left">
         </button>
         <button type="button" pButton icon="fas fa-file" iconPos="left" 
             class="CSV_Button p-input-icon-left ml-auto"
             pTooltip="Export to EXCEL" [escape]="false"
             disabled *ngIf="searchResult.length==0"
-            label="CSV" (click)="exportExcelRecap(availablePPG,3)" style="float:left">
+            [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap(availablePPG,3)" style="float:left">
         </button>
     </span>
       <div class="row">
@@ -109,20 +109,20 @@
                                   class="CSV_Button p-input-icon-left ml-auto"
                                   pTooltip="Export to EXCEL" [escape]="false"
                                   *ngIf="searchResult.length>0"
-                                  label="CSV" (click)="exportExcelRecap(searchResult,1)" style="float:left">
+                                  [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap(searchResult,1)" style="float:left">
                               </button>
                               <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                   class="CSV_Button p-input-icon-left ml-auto"
                                   pTooltip="Export to EXCEL" [escape]="false"
                                   disabled *ngIf="searchResult.length==0"
-                                  label="CSV" (click)="exportExcelRecap(searchResult,1)" style="float:left">
+                                  [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap(searchResult,1)" style="float:left">
                               </button>
                           </span>
                       </div>
                       <div class="col-6" style="text-align: right;">
                           <span class="p-input-icon-right">
                               <i class="pi pi-search"></i>
-                              <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                              <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                           </span>
                       </div>
                   </div>
@@ -179,20 +179,20 @@
                                 class="CSV_Button p-input-icon-left ml-auto"
                                 pTooltip="Export to EXCEL" [escape]="false"
                                 *ngIf="searchResult.length>0"
-                                label="CSV" (click)="exportExcelRecap(recyclablePPG,2)" style="float:left">
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap(recyclablePPG,2)" style="float:left">
                             </button>
                             <button type="button" pButton icon="fas fa-file" iconPos="left" 
                                 class="CSV_Button p-input-icon-left ml-auto"
                                 pTooltip="Export to EXCEL" [escape]="false"
                                 disabled *ngIf="searchResult.length==0"
-                                label="CSV" (click)="exportExcelRecap(recyclablePPG,2)" style="float:left">
+                                [label]="'CMN.CSV' | lbl:'CSV'" (click)="exportExcelRecap(recyclablePPG,2)" style="float:left">
                             </button>
                         </span>
                     </div>
                     <div class="col-6" style="text-align: right;">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" placeholder="Type text to filter..." />
+                            <input pInputText type="text" (input)="result.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
                         </span>
                     </div>
                 </div>

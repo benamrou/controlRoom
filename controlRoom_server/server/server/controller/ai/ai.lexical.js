@@ -401,6 +401,75 @@ function extractBindsFromHints(rawText, hints) {
     return { entities: entities, matches: matches };
 }
 
+/**
+ * Relative date resolution — converts common English temporal expressions
+ * to absolute YYYY-MM-DD ranges so buildExecuteContext can set _date_explicit=true
+ * and MOVEMENT/HISTORY/LOG templates are not wrongly demoted by the temporal guard.
+ *
+ * Returns { date_from, date_to } or null when no relative date is detected.
+ */
+function extractRelativeDate(text) {
+    const t = String(text || "").toLowerCase();
+    const now = new Date();
+    function fmt(d) {
+        return d.getFullYear() + "-"
+            + String(d.getMonth() + 1).padStart(2, "0") + "-"
+            + String(d.getDate()).padStart(2, "0");
+    }
+    function dayOffset(d, n) {
+        const r = new Date(d);
+        r.setDate(r.getDate() + n);
+        return r;
+    }
+
+    if (/\byesterday\b/.test(t)) {
+        const y = dayOffset(now, -1);
+        return { date_from: fmt(y), date_to: fmt(y) };
+    }
+    if (/\btoday\b/.test(t)) {
+        return { date_from: fmt(now), date_to: fmt(now) };
+    }
+    if (/\blast\s+week\b/.test(t)) {
+        // Mon–Sun of the previous calendar week
+        const dayOfWeek = now.getDay() || 7;           // 1=Mon .. 7=Sun
+        const startOfThisWeek = dayOffset(now, -(dayOfWeek - 1));
+        const end   = dayOffset(startOfThisWeek, -1);  // last Sunday
+        const start = dayOffset(startOfThisWeek, -7);  // last Monday
+        return { date_from: fmt(start), date_to: fmt(end) };
+    }
+    if (/\bthis\s+week\b/.test(t)) {
+        const dayOfWeek = now.getDay() || 7;
+        const start = dayOffset(now, -(dayOfWeek - 1));
+        return { date_from: fmt(start), date_to: fmt(now) };
+    }
+    if (/\bthis\s+month\b/.test(t)) {
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        return { date_from: fmt(start), date_to: fmt(now) };
+    }
+    if (/\blast\s+month\b/.test(t)) {
+        const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const end   = new Date(now.getFullYear(), now.getMonth(), 0);
+        return { date_from: fmt(start), date_to: fmt(end) };
+    }
+    // "last N days" / "past N days"
+    const m = t.match(/\b(?:last|past)\s+(\d+)\s+days?\b/);
+    if (m) {
+        const n = parseInt(m[1], 10);
+        if (!isNaN(n) && n > 0 && n <= 3650) {
+            return { date_from: fmt(dayOffset(now, -n)), date_to: fmt(now) };
+        }
+    }
+    // "last N weeks"
+    const mw = t.match(/\b(?:last|past)\s+(\d+)\s+weeks?\b/);
+    if (mw) {
+        const n = parseInt(mw[1], 10);
+        if (!isNaN(n) && n > 0) {
+            return { date_from: fmt(dayOffset(now, -n * 7)), date_to: fmt(now) };
+        }
+    }
+    return null;
+}
+
 module.exports = {
     normalize: normalize,
     stem: stem,
@@ -410,5 +479,6 @@ module.exports = {
     jaccard: jaccard,
     overlap: intersectionCount,
     extractBindsFromHints: extractBindsFromHints,
+    extractRelativeDate: extractRelativeDate,
     STOPWORDS: STOPWORDS
 };

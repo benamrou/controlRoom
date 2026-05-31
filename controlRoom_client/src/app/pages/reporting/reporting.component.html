@@ -1,11 +1,11 @@
-<app-page-header [heading]="'Reporting Tool Box'" [icon]="'fa-calendar'"></app-page-header>
+<app-page-header [heading]="'RT.RPTBOX' | lbl:'Reporting Tool Box'" [icon]="'fa-calendar'"></app-page-header>
 
 <div class="content-section implementation" style="padding: 5px;">
     <p-toast [style]="{marginTop: '80px'}" position="top-right"></p-toast>
 </div>
 
 <div class="bbs_search_panel"  >
-    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">Reporting : </span>
+    <span style="margin-right:20px; padding-left: 15px; font-weight: bolder">{{ 'RT.RPT.LBL' | lbl:'Reporting :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 90%; line-height: 25px">
         <p-autoComplete [(ngModel)]="selectedReport" [suggestions]="filteredReports" 
                         (completeMethod)="filterReports($event)" [size]="30"
@@ -20,7 +20,7 @@
     </span>
 
     <span class="pull-right" style="padding-right: 20px">
-        <button type="submit" pButton (click)="openReport()" icon="fas fa-search" label="OPEN" [disabled]="searchCode === ''" style="margin-right: 15px" 
+        <button type="submit" pButton (click)="openReport()" icon="fas fa-search" [label]="'RT.BTN.OPEN' | lbl:'OPEN'" [disabled]="searchCode === ''" style="margin-right: 15px" 
                 [style]="{'height': '35px'}" style="margin-right: 15px"></button>
         <button type="submit" pButton (click)="search()" icon="fas fa-sync-alt" [disabled]="true"
                 [style]="{'height': '35px'}"></button>
@@ -64,14 +64,14 @@
     < FILTER >
     <ng-template pTemplate="caption">
             <div class="pull-right">
-                    <input  type="text" #gb placeholder="Type text to filter..." 
+                    <input  type="text" #gb [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" 
                         (input)="result.filterGlobal($any($event.target).value, 'contains')" 
                         [style.width]="40*widget.width +'px'">
                     </div>
                     <div class="ui-helper-clearfix" >
                     <button type="button" pButton icon="fas fa-file" iconPos="left" 
                         class="CSV_Button"
-                        label="CSV" (click)="result.exportCSV()" style="float:left"></button>
+                        [label]="'CMN.CSV' | lbl:'CSV'" (click)="result.exportCSV()" style="float:left"></button>
                     </div>
     </ng-template>
     <-- HEADER >

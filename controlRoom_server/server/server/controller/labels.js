@@ -40,7 +40,7 @@ let module = {};
 * @param {Object} response is the server response 
 * @return {Boolean} Returns the item general information
 *
-* sub-module calls LIBQUERY entry LAB0000001
+* sub-module calls LIBQUERY entry LAB0000002 (TRA_LABELS by language)
 */
 module.get = function (request,response) {
         app.get('/api/labels/', function (request, response) {
@@ -48,13 +48,14 @@ module.get = function (request,response) {
         response.setHeader('Access-Control-Allow-Origin', '*');
         // requestuest methods you wish to allow
         response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        var lang = request.header('LANGUAGE') || 'us_US';
         //module.executeLibQuery = function (queryNum, params, user, database_sid, language, request, response) 
         SQL.executeLibQuery(SQL.getNextTicketID(),
-                           "LAB0000001", 
-                            "'{" + request.query.PARAM + "}'",
+                           "LAB0000002", 
+                            "'{" + lang + "}'",
                             request.header('USER'),
                             "'{" + request.header('DATABASE_SID') + "}'", 
-                            "'{" +request.header('LANGUAGE') + "}'", 
+                            "'{" + lang + "}'", 
                             request, response);
         });
     };

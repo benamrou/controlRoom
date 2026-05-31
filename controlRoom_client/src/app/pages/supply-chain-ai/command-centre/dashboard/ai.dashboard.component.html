@@ -1,14 +1,14 @@
-<app-page-header [heading]="'AI Dashboard'" [icon]="'fas fa-tachometer-alt'"></app-page-header>
+<app-page-header [heading]="'S76.TITLE' | lbl:'AI Dashboard'" [icon]="'fas fa-tachometer-alt'"></app-page-header>
 
 <p-toast></p-toast>
 
 <div class="ai-module-container">
   <div class="ai-topbar">
-    <label><i class="fas fa-store"></i> Retailer</label>
+    <label><i class="fas fa-store"></i> {{ 'S76.LBL.RET' | lbl:'Retailer' }}</label>
     <p-dropdown [options]="retailers"
                 [(ngModel)]="selectedRetailer"
                 optionLabel="RETAILER_NAME"
-                placeholder="Select retailer..."
+                [placeholder]="'S76.PLH.RET' | lbl:'Select retailer...'"
                 [loading]="loadingRetailers"
                 (onChange)="onRetailerChange()">
     </p-dropdown>
@@ -16,37 +16,37 @@
 
   <div class="ai-wip-notice" *ngIf="!selectedRetailer">
     <i class="fas fa-tachometer-alt"></i>
-    <h3>Select a retailer</h3>
-    <p>Dashboard KPIs load from existing AI LIBQUERY status endpoints.</p>
+    <h3>{{ 'S76.MSG.SEL' | lbl:'Select a retailer' }}</h3>
+    <p>{{ 'S76.MSG.KPI' | lbl:'Dashboard KPIs load from AI status endpoints.' }}</p>
   </div>
 
   <div *ngIf="selectedRetailer" class="ai-kpi-grid">
-    <p-card header="Context Learning">
+    <p-card [header]="'S76.CRD.CTX' | lbl:'Context Learning'">
       <div class="kpi-main">{{ lockedContext }} / {{ totalContext }}</div>
-      <div class="kpi-sub">Knowledge items locked</div>
-      <p-tag [value]="requiredReady ? 'Required ready' : 'In progress'"
-             [severity]="requiredReady ? 'success' : 'warning'"></p-tag>
+      <div class="kpi-sub">{{ 'S76.SUB.LOCK' | lbl:'Knowledge items locked' }}</div>
+      <p-tag *ngIf="requiredReady" [value]="'S76.TAG.READY' | lbl:'Required ready'" severity="success"></p-tag>
+      <p-tag *ngIf="!requiredReady" [value]="'S76.TAG.PROG' | lbl:'In progress'" severity="warning"></p-tag>
     </p-card>
 
-    <p-card header="Required Items">
+    <p-card [header]="'S76.CRD.REQ' | lbl:'Required Items'">
       <div class="kpi-main">{{ requiredLocked }} / {{ requiredContext }}</div>
-      <div class="kpi-sub">Priority-1 items locked</div>
+      <div class="kpi-sub">{{ 'S76.SUB.PRI' | lbl:'Priority-1 items locked' }}</div>
     </p-card>
 
-    <p-card header="Avg Confidence">
+    <p-card [header]="'S76.CRD.CONF' | lbl:'Avg Confidence'">
       <div class="kpi-main">{{ avgConfidencePct }}%</div>
-      <div class="kpi-sub">Across all catalog items</div>
+      <div class="kpi-sub">{{ 'S76.SUB.AVG' | lbl:'Across all catalog items' }}</div>
     </p-card>
 
-    <p-card header="Active Item View">
-      <div *ngIf="loadingView">Loading...</div>
+    <p-card [header]="'S76.CRD.VIEW' | lbl:'Active Item View'">
+      <div *ngIf="loadingView">{{ 'CMN.LOADING' | lbl:'Loading...' }}</div>
       <ng-container *ngIf="!loadingView">
         <div class="kpi-main" *ngIf="viewStatus?.VIEW_NAME || viewStatus?.view_name">
           {{ viewStatus?.VIEW_NAME || viewStatus?.view_name }}
         </div>
-        <div class="kpi-sub" *ngIf="viewStatus?.VIEW_NAME || viewStatus?.view_name">Generated view</div>
-        <p-tag [value]="(viewStatus?.VIEW_NAME || viewStatus?.view_name) ? 'Available' : 'Not generated'"
-               [severity]="(viewStatus?.VIEW_NAME || viewStatus?.view_name) ? 'success' : 'danger'"></p-tag>
+        <div class="kpi-sub" *ngIf="viewStatus?.VIEW_NAME || viewStatus?.view_name">{{ 'S76.SUB.VIEW' | lbl:'Generated view' }}</div>
+        <p-tag *ngIf="viewStatus?.VIEW_NAME || viewStatus?.view_name" [value]="'S76.TAG.AVAIL' | lbl:'Available'" severity="success"></p-tag>
+        <p-tag *ngIf="!(viewStatus?.VIEW_NAME || viewStatus?.view_name)" [value]="'S76.TAG.NGEN' | lbl:'Not generated'" severity="danger"></p-tag>
       </ng-container>
     </p-card>
   </div>

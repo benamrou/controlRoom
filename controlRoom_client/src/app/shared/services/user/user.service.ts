@@ -131,7 +131,7 @@ export class User {
                  this.userInfo.corporate = data[0].USERCORP; // @ts-ignore
                  this.userInfo.password = data[0].USERPASS;
                  this.userInfo.authentificationMethod = data[0].USERAUTH; // @ts-ignore
-                 this.userInfo.language = data[0].USERLANG; 
+                 this.userInfo.language = UserService.normalizeLanguageCode(data[0].USERLANG);
                  this.userInfo.profile = data[0].USERPROF;
                  this.userInfo.application = data[0].USERAPPLI;
                  this.userInfo.firstname = data[0].USERFNAME;
@@ -156,6 +156,10 @@ export class User {
                  //console.log ('data[0] : ' + JSON.stringify(data[0]));
                  //console.log ('USERLNAME : ' + data[0].USERLNAME);
                  this.userInfo.userNameDisplay = this.userInfo.firstname + ' ' + this.userInfo.lastname.substring(0,1) + '.';
+                 if (this.userInfo.language) {
+                   localStorage.setItem('ICRLanguage', this.userInfo.language);
+                   this.ICRLanguage = this.userInfo.language;
+                 }
                  return this.userInfo;
              }));
    }
@@ -350,10 +354,31 @@ export class User {
          }
      }
  
-     setMainLanguage (newLanguage: string) {
-         this.userInfo.envDefaultLanguage =newLanguage;
-         localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
-         this.ICRLanguage = this.userInfo.envDefaultLanguage;
+     /** Normalize legacy header code and empty values. */
+     static normalizeLanguageCode(lang: string | null | undefined): string {
+         const v = (lang || '').trim();
+         if (!v) {
+             return 'us_US';
+         }
+         if (v === 'en_EN') {
+             return 'en_GB';
+         }
+         return v;
+     }
+
+     /** Session UI language — updates USERLANG, env default, and ICRLanguage (menu + labels). */
+     applyUiLanguage(newLanguage: string): void {
+         const lang = UserService.normalizeLanguageCode(newLanguage);
+         if (this.userInfo) {
+             this.userInfo.language = lang;
+             this.userInfo.envDefaultLanguage = lang;
+         }
+         this.ICRLanguage = lang;
+         localStorage.setItem('ICRLanguage', lang);
+     }
+
+     setMainLanguage(newLanguage: string) {
+         this.applyUiLanguage(newLanguage);
      }
    
      setNetwork(in_network, in_networkTree) {
