@@ -66,6 +66,7 @@ export class LogginService{
                     localStorage.setItem('ICRUser', data.USERID);
                     localStorage.setItem('ICRSID', '');
                     localStorage.setItem('ICRLanguage', '');
+                    localStorage.setItem('ICRUiLanguage', '');
                     // return true to indicate successful login
                     return true;
                 } 
@@ -81,5 +82,6 @@ export class LogginService{
         localStorage.removeItem('ICRAuthToken');
         localStorage.removeItem('ICRSID');
         localStorage.removeItem('ICRLanguage');
+        localStorage.removeItem('ICRUiLanguage');
     }
 }

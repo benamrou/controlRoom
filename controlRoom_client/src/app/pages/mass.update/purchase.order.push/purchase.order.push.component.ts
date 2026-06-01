@@ -245,7 +245,7 @@ export class PurchaseOrderPushComponent implements OnInit{
                         this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 2/4: Executing plan', detail:  this.uploadedFiles[0].name + ' processing plan is now being executed.'});
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
-                                    //console.log('data userID : ', data);
+                                    console.log('data userID : ', data);
                                     userID = data[0].RESULT;
                                 },
                                 error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },

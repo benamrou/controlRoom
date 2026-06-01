@@ -46,14 +46,9 @@ export class LabelService {
     private _query: QueryService,
   ) {}
 
-  /** Active UI language — USERLANG, then env default, then localStorage. */
+  /** Active UI language (TRA_LABELS) — USERLANG / ICRUiLanguage only. */
   resolveLanguage(): string {
-    return UserService.normalizeLanguageCode(
-      this._userService.userInfo?.language
-      || this._userService.userInfo?.envDefaultLanguage
-      || localStorage.getItem('ICRLanguage')
-      || 'us_US',
-    );
+    return UserService.resolveUiLanguage(this._userService.userInfo);
   }
 
   /** Lookup TRA_LABELS by TLAID; optional fallback when key missing. */
@@ -77,7 +72,6 @@ export class LabelService {
   loadForLanguage(lang?: string): Observable<void> {
     const active = UserService.normalizeLanguageCode(lang || this.resolveLanguage());
     this.language = active;
-    this._userService.applyUiLanguage(active);
     return this._query.getQueryResult('LAB0000002', [active]).pipe(
       tap((raw) => this.indexLabelRows(raw)),
       map(() => undefined),

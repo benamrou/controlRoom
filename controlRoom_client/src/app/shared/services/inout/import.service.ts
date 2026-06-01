@@ -137,6 +137,56 @@ export class ImportService{
 
    }
 
+   /**
+    * MAS0000002 may return row array [{ RESULT | USERID | JSONUSERID }] or columnar { RESULT: [val] }.
+    * Used only for the batch -u flag; $USERID in psint05p/psifa*p is expanded on the GOLD host.
+    */
+   static extractExecutionPlanUserId(data: unknown): string {
+        if (data == null) {
+            return '';
+        }
+        if (typeof data === 'string' || typeof data === 'number') {
+            const s = String(data).trim();
+            return s;
+        }
+        if (Array.isArray(data)) {
+            if (!data.length) {
+                return '';
+            }
+            return ImportService.extractExecutionPlanUserId(data[0]);
+        }
+        if (typeof data === 'object') {
+            const row = data as Record<string, unknown>;
+            const columnKeys = ['RESULT', 'USERID', 'JSONUSERID', 'JSONUSER', 'USER'];
+            for (const key of columnKeys) {
+                const col = row[key];
+                if (Array.isArray(col) && col.length && col[0] != null) {
+                    const v = String(col[0]).trim();
+                    if (v) {
+                        return v;
+                    }
+                }
+            }
+            const rowKeys = ['RESULT', 'USERID', 'JSONUSERID', 'JSONUSER', 'USER', 'result', 'userid', 'jsonuserid'];
+            for (const key of rowKeys) {
+                const v = row[key];
+                if (v != null && !Array.isArray(v)) {
+                    const s = String(v).trim();
+                    if (s) {
+                        return s;
+                    }
+                }
+            }
+            const values = Object.values(row).filter(
+                (v) => v != null && !Array.isArray(v) && String(v).trim() !== ''
+            );
+            if (values.length === 1) {
+                return String(values[0]).trim();
+            }
+        }
+        return '';
+    }
+
    execute (executionId: any) {
     //console.log('postFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
     this.request = this.executeUploadJSONUrl;
@@ -149,8 +199,8 @@ export class ImportService{
     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this._http.get(this.request, this.params, headersSearch).pipe(map(response => {
-            let data = <any> response;
-            return data;
+            const planUserId = ImportService.extractExecutionPlanUserId(response);
+            return [{ RESULT: planUserId }];
     }));
     
     }
@@ -240,10 +290,17 @@ export class ImportService{
             default:
                 console.log ('Unknown mass tool id : ', toolId);
         }
-        if(userID) {
-            command = command + ' -u' + userID;
+        const planUser = ImportService.extractExecutionPlanUserId(
+            userID != null && typeof userID === 'object' ? userID : [{ RESULT: userID }]
+        );
+        if (planUser) {
+            command = command + ' -u' + planUser;
+        } else {
+            console.warn('executePlan: no execution-plan user id from MAS0000002 (-u flag omitted)');
         }
-        
+
+        console.log('userID', userID, 'planUser', planUser);
+
         command = command + ' ' + this._userService.userInfo.envDefaultLanguage + ' 1;'
 
         console.log(' command :', command)

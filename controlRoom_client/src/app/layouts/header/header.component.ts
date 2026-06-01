@@ -70,11 +70,19 @@ export class HeaderComponent implements OnInit {
 	}
 
 	get currentUiLanguage(): string {
-		return this._labelService.resolveLanguage();
+		return UserService.resolveUiLanguage(this._userService.userInfo);
 	}
 
-	currentLanguageLabel(): string {
+	currentUiLanguageLabel(): string {
 		return uiLanguageLabel(this.currentUiLanguage);
+	}
+
+	currentDataLanguage(): string {
+		return UserService.resolveDataLanguage(this._userService.userInfo);
+	}
+
+	currentDataLanguageLabel(): string {
+		return uiLanguageLabel(this.currentDataLanguage()) || this.currentDataLanguage();
 	}
 
 	isLanguageActive(langId: string): boolean {
@@ -208,7 +216,7 @@ export class HeaderComponent implements OnInit {
 				this._msg.add({
 					severity: 'success',
 					summary: 'Language',
-					detail: `UI language set to ${this.currentLanguageLabel()}.`,
+					detail: `UI language set to ${this.currentUiLanguageLabel()}. Data language remains ${this.currentDataLanguageLabel()}.`,
 					life: 2500,
 				});
 			},

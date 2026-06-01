@@ -1,6 +1,9 @@
 import { UserService } from '../services/user/user.service';
 
-/** Canonical ICR UI languages — display text is fixed; LANID is stored in USERLANG / ICRLanguage. */
+/**
+ * Header UI language picker (us_US / en_GB / fr_FR) — stored in USERSROOM.USERLANG + ICRUiLanguage.
+ * Job/data language comes from CORPENV.ENVDEFLANG (ICRLanguage) and drives LIBQUERY / GOLD dictionary text.
+ */
 export const UI_LANGUAGE_IDS = ['us_US', 'en_GB', 'fr_FR'] as const;
 
 export type UiLanguageId = typeof UI_LANGUAGE_IDS[number];

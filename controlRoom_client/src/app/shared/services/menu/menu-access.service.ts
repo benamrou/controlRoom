@@ -110,12 +110,7 @@ export class MenuAccessService {
 
   /** User UI language for ICR_MENU_LABEL join (:param2 on SET0000040/0041). */
   private resolveMenuLanguage(): string {
-    return UserService.normalizeLanguageCode(
-      this._user.userInfo?.language
-      || this._user.userInfo?.envDefaultLanguage
-      || localStorage.getItem('ICRLanguage')
-      || 'us_US',
-    );
+    return UserService.resolveUiLanguage(this._user.userInfo);
   }
 
   /** Load effective menu + header actions (login). Not tied to GOLD environment switching. */
@@ -133,12 +128,6 @@ export class MenuAccessService {
     if (this._user.userInfo) {
       if (!this._user.userInfo.sid?.length && sid) {
         this._user.userInfo.sid = [sid];
-      }
-      if (!this._user.userInfo.envDefaultLanguage) {
-        const lang = localStorage.getItem('ICRLanguage');
-        if (lang) {
-          this._user.userInfo.envDefaultLanguage = lang;
-        }
       }
     }
     const safeRows = (data: unknown): Record<string, unknown>[] => {

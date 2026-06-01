@@ -41,13 +41,9 @@ export class QueryService {
     return sid != null && String(sid).trim() !== '' ? String(sid) : '';
   }
 
+  /** CORPENV.ENVDEFLANG for the active GOLD environment — not the UI language picker. */
   private resolveLanguage(): string {
-    return UserService.normalizeLanguageCode(
-      this._userService.userInfo?.language
-      || this._userService.userInfo?.envDefaultLanguage
-      || localStorage.getItem('ICRLanguage')
-      || 'us_US',
-    );
+    return UserService.resolveDataLanguage(this._userService.userInfo);
   }
 
   getQueryResult(queryId: string, param?: any[]) {

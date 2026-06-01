@@ -442,9 +442,9 @@ export class SettingsAdminService {
     return this.getRows(Q.LABELS_COVERAGE, [(targetLanguage || 'en_GB').trim()]);
   }
 
-  /** USERLANG / ICRLanguage for widget catalog and other admin reads. */
+  /** USERSROOM.USERLANG / ICRUiLanguage — not CORPENV.ENVDEFLANG. */
   static resolveUiLanguage(): string {
-    return UserService.normalizeLanguageCode(localStorage.getItem('ICRLanguage') || 'us_US');
+    return UserService.resolveUiLanguage();
   }
 
   listAccessProfiles(): Observable<Record<string, unknown>[]> {

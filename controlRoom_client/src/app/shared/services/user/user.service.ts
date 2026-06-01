@@ -157,8 +157,7 @@ export class User {
                  //console.log ('USERLNAME : ' + data[0].USERLNAME);
                  this.userInfo.userNameDisplay = this.userInfo.firstname + ' ' + this.userInfo.lastname.substring(0,1) + '.';
                  if (this.userInfo.language) {
-                   localStorage.setItem('ICRLanguage', this.userInfo.language);
-                   this.ICRLanguage = this.userInfo.language;
+                   this.applyUiLanguage(this.userInfo.language);
                  }
                  return this.userInfo;
              }));
@@ -299,9 +298,8 @@ export class User {
 
                  console.log('ICRSID', this.userInfo);
                  localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
-                 localStorage.setItem('ICRLanguage', this.userInfo.envDefaultLanguage);
                  this.ICRSID = this.userInfo.sid[0].toString();
-                 this.ICRLanguage= this.userInfo.envDefaultLanguage;
+                 this.applyDataLanguage(this.userInfo.envDefaultLanguage || 'us_US');
                  
                  //console.log('Env: ' + JSON.stringify (this.userInfo));
          }));
@@ -351,6 +349,7 @@ export class User {
              this.userInfo.sid.push(primary.dbLink);
              this.ICRSID = String(primary.dbLink);
              localStorage.setItem('ICRSID', this.ICRSID);
+             this.applyDataLanguage(primary.defaultLanguage || this.userInfo.envDefaultLanguage || 'us_US');
          }
      }
  
@@ -366,17 +365,54 @@ export class User {
          return v;
      }
 
-     /** Session UI language — updates USERLANG, env default, and ICRLanguage (menu + labels). */
+     /** localStorage: UI chrome (TRA_LABELS, ICR_MENU_LABEL) — USERSROOM.USERLANG. */
+     static readonly LS_UI_LANGUAGE = 'ICRUiLanguage';
+     /** localStorage: job/data LANGUAGE header — CORPENV.ENVDEFLANG for active GOLD env. */
+     static readonly LS_DATA_LANGUAGE = 'ICRLanguage';
+
+     /** UI language for labels/menus — never falls back to ENVDEFLANG. */
+     static resolveUiLanguage(userInfo?: { language?: string } | null): string {
+         return UserService.normalizeLanguageCode(
+             userInfo?.language
+             || localStorage.getItem(UserService.LS_UI_LANGUAGE)
+             || 'us_US',
+         );
+     }
+
+     /** Data/job language for LIBQUERY and GOLD dictionary — from active environment. */
+     static resolveDataLanguage(userInfo?: {
+         envDefaultLanguage?: string;
+         mainEnvironment?: { defaultLanguage?: string }[];
+     } | null): string {
+         const main = userInfo?.mainEnvironment?.[0];
+         return UserService.normalizeLanguageCode(
+             main?.defaultLanguage
+             || userInfo?.envDefaultLanguage
+             || localStorage.getItem(UserService.LS_DATA_LANGUAGE)
+             || 'us_US',
+         );
+     }
+
+     /** Persist UI language only (header globe). Does not change CORPENV data language. */
      applyUiLanguage(newLanguage: string): void {
          const lang = UserService.normalizeLanguageCode(newLanguage);
          if (this.userInfo) {
              this.userInfo.language = lang;
+         }
+         localStorage.setItem(UserService.LS_UI_LANGUAGE, lang);
+     }
+
+     /** Persist job/data language from CORPENV.ENVDEFLANG (environment load/switch). */
+     applyDataLanguage(newLanguage: string): void {
+         const lang = UserService.normalizeLanguageCode(newLanguage);
+         if (this.userInfo) {
              this.userInfo.envDefaultLanguage = lang;
          }
          this.ICRLanguage = lang;
-         localStorage.setItem('ICRLanguage', lang);
+         localStorage.setItem(UserService.LS_DATA_LANGUAGE, lang);
      }
 
+     /** @deprecated Use applyUiLanguage — kept for legacy callers. */
      setMainLanguage(newLanguage: string) {
          this.applyUiLanguage(newLanguage);
      }

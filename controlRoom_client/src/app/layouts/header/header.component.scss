@@ -37,8 +37,7 @@
         &:hover { opacity: 0.78; }
     }
 
-    .env-current-label,
-    .lang-current-label {
+    .env-current-label {
         margin-left: 4px;
         font-size: 0.8rem;
         font-weight: 600;
@@ -50,8 +49,13 @@
     }
 
     .adh-lang-dropdown .dropdown-item.active {
+        color: darken($summer-coral, 12%) !important;
         font-weight: 700;
-        background: rgba($summer-coral, 0.12);
+        background: linear-gradient(
+            90deg,
+            rgba($summer-coral, 0.28) 0%,
+            rgba($summer-sun, 0.22) 100%
+        );
     }
 
     // ── Nav Links ────────────────────────────────────────────

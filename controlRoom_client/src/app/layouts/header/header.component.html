@@ -70,10 +70,10 @@
                             </button>
                         </li>
 
-        <!-- Panel Environment selection (GOLD central — Prod, Preprod, etc.) -->
+        <!-- GOLD environment (Prod, Preprod) — job/data language follows CORPENV.ENVDEFLANG -->
                         <li *ngIf="environments.length > 0" class="nav-item dropdown adh-env-dropdown">
                             <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown"
-                               [title]="'Database: ' + (selectedEnvironment || 'Environment')">
+                               [title]="'Environment: ' + (selectedEnvironment || '') + ' · Data language: ' + currentDataLanguageLabel()">
                                 <i class="fa fa-database"></i>
                                 <span class="env-current-label" *ngIf="selectedEnvironment">{{ selectedEnvironment }}</span>
                                 <b class="caret"></b><span class="sr-only"></span>
@@ -86,14 +86,13 @@
                             </div>
                         </li>
 
-        <!-- UI language (TRA_LABELS + ICR_MENU_LABEL) -->
+        <!-- UI language (TRA_LABELS + ICR_MENU_LABEL) — independent of CORPENV.ENVDEFLANG -->
                         <li class="nav-item dropdown adh-lang-dropdown">
                             <a href="javascript:void(0)" class="nav-link dropdown-toggle"
                                [ngClass]="{'isDisabled': _userService.userInfo.type == '2' || languageBusy}"
                                data-bs-toggle="dropdown"
-                               [title]="'Language: ' + currentLanguageLabel()">
+                               [title]="'UI language: ' + currentUiLanguageLabel()">
                                 <i class="fa fa-language"></i>
-                                <span class="lang-current-label">{{ currentLanguageLabel() }}</span>
                                 <b class="caret"></b>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right summer-dropdown">
