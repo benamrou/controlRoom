@@ -16,6 +16,7 @@ export class AiDataHealthService {
   private Q_RUN_CHECKS          = 'AI0000084';
   private Q_RUN_SINGLE_CHECK    = 'AI0000090';
   private Q_RUN_RESOLUTION_JOB    = 'AI0000091';
+  private Q_RUN_RESOLUTION_SQL    = 'AI0000092';
 
   constructor(
     private _query: QueryService,
@@ -24,7 +25,8 @@ export class AiDataHealthService {
 
   /** Resolution pipeline mode stored on AI_DATA_CHECK_DEF. */
   static readonly RESOLUTION_MODES = [
-    'NONE', 'LIBQUERY', 'JOB', 'LIBQUERY_JOB', 'SCRIPT', 'SCRIPT_JOB'
+    'NONE', 'LIBQUERY', 'JOB', 'LIBQUERY_JOB', 'SCRIPT', 'SCRIPT_JOB',
+    'SQL', 'SQL_JOB', 'SQL_SCRIPT', 'SQL_SCRIPT_JOB'
   ] as const;
 
   getChecksWithResults(retailerId: string, tier?: string) {
@@ -67,6 +69,9 @@ export class AiDataHealthService {
     RESOLUTION_JOB_NAME?: string;
     RESOLUTION_SCRIPT_TEMPLATE?: string;
     RESOLUTION_SCRIPT_PARAM_MAP?: string;
+    RESOLUTION_SQL?: string;
+    RESOLUTION_BATCH_SQL?: string;
+    RESOLUTION_BATCH_SCRIPT_TEMPLATE?: string;
     FIXABLE_STATUS_COLUMN?: string;
     FIXABLE_STATUS_VALUE?: string;
   }) {
@@ -79,6 +84,22 @@ export class AiDataHealthService {
    */
   executeResolutionLibQuery(resolutionQueryNum: string, rowPayload: Record<string, unknown>) {
     return this._query.postQueryResult(resolutionQueryNum.trim(), [rowPayload]);
+  }
+
+  /**
+   * Inline UPDATE/MERGE from AI_DATA_CHECK_DEF.RESOLUTION_SQL (AI0000092).
+   * Per-row Fix: include bind keys (+ column headers when map is bind=Column).
+   * Fix all (once): pass batchFix=true → BATCH_FIX=1, no row binds (SQL must not use :binds).
+   */
+  executeResolutionSql(rowPayload: Record<string, unknown>, dryRun = false, batchFix = false) {
+    const body = { ...rowPayload };
+    if (batchFix) {
+      body.BATCH_FIX = 1;
+    }
+    if (dryRun) {
+      body.DRY_RUN = 1;
+    }
+    return this._query.postQueryResult(this.Q_RUN_RESOLUTION_SQL, [body]);
   }
 
   /**
@@ -96,6 +117,43 @@ export class AiDataHealthService {
    */
   executeResolutionScript(script: string): Observable<{ CMD?: string; RESULT?: string; ERROR?: string }> {
     return this._process.executeScript(script);
+  }
+
+  /** Batch Fix all (once) — prefer RESOLUTION_BATCH_SCRIPT_TEMPLATE; never use per-row :placeholders. */
+  pickBatchScriptTemplate(def: {
+    RESOLUTION_BATCH_SCRIPT_TEMPLATE?: string;
+    RESOLUTION_SCRIPT_TEMPLATE?: string;
+  }): { script: string } | { error: string } {
+    const batch = (def.RESOLUTION_BATCH_SCRIPT_TEMPLATE || '').trim();
+    if (batch) {
+      const batchErr = this.validateBatchScriptTemplate(batch);
+      if (batchErr) {
+        return { error: batchErr };
+      }
+      return { script: batch };
+    }
+    const fallback = (def.RESOLUTION_SCRIPT_TEMPLATE || '').trim();
+    if (fallback && !/:[A-Za-z_][A-Za-z0-9_]*/.test(fallback)) {
+      return { script: fallback };
+    }
+    if (fallback) {
+      return {
+        error: 'Batch script template is missing. Configure "Batch script template (Fix all once)" in S25 '
+          + '(per-row template uses :placeholders and cannot run as a batch).'
+      };
+    }
+    return { error: 'Batch script template is not configured.' };
+  }
+
+  validateBatchScriptTemplate(template: string): string | null {
+    const cmd = (template || '').trim();
+    if (!cmd) {
+      return 'Batch script template is empty.';
+    }
+    if (/:[A-Za-z_][A-Za-z0-9_]*/.test(cmd)) {
+      return 'Batch script must not contain :placeholders — use fixed literals for Fix all (once).';
+    }
+    return null;
   }
 
   /**

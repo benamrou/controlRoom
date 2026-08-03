@@ -1,0 +1,205 @@
+<app-page-header
+  [heading]="'S83.TITLE' | lbl:'Manufacturing AGRN'"
+  [icon]="'fa-industry'"
+  [waitMessage]="waitMessage"
+  [okExit]="okExit"
+  [screenID]="screenID">
+</app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+  <p-toast [style]="{ marginTop: '80px' }" position="top-right"></p-toast>
+</div>
+
+<div class="mfg-agrn-page">
+  <div class="alert alert-warning mfg-agrn-warn">
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{ 'S83.WARN' | lbl:'Use this functionality when Just Food production order has not been generated automatically for Manufacturing warehouse. This process will create the Manufacturing warehouse AGRN with 1 case by item placeholder, in order to allow the produced items to be received.' }}</span>
+  </div>
+
+  <div class="bbs_search_panel mfg-agrn-toolbar">
+    <button
+      type="button"
+      pButton
+      icon="fas fa-industry"
+      class="p-button-success"
+      [label]="'S83.BTN.RUN' | lbl:'Generate Manufacturing'"
+      [disabled]="running"
+      (click)="generateManufacturing()">
+    </button>
+  </div>
+
+  <div class="alert alert-info mfg-agrn-exists" *ngIf="existingRows.length">
+    <i class="fas fa-info-circle"></i>
+    <span>{{ 'S83.MSG.XFND' | lbl:'A Manufacturing AGRN already exists for today — see order details below.' }}</span>
+  </div>
+
+  <div class="mfg-agrn-results mfg-agrn-existing" *ngIf="existingRows.length">
+    <p-table
+      #existingTable
+      [value]="existingRows"
+      [columns]="columnsExisting"
+      [paginator]="existingRows.length > 10"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [resizableColumns]="true"
+      columnResizeMode="expand"
+      [scrollable]="true"
+      scrollHeight="280px"
+      styleClass="p-datatable-sm"
+      [autoLayout]="true">
+      <ng-template pTemplate="caption">
+        <div class="mfg-agrn-caption">
+          <span>{{ 'S83.LBL.XORD' | lbl:'Existing manufacturing orders (today)' }} ({{ existingRows.length }})</span>
+          <button
+            type="button"
+            pButton
+            icon="fas fa-file"
+            class="CSV_Button"
+            [label]="'CMN.CSV' | lbl:'CSV'"
+            (click)="existingTable.exportCSV()">
+          </button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" pResizableColumn>{{ col.header }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">{{ row[col.field] }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div class="mfg-agrn-results" *ngIf="generatedRows.length">
+    <p-table
+      #resultTable
+      [value]="generatedRows"
+      [columns]="columnsResult"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [resizableColumns]="true"
+      columnResizeMode="expand"
+      [scrollable]="true"
+      scrollHeight="420px"
+      styleClass="p-datatable-sm"
+      [autoLayout]="true">
+      <ng-template pTemplate="caption">
+        <div class="mfg-agrn-caption">
+          <span>{{ 'S83.LBL.RESULT' | lbl:'Generated production orders' }} ({{ generatedRows.length }})</span>
+          <button
+            type="button"
+            pButton
+            icon="fas fa-file"
+            class="CSV_Button"
+            [label]="'CMN.CSV' | lbl:'CSV'"
+            (click)="resultTable.exportCSV()">
+          </button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" pResizableColumn>{{ col.header }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">{{ row[col.field] }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div class="mfg-agrn-empty" *ngIf="!running && !loadingExisting && !existingRows.length && !generatedRows.length">
+    <p>{{ 'S83.MSG.EMPTY' | lbl:'Click Generate Manufacturing to create placeholder orders and view results here.' }}</p>
+  </div>
+
+  <div class="mfg-agrn-empty" *ngIf="loadingExisting && !existingRows.length">
+    <p>{{ 'S83.MSG.LOAD' | lbl:'Checking for existing manufacturing orders…' }}</p>
+  </div>
+</div>
+
+<p-dialog
+  [(visible)]="showConfirmDialog"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '520px' }"
+  (onHide)="cancelConfirm()">
+  <p-header>{{ 'S83.CFM.TTL' | lbl:'Confirm AGRN generation' }}</p-header>
+
+  <div class="mfg-agrn-confirm">
+    <div class="alert alert-warning mfg-agrn-confirm-warn">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span *ngIf="existingRows.length; else standardConfirmMsg">
+        {{ 'S83.CFM.XMSG' | lbl:'A Manufacturing AGRN already exists for today. Generating again may create duplicate orders. Confirm only if you intend to proceed.' }}
+      </span>
+      <ng-template #standardConfirmMsg>
+        <span>{{ 'S83.CFM.MSG' | lbl:'Run mfgPlaceOrder on GOLD and integrate JF_ORDERS for today?' }}</span>
+      </ng-template>
+    </div>
+
+    <label class="mfg-agrn-confirm-label" for="mfgAgrnConfirmUserId">
+      {{ 'S83.LBL.UID' | lbl:'User id' }}
+    </label>
+    <input
+      id="mfgAgrnConfirmUserId"
+      type="text"
+      pInputText
+      class="mfg-agrn-confirm-input"
+      [(ngModel)]="confirmUserId"
+      [placeholder]="'S83.PLH.UID' | lbl:'Enter your user id to confirm'"
+      autocomplete="off"
+      (keyup.enter)="acceptConfirm()" />
+    <p class="mfg-agrn-confirm-hint">
+      {{ 'S83.MSG.UHNT' | lbl:'Type your login user id to authorize this operation.' }}
+    </p>
+  </div>
+
+  <p-footer>
+    <button
+      type="button"
+      pButton
+      class="p-button-text"
+      [label]="'CMN.CANCEL' | lbl:'Cancel'"
+      (click)="cancelConfirm()">
+    </button>
+    <button
+      type="button"
+      pButton
+      icon="fas fa-check"
+      class="p-button-success"
+      [label]="'S83.BTN.CFM' | lbl:'Confirm'"
+      [disabled]="!confirmUserIdMatches()"
+      (click)="acceptConfirm()">
+    </button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog
+  [(visible)]="displayCompletedDialog"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '520px' }"
+  (onHide)="closeCompletedDialog()">
+  <p-header>{{ 'S83.DLG.DONE' | lbl:'Generation completed' }}</p-header>
+  <p class="mfg-agrn-done-msg">
+    {{ 'S83.MSG.DONE' | lbl:'Manufacturing purchase order has been generated. Purchase order transfer to GOLD Stock runs every 30 minutes.' }}
+  </p>
+  <p-footer>
+    <button
+      type="button"
+      pButton
+      icon="fas fa-check"
+      iconPos="right"
+      [label]="'CMN.OK' | lbl:'Ok'"
+      (click)="closeCompletedDialog()">
+    </button>
+  </p-footer>
+</p-dialog>

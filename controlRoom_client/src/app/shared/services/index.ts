@@ -9,6 +9,7 @@ export * from './schedule/schedule.service';
 export * from './reporting/reporting.service';
 export * from './warehouse/warehouse.service';
 export * from './warehouse/warehouse.item.service';
+export * from './warehouse/mfg.agrn.service';
 export * from './counting/counting.service';
 export * from './inventory/inventory.service';
 export * from './cao/cao.service';

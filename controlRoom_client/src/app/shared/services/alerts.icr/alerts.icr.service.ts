@@ -150,6 +150,67 @@ export class AlertsICRService {
     }
 
 
+    // ==================== ALERTBUG (patch / bug-fix history) ====================
+
+    /** List patch history for an alert — ALT0000040 */
+    getAlertBugs(altid: string): Observable<any[]> {
+        return this._queryService.getQueryResult('ALT0000040', [altid || '-1']).pipe(
+            map((data) => this.normalizeRows(data))
+        );
+    }
+
+    /** Get one patch entry — ALT0000041 */
+    getAlertBug(bugid: string): Observable<any | null> {
+        return this._queryService.getQueryResult('ALT0000041', [bugid || '-1']).pipe(
+            map((data) => {
+                const rows = this.normalizeRows(data);
+                return rows.length ? rows[0] : null;
+            })
+        );
+    }
+
+    /** Create/Update patch entry — ALT0000042 (CLOB issue/resolution/notes) */
+    saveAlertBug(bugData: any) {
+        const payload = {
+            BUGID: bugData.BUGID || '',
+            BALTID: bugData.BALTID,
+            BUGPATCHDAY: bugData.BUGPATCHDAY || '',
+            BUGRELEASEDATE: bugData.BUGRELEASEDATE || '',
+            BUGISSUE: bugData.BUGISSUE || '',
+            BUGRESOLUTION: bugData.BUGRESOLUTION || '',
+            BUGNOTES: bugData.BUGNOTES || '',
+            BUGUTIL: bugData.BUGUTIL || this._userService.userInfo?.username || '',
+        };
+        return this._queryService.postQueryResult('ALT0000042', [payload]);
+    }
+
+    /** Delete patch entry — ALT0000043 */
+    deleteAlertBug(bugid: string) {
+        return this._queryService.postQueryResult('ALT0000043', [{ BUGID: bugid }]);
+    }
+
+    private normalizeRows(data: unknown): any[] {
+        if (data == null) {
+            return [];
+        }
+        const raw = Array.isArray(data)
+            ? data
+            : (typeof data === 'object' && Array.isArray((data as { rows?: unknown[] }).rows)
+                ? (data as { rows: unknown[] }).rows
+                : []);
+        return raw.map((row) => {
+            if (!row || typeof row !== 'object') {
+                return {};
+            }
+            const out: Record<string, unknown> = {};
+            for (const k of Object.keys(row as Record<string, unknown>)) {
+                out[k.toUpperCase()] = (row as Record<string, unknown>)[k];
+            }
+            return out;
+        });
+    }
+
+
     // ==================== EXECUTION METHODS ====================
 
     executeQuery(altid, paramsAlert) {

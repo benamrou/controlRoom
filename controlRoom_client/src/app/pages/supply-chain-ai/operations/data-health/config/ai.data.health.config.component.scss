@@ -75,8 +75,99 @@
 .adhc-input--order { width: 100px; }
 
 .adhc-query-row {
-  display: flex; align-items: center; gap: 0.5rem;
-  .adhc-input--qnum { flex: 1; }
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  .adhc-input--qnum { flex: 1; min-width: 140px; }
+}
+
+.adhc-query-preview {
+  min-height: 4rem;
+  .adhc-query-preview-meta {
+    font-size: 0.8rem;
+    color: var(--text-color-secondary);
+    margin: 0 0 0.75rem;
+  }
+  .adhc-query-preview-error {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin: 0 0 0.75rem;
+  }
+  .adhc-query-preview-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .adhc-query-preview-cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+  .adhc-col-chip {
+    font-size: 0.75rem;
+    font-family: ui-monospace, monospace;
+    background: var(--surface-ground, #f1f5f9);
+    border: 1px solid var(--surface-border, #dee2e6);
+    border-radius: 4px;
+    padding: 0.15rem 0.45rem;
+  }
+  .adhc-query-preview-catalog {
+    font-size: 0.72rem;
+    color: var(--text-color-secondary);
+    margin: 0 0 0.75rem;
+  }
+  .adhc-query-preview-sql-block {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--surface-border, #dee2e6);
+  }
+  .adhc-query-preview-sql-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.35rem;
+  }
+  .adhc-query-preview-libtitle {
+    font-size: 0.8rem;
+    margin: 0 0 0.35rem;
+    color: var(--text-color);
+  }
+  .adhc-query-preview-libmeta {
+    font-size: 0.72rem;
+    color: var(--text-color-secondary);
+    margin: 0 0 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .adhc-query-preview-tag {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    background: var(--surface-100, #e9ecef);
+  }
+  .adhc-query-preview-sql {
+    margin: 0;
+    padding: 0.65rem 0.75rem;
+    max-height: 200px;
+    overflow: auto;
+    font-size: 0.7rem;
+    line-height: 1.35;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--surface-ground, #f8f9fa);
+    border: 1px solid var(--surface-border, #dee2e6);
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .adhc-query-preview-nosql {
+    margin: 0 0 0.75rem;
+  }
+  .adhc-query-preview-table {
+    margin-top: 0.5rem;
+    th, td { font-size: 0.72rem; white-space: nowrap; max-width: 12rem;
+      overflow: hidden; text-overflow: ellipsis; }
+  }
 }
 
 .adhc-verify-result {

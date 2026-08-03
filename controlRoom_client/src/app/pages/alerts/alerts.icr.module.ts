@@ -16,6 +16,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CalendarModule } from 'primeng/calendar';
+import { EditorModule } from 'primeng/editor';
 
 @NgModule({
     imports: [ RouterModule,CommonModule,FormsModule, TableModule, ButtonModule, PageHeaderModule,
@@ -24,7 +25,8 @@ import { CalendarModule } from 'primeng/calendar';
                DialogModule, InputTextareaModule,
                DropdownModule,
                ConfirmDialogModule,
-               CalendarModule
+               CalendarModule,
+               EditorModule
              ],
     declarations: [AlertsICRComponent],
     exports: [AlertsICRComponent],

@@ -24,7 +24,9 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "allowedCommonJsDependencies": [
-              "lodash"
+              "lodash",
+              "quill",
+              "jsbarcode"
             ],
             "assets": [
               "./src/favicon.ico",
@@ -59,6 +61,7 @@
               "./node_modules/primeicons/primeicons.css",
               "./node_modules/primeng/resources/primeng.min.css",
               "./node_modules/primeflex/primeflex.css",
+              "./node_modules/quill/dist/quill.snow.css",
               "./src/styles.scss"
             ],
             "scripts": [
@@ -96,6 +99,7 @@
               "namedChunks": true
             },
             "heinens": {
+              "baseHref": "/icr/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -112,6 +116,7 @@
               ]
             },
             "oci": {
+              "baseHref": "/icr/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,

@@ -1,5 +1,6 @@
 import { Component, ViewChild, OnDestroy, HostListener } from '@angular/core';
 import { ViewEncapsulation } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ImportService,  AlertsICRService, QueryService } from '../../shared/services/index';
 import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
 import { Dialog } from 'primeng/dialog';
@@ -124,9 +125,36 @@ export class AlertsICRComponent implements OnDestroy {
    alertDistributionDisplay: any = {};
    alertSheduleDisplay: any = {};
    displayAlert: boolean = false;
+   altspecEditMode: boolean = false;
+   altspecEditSnapshot: string = '';
+   altspecPreviewSafe: SafeHtml = '';
+   altspecHasContent = false;
+   private altspecPreviewRaw = '';
+   altspecShowHtmlSource = false;
    alertSheduleDisplay_DALTEMAIL: string[] = []; 
    alertSheduleDisplay_DALTEMAILCC: string[] = []; 
    alertSheduleDisplay_DALTEMAILBCC: string[] = [];
+
+   /** ALERTBUG — patch / bug-fix history (HTML CLOB like ALTSPEC) */
+   alertBugRows: any[] = [];
+   alertBugLoading = false;
+   showBugDialog = false;
+   showBugViewDialog = false;
+   bugEditMode: 'add' | 'edit' = 'add';
+   bugDisplay: any = {};
+   bugViewRow: any = null;
+   bugViewIssueSafe: SafeHtml = '';
+   bugViewResolutionSafe: SafeHtml = '';
+   bugViewNotesSafe: SafeHtml = '';
+   bugPatchDay: Date | null = null;
+   bugReleaseDate: Date | null = null;
+   bugColumns = [
+     { field: 'BUGPATCHDAY', header: 'Patch day' },
+     { field: 'BUGRELEASEDATE', header: 'Release' },
+     { field: 'BUGISSUE', header: 'Issue' },
+     { field: 'BUGRESOLUTION', header: 'Resolution' },
+     { field: 'BUGUTIL', header: 'By' },
+   ];
 
    screenID;
    csvButtonTooltip: string ='';
@@ -142,7 +170,8 @@ export class AlertsICRComponent implements OnDestroy {
               private _confrmation: ConfirmationService,
               private _uploadService: ImportService,
               private _queryService: QueryService, 
-              private _messageService: MessageService) {
+              private _messageService: MessageService,
+              private _sanitizer: DomSanitizer) {
     this.screenID =  'SCR0000000019';
     this.columnsResult = [
       { field: 'ACTION', header: 'Action', align:'left', expand: 0, display: true, main: true},
@@ -152,7 +181,522 @@ export class AlertsICRComponent implements OnDestroy {
    ];
    this.csvButtonTooltip = "This is reporting all the information in the table below for detailed analyze."
   }
-  
+
+  /** Cached sanitized ALTSPEC — updated explicitly to avoid CD / innerHTML storms while typing. */
+  private refreshAltspecPreview(): void {
+    const raw = this.normalizeAltspecValue(this.alertDisplay?.ALTSPEC);
+    if (raw === this.altspecPreviewRaw) {
+      return;
+    }
+    this.altspecPreviewRaw = raw;
+    this.altspecHasContent = !!raw;
+    this.altspecPreviewSafe = raw
+      ? this._sanitizer.bypassSecurityTrustHtml(raw)
+      : '';
+  }
+
+  private normalizeAltspecValue(value: unknown): string {
+    if (value == null) {
+      return '';
+    }
+    const raw = String(value).trim();
+    if (!raw || raw === '<p><br></p>' || raw === '<p></p>' || raw === '<br>') {
+      return '';
+    }
+    return raw;
+  }
+
+  private ensureAltspecString(): void {
+    if (!this.alertDisplay) {
+      return;
+    }
+    if (this.alertDisplay.ALTSPEC == null) {
+      this.alertDisplay.ALTSPEC = '';
+    } else if (typeof this.alertDisplay.ALTSPEC !== 'string') {
+      this.alertDisplay.ALTSPEC = String(this.alertDisplay.ALTSPEC);
+    }
+  }
+
+  onAltspecEditorChange(event: { htmlValue?: string }): void {
+    if (event?.htmlValue != null) {
+      this.alertDisplay.ALTSPEC = event.htmlValue;
+    }
+    this.altspecHasContent = !!this.normalizeAltspecValue(this.alertDisplay?.ALTSPEC);
+  }
+
+  toggleAltspecHtmlSource(): void {
+    this.altspecShowHtmlSource = !this.altspecShowHtmlSource;
+  }
+
+  private resetAltspecView(): void {
+    this.altspecEditMode = false;
+    this.altspecShowHtmlSource = false;
+    this.altspecEditSnapshot = '';
+    this.altspecPreviewRaw = '';
+    this.altspecPreviewSafe = '';
+    this.altspecHasContent = false;
+  }
+
+  enterAltspecEdit(): void {
+    this.ensureAltspecString();
+    this.altspecEditSnapshot = this.alertDisplay?.ALTSPEC || '';
+    this.altspecShowHtmlSource = false;
+    this.altspecEditMode = true;
+    this.waitMessage = '';
+    this.refreshAltspecPreview();
+  }
+
+  exitAltspecEdit(): void {
+    this.ensureAltspecString();
+    const normalized = this.normalizeAltspecValue(this.alertDisplay?.ALTSPEC);
+    this.alertDisplay.ALTSPEC = normalized;
+    this.altspecEditMode = false;
+    this.altspecShowHtmlSource = false;
+    this.altspecEditSnapshot = '';
+    this.refreshAltspecPreview();
+  }
+
+  cancelAltspecEdit(): void {
+    this.alertDisplay.ALTSPEC = this.altspecEditSnapshot;
+    this.altspecEditMode = false;
+    this.altspecShowHtmlSource = false;
+    this.altspecEditSnapshot = '';
+    this.refreshAltspecPreview();
+  }
+
+  /**
+   * Export Specification + Bug/patch history to PDF via browser print dialog
+   * (Save as PDF). Refreshes bug rows first so the PDF is complete.
+   */
+  exportSpecAndBugsPdf(): void {
+    const altid = String(this.alertDisplay?.ALTID || '').trim();
+    if (!altid) {
+      this._messageService.add({
+        severity: 'warn',
+        summary: 'Export to PDF',
+        detail: 'Save the alert first so it has an Alert id.',
+        life: 6000,
+      });
+      return;
+    }
+    this.waitMessage = 'Preparing PDF…';
+    this.subscription.push(
+      this._alertsICRService.getAlertBugs(altid).subscribe({
+        next: (rows) => {
+          this.alertBugRows = rows || [];
+          this.waitMessage = null;
+          this.openSpecPdfPrintWindow(this.alertBugRows);
+        },
+        error: (err) => {
+          this.waitMessage = null;
+          this._messageService.add({
+            severity: 'error',
+            summary: 'Export to PDF',
+            detail: err?.message || String(err),
+            life: 10000,
+          });
+        },
+      })
+    );
+  }
+
+  private openSpecPdfPrintWindow(bugRows: any[]): void {
+    const altid = String(this.alertDisplay?.ALTID || '').trim();
+    const subject = String(this.alertDisplay?.ALTSUBJECT || '').trim();
+    const title = [altid, subject].filter(Boolean).join(' — ') || 'Alert specification';
+    const specHtml = this.normalizeAltspecValue(this.alertDisplay?.ALTSPEC)
+      || '<p><em>No specification written.</em></p>';
+    const bugsHtml = this.buildBugsPdfSection(bugRows || []);
+    const generated = new Date().toLocaleString();
+    const logoUrl = this.getCompanyLogoUrl();
+
+    const doc = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>${this.escapeHtml(title)}</title>
+  <style>
+    @page { margin: 16mm; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #222;
+      font-size: 10pt;
+      line-height: 1.4;
+    }
+    h1 { font-family: Arial, Helvetica, sans-serif; font-size: 14pt; margin: 0 0 4pt; }
+    h2 { font-family: Arial, Helvetica, sans-serif; font-size: 12pt; margin: 16pt 0 8pt; border-bottom: 1px solid #999; padding-bottom: 4pt; page-break-after: avoid; }
+    h3 { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; margin: 12pt 0 6pt; page-break-after: avoid; }
+    h4 { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; margin: 8pt 0 4pt; page-break-after: avoid; }
+    .pdf-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 14pt;
+    }
+    .pdf-header-text { flex: 1 1 auto; min-width: 0; }
+    .pdf-logo {
+      flex: 0 0 auto;
+      height: 52px;
+      width: auto;
+      max-width: 160px;
+      object-fit: contain;
+    }
+    .meta { color: #555; font-size: 9pt; margin: 0; }
+    .section { margin-bottom: 16pt; }
+    .bug-card { border: 1px solid #ccc; border-radius: 4px; padding: 8pt 10pt; margin: 0 0 10pt; page-break-inside: avoid; }
+    .bug-meta { font-size: 9pt; color: #444; margin-bottom: 6pt; }
+    .ql-editor, .content { max-width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; }
+    .ql-editor p, .content p { margin: 0 0 0.55em; }
+    .ql-editor ul, .content ul,
+    .ql-editor ol, .content ol { margin: 0.35em 0 0.7em 1.2em; }
+    .ql-editor li, .content li { font-size: 10pt; }
+    .ql-indent-1 { margin-left: 1.5em; }
+    .ql-indent-2 { margin-left: 3em; }
+    a { color: #0645ad; }
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="pdf-header">
+    <div class="pdf-header-text">
+      <h1>${this.escapeHtml(title)}</h1>
+      <p class="meta">Alert specification &amp; bug/patch history · Generated ${this.escapeHtml(generated)}</p>
+    </div>
+    <img class="pdf-logo" src="${this.escapeHtml(logoUrl)}" alt="Company logo" />
+  </div>
+
+  <div class="section">
+    <h2>1. Specification</h2>
+    <div class="content ql-editor">${specHtml}</div>
+  </div>
+
+  <div class="section">
+    <h2>2. Bug / patch history</h2>
+    ${bugsHtml}
+  </div>
+
+  <script>
+    window.onload = function () {
+      var img = document.querySelector('.pdf-logo');
+      function go() {
+        setTimeout(function () { window.focus(); window.print(); }, 200);
+      }
+      if (img && !img.complete) {
+        img.onload = go;
+        img.onerror = go;
+      } else {
+        go();
+      }
+    };
+  </script>
+</body>
+</html>`;
+
+    const win = window.open('', '_blank');
+    if (!win) {
+      this._messageService.add({
+        severity: 'warn',
+        summary: 'Export to PDF',
+        detail: 'Pop-up blocked. Allow pop-ups for this site, then try again.',
+        life: 8000,
+      });
+      return;
+    }
+    win.document.open();
+    win.document.write(doc);
+    win.document.close();
+    this._messageService.add({
+      severity: 'info',
+      summary: 'Export to PDF',
+      detail: 'Use the print dialog → Save as PDF.',
+      life: 6000,
+    });
+  }
+
+  /** Absolute URL so the print window can load logo.png (about:blank has no relative base). */
+  private getCompanyLogoUrl(): string {
+    try {
+      return new URL('assets/images/logo.png', document.baseURI).href;
+    } catch {
+      return `${window.location.origin}/assets/images/logo.png`;
+    }
+  }
+
+  private buildBugsPdfSection(rows: any[]): string {
+    if (!rows || !rows.length) {
+      return '<p><em>No patch history recorded for this alert.</em></p>';
+    }
+    return rows.map((row, idx) => {
+      const patch = this.escapeHtml(row.BUGPATCHDAY || '—');
+      const release = this.escapeHtml(row.BUGRELEASEDATE || '—');
+      const by = this.escapeHtml(row.BUGUTIL || '—');
+      const issue = this.normalizeBugHtmlField(row.BUGISSUE) || '<p><em>—</em></p>';
+      const resolution = this.normalizeBugHtmlField(row.BUGRESOLUTION) || '<p><em>—</em></p>';
+      const notes = this.normalizeBugHtmlField(row.BUGNOTES);
+      const notesBlock = this.bugHtmlEmpty(notes)
+        ? ''
+        : `<h4>Notes</h4><div class="content ql-editor">${notes}</div>`;
+      return `
+      <div class="bug-card">
+        <h3>Patch ${idx + 1}</h3>
+        <div class="bug-meta"><strong>Patch day:</strong> ${patch}
+          · <strong>Release:</strong> ${release}
+          · <strong>By:</strong> ${by}</div>
+        <h4>Issue</h4>
+        <div class="content ql-editor">${issue}</div>
+        <h4>Resolution</h4>
+        <div class="content ql-editor">${resolution}</div>
+        ${notesBlock}
+      </div>`;
+    }).join('\n');
+  }
+
+  private escapeHtml(value: unknown): string {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  loadAlertBugs(altid: string): void {
+    if (!altid) {
+      this.alertBugRows = [];
+      return;
+    }
+    this.alertBugLoading = true;
+    this.subscription.push(
+      this._alertsICRService.getAlertBugs(altid).subscribe({
+        next: (rows) => {
+          this.alertBugRows = rows || [];
+          this.alertBugLoading = false;
+        },
+        error: (err) => {
+          this.alertBugLoading = false;
+          this.alertBugRows = [];
+          this._messageService.add({
+            severity: 'error',
+            summary: 'Bug / patch history',
+            detail: err?.message || String(err),
+            life: 8000,
+          });
+        },
+      })
+    );
+  }
+
+  private parseBugDate(value: unknown): Date | null {
+    if (value == null || value === '') {
+      return null;
+    }
+    if (value instanceof Date && !isNaN(value.getTime())) {
+      return value;
+    }
+    const s = String(value).trim();
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+    if (m) {
+      return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    }
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  private formatBugDate(value: Date | null): string {
+    if (!value || isNaN(value.getTime())) {
+      return '';
+    }
+    const y = value.getFullYear();
+    const m = String(value.getMonth() + 1).padStart(2, '0');
+    const d = String(value.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  bugPreview(text: unknown, max = 120): string {
+    const s = String(text ?? '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!s) {
+      return '—';
+    }
+    return s.length > max ? s.slice(0, max) + '…' : s;
+  }
+
+  private bugHtmlEmpty(html: unknown): boolean {
+    return this.bugPreview(html, 99999) === '—';
+  }
+
+  private normalizeBugHtmlField(value: unknown): string {
+    if (value == null) {
+      return '';
+    }
+    return typeof value === 'string' ? value : String(value);
+  }
+
+  private trustBugHtml(value: unknown): SafeHtml {
+    const raw = this.normalizeBugHtmlField(value).trim();
+    return raw ? this._sanitizer.bypassSecurityTrustHtml(raw) : '';
+  }
+
+  openAddBug(): void {
+    const altid = this.alertDisplay?.ALTID;
+    if (!altid) {
+      this._messageService.add({
+        severity: 'warn',
+        summary: 'Bug / patch history',
+        detail: 'Save the alert first so it has an Alert id.',
+        life: 6000,
+      });
+      return;
+    }
+    this.bugEditMode = 'add';
+    this.bugDisplay = {
+      BUGID: '',
+      BALTID: altid,
+      BUGISSUE: '',
+      BUGRESOLUTION: '',
+      BUGNOTES: '',
+    };
+    this.bugPatchDay = new Date();
+    this.bugReleaseDate = null;
+    this.showBugDialog = true;
+  }
+
+  openEditBug(row: any): void {
+    if (!row) {
+      return;
+    }
+    this.bugEditMode = 'edit';
+    this.bugDisplay = {
+      BUGID: row.BUGID,
+      BALTID: row.BALTID || this.alertDisplay?.ALTID,
+      BUGISSUE: this.normalizeBugHtmlField(row.BUGISSUE),
+      BUGRESOLUTION: this.normalizeBugHtmlField(row.BUGRESOLUTION),
+      BUGNOTES: this.normalizeBugHtmlField(row.BUGNOTES),
+    };
+    this.bugPatchDay = this.parseBugDate(row.BUGPATCHDAY);
+    this.bugReleaseDate = this.parseBugDate(row.BUGRELEASEDATE);
+    this.showBugDialog = true;
+  }
+
+  openBugView(row: any): void {
+    if (!row) {
+      return;
+    }
+    this.bugViewRow = row;
+    this.bugViewIssueSafe = this.trustBugHtml(row.BUGISSUE);
+    this.bugViewResolutionSafe = this.trustBugHtml(row.BUGRESOLUTION);
+    this.bugViewNotesSafe = this.trustBugHtml(row.BUGNOTES);
+    this.showBugViewDialog = true;
+  }
+
+  closeBugView(): void {
+    this.showBugViewDialog = false;
+    this.bugViewRow = null;
+    this.bugViewIssueSafe = '';
+    this.bugViewResolutionSafe = '';
+    this.bugViewNotesSafe = '';
+  }
+
+  cancelBugEdit(): void {
+    this.showBugDialog = false;
+  }
+
+  saveBugEntry(): void {
+    const altid = this.bugDisplay?.BALTID || this.alertDisplay?.ALTID;
+    if (!altid) {
+      return;
+    }
+    if (!this.bugPatchDay && this.bugHtmlEmpty(this.bugDisplay.BUGISSUE)) {
+      this._messageService.add({
+        severity: 'warn',
+        summary: 'Bug / patch history',
+        detail: 'Enter at least a patch day or an issue description.',
+        life: 6000,
+      });
+      return;
+    }
+    this.waitMessage = 'Saving patch entry…';
+    this.subscription.push(
+      this._alertsICRService.saveAlertBug({
+        BUGID: this.bugDisplay.BUGID || '',
+        BALTID: altid,
+        BUGPATCHDAY: this.formatBugDate(this.bugPatchDay),
+        BUGRELEASEDATE: this.formatBugDate(this.bugReleaseDate),
+        BUGISSUE: this.normalizeBugHtmlField(this.bugDisplay.BUGISSUE),
+        BUGRESOLUTION: this.normalizeBugHtmlField(this.bugDisplay.BUGRESOLUTION),
+        BUGNOTES: this.normalizeBugHtmlField(this.bugDisplay.BUGNOTES),
+      }).subscribe({
+        next: () => {
+          this.waitMessage = '';
+          this.showBugDialog = false;
+          this._messageService.add({
+            severity: 'success',
+            summary: 'Bug / patch history',
+            detail: 'Patch entry saved.',
+            life: 5000,
+          });
+          this.loadAlertBugs(altid);
+        },
+        error: (err) => {
+          this.waitMessage = '';
+          this._messageService.add({
+            severity: 'error',
+            summary: 'Bug / patch history',
+            detail: err?.message || String(err),
+            life: 10000,
+          });
+        },
+      })
+    );
+  }
+
+  confirmDeleteBug(row: any): void {
+    this._confrmation.confirm({
+      message: 'Remove this patch history entry?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => this.deleteBugEntry(row),
+    });
+  }
+
+  private deleteBugEntry(row: any): void {
+    const bugid = row?.BUGID;
+    const altid = row?.BALTID || this.alertDisplay?.ALTID;
+    if (!bugid) {
+      return;
+    }
+    this.waitMessage = 'Removing patch entry…';
+    this.subscription.push(
+      this._alertsICRService.deleteAlertBug(bugid).subscribe({
+        next: () => {
+          this.waitMessage = '';
+          this._messageService.add({
+            severity: 'success',
+            summary: 'Bug / patch history',
+            detail: 'Patch entry removed.',
+            life: 5000,
+          });
+          this.loadAlertBugs(altid);
+        },
+        error: (err) => {
+          this.waitMessage = '';
+          this._messageService.add({
+            severity: 'error',
+            summary: 'Bug / patch history',
+            detail: err?.message || String(err),
+            life: 10000,
+          });
+        },
+      })
+    );
+  }
 
   search() {
     this.razSearch();
@@ -255,7 +799,8 @@ export class AlertsICRComponent implements OnDestroy {
       ALTFORMATTAB2XLS: '',
       ALTNOHTML: 0,
       ALTNOHTMLBOOLEAN: false,
-      ALTSQL: ''
+      ALTSQL: '',
+      ALTSPEC: ''
     };
 
     // Initialize empty distribution
@@ -303,6 +848,8 @@ export class AlertsICRComponent implements OnDestroy {
     this.scheduleMinute = 0;
     this.updateReadableSchedule();
 
+    this.resetAltspecView();
+    this.alertBugRows = [];
     this.displayAlert = true;
     this._messageService.add({severity:'info', summary:'New Alert', detail: 'Fill in the alert details and save.'});
   }
@@ -390,6 +937,10 @@ export class AlertsICRComponent implements OnDestroy {
     this.alertSheduleDisplay_DALTEMAILCC = this.parseEmailList(this.alertDistributionDisplay.DALTEMAILCC);
     this.alertSheduleDisplay_DALTEMAILBCC = this.parseEmailList(this.alertDistributionDisplay.DALTEMAILBCC);
 
+    this.resetAltspecView();
+    this.ensureAltspecString();
+    this.refreshAltspecPreview();
+    this.loadAlertBugs(alertId);
     this.displayAlert = true;
   }
 
@@ -488,6 +1039,10 @@ export class AlertsICRComponent implements OnDestroy {
     this.alertSheduleDisplay_DALTEMAILCC = this.parseEmailList(this.alertDistributionDisplay.DALTEMAILCC);
     this.alertSheduleDisplay_DALTEMAILBCC = this.parseEmailList(this.alertDistributionDisplay.DALTEMAILBCC);
 
+    this.resetAltspecView();
+    this.ensureAltspecString();
+    this.refreshAltspecPreview();
+    this.alertBugRows = [];
     this.displayAlert = true;
     this._messageService.add({severity:'info', summary:'Duplicate Alert', detail: 'Enter a new Alert ID. Query number and other settings have been copied.'});
   }
@@ -913,6 +1468,7 @@ export class AlertsICRComponent implements OnDestroy {
     this.isNewAlert = false;
     this.isNewDistribution = false;
     this.isNewSchedule = false;
+    this.resetAltspecView();
   }
 
   ngOnDestroy() {

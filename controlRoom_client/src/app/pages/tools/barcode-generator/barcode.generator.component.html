@@ -1,0 +1,115 @@
+<app-page-header
+  [heading]="'S82.TITLE' | lbl:'Barcode generator'"
+  [screenID]="screenID"
+  [icon]="'fas fa-barcode'">
+</app-page-header>
+
+<div class="content-section implementation barcode-generator-page">
+  <p class="text-color-secondary mb-3">
+    {{ 'S82.SUBTTL' | lbl:'Enter codes and generate barcodes instantly for testing and labels.' }}
+  </p>
+
+  <div class="card barcode-input-card no-print">
+    <label class="font-bold block mb-2" for="codes-input">
+      {{ 'S82.LBL.CODE' | lbl:'Enter codes' }}
+    </label>
+    <textarea
+      id="codes-input"
+      pInputTextarea
+      class="w-full codes-textarea"
+      rows="6"
+      [(ngModel)]="codesInput"
+      (keydown)="onCodesKeydown($event)"
+      [placeholder]="'S82.PLH.CODE' | lbl:'Paste or type codes — separate by Enter, comma, or tab'">
+    </textarea>
+    <small class="text-color-secondary block mt-1">
+      {{ 'S82.HNT.CODE' | lbl:'Codes can be separated by newlines, commas, or tabs. Ctrl+Enter to generate.' }}
+    </small>
+
+    <div class="flex align-items-end flex-wrap gap-3 mt-3">
+      <div class="flex flex-column gap-1">
+        <label class="font-bold" for="format-select">{{ 'S82.LBL.FMT' | lbl:'Format' }}</label>
+        <p-dropdown
+          inputId="format-select"
+          [options]="formatOptions"
+          optionLabel="label"
+          optionValue="value"
+          [(ngModel)]="selectedFormat"
+          [style]="{ 'min-width': '12rem' }">
+        </p-dropdown>
+      </div>
+      <button
+        pButton
+        type="button"
+        icon="fas fa-barcode"
+        [label]="'S82.BTN.GEN' | lbl:'Generate barcodes'"
+        (click)="generate()">
+      </button>
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined"
+        icon="pi pi-times"
+        [label]="'CMN.CLEAR' | lbl:'Clear'"
+        (click)="clearAll()">
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="showResults" class="barcode-results-section">
+    <div class="flex align-items-center justify-content-between flex-wrap gap-2 mb-3 no-print results-toolbar">
+      <span class="text-color-secondary">
+        {{ validCount }} {{ 'S82.MSG.GEN' | lbl:'barcode(s) generated' }}
+        <span *ngIf="errorCount > 0"> · {{ errorCount }} {{ 'S82.MSG.INV' | lbl:'invalid' }}</span>
+      </span>
+      <div class="flex align-items-center flex-wrap gap-2">
+        <span class="text-color-secondary text-sm mr-1">{{ 'S82.LBL.ZOOM' | lbl:'Zoom' }}</span>
+        <button
+          pButton
+          type="button"
+          class="p-button-outlined p-button-sm"
+          icon="pi pi-minus"
+          [label]="'S82.ZOOM.OUT' | lbl:'Zoom out'"
+          [disabled]="!canZoomOut"
+          (click)="zoomOut()">
+        </button>
+        <button
+          pButton
+          type="button"
+          class="p-button-outlined p-button-sm zoom-reset-btn"
+          [label]="zoomPercentLabel"
+          [title]="'S82.ZOOM.RST' | lbl:'Reset zoom'"
+          (click)="resetZoom()">
+        </button>
+        <button
+          pButton
+          type="button"
+          class="p-button-outlined p-button-sm"
+          icon="pi pi-plus"
+          [label]="'S82.ZOOM.IN' | lbl:'Zoom in'"
+          [disabled]="!canZoomIn"
+          (click)="zoomIn()">
+        </button>
+        <button
+          pButton
+          type="button"
+          class="p-button-outlined"
+          icon="pi pi-print"
+          [label]="'S82.BTN.PRNT' | lbl:'Print'"
+          (click)="print()">
+        </button>
+      </div>
+    </div>
+
+    <div class="barcodes-grid">
+      <div
+        *ngFor="let item of results"
+        class="barcode-item"
+        [class.barcode-item-error]="item.error">
+        <div *ngIf="item.svgHtml" class="barcode-svg-wrap" [innerHTML]="item.svgHtml"></div>
+        <div class="barcode-label">{{ item.code }}</div>
+        <div *ngIf="item.error" class="barcode-error-msg">{{ item.error }}</div>
+      </div>
+    </div>
+  </div>
+</div>

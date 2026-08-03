@@ -46,6 +46,11 @@ export class QueryService {
     return UserService.resolveDataLanguage(this._userService.userInfo);
   }
 
+  /** Active ENVDBLINK — same value sent as DATABASE_SID on every LIBQUERY request. */
+  databaseSid(): string {
+    return this.resolveDatabaseSid();
+  }
+
   getQueryResult(queryId: string, param?: any[]) {
     this.request = this.baseQueryUrl;
     const p = param ?? [];

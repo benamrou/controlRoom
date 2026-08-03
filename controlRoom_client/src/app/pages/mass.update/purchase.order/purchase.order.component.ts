@@ -479,28 +479,32 @@ export class PurchaseOrderComponent implements OnInit{
       this.globalError.push('The column A header must be named SITE_CODE'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[1].field.toUpperCase() !== 'ORDER_DATE') {
-        this.globalError.push('The column B header must be named ORDER_DATE'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[1].field.toUpperCase() !== 'VENDOR_CODE') {
+        this.globalError.push('The column B header must be named VENDOR_CODE'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[2].field.toUpperCase() !== 'DELIVERY_DATE') {
-        this.globalError.push('The column C header must be named DELIVERY_DATE'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[2].field.toUpperCase() !== 'ORDER_DATE') {
+        this.globalError.push('The column C header must be named ORDER_DATE'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'ORDER_STATUS') {
-        this.globalError.push('The column D header must be named ORDER_STATUS'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'DELIVERY_DATE') {
+        this.globalError.push('The column D header must be named DELIVERY_DATE'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[4].field.toUpperCase() !== 'ITEM_CODE') {
-        this.globalError.push('The column E header must be named ITEM_CODE'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[4].field.toUpperCase() !== 'ORDER_STATUS') {
+        this.globalError.push('The column E header must be named ORDER_STATUS'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[5].field.toUpperCase() !== 'LV_CODE') {
-        this.globalError.push('The column F header must be named LV_CODE'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[5].field.toUpperCase() !== 'ITEM_CODE') {
+        this.globalError.push('The column F header must be named ITEM_CODE'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[6].field.toUpperCase() !== 'QTY') {
-        this.globalError.push('The column G header must be named QTY'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[6].field.toUpperCase() !== 'LV_CODE') {
+        this.globalError.push('The column G header must be named LV_CODE'); 
+      result = false;
+    }
+    if (this._importService.wb.sheets[0].worksheet.columns[7].field.toUpperCase() !== 'QTY') {
+        this.globalError.push('The column H header must be named QTY'); 
       result = false;
     }
 

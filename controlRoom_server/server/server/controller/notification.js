@@ -237,6 +237,25 @@ function clearModule() {
     heap.disrequire('json2xls.js');
 }
 
+// ── ORACLE ERROR ROUTING ────────────────────────────────────────────────
+// PKREQUESTMANAGER returns Oracle errors as a 1-row result
+// ('Executing issue, check DBMS_SQL.EXECUTE rights. -NNNN-ORA-NNNNN...').
+// Those must never reach the business distribution list: reroute to admin.
+const ADMIN_EMAIL = 'abenamrouche@heinens.com';
+
+/**
+ * Detect PKREQUESTMANAGER error rows (Oracle errors returned as data).
+ * Errors always come back as a single row, so checking the first is enough.
+ */
+function isOracleErrorResult(rows) {
+    if (!rows || rows.length === 0) return false;
+    return Object.values(rows[0]).some(v =>
+        v && typeof v === 'string' &&
+        (v.includes('ORA-') || v.includes('Executing issue'))
+    );
+}
+// ────────────────────────────────────────────────────────────────────────
+
 /**
  * Execute a shell script from SALTSHELL content
  * Adapted from crontab.js executeScript function
@@ -430,6 +449,11 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
           heap.logger.log('alert', 'SQL Error on main QUERY: ' + err.message, 'alert', 3);
           return;
         }
+        // ── ORACLE ERROR ROUTING: detect error rows on the main query
+        let oracleErrorDetected = isOracleErrorResult(detailData);
+        if (oracleErrorDetected) {
+          heap.logger.log('alert', `[ORACLE ERROR DETECTED] ${request.requestId} | Alert: ${alertData[0].ALTID} | Rerouting to admin only: ${JSON.stringify(detailData[0])}`, 'alert', 3);
+        }
         let preHtml = '';
         let bannerHtml = '';
         if (bannerData.length >= 1) {
@@ -529,6 +553,12 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                     heap.logger.log('alert', `dataDetailN empty ${qNode.dataDetailN}`, 'alert', 3);
                     dataDetailN = [];
                   }
+
+                  // ── ORACLE ERROR ROUTING: a secondary sheet can carry the error too
+                  if (!oracleErrorDetected && isOracleErrorResult(dataDetailN)) {
+                    oracleErrorDetected = true;
+                    heap.logger.log('alert', `[ORACLE ERROR DETECTED] ${request.requestId} | ${qNode.key} | Rerouting to admin only: ${JSON.stringify(dataDetailN[0])}`, 'alert', 3);
+                  }
                   
                     // Update phase to JSON2XLS
                     await heap.dbLogger.updateRequest(request.requestId, {
@@ -605,6 +635,19 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                 rowCount: detailData.length
               });
               
+              if (oracleErrorDetected) {
+                // ── ORACLE ERROR ROUTING: admin only, request marked FAILED
+                const durationErr = Math.floor((Date.now() - request.requestStartTime) / 1000);
+                clearTimeout(request.overallTimeout);
+                await heap.dbLogger.logFailed(request.requestId, durationErr, 'Oracle error in alert result (secondary query)');
+                sendEmail(
+                  ADMIN_EMAIL,
+                  null,
+                  null,
+                  `ORACLE ERROR ALERT - ${alertData[0].ALTSUBJECT} ${SUBJECT_EXT}`,
+                  html
+                );
+              } else {
               sendEmail(
                 alertData[0].ALTEMAIL,
                 alertData[0].ALTEMAILCC,
@@ -615,6 +658,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                 request.requestStartTime,
                 request.overallTimeout
               );
+              }
           }
           else {
               // No email sent (ALTREALTIME != '0' and 0 rows)
@@ -800,6 +844,27 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                 
                 heap.logger.log('alert', `[Excel Generated] Size: ${bufferSizeMB}MB | Duration: ${bufferDuration}s | Rows: ${detailData.length}`, 'alert', 1);
                 
+                if (oracleErrorDetected) {
+                  // ── ORACLE ERROR ROUTING: admin only, request marked FAILED.
+                  // No monitoring params passed to sendEmailCSV so its success
+                  // path cannot overwrite the FAILED status with COMPLETE
+                  // (same pattern as the Excel-generation fallback email).
+                  const durationErr = Math.floor((Date.now() - request.requestStartTime) / 1000);
+                  clearTimeout(request.overallTimeout);
+                  await heap.dbLogger.logFailed(request.requestId, durationErr,
+                    `Oracle error in alert result: ${JSON.stringify(detailData[0]).substring(0, 3900)}`);
+                  sendEmailCSV(
+                    ADMIN_EMAIL,
+                    null,
+                    null,
+                    `ORACLE ERROR ALERT - ${alertData[0].ALTSUBJECT} ${SUBJECT_EXT}`,
+                    html,
+                    buffer,
+                    preHtml,
+                    false,
+                    FILENAME_EXT
+                  );
+                } else {
                 // Update phase to EMAIL_SENT
                 await heap.dbLogger.updateRequest(request.requestId, {
                   phase: 'EMAIL_SENT'
@@ -819,6 +884,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                   request.requestStartTime,
                   request.overallTimeout
                 );
+                }
                 buffer = null;
                 // FIX: clearModule/gc moved here — after async work completes —
                 // to avoid racing the active xlsx write stream
@@ -882,7 +948,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
           }
 
         // Optionally send SMS if configured
-        if (alertData[0].ALTSMS == 1 && alertData[0].ALTSMSCONTENT && alertData[0].ALTMOBILE && html.indexOf('ERRORDIAGNOSED') < 0) {
+        if (alertData[0].ALTSMS == 1 && alertData[0].ALTSMSCONTENT && alertData[0].ALTMOBILE && html.indexOf('ERRORDIAGNOSED') < 0 && !oracleErrorDetected) {
           const newLineSMS = '<br>';
           sendSMS(
             alertData[0].ALTMOBILE,
@@ -1272,4 +1338,3 @@ module.get = async function (request,response) {
     }
     return module;
  }
- 

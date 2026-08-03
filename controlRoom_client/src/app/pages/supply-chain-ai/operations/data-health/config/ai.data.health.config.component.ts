@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { AiDataHealthService } from 'src/app/shared/services/ai/ai.data.health.service';
 import { AiRetailerService } from 'src/app/shared/services/ai/ai.retailer.service';
@@ -24,12 +26,28 @@ interface CheckDef {
   RESOLUTION_JOB_NAME?: string;
   RESOLUTION_SCRIPT_TEMPLATE?: string;
   RESOLUTION_SCRIPT_PARAM_MAP?: string;
+  RESOLUTION_SQL?: string;
+  RESOLUTION_BATCH_SQL?: string;
+  RESOLUTION_BATCH_SCRIPT_TEMPLATE?: string;
   FIXABLE_STATUS_COLUMN?: string;
   FIXABLE_STATUS_VALUE?: string;
 }
 
 export type ResolutionMode =
-  'NONE' | 'LIBQUERY' | 'JOB' | 'LIBQUERY_JOB' | 'SCRIPT' | 'SCRIPT_JOB';
+  'NONE' | 'LIBQUERY' | 'JOB' | 'LIBQUERY_JOB' | 'SCRIPT' | 'SCRIPT_JOB'
+  | 'SQL' | 'SQL_JOB' | 'SQL_SCRIPT' | 'SQL_SCRIPT_JOB';
+
+interface LibQueryCatalogRow {
+  QUERYID?: number | string;
+  QUERYNUM?: string;
+  QUERYTITLE?: string;
+  QUERYDESC?: string;
+  QUERYSQL?: string;
+  QUERYPARAM?: string;
+  QUERYRESULT?: string;
+  QUERYTYPE?: number;
+  QUERYUPDATE?: number;
+}
 
 @Component({
   selector: 'ai-data-health-config-cmp',
@@ -57,6 +75,24 @@ export class AiDataHealthConfigComponent implements OnInit {
   resolutionVerifyState: 'idle' | 'checking' | 'ok' | 'error' = 'idle';
   resolutionVerifyMessage = '';
 
+  /** LIBQUERY column preview (check detail query or resolution LIBQUERY). */
+  private static readonly LIBQUERY_CATALOG_SEARCH = 'LIB0000001';
+  queryPreviewVisible = false;
+  queryPreviewLoading = false;
+  queryPreviewTitle = '';
+  queryPreviewQueryNum = '';
+  queryPreviewColumns: string[] = [];
+  queryPreviewCatalogColumns: string[] = [];
+  queryPreviewRows: Record<string, unknown>[] = [];
+  queryPreviewRowCount = 0;
+  queryPreviewError = '';
+  queryPreviewTitleLib = '';
+  queryPreviewDesc = '';
+  queryPreviewSql = '';
+  queryPreviewParam = '';
+  queryPreviewTypeLabel = '';
+  queryPreviewUpdateLabel = '';
+
   tierOptions = [
     { label: 'Real-time (5 min)', value: 'REALTIME' },
     { label: 'Hourly', value: 'HOURLY' },
@@ -71,6 +107,10 @@ export class AiDataHealthConfigComponent implements OnInit {
 
   resolutionModeOptions = [
     { label: 'None', value: 'NONE' },
+    { label: 'Inline SQL only', value: 'SQL' },
+    { label: 'Inline SQL then job', value: 'SQL_JOB' },
+    { label: 'Inline SQL then GOLD script', value: 'SQL_SCRIPT' },
+    { label: 'Inline SQL → GOLD script → job', value: 'SQL_SCRIPT_JOB' },
     { label: 'LIBQUERY only', value: 'LIBQUERY' },
     { label: 'Scheduler job only', value: 'JOB' },
     { label: 'LIBQUERY then job', value: 'LIBQUERY_JOB' },
@@ -203,9 +243,17 @@ export class AiDataHealthConfigComponent implements OnInit {
   get resolutionMode(): ResolutionMode {
     const m = (this.form.RESOLUTION_MODE || 'NONE').toUpperCase();
     const allowed: ResolutionMode[] = [
-      'LIBQUERY', 'JOB', 'LIBQUERY_JOB', 'SCRIPT', 'SCRIPT_JOB'
+      'LIBQUERY', 'JOB', 'LIBQUERY_JOB', 'SCRIPT', 'SCRIPT_JOB',
+      'SQL', 'SQL_JOB', 'SQL_SCRIPT', 'SQL_SCRIPT_JOB'
     ];
     return (allowed.includes(m as ResolutionMode) ? m : 'NONE') as ResolutionMode;
+  }
+
+  get showResolutionSql(): boolean {
+    return this.resolutionMode === 'SQL'
+      || this.resolutionMode === 'SQL_JOB'
+      || this.resolutionMode === 'SQL_SCRIPT'
+      || this.resolutionMode === 'SQL_SCRIPT_JOB';
   }
 
   get showResolutionLibQuery(): boolean {
@@ -215,16 +263,90 @@ export class AiDataHealthConfigComponent implements OnInit {
   get showResolutionJob(): boolean {
     return this.resolutionMode === 'JOB'
       || this.resolutionMode === 'LIBQUERY_JOB'
-      || this.resolutionMode === 'SCRIPT_JOB';
+      || this.resolutionMode === 'SCRIPT_JOB'
+      || this.resolutionMode === 'SQL_JOB'
+      || this.resolutionMode === 'SQL_SCRIPT_JOB';
   }
 
   get showResolutionScript(): boolean {
-    return this.resolutionMode === 'SCRIPT' || this.resolutionMode === 'SCRIPT_JOB';
+    return this.resolutionMode === 'SCRIPT'
+      || this.resolutionMode === 'SCRIPT_JOB'
+      || this.resolutionMode === 'SQL_SCRIPT'
+      || this.resolutionMode === 'SQL_SCRIPT_JOB';
   }
 
   onResolutionModeChange(): void {
     this.resolutionVerifyState = 'idle';
     this.resolutionVerifyMessage = '';
+  }
+
+  verifyResolutionSql(): void {
+    const sql = (this.form.RESOLUTION_SQL || '').trim();
+    if (!sql) {
+      this.resolutionVerifyState = 'error';
+      this.resolutionVerifyMessage = 'Enter resolution SQL first.';
+      return;
+    }
+    const head = sql.toUpperCase();
+    if (!head.startsWith('UPDATE') && !head.startsWith('MERGE')) {
+      this.resolutionVerifyState = 'error';
+      this.resolutionVerifyMessage = 'SQL must start with UPDATE or MERGE.';
+      return;
+    }
+    const cols = this.parseParamMap(this.form.RESOLUTION_PARAM_MAP);
+    if (!cols.length) {
+      this.resolutionVerifyState = 'error';
+      this.resolutionVerifyMessage = 'Enter parameter map (bind=column or bind names).';
+      return;
+    }
+    if (!this.form.CHECK_ID?.trim()) {
+      this.resolutionVerifyState = 'ok';
+      this.resolutionVerifyMessage =
+        'Syntax OK. Save the check, then verify again to dry-run against the database.';
+      return;
+    }
+    const sample: Record<string, unknown> = {
+      CHECK_ID: this.form.CHECK_ID,
+      RETAILER_ID: this.selectedRetailer?.RETAILER_ID || this.form.RETAILER_ID,
+      DRY_RUN: 1
+    };
+    for (const entry of this.parseParamEntries(this.form.RESOLUTION_PARAM_MAP)) {
+      sample[entry.bind] = '-1';
+      if (entry.col !== entry.bind) {
+        sample[entry.col] = '-1';
+      }
+    }
+    this.resolutionVerifyState = 'checking';
+    this.resolutionVerifyMessage = '';
+    this._svc.executeResolutionSql(sample, true).subscribe({
+      next: () => {
+        this.resolutionVerifyState = 'ok';
+        this.resolutionVerifyMessage =
+          'SQL accepted (dry-run). Review binds and GOLD impact before using Fix on the dashboard.';
+      },
+      error: (err: any) => {
+        this.resolutionVerifyState = 'error';
+        this.resolutionVerifyMessage = err?.error?.message || err?.message || 'Resolution SQL failed.';
+      }
+    });
+  }
+
+  /** bind=Column header or bare bind name (column same as bind). */
+  private parseParamEntries(map?: string): { bind: string; col: string }[] {
+    return (map || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((token) => {
+        const eq = token.indexOf('=');
+        if (eq > 0) {
+          return {
+            bind: token.slice(0, eq).trim().replace(/^:/, ''),
+            col: token.slice(eq + 1).trim()
+          };
+        }
+        return { bind: token.replace(/^:/, ''), col: token };
+      });
   }
 
   verifyResolutionQuery(): void {
@@ -283,6 +405,203 @@ export class AiDataHealthConfigComponent implements OnInit {
     });
   }
 
+  /** Preview columns returned by the check detail LIBQUERY (live run + LIBQUERY catalog). */
+  viewQueryDetail(): void {
+    this.openQueryColumnPreview(
+      (this.form.QUERY_NUM || '').trim(),
+      'Check detail query columns'
+    );
+  }
+
+  viewResolutionQueryDetail(): void {
+    this.openQueryColumnPreview(
+      (this.form.RESOLUTION_QUERY_NUM || '').trim(),
+      'Resolution LIBQUERY columns'
+    );
+  }
+
+  private openQueryColumnPreview(queryNum: string, title: string): void {
+    if (!queryNum) {
+      this._msg.add({ severity: 'warn', summary: 'LIBQUERY', detail: 'Enter a LIBQUERY number first.' });
+      return;
+    }
+    const retailerId = this.selectedRetailer?.RETAILER_ID || this.form.RETAILER_ID;
+    if (!retailerId) {
+      this._msg.add({ severity: 'warn', summary: 'Retailer', detail: 'Select a retailer to preview query columns.' });
+      return;
+    }
+
+    this.queryPreviewVisible = true;
+    this.queryPreviewLoading = true;
+    this.queryPreviewTitle = title;
+    this.queryPreviewQueryNum = queryNum;
+    this.queryPreviewColumns = [];
+    this.queryPreviewCatalogColumns = [];
+    this.queryPreviewRows = [];
+    this.queryPreviewRowCount = 0;
+    this.queryPreviewError = '';
+    this.queryPreviewTitleLib = '';
+    this.queryPreviewDesc = '';
+    this.queryPreviewSql = '';
+    this.queryPreviewParam = '';
+    this.queryPreviewTypeLabel = '';
+    this.queryPreviewUpdateLabel = '';
+
+    forkJoin({
+      live: this._query.getQueryResult(queryNum, [retailerId]).pipe(
+        catchError((err) => of({ __error: err }))
+      ),
+      catalog: this._query
+        .getQueryResult(AiDataHealthConfigComponent.LIBQUERY_CATALOG_SEARCH, [queryNum, '%', '%'])
+        .pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ live, catalog }) => {
+        const liveErr = live && typeof live === 'object' && '__error' in (live as object);
+        if (liveErr) {
+          const err = (live as { __error: { error?: { message?: string }; message?: string } }).__error;
+          this.queryPreviewError =
+            err?.error?.message || err?.message || 'Query execution failed.';
+        } else {
+          const rows = Array.isArray(live) ? (live as Record<string, unknown>[]) : [];
+          this.queryPreviewRowCount = rows.length;
+          this.queryPreviewRows = rows.slice(0, 8);
+          this.queryPreviewColumns = this.extractColumnNames(rows);
+        }
+
+        const catRow = this.findLibQueryCatalogRow(catalog, queryNum);
+        if (catRow) {
+          this.applyLibQueryCatalogToPreview(catRow);
+          this.loadFullLibQuerySqlIfNeeded(catRow);
+        }
+
+        if (!this.queryPreviewColumns.length && !this.queryPreviewError && !this.queryPreviewSql) {
+          this.queryPreviewError = 'Query returned no rows and LIBQUERY catalog entry was not found.';
+        }
+        this.queryPreviewLoading = false;
+      },
+      error: () => {
+        this.queryPreviewLoading = false;
+        this.queryPreviewError = 'Could not load query preview.';
+      }
+    });
+  }
+
+  private findLibQueryCatalogRow(catalog: unknown, queryNum: string): LibQueryCatalogRow | null {
+    if (!Array.isArray(catalog)) { return null; }
+    const want = queryNum.toUpperCase();
+    const row = catalog.find(
+      (r: LibQueryCatalogRow) => String(r?.QUERYNUM || '').toUpperCase() === want
+    );
+    return row || null;
+  }
+
+  private applyLibQueryCatalogToPreview(catRow: LibQueryCatalogRow): void {
+    this.queryPreviewTitleLib = (catRow.QUERYTITLE || '').trim();
+    this.queryPreviewDesc = (catRow.QUERYDESC || '').trim();
+    this.queryPreviewSql = this.normalizeCatalogSql(catRow.QUERYSQL);
+    this.queryPreviewParam = (catRow.QUERYPARAM || '').trim();
+    const qt = catRow.QUERYTYPE;
+    this.queryPreviewTypeLabel =
+      qt === 0 ? 'SQL (QUERYTYPE 0)' : qt === 1 ? 'Package (QUERYTYPE 1)' : qt === 2 ? 'Widget (QUERYTYPE 2)' : '';
+    const qu = catRow.QUERYUPDATE;
+    this.queryPreviewUpdateLabel =
+      qu === 1 ? 'DML (QUERYUPDATE 1)' : qu === 0 ? 'Read (QUERYUPDATE 0)' : '';
+
+    if (catRow.QUERYRESULT) {
+      this.queryPreviewCatalogColumns = this.parseCatalogColumns(String(catRow.QUERYRESULT));
+      if (!this.queryPreviewColumns.length && this.queryPreviewCatalogColumns.length) {
+        this.queryPreviewColumns = [...this.queryPreviewCatalogColumns];
+      }
+    }
+  }
+
+  /** Search list may omit/truncate CLOB — reload by QUERYID like Query Library edit. */
+  private loadFullLibQuerySqlIfNeeded(catRow: LibQueryCatalogRow): void {
+    const id = catRow.QUERYID;
+    if (id === undefined || id === null || String(id).trim() === '') {
+      return;
+    }
+    const sqlLen = this.queryPreviewSql.length;
+    if (sqlLen > 500) {
+      return;
+    }
+    this._query
+      .getQueryResult(AiDataHealthConfigComponent.LIBQUERY_CATALOG_SEARCH, [
+        String(id),
+        '%',
+        '%'
+      ])
+      .subscribe({
+        next: (rows: unknown) => {
+          if (!Array.isArray(rows) || !rows.length) {
+            return;
+          }
+          const full = rows[0] as LibQueryCatalogRow;
+          const sql = this.normalizeCatalogSql(full.QUERYSQL);
+          if (sql.length > sqlLen) {
+            this.queryPreviewSql = sql;
+            if (full.QUERYTITLE) {
+              this.queryPreviewTitleLib = String(full.QUERYTITLE).trim();
+            }
+            if (full.QUERYDESC) {
+              this.queryPreviewDesc = String(full.QUERYDESC).trim();
+            }
+            if (full.QUERYPARAM) {
+              this.queryPreviewParam = String(full.QUERYPARAM).trim();
+            }
+          }
+        }
+      });
+  }
+
+  private normalizeCatalogSql(raw: unknown): string {
+    if (raw === null || raw === undefined) { return ''; }
+    if (typeof raw === 'string') { return raw.trim(); }
+    return String(raw).trim();
+  }
+
+  copyQueryPreviewSql(): void {
+    if (!this.queryPreviewSql) { return; }
+    const text = this.queryPreviewSql;
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(
+        () => this._msg.add({ severity: 'success', summary: 'Copied', detail: 'SQL copied to clipboard.' }),
+        () => this._msg.add({ severity: 'warn', summary: 'Copy failed', detail: 'Could not copy SQL.' })
+      );
+    } else {
+      this._msg.add({ severity: 'info', summary: 'SQL', detail: 'Select the text in the preview and copy manually.' });
+    }
+  }
+
+  private parseCatalogColumns(queryResult: string): string[] {
+    return queryResult
+      .split(',')
+      .map((c) => c.trim())
+      .filter(Boolean);
+  }
+
+  /** Column order from first row; include keys seen in other rows. */
+  private extractColumnNames(rows: Record<string, unknown>[]): string[] {
+    if (!rows.length) { return []; }
+    const ordered = Object.keys(rows[0]);
+    const seen = new Set(ordered.map((k) => k.toUpperCase()));
+    for (const row of rows.slice(1)) {
+      for (const key of Object.keys(row)) {
+        if (!seen.has(key.toUpperCase())) {
+          ordered.push(key);
+          seen.add(key.toUpperCase());
+        }
+      }
+    }
+    return ordered;
+  }
+
+  queryPreviewCell(row: Record<string, unknown>, col: string): string {
+    const v = row[col] ?? row[col.toUpperCase()] ?? row[col.toLowerCase()];
+    if (v === null || v === undefined) { return ''; }
+    return String(v);
+  }
+
   saveDef(): void {
     if (!this.form.CHECK_CODE?.trim() || !this.form.CHECK_NAME?.trim() || !this.form.QUERY_NUM?.trim()) {
       this._msg.add({ severity: 'warn', summary: 'Validation', detail: 'Code, name and LIBQUERY number are required.' });
@@ -300,6 +619,33 @@ export class AiDataHealthConfigComponent implements OnInit {
       });
       return;
     }
+    if (mode === 'SQL' || mode === 'SQL_JOB' || mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB') {
+      if (!this.form.RESOLUTION_SQL?.trim()) {
+        this._msg.add({
+          severity: 'warn',
+          summary: 'Validation',
+          detail: 'Per-row resolution SQL is required for inline SQL modes.'
+        });
+        return;
+      }
+      if (!this.form.RESOLUTION_PARAM_MAP?.trim()) {
+        this._msg.add({
+          severity: 'warn',
+          summary: 'Validation',
+          detail: 'Per-row SQL parameter map is required (Fix / Fix all each row).'
+        });
+        return;
+      }
+      const head = this.form.RESOLUTION_SQL.trim().toUpperCase();
+      if (!head.startsWith('UPDATE') && !head.startsWith('MERGE')) {
+        this._msg.add({
+          severity: 'warn',
+          summary: 'Validation',
+          detail: 'Resolution SQL must start with UPDATE or MERGE.'
+        });
+        return;
+      }
+    }
     if (mode === 'LIBQUERY' || mode === 'LIBQUERY_JOB') {
       if (!this.form.RESOLUTION_QUERY_NUM?.trim() || !this.form.RESOLUTION_PARAM_MAP?.trim()) {
         this._msg.add({
@@ -310,7 +656,10 @@ export class AiDataHealthConfigComponent implements OnInit {
         return;
       }
     }
-    if (mode === 'JOB' || mode === 'LIBQUERY_JOB' || mode === 'SCRIPT_JOB') {
+    if (
+      mode === 'JOB' || mode === 'LIBQUERY_JOB' || mode === 'SCRIPT_JOB'
+      || mode === 'SQL_JOB' || mode === 'SQL_SCRIPT_JOB'
+    ) {
       if (!this.form.RESOLUTION_JOB_NAME?.trim()) {
         this._msg.add({
           severity: 'warn',
@@ -320,7 +669,7 @@ export class AiDataHealthConfigComponent implements OnInit {
         return;
       }
     }
-    if (mode === 'SCRIPT' || mode === 'SCRIPT_JOB') {
+    if (mode === 'SCRIPT' || mode === 'SCRIPT_JOB' || mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB') {
       if (!this.form.RESOLUTION_SCRIPT_TEMPLATE?.trim()
         || !this.form.RESOLUTION_SCRIPT_PARAM_MAP?.trim()) {
         this._msg.add({
@@ -337,37 +686,51 @@ export class AiDataHealthConfigComponent implements OnInit {
     }
     this.savingDef = true;
     const payload = {
-      CHECK_ID: this.form.CHECK_ID || '',
-      CHECK_CODE: (this.form.CHECK_CODE || '').toUpperCase(),
+      CHECK_ID: (this.form.CHECK_ID || '').trim(),
+      CHECK_CODE: (this.form.CHECK_CODE || '').trim().toUpperCase(),
       CHECK_NAME: this.form.CHECK_NAME || '',
       CHECK_DESCRIPTION: this.form.CHECK_DESCRIPTION || '',
       QUERY_NUM: this.form.QUERY_NUM || '',
       TIER: this.form.TIER || 'NIGHTLY',
       SEVERITY: this.form.SEVERITY || 'WARNING',
       ENABLED: this.form.ENABLED ?? 1,
-      RETAILER_ID: this.selectedRetailer?.RETAILER_ID || '',
+      RETAILER_ID: (this.form.RETAILER_ID || this.selectedRetailer?.RETAILER_ID || '').trim(),
       SKILL_CODE: this.form.SKILL_CODE || '',
       ENTITY_KEY: this.form.ENTITY_KEY || '',
       DISPLAY_ORDER: this.form.DISPLAY_ORDER ?? 999,
       RESOLUTION_MODE: mode,
+      RESOLUTION_SQL:
+        mode === 'SQL' || mode === 'SQL_JOB' || mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB'
+          ? (this.form.RESOLUTION_SQL || '').trim()
+          : '',
+      RESOLUTION_BATCH_SQL:
+        mode === 'SQL' || mode === 'SQL_JOB' || mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB'
+          ? (this.form.RESOLUTION_BATCH_SQL || '').trim()
+          : '',
+      RESOLUTION_BATCH_SCRIPT_TEMPLATE:
+        mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB'
+          ? (this.form.RESOLUTION_BATCH_SCRIPT_TEMPLATE || '').trim()
+          : '',
       RESOLUTION_QUERY_NUM:
         mode === 'LIBQUERY' || mode === 'LIBQUERY_JOB'
           ? (this.form.RESOLUTION_QUERY_NUM || '').trim()
           : '',
       RESOLUTION_PARAM_MAP:
-        mode === 'LIBQUERY' || mode === 'LIBQUERY_JOB'
+        mode === 'SQL' || mode === 'SQL_JOB' || mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB'
+          || mode === 'LIBQUERY' || mode === 'LIBQUERY_JOB'
           ? (this.form.RESOLUTION_PARAM_MAP || '').trim()
           : '',
       RESOLUTION_JOB_NAME:
         mode === 'JOB' || mode === 'LIBQUERY_JOB' || mode === 'SCRIPT_JOB'
+          || mode === 'SQL_JOB' || mode === 'SQL_SCRIPT_JOB'
           ? (this.form.RESOLUTION_JOB_NAME || '').trim()
           : '',
       RESOLUTION_SCRIPT_TEMPLATE:
-        mode === 'SCRIPT' || mode === 'SCRIPT_JOB'
+        mode === 'SCRIPT' || mode === 'SCRIPT_JOB' || mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB'
           ? (this.form.RESOLUTION_SCRIPT_TEMPLATE || '').trim()
           : '',
       RESOLUTION_SCRIPT_PARAM_MAP:
-        mode === 'SCRIPT' || mode === 'SCRIPT_JOB'
+        mode === 'SCRIPT' || mode === 'SCRIPT_JOB' || mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB'
           ? (this.form.RESOLUTION_SCRIPT_PARAM_MAP || '').trim()
           : '',
       FIXABLE_STATUS_COLUMN: (this.form.FIXABLE_STATUS_COLUMN || '').trim(),
@@ -380,9 +743,12 @@ export class AiDataHealthConfigComponent implements OnInit {
         this._msg.add({ severity: 'success', summary: 'Saved', detail: `Check "${payload.CHECK_NAME}" saved.` });
         this.loadDefs();
       },
-      error: () => {
+      error: (err: unknown) => {
         this.savingDef = false;
-        this._msg.add({ severity: 'error', summary: 'Error', detail: 'Could not save check.' });
+        const e = err as { error?: { MESSAGE?: string; message?: string }; message?: string };
+        const raw = e?.error?.MESSAGE || e?.error?.message || e?.message || 'Could not save check.';
+        const detail = typeof raw === 'string' ? raw : JSON.stringify(raw);
+        this._msg.add({ severity: 'error', summary: 'Save failed', detail });
       }
     });
   }

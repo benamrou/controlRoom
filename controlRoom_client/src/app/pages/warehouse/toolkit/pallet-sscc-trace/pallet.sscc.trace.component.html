@@ -1,0 +1,340 @@
+<app-page-header
+  [heading]="'S87.TITLE' | lbl:'Pallet/SSCC traceability'"
+  [icon]="'fa-barcode'"
+  [waitMessage]="waitMessage"
+  [okExit]="okExit"
+  [screenID]="screenID">
+</app-page-header>
+
+<div class="content-section implementation" style="padding: 5px;">
+  <p-toast [style]="{ marginTop: '80px' }" position="top-right"></p-toast>
+</div>
+
+<div class="sscc-trace-page">
+  <div class="alert alert-warning sscc-trace-warn">
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{ 'S87.WARN' | lbl:'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC pallet lines. Default search: allotment missing both indicators. Production lot is only available for Manufacturing warehouse 93080.' }}</span>
+  </div>
+
+  <div class="sscc-trace-search-bar sscc-trace-row">
+    <div class="sscc-trace-group">
+      <span class="sscc-trace-label">{{ 'S87.LBL.WHS' | lbl:'Whs #' }}</span>
+      <input
+        pInputText
+        type="text"
+        class="sscc-trace-input"
+        [(ngModel)]="searchWhs"
+        [placeholder]="'S87.PLH.WHS' | lbl:'93080 (blank = all)'" />
+    </div>
+
+    <div class="sscc-trace-group">
+      <span class="sscc-trace-label">{{ 'S87.LBL.PO' | lbl:'PO #' }}</span>
+      <input
+        pInputText
+        type="text"
+        class="sscc-trace-input"
+        [(ngModel)]="searchPo"
+        [placeholder]="'S87.PLH.PO' | lbl:'Enter PO (receipt or shipment)'" />
+    </div>
+
+    <div class="sscc-trace-group">
+      <span class="sscc-trace-label">{{ 'S87.LBL.VND' | lbl:'Vendor #' }}</span>
+      <input
+        pInputText
+        type="text"
+        class="sscc-trace-input"
+        [(ngModel)]="searchVendor"
+        [placeholder]="'S87.PLH.VND' | lbl:'Enter vendor code'" />
+    </div>
+
+    <div class="sscc-trace-group sscc-trace-group-btn">
+      <button
+        type="button"
+        pButton
+        icon="fas fa-search"
+        class="p-button-success"
+        [style]="{ height: '35px' }"
+        [label]="'S87.BTN.SRCH' | lbl:'SEARCH'"
+        [disabled]="searching || saving"
+        (click)="search()">
+      </button>
+    </div>
+  </div>
+
+  <div class="sscc-trace-search-bar sscc-trace-row sscc-trace-row-sub">
+    <div class="sscc-trace-group">
+      <span class="sscc-trace-label">{{ 'S87.LBL.SSCC' | lbl:'SSCC #' }}</span>
+      <input
+        pInputText
+        type="text"
+        class="sscc-trace-input"
+        [(ngModel)]="searchSscc"
+        [placeholder]="'S87.PLH.SSCC' | lbl:'Enter SSCC'" />
+    </div>
+
+    <div class="sscc-trace-group">
+      <span class="sscc-trace-label">{{ 'S87.LBL.ITEM' | lbl:'Item #' }}</span>
+      <input
+        pInputText
+        type="text"
+        class="sscc-trace-input"
+        [(ngModel)]="searchItem"
+        [placeholder]="'S87.PLH.ITEM' | lbl:'Enter item code'" />
+    </div>
+
+    <div class="sscc-trace-group">
+      <span class="sscc-trace-label">{{ 'S87.LBL.FLOW' | lbl:'Flow' }}</span>
+      <p-dropdown
+        [options]="flowOptions"
+        [(ngModel)]="searchFlow"
+        optionLabel="label"
+        optionValue="value"
+        [style]="{ width: '100%', height: '35px' }"
+        styleClass="sscc-trace-dropdown">
+      </p-dropdown>
+    </div>
+
+    <div class="sscc-trace-group">
+      <span class="sscc-trace-label">{{ 'S87.LBL.MISS' | lbl:'Missing' }}</span>
+      <p-dropdown
+        [options]="missingOptions"
+        [(ngModel)]="searchMissing"
+        optionLabel="label"
+        optionValue="value"
+        [style]="{ width: '100%', height: '35px' }"
+        styleClass="sscc-trace-dropdown">
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="sscc-trace-results" *ngIf="rows.length">
+    <div class="sscc-trace-mass-bar">
+      <span class="sscc-trace-mass-title">{{ 'S87.LBL.MASS' | lbl:'Apply to all results' }}</span>
+      <div class="sscc-trace-group">
+        <span class="sscc-trace-label">{{ 'S87.LBL.UBD' | lbl:'UBD' }}</span>
+        <p-calendar
+          [(ngModel)]="massUbdDate"
+          dateFormat="mm/dd/yy"
+          [showIcon]="true"
+          [readonlyInput]="true"
+          appendTo="body"
+          inputStyleClass="sscc-trace-input"
+          [style]="{ height: '35px' }">
+        </p-calendar>
+      </div>
+      <div class="sscc-trace-group" *ngIf="massLotAllowed">
+        <span class="sscc-trace-label">{{ 'S87.LBL.LOF' | lbl:'Prod lot' }}</span>
+        <input
+          pInputText
+          type="text"
+          class="sscc-trace-input"
+          maxlength="30"
+          [(ngModel)]="massLotValue"
+          [placeholder]="'S87.PLH.LOF' | lbl:'Production lot'" />
+      </div>
+      <div class="sscc-trace-group sscc-trace-group-btn">
+        <button
+          type="button"
+          pButton
+          icon="fas fa-check-double"
+          class="p-button-warning"
+          [style]="{ height: '35px' }"
+          [label]="'S87.BTN.MASS' | lbl:'APPLY TO ALL'"
+          [disabled]="searching || saving"
+          (click)="requestMassApply()">
+        </button>
+      </div>
+    </div>
+
+    <p-table
+      #resultTable
+      [value]="rows"
+      [paginator]="true"
+      [rows]="15"
+      [rowsPerPageOptions]="[15, 25, 50]"
+      [resizableColumns]="true"
+      columnResizeMode="expand"
+      [scrollable]="true"
+      scrollHeight="480px"
+      styleClass="p-datatable-sm"
+      [autoLayout]="true"
+      [globalFilterFields]="['SSCC', 'ITEM', 'PO #', 'WHS #']">
+      <ng-template pTemplate="caption">
+        <div class="sscc-trace-caption">
+          <span>{{ rows.length }} SSCC line(s)</span>
+          <button
+            type="button"
+            pButton
+            icon="fas fa-file"
+            class="CSV_Button"
+            [label]="'CMN.CSV' | lbl:'CSV'"
+            (click)="resultTable.exportCSV()">
+          </button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of columnsResult" [pSortableColumn]="col.field" pResizableColumn>
+            {{ col.header }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+          <th>{{ 'CMN.ACTIONS' | lbl:'Actions' }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td *ngFor="let col of columnsResult">
+            <ng-container [ngSwitch]="col.field">
+              <span *ngSwitchCase="'UBD'">{{ displayUbd(row) || '—' }}</span>
+              <span *ngSwitchCase="'PROD LOT'">{{ displayLot(row) || '—' }}</span>
+              <span *ngSwitchCase="'FLOW'">{{ displayFlow(row) || '—' }}</span>
+              <span *ngSwitchCase="'RECEIVED ON'">{{ displayReceived(row) || '—' }}</span>
+              <span *ngSwitchCase="'PO #'">{{ displayPo(row) || '—' }}</span>
+              <span *ngSwitchDefault>{{ row[col.field] }}</span>
+            </ng-container>
+          </td>
+          <td class="sscc-trace-actions">
+            <div class="sscc-trace-action-row">
+              <button
+                type="button"
+                pButton
+                class="p-button-outlined p-button-sm"
+                [label]="displayUbd(row) ? 'UBD' : '+ UBD'"
+                (click)="displayUbd(row) ? openEdit(row, 'DLC') : openAdd(row, 'DLC')">
+              </button>
+              <button
+                *ngIf="displayUbd(row)"
+                type="button"
+                pButton
+                icon="fas fa-trash"
+                class="p-button-text p-button-danger p-button-sm"
+                (click)="openDelete(row, 'DLC')"
+                pTooltip="Remove UBD">
+              </button>
+            </div>
+            <div class="sscc-trace-action-row" *ngIf="canEditLof(row)">
+              <button
+                type="button"
+                pButton
+                class="p-button-outlined p-button-sm"
+                [label]="displayLot(row) ? 'LOT' : '+ LOT'"
+                (click)="displayLot(row) ? openEdit(row, 'LOF') : openAdd(row, 'LOF')">
+              </button>
+              <button
+                *ngIf="displayLot(row)"
+                type="button"
+                pButton
+                icon="fas fa-trash"
+                class="p-button-text p-button-danger p-button-sm"
+                (click)="openDelete(row, 'LOF')"
+                pTooltip="Remove prod lot">
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div class="sscc-trace-empty" *ngIf="!searching && !rows.length">
+    <p *ngIf="!hasSearched">{{ 'S87.MSG.READY' | lbl:'Set your filters and click SEARCH.' }}</p>
+    <p *ngIf="hasSearched">{{ 'S87.MSG.EMPTY' | lbl:'No SSCC lines found for the current filters.' }}</p>
+  </div>
+</div>
+
+<!-- Add / Edit value dialog -->
+<p-dialog
+  [(visible)]="showEditDialog"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [style]="{ width: '480px' }"
+  (onHide)="cancelEdit()">
+  <p-header>
+    {{ dialogMode === 'add'
+         ? ('S87.DLG.ADD' | lbl:'Add indicator')
+         : ('S87.DLG.EDIT' | lbl:'Edit indicator') }}
+    — {{ dialogKind === 'DLC' ? ('S87.LBL.UBD' | lbl:'UBD') : ('S87.LBL.LOF' | lbl:'Prod lot (LOF)') }}
+  </p-header>
+
+  <div class="sscc-trace-edit" *ngIf="selectedRow">
+    <p class="sscc-trace-edit-meta">
+      <strong>SSCC</strong> {{ selectedRow['SSCC'] }}
+      · <strong>Item</strong> {{ selectedRow['Item'] }}
+      · <strong>Whs</strong> {{ selectedRow['Whs #'] }}
+    </p>
+
+    <div *ngIf="dialogKind === 'DLC'" class="field">
+      <label class="font-bold">{{ 'S87.LBL.UBD' | lbl:'UBD' }}</label>
+      <p-calendar
+        [(ngModel)]="dialogUbdDate"
+        dateFormat="mm/dd/yy"
+        [showIcon]="true"
+        [readonlyInput]="true"
+        appendTo="body">
+      </p-calendar>
+    </div>
+
+    <div *ngIf="dialogKind === 'LOF'" class="field">
+      <label class="font-bold">{{ 'S87.LBL.LOF' | lbl:'Prod lot (LOF)' }}</label>
+      <input pInputText type="text" class="w-full" maxlength="30" [(ngModel)]="dialogLotValue" />
+    </div>
+  </div>
+
+  <p-footer>
+    <button type="button" pButton class="p-button-text" [label]="'CMN.CANCEL' | lbl:'Cancel'" (click)="cancelEdit()"></button>
+    <button type="button" pButton icon="fas fa-check" class="p-button-success"
+            [label]="'S87.BTN.SAVE' | lbl:'Save'" (click)="requestSave()"></button>
+  </p-footer>
+</p-dialog>
+
+<!-- User-id confirmation -->
+<p-dialog
+  [(visible)]="showConfirmDialog"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [style]="{ width: '480px' }"
+  (onHide)="cancelConfirm()">
+  <p-header>{{ 'S87.CFM.TTL' | lbl:'Confirm change' }}</p-header>
+  <div class="sscc-trace-confirm">
+    <div class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span *ngIf="pendingAction === 'delete'">
+        {{ 'S87.CFM.DEL' | lbl:'Remove this traceability indicator from the SSCC line?' }}
+      </span>
+      <span *ngIf="pendingAction === 'mass'">
+        {{ massConfirmDetail() }}
+      </span>
+      <span *ngIf="pendingAction === 'add' || pendingAction === 'edit'">
+        {{ 'S87.CFM.SAV' | lbl:'Save this traceability indicator on the SSCC line?' }}
+      </span>
+    </div>
+    <label class="font-bold" for="ssccTraceUid">{{ 'S87.LBL.UID' | lbl:'User id' }}</label>
+    <input
+      id="ssccTraceUid"
+      type="text"
+      pInputText
+      class="w-full"
+      [(ngModel)]="confirmUserId"
+      [placeholder]="'S87.PLH.UID' | lbl:'Enter your user id to confirm'"
+      autocomplete="off"
+      (keyup.enter)="acceptConfirm()" />
+  </div>
+  <p-footer>
+    <button type="button" pButton class="p-button-text" [label]="'CMN.CANCEL' | lbl:'Cancel'" (click)="cancelConfirm()"></button>
+    <button
+      type="button"
+      pButton
+      icon="fas fa-check"
+      [class]="pendingAction === 'delete' ? 'p-button-danger' : 'p-button-success'"
+      [label]="pendingAction === 'delete'
+        ? ('S87.BTN.DEL' | lbl:'Remove')
+        : pendingAction === 'mass'
+          ? ('S87.BTN.MASS' | lbl:'APPLY TO ALL')
+          : ('S87.BTN.SAVE' | lbl:'Save')"
+      [disabled]="!confirmUserIdMatches()"
+      (click)="acceptConfirm()">
+    </button>
+  </p-footer>
+</p-dialog>

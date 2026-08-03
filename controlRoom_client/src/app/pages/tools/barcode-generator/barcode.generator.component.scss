@@ -1,0 +1,133 @@
+.barcode-generator-page {
+  width: 100%;
+  max-width: none;
+}
+
+.barcode-input-card {
+  padding: 1.25rem;
+  width: 100%;
+}
+
+.codes-textarea {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+.barcodes-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.barcode-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 1.25rem 0.75rem;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1.5px solid #e5e7eb;
+  break-inside: avoid;
+  flex: 0 0 auto;
+  width: max-content;
+  max-width: 100%;
+}
+
+.barcode-item svg {
+  display: block;
+  height: auto;
+}
+
+.barcode-svg-wrap {
+  display: block;
+  line-height: 0;
+  max-width: 100%;
+}
+
+.barcode-label {
+  font-size: 0.82rem;
+  color: #374151;
+  font-weight: 600;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 0.05em;
+  text-align: center;
+  word-break: break-all;
+  max-width: 100%;
+}
+
+.barcode-item-error {
+  background: #fff7f7;
+  border-color: #fca5a5;
+}
+
+.barcode-item-error .barcode-label {
+  color: #dc2626;
+}
+
+.barcode-error-msg {
+  font-size: 0.75rem;
+  color: #ef4444;
+}
+
+.results-toolbar {
+  width: 100%;
+}
+
+.results-toolbar .zoom-reset-btn {
+  min-width: 4.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media print {
+  body.icr-barcode-print app-header,
+  body.icr-barcode-print app-sidebar,
+  body.icr-barcode-print p-toast,
+  body.icr-barcode-print .p-toast,
+  body.icr-barcode-print .no-print,
+  body.icr-barcode-print app-page-header,
+  body.icr-barcode-print .barcode-input-card,
+  body.icr-barcode-print .results-toolbar,
+  body.icr-barcode-print .barcode-generator-page > p {
+    display: none !important;
+  }
+
+  body.icr-barcode-print .main-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  body.icr-barcode-print .barcode-generator-page,
+  body.icr-barcode-print .barcode-results-section {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  body.icr-barcode-print .barcodes-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.75rem;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.icr-barcode-print .barcode-item {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  @page {
+    margin: 12mm;
+  }
+}

@@ -115,6 +115,7 @@ import { ItemCharacteristicModule } from './pages/mass.update/item.characteristi
 import { VariableWeightModule } from './pages/mass.update/variable.weight/variable.weight.module';
 import { ItemLogisticCodeModule } from './pages/mass.update/item.logistic.code/item.logistic.code.module';
 import { SyndigoUpdateModule } from './pages/syndigo/update/syndigo.update.module';
+import { SyndigoExcludePosModule } from './pages/syndigo/exclude-pos/syndigo.exclude.pos.module';
 import { DashboardReceptionModule } from './pages/reporting/account.payable/reception/dashboard.reception.module';
 import { EdiAsnModule } from './pages/edi/asn/edi.asn.module';
 import { ItemImagesModule } from './pages/mass.update/item.images/item.images.module';
@@ -126,7 +127,10 @@ import { FillRateModule } from './pages/reporting/fill.rate/fill.rate.module';
 import { SupplierAddressModule } from './pages/mass.update/supplier.address/supplier.address.module';
 import { UnarchiveInvoiceModule } from './pages/finance/unarchive/unarchive.invoice.module';
 import { ReportFilterModule } from './pages/reporting/report.filter/report.filter.module';
+import { BarcodeGeneratorModule } from './pages/tools/barcode-generator/barcode.generator.module';
 import { ProductionNumberModule } from './pages/warehouse/toolkit/production.number/production.number.module';
+import { ManufacturingAgrnModule } from './pages/warehouse/toolkit/manufacturing-agrn/manufacturing.agrn.module';
+import { PalletSsccTraceModule } from './pages/warehouse/toolkit/pallet-sscc-trace/pallet.sscc.trace.module';
 import { ItemListDescriptionModule } from './pages/mass.update/itemlist.description/itemlist.description.module';
 import { PurchaseOrderModule } from './pages/mass.update/purchase.order/purchase.order.module';
 import { ItemDescriptionModule } from './pages/mass.update/item.description/item.description.module';
@@ -265,6 +269,7 @@ import { DocumentationModule } from './pages/documentation/documentation.module'
     DashboardReceptionModule,
     EdiAsnModule,
     SyndigoUpdateModule,
+    SyndigoExcludePosModule,
     ItemImagesModule,
     SpaceItemReportingModule,
     PPGRetailModule,
@@ -277,8 +282,11 @@ import { DocumentationModule } from './pages/documentation/documentation.module'
     PalletLabelModule,
     UnarchiveInvoiceModule,
     ReportFilterModule,
+    BarcodeGeneratorModule,
     AvailableMHModule,
     ProductionNumberModule,
+    ManufacturingAgrnModule,
+    PalletSsccTraceModule,
     ItemListDescriptionModule,
     PurchaseOrderModule,
     PurchaseOrderPushModule,

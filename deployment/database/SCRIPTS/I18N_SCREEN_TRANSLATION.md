@@ -37,7 +37,7 @@ Sidebar / header menus (separate path)
 | Rule | Detail |
 |------|--------|
 | **`TLAID` max length** | **15 characters** — longer keys cause `ORA-12899`. |
-| **`TLADESC` max length** | **100 characters** — split long copy across multiple keys if needed. |
+| **`TLADESC` type** | **CLOB** (migrated via `109_tra_labels_tladesc_clob.sql`) — long banners and help copy are supported; `TLAID` remains ≤ 15 chars. |
 | **SQL literals** | No `&` in string literals; use `SET DEFINE OFF` at top of deploy scripts. |
 | **Idempotent deploy** | Use `MERGE` per `(TLAID, TLALANGUE)`; scripts are safe to re-run. |
 | **`TLASCREEN`** | Set to `SCR00000000xx` for screen-owned keys, `ROUTE` for route-only pages, `COMMON` for shared chrome. |

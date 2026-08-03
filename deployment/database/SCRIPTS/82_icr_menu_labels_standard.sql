@@ -50,6 +50,7 @@ BEGIN
   upsert_menu('ROUTE_SPACEITEM', 'fr_FR', 'Historique article');
   upsert_menu('ROUTE_SPACEDIM', 'fr_FR', 'Infos SKU');
   upsert_menu('ROUTE_ITEMADDR', 'fr_FR', 'Chargement adresse article');
+  upsert_menu('ROUTE_SYNDIGOEXCLUDEPOS', 'fr_FR', 'Exclusion UPC POS');
 
   -- Finance
   upsert_menu('GRP_FINANCE', 'fr_FR', 'Comptes fournisseurs');

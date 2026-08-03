@@ -1,0 +1,85 @@
+.mfg-agrn-page {
+  padding: 0 12px 24px;
+}
+
+.mfg-agrn-warn {
+  width: 100%;
+  font-size: small;
+  border: 1px solid #000;
+  margin-bottom: 12px;
+
+  i {
+    margin-right: 0.75em;
+  }
+}
+
+.mfg-agrn-exists {
+  margin-bottom: 12px;
+  font-size: small;
+
+  i {
+    margin-right: 0.75em;
+  }
+}
+
+.mfg-agrn-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  margin-bottom: 16px;
+}
+
+.mfg-agrn-results {
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: #fff;
+  padding: 0 4px 8px;
+  margin-bottom: 16px;
+}
+
+.mfg-agrn-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-weight: 600;
+}
+
+.mfg-agrn-empty {
+  padding: 24px 16px;
+  color: #666;
+  font-style: italic;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.mfg-agrn-confirm-warn {
+  margin-bottom: 16px;
+  font-size: small;
+
+  i {
+    margin-right: 0.75em;
+  }
+}
+
+.mfg-agrn-confirm-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.mfg-agrn-confirm-input {
+  width: 100%;
+}
+
+.mfg-agrn-confirm-hint {
+  margin: 8px 0 0;
+  font-size: small;
+  color: #666;
+}
+
+.mfg-agrn-done-msg {
+  margin: 0;
+  line-height: 1.5;
+}

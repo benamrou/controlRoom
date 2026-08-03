@@ -15,3 +15,216 @@
 :host ::ng-deep .field>label {
     font-weight: 700 !important;
 }
+
+.altspec-edit {
+    min-height: 28rem;
+}
+
+.altspec-edit-hint {
+    margin: 0 0 0.75rem;
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+}
+
+.altspec-edit-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+:host ::ng-deep .altspec-rich-editor {
+    .p-editor-container {
+        border: 1px solid var(--surface-border);
+        border-radius: var(--border-radius);
+    }
+
+    .p-editor-toolbar {
+        border-bottom: 1px solid var(--surface-border);
+    }
+
+    .p-editor-content,
+    .ql-editor {
+        min-height: 20rem;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+}
+
+:host ::ng-deep .alertbug-rich-editor {
+    .p-editor-content,
+    .ql-editor {
+        min-height: 8rem;
+    }
+}
+
+.alertbug-edit {
+    .field {
+        margin-bottom: 1rem;
+    }
+}
+
+.alertbug-view {
+    h4 {
+        margin: 1rem 0 0.5rem;
+        font-size: 1rem;
+    }
+
+    .altspec-preview-body {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 0.75rem 1rem;
+        background: #fafafa;
+        min-height: 3rem;
+    }
+}
+
+.alertbug-preview-link {
+    color: #0d6efd;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+:host ::ng-deep .ql-tooltip,
+:host ::ng-deep .ql-picker-options {
+    z-index: 10000 !important;
+}
+
+.altspec-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.altspec-view {
+    min-height: 24rem;
+    padding: 1.5rem 2rem;
+    background: #fff;
+    border: 1px solid var(--surface-border);
+}
+
+.altspec-view-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 20rem;
+    text-align: center;
+}
+
+.altspec-view-empty-btn {
+    margin-top: 0.25rem;
+}
+
+.altspec-view-body {
+    max-width: 52rem;
+}
+
+/* Read-only spec uses Quill HTML (ql-indent-* on li) — reuse Quill list/indent rules from quill.snow.css */
+.altspec-view-body.ql-editor {
+    cursor: default;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    overflow: visible;
+    white-space: normal;
+
+    > * {
+        cursor: default;
+    }
+
+    ul ul,
+    ol ol,
+    ul ol,
+    ol ul {
+        margin-top: 0.15rem;
+        margin-bottom: 0.15rem;
+    }
+}
+
+.altspec-pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.altspec-editor {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    min-height: 22rem;
+    resize: vertical;
+}
+
+.altspec-preview {
+    min-height: 22rem;
+    max-height: 28rem;
+    overflow: auto;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--surface-border);
+    background: var(--surface-ground);
+}
+
+.altspec-preview-empty {
+    color: var(--text-color-secondary);
+    font-style: italic;
+}
+
+.altspec-preview-body {
+    line-height: 1.6;
+    word-wrap: break-word;
+    color: var(--text-color);
+
+    h1, h2, h3, h4 {
+        margin-top: 0.75rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    h2:first-child, h1:first-child {
+        margin-top: 0;
+    }
+
+    p {
+        margin: 0 0 0.75rem;
+    }
+
+    /* Lists: only when NOT using Quill markup (ql-editor supplies its own list CSS) */
+    &:not(.ql-editor) {
+        ul, ol {
+            margin: 0 0 0.75rem 1.25rem;
+            padding-left: 1rem;
+
+            ul, ol {
+                margin-top: 0.25rem;
+                margin-bottom: 0.25rem;
+                padding-left: 1.5rem;
+            }
+        }
+
+        ul ul { list-style-type: circle; }
+        ul ul ul { list-style-type: square; }
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 0.75rem;
+    }
+
+    th, td {
+        border: 1px solid var(--surface-border);
+        padding: 0.35rem 0.5rem;
+        text-align: left;
+    }
+
+    th {
+        background: var(--surface-100);
+    }
+}

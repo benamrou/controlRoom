@@ -32,13 +32,13 @@ function autofitColumns(ws, rowCount){
     } else {
         sampleSize = 300;
     }
-    
+
     if (rowCount > 1000) {
         heap.logger.log('alert', `[AUTOFIT] Sampling ${sampleSize} of ${rowCount} rows for column width calculation`, 'alert', 1);
     }
-    
+
     const startTime = Date.now();
-    
+
     eachColumnInRange(ws, 1, ws.columnCount, column => {
         let maxWidth=10;
         let cellCount = 0;
@@ -67,7 +67,7 @@ function autofitColumns(ws, rowCount){
         maxWidth += 1;
         column.width = maxWidth;
     });
-    
+
     if (rowCount > 1000) {
         const duration = ((Date.now() - startTime) / 1000).toFixed(2);
         heap.logger.log('alert', `[AUTOFIT] Completed in ${duration}s (sampled ${sampleSize} rows)`, 'alert', 1);
@@ -93,7 +93,7 @@ function setPageBreak(ws, alertData, alert) {
                 ws.getRow(rowBreak).addPageBreak();
             }
         }
-    }            
+    }
 }
 
 /**
@@ -151,7 +151,7 @@ function setPrintArea(ws, alert) {
             }
             if (margins && typeof margins === 'object') {
                 const requiredProps = ['left', 'right', 'top', 'bottom'];
-                const hasAllProps = requiredProps.every(prop => 
+                const hasAllProps = requiredProps.every(prop =>
                     margins.hasOwnProperty(prop) && typeof margins[prop] === 'number'
                 );
                 if (hasAllProps) {
@@ -163,10 +163,10 @@ function setPrintArea(ws, alert) {
                 throw new Error('Invalid margins object');
             }
         } catch (parseError) {
-            heap.logger.log('alert', 
+            heap.logger.log('alert',
                 `ALTMARGIN parse error: ${parseError.message} | ` +
                 `Type: ${typeof alert.ALTMARGIN} | ` +
-                `Value: ${JSON.stringify(alert.ALTMARGIN).substring(0, 100)}`, 
+                `Value: ${JSON.stringify(alert.ALTMARGIN).substring(0, 100)}`,
                 'alert', 3);
             ws.pageSetup.margins = { left: 0.7, right: 0.7, top: 0.75, bottom: 0.75, header: 0.3, footer: 0.3 };
         }
@@ -749,7 +749,7 @@ function setXLSHeader(worksheet, alertData, extensionHeader) {
     worksheet.mergeCells('I2','K2');
     worksheet.mergeCells('I3','K3');
     worksheet.getCell('H3').value = 'Report date';
-    worksheet.getCell('I3').value = new Date(); 
+    worksheet.getCell('I3').value = new Date();
     worksheet.getCell('I2').alignment = { vertical: 'top', horizontal: 'left' };
     worksheet.getCell('I3').alignment = { vertical: 'top', horizontal: 'left' };
 
@@ -785,21 +785,94 @@ function setXLSProperties(workbook) {
 
 /********************************************************************************************/
 
+/**
+ * ALTCOLMOVE — "move to end" column reorder.
+ *
+ * FIX (see prior debugging thread): the previous implementation computed the
+ * reorder TWICE — once for the header list (dataColumns, via valueColumns)
+ * and once for the row values (dataRows) — using two DIFFERENT index
+ * conventions:
+ *   - header block used move2end values as-is (0-based)
+ *   - row block did `idx - 1` (treated them as 1-based)
+ * That mismatch silently desynced headers from their data by one column,
+ * and cascaded through every column after the first moved one.
+ *
+ * On top of that, the header block MUTATED valueColumns (removed + re-pushed
+ * elements) before the row block computed its own indices — so the row
+ * block's index math was being evaluated against an array whose length/
+ * order no longer matched the original detailData object keys.
+ *
+ * Fix: compute keepIndices/movedIndices ONCE, against the ORIGINAL
+ * (unmutated) column order, and reuse that exact same split for both the
+ * header list and every data row. This guarantees headers and cell values
+ * can never drift out of sync, and move2end is always interpreted the same
+ * way everywhere: 0-based indices into the original column order, moved to
+ * the end in the order listed.
+ *
+ * @param {string[]} valueColumns - original column keys, in original order
+ * @param {string}   altColMove   - raw ALTCOLMOVE JSON string, e.g.
+ *                                  {"move2end":[5,6,7,...,28]}
+ * @returns {{keepIndices:number[], movedIndices:number[], reorderedColumns:string[]}}
+ */
+function resolveColMove(valueColumns, altColMove) {
+    let keepIndices  = valueColumns.map((_, i) => i);
+    let movedIndices = [];
+
+    if (!altColMove) {
+        return { keepIndices, movedIndices, reorderedColumns: valueColumns.slice() };
+    }
+
+    let colMove;
+    try {
+        colMove = JSON.parse(altColMove);
+    } catch (e) {
+        heap.logger.log('alert', `[COLMOVE] Failed to parse ALTCOLMOVE: ${e.message}`, 'alert', 3);
+        return { keepIndices, movedIndices, reorderedColumns: valueColumns.slice() };
+    }
+
+    if (!colMove || !Array.isArray(colMove.move2end) || colMove.move2end.length === 0) {
+        return { keepIndices, movedIndices, reorderedColumns: valueColumns.slice() };
+    }
+
+    // Only keep indices that are valid and in-range — protects against a
+    // stale/misconfigured move2end referencing a column that no longer exists.
+    const moveSet = new Set(
+        colMove.move2end.filter(idx => Number.isInteger(idx) && idx >= 0 && idx < valueColumns.length)
+    );
+
+    if (moveSet.size !== colMove.move2end.length) {
+        heap.logger.log('alert',
+            `[COLMOVE] Some move2end indices were out of range and ignored (valueColumns.length=${valueColumns.length})`,
+            'alert', 3);
+    }
+
+    keepIndices  = [];
+    movedIndices = colMove.move2end.filter(idx => moveSet.has(idx)); // preserves requested order
+
+    for (let i = 0; i < valueColumns.length; i++) {
+        if (!moveSet.has(i)) {
+            keepIndices.push(i);
+        }
+    }
+
+    heap.logger.log('alert',
+        `[COLMOVE] ${keepIndices.length} kept, ${movedIndices.length} moved to end`,
+        'alert', 1);
+
+    const reorderedColumns = [...keepIndices, ...movedIndices].map(i => valueColumns[i]);
+
+    return { keepIndices, movedIndices, reorderedColumns };
+}
+
 function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, tableName, formatingRules, renameColumn) {
     let valueColumns = Object.keys(detailData[0] || {});
     let dataColumns = [];
-    let colMove = null;
     renameColumn = renameColumn || [];
 
-    if ( alertData[0].ALTCOLMOVE) {
-        let element;
-        let colMove=JSON.parse(alertData[0].ALTCOLMOVE);
-        for (let j=0; j < colMove.move2end.length ; j++) {
-            element = valueColumns[colMove.move2end[j]-j];
-            valueColumns.splice(colMove.move2end[j]-j,1);
-            valueColumns.splice(valueColumns.length,0, element);
-        }
-    }
+    // ── ALTCOLMOVE — resolved ONCE, reused for both headers and row data ───────
+    const { keepIndices, movedIndices, reorderedColumns } =
+        resolveColMove(valueColumns, alertData[0].ALTCOLMOVE);
+    valueColumns = reorderedColumns;
 
     for(let i =0;i < valueColumns.length ; i ++) {
         dataColumns.push({name: valueColumns[i], filterButton: true});
@@ -811,28 +884,14 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
         dataColumns[k-1].name=renameColumn[i].COLNAME;
     }
 
-    // Add rows detail
+    // Add rows detail — uses the exact same keepIndices/movedIndices as the header above,
+    // so headers and cell values can never drift out of sync.
     let dataRows = [];
-    
-    if (alertData[0].ALTCOLMOVE) {
-        colMove = JSON.parse(alertData[0].ALTCOLMOVE);
-        heap.logger.log('alert', `[COLMOVE] Moving ${colMove.move2end.length} columns to end for ${detailData.length} rows`, 'alert', 1);
-        
-        const moveIndices = colMove.move2end.map(idx => idx - 1);
-        const keepIndices = [];
-        const movedIndices = [];
-        
-        for (let i = 0; i < valueColumns.length; i++) {
-            if (moveIndices.includes(i)) {
-                movedIndices.push(i);
-            } else {
-                keepIndices.push(i);
-            }
-        }
-        
-        heap.logger.log('alert', `[COLMOVE] Calculated reordering: ${keepIndices.length} kept, ${movedIndices.length} moved`, 'alert', 1);
+
+    if (movedIndices.length > 0) {
+        heap.logger.log('alert', `[COLMOVE] Moving ${movedIndices.length} columns to end for ${detailData.length} rows`, 'alert', 1);
         const startTime = Date.now();
-        
+
         for (let i = 0; i < detailData.length; i++) {
             const values = Object.values(detailData[i]);
             const reordered = [];
@@ -840,7 +899,7 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
             for (const idx of movedIndices) reordered.push(values[idx]);
             dataRows.push(reordered);
         }
-        
+
         const duration = ((Date.now() - startTime) / 1000).toFixed(2);
         heap.logger.log('alert', `[COLMOVE] Reordered ${detailData.length} rows in ${duration}s`, 'alert', 1);
     } else {
@@ -872,7 +931,7 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
         heap.logger.log('alert', e, 'alert', 3);
     }
 
-    /**************************************************************************/  
+    /**************************************************************************/
     if (dataRows.length == 0) {
         worksheet.getCell('A6').value = 'No reported elements';
         worksheet.getCell('A6').font = { name: 'Arial', family: 4, size: 10, underline: false, bold: true };
@@ -890,7 +949,7 @@ function json2xls(workbook, worksheet, alertData, detailData, extensionHeader, t
             columns: [...dataColumns],  // Spread IS needed - cleanup code empties original arrays!
             rows: [...dataRows]          // Spread IS needed - cleanup code empties original arrays!
         });
-        
+
         if (alertData[0].ALTBORDER === 1) {
             heap.logger.log('alert', `[BORDERS] Using TableStyleLight1 for ${dataRows.length} rows`, 'alert', 1);
         }

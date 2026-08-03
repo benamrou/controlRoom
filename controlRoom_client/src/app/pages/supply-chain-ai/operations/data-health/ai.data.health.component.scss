@@ -276,8 +276,14 @@
   font-size: 0.78rem;
 }
 
+.adh-rows-dialog .adh-fix-all-actions {
+  display: inline-flex;
+  gap: 0.5rem;
+  margin-right: 0.5rem;
+}
+
 /* Solid amber + white text — avoids theme p-button-warning (blue on orange) */
-.adh-rows-dialog .adh-btn-fix-all.p-button {
+.adh-rows-dialog .adh-btn-fix-all.p-button:not(.p-button-outlined) {
   background: #c2410c;
   border: 1px solid #9a3412;
   color: #fff;

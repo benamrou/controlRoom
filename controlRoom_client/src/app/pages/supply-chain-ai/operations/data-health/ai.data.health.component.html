@@ -319,12 +319,24 @@
         · {{ fixableRowCount }} fixable
       </span>
     </span>
-    <button *ngIf="hasResolution(detailExportCard) && fixableRowCount > 0"
-      pButton type="button" label="Fix all fixable" icon="pi pi-wrench"
-      class="p-button-sm adh-btn-fix-all"
-      [disabled]="!!fixingRowKey"
-      (click)="fixAllFixable()">
-    </button>
+    <span class="adh-fix-all-actions" *ngIf="hasResolution(detailExportCard) && fixableRowCount > 0">
+      <button *ngIf="hasBatchResolution(detailExportCard)"
+        pButton type="button" label="Fix all (once)" icon="pi pi-bolt"
+        class="p-button-sm adh-btn-fix-all"
+        pTooltip="One batch SQL + script run for all fixable rows"
+        tooltipPosition="top"
+        [disabled]="!!fixingRowKey"
+        (click)="fixAllFixable()">
+      </button>
+      <button *ngIf="hasPerRowResolution(detailExportCard)"
+        pButton type="button" label="Fix all (each row)" icon="pi pi-wrench"
+        class="p-button-sm p-button-outlined adh-btn-fix-all"
+        pTooltip="Run per-row resolution SQL and script for every fixable line"
+        tooltipPosition="top"
+        [disabled]="!!fixingRowKey"
+        (click)="fixAllEachRow()">
+      </button>
+    </span>
     <button pButton
             type="button"
             label="Excel"

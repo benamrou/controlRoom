@@ -6,7 +6,8 @@ import { AiRetailerService } from 'src/app/shared/services/ai/ai.retailer.servic
 import { QueryService } from 'src/app/shared/services/query/query.service';
 import { ExportService } from 'src/app/shared/services/inout/export.service';
 import { LabelService } from 'src/app/shared/services/labels/labels.service';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 type Tier = 'ALL' | 'REALTIME' | 'HOURLY' | 'NIGHTLY';
 type Severity = 'CRITICAL' | 'WARNING' | 'INFO';
@@ -30,6 +31,9 @@ interface CheckCard {
   RESOLUTION_JOB_NAME?: string;
   RESOLUTION_SCRIPT_TEMPLATE?: string;
   RESOLUTION_SCRIPT_PARAM_MAP?: string;
+  RESOLUTION_SQL?: string;
+  RESOLUTION_BATCH_SQL?: string;
+  RESOLUTION_BATCH_SCRIPT_TEMPLATE?: string;
   FIXABLE_STATUS_COLUMN?: string;
   FIXABLE_STATUS_VALUE?: string;
   LAST_RUN_AT: string | null;
@@ -293,12 +297,18 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
       return;
     }
     this.detailRowsMaximized = false;
-    this.detailExportCard = card;
     this.rowsTitle = `${card.CHECK_NAME} — ${runAt}`;
     this.detailRows = [];
     this.detailColumns = [];
     this.rowsVisible = true;
     this.loadingRows = true;
+    this.refreshCheckDefCard(card).subscribe((fresh) => {
+      this.detailExportCard = fresh;
+      this.loadDetailRows(fresh);
+    });
+  }
+
+  private loadDetailRows(card: CheckCard): void {
     this._query.getQueryResult(card.QUERY_NUM, [this.selectedRetailer.RETAILER_ID]).subscribe({
       next: (data: any) => {
         const rows = Array.isArray(data) ? data : [];
@@ -453,18 +463,46 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
   resolutionMode(card: CheckCard | null): string {
     const raw = card?.RESOLUTION_MODE ?? (card as any)?.resolution_mode ?? 'NONE';
     const m = String(raw).trim().toUpperCase();
-    const allowed = ['LIBQUERY', 'JOB', 'LIBQUERY_JOB', 'SCRIPT', 'SCRIPT_JOB'];
+    const allowed = [
+      'LIBQUERY', 'JOB', 'LIBQUERY_JOB', 'SCRIPT', 'SCRIPT_JOB',
+      'SQL', 'SQL_JOB', 'SQL_SCRIPT', 'SQL_SCRIPT_JOB'
+    ];
     return allowed.includes(m) ? m : 'NONE';
   }
 
-  hasResolution(card: CheckCard | null): boolean {
+  /** Per-row Fix / Fix all (each row). */
+  hasPerRowResolution(card: CheckCard | null): boolean {
     const mode = this.resolutionMode(card);
     if (mode === 'NONE') { return false; }
+    if (mode === 'SQL') {
+      return !!(card?.RESOLUTION_SQL?.trim() && card?.RESOLUTION_PARAM_MAP?.trim());
+    }
+    if (mode === 'SQL_JOB') {
+      return !!(
+        card?.RESOLUTION_SQL?.trim()
+        && card?.RESOLUTION_PARAM_MAP?.trim()
+        && card?.RESOLUTION_JOB_NAME?.trim()
+      );
+    }
+    if (mode === 'SQL_SCRIPT') {
+      return !!(
+        card?.RESOLUTION_SQL?.trim()
+        && card?.RESOLUTION_PARAM_MAP?.trim()
+        && card?.RESOLUTION_SCRIPT_TEMPLATE?.trim()
+        && card?.RESOLUTION_SCRIPT_PARAM_MAP?.trim()
+      );
+    }
+    if (mode === 'SQL_SCRIPT_JOB') {
+      return !!(
+        card?.RESOLUTION_SQL?.trim()
+        && card?.RESOLUTION_PARAM_MAP?.trim()
+        && card?.RESOLUTION_JOB_NAME?.trim()
+        && card?.RESOLUTION_SCRIPT_TEMPLATE?.trim()
+        && card?.RESOLUTION_SCRIPT_PARAM_MAP?.trim()
+      );
+    }
     if (mode === 'LIBQUERY') {
       return !!(card?.RESOLUTION_QUERY_NUM?.trim() && card?.RESOLUTION_PARAM_MAP?.trim());
-    }
-    if (mode === 'JOB') {
-      return !!card?.RESOLUTION_JOB_NAME?.trim();
     }
     if (mode === 'LIBQUERY_JOB') {
       return !!(
@@ -489,8 +527,48 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  /** Fix all (once) — batch SQL/script or job-only. */
+  hasBatchResolution(card: CheckCard | null): boolean {
+    const mode = this.resolutionMode(card);
+    if (mode === 'NONE') { return false; }
+    if (mode === 'JOB') {
+      return !!card?.RESOLUTION_JOB_NAME?.trim();
+    }
+    if (mode === 'SQL' || mode === 'SQL_JOB') {
+      return !!(
+        card?.RESOLUTION_BATCH_SQL?.trim()
+        || card?.RESOLUTION_SQL?.trim()
+      );
+    }
+    if (mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB') {
+      return !!(
+        card?.RESOLUTION_BATCH_SQL?.trim()
+        || card?.RESOLUTION_BATCH_SCRIPT_TEMPLATE?.trim()
+        || card?.RESOLUTION_SQL?.trim()
+      );
+    }
+    if (mode === 'LIBQUERY' || mode === 'LIBQUERY_JOB') {
+      return !!card?.RESOLUTION_QUERY_NUM?.trim() && !card?.RESOLUTION_PARAM_MAP?.trim();
+    }
+    if (mode === 'SCRIPT' || mode === 'SCRIPT_JOB') {
+      return !!(
+        card?.RESOLUTION_BATCH_SCRIPT_TEMPLATE?.trim()
+        || card?.RESOLUTION_SCRIPT_TEMPLATE?.trim()
+      );
+    }
+    return false;
+  }
+
+  hasResolution(card: CheckCard | null): boolean {
+    return this.hasPerRowResolution(card) || this.hasBatchResolution(card);
+  }
+
   resolutionModeLabel(card: CheckCard | null): string {
     const labels: Record<string, string> = {
+      SQL: 'Inline SQL',
+      SQL_JOB: 'Inline SQL → job',
+      SQL_SCRIPT: 'Inline SQL → GOLD script',
+      SQL_SCRIPT_JOB: 'Inline SQL → script → job',
       LIBQUERY: 'LIBQUERY',
       JOB: 'Scheduler job',
       LIBQUERY_JOB: 'LIBQUERY → job',
@@ -511,7 +589,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
   }
 
   canFixRow(row: Record<string, unknown>): boolean {
-    return this.hasResolution(this.detailExportCard)
+    return this.hasPerRowResolution(this.detailExportCard)
       && this.isRowFixable(row)
       && this.fixingRowKey !== this.rowKey(row);
   }
@@ -519,11 +597,19 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
   confirmFixRow(row: Record<string, unknown>, event?: Event): void {
     event?.stopPropagation();
     const card = this.detailExportCard;
-    if (!card || !this.isRowFixable(row)) { return; }
+    if (!card || !this.hasPerRowResolution(card) || !this.isRowFixable(row)) { return; }
     const mode = this.resolutionMode(card);
     let msg = 'Run the configured resolution for this row? This may update data in GOLD.';
     if (mode === 'JOB') {
-      msg = `Run scheduler job "${card.RESOLUTION_JOB_NAME}" once? (Job mode does not run per-row LIBQUERY; use Fix all fixable to process the queue.)`;
+      msg = `Run scheduler job "${card.RESOLUTION_JOB_NAME}" once? (Same as Fix all for job-only mode.)`;
+    } else if (mode === 'SQL') {
+      msg = 'Run the configured UPDATE/MERGE SQL for this row? This may change data in GOLD.';
+    } else if (mode === 'SQL_JOB') {
+      msg = 'Run inline resolution SQL for this row, then start the follow-up scheduler job?';
+    } else if (mode === 'SQL_SCRIPT') {
+      msg = 'Run inline resolution SQL for this row, then run the GOLD batch script?';
+    } else if (mode === 'SQL_SCRIPT_JOB') {
+      msg = 'Run inline SQL, then the GOLD script, then start the follow-up scheduler job for this row?';
     } else if (mode === 'LIBQUERY_JOB') {
       msg = 'Run resolution LIBQUERY for this row, then start the follow-up scheduler job?';
     } else if (mode === 'SCRIPT' || mode === 'SCRIPT_JOB') {
@@ -543,25 +629,39 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
     const card = this.detailExportCard;
     const retailerId = this.selectedRetailer?.RETAILER_ID;
     if (!card || !retailerId) { return; }
+    this.fixingRowKey = this.rowKey(row);
+    this.runFixRowChain(row, card, retailerId, {
+      refreshAtEnd: true,
+      onDone: (detail) => {
+        this.fixingRowKey = null;
+        this._msg.add({ severity: 'success', summary: 'Fix applied', detail });
+        this.refreshCheckAfterFix(card);
+      },
+      onError: (summary, err) => {
+        this.fixingRowKey = null;
+        const e = err as { error?: { message?: string }; message?: string };
+        this._msg.add({
+          severity: 'error',
+          summary,
+          detail: e?.error?.message || e?.message || 'Resolution failed.'
+        });
+      }
+    });
+  }
+
+  /** Run resolution for one detail row (shared by Fix and Fix all each row). */
+  private runFixRowChain(
+    row: Record<string, unknown>,
+    card: CheckCard,
+    retailerId: string,
+    handlers: {
+      refreshAtEnd: boolean;
+      onDone: (detail: string) => void;
+      onError: (summary: string, err?: unknown) => void;
+    }
+  ): void {
     const mode = this.resolutionMode(card);
-    const key = this.rowKey(row);
-    this.fixingRowKey = key;
-
-    const onDone = (detail: string) => {
-      this.fixingRowKey = null;
-      this._msg.add({ severity: 'success', summary: 'Fix applied', detail });
-      this.refreshCheckAfterFix(card);
-    };
-
-    const onError = (summary: string, err: unknown) => {
-      this.fixingRowKey = null;
-      const e = err as { error?: { message?: string }; message?: string };
-      this._msg.add({
-        severity: 'error',
-        summary,
-        detail: e?.error?.message || e?.message || 'Resolution failed.'
-      });
-    };
+    const { onDone, onError } = handlers;
 
     if (mode === 'JOB') {
       this._svc.executeResolutionJob(card.CHECK_ID, retailerId).subscribe({
@@ -574,8 +674,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
     if (mode === 'SCRIPT' || mode === 'SCRIPT_JOB') {
       const built = this.buildResolutionScriptForRow(row, card);
       if ('error' in built) {
-        this.fixingRowKey = null;
-        this._msg.add({ severity: 'warn', summary: 'Cannot run script', detail: built.error });
+        onError('Cannot run script', { message: built.error });
         return;
       }
       this._svc.executeResolutionScript(built.script).subscribe({
@@ -600,9 +699,14 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (mode === 'SQL' || mode === 'SQL_JOB' || mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB') {
+      this.runSqlResolutionChain(row, card, retailerId, mode, onDone, onError);
+      return;
+    }
+
     const payload = this.buildResolutionPayload(row, card);
     if (payload === null) {
-      this.fixingRowKey = null;
+      onError('Fix failed', { message: 'Missing bind values for resolution.' });
       return;
     }
 
@@ -631,6 +735,14 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
 
   fixAllFixable(): void {
     const card = this.detailExportCard;
+    if (!card || !this.hasBatchResolution(card)) {
+      this._msg.add({
+        severity: 'warn',
+        summary: 'Batch fix not configured',
+        detail: 'Add batch resolution SQL (Fix all once) in Data Health Configuration.'
+      });
+      return;
+    }
     const fixable = this.detailRows.filter((r) => this.isRowFixable(r));
     if (!fixable.length) {
       this._msg.add({ severity: 'warn', summary: 'No fixable rows', detail: 'No rows match the fixable criteria.' });
@@ -639,24 +751,48 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
     const mode = this.resolutionMode(card);
     if (mode === 'JOB') {
       this._confirm.confirm({
-        message: `Run scheduler job "${card?.RESOLUTION_JOB_NAME}" once for this check? (No per-row LIBQUERY in job-only mode.)`,
-        header: 'Run resolution job',
+        message: `Run scheduler job "${card?.RESOLUTION_JOB_NAME}" once for this check?`,
+        header: 'Fix all (once)',
         icon: 'pi pi-wrench',
         accept: () => this.executeJobOnlyFix(card!)
       });
       return;
     }
-    if (mode === 'LIBQUERY' || mode === 'LIBQUERY_JOB' || mode === 'SCRIPT' || mode === 'SCRIPT_JOB') {
-      const step =
-        mode === 'LIBQUERY' ? 'LIBQUERY'
-          : mode === 'LIBQUERY_JOB' ? 'LIBQUERY on each row, then one scheduler job'
-            : mode === 'SCRIPT' ? 'GOLD script on each row'
-              : 'GOLD script on each row, then one scheduler job';
+    if (
+      mode === 'SQL' || mode === 'SQL_JOB' || mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB'
+      || mode === 'LIBQUERY' || mode === 'LIBQUERY_JOB'
+      || mode === 'SCRIPT' || mode === 'SCRIPT_JOB'
+    ) {
+      const step = this.batchFixStepLabel(mode);
+      const batchNote = card.RESOLUTION_BATCH_SQL?.trim()
+        ? ' Uses batch resolution SQL from configuration.'
+        : '';
+      const scriptOnceModes = mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB';
+      const confirmMsg = scriptOnceModes
+        ? `Run batch SQL once, then GOLD script for each distinct site `
+          + `(${fixable.length} fixable row(s))?${batchNote} `
+          + 'Use Fix all (each row) to run per-row SQL and script on every line.'
+        : `Run resolution once (${step}) for ${fixable.length} fixable issue(s)?${batchNote} `
+          + 'Use Fix all (each row) to run per-row SQL and script instead.';
       this._confirm.confirm({
-        message: `Apply resolution (${step}) to ${fixable.length} fixable row(s)?`,
-        header: 'Fix all',
+        message: confirmMsg,
+        header: 'Fix all (once)',
         icon: 'pi pi-wrench',
-        accept: () => this.runFixAllSequential(fixable, 0)
+        accept: () => {
+          this.refreshCheckDefCard(card!).subscribe({
+            next: (fresh) => {
+              this.detailExportCard = fresh;
+              this.runFixAllOnce(fresh, fixable);
+            },
+            error: () => {
+              this._msg.add({
+                severity: 'error',
+                summary: 'Batch fix',
+                detail: 'Could not reload check definition — refresh the dashboard and try again.'
+              });
+            }
+          });
+        }
       });
       return;
     }
@@ -665,6 +801,96 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
       summary: 'Resolution not configured',
       detail: 'Set a valid resolution mode on this check in Data Health Configuration.'
     });
+  }
+
+  /** Merge latest AI_DATA_CHECK_DEF (AI0000086) so batch SQL/script fields are not stale on the grid card. */
+  private refreshCheckDefCard(card: CheckCard): Observable<CheckCard> {
+    return this._svc.getCheckDefById(card.CHECK_ID).pipe(
+      map((data: unknown) => {
+        const row = Array.isArray(data) ? (data as Record<string, unknown>[])[0] : data;
+        if (!row || typeof row !== 'object') {
+          return card;
+        }
+        return this.normalizeCheckCard({ ...card, ...(row as Record<string, unknown>) });
+      }),
+      catchError(() => of(card))
+    );
+  }
+
+  fixAllEachRow(): void {
+    const card = this.detailExportCard;
+    if (!card || !this.hasPerRowResolution(card)) {
+      this._msg.add({
+        severity: 'warn',
+        summary: 'Per-row fix not configured',
+        detail: 'Add per-row resolution SQL and parameter maps in Data Health Configuration.'
+      });
+      return;
+    }
+    const fixable = this.detailRows.filter((r) => this.isRowFixable(r));
+    if (!fixable.length) {
+      this._msg.add({ severity: 'warn', summary: 'No fixable rows', detail: 'No rows match the fixable criteria.' });
+      return;
+    }
+    const mode = this.resolutionMode(card);
+    const step = this.batchFixStepLabel(mode);
+    this._confirm.confirm({
+      message: `Run resolution (${step}) for each of ${fixable.length} fixable row(s), one after another?`
+        + ' This uses per-row SQL, maps, and script placeholders.',
+      header: 'Fix all (each row)',
+      icon: 'pi pi-wrench',
+      accept: () => this.runFixAllPerRow(fixable)
+    });
+  }
+
+  /** Sequential per-row resolution for every fixable detail line. */
+  private runFixAllPerRow(fixable: Record<string, unknown>[]): void {
+    const card = this.detailExportCard;
+    const retailerId = this.selectedRetailer?.RETAILER_ID;
+    if (!card || !retailerId) { return; }
+
+    let index = 0;
+    let successCount = 0;
+
+    const finish = () => {
+      this.fixingRowKey = null;
+      this._msg.add({
+        severity: 'success',
+        summary: 'Fix all complete',
+        detail: `Applied fix to ${successCount} of ${fixable.length} row(s). Refreshing…`
+      });
+      this.refreshCheckAfterFix(card);
+    };
+
+    const fail = (summary: string, err?: unknown) => {
+      this.fixingRowKey = null;
+      const e = err as { error?: { message?: string }; message?: string };
+      const raw = e?.error?.message || e?.message;
+      let detail = (typeof raw === 'string' ? raw : summary) || 'Fix all stopped.';
+      if (successCount > 0) {
+        detail += ` (${successCount} row(s) succeeded before failure.)`;
+      }
+      this._msg.add({ severity: 'error', summary, detail });
+    };
+
+    const next = () => {
+      if (index >= fixable.length) {
+        finish();
+        return;
+      }
+      const row = fixable[index++];
+      this.fixingRowKey = this.rowKey(row);
+      this.runFixRowChain(row, card, retailerId, {
+        refreshAtEnd: false,
+        onDone: () => {
+          successCount++;
+          next();
+        },
+        onError: (summary, err) => fail(summary, err)
+      });
+    };
+
+    next();
   }
 
   private executeJobOnlyFix(card: CheckCard): void {
@@ -693,100 +919,144 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
     });
   }
 
-  private runFixAllSequential(rows: Record<string, unknown>[], index: number): void {
-    const card = this.detailExportCard;
-    const mode = this.resolutionMode(card);
-
-    if (index === 0 && mode === 'JOB') {
-      this.executeJobOnlyFix(card!);
-      return;
-    }
-
-    if (index >= rows.length) {
-      const retailerId = this.selectedRetailer?.RETAILER_ID;
-      if ((mode === 'LIBQUERY_JOB' || mode === 'SCRIPT_JOB') && card && retailerId) {
-        this._svc.executeResolutionJob(card.CHECK_ID, retailerId).subscribe({
-          next: () => {
-            const step = mode === 'SCRIPT_JOB' ? 'Script' : 'LIBQUERY';
-            this._msg.add({
-              severity: 'success',
-              summary: 'Batch fix complete',
-              detail: `${step} applied to ${rows.length} row(s); job "${card.RESOLUTION_JOB_NAME}" started.`
-            });
-            if (card) { this.refreshCheckAfterFix(card); }
-          },
-          error: (err: unknown) => {
-            const e = err as { error?: { message?: string }; message?: string };
-            this._msg.add({
-              severity: 'warn',
-              summary: 'Rows fixed; job failed',
-              detail: e?.error?.message || e?.message || `LIBQUERY OK for ${rows.length} rows but job step failed.`
-            });
-            if (card) { this.refreshCheckAfterFix(card); }
-          }
-        });
-      } else {
-        this._msg.add({
-          severity: 'success',
-          summary: 'Batch fix complete',
-          detail: `Processed ${rows.length} row(s). Refreshing…`
-        });
-        if (card) { this.refreshCheckAfterFix(card); }
-      }
-      return;
-    }
-    const row = rows[index];
-    if (!card) { return; }
-    this.fixingRowKey = this.rowKey(row);
-
-    const advance = () => {
-      this.fixingRowKey = null;
-      this.runFixAllSequential(rows, index + 1);
+  private batchFixStepLabel(mode: string): string {
+    const labels: Record<string, string> = {
+      SQL: 'inline SQL',
+      SQL_JOB: 'inline SQL, then scheduler job',
+      SQL_SCRIPT: 'inline SQL, then GOLD script',
+      SQL_SCRIPT_JOB: 'inline SQL, GOLD script, then scheduler job',
+      LIBQUERY: 'resolution LIBQUERY',
+      LIBQUERY_JOB: 'resolution LIBQUERY, then scheduler job',
+      SCRIPT: 'GOLD script',
+      SCRIPT_JOB: 'GOLD script, then scheduler job'
     };
+    return labels[mode] || mode;
+  }
 
-    const fail = (detail?: string) => {
+  /** Fix all fixable — batch SQL / LIBQUERY / job once; SQL_SCRIPT runs script per distinct site. */
+  private runFixAllOnce(card: CheckCard, fixable: Record<string, unknown>[]): void {
+    const fixableCount = fixable.length;
+    const retailerId = this.selectedRetailer?.RETAILER_ID;
+    if (!retailerId) { return; }
+    const mode = this.resolutionMode(card);
+    this.fixingRowKey = '__batch__';
+
+    const finish = (detail: string) => {
       this.fixingRowKey = null;
       this._msg.add({
+        severity: 'success',
+        summary: 'Batch fix complete',
+        detail
+      });
+      this.refreshCheckAfterFix(card);
+    };
+
+    const fail = (summary: string, err?: unknown) => {
+      this.fixingRowKey = null;
+      const e = err as { error?: { MESSAGE?: string; message?: string }; message?: string };
+      const raw = e?.error?.MESSAGE || e?.error?.message || e?.message;
+      this._msg.add({
         severity: 'error',
-        summary: 'Batch fix stopped',
-        detail: detail || `Failed at row ${index + 1} of ${rows.length}.`
+        summary,
+        detail: (typeof raw === 'string' ? raw : summary) || 'Batch fix failed.'
       });
     };
 
-    if (mode === 'SCRIPT' || mode === 'SCRIPT_JOB') {
-      const built = this.buildResolutionScriptForRow(row, card);
+    const runJob = (prefix: string) => {
+      this._svc.executeResolutionJob(card.CHECK_ID, retailerId).subscribe({
+        next: () => finish(
+          `${prefix} Job "${card.RESOLUTION_JOB_NAME}" started for ${fixableCount} fixable issue(s). Refreshing…`
+        ),
+        error: (err) => fail('Job step failed', err)
+      });
+    };
+
+    const runBatchScriptOnce = (thenJob: boolean) => {
+      const built = this._svc.pickBatchScriptTemplate(card);
       if ('error' in built) {
-        fail(built.error);
+        fail('Batch script not configured', { message: built.error });
         return;
       }
       this._svc.executeResolutionScript(built.script).subscribe({
         next: (data) => {
           if (data?.ERROR) {
-            fail(String(data.ERROR));
+            fail('Script failed', { message: String(data.ERROR) });
             return;
           }
-          advance();
+          if (thenJob) {
+            runJob('Script completed.');
+          } else {
+            finish(`GOLD batch script submitted once (${built.script}). Refreshing…`);
+          }
         },
-        error: () => fail()
+        error: (err) => fail('Script failed', err)
+      });
+    };
+
+    const runScriptsAfterBatchSql = (thenJob: boolean) => {
+      const hasPerRowScript = !!(
+        card.RESOLUTION_SCRIPT_TEMPLATE?.trim()
+        && card.RESOLUTION_SCRIPT_PARAM_MAP?.trim()
+      );
+      if (hasPerRowScript) {
+        const siteRows = this.distinctRowsForScript(fixable, card);
+        this.runDistinctSiteScripts(card, siteRows, thenJob, finish, fail, runJob);
+        return;
+      }
+      runBatchScriptOnce(thenJob);
+    };
+
+    if (mode === 'SCRIPT') {
+      runBatchScriptOnce(false);
+      return;
+    }
+    if (mode === 'SCRIPT_JOB') {
+      runBatchScriptOnce(true);
+      return;
+    }
+
+    if (mode === 'LIBQUERY' || mode === 'LIBQUERY_JOB') {
+      if (card.RESOLUTION_PARAM_MAP?.trim()) {
+        fail(
+          'Per-row LIBQUERY',
+          {
+            message: 'Fix all (once) needs a batch resolution LIBQUERY with no parameter map, '
+              + 'or use Fix on individual rows.'
+          }
+        );
+        return;
+      }
+      this._svc.executeResolutionLibQuery(card.RESOLUTION_QUERY_NUM!, {
+        CHECK_ID: card.CHECK_ID,
+        RETAILER_ID: retailerId
+      }).subscribe({
+        next: () => {
+          if (mode === 'LIBQUERY_JOB') {
+            runJob('Resolution LIBQUERY completed.');
+          } else {
+            finish(`Resolution LIBQUERY completed once for ${fixableCount} fixable issue(s). Refreshing…`);
+          }
+        },
+        error: (err) => fail('LIBQUERY step failed', err)
       });
       return;
     }
 
-    if (mode !== 'LIBQUERY' && mode !== 'LIBQUERY_JOB') {
-      fail(`Fix all batch is not supported for resolution mode "${mode}".`);
-      return;
+    if (mode === 'SQL' || mode === 'SQL_JOB' || mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB') {
+      const batchPayload = { CHECK_ID: card.CHECK_ID, RETAILER_ID: retailerId };
+      this._svc.executeResolutionSql(batchPayload, false, true).subscribe({
+        next: () => {
+          if (mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB') {
+            runScriptsAfterBatchSql(mode === 'SQL_SCRIPT_JOB');
+          } else if (mode === 'SQL_JOB') {
+            runJob('Inline SQL completed.');
+          } else {
+            finish(`Inline SQL completed once for ${fixableCount} fixable issue(s). Refreshing…`);
+          }
+        },
+        error: (err) => fail('SQL step failed', err)
+      });
     }
-
-    const payload = this.buildResolutionPayload(row, card);
-    if (payload === null) {
-      fail(`Row ${index + 1} of ${rows.length} has missing bind values.`);
-      return;
-    }
-
-    this._svc.executeResolutionLibQuery(card.RESOLUTION_QUERY_NUM!, payload).subscribe({
-      next: () => advance(),
-      error: () => fail()
-    });
   }
 
   /** Summary bar totals — derived from the same card list as the grid (avoids AI0000081 drift). */
@@ -819,6 +1089,69 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
     } as CheckCard;
   }
 
+  /**
+   * Inline SQL (AI0000092), optional GOLD script, optional scheduler job — per row.
+   */
+  private runSqlResolutionChain(
+    row: Record<string, unknown>,
+    card: CheckCard,
+    retailerId: string,
+    mode: string,
+    onDone: (detail: string) => void,
+    onError: (summary: string, err?: unknown) => void
+  ): void {
+    const sqlPayload = this.buildResolutionSqlPayload(row, card, retailerId);
+    if (sqlPayload === null) {
+      onError('Fix failed', { message: 'Missing bind values for inline SQL.' });
+      return;
+    }
+    const runJob = () => {
+      this._svc.executeResolutionJob(card.CHECK_ID, retailerId).subscribe({
+        next: () => onDone(
+          `SQL and script completed, then job "${card.RESOLUTION_JOB_NAME}" started. Refreshing…`
+        ),
+        error: (err) => onError('Job step failed (SQL and script succeeded)', err)
+      });
+    };
+    const runScript = () => {
+      const built = this.buildResolutionScriptForRow(row, card);
+      if ('error' in built) {
+        onError('Script step failed (SQL succeeded)', { message: built.error });
+        return;
+      }
+      this._svc.executeResolutionScript(built.script).subscribe({
+        next: (data) => {
+          if (data?.ERROR) {
+            onError('Script step failed (SQL succeeded)', { message: String(data.ERROR) });
+            return;
+          }
+          if (mode === 'SQL_SCRIPT_JOB') {
+            runJob();
+          } else if (mode === 'SQL_SCRIPT') {
+            onDone('Inline SQL and GOLD script completed. Refreshing detail rows…');
+          } else if (mode === 'SQL_JOB') {
+            runJob();
+          } else {
+            onDone('Resolution SQL completed. Refreshing detail rows…');
+          }
+        },
+        error: (err) => onError('Script step failed (SQL succeeded)', err)
+      });
+    };
+    this._svc.executeResolutionSql(sqlPayload).subscribe({
+      next: () => {
+        if (mode === 'SQL_SCRIPT' || mode === 'SQL_SCRIPT_JOB') {
+          runScript();
+        } else if (mode === 'SQL_JOB') {
+          runJob();
+        } else {
+          onDone('Resolution SQL completed. Refreshing detail rows…');
+        }
+      },
+      error: (err) => onError('SQL step failed', err)
+    });
+  }
+
   private buildResolutionScriptForRow(
     row: Record<string, unknown>,
     card: CheckCard
@@ -829,6 +1162,52 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
       row,
       (r, col) => this.getRowCell(r, col)
     );
+  }
+
+  private parseResolutionParamEntries(map?: string): { bind: string; col: string }[] {
+    return (map || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((token) => {
+        const eq = token.indexOf('=');
+        if (eq > 0) {
+          return {
+            bind: token.slice(0, eq).trim().replace(/^:/, ''),
+            col: token.slice(eq + 1).trim()
+          };
+        }
+        return { bind: token.replace(/^:/, ''), col: token };
+      });
+  }
+
+  /** Payload for AI0000092 — bind keys match :tokens in RESOLUTION_SQL. */
+  private buildResolutionSqlPayload(
+    row: Record<string, unknown>,
+    card: CheckCard,
+    retailerId: string
+  ): Record<string, unknown> | null {
+    if (!card.RESOLUTION_PARAM_MAP?.trim()) { return null; }
+    const payload: Record<string, unknown> = {
+      CHECK_ID: card.CHECK_ID,
+      RETAILER_ID: retailerId
+    };
+    for (const entry of this.parseResolutionParamEntries(card.RESOLUTION_PARAM_MAP)) {
+      const val = this.getRowCell(row, entry.col);
+      if (val === undefined || val === null || val === '') {
+        this._msg.add({
+          severity: 'warn',
+          summary: 'Missing value',
+          detail: `Column "${entry.col}" is empty — cannot run resolution SQL.`
+        });
+        return null;
+      }
+      payload[entry.bind] = val;
+      if (entry.col !== entry.bind) {
+        payload[entry.col] = val;
+      }
+    }
+    return payload;
   }
 
   private buildResolutionPayload(
@@ -926,6 +1305,82 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
 
   isRowFixing(row: Record<string, unknown>): boolean {
     return this.fixingRowKey === this.rowKey(row);
+  }
+
+  /** One representative row per distinct script bind (e.g. Site #) for batch SQL + per-site GOLD script. */
+  private distinctRowsForScript(
+    fixable: Record<string, unknown>[],
+    card: CheckCard
+  ): Record<string, unknown>[] {
+    const entries = this.parseResolutionParamEntries(card.RESOLUTION_SCRIPT_PARAM_MAP || '');
+    if (!entries.length) {
+      return [];
+    }
+    const seen = new Set<string>();
+    const out: Record<string, unknown>[] = [];
+    for (const row of fixable) {
+      const parts = entries.map((e) => {
+        const val = this.getRowCell(row, e.col);
+        return val === undefined || val === null ? '' : String(val).trim();
+      });
+      if (parts.some((p) => !p)) {
+        continue;
+      }
+      const key = parts.join('\u0001');
+      if (seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
+      out.push(row);
+    }
+    return out;
+  }
+
+  private runDistinctSiteScripts(
+    card: CheckCard,
+    rows: Record<string, unknown>[],
+    thenJob: boolean,
+    finish: (detail: string) => void,
+    fail: (summary: string, err?: unknown) => void,
+    runJob: (prefix: string) => void
+  ): void {
+    if (!rows.length) {
+      fail('No script targets', {
+        message: 'Could not derive distinct sites from fixable rows — check script parameter map column headers.'
+      });
+      return;
+    }
+    let index = 0;
+    let ok = 0;
+    const next = () => {
+      if (index >= rows.length) {
+        const siteLabel = rows.length === 1 ? '1 site' : `${ok} sites`;
+        if (thenJob) {
+          runJob(`GOLD script submitted for ${siteLabel}.`);
+        } else {
+          finish(`Batch SQL done; GOLD script submitted for ${siteLabel}. Refreshing…`);
+        }
+        return;
+      }
+      const row = rows[index++];
+      const built = this.buildResolutionScriptForRow(row, card);
+      if ('error' in built) {
+        fail('Script build failed', { message: built.error });
+        return;
+      }
+      this._svc.executeResolutionScript(built.script).subscribe({
+        next: (data) => {
+          if (data?.ERROR) {
+            fail('Script failed', { message: String(data.ERROR) });
+            return;
+          }
+          ok++;
+          next();
+        },
+        error: (err) => fail('Script failed', err)
+      });
+    };
+    next();
   }
 
   private rowKey(row: Record<string, unknown>): string {

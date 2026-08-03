@@ -1,0 +1,173 @@
+-- =============================================================================
+-- 97_data_health_ai0000087_upsert_fix.sql
+-- Fix AI0000087 upsert — match by CHECK_ID on edit, CLOB RESOLUTION_SQL, rowcount guard
+-- QUERYSQL uses TO_CLOB(...) || q'~...~' (MERGE > 4000 chars — ORA-01704).
+-- Deploy after: 52 (inline SQL) and 96 (SQL_SCRIPT modes on CK constraint). Re-runnable.
+-- =============================================================================
+
+BEGIN
+    EXECUTE IMMEDIATE 'ALTER TABLE AI_DATA_CHECK_DEF DROP CONSTRAINT CK_AI_RESOLUTION_MODE';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE NOT IN (-2443) THEN RAISE; END IF;
+END;
+/
+
+BEGIN
+    EXECUTE IMMEDIATE q'[
+        ALTER TABLE AI_DATA_CHECK_DEF ADD CONSTRAINT CK_AI_RESOLUTION_MODE
+        CHECK (RESOLUTION_MODE IN (
+          'NONE','LIBQUERY','JOB','LIBQUERY_JOB','SCRIPT','SCRIPT_JOB',
+          'SQL','SQL_JOB','SQL_SCRIPT','SQL_SCRIPT_JOB'
+        ))
+    ]';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE NOT IN (-2264, -2275, -2261) THEN RAISE; END IF;
+END;
+/
+
+DELETE FROM LIBQUERY WHERE QUERYNUM = 'AI0000087';
+
+INSERT INTO LIBQUERY (
+    QUERYID, QUERYNUM, QUERYTITLE, QUERYDESC, QUERYSQL, QUERYPARAM, QUERYRESULT, QUERYACCESS, QUERYTYPE, QUERYUPDATE
+)
+SELECT (SELECT NVL(MAX(QUERYID), 0) + 1 FROM LIBQUERY),
+       'AI0000087',
+       'S25 — upsert check definition',
+       'MERGE AI_DATA_CHECK_DEF: match CHECK_ID when sent (edit), else CHECK_CODE+RETAILER_ID (insert). Body: {values:[{CHECK_ID?,CHECK_CODE,...}]}.',
+       TO_CLOB(q'~
+DECLARE
+  v_req NUMBER := :param1;
+  v_payload_rows NUMBER;
+BEGIN
+  SELECT COUNT(*)
+    INTO v_payload_rows
+    FROM REQUEST_QUERY_BODY rb
+   WHERE rb.REQUESTID = v_req;
+
+  IF v_payload_rows = 0 THEN
+    RAISE_APPLICATION_ERROR(-20088, 'Request body not found for REQUESTID=' || v_req);
+  END IF;
+
+  SELECT COUNT(*)
+    INTO v_payload_rows
+    FROM REQUEST_QUERY_BODY rb,
+         JSON_TABLE(rb.REQUESTBODY, '$.values[0]'
+           COLUMNS (CHECK_CODE VARCHAR2(50) PATH '$."CHECK_CODE"')
+         ) jt
+   WHERE rb.REQUESTID = v_req
+     AND jt.CHECK_CODE IS NOT NULL;
+
+  IF v_payload_rows = 0 THEN
+    RAISE_APPLICATION_ERROR(-20089, 'JSON payload missing values[0] or CHECK_CODE.');
+  END IF;
+
+  MERGE INTO AI_DATA_CHECK_DEF tgt
+  USING (
+    SELECT
+      NULLIF(TRIM(jt.CHECK_ID), '') AS CHECK_ID,
+      TRIM(jt.CHECK_CODE)            AS CHECK_CODE,
+      jt.CHECK_NAME,
+      jt.CHECK_DESCRIPTION,
+      jt.QUERY_NUM,
+      jt.TIER,
+      jt.SEVERITY,
+      jt.ENABLED,
+      TRIM(jt.RETAILER_ID)           AS RETAILER_ID,
+      jt.SKILL_CODE,
+      jt.ENTITY_KEY,
+      jt.DISPLAY_ORDER,
+      NVL(NULLIF(TRIM(jt.RESOLUTION_MODE), ''), 'NONE') AS RESOLUTION_MODE,
+      NULLIF(TRIM(jt.RESOLUTION_QUERY_NUM), '')         AS RESOLUTION_QUERY_NUM,
+      NULLIF(TRIM(jt.RESOLUTION_PARAM_MAP), '')       AS RESOLUTION_PARAM_MAP,
+      NULLIF(TRIM(jt.RESOLUTION_JOB_NAME), '')        AS RESOLUTION_JOB_NAME,
+      NULLIF(TRIM(jt.RESOLUTION_SCRIPT_TEMPLATE), '') AS RESOLUTION_SCRIPT_TEMPLATE,
+      NULLIF(TRIM(jt.RESOLUTION_SCRIPT_PARAM_MAP), '') AS RESOLUTION_SCRIPT_PARAM_MAP,
+      jt.RESOLUTION_SQL,
+      NULLIF(TRIM(jt.FIXABLE_STATUS_COLUMN), '')      AS FIXABLE_STATUS_COLUMN,
+      NULLIF(TRIM(jt.FIXABLE_STATUS_VALUE), '')       AS FIXABLE_STATUS_VALUE
+    FROM REQUEST_QUERY_BODY rb,
+         JSON_TABLE(rb.REQUESTBODY, '$.values[0]'
+           COLUMNS (
+             CHECK_ID                     VARCHAR2(36)   PATH '$."CHECK_ID"',
+             CHECK_CODE                   VARCHAR2(50)   PATH '$."CHECK_CODE"',
+             CHECK_NAME                   VARCHAR2(200)  PATH '$."CHECK_NAME"',
+             CHECK_DESCRIPTION            VARCHAR2(500)  PATH '$."CHECK_DESCRIPTION"',
+             QUERY_NUM                    VARCHAR2(20)   PATH '$."QUERY_NUM"',
+             TIER                         VARCHAR2(20)   PATH '$."TIER"',
+             SEVERITY                     VARCHAR2(20)   PATH '$."SEVERITY"',
+             ENABLED                      NUMBER         PATH '$."ENABLED"',
+             RETAILER_ID                  VARCHAR2(50)   PATH '$."RETAILER_ID"',
+             SKILL_CODE                   VARCHAR2(100)  PATH '$."SKILL_CODE"',
+             ENTITY_KEY                   VARCHAR2(100)  PATH '$."ENTITY_KEY"',
+             DISPLAY_ORDER                NUMBER         PATH '$."DISPLAY_ORDER"',
+             RESOLUTION_MODE              VARCHAR2(20)   PATH '$."RESOLUTION_MODE"',
+             RESOLUTION_QUERY_NUM         VARCHAR2(20)   PATH '$."RESOLUTION_QUERY_NUM"',
+             RESOLUTION_PARAM_MAP         VARCHAR2(500)  PATH '$."RESOLUTION_PARAM_MAP"',
+             RESOLUTION_JOB_NAME          VARCHAR2(128)  PATH '$."RESOLUTION_JOB_NAME"',
+             RESOLUTION_SCRIPT_TEMPLATE   VARCHAR2(500)  PATH '$."RESOLUTION_SCRIPT_TEMPLATE"',
+             RESOLUTION_SCRIPT_PARAM_MAP  VARCHAR2(500)  PATH '$."RESOLUTION_SCRIPT_PARAM_MAP"',
+             RESOLUTION_SQL               CLOB           PATH '$."RESOLUTION_SQL"',
+             FIXABLE_STATUS_COLUMN        VARCHAR2(100)  PATH '$."FIXABLE_STATUS_COLUMN"',
+             FIXABLE_STATUS_VALUE         VARCHAR2(200)  PATH '$."FIXABLE_STATUS_VALUE"'
+           )
+         ) jt
+    WHERE rb.REQUESTID = v_req
+  ) src
+~') || q'~
+  ON (
+    (src.CHECK_ID IS NOT NULL AND tgt.CHECK_ID = src.CHECK_ID)
+    OR (src.CHECK_ID IS NULL AND tgt.CHECK_CODE = src.CHECK_CODE AND tgt.RETAILER_ID = src.RETAILER_ID)
+  )
+  WHEN MATCHED THEN UPDATE SET
+    tgt.CHECK_NAME                   = src.CHECK_NAME,
+    tgt.CHECK_DESCRIPTION            = src.CHECK_DESCRIPTION,
+    tgt.QUERY_NUM                    = src.QUERY_NUM,
+    tgt.TIER                         = src.TIER,
+    tgt.SEVERITY                     = src.SEVERITY,
+    tgt.ENABLED                      = src.ENABLED,
+    tgt.SKILL_CODE                   = src.SKILL_CODE,
+    tgt.ENTITY_KEY                   = src.ENTITY_KEY,
+    tgt.DISPLAY_ORDER                = src.DISPLAY_ORDER,
+    tgt.RESOLUTION_MODE              = src.RESOLUTION_MODE,
+    tgt.RESOLUTION_QUERY_NUM         = src.RESOLUTION_QUERY_NUM,
+    tgt.RESOLUTION_PARAM_MAP         = src.RESOLUTION_PARAM_MAP,
+    tgt.RESOLUTION_JOB_NAME          = src.RESOLUTION_JOB_NAME,
+    tgt.RESOLUTION_SCRIPT_TEMPLATE   = src.RESOLUTION_SCRIPT_TEMPLATE,
+    tgt.RESOLUTION_SCRIPT_PARAM_MAP  = src.RESOLUTION_SCRIPT_PARAM_MAP,
+    tgt.RESOLUTION_SQL               = src.RESOLUTION_SQL,
+    tgt.FIXABLE_STATUS_COLUMN        = src.FIXABLE_STATUS_COLUMN,
+    tgt.FIXABLE_STATUS_VALUE         = src.FIXABLE_STATUS_VALUE,
+    tgt.UPDATED_AT                   = SYSDATE
+  WHEN NOT MATCHED THEN INSERT (
+    CHECK_ID, CHECK_CODE, CHECK_NAME, CHECK_DESCRIPTION,
+    QUERY_NUM, TIER, SEVERITY, ENABLED,
+    RETAILER_ID, SKILL_CODE, ENTITY_KEY, DISPLAY_ORDER,
+    RESOLUTION_MODE, RESOLUTION_QUERY_NUM, RESOLUTION_PARAM_MAP, RESOLUTION_JOB_NAME,
+    RESOLUTION_SCRIPT_TEMPLATE, RESOLUTION_SCRIPT_PARAM_MAP, RESOLUTION_SQL,
+    FIXABLE_STATUS_COLUMN, FIXABLE_STATUS_VALUE,
+    CREATED_AT, UPDATED_AT
+  ) VALUES (
+    NVL(src.CHECK_ID, SYS_GUID()),
+    src.CHECK_CODE, src.CHECK_NAME, src.CHECK_DESCRIPTION,
+    src.QUERY_NUM, src.TIER, src.SEVERITY, src.ENABLED,
+    src.RETAILER_ID, src.SKILL_CODE, src.ENTITY_KEY, src.DISPLAY_ORDER,
+    src.RESOLUTION_MODE, src.RESOLUTION_QUERY_NUM, src.RESOLUTION_PARAM_MAP, src.RESOLUTION_JOB_NAME,
+    src.RESOLUTION_SCRIPT_TEMPLATE, src.RESOLUTION_SCRIPT_PARAM_MAP, src.RESOLUTION_SQL,
+    src.FIXABLE_STATUS_COLUMN, src.FIXABLE_STATUS_VALUE,
+    SYSDATE, SYSDATE
+  );
+
+  IF SQL%ROWCOUNT = 0 THEN
+    RAISE_APPLICATION_ERROR(-20090,
+      'No row merged — verify CHECK_ID or CHECK_CODE + RETAILER_ID match an existing definition.');
+  END IF;
+END;
+~',
+       ':param1=REQUESTID (auto-bound by CALLQUERY)',
+       '',
+       1, 0, 1
+  FROM dual;
+
+COMMIT;

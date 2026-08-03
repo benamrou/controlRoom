@@ -235,6 +235,102 @@
                     </div>
                 </div>
             </p-tabPanel>
+            <p-tabPanel [header]="'S19.TAB.SPEC' | lbl:'Specification'" lefticon="fas fa-book-open">
+                <div class="altspec-toolbar">
+                    <button *ngIf="!altspecEditMode" pButton type="button" icon="fas fa-pen"
+                        [label]="'CMN.EDIT' | lbl:'Edit'"
+                        (click)="enterAltspecEdit()"
+                        class="p-button-sm"></button>
+                    <button *ngIf="!altspecEditMode" pButton type="button" icon="fas fa-file-pdf"
+                        [label]="'S19.SPC.PDF' | lbl:'Export to PDF'"
+                        (click)="exportSpecAndBugsPdf()"
+                        class="p-button-sm p-button-outlined"
+                        [disabled]="!alertDisplay?.ALTID"
+                        pTooltip="Export Specification and Bug/patch history to PDF"></button>
+                    <ng-container *ngIf="altspecEditMode">
+                        <button pButton type="button" icon="fas fa-check"
+                            [label]="'CMN.DONE' | lbl:'Done'"
+                            (click)="exitAltspecEdit()"
+                            class="p-button-sm"></button>
+                        <button pButton type="button" icon="fas fa-undo"
+                            [label]="'CMN.CANCEL' | lbl:'Cancel'"
+                            (click)="cancelAltspecEdit()"
+                            class="p-button-sm p-button-text"></button>
+                    </ng-container>
+                </div>
+
+                <!-- Read-only: rendered specification -->
+                <div *ngIf="!altspecEditMode" class="altspec-view surface-border border-round">
+                    <div *ngIf="!altspecHasContent" class="altspec-preview-empty altspec-view-empty">
+                        {{ 'S19.SPC.EMPTY' | lbl:'No specification has been written for this alert yet.' }}
+                        <button pButton type="button" icon="fas fa-pen"
+                            [label]="'S19.SPC.WRITE' | lbl:'Write specification'"
+                            (click)="enterAltspecEdit()"
+                            class="p-button-sm p-button-outlined altspec-view-empty-btn"></button>
+                    </div>
+                    <div *ngIf="altspecHasContent"
+                        class="altspec-preview-body altspec-view-body ql-editor"
+                        [innerHTML]="altspecPreviewSafe"></div>
+                </div>
+
+                <!-- Edit: rich text (paste bullets, colors, tables — stored as HTML) -->
+                <div *ngIf="altspecEditMode" class="altspec-edit">
+                    <p class="altspec-edit-hint">
+                        {{ 'S19.SPC.RICHHT' | lbl:'Type or paste from Word, Outlook, or Excel — formatting is converted to HTML automatically.' }}
+                    </p>
+                    <p-editor [(ngModel)]="alertDisplay.ALTSPEC"
+                        styleClass="altspec-rich-editor"
+                        [style]="{ height: '24rem' }"
+                        (onTextChange)="onAltspecEditorChange($event)">
+                        <ng-template pTemplate="header">
+                            <span class="ql-formats">
+                                <select class="ql-header" title="Heading">
+                                    <option value="1">Heading 1</option>
+                                    <option value="2">Heading 2</option>
+                                    <option value="3">Heading 3</option>
+                                    <option selected>Normal</option>
+                                </select>
+                            </span>
+                            <span class="ql-formats">
+                                <button type="button" class="ql-bold" title="Bold"></button>
+                                <button type="button" class="ql-italic" title="Italic"></button>
+                                <button type="button" class="ql-underline" title="Underline"></button>
+                                <button type="button" class="ql-strike" title="Strikethrough"></button>
+                            </span>
+                            <span class="ql-formats">
+                                <select class="ql-color" title="Text color"></select>
+                                <select class="ql-background" title="Highlight"></select>
+                            </span>
+                            <span class="ql-formats">
+                                <button type="button" class="ql-list" value="ordered" title="Numbered list"></button>
+                                <button type="button" class="ql-list" value="bullet" title="Bullet list"></button>
+                                <button type="button" class="ql-indent" value="-1" title="Decrease indent"></button>
+                                <button type="button" class="ql-indent" value="+1" title="Increase indent"></button>
+                            </span>
+                            <span class="ql-formats">
+                                <select class="ql-align" title="Alignment"></select>
+                            </span>
+                            <span class="ql-formats">
+                                <button type="button" class="ql-link" title="Link"></button>
+                                <button type="button" class="ql-clean" title="Clear formatting"></button>
+                            </span>
+                        </ng-template>
+                    </p-editor>
+                    <div class="altspec-edit-footer">
+                        <button pButton type="button" icon="fas fa-code"
+                            [label]="altspecShowHtmlSource ? ('S19.SPC.HIDHT' | lbl:'Hide HTML') : ('S19.SPC.SHWHT' | lbl:'Show HTML source')"
+                            (click)="toggleAltspecHtmlSource()"
+                            class="p-button-sm p-button-text"></button>
+                        <button pButton type="button" icon="fas fa-copy"
+                            (click)="copyToClipboard(alertDisplay.ALTSPEC)"
+                            pTooltip="Copy HTML to clipboard" tooltipPosition="left"
+                            class="p-button-sm p-button-text"></button>
+                    </div>
+                    <textarea *ngIf="altspecShowHtmlSource" rows="8" [(ngModel)]="alertDisplay.ALTSPEC"
+                        (input)="onAltspecEditorChange({ htmlValue: alertDisplay.ALTSPEC })"
+                        class="altspec-editor text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round w-full"></textarea>
+                </div>
+            </p-tabPanel>
             <p-tabPanel [header]="'S19.TAB.DLST' | lbl:'Distribution list'" lefticon="fas fa-envelope-open">
                 <div class="formgrid grid">
                     <div class="field col-3">
@@ -547,11 +643,201 @@
                     </div>
                 </div>
             </p-tabPanel>
+            <p-tabPanel [header]="'S19.TAB.BUG' | lbl:'Bug / patch history'" lefticon="fas fa-bug">
+                <p class="altspec-edit-hint" style="margin-bottom: 12px;">
+                    {{ 'S19.BUG.HINT' | lbl:'Track bug fixes and releases for this alert. Issue and resolution are unlimited text (CLOB).' }}
+                </p>
+                <div style="margin-bottom: 10px; text-align: right;">
+                    <button pButton type="button" icon="pi pi-plus"
+                        [label]="'S19.BUG.ADD' | lbl:'Add patch entry'"
+                        class="p-button-sm p-button-success"
+                        [disabled]="!alertDisplay?.ALTID || isNewAlert"
+                        (click)="openAddBug()">
+                    </button>
+                </div>
+                <div *ngIf="!alertBugRows?.length && !alertBugLoading" class="altspec-preview-empty" style="padding: 16px;">
+                    {{ 'S19.BUG.EMPTY' | lbl:'No patch history recorded for this alert yet.' }}
+                </div>
+                <p-table *ngIf="alertBugRows?.length"
+                    [value]="alertBugRows"
+                    [paginator]="true"
+                    [rows]="8"
+                    styleClass="p-datatable-sm"
+                    [loading]="alertBugLoading">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th *ngFor="let col of bugColumns">{{ col.header }}</th>
+                            <th style="width: 7rem;">{{ 'CMN.ACTIONS' | lbl:'Actions' }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row>
+                        <tr>
+                            <td>{{ row.BUGPATCHDAY || '—' }}</td>
+                            <td>{{ row.BUGRELEASEDATE || '—' }}</td>
+                            <td>
+                                <a href="#" class="alertbug-preview-link" (click)="openBugView(row); $event.preventDefault()">
+                                    {{ bugPreview(row.BUGISSUE) }}
+                                </a>
+                            </td>
+                            <td>{{ bugPreview(row.BUGRESOLUTION) }}</td>
+                            <td>{{ row.BUGUTIL || '—' }}</td>
+                            <td>
+                                <button type="button" pButton icon="fas fa-eye"
+                                    class="p-button-text p-button-sm"
+                                    (click)="openBugView(row)"
+                                    pTooltip="View"></button>
+                                <button type="button" pButton icon="fas fa-pen"
+                                    class="p-button-text p-button-sm"
+                                    (click)="openEditBug(row)"
+                                    pTooltip="Edit"></button>
+                                <button type="button" pButton icon="fas fa-trash"
+                                    class="p-button-text p-button-danger p-button-sm"
+                                    (click)="confirmDeleteBug(row)"
+                                    pTooltip="Remove"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-tabPanel>
         </p-tabView>
 
     </div>
 
 
+</p-dialog>
+
+<!-- ALERTBUG add/edit dialog (Issue / Resolution / Notes = HTML CLOB like ALTSPEC) -->
+<p-dialog
+    [(visible)]="showBugDialog"
+    [modal]="true"
+    [closable]="true"
+    [draggable]="false"
+    [style]="{ width: '820px' }"
+    [contentStyle]="{ 'max-height': '70vh', 'overflow': 'auto' }"
+    [baseZIndex]="12000"
+    (onHide)="cancelBugEdit()">
+    <p-header>
+        {{ bugEditMode === 'add'
+             ? ('S19.BUG.ADD' | lbl:'Add patch entry')
+             : ('S19.BUG.EDIT' | lbl:'Edit patch entry') }}
+    </p-header>
+    <div class="formgrid grid alertbug-edit" *ngIf="bugDisplay">
+        <div class="field col-12 md:col-6">
+            <label class="font-bold">{{ 'S19.BUG.PDAY' | lbl:'Patch day' }}</label>
+            <p-calendar [(ngModel)]="bugPatchDay" dateFormat="yy-mm-dd" [showIcon]="true"
+                appendTo="body" [style]="{ width: '100%' }"></p-calendar>
+        </div>
+        <div class="field col-12 md:col-6">
+            <label class="font-bold">{{ 'S19.BUG.RDAY' | lbl:'Release date' }}</label>
+            <p-calendar [(ngModel)]="bugReleaseDate" dateFormat="yy-mm-dd" [showIcon]="true"
+                appendTo="body" [style]="{ width: '100%' }"></p-calendar>
+        </div>
+
+        <div class="field col-12">
+            <label class="font-bold">{{ 'S19.BUG.ISSUE' | lbl:'Issue' }}</label>
+            <p class="altspec-edit-hint">{{ 'S19.SPC.RICHHT' | lbl:'Type or paste from Word, Outlook, or Excel — formatting is converted to HTML automatically.' }}</p>
+            <p-editor [(ngModel)]="bugDisplay.BUGISSUE"
+                styleClass="altspec-rich-editor alertbug-rich-editor"
+                [style]="{ height: '14rem' }">
+                <ng-template pTemplate="header">
+                    <ng-container *ngTemplateOutlet="bugEditorToolbar"></ng-container>
+                </ng-template>
+            </p-editor>
+        </div>
+
+        <div class="field col-12">
+            <label class="font-bold">{{ 'S19.BUG.RES' | lbl:'Resolution' }}</label>
+            <p-editor [(ngModel)]="bugDisplay.BUGRESOLUTION"
+                styleClass="altspec-rich-editor alertbug-rich-editor"
+                [style]="{ height: '14rem' }">
+                <ng-template pTemplate="header">
+                    <ng-container *ngTemplateOutlet="bugEditorToolbar"></ng-container>
+                </ng-template>
+            </p-editor>
+        </div>
+
+        <div class="field col-12">
+            <label class="font-bold">{{ 'S19.BUG.NOTES' | lbl:'Notes' }}</label>
+            <p-editor [(ngModel)]="bugDisplay.BUGNOTES"
+                styleClass="altspec-rich-editor alertbug-rich-editor"
+                [style]="{ height: '10rem' }">
+                <ng-template pTemplate="header">
+                    <ng-container *ngTemplateOutlet="bugEditorToolbar"></ng-container>
+                </ng-template>
+            </p-editor>
+        </div>
+    </div>
+    <p-footer>
+        <button type="button" pButton class="p-button-text"
+            [label]="'CMN.CANCEL' | lbl:'Cancel'" (click)="cancelBugEdit()"></button>
+        <button type="button" pButton icon="fas fa-check" class="p-button-success"
+            [label]="'CMN.OK' | lbl:'Save'" (click)="saveBugEntry()"></button>
+    </p-footer>
+</p-dialog>
+
+<!-- Shared Quill toolbar (same as ALTSPEC) -->
+<ng-template #bugEditorToolbar>
+    <span class="ql-formats">
+        <select class="ql-header" title="Heading">
+            <option value="1">Heading 1</option>
+            <option value="2">Heading 2</option>
+            <option value="3">Heading 3</option>
+            <option selected>Normal</option>
+        </select>
+    </span>
+    <span class="ql-formats">
+        <button type="button" class="ql-bold" title="Bold"></button>
+        <button type="button" class="ql-italic" title="Italic"></button>
+        <button type="button" class="ql-underline" title="Underline"></button>
+        <button type="button" class="ql-strike" title="Strikethrough"></button>
+    </span>
+    <span class="ql-formats">
+        <select class="ql-color" title="Text color"></select>
+        <select class="ql-background" title="Highlight"></select>
+    </span>
+    <span class="ql-formats">
+        <button type="button" class="ql-list" value="ordered" title="Numbered list"></button>
+        <button type="button" class="ql-list" value="bullet" title="Bullet list"></button>
+        <button type="button" class="ql-indent" value="-1" title="Decrease indent"></button>
+        <button type="button" class="ql-indent" value="+1" title="Increase indent"></button>
+    </span>
+    <span class="ql-formats">
+        <select class="ql-align" title="Alignment"></select>
+    </span>
+    <span class="ql-formats">
+        <button type="button" class="ql-link" title="Link"></button>
+        <button type="button" class="ql-clean" title="Clear formatting"></button>
+    </span>
+</ng-template>
+
+<!-- View rendered bug HTML (Issue / Resolution / Notes) -->
+<p-dialog
+    [(visible)]="showBugViewDialog"
+    [modal]="true"
+    [closable]="true"
+    [draggable]="false"
+    [style]="{ width: '780px' }"
+    [contentStyle]="{ 'max-height': '70vh', 'overflow': 'auto' }"
+    [baseZIndex]="12000"
+    (onHide)="closeBugView()">
+    <p-header>{{ 'S19.BUG.VIEW' | lbl:'Patch entry' }}</p-header>
+    <div *ngIf="bugViewRow" class="alertbug-view">
+        <p><strong>{{ 'S19.BUG.PDAY' | lbl:'Patch day' }}:</strong> {{ bugViewRow.BUGPATCHDAY || '—' }}
+           · <strong>{{ 'S19.BUG.RDAY' | lbl:'Release date' }}:</strong> {{ bugViewRow.BUGRELEASEDATE || '—' }}</p>
+        <h4>{{ 'S19.BUG.ISSUE' | lbl:'Issue' }}</h4>
+        <div class="altspec-preview-body ql-editor" [innerHTML]="bugViewIssueSafe"></div>
+        <h4>{{ 'S19.BUG.RES' | lbl:'Resolution' }}</h4>
+        <div class="altspec-preview-body ql-editor" [innerHTML]="bugViewResolutionSafe"></div>
+        <h4>{{ 'S19.BUG.NOTES' | lbl:'Notes' }}</h4>
+        <div class="altspec-preview-body ql-editor" [innerHTML]="bugViewNotesSafe"></div>
+    </div>
+    <p-footer>
+        <button type="button" pButton class="p-button-text"
+            [label]="'CMN.CLOSE' | lbl:'Close'" (click)="closeBugView()"></button>
+        <button type="button" pButton icon="fas fa-pen" class="p-button-sm"
+            [label]="'CMN.EDIT' | lbl:'Edit'"
+            (click)="closeBugView(); openEditBug(bugViewRow)"></button>
+    </p-footer>
 </p-dialog>
 
 <p-confirmDialog key="shellConfirm"></p-confirmDialog>

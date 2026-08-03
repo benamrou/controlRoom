@@ -149,6 +149,11 @@
           placeholder="e.g. AI0000090"
           class="adhc-input adhc-input--qnum"
           (ngModelChange)="verifyState = 'idle'" />
+        <button pButton type="button" [label]="'S62.VIEWCOL' | lbl:'View columns'" icon="pi pi-table"
+          class="p-button-sm p-button-outlined"
+          [disabled]="!form.QUERY_NUM?.trim() || !selectedRetailer"
+          (click)="viewQueryDetail()">
+        </button>
         <button pButton type="button" [label]="'S62.VERIFY' | lbl:'Verify'" icon="pi pi-bolt"
           class="p-button-sm p-button-outlined"
           [loading]="verifyState === 'checking'"
@@ -198,8 +203,13 @@
     <div class="adhc-form-section">
       <div class="adhc-section-title">Resolution (fix)</div>
       <p class="adhc-section-desc">
-        Choose how the dashboard applies a fix: row-level LIBQUERY, a GOLD batch script (remote
-        <code>executeScript</code>), a scheduler job, or combinations in sequence.
+        Choose how the dashboard applies a fix: <strong>inline UPDATE/MERGE</strong> stored on this
+        check, a separate resolution LIBQUERY, GOLD batch script, scheduler job, or combinations
+        (SQL then job, LIBQUERY then job, etc.).
+      </p>
+      <p class="adhc-section-desc adhc-hint">
+        Configure <strong>per-row</strong> resolution (Fix / Fix all each row) and optional
+        <strong>batch</strong> resolution (Fix all once) on the same check.
       </p>
     </div>
 
@@ -213,6 +223,56 @@
       </p-dropdown>
     </div>
 
+    <ng-container *ngIf="showResolutionSql">
+    <div class="adhc-form-row">
+      <label class="adhc-label">Per-row resolution SQL <span class="adhc-req">*</span></label>
+      <textarea pInputTextarea [(ngModel)]="form.RESOLUTION_SQL" rows="6" class="adhc-input w-full"
+        maxlength="4000"
+        placeholder="UPDATE my_table SET col = :val WHERE store = :STORE AND upc = :UPC"
+        (ngModelChange)="resolutionVerifyState = 'idle'"></textarea>
+      <div class="adhc-query-row p-mt-2">
+        <button pButton type="button" [label]="'S62.VERIFY' | lbl:'Verify'" icon="pi pi-bolt"
+          class="p-button-sm p-button-outlined"
+          [loading]="resolutionVerifyState === 'checking'"
+          [disabled]="!form.RESOLUTION_SQL?.trim()"
+          (click)="verifyResolutionSql()">
+        </button>
+      </div>
+      <div class="adhc-verify-result" [ngClass]="resolutionVerifyClass" *ngIf="resolutionVerifyState !== 'idle'">
+        <i [class]="'pi ' + resolutionVerifyIcon"></i>
+        <span>{{ resolutionVerifyMessage }}</span>
+      </div>
+      <small class="adhc-hint">
+        For <strong>Fix</strong> and <strong>Fix all (each row)</strong>. Use <code>:bind</code> tokens
+        (e.g. <code>:site</code>) and map them below. Max 4000 chars. Must start with
+        <code>UPDATE</code> or <code>MERGE</code>.
+      </small>
+    </div>
+
+    <div class="adhc-form-row">
+      <label class="adhc-label">Per-row SQL parameter map <span class="adhc-req">*</span></label>
+      <input pInputText [(ngModel)]="form.RESOLUTION_PARAM_MAP"
+        placeholder="site=Site # or transferNumber=TRANSFER NUMBER"
+        class="adhc-input" />
+      <small class="adhc-hint">
+        Map each <code>:bind</code> to a detail column header. Required for per-row fixes.
+      </small>
+    </div>
+
+    <div class="adhc-form-row adhc-form-row--batch">
+      <label class="adhc-label">Batch resolution SQL <span class="adhc-hint-inline">(Fix all once)</span></label>
+      <textarea pInputTextarea [(ngModel)]="form.RESOLUTION_BATCH_SQL" rows="5" class="adhc-input w-full"
+        maxlength="4000"
+        placeholder="UPDATE vteremart@dblink SET … WHERE vtatrt = 2 AND trunc(vtadate) >= trunc(sysdate-1)"
+        (ngModelChange)="resolutionVerifyState = 'idle'"></textarea>
+      <small class="adhc-hint">
+        Optional. Broad <code>WHERE</code>, no <code>:binds</code> — one statement fixes every matching row.
+        Used by <strong>Fix all (once)</strong>. If empty, batch falls back to per-row SQL (not recommended when
+        per-row SQL uses <code>:binds</code>).
+      </small>
+    </div>
+    </ng-container>
+
     <ng-container *ngIf="showResolutionLibQuery">
     <div class="adhc-form-row">
       <label class="adhc-label">Resolution LIBQUERY</label>
@@ -221,6 +281,11 @@
           placeholder="e.g. DH0000001"
           class="adhc-input adhc-input--qnum"
           (ngModelChange)="resolutionVerifyState = 'idle'" />
+        <button pButton type="button" [label]="'S62.VIEWCOL' | lbl:'View columns'" icon="pi pi-table"
+          class="p-button-sm p-button-outlined"
+          [disabled]="!form.RESOLUTION_QUERY_NUM?.trim() || !selectedRetailer"
+          (click)="viewResolutionQueryDetail()">
+        </button>
         <button pButton type="button" [label]="'S62.VERIFY' | lbl:'Verify'" icon="pi pi-bolt"
           class="p-button-sm p-button-outlined"
           [loading]="resolutionVerifyState === 'checking'"
@@ -251,24 +316,33 @@
 
     <ng-container *ngIf="showResolutionScript">
     <div class="adhc-form-row">
-      <label class="adhc-label">Script template</label>
+      <label class="adhc-label">Per-row script template</label>
       <input pInputText [(ngModel)]="form.RESOLUTION_SCRIPT_TEMPLATE"
-        placeholder="pssti20p pssti20p $USERID :transferNumber HN"
+        placeholder="pssti12p pssti12p $USERID 10 :site :site -1 HN 1"
         class="adhc-input" />
       <small class="adhc-hint">
-        GOLD batch command sent to <code>ProcessService.executeScript</code>. Keep
-        <code>$USERID</code> literal (expanded on the remote host). Use
-        <code>:name</code> for values taken from each detail row.
+        For <strong>Fix</strong> and <strong>Fix all (each row)</strong>. Use <code>:name</code> and map below.
+        Keep <code>$USERID</code> literal.
+      </small>
+    </div>
+    <div class="adhc-form-row" *ngIf="form.RESOLUTION_MODE === 'SQL_SCRIPT' || form.RESOLUTION_MODE === 'SQL_SCRIPT_JOB'">
+      <label class="adhc-label">Batch script template <span class="adhc-hint-inline">(Fix all once)</span></label>
+      <input pInputText [(ngModel)]="form.RESOLUTION_BATCH_SCRIPT_TEMPLATE"
+        placeholder="pssti12p pssti12p $USERID 10 -1 -1 HN 1"
+        class="adhc-input" />
+      <small class="adhc-hint">
+        Optional fixed GOLD command when there is no per-row script map.
+        For <strong>SQL_SCRIPT</strong>, Fix all (once) runs batch SQL once, then the
+        <strong>per-row script</strong> once per distinct site (same as line Fix) — batch script is ignored when a script map exists.
       </small>
     </div>
     <div class="adhc-form-row">
-      <label class="adhc-label">Script parameter map</label>
+      <label class="adhc-label">Per-row script parameter map</label>
       <input pInputText [(ngModel)]="form.RESOLUTION_SCRIPT_PARAM_MAP"
         placeholder="transferNumber=TRANSFER NUMBER"
         class="adhc-input" />
       <small class="adhc-hint">
-        Comma-separated <code>placeholder=Column header</code> pairs matching
-        <code>:placeholder</code> tokens in the template (header must match the detail query).
+        Map <code>:placeholder</code> to detail column headers for per-row fixes.
       </small>
     </div>
     </ng-container>
@@ -298,7 +372,8 @@
           class="adhc-input" />
       </div>
     </div>
-    <small class="adhc-hint adhc-hint--block p-mb-3" *ngIf="resolutionMode !== 'NONE'">
+    <small class="adhc-hint adhc-hint--block p-mb-3"
+      *ngIf="showResolutionSql || showResolutionLibQuery || showResolutionScript">
       When both are set, only detail rows with that status show a <strong>Fix</strong> action.
       Leave blank to allow fix on every row when resolution is configured.
     </small>
@@ -318,6 +393,86 @@
     <button pButton type="button" [label]="saveButtonLabel" icon="pi pi-check"
       [loading]="savingDef"
       (click)="saveDef()">
+    </button>
+  </ng-template>
+</p-dialog>
+
+<!-- LIBQUERY column preview -->
+<p-dialog [(visible)]="queryPreviewVisible"
+  [header]="queryPreviewTitle"
+  [modal]="true"
+  [style]="{ width: '840px', maxWidth: '95vw' }"
+  [draggable]="true"
+  [resizable]="true">
+  <div class="adhc-query-preview" *ngIf="queryPreviewLoading">
+    <i class="pi pi-spin pi-spinner"></i> Loading sample for <code>{{ queryPreviewQueryNum }}</code>…
+  </div>
+  <div class="adhc-query-preview" *ngIf="!queryPreviewLoading">
+    <p class="adhc-query-preview-meta">
+      <code>{{ queryPreviewQueryNum }}</code>
+      <span *ngIf="selectedRetailer"> · {{ selectedRetailer.RETAILER_NAME || selectedRetailer.RETAILER_ID }}</span>
+      <span *ngIf="!queryPreviewError">
+        · {{ queryPreviewRowCount }} row{{ queryPreviewRowCount !== 1 ? 's' : '' }} returned
+      </span>
+    </p>
+    <p class="adhc-query-preview-error" *ngIf="queryPreviewError">
+      <i class="pi pi-exclamation-triangle"></i> {{ queryPreviewError }}
+    </p>
+
+    <div class="adhc-query-preview-sql-block" *ngIf="queryPreviewSql">
+      <div class="adhc-query-preview-sql-head">
+        <span class="adhc-query-preview-label">Query (LIBQUERY catalog)</span>
+        <button pButton type="button" icon="pi pi-copy" class="p-button-text p-button-sm"
+          [pTooltip]="'CMN.COPY' | lbl:'Copy'" (click)="copyQueryPreviewSql()">
+        </button>
+      </div>
+      <p class="adhc-query-preview-libtitle" *ngIf="queryPreviewTitleLib">
+        <strong>{{ queryPreviewTitleLib }}</strong>
+        <span *ngIf="queryPreviewDesc"> — {{ queryPreviewDesc }}</span>
+      </p>
+      <p class="adhc-query-preview-libmeta" *ngIf="queryPreviewParam || queryPreviewTypeLabel">
+        <span *ngIf="queryPreviewParam"><code>QUERYPARAM</code> {{ queryPreviewParam }}</span>
+        <span *ngIf="queryPreviewTypeLabel" class="adhc-query-preview-tag">{{ queryPreviewTypeLabel }}</span>
+        <span *ngIf="queryPreviewUpdateLabel" class="adhc-query-preview-tag">{{ queryPreviewUpdateLabel }}</span>
+      </p>
+      <pre class="adhc-query-preview-sql">{{ queryPreviewSql }}</pre>
+    </div>
+    <p class="adhc-query-preview-nosql adhc-hint" *ngIf="!queryPreviewLoading && !queryPreviewSql">
+      SQL text not loaded — Query Library lookup (<code>LIB0000001</code>) may require admin access or the
+      query id may be missing from the catalog.
+    </p>
+
+    <div *ngIf="queryPreviewColumns.length">
+      <div class="adhc-query-preview-label">Columns (use these names in parameter maps and fixable status)</div>
+      <div class="adhc-query-preview-cols">
+        <span class="adhc-col-chip" *ngFor="let col of queryPreviewColumns">{{ col }}</span>
+      </div>
+      <p class="adhc-query-preview-catalog" *ngIf="queryPreviewCatalogColumns.length">
+        LIBQUERY catalog <code>QUERYRESULT</code>:
+        {{ queryPreviewCatalogColumns.join(', ') }}
+      </p>
+    </div>
+    <p-table *ngIf="queryPreviewRows.length" [value]="queryPreviewRows"
+      styleClass="p-datatable-sm adhc-query-preview-table"
+      [scrollable]="true" scrollHeight="220px">
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of queryPreviewColumns">{{ col }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td *ngFor="let col of queryPreviewColumns">{{ queryPreviewCell(row, col) }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p class="adhc-hint" *ngIf="queryPreviewRowCount > queryPreviewRows.length">
+      Showing first {{ queryPreviewRows.length }} of {{ queryPreviewRowCount }} rows.
+    </p>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton type="button" [label]="'CMN.CLOSE' | lbl:'Close'" icon="pi pi-times"
+      class="p-button-text" (click)="queryPreviewVisible = false">
     </button>
   </ng-template>
 </p-dialog>

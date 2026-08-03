@@ -396,7 +396,7 @@ export class HttpService  {
     if (bodyOptions) {
       body.command = bodyOptions;
     }
-
+    console.log('command url :', url, environment);
     this.logRequest('HTTP EXECUTE', url, headersOption, body, paramOptions);
     return this.httpClient.post(url, body, { headers: headersOption,
                                       params: paramOptions,

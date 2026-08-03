@@ -63,12 +63,15 @@ import { PalletLabelComponent } from './pages/warehouse/toolkit/pallet.label/pal
 import { UnarchiveInvoiceComponent } from './pages/finance/unarchive/unarchive.invoice.component';
 import { ReportFilterComponent } from './pages/reporting/report.filter/report.filter.component';
 import { ProductionNumberComponent } from './pages/warehouse/toolkit/production.number/production.number.component';
+import { ManufacturingAgrnComponent } from './pages/warehouse/toolkit/manufacturing-agrn/manufacturing.agrn.component';
+import { PalletSsccTraceComponent } from './pages/warehouse/toolkit/pallet-sscc-trace/pallet.sscc.trace.component';
 import { PurchaseOrderComponent } from './pages/mass.update/purchase.order/purchase.order.component';
 import { StockLayerComponent } from './pages/mass.update/stock.layer/stock.layer.component';
 
 import { DashboardReceptionComponent } from './pages/reporting/account.payable/reception/dashboard.reception.component';
 import { EdiAsnComponent } from './pages/edi/asn/edi.asn.component';
 import { SyndigoUpdateComponent } from './pages/syndigo/update/syndigo.update.component';
+import { SyndigoExcludePosComponent } from './pages/syndigo/exclude-pos/syndigo.exclude.pos.component';
 import { PPGRetailComponent } from './pages/mdm/ppg.retail/ppg.retail.component';
 import { SpaceItemDimReportingComponent } from './pages/space.planning/item.dimension.reporting/space.item.dimension.reporting.component';
 import { AvailableMHComponent } from './pages/mdm/available.mh/available.mh.component';
@@ -107,6 +110,7 @@ import { AiAssistantComponent } from './pages/supply-chain-ai/inquiry/ai-assista
 import { AiDataHealthComponent } from './pages/supply-chain-ai/operations/data-health/ai.data.health.component';
 import { AiDataHealthConfigComponent } from './pages/supply-chain-ai/operations/data-health/config/ai.data.health.config.component';
 import { DocumentationViewerComponent } from './pages/documentation/documentation-viewer.component';
+import { BarcodeGeneratorComponent } from './pages/tools/barcode-generator/barcode.generator.component';
 
 const routes: Routes = [
    /* Root: redirect only (no component on ''). A '' route with component+lazy children has historically kept the dashboard
@@ -149,11 +153,14 @@ const routes: Routes = [
   { path: 'releasepallet', component: ReleasePalletComponent, canActivate: [AuthentificationGuard] },
   { path: 'palletlabel', component: PalletLabelComponent, canActivate: [AuthentificationGuard] },
   { path: 'productionnumber', component: ProductionNumberComponent, canActivate: [AuthentificationGuard] },
+  { path: 'mfgagrn', component: ManufacturingAgrnComponent, canActivate: [AuthentificationGuard] },
+  { path: 'pallettrace', component: PalletSsccTraceComponent, canActivate: [AuthentificationGuard] },
   
   /* Syndigo */
   { path: 'syndigosearch', component: SyndigoProductComponent, canActivate: [AuthentificationGuard] },
   { path: 'syndigocollect', component: SyndigoDownloadComponent, canActivate: [AuthentificationGuard] },
   { path: 'syndigoupdate', component: SyndigoUpdateComponent, canActivate: [AuthentificationGuard] },
+  { path: 'syndigoexcludepos', component: SyndigoExcludePosComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemaddress', component: ItemAddressComponent, canActivate: [AuthentificationGuard] },
 
   
@@ -214,6 +221,9 @@ const routes: Routes = [
   { path: 'dashboardreception', component: DashboardReceptionComponent, canActivate: [AuthentificationGuard] },
   { path: 'fillrate', component: FillRateComponent, canActivate: [AuthentificationGuard] },
   { path: 'reportfilter', component: ReportFilterComponent, canActivate: [AuthentificationGuard] },
+
+  /* Tools */
+  { path: 'barcodegenerator', component: BarcodeGeneratorComponent, canActivate: [AuthentificationGuard] },
   
   /** ALERT */
   { path: 'alerts-icr', component: AlertsICRComponent, canActivate: [AuthentificationGuard] },

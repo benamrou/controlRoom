@@ -9,8 +9,13 @@ export UV_THREADPOOL_SIZE=10
 
 CONTROLROOM_SERVER=${ICR_SERVER}
 #CONFIG_SERVER=${CONTROLROOM_SERVER}/config/admin/server
-#NODE_BIN=/usr/bin/
-NODE_BIN=/usr/local/bin/
+NODE_BIN=/usr/bin/
+
+# ICR_LOG_LEVEL=0  — full trace (equivalent to old ICR_DEBUG=1)
+# ICR_LOG_LEVEL=1  — INFO and above
+# ICR_LOG_LEVEL=2  — WARN and above  ← production default
+# ICR_LOG_LEVEL=3  — ERROR only      ← minimum footprint
+export ICR_LOG_LEVEL=0
 
 cd ${CONTROLROOM_SERVER}
 # export NODE_MODULE_PATH=${CONFIG_SERVER}/node_modules/lib/node_modules/ControlRoomAdminServer/node_modules/

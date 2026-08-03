@@ -2,6 +2,12 @@
 * DBCONNECT API class - Manages query execution with proper connection pooling
 * @author Ahmed Benamrouche
 * Updated: February 2026 - Fixed connection pool management
+* Updated: July 2026 - Explicit transaction cleanup on pooled connections:
+*   remote (@dblink) statements begin a distributed transaction that a SELECT
+*   never commits; sessions returned to the pool could carry it as residue
+*   ("ghost" rows in v$global_transaction) and poison the next request with
+*   ORA-02046. Connections are now rolled back at release (end of request)
+*   and defensively at acquisition (guards paths where release was skipped).
 */
 
 "use strict"
@@ -136,6 +142,10 @@ async function executeQuery(sql, bindParams, options, ticketId, request, respons
     try {
         // ✅ GET CONNECTION FROM POOL - not standalone!
         connection = await pool.getConnection();
+        // Defensive: clear any (distributed) transaction residue left by this
+        // pooled session's previous request (abandoned fetch, timeout, stream
+        // hang). No-op on a clean session.
+        await connection.rollback();
         
         const result = await execute(sql, bindParams, options, connection, ticketId, user, callback);
         
@@ -179,6 +189,9 @@ async function executeCursor(sql, bindParams, options, ticketId, request, respon
     try {
         // ✅ USES POOL CORRECTLY
         connection = await pool.getConnection();
+        // Defensive: clear any (distributed) transaction residue left by this
+        // pooled session's previous request. No-op on a clean session.
+        await connection.rollback();
         
         const result = await execute(sql, bindParams, options, connection, ticketId, user, callback);
         
@@ -304,6 +317,9 @@ async function executeCursorStream(sql, bindParams, options, ticketId, request, 
     try {
         // ✅ USES POOL CORRECTLY
         connection = await pool.getConnection();
+        // Defensive: clear any (distributed) transaction residue left by this
+        // pooled session's previous request. No-op on a clean session.
+        await connection.rollback();
         
         const stream = connection.queryStream(sql, bindParams, options);
         
@@ -321,18 +337,26 @@ async function executeCursorStream(sql, bindParams, options, ticketId, request, 
         
         stream.on('end', async () => {
             logger.log(ticketId, `${rowsToReturn.length} Object(s) returned [STREAM COMPLETE]`, user);
+            try { await connection.rollback(); } catch (e) { /* broken conn */ }
             await connection.close();
             callback(null, rowsToReturn);
         });
         
         stream.on('error', async (err) => {
             logger.log(ticketId, '008 - Stream error: ' + err, user, 3);
+            try { await connection.rollback(); } catch (e) { /* broken conn */ }
             await connection.close();
             callback(err, null);
         });
         
     } catch (err) {
         logger.log(ticketId, '009 - executeCursorStream error: ' + err, user, 3);
+        // FIX: connection was leaked on this path (never closed) - the exact
+        // scenario that leaves ghost distributed transactions in the pool
+        if (connection) {
+            try { await connection.rollback(); } catch (e) { /* broken conn */ }
+            try { await connection.close(); } catch (e) { /* already closed */ }
+        }
         callback(err, null);
     }
 }
@@ -352,6 +376,14 @@ function releaseConnections(connection, resultSet) {
                 }
                 
                 if (connection) {
+                    // End-of-request cleanup: explicitly terminate any
+                    // distributed transaction begun by fetching over a DB link
+                    // before the session goes back to the pool.
+                    try {
+                        await connection.rollback();
+                    } catch (err) {
+                        // Connection may be broken; close below handles it
+                    }
                     try {
                         await connection.close();
                     } catch (err) {
