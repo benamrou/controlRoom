@@ -14,7 +14,7 @@ UPDATE ALERTS
    SET ALTSPEC =
        TO_CLOB(q'!
 <div class="altspec-doc">
-  <h2><strong>Hole report — Order writer specification</strong></h2>
+  <h2><strong>Hole report - Order writer specification</strong></h2>
   <p>This specification describes how store associates use the hole report to support daily ordering decisions, how the report is structured, and how <strong>Last delivery status</strong> is determined.</p>
 
   <h3><strong>Table of contents</strong></h3>
@@ -25,7 +25,8 @@ UPDATE ALERTS
     <li><a href="#sec-tabs" onclick="event.preventDefault();var e=document.getElementById('sec-tabs');if(e)e.scrollIntoView({behavior:'smooth'});return false;">Report tabs</a></li>
     <li><a href="#sec-printable" onclick="event.preventDefault();var e=document.getElementById('sec-printable');if(e)e.scrollIntoView({behavior:'smooth'});return false;">Printable worksheet</a></li>
     <li><a href="#sec-fields" onclick="event.preventDefault();var e=document.getElementById('sec-fields');if(e)e.scrollIntoView({behavior:'smooth'});return false;">Field notes (Orderable / Comment)</a></li>
-    <li><a href="#sec-waterfall" onclick="event.preventDefault();var e=document.getElementById('sec-waterfall');if(e)e.scrollIntoView({behavior:'smooth'});return false;">Last delivery status — waterfall logic</a></li>
+    <li><a href="#sec-waterfall" onclick="event.preventDefault();var e=document.getElementById('sec-waterfall');if(e)e.scrollIntoView({behavior:'smooth'});return false;">Last delivery status - waterfall logic</a></li>
+    <li><a href="#sec-snowflake" onclick="event.preventDefault();var e=document.getElementById('sec-snowflake');if(e)e.scrollIntoView({behavior:'smooth'});return false;">Data shared with Snowflake</a></li>
   </ol>
 
   <hr />
@@ -45,19 +46,19 @@ UPDATE ALERTS
   <h3 id="sec-schedule"><strong>3. Report schedule (store groups)</strong></h3>
   <p>There are <strong>3 groups</strong> of stores:</p>
   <ul>
-    <li><strong>08:30am</strong> — Store <strong>#18</strong> only</li>
-    <li><strong>10:30am</strong> — Cleveland (CLE) stores <strong>except</strong> store <strong>#6</strong> and <strong>#9</strong></li>
-    <li><strong>10:30pm</strong> — Chicago (CHI) stores, plus CLE stores <strong>#6</strong> and <strong>#9</strong></li>
+    <li><strong>08:30am</strong> - Store <strong>#18</strong> only</li>
+    <li><strong>10:30am</strong> - Cleveland (CLE) stores <strong>except</strong> store <strong>#6</strong> and <strong>#9</strong></li>
+    <li><strong>10:30pm</strong> - Chicago (CHI) stores, plus CLE stores <strong>#6</strong> and <strong>#9</strong></li>
   </ul>
 !') || TO_CLOB(q'!
   <h3 id="sec-tabs"><strong>4. Report tabs</strong></h3>
   <p>The report contains <strong>5 tabs</strong>:</p>
   <ul>
-    <li><strong>Recap</strong> — Summary of reported holes during the last <strong>12 weeks</strong>, plus the current week by day, for the major vendors.</li>
-    <li><strong>Details</strong> — Reported holes for all items listed in the Recap.</li>
-    <li><strong>Persistent Holes (3-day)</strong> — Holes reported <strong>3 days consecutively</strong>.</li>
-    <li><strong>Persistent Holes (1-day)</strong> — Holes reported on the <strong>day of the report</strong>.</li>
-    <li><strong>Printable (1-day)</strong> — Landscape printable version of <strong>Persistent Holes (1-day)</strong>, with the key columns the order writer needs.</li>
+    <li><strong>Recap</strong> - Summary of reported holes during the last <strong>12 weeks</strong>, plus the current week by day, for the major vendors.</li>
+    <li><strong>Details</strong> - Reported holes for all items listed in the Recap.</li>
+    <li><strong>Persistent Holes (3-day)</strong> - Holes reported <strong>3 days consecutively</strong>.</li>
+    <li><strong>Persistent Holes (1-day)</strong> - Holes reported on the <strong>day of the report</strong>.</li>
+    <li><strong>Printable (1-day)</strong> - Landscape printable version of <strong>Persistent Holes (1-day)</strong>, with the key columns the order writer needs.</li>
   </ul>
 
   <h3 id="sec-printable"><strong>5. Printable worksheet</strong></h3>
@@ -81,19 +82,19 @@ UPDATE ALERTS
 
   <h3 id="sec-fields"><strong>6. Field notes (Orderable / Comment)</strong></h3>
   <ul>
-    <li><strong>Comment</strong> — Contains <em>Check if discontinued</em> when the item orderable assortment has been turned off.</li>
-    <li><strong>Orderable</strong> — Set to <strong>No</strong> for items that are not orderable. Otherwise it is <strong>Yes</strong> (but <strong>Yes</strong> is not displayed everywhere in the report).</li>
+    <li><strong>Comment</strong> - Contains <em>Check if discontinued</em> when the item orderable assortment has been turned off.</li>
+    <li><strong>Orderable</strong> - Set to <strong>No</strong> for items that are not orderable. Otherwise it is <strong>Yes</strong> (but <strong>Yes</strong> is not displayed everywhere in the report).</li>
   </ul>
 
-  <h3 id="sec-waterfall"><strong>7. Last delivery status — waterfall logic</strong></h3>
+  <h3 id="sec-waterfall"><strong>7. Last delivery status - waterfall logic</strong></h3>
   <p>Order writers rely on <strong>Last delivery status</strong> to interpret each hole. Status is resolved with the waterfall below.</p>
 
   <h4><strong>BA Sweetie only</strong></h4>
   <p>Schedule: stores order by <strong>Friday morning</strong> to deliver to the Cleveland store on <strong>Tuesday</strong>; the rest, along with Chicago, get delivery on <strong>Wednesday</strong> (Wednesday as the delivery date for all locations):</p>
   <ul>
-    <li class="ql-indent-1"><strong>SBT (CUT)</strong> — if still a hole the next day after delivery (hole on Friday, Saturday, Sunday)</li>
-    <li class="ql-indent-1"><strong>SBT (AWAITING DELIVERY)</strong> — if an order is found</li>
-    <li class="ql-indent-1"><strong>SBT (NOT ORDERED)</strong> — if the BA Sweetie item was not ordered</li>
+    <li class="ql-indent-1"><strong>SBT (CUT)</strong> - if still a hole the next day after delivery (hole on Friday, Saturday, Sunday)</li>
+    <li class="ql-indent-1"><strong>SBT (AWAITING DELIVERY)</strong> - if an order is found</li>
+    <li class="ql-indent-1"><strong>SBT (NOT ORDERED)</strong> - if the BA Sweetie item was not ordered</li>
   </ul>
 
   <h4><strong>Others</strong></h4>
@@ -113,7 +114,14 @@ UPDATE ALERTS
         <li class="ql-indent-1">Last item PO in valued or awaiting delivery</li>
       </ul>
     </li>
-    <li><strong>Else</strong> — <strong>NOT ORDERED</strong></li>
+    <li><strong>Else</strong> - <strong>NOT ORDERED</strong></li>
+  </ul>
+
+  <h3 id="sec-snowflake"><strong>8. Data shared with Snowflake</strong></h3>
+  <p>Around <strong>1:00am</strong>, ICR shares the <strong>Persistent Holes (1-day)</strong> dataset with Snowflake.</p>
+  <ul>
+    <li><strong>Target:</strong> shared table <strong>HOLE_REPORT</strong> under the <strong>HNCUSTOM</strong> schema</li>
+    <li><strong>Content:</strong> the data shared are exactly the same as the report shared with the store (Persistent Holes / Printable 1-day content)</li>
   </ul>
 </div>
 !')
