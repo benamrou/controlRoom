@@ -39,8 +39,151 @@
         </p-footer>
     </p-dialog>
 
+    <p-dialog header="What's new" [(visible)]="newsBannerVisible" [modal]="true"
+        [style]="{width: '40rem'}" [closable]="true" (onHide)="closeNewsBanner()">
+        <p class="news-banner-intro">Login notifications active through their notify-until date.</p>
+        <article *ngFor="let item of newsBannerItems" class="news-card"
+            [class.news-card--patch]="item.ITEM_TYPE === 'PATCH'">
+            <div class="news-banner-type">{{ item.ITEM_TYPE === 'PATCH' ? 'Patch' : 'News' }}</div>
+            <h4 class="news-card-title">{{ item.TITLE }}</h4>
+            <div class="news-meta">{{ item.PUBLISHED_ON }}
+                <span *ngIf="item.NOTIFICATION_DATE"> · Until {{ item.NOTIFICATION_DATE }}</span>
+            </div>
+            <pre class="news-body">{{ item.NOTIFICATION_MSG }}</pre>
+        </article>
+        <p-footer>
+            <button type="button" pButton label="View all" class="p-button-text"
+                (click)="openNewsFromBanner()"></button>
+            <button type="button" pButton label="OK" icon="pi pi-check"
+                (click)="closeNewsBanner()"></button>
+        </p-footer>
+    </p-dialog>
+
+    <p-dialog header="News & patches" [(visible)]="newsDialogVisible" [modal]="true"
+        [style]="{width: '52rem'}" [maximizable]="true" [contentStyle]="{'overflow':'auto','max-height':'70vh'}">
+        <p-tabView [(activeIndex)]="newsTabIndex">
+            <p-tabPanel>
+                <ng-template pTemplate="header">
+                    News <span class="news-tab-badge" *ngIf="newsNotifyCount > 0">{{ newsNotifyCount }}</span>
+                </ng-template>
+                <div *ngIf="newsBusy" class="news-empty">Loading…</div>
+                <div *ngIf="!newsBusy && newsItems.length === 0" class="news-empty">No news published yet.</div>
+                <article *ngFor="let item of newsItems" class="news-card"
+                    [class.news-card--notify]="isActiveNotify(item)">
+                    <div class="news-banner-type" *ngIf="isActiveNotify(item)">Notification</div>
+                    <h4 class="news-card-title">{{ item.TITLE }}</h4>
+                    <div class="news-meta">{{ item.PUBLISHED_ON }} <span *ngIf="item.PUBLISHED_BY">· {{ item.PUBLISHED_BY }}</span>
+                        <span *ngIf="item.NOTIFICATION_DATE"> · Until {{ item.NOTIFICATION_DATE }}</span>
+                    </div>
+                    <pre class="news-body">{{ item.BODY }}</pre>
+                </article>
+            </p-tabPanel>
+            <p-tabPanel>
+                <ng-template pTemplate="header">
+                    Patches <span class="news-tab-badge" *ngIf="patchNotifyCount > 0">{{ patchNotifyCount }}</span>
+                </ng-template>
+                <div *ngIf="newsBusy" class="news-empty">Loading…</div>
+                <div *ngIf="!newsBusy && patchItems.length === 0" class="news-empty">No patches published yet.</div>
+                <article *ngFor="let item of patchItems" class="news-card news-card--patch"
+                    [class.news-card--notify]="isActiveNotify(item)">
+                    <div class="news-banner-type" *ngIf="isActiveNotify(item)">Notification</div>
+                    <h4 class="news-card-title">{{ item.TITLE }}</h4>
+                    <div class="news-meta">{{ item.PUBLISHED_ON }} <span *ngIf="item.PUBLISHED_BY">· {{ item.PUBLISHED_BY }}</span>
+                        <span *ngIf="item.NOTIFICATION_DATE"> · Until {{ item.NOTIFICATION_DATE }}</span>
+                    </div>
+                    <pre class="news-body">{{ item.BODY }}</pre>
+                </article>
+            </p-tabPanel>
+            <p-tabPanel header="Publish" *ngIf="isIcrAdmin">
+                <div class="news-admin-toolbar">
+                    <button type="button" pButton icon="pi pi-plus" label="New item"
+                        (click)="openNewsEditor()"></button>
+                </div>
+                <p-table [value]="adminNewsItems" [rows]="8" [paginator]="adminNewsItems.length > 8"
+                    styleClass="p-datatable-sm" [scrollable]="true" scrollHeight="280px">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width:6rem">Type</th>
+                            <th>Title</th>
+                            <th style="width:7rem">Status</th>
+                            <th style="width:9rem">Date</th>
+                            <th style="width:9rem">Notify until</th>
+                            <th style="width:8rem"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row>
+                        <tr>
+                            <td>{{ row.ITEM_TYPE }}</td>
+                            <td>{{ row.TITLE }}</td>
+                            <td>{{ row.PUBLISHED === 1 ? 'Published' : 'Draft' }}</td>
+                            <td>{{ row.PUBLISHED_ON }}</td>
+                            <td>{{ row.NOTIFICATION_DATE || '—' }}</td>
+                            <td>
+                                <button type="button" pButton icon="pi pi-pencil" class="p-button-text p-button-sm"
+                                    (click)="openNewsEditor(row)"></button>
+                                <button type="button" pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm"
+                                    (click)="deleteNewsItem(row)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr><td colspan="6">No items yet. Click New item to publish news or a patch.</td></tr>
+                    </ng-template>
+                </p-table>
+            </p-tabPanel>
+        </p-tabView>
+        <p-footer>
+            <button type="button" pButton label="Close" class="p-button-text"
+                (click)="newsDialogVisible=false"></button>
+        </p-footer>
+    </p-dialog>
+
+    <p-dialog [header]="newsForm.NEWS_ID ? 'Edit item' : 'Publish item'" [(visible)]="newsEditVisible"
+        [modal]="true" [style]="{width: '38rem'}" [closable]="!newsEditBusy" (onHide)="closeNewsEditor()">
+        <div class="p-fluid formgrid grid">
+            <div class="field col-6">
+                <label>Type</label>
+                <p-dropdown [options]="newsTypeOptions" [(ngModel)]="newsForm.ITEM_TYPE"
+                    optionLabel="label" optionValue="value" [disabled]="newsEditBusy"></p-dropdown>
+            </div>
+            <div class="field col-6">
+                <label>Status</label>
+                <p-dropdown [options]="publishedOptions" [(ngModel)]="newsForm.PUBLISHED"
+                    optionLabel="label" optionValue="value" [disabled]="newsEditBusy"></p-dropdown>
+            </div>
+            <div class="field col-12">
+                <label>Title</label>
+                <input pInputText [(ngModel)]="newsForm.TITLE" maxlength="200" [disabled]="newsEditBusy" />
+            </div>
+            <div class="field col-12">
+                <label>Notify until</label>
+                <p-calendar [(ngModel)]="newsNotifyDate" dateFormat="yy-mm-dd" [showIcon]="true"
+                    appendTo="body" [style]="{ width: '100%' }" [disabled]="newsEditBusy"
+                    [showButtonBar]="true"
+                    placeholder="Optional — login banner through this date"></p-calendar>
+            </div>
+            <div class="field col-12">
+                <label>Login banner message</label>
+                <textarea pInputTextarea [(ngModel)]="newsForm.NOTIFICATION_MSG" rows="6"
+                    [disabled]="newsEditBusy" maxlength="2000"
+                    placeholder="Banner text — line breaks are kept"></textarea>
+            </div>
+            <div class="field col-12">
+                <label>Body</label>
+                <textarea pInputTextarea [(ngModel)]="newsForm.BODY" rows="8" [disabled]="newsEditBusy"
+                    maxlength="4000"></textarea>
+            </div>
+        </div>
+        <p-footer>
+            <button type="button" pButton label="Cancel" class="p-button-text"
+                (click)="closeNewsEditor()" [disabled]="newsEditBusy"></button>
+            <button type="button" pButton label="Save" icon="pi pi-check"
+                (click)="saveNewsItem()" [loading]="newsEditBusy"></button>
+        </p-footer>
+    </p-dialog>
+
         <div class="pos-f-t fixed-top header">
-            <nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md summer-header">
+            <nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md fall-header">
 
                 <button class="navbar-toggler navbar-toggler-right" (click)="toggleSidebar()" data-bs-toggle="dropdown">
                     <span class="navbar-toggler-icon"></span>
@@ -49,9 +192,9 @@
                     {{appEnvironment}}
                 </a>
 
-                <!-- Summer badge -->
-                <div class="summer-badge">
-                    <span>🌴 Summer mode</span>
+                <!-- Fall badge -->
+                <div class="fall-badge">
+                    <span>🍂 Fall mode</span>
                 </div>
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02" style="padding-right: 3%">
@@ -70,6 +213,17 @@
                             </button>
                         </li>
 
+        <!-- What's new -->
+                        <li *ngIf="menuAccess.showNewsMailButton()" class="nav-item news-mail-item">
+                            <button type="button" class="news-whats-new-btn"
+                                    (click)="openNewsDialog()"
+                                    title="What's new">
+                                <i class="fas fa-newspaper"></i>
+                                <span class="news-whats-new-label">What's new</span>
+                                <span class="news-mail-badge" *ngIf="newsBadgeCount > 0">{{ newsBadgeCount }}</span>
+                            </button>
+                        </li>
+
         <!-- GOLD environment (Prod, Preprod) — job/data language follows CORPENV.ENVDEFLANG -->
                         <li *ngIf="environments.length > 0" class="nav-item dropdown adh-env-dropdown">
                             <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown"
@@ -78,7 +232,7 @@
                                 <span class="env-current-label" *ngIf="selectedEnvironment">{{ selectedEnvironment }}</span>
                                 <b class="caret"></b><span class="sr-only"></span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right summer-dropdown">
+                            <div class="dropdown-menu dropdown-menu-right fall-dropdown">
                                 <a *ngFor="let environment of environments" class="dropdown-item"
                                     [class.active]="environment.value?.type === envTypeConnected"
                                     (click)="environmentChange(environment.label, environment.value.type)">{{ environment.label }}
@@ -95,7 +249,7 @@
                                 <i class="fa fa-language"></i>
                                 <b class="caret"></b>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right summer-dropdown">
+                            <div class="dropdown-menu dropdown-menu-right fall-dropdown">
                                 <a *ngFor="let lang of languageOptions" class="dropdown-item"
                                    [class.active]="isLanguageActive(lang.id)"
                                    href="javascript:void(0)"
@@ -108,7 +262,7 @@
                             <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                 <i class="fa fa-user"></i> {{_userService.userInfo.userNameDisplay}} <b class="caret"></b>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right summer-dropdown">
+                            <div class="dropdown-menu dropdown-menu-right fall-dropdown">
                                 <a *ngFor="let item of menuAccess.profileMenu$ | async" class="dropdown-item"
                                     href="javascript:void(0)"
                                     [ngClass]="{'isDisabled': isProfileMenuDisabled(item)}"

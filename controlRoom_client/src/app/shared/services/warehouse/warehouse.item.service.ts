@@ -51,8 +51,6 @@ getItemPickingInfo (itemParam: string, pickingParam: string) {
       this.params= new HttpParams();
       this.params = this.params.set('PARAM', itemParam);
       this.params = this.params.append('PARAM', pickingParam);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
      this.dataResult = [];
 
@@ -111,8 +109,6 @@ getItemPickingInfo (itemParam: string, pickingParam: string) {
     this.params = this.params.append('PARAM', itemParam);
     this.params = this.params.append('PARAM', lvParam);
     this.params = this.params.append('PARAM', pickingParam);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
     //console.log('Parameters delete: ' + JSON.stringify(this.params));
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
@@ -129,8 +125,6 @@ releasePallet(ssccToChange) {
         let body = ssccToChange;
 
         headersSearch = headersSearch.set('QUERY_ID', this.queryReleasePallet);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
                 let data = <any> response;
                 return data;

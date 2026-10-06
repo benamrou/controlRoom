@@ -1,5 +1,5 @@
 <div>
-    <app-page-header #pageHeader [heading]="'S50.TITLE' | lbl:'Stock layer change'" [icon]="'fa-layer-group'"
+    <app-page-header #pageHeader [heading]="'S50.TITLE' | lbl:'Stock layer initialization in cost'" [icon]="'fa-layer-group'"
                      [waitMessage]="waitMessage" [screenID]="screenID">
     </app-page-header>
 </div>
@@ -139,14 +139,15 @@
         </p-header>
         <div class="row">
             <div class="col">
-                {{ 'S50.MU.SEL' | lbl:'Select your Stock layer file change.' }}
-                {{ 'S50.MU.XLS' | lbl:'The XLS(x) Excel file should contain those five columns headers:' }}
+                {{ 'S50.MU.SEL' | lbl:'Select your Stock layer initialization file.' }}
+                {{ 'S50.MU.XLS' | lbl:'The XLS(x) Excel file should contain those six column headers:' }}
                 <ul>
-                    <li>{{ 'S50.MU.CA' | lbl:'COLUMN A: Site code' }}</li>
-                    <li>{{ 'S50.MU.CB' | lbl:'COLUMN B: item code' }}</li>
+                    <li>{{ 'S50.MU.CA' | lbl:'COLUMN A: Site code (blank or ALL = all stores)' }}</li>
+                    <li>{{ 'S50.MU.CB' | lbl:'COLUMN B: Item code' }}</li>
                     <li>{{ 'S50.MU.CC' | lbl:'COLUMN C: LV code' }}</li>
-                    <li>{{ 'S50.MU.CD' | lbl:'COLUMN D: Quantity' }}</li>
-                    <li>{{ 'S50.MU.CE' | lbl:'COLUMN E: Case cost' }}</li>
+                    <li>{{ 'S50.MU.CD' | lbl:'COLUMN D: Position type 0-11 (blank or ALL = all positions)' }}</li>
+                    <li>{{ 'S50.MU.CE' | lbl:'COLUMN E: Quantity' }}</li>
+                    <li>{{ 'S50.MU.CF' | lbl:'COLUMN F: Unit cost' }}</li>
                 </ul>
 
 
@@ -283,7 +284,7 @@
         <div class="row">
             <div style="width: 50%;">
                 <span style="margin-right:1.3em; margin-top: 5px; padding-left: 15px; font-weight: bolder">{{ 'MU.LBL.LNKDT' | lbl:'New link start date :' }} </span>
-                <p-calendar [(ngModel)]="startDate"  
+                <p-calendar appendTo="body" [(ngModel)]="startDate"  
                             [readonlyInput]="true"
                             dateFormat="mm/dd/yy"
                             [defaultDate]="defaultStartDate"
@@ -294,7 +295,7 @@
 
             <div style="width: 50%;">
                 <p-checkbox [(ngModel)]="itemTrace" [binary]="true"></p-checkbox>
-                <span style="margin-top: 5px; padding-left: 15px;">Stock layer trace generation </span>
+                <span style="margin-top: 5px; padding-left: 15px;">Stock layer trace generation</span>
             </div>
             
         </div>
@@ -315,7 +316,7 @@
 
             <div style="width: 50%;">
                 <span style="padding-left: 15px; font-weight: bolder">
-                    {{ 'S50.MU.WHEN' | lbl:'When do you want to execute the Stock layer changes?' }}
+                    {{ 'S50.MU.WHEN' | lbl:'When do you want to execute the stock layer initialization?' }}
                 </span>
                 &nbsp;&nbsp;
                 <p-toggleButton [(ngModel)]="scheduleFlag" [onLabel]="'MU.TOG.SCHD' | lbl:'Schedule-it'" [offLabel]="'MU.TOG.NOW' | lbl:'Now'" >
@@ -325,7 +326,7 @@
 
             <div *ngIf="scheduleFlag"  style="width: 50%;">
 
-                <p-calendar [(ngModel)]="scheduleDate"  
+                <p-calendar appendTo="body" [(ngModel)]="scheduleDate"  
                             [minDate]="dateNow"
                             dateFormat="mm/dd/yy"
                             [showTime]="true"

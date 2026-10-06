@@ -24,6 +24,10 @@ export interface SsccTraceSearchParams {
   missing?: string;
   /** UL_DONORD; empty/-1 = all warehouses */
   whs?: string;
+  /** Pallet created on/after (Date or YYYY-MM-DD). Empty = no lower bound. */
+  createdFrom?: Date | string | null;
+  /** Pallet created on/before (Date or YYYY-MM-DD). Empty = no upper bound. */
+  createdUntil?: Date | string | null;
 }
 
 export interface SsccTraceIndicatorPayload {
@@ -52,11 +56,36 @@ export class SsccTraceService {
     const missing = (params.missing || '-1').trim() || '-1';
     const whs = (params.whs || '').trim() || '-1';
     const vendor = (params.vendor || '').trim() || '-1';
+    const createdFrom = this.formatSearchDate(params.createdFrom);
+    const createdUntil = this.formatSearchDate(params.createdUntil);
     return this._query.getQueryResult(SSCC_TRACE_SEARCH_QUERY, [
-      sscc, item, po, flow, missing, whs, vendor,
+      sscc, item, po, flow, missing, whs, vendor, createdFrom, createdUntil,
     ]).pipe(
       map((data) => SettingsAdminService.toRows(data)),
     );
+  }
+
+  /** YYYY-MM-DD for LIBQUERY binds, or '-1' when unset. */
+  formatSearchDate(value: Date | string | null | undefined): string {
+    if (value == null || value === '') {
+      return '-1';
+    }
+    if (value instanceof Date && !isNaN(value.getTime())) {
+      const y = value.getFullYear();
+      const m = String(value.getMonth() + 1).padStart(2, '0');
+      const d = String(value.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+    const raw = String(value).trim();
+    const iso = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (iso) {
+      return iso[1];
+    }
+    const us = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (us) {
+      return `${us[3]}-${us[1].padStart(2, '0')}-${us[2].padStart(2, '0')}`;
+    }
+    return '-1';
   }
 
   saveIndicator(payload: SsccTraceIndicatorPayload): Observable<unknown> {
@@ -109,10 +138,6 @@ export class SsccTraceService {
     return String(row?.['SOURCE'] ?? 'LIVE').trim().toUpperCase() === 'ARCHIVE'
       ? 'ARCHIVE'
       : 'LIVE';
-  }
-
-  isManufacturingWhs(whs: unknown): boolean {
-    return String(whs ?? '').trim() === MFG_DONORD;
   }
 
   formatUbdForDisplay(val: unknown): string {

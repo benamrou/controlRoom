@@ -8,7 +8,41 @@
 *   ("ghost" rows in v$global_transaction) and poison the next request with
 *   ORA-02046. Connections are now rolled back at release (end of request)
 *   and defensively at acquisition (guards paths where release was skipped).
+* Updated: August 2026 - Alerts (notification.js → EXECUTEQUERY over @dblink)
+*   are the main producers of distributed TX residue. On ORA-02046 / known
+*   distributed errors, drop the session from the pool instead of recycling it.
 */
+
+/** True when err/message indicates a poisoned distributed-TX session. */
+function isDistributedTxError(errOrText) {
+    const text = (errOrText && errOrText.message) ? errOrText.message : String(errOrText || '');
+    return /ORA-02046|ORA-02041|ORA-02050|ORA-02051|ORA-02052|ORA-02053|ORA-02054|distributed transaction/i.test(text);
+}
+
+/**
+ * End any open (distributed) transaction, then return or destroy the session.
+ * @param {object} connection
+ * @param {{ drop?: boolean }} [opts] - drop:true removes the session from the pool
+ */
+async function clearAndClose(connection, opts) {
+    if (!connection) {
+        return;
+    }
+    const drop = !!(opts && opts.drop);
+    try {
+        await connection.rollback();
+    } catch (e) { /* broken conn — close/drop below */ }
+    try {
+        if (drop && typeof connection.close === 'function') {
+            // node-oracledb: close({ drop: true }) destroys instead of pool recycle
+            await connection.close({ drop: true });
+        } else {
+            await connection.close();
+        }
+    } catch (err) {
+        logger.log('[DB]', 'Error closing connection: ' + err, 'internal', 1);
+    }
+}
 
 "use strict"
 
@@ -160,7 +194,7 @@ async function executeQuery(sql, bindParams, options, ticketId, request, respons
     } catch(err) {
         logger.log(ticketId, '006 - executeQuery error: ' + err, user, 3);
         if (connection) {
-            await releaseConnections(connection, null);
+            await releaseConnections(connection, null, { drop: isDistributedTxError(err) });
         }
         callback(err, null);
     }
@@ -206,7 +240,7 @@ async function executeCursor(sql, bindParams, options, ticketId, request, respon
     } catch (err) {
         logger.log(ticketId, '007 - executeCursor error: ' + err, user, 3);
         if (connection) {
-            await releaseConnections(connection, null);
+            await releaseConnections(connection, null, { drop: isDistributedTxError(err) });
         }
         callback(err, null);
     }
@@ -243,7 +277,13 @@ async function fetchRowsFromRS(ticketId, connection, resultSet, batchSize, user,
                         value && typeof value === 'string' && value.includes('ORA-')
                     );
                     logger.log(ticketId, ` Oracle Error detected: ${oraError}`, user);
-                    await releaseConnections(connection, resultSet);
+                    // ORA-02046 means this session is already poisoned — do not recycle it
+                    // into the pool for the next alert/UI request.
+                    const drop = isDistributedTxError(oraError);
+                    if (drop) {
+                        logger.log(ticketId, ' Dropping pooled session after distributed TX error (ORA-02046 family)', user, 2);
+                    }
+                    await releaseConnections(connection, resultSet, { drop });
                     callback(null, rowsToReturn);
                     return;
                 }
@@ -256,12 +296,13 @@ async function fetchRowsFromRS(ticketId, connection, resultSet, batchSize, user,
         
         logger.log(ticketId, `${totalFetched} total Object(s) returned [FETCH COMPLETE]`, user);
         
+        // Alert SELECTs over @dblink leave an open distributed TX until ROLLBACK/COMMIT.
         await releaseConnections(connection, resultSet);
         callback(null, rowsToReturn);
         
     } catch (err) {
         logger.log(ticketId, " Error fetching rows: " + JSON.stringify(err), user);
-        await releaseConnections(connection, resultSet);
+        await releaseConnections(connection, resultSet, { drop: isDistributedTxError(err) });
         callback(err, null);
     }
 }
@@ -271,7 +312,7 @@ async function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRowsT
     
     if (resultSet == null) {
         logger.log(ticketId, " Resultset empty...", user);
-        await connection.close();
+        await releaseConnections(connection, null);
         callback(null, []);
         return;
     }
@@ -301,7 +342,7 @@ async function fetchRowsFromRSCallback(ticketId, connection, resultSet, numRowsT
         
     } catch (err) {
         logger.log(ticketId, " Error: " + JSON.stringify(err), user);
-        await releaseConnections(connection, resultSet);
+        await releaseConnections(connection, resultSet, { drop: isDistributedTxError(err) });
         callback(err, null);
     }
 }
@@ -337,15 +378,13 @@ async function executeCursorStream(sql, bindParams, options, ticketId, request, 
         
         stream.on('end', async () => {
             logger.log(ticketId, `${rowsToReturn.length} Object(s) returned [STREAM COMPLETE]`, user);
-            try { await connection.rollback(); } catch (e) { /* broken conn */ }
-            await connection.close();
+            await clearAndClose(connection);
             callback(null, rowsToReturn);
         });
         
         stream.on('error', async (err) => {
             logger.log(ticketId, '008 - Stream error: ' + err, user, 3);
-            try { await connection.rollback(); } catch (e) { /* broken conn */ }
-            await connection.close();
+            await clearAndClose(connection, { drop: isDistributedTxError(err) });
             callback(err, null);
         });
         
@@ -354,8 +393,7 @@ async function executeCursorStream(sql, bindParams, options, ticketId, request, 
         // FIX: connection was leaked on this path (never closed) - the exact
         // scenario that leaves ghost distributed transactions in the pool
         if (connection) {
-            try { await connection.rollback(); } catch (e) { /* broken conn */ }
-            try { await connection.close(); } catch (e) { /* already closed */ }
+            await clearAndClose(connection, { drop: isDistributedTxError(err) });
         }
         callback(err, null);
     }
@@ -363,7 +401,12 @@ async function executeCursorStream(sql, bindParams, options, ticketId, request, 
 
 module.exports.executeCursorStream = executeCursorStream;
 
-function releaseConnections(connection, resultSet) {
+/**
+ * @param {object} connection
+ * @param {object|null} resultSet
+ * @param {{ drop?: boolean }} [opts] - drop:true destroys the session (use after ORA-02046)
+ */
+function releaseConnections(connection, resultSet, opts) {
     return new Promise((resolve) => {
         process.nextTick(async () => {
             try {
@@ -376,19 +419,11 @@ function releaseConnections(connection, resultSet) {
                 }
                 
                 if (connection) {
-                    // End-of-request cleanup: explicitly terminate any
-                    // distributed transaction begun by fetching over a DB link
-                    // before the session goes back to the pool.
-                    try {
-                        await connection.rollback();
-                    } catch (err) {
-                        // Connection may be broken; close below handles it
-                    }
-                    try {
-                        await connection.close();
-                    } catch (err) {
-                        logger.log('[DB]', 'Error closing connection: ' + err, 'internal', 1);
-                    }
+                    // End-of-request cleanup: terminate any distributed transaction
+                    // begun by alert/UI SELECTs over @dblink (notification.js path)
+                    // before the session goes back to the pool — or drop it entirely
+                    // when we already know it is poisoned (ORA-02046 family).
+                    await clearAndClose(connection, opts);
                 }
                 
                 resolve();

@@ -169,7 +169,7 @@ export class QueryRunnerComponent implements OnInit {
         const rows: PresetQueryRow[] = data || [];
         if (rows.length === 0) {
           this.applyPresets(MOCK_PRESET_QUERIES, false);
-          this.messageService.add({ severity: 'warn', summary: 'No Presets Found', detail: 'No presets returned from DB — using built-in catalogue.' });
+          this.messageService.add({ severity: 'warn', summary: 'No Presets Found', detail: 'No presets returned from DB - using built-in catalogue.' });
         } else {
           this.applyPresets(this.mapRowsToPresets(rows), true);
         }
@@ -180,7 +180,7 @@ export class QueryRunnerComponent implements OnInit {
         this.applyPresets(MOCK_PRESET_QUERIES, false);
         this.loadingPresets = false;
         this.waitMessage = '';
-        this.messageService.add({ severity: 'warn', summary: 'Preset Load Failed', detail: 'Could not load presets from DB — using built-in catalogue.' });
+        this.messageService.add({ severity: 'warn', summary: 'Preset Load Failed', detail: 'Could not load presets from DB - using built-in catalogue.' });
       }
     });
   }
@@ -285,7 +285,7 @@ export class QueryRunnerComponent implements OnInit {
     const found = dangerous.find(kw => upper.includes(kw));
     if (found) {
       this.showSqlWarning = true;
-      this.sqlWarningMessage = `Statement contains ${found.trim()} — make sure this is intentional.`;
+      this.sqlWarningMessage = `Statement contains ${found.trim()} - make sure this is intentional.`;
     } else {
       this.showSqlWarning = false;
       this.sqlWarningMessage = '';

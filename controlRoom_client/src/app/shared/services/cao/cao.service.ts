@@ -210,8 +210,6 @@ export class CaoService {
     this.params = this.params.append('PARAM', pres_stock);
     this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
 
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
     console.log('Parameters Update Cao param: ' + JSON.stringify(this.params));
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
@@ -228,8 +226,6 @@ export class CaoService {
     this.params= new HttpParams();
     this.params = this.params.set('PARAM',localStorage.getItem('ICRUser'));
 
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
             return data;
@@ -244,8 +240,6 @@ export class CaoService {
     this.params= new HttpParams();
     this.params = this.params.set('PARAM',localStorage.getItem('ICRUser'));
 
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
             return data;

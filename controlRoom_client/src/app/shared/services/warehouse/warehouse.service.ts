@@ -37,8 +37,6 @@ export class WarehouseService {
         this.params = this.params.set('PARAM', vendorCode);
         this.params = this.params.append('PARAM', periodStart);
         this.params = this.params.append('PARAM', periodEnd);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this._http.get(this.request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;

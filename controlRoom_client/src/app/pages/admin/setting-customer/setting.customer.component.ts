@@ -78,7 +78,7 @@ export class SettingCustomerComponent implements OnInit, OnDestroy {
       next: (rows) => {
         this.corps = rows;
         const mapped = rows.map((c) => ({
-          label: `${c.CORPCODE || ''} — ${c.CORPLDESC || c.CORPSDESC || ''}`.trim(),
+          label: `${c.CORPCODE || ''} - ${c.CORPLDESC || c.CORPSDESC || ''}`.trim(),
           value: Number(c.CORPID),
         }));
         const dropped = mapped.filter((o) => o.value <= 0 || Number.isNaN(o.value));

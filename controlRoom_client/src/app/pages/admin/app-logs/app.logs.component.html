@@ -10,7 +10,7 @@
         <span *ngIf="!selectedFile">{{ 'S70.FOLDER' | lbl:'Log folder:' }}</span>
         <code>{{ serverLogPath }}</code>
         <span class="log-root-note" *ngIf="selectedFile"> · {{ 'S70.NEWEST' | lbl:'newest first' }}</span>
-        <span class="log-root-warn" *ngIf="serverTailTruncated"> · large file — showing last {{ tailLines }} lines only</span>
+        <span class="log-root-warn" *ngIf="serverTailTruncated"> · large file - showing last {{ tailLines }} lines only</span>
     </p>
 
     <p-tabView [(activeIndex)]="activeTabIndex">
@@ -60,12 +60,12 @@
                 </div>
                 <div class="field col-12 md:col-2">
                     <label class="font-bold">{{ 'CMN.FROM' | lbl:'From' }}</label>
-                    <p-calendar [(ngModel)]="croomDateFrom" dateFormat="mm/dd/yy" [showIcon]="true"
+                    <p-calendar appendTo="body" [(ngModel)]="croomDateFrom" dateFormat="mm/dd/yy" [showIcon]="true"
                         [style]="{ width: '100%' }"></p-calendar>
                 </div>
                 <div class="field col-12 md:col-2">
                     <label class="font-bold">{{ 'CMN.TO' | lbl:'To' }}</label>
-                    <p-calendar [(ngModel)]="croomDateTo" dateFormat="mm/dd/yy" [showIcon]="true"
+                    <p-calendar appendTo="body" [(ngModel)]="croomDateTo" dateFormat="mm/dd/yy" [showIcon]="true"
                         [style]="{ width: '100%' }"></p-calendar>
                 </div>
                 <div class="field col-12 md:col-3 flex align-items-end">
@@ -119,7 +119,7 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
-                    <tr><td colspan="8" class="text-center">{{ 'S70.EMP.CRM' | lbl:'No rows — run Search.' }}</td></tr>
+                    <tr><td colspan="8" class="text-center">{{ 'S70.EMP.CRM' | lbl:'No rows - run Search.' }}</td></tr>
                 </ng-template>
             </p-table>
         </p-tabPanel>
@@ -138,12 +138,12 @@
                 </div>
                 <div class="field col-12 md:col-2">
                     <label class="font-bold">{{ 'CMN.FROM' | lbl:'From' }}</label>
-                    <p-calendar [(ngModel)]="alertDateFrom" dateFormat="mm/dd/yy" [showIcon]="true"
+                    <p-calendar appendTo="body" [(ngModel)]="alertDateFrom" dateFormat="mm/dd/yy" [showIcon]="true"
                         [style]="{ width: '100%' }"></p-calendar>
                 </div>
                 <div class="field col-12 md:col-2">
                     <label class="font-bold">{{ 'CMN.TO' | lbl:'To' }}</label>
-                    <p-calendar [(ngModel)]="alertDateTo" dateFormat="mm/dd/yy" [showIcon]="true"
+                    <p-calendar appendTo="body" [(ngModel)]="alertDateTo" dateFormat="mm/dd/yy" [showIcon]="true"
                         [style]="{ width: '100%' }"></p-calendar>
                 </div>
                 <div class="field col-12 md:col-3 flex align-items-end">
@@ -201,7 +201,7 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
-                    <tr><td colspan="10" class="text-center">{{ 'S70.EMP.ALR' | lbl:'No rows — run Search.' }}</td></tr>
+                    <tr><td colspan="10" class="text-center">{{ 'S70.EMP.ALR' | lbl:'No rows - run Search.' }}</td></tr>
                 </ng-template>
             </p-table>
             <p class="mt-2 text-muted">

@@ -23,6 +23,8 @@ Aligned with `controlRoom_client/src/app/pages/mass.update/` as of repository sc
 | `/purchaseorderpush` | `purchase.order.push/` | ICR_TEMPLATE017 | 19 |
 | `/stocklayer` | `stock.layer/` | ICR_TEMPLATE018 | 20 |
 | `/itemendupc` | `item.end.upc/` | ICR_TEMPLATE020 | 21 |
+| `/referencetoorder` | `reference.to.order/` | ICR_TEMPLATE021 | 22 |
+| `/newitemppg` | `new.item.ppg/` | ICR_TEMPLATE022 | 23 |
 | `/itemretail` *(no menu)* | `item.retail/` | ICR_TEMPLATE019 | 12 |
 | `/itemaddress` | `item.address/` | ICR_TEMPLATE016 | 18 |
 

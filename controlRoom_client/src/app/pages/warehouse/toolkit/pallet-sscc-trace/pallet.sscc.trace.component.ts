@@ -20,7 +20,6 @@ type PendingAction = DialogMode | null;
 })
 export class PalletSsccTraceComponent {
   readonly screenID = 'SCR0000000087';
-  readonly mfgDonord = MFG_DONORD;
 
   searching = false;
   saving = false;
@@ -37,8 +36,12 @@ export class PalletSsccTraceComponent {
   searchWhs = MFG_DONORD;
   /** Default: allotment */
   searchFlow = 'A';
-  /** Default: missing both UBD and LOF */
-  searchMissing = 'BOTH';
+  /** Default: any (with or without UBD / prod lot) */
+  searchMissing = '-1';
+  /** Pallet created on/after (optional). */
+  searchCreatedFrom: Date | null = null;
+  /** Pallet created on/before (optional). */
+  searchCreatedUntil: Date | null = null;
 
   flowOptions = [
     { label: 'Allotment', value: 'A' },
@@ -54,7 +57,7 @@ export class PalletSsccTraceComponent {
   ];
 
   rows: SsccTraceRow[] = [];
-  // SettingsAdminService.toRows() uppercases every key — field names must match that.
+  // SettingsAdminService.toRows() uppercases every key - field names must match that.
   columnsResult: { field: string; header: string }[] = [
     { field: 'SOURCE', header: 'Source' },
     { field: 'WHS #', header: 'Whs #' },
@@ -64,6 +67,7 @@ export class PalletSsccTraceComponent {
     { field: 'ITEM DESC.', header: 'Item desc.' },
     { field: 'PO #', header: 'PO #' },
     { field: 'FLOW', header: 'Flow' },
+    { field: 'CREATED ON', header: 'Created on' },
     { field: 'RECEIVED ON', header: 'Received on' },
     { field: 'UBD', header: 'UBD' },
     { field: 'PROD LOT', header: 'Prod lot' },
@@ -71,7 +75,7 @@ export class PalletSsccTraceComponent {
 
   selectedRow: SsccTraceRow | null = null;
 
-  /** Mass entry — apply same UBD / prod lot to every searched row. */
+  /** Mass entry - apply same UBD / prod lot to every searched row. */
   massUbdDate: Date | null = null;
   massLotValue = '';
 
@@ -92,6 +96,17 @@ export class PalletSsccTraceComponent {
   ) {}
 
   search(): void {
+    if (this.searchCreatedFrom && this.searchCreatedUntil
+        && this.searchCreatedFrom.getTime() > this.searchCreatedUntil.getTime()) {
+      this._messageService.add({
+        severity: 'warn',
+        summary: 'Pallet/SSCC traceability',
+        detail: this._labels.text('S87.MSG.DRANGE', 'Created from must be on or before Created until.'),
+        life: 6000,
+      });
+      return;
+    }
+
     this.searching = true;
     this.waitMessage = 'Searching SSCC lines…';
     this.okExit = false;
@@ -106,6 +121,8 @@ export class PalletSsccTraceComponent {
       flow: this.searchFlow,
       missing: this.searchMissing,
       whs: this.searchWhs,
+      createdFrom: this.searchCreatedFrom,
+      createdUntil: this.searchCreatedUntil,
     }).subscribe({
       next: (rows) => {
         this.searching = false;
@@ -162,7 +179,15 @@ export class PalletSsccTraceComponent {
   }
 
   displayReceived(row: SsccTraceRow): string {
-    const v = row['RECEIVED ON'];
+    return this.displayDateField(row, 'RECEIVED ON');
+  }
+
+  displayCreated(row: SsccTraceRow): string {
+    return this.displayDateField(row, 'CREATED ON');
+  }
+
+  private displayDateField(row: SsccTraceRow, field: string): string {
+    const v = row[field];
     if (v == null) {
       return '';
     }
@@ -183,15 +208,6 @@ export class PalletSsccTraceComponent {
     return v === '' || v === ' ' ? '' : v;
   }
 
-  canEditLof(row: SsccTraceRow): boolean {
-    return this._svc.isManufacturingWhs(row['WHS #']);
-  }
-
-  /** True when at least one result row is Manufacturing (LOF allowed). */
-  get massLotAllowed(): boolean {
-    return this.rows.some((r) => this.canEditLof(r));
-  }
-
   requestMassApply(): void {
     if (!this.rows.length) {
       return;
@@ -204,15 +220,6 @@ export class PalletSsccTraceComponent {
         summary: 'Pallet/SSCC traceability',
         detail: this._labels.text('S87.MSG.MASSREQ', 'Enter a UBD and/or production lot to apply to all results.'),
         life: 6000,
-      });
-      return;
-    }
-    if (lot && !this.massLotAllowed) {
-      this._messageService.add({
-        severity: 'warn',
-        summary: 'Pallet/SSCC traceability',
-        detail: this._labels.text('S87.MSG.LOF', 'Production lot is only allowed for Manufacturing warehouse 93080.'),
-        life: 8000,
       });
       return;
     }
@@ -232,22 +239,12 @@ export class PalletSsccTraceComponent {
       parts.push(`UBD ${this._svc.formatUbdForDisplay(ubd)}`);
     }
     if (lot) {
-      const lofCount = this.rows.filter((r) => this.canEditLof(r)).length;
-      parts.push(`prod lot ${lot} (${lofCount} mfg line(s))`);
+      parts.push(`prod lot ${lot}`);
     }
     return `Apply ${parts.join(' and ')} to ${n} SSCC line(s)?`;
   }
 
   openAdd(row: SsccTraceRow, kind: IndicatorKind): void {
-    if (kind === 'LOF' && !this.canEditLof(row)) {
-      this._messageService.add({
-        severity: 'warn',
-        summary: 'Pallet/SSCC traceability',
-        detail: this._labels.text('S87.MSG.LOF', 'Production lot is only allowed for Manufacturing warehouse 93080.'),
-        life: 8000,
-      });
-      return;
-    }
     this.selectedRow = row;
     this.dialogMode = 'add';
     this.dialogKind = kind;
@@ -257,15 +254,6 @@ export class PalletSsccTraceComponent {
   }
 
   openEdit(row: SsccTraceRow, kind: IndicatorKind): void {
-    if (kind === 'LOF' && !this.canEditLof(row)) {
-      this._messageService.add({
-        severity: 'warn',
-        summary: 'Pallet/SSCC traceability',
-        detail: this._labels.text('S87.MSG.LOF', 'Production lot is only allowed for Manufacturing warehouse 93080.'),
-        life: 8000,
-      });
-      return;
-    }
     this.selectedRow = row;
     this.dialogMode = 'edit';
     this.dialogKind = kind;
@@ -421,7 +409,7 @@ export class PalletSsccTraceComponent {
           SOURCE: source,
         });
       }
-      if (lot && this.canEditLof(row)) {
+      if (lot) {
         payloads.push({
           USSCC: usscc,
           CSSCC: csscc,

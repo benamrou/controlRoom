@@ -49,6 +49,46 @@
         font-size: 0.95rem;
         line-height: 1.6;
     }
+
+    .ql-editor .ql-html-table {
+        margin: 0.75rem 0;
+        overflow-x: auto;
+    }
+
+    .ql-editor .ql-html-table table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    .ql-editor .ql-html-table th,
+    .ql-editor .ql-html-table td {
+        border: 1px solid var(--surface-border, #ced4da);
+        padding: 0.35rem 0.5rem;
+        min-width: 4rem;
+        vertical-align: top;
+        background: #fff;
+    }
+
+    .ql-editor .ql-html-table th {
+        background: var(--surface-100, #f8f9fa);
+        font-weight: 700;
+    }
+}
+
+/* Quill snow has no built-in table icon - Font Awesome fa-table */
+.ql-snow .ql-toolbar button.ql-table,
+.ql-snow.ql-toolbar button.ql-table {
+    position: relative;
+}
+
+.ql-snow .ql-toolbar button.ql-table::before,
+.ql-snow.ql-toolbar button.ql-table::before {
+    font-family: 'Font Awesome 5 Free', 'Font Awesome 6 Free', FontAwesome;
+    font-weight: 900;
+    content: '\f0ce';
+    display: inline-block;
+    line-height: 1;
 }
 
 :host ::ng-deep .alertbug-rich-editor {
@@ -125,7 +165,7 @@
     max-width: 52rem;
 }
 
-/* Read-only spec uses Quill HTML (ql-indent-* on li) — reuse Quill list/indent rules from quill.snow.css */
+/* Read-only spec uses Quill HTML (ql-indent-* on li) - reuse Quill list/indent rules from quill.snow.css */
 .altspec-view-body.ql-editor {
     cursor: default;
     height: auto;
@@ -216,6 +256,15 @@
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 0.75rem;
+    }
+
+    .ql-html-table {
+        margin: 0.75rem 0;
+        overflow-x: auto;
+    }
+
+    .ql-html-table table {
+        margin-bottom: 0;
     }
 
     th, td {

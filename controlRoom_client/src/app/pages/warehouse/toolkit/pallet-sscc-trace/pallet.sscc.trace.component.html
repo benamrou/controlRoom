@@ -13,7 +13,7 @@
 <div class="sscc-trace-page">
   <div class="alert alert-warning sscc-trace-warn">
     <i class="fas fa-exclamation-circle"></i>
-    <span>{{ 'S87.WARN' | lbl:'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC pallet lines. Default search: allotment missing both indicators. Production lot is only available for Manufacturing warehouse 93080.' }}</span>
+    <span>{{ 'S87.WARN' | lbl:'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC pallet lines. Default search: allotment, any indicators. Use Apply to all to set the same UBD and/or production lot on every result row.' }}</span>
   </div>
 
   <div class="sscc-trace-search-bar sscc-trace-row">
@@ -89,8 +89,10 @@
         [(ngModel)]="searchFlow"
         optionLabel="label"
         optionValue="value"
+        appendTo="body"
         [style]="{ width: '100%', height: '35px' }"
-        styleClass="sscc-trace-dropdown">
+        styleClass="sscc-trace-dropdown"
+        panelStyleClass="sscc-trace-dropdown-panel">
       </p-dropdown>
     </div>
 
@@ -101,9 +103,40 @@
         [(ngModel)]="searchMissing"
         optionLabel="label"
         optionValue="value"
+        appendTo="body"
         [style]="{ width: '100%', height: '35px' }"
-        styleClass="sscc-trace-dropdown">
+        styleClass="sscc-trace-dropdown"
+        panelStyleClass="sscc-trace-dropdown-panel">
       </p-dropdown>
+    </div>
+  </div>
+
+  <div class="sscc-trace-search-bar sscc-trace-row sscc-trace-row-dates">
+    <div class="sscc-trace-group">
+      <span class="sscc-trace-label">{{ 'S87.LBL.CFROM' | lbl:'Created from' }}</span>
+      <p-calendar
+        [(ngModel)]="searchCreatedFrom"
+        dateFormat="mm/dd/yy"
+        [showIcon]="true"
+        [showButtonBar]="true"
+        appendTo="body"
+        inputStyleClass="sscc-trace-input"
+        [style]="{ height: '35px' }"
+        [placeholder]="'S87.PLH.CFROM' | lbl:'Optional'">
+      </p-calendar>
+    </div>
+    <div class="sscc-trace-group">
+      <span class="sscc-trace-label">{{ 'S87.LBL.CUNTIL' | lbl:'Created until' }}</span>
+      <p-calendar
+        [(ngModel)]="searchCreatedUntil"
+        dateFormat="mm/dd/yy"
+        [showIcon]="true"
+        [showButtonBar]="true"
+        appendTo="body"
+        inputStyleClass="sscc-trace-input"
+        [style]="{ height: '35px' }"
+        [placeholder]="'S87.PLH.CUNTIL' | lbl:'Optional'">
+      </p-calendar>
     </div>
   </div>
 
@@ -122,7 +155,7 @@
           [style]="{ height: '35px' }">
         </p-calendar>
       </div>
-      <div class="sscc-trace-group" *ngIf="massLotAllowed">
+      <div class="sscc-trace-group">
         <span class="sscc-trace-label">{{ 'S87.LBL.LOF' | lbl:'Prod lot' }}</span>
         <input
           pInputText
@@ -185,11 +218,12 @@
         <tr>
           <td *ngFor="let col of columnsResult">
             <ng-container [ngSwitch]="col.field">
-              <span *ngSwitchCase="'UBD'">{{ displayUbd(row) || '—' }}</span>
-              <span *ngSwitchCase="'PROD LOT'">{{ displayLot(row) || '—' }}</span>
-              <span *ngSwitchCase="'FLOW'">{{ displayFlow(row) || '—' }}</span>
-              <span *ngSwitchCase="'RECEIVED ON'">{{ displayReceived(row) || '—' }}</span>
-              <span *ngSwitchCase="'PO #'">{{ displayPo(row) || '—' }}</span>
+              <span *ngSwitchCase="'UBD'">{{ displayUbd(row) || '-' }}</span>
+              <span *ngSwitchCase="'PROD LOT'">{{ displayLot(row) || '-' }}</span>
+              <span *ngSwitchCase="'FLOW'">{{ displayFlow(row) || '-' }}</span>
+              <span *ngSwitchCase="'CREATED ON'">{{ displayCreated(row) || '-' }}</span>
+              <span *ngSwitchCase="'RECEIVED ON'">{{ displayReceived(row) || '-' }}</span>
+              <span *ngSwitchCase="'PO #'">{{ displayPo(row) || '-' }}</span>
               <span *ngSwitchDefault>{{ row[col.field] }}</span>
             </ng-container>
           </td>
@@ -212,7 +246,7 @@
                 pTooltip="Remove UBD">
               </button>
             </div>
-            <div class="sscc-trace-action-row" *ngIf="canEditLof(row)">
+            <div class="sscc-trace-action-row">
               <button
                 type="button"
                 pButton
@@ -254,7 +288,7 @@
     {{ dialogMode === 'add'
          ? ('S87.DLG.ADD' | lbl:'Add indicator')
          : ('S87.DLG.EDIT' | lbl:'Edit indicator') }}
-    — {{ dialogKind === 'DLC' ? ('S87.LBL.UBD' | lbl:'UBD') : ('S87.LBL.LOF' | lbl:'Prod lot (LOF)') }}
+    - {{ dialogKind === 'DLC' ? ('S87.LBL.UBD' | lbl:'UBD') : ('S87.LBL.LOF' | lbl:'Prod lot (LOF)') }}
   </p-header>
 
   <div class="sscc-trace-edit" *ngIf="selectedRow">

@@ -31,14 +31,14 @@ export class AiDomainInvestigationComponent {
     setTimeout(() => {
       this.results = [
         {
-          header: `${this.activeDomain} — Identity & scope`,
+          header: `${this.activeDomain} - Identity & scope`,
           lines: [
             `Retailer=${this.form.retailer_id}, Entity=${this.form.entity_id}`,
             `Site=${this.form.site_id || '-'}, Date=${this.form.date_ref || '-'}`
           ]
         },
         {
-          header: `${this.activeDomain} — Evidence facts`,
+          header: `${this.activeDomain} - Evidence facts`,
           lines: [
             'Fact 1: Master record found in GOLD.',
             'Fact 2: At least one local override detected.',
@@ -46,7 +46,7 @@ export class AiDomainInvestigationComponent {
           ]
         },
         {
-          header: `${this.activeDomain} — Preliminary conclusion`,
+          header: `${this.activeDomain} - Preliminary conclusion`,
           lines: [
             'Status: PROBABLE root-cause path identified.',
             'Next action: run targeted SQL template validation and capture recommendation.'

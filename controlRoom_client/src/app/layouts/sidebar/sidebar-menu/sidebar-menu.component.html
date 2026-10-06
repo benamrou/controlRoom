@@ -2,7 +2,7 @@
     <!-- Top-level group -->
     <div *ngIf="node.MENU_TYPE === 'GROUP' && depth === 0" class="nested-menu">
         <a class="list-group-item" (click)="onExpand(node.EXPAND_KEY, $event)">
-            <span><i [class]="menuIconClass(node)"></i> &nbsp; {{ node.LABEL_TEXT }}</span>
+            <i [class]="menuIconClass(node)"></i><span class="menu-label">&nbsp;{{ node.LABEL_TEXT }}</span>
         </a>
         <li class="nested" [ngClass]="{'expand': isExpanded(node.EXPAND_KEY)}">
             <ul class="submenu">
@@ -15,7 +15,7 @@
     <!-- Nested group (rare) -->
     <ng-container *ngIf="node.MENU_TYPE === 'GROUP' && depth > 0">
         <a class="list-group-item" (click)="onExpand(node.EXPAND_KEY, $event)">
-            <span><i [class]="menuIconClass(node)"></i> &nbsp; {{ node.LABEL_TEXT }}</span>
+            <i [class]="menuIconClass(node)"></i><span class="menu-label">&nbsp;{{ node.LABEL_TEXT }}</span>
         </a>
         <li class="nested" [ngClass]="{'expand': isExpanded(node.EXPAND_KEY)}">
             <ul class="submenu" [style.padding-left.rem]="depth * 0.5">
@@ -26,7 +26,7 @@
     </ng-container>
 
     <li *ngIf="node.MENU_TYPE === 'LABEL'" class="submenu-group-label">
-        <span>{{ node.LABEL_TEXT }}</span>
+        <span class="menu-label">{{ node.LABEL_TEXT }}</span>
     </li>
 
     <!-- Top-level route (e.g. Search) — same markup as group headers / legacy sidebar -->
@@ -35,13 +35,13 @@
         [routerLink]="node.ROUTE_PATH"
         routerLinkActive="router-link-active"
         [routerLinkActiveOptions]="node.ROUTE_PATH?.includes('skill-studio/builder') ? { exact: false } : { exact: true }">
-        <span><i [class]="menuIconClass(node)"></i> &nbsp; {{ node.LABEL_TEXT }}</span>
+        <i [class]="menuIconClass(node)"></i><span class="menu-label">&nbsp;{{ node.LABEL_TEXT }}</span>
     </a>
 
     <li *ngIf="node.MENU_TYPE === 'ROUTE' && depth > 0">
         <a class="bbs_link_menu" [routerLink]="node.ROUTE_PATH" routerLinkActive="router-link-active"
             [routerLinkActiveOptions]="node.ROUTE_PATH?.includes('skill-studio/builder') ? { exact: false } : { exact: true }">
-            <span><i [class]="menuIconClass(node)"></i> {{ node.LABEL_TEXT }}</span>
+            <i [class]="menuIconClass(node)"></i><span class="menu-label"> {{ node.LABEL_TEXT }}</span>
         </a>
     </li>
 </ng-container>

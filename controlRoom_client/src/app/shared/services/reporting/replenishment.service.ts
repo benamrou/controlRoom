@@ -48,8 +48,6 @@ export class ReportingReplenishmentService {
         this.params = this.params.append('PARAM', vendorCode);
         this.params = this.params.append('PARAM', periodStart);
         this.params = this.params.append('PARAM', periodEnd);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
@@ -72,8 +70,6 @@ export class ReportingReplenishmentService {
       this.params= new HttpParams();
       this.params = this.params.set('PARAM', warehouseCode);
       this.params = this.params.append('PARAM', vendorCode);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
       return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
@@ -95,8 +91,6 @@ export class ReportingReplenishmentService {
       this.params= new HttpParams();
       this.params = this.params.set('PARAM', warehouseCode);
       this.params = this.params.append('PARAM', vendorCode);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
       return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
@@ -118,8 +112,6 @@ export class ReportingReplenishmentService {
       this.params= new HttpParams();
       this.params = this.params.set('PARAM', warehouseCode);
       this.params = this.params.append('PARAM', vendorCode);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
       return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
@@ -142,8 +134,6 @@ export class ReportingReplenishmentService {
       this.params= new HttpParams();
       this.params = this.params.set('PARAM', warehouseCode);
       this.params = this.params.append('PARAM', vendorCode);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
       return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
@@ -165,8 +155,6 @@ export class ReportingReplenishmentService {
       this.params= new HttpParams();
       this.params = this.params.set('PARAM', warehouseCode);
       this.params = this.params.append('PARAM', vendorCode);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
       return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
@@ -188,8 +176,6 @@ export class ReportingReplenishmentService {
       this.params= new HttpParams();
       this.params = this.params.set('PARAM', warehouseCode);
       this.params = this.params.append('PARAM', vendorCode);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
       return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
@@ -214,8 +200,6 @@ export class ReportingReplenishmentService {
           this.params = this.params.append('PARAM', warehouseCode);
           this.params = this.params.append('PARAM', ubdEnd);
           this.params = this.params.append('PARAM', closedUBD);
-          headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-          headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
           return this.http.get(this.request, this.params, this.options).pipe(map(response => {
                   let data = <any> response;
@@ -237,8 +221,6 @@ export class ReportingReplenishmentService {
       this.params= new HttpParams();
       this.params = this.params.set('PARAM', itemCinv);
       this.params = this.params.append('PARAM', days);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
       return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
@@ -262,8 +244,6 @@ export class ReportingReplenishmentService {
       this.params = this.params.set('PARAM', warehouseCode);
       this.params = this.params.append('PARAM', itemCinv);
       this.params = this.params.append('PARAM', days);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
       return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;

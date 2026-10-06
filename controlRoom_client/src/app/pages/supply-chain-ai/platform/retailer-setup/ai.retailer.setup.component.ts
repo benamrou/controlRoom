@@ -133,7 +133,7 @@ export class AiRetailerSetupComponent implements OnInit, OnDestroy {
             this.testResults  = [
                 { label: 'CORPENV row',   status: 'OK' },
                 { label: 'ENVDBLINK set', status: 'FAIL',
-                  detail: 'CORPENV.ENVDBLINK is null — set DB link first' }
+                  detail: 'CORPENV.ENVDBLINK is null - set DB link first' }
             ];
             this.testSuccess = false;
             this.testComplete = true;
@@ -144,7 +144,7 @@ export class AiRetailerSetupComponent implements OnInit, OnDestroy {
                 { label: 'CORPENV row',       status: 'OK' },
                 { label: 'ENVDBLINK set',     status: 'OK',   detail: dbLink },
                 { label: 'ENVGOLDSCHEMA set', status: 'FAIL',
-                  detail: 'CORPENV.ENVGOLDSCHEMA is null — set schema prefix first' }
+                  detail: 'CORPENV.ENVGOLDSCHEMA is null - set schema prefix first' }
             ];
             this.testSuccess = false;
             this.testComplete = true;
@@ -162,7 +162,7 @@ export class AiRetailerSetupComponent implements OnInit, OnDestroy {
                 this.testSuccess  = result.success === true;
                 this.testComplete = true;
                 this.testRunning  = false;
-                // Do NOT auto-advance — let user review results and click Next
+                // Do NOT auto-advance - let user review results and click Next
             },
             error: (err: any) => {
                 this.testRunning = false;
@@ -184,7 +184,7 @@ export class AiRetailerSetupComponent implements OnInit, OnDestroy {
             corpenv_id:    this.selectedEnv.ENVID || this.selectedEnv.envid
         }).subscribe({
             next: () => {
-                // Row saved — now mark connection tested
+                // Row saved - now mark connection tested
                 this._svc.markConnectionTested(this.retailerId).subscribe();
                 this.setupComplete = true;
                 this.saving = false;
@@ -203,7 +203,7 @@ export class AiRetailerSetupComponent implements OnInit, OnDestroy {
 
     nextStep(): void {
         if (this.activeStep === 2 && !this.testComplete) {
-            // Test not run yet — run it
+            // Test not run yet - run it
             this.runConnectionTest();
             return;
         }

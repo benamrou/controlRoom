@@ -75,6 +75,7 @@ BEGIN
   seed3('S49.TITLE', 'Push/Breakdown order creation', 'Push/Breakdown order creation', 'Creation commande push/repartition', 'SCR0000000049');
   seed3('S50.TITLE', 'Stock layer change', 'Stock layer change', 'Changement couche stock', 'SCR0000000050');
   seed3('S51.TITLE', 'Item end barcode', 'Item end barcode', 'Fin code-barres article', 'SCR0000000051');
+  seed3('S90.TITLE', 'Reference to order', 'Reference to order', 'Reference a la commande', 'SCR0000000090');
   seed3('S57.TITLE', 'pageHeading', 'pageHeading', 'pageHeading', 'SCR0000000057');
   seed3('S63.TITLE', 'Alerts journal', 'Alerts journal', 'Journal des alertes', 'SCR0000000063');
   seed3('S71.TITLE', 'Playbook Management', 'Playbook Management', 'Playbook Management', 'SCR0000000071');

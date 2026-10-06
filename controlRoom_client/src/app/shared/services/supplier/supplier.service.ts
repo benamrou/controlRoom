@@ -36,8 +36,6 @@ export class SupplierService {
         let options = new HttpHeaders();
         this.params= new HttpParams();
         this.params = this.params.set('PARAM', inputInfo);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
             let data = <any> response;
@@ -58,8 +56,6 @@ export class SupplierService {
       let options = new HttpHeaders();
       this.params= new HttpParams();
       this.params = this.params.set('PARAM', supplierCodeorDesc);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
       return this.http.get(this.request, this.params, this.options).pipe(map(response => {
           let data = <any> response;

@@ -47,7 +47,7 @@ export class SettingMenuAccessComponent implements OnInit, OnDestroy {
 
   private labelSub?: Subscription;
 
-  /** Flag rules table — includes FLAG_LABEL for friendly-name search. */
+  /** Flag rules table - includes FLAG_LABEL for friendly-name search. */
   readonly rulesTableGlobalFields = [
     'FLAG_NAME',
     'FLAG_LABEL',
@@ -85,7 +85,7 @@ export class SettingMenuAccessComponent implements OnInit, OnDestroy {
   savingTranslations = false;
   translationImportText = '';
 
-  parentDropdown: { label: string; value: string | null }[] = [{ label: '(none — top level)', value: null }];
+  parentDropdown: { label: string; value: string | null }[] = [{ label: '(none - top level)', value: null }];
   menuCodeDropdown: { label: string; value: string }[] = [];
 
   constructor(
@@ -158,13 +158,13 @@ export class SettingMenuAccessComponent implements OnInit, OnDestroy {
 
   private refreshMenuDropdowns(rows: Record<string, unknown>[]): void {
     this.parentDropdown = [
-      { label: '(none — top level)', value: null },
+      { label: '(none - top level)', value: null },
       ...rows
         .filter((r) => r.MENU_TYPE === 'GROUP')
-        .map((r) => ({ label: `${r.MENU_CODE} — ${r.LABEL_TEXT}`, value: String(r.MENU_CODE) })),
+        .map((r) => ({ label: `${r.MENU_CODE} - ${r.LABEL_TEXT}`, value: String(r.MENU_CODE) })),
     ];
     this.menuCodeDropdown = rows.map((r) => ({
-      label: `${r.MENU_CODE} — ${r.LABEL_TEXT}`,
+      label: `${r.MENU_CODE} - ${r.LABEL_TEXT}`,
       value: String(r.MENU_CODE),
     }));
   }
@@ -416,7 +416,7 @@ export class SettingMenuAccessComponent implements OnInit, OnDestroy {
     this.profileDropdownOptions = this.profiles
       .filter((p) => Number(p.PROFILE_ID) > 0)
       .map((p) => ({
-        label: `${p.PROFILE_CODE} — ${p.PROFILE_NAME}`,
+        label: `${p.PROFILE_CODE} - ${p.PROFILE_NAME}`,
         value: Number(p.PROFILE_ID),
       }));
   }

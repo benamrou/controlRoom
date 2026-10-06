@@ -1,9 +1,9 @@
 /* ==============================================
-   ICR SUMMER THEME — header.component.scss
-   Matches login.component.scss summer palette
+   ICR FALL THEME — header.component.scss
+   Matches login.component.scss fall palette
    ============================================== */
 
-@import '../themes/summer-palette';
+@import '../themes/fall-palette';
 
 // Stay above page BlockUI overlays (z-index 99 in page-header) and dialog masks
 .pos-f-t.fixed-top.header {
@@ -11,27 +11,29 @@
 }
 
 // ── Navbar Bar ─────────────────────────────────────────────────
-.summer-header {
+.fall-header {
+    position: relative;
+    overflow: visible;
     background: linear-gradient(
         135deg,
-        rgba($summer-sky-top, 0.92)  0%,
-        rgba($summer-sky-mid, 0.90) 50%,
-        rgba($summer-horizon, 0.88) 100%
+        rgba($fall-cream, 0.95) 0%,
+        rgba($fall-amber, 0.92) 45%,
+        rgba($fall-burnt, 0.90) 100%
     );
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1.5px solid rgba($summer-coral, 0.30);
+    border-bottom: 1.5px solid rgba($fall-coral, 0.30);
     box-shadow:
-        0 2px 16px rgba($summer-deep, 0.10),
-        0 1px 0   rgba($summer-white, 0.60) inset;
+        0 2px 16px rgba($fall-deep, 0.10),
+        0 1px 0   rgba($fall-white, 0.60) inset;
 
     // ── Brand ────────────────────────────────────────────────
     .navbar-brand {
         font-weight: 700;
         font-size: 1.15rem;
         letter-spacing: 0.02em;
-        color: $summer-deep !important;
-        text-shadow: 0 1px 3px rgba($summer-white, 0.70);
+        color: $fall-deep !important;
+        text-shadow: 0 1px 3px rgba($fall-white, 0.70);
         transition: opacity 0.2s;
 
         &:hover { opacity: 0.78; }
@@ -49,18 +51,18 @@
     }
 
     .adh-lang-dropdown .dropdown-item.active {
-        color: darken($summer-coral, 12%) !important;
+        color: darken($fall-coral, 12%) !important;
         font-weight: 700;
         background: linear-gradient(
             90deg,
-            rgba($summer-coral, 0.28) 0%,
-            rgba($summer-sun, 0.22) 100%
+            rgba($fall-coral, 0.28) 0%,
+            rgba($fall-sun, 0.22) 100%
         );
     }
 
     // ── Nav Links ────────────────────────────────────────────
     .nav-link {
-        color: $summer-deep !important;
+        color: $fall-deep !important;
         font-weight: 500;
         font-size: 0.93rem;
         padding: 0.45rem 0.75rem;
@@ -71,8 +73,8 @@
 
         &:hover,
         &:focus {
-            background: rgba($summer-coral, 0.18);
-            color: darken($summer-deep, 8%) !important;
+            background: rgba($fall-coral, 0.18);
+            color: darken($fall-deep, 8%) !important;
         }
 
         &.isDisabled {
@@ -82,38 +84,38 @@
     }
 
     // spring badge — centred in the navbar
-    .summer-badge {
+    .fall-badge {
         position: absolute;
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
 
         span {
-            background: linear-gradient(135deg, $summer-coral, $summer-sun);
+            background: linear-gradient(135deg, $fall-pumpkin-a, $fall-pumpkin-b);
             color: #fff;
             font-size: 0.7rem;
             font-weight: 700;
             padding: 4px 14px;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba($summer-aqua, 0.25);
+            box-shadow: 0 2px 10px rgba($fall-burnt, 0.28);
             letter-spacing: 0.03em;
         }
     }
 
     // ── Hamburger toggler ─────────────────────────────────────
     .navbar-toggler {
-        border-color: rgba($summer-deep, 0.30);
+        border-color: rgba($fall-deep, 0.30);
 
         .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%2301579B' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%235C3A21' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
         }
     }
     
 }
 
 
-// ── Summer Badge ───────────────────────────────────────────────
-.summer-badge {
+// ── Fall Badge ───────────────────────────────────────────────
+.fall-badge {
     display: flex;
     align-items: center;
     margin-left: 12px;
@@ -130,13 +132,13 @@
         color: #fff;
         background: linear-gradient(
             135deg,
-            rgba($summer-sun, 0.75) 0%,
-            rgba($summer-sun,  0.65) 100%
+            rgba($fall-sun, 0.75) 0%,
+            rgba($fall-sun,  0.65) 100%
         );
-        border: 1px solid rgba($summer-coral, 0.45);
+        border: 1px solid rgba($fall-coral, 0.45);
         box-shadow:
-            0 1px 6px rgba($summer-coral, 0.20),
-            0 0 0 1px rgba($summer-white, 0.50) inset;
+            0 1px 6px rgba($fall-coral, 0.20),
+            0 0 0 1px rgba($fall-white, 0.50) inset;
         animation: badge-sway 4s ease-in-out infinite;
     }
 }
@@ -146,23 +148,22 @@
     50%      { transform: rotate(1.5deg);  }
 }
 
-
-// ── Summer Dropdowns ───────────────────────────────────────────
-.summer-dropdown {
-    background: rgba($summer-white, 0.92);
+// ── Fall Dropdowns ───────────────────────────────────────────
+.fall-dropdown {
+    background: rgba($fall-white, 0.92);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1.5px solid rgba($summer-coral, 0.25);
+    border: 1.5px solid rgba($fall-coral, 0.25);
     border-radius: 14px;
     box-shadow:
-        0 8px 28px rgba($summer-deep, 0.12),
-        0 0 0 1px rgba($summer-white, 0.70) inset;
+        0 8px 28px rgba($fall-deep, 0.12),
+        0 0 0 1px rgba($fall-white, 0.70) inset;
     padding: 6px 4px;
     min-width: 160px;
     overflow: hidden;
 
     .dropdown-item {
-        color: $summer-deep;
+        color: $fall-deep;
         font-size: 0.88rem;
         font-weight: 500;
         padding: 7px 16px;
@@ -172,27 +173,27 @@
         align-items: center;
         gap: 8px;
 
-        i { color: $summer-palm; min-width: 16px; }
+        i { color: $fall-trunk; min-width: 16px; }
 
         &:hover,
         &:focus {
             background: linear-gradient(
                 90deg,
-                rgba($summer-sun, 0.45) 0%,
-                rgba($summer-sky-mid,  0.35) 100%
+                rgba($fall-sun, 0.45) 0%,
+                rgba($fall-sky-mid,  0.35) 100%
             );
-            color: darken($summer-deep, 6%);
+            color: darken($fall-deep, 6%);
             padding-left: 20px;
         }
 
         &.active {
-            background: rgba($summer-sky-mid, 0.35);
+            background: rgba($fall-sky-mid, 0.35);
             font-weight: 700;
         }
 
         &:active {
-            background: rgba($summer-coral, 0.25);
-            color: $summer-deep;
+            background: rgba($fall-coral, 0.25);
+            color: $fall-deep;
         }
 
         &.isDisabled {
@@ -203,7 +204,7 @@
 
     // Thin petal-pink divider between groups (optional, targets last profile item)
     .dropdown-divider {
-        border-color: rgba($summer-coral, 0.22);
+        border-color: rgba($fall-coral, 0.22);
         margin: 4px 10px;
     }
 }
@@ -257,4 +258,148 @@
             border-color: #48bb78;
         }
     }
+}
+
+.news-mail-item {
+    display: flex;
+    align-items: center;
+    margin-left: 0.35rem;
+}
+
+.news-whats-new-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,0,0,.35);
+    border: 1.5px solid rgba(255,255,255,.5);
+    border-radius: 20px;
+    color: #fff;
+    cursor: pointer;
+    font-size: .78rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    transition: background .2s, border-color .2s;
+    white-space: nowrap;
+    letter-spacing: .03em;
+
+    i { font-size: .85rem; margin-right: 0; }
+
+    &:hover {
+        background: rgba(0,0,0,.5);
+        border-color: #fff;
+    }
+}
+
+.news-whats-new-label {
+    font-weight: 700;
+}
+
+.news-mail-link {
+    position: relative;
+
+    i { margin-right: 0 !important; }
+}
+
+.news-mail-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: #c53030;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+}
+
+.news-empty {
+    color: #5c3a21;
+    opacity: 0.7;
+    padding: 1rem 0.25rem;
+}
+
+.news-card {
+    border: 1px solid rgba(197, 120, 80, 0.25);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    background: rgba(255, 255, 255, 0.7);
+
+    h4,
+    .news-card-title {
+        margin: 0 0 0.25rem;
+        font-size: 1rem;
+        color: #5c3a21;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", inherit;
+    }
+}
+
+.news-card--patch {
+    border-left: 4px solid #2b6cb0;
+}
+
+.news-card--notify {
+    border-left: 4px solid #c53030;
+    background: rgba(254, 215, 215, 0.35);
+}
+
+.news-meta {
+    font-size: 0.78rem;
+    color: #6b4f3a;
+    margin-bottom: 0.5rem;
+}
+
+.news-body {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", inherit;
+    font-size: 0.88rem;
+    color: #3d2b1f;
+    line-height: 1.45;
+}
+
+.news-admin-toolbar {
+    margin-bottom: 0.75rem;
+}
+
+.news-tab-badge {
+    display: inline-block;
+    margin-left: 0.35rem;
+    min-width: 1.15rem;
+    padding: 0 0.35rem;
+    border-radius: 8px;
+    background: #c53030;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.15rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.news-banner-intro {
+    margin: 0 0 0.85rem;
+    font-size: 0.9rem;
+    color: #6b4f3a;
+}
+
+.news-banner-type {
+    display: inline-block;
+    margin-bottom: 0.35rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
+    background: #edf2f7;
+    color: #2d3748;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
 }

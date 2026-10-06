@@ -57,7 +57,7 @@
   opacity: 0.65;
 }
 
-// Dropdown panels inside modals — appendTo="body" + z-index above p-dialog mask
+// Dropdown panels inside modals - appendTo="body" + z-index above p-dialog mask
 :host ::ng-deep .menu-access-dropdown-panel.p-dropdown-panel {
   z-index: 11002 !important;
 

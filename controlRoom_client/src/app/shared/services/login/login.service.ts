@@ -83,5 +83,6 @@ export class LogginService{
         localStorage.removeItem('ICRSID');
         localStorage.removeItem('ICRLanguage');
         localStorage.removeItem('ICRUiLanguage');
+        localStorage.removeItem(UserService.LS_ENV_TYPE);
     }
 }

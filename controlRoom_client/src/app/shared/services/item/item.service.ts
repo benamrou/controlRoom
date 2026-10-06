@@ -220,8 +220,6 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
          let headersSearch = new HttpHeaders();
          this.params= new HttpParams();
          this.params = this.params.set('PARAM', itemCode);
-         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
          return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
                  let data = <any> response;
@@ -346,8 +344,6 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
          let headersSearch = new HttpHeaders();
          this.params= new HttpParams();
          this.params = this.params.set('PARAM', itemCode);
-         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
  
          return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
@@ -393,8 +389,6 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
      this.params= new HttpParams();
      this.params = this.params.set('PARAM', warehouseCode);
      this.params = this.params.append('PARAM', supplierCode);
-     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
  
      return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
@@ -445,8 +439,6 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
          let headersSearch = new HttpHeaders();
          this.params= new HttpParams();
          this.params =this.params.set('PARAM', itemCode);
-         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
          return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
                  let data = <any> response;
@@ -509,8 +501,6 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
          let headersSearch = new HttpHeaders();
          this.params= new HttpParams();
          this.params =this.params.set('PARAM', itemCode);
-         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
          return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
                  let data = <any> response;
@@ -551,8 +541,6 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
          let headersSearch = new HttpHeaders();
          this.params= new HttpParams();
          this.params = this.params.set('PARAM', itemCode);
-         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
          return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
                  let data = <any> response;
@@ -597,8 +585,6 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
          this.params = this.params.set('PARAM', itemCode);
          this.params = this.params.append('PARAM', warehousecode);
          this.params = this.params.append('PARAM', suppliercode);
-         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
          return this.http.get(this.request, this.params, options).pipe(map(response => {
             let data = <any> response;

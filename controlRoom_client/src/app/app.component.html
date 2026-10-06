@@ -1,12 +1,16 @@
 <!-- Single primary router-outlet only. Two sibling outlets (main vs login) can leave the wrong outlet
      receiving navigations so the URL updates while the dashboard view stays mounted. -->
-<app-header *ngIf="showAppChrome()"></app-header>
+<div class="fall-page-wipe" *ngIf="leafWipeActive" aria-hidden="true">
+    <span class="fall-page-wipe__leaf" *ngFor="let n of leafWipeLeaves">🍂</span>
+</div>
+
+<app-header *ngIf="showAppChrome()"
+            (sidebarCollapseToggle)="onSidebarCollapseToggle()"></app-header>
 <app-sidebar *ngIf="showAppChrome()"
              (collapsedEvent)="receiveCollapsed($event)"></app-sidebar>
 
 <section #workspace
          [class.main-container]="showAppChrome()"
-         [class.collapsed]="showAppChrome() && collapedSideBar"
          [class.login-shell]="!showAppChrome()">
     <router-outlet (activate)="onActivate($event)"></router-outlet>
 </section>

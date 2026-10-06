@@ -1,0 +1,45 @@
+.massload-rules {
+  .scope-badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .scope-CONSTANT {
+    background: #e8f0fe;
+    color: #1a56db;
+  }
+  .scope-STORE {
+    background: #e6f4ea;
+    color: #137333;
+  }
+  .scope-WAREHOUSE {
+    background: #fef3e2;
+    color: #b06000;
+  }
+  .rules-json {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+  .actions-col {
+    width: 6rem;
+    white-space: nowrap;
+  }
+  .action-buttons {
+    display: inline-flex;
+    gap: 0.25rem;
+  }
+  .action-btn-delete {
+    color: #5c5c5c !important;
+    border-color: #8a8a8a !important;
+    background: transparent !important;
+  }
+  .action-btn-delete:enabled:hover {
+    color: #3a3a3a !important;
+    border-color: #5c5c5c !important;
+    background: #f0f0f0 !important;
+  }
+}

@@ -6,20 +6,19 @@
 export const environment = {
   production: true,
   //Heinen's PROD OCI
-  //hostURL           : "http://10.227.100.75:8090",
-  //serverURL_local   : "http://10.227.100.75:8093",
-  //serverURL         : "http://10.227.100.75:8093",
-  //serverBatchURL    : "http://10.227.100.75:8091",
-  //baseURL           : "http://10.227.100.75:8090/icr",
+  hostURL           : "http://10.227.100.75:8090",
+  serverURL_local   : "http://10.227.100.75:8093",
+  serverURL         : "http://10.227.100.75:8093",
+  serverBatchURL    : "http://10.227.100.75:8091",
+  baseURL           : "http://10.227.100.75:8090/icr",
 
 
   //Heinen's PRE-PROD OCI
-  hostURL           : "http://10.227.100.44:8090",
-  serverURL_local   : "http://10.227.100.44:8093",
-  serverURL         : "http://10.227.100.44:8093",
-  serverBatchURL    : "http://10.227.100.44:8091",
-  baseURL           : "http://10.227.100.44:8090/icr",
-
+  //hostURL           : "http://10.227.100.44:8090",
+  //serverURL_local   : "http://10.227.100.44:8093",
+  //serverURL         : "http://10.227.100.44:8093",
+  //serverBatchURL    : "http://10.227.100.44:8091",
+  //baseURL           : "http://10.227.100.44:8090/icr",
 
   //Heinen's TEST OCI
   //hostURL           : "http://10.227.100.46:8090",

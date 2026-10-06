@@ -19,7 +19,7 @@ import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header
 import { I18nModule } from "src/app/shared/pipes/i18n.module";
 
 /**
- * Phase 4b — "Pending phrasings" admin screen for the Supply Chain AI engine.
+ * Phase 4b - "Pending phrasings" admin screen for the Supply Chain AI engine.
  * Phase 7 added the auto-promote dialog (Dialog + Tooltip).
  * Same eager-routing pattern as `AiSkillLibraryModule`. Exposed via:
  *   /ai/skill-studio/pending-phrasings

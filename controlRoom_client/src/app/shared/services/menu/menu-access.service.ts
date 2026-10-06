@@ -93,7 +93,9 @@ export class MenuAccessService {
   }
 
   private rebuildProfileMenu(): void {
-    let items = this._headerMenuRows.filter((r) => r.MENU_CODE !== 'HDR_AI_TOGGLE');
+    let items = this._headerMenuRows.filter(
+      (r) => r.MENU_CODE !== 'HDR_AI_TOGGLE' && r.MENU_CODE !== 'HDR_NEWS_MAIL',
+    );
     if (!items.length) {
       items = [...LEGACY_PROFILE_MENU];
     }
@@ -118,16 +120,17 @@ export class MenuAccessService {
     const uid = (userId || this._user.ICRUser || localStorage.getItem('ICRUser') || '').trim();
     const lang = this.resolveMenuLanguage();
     const sidRaw = this._user.userInfo?.sid?.[0] ?? localStorage.getItem('ICRSID');
-    const sid = sidRaw != null ? String(sidRaw).trim() : '';
-    if (!uid || !sid) {
+    const sidParts = UserService.splitSidHeader(sidRaw != null ? String(sidRaw) : '');
+    const sidCentral = sidParts[0] || '';
+    if (!uid || !sidCentral) {
       this._loadFailed = true;
       this._ready = true;
       this._profileMenu$.next([...LEGACY_PROFILE_MENU]);
       return of(undefined);
     }
     if (this._user.userInfo) {
-      if (!this._user.userInfo.sid?.length && sid) {
-        this._user.userInfo.sid = [sid];
+      if (!this._user.userInfo.sid?.length && sidParts.length) {
+        this._user.userInfo.sid = sidParts;
       }
     }
     const safeRows = (data: unknown): Record<string, unknown>[] => {
@@ -189,7 +192,9 @@ export class MenuAccessService {
           grantRoute(p.ROUTE_PATH);
         }
         const profileCount = this._profileMenu$.value.length;
-        const fromDb = this._headerMenuRows.filter((r) => r.MENU_CODE !== 'HDR_AI_TOGGLE').length;
+        const fromDb = this._headerMenuRows.filter(
+          (r) => r.MENU_CODE !== 'HDR_AI_TOGGLE' && r.MENU_CODE !== 'HDR_NEWS_MAIL',
+        ).length;
         console.log('[MenuAccess] profile menu', { fromDb, shown: profileCount, codes: this._profileMenu$.value.map((i) => i.MENU_CODE) });
         const sidebarRows = rowList.filter(
           (r) => r.MENU_TYPE !== 'HEADER' && r.MENU_CODE !== 'DASHBOARD',
@@ -237,6 +242,11 @@ export class MenuAccessService {
       return !!(u && (u.aiAdmin === 1 || u.aiDesigner === 1));
     }
     return false;
+  }
+
+  /** Envelope in the top bar — visible to every logged-in user. */
+  showNewsMailButton(): boolean {
+    return true;
   }
 
   canNavigate(routePath: string): boolean {

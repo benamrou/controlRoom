@@ -40,8 +40,6 @@ export class CommentService {
       this.params = this.params.set('PARAM', warehouseCode);
       this.params = this.params.append('PARAM', item);
       this.params = this.params.append('PARAM', lv);
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
       return this.http.get(this.request, this.params, this.options).pipe(map(response => {
               let data = <any> response;
@@ -71,8 +69,6 @@ export class CommentService {
       json.comment = comment;
       console.log('createComment', warehouseCode, item, lv, comment, json)
 
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
       return this.http.post(this.request, this.params, headersSearch, json).pipe(map(response => {
               let data = <any> response;
               return data;
@@ -100,8 +96,6 @@ export class CommentService {
       this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
 
       /* DELETE and CREATE if edit */
-      headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-      headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
       return this.http.post(this.request, this.params, headersSearch, json).pipe(map(response => {
               let data = <any> response;
               return data;

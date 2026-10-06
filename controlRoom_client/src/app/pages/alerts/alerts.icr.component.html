@@ -273,14 +273,16 @@
                         [innerHTML]="altspecPreviewSafe"></div>
                 </div>
 
-                <!-- Edit: rich text (paste bullets, colors, tables — stored as HTML) -->
+                <!-- Edit: rich text (paste bullets, colors, tables - stored as HTML) -->
                 <div *ngIf="altspecEditMode" class="altspec-edit">
                     <p class="altspec-edit-hint">
-                        {{ 'S19.SPC.RICHHT' | lbl:'Type or paste from Word, Outlook, or Excel — formatting is converted to HTML automatically.' }}
+                        {{ 'S19.SPC.RICHHT' | lbl:'Type or paste from Word, Outlook, or Excel - formatting is converted to HTML automatically. Use Insert table for a blank grid.' }}
                     </p>
                     <p-editor [(ngModel)]="alertDisplay.ALTSPEC"
                         styleClass="altspec-rich-editor"
                         [style]="{ height: '24rem' }"
+                        [modules]="altspecQuillModules"
+                        (onInit)="onAltspecQuillInit($event)"
                         (onTextChange)="onAltspecEditorChange($event)">
                         <ng-template pTemplate="header">
                             <span class="ql-formats">
@@ -312,6 +314,7 @@
                             </span>
                             <span class="ql-formats">
                                 <button type="button" class="ql-link" title="Link"></button>
+                                <button type="button" class="ql-table" title="Insert table"></button>
                                 <button type="button" class="ql-clean" title="Clear formatting"></button>
                             </span>
                         </ng-template>
@@ -457,7 +460,7 @@
                     </div>
                     <div class="field col-3">
                         <label class="font-bold" for="saltactive">Effective Date</label>
-                        <p-calendar id="saltactive" [(ngModel)]="alertSheduleDisplay.SALTACTIVEDATE" 
+                        <p-calendar appendTo="body" id="saltactive" [(ngModel)]="alertSheduleDisplay.SALTACTIVEDATE" 
                             [showIcon]="true" dateFormat="mm/dd/yy" [showButtonBar]="true"
                             inputStyleClass="text-base text-color surface-overlay p-2 border-3 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
                         </p-calendar>
@@ -672,15 +675,15 @@
                     </ng-template>
                     <ng-template pTemplate="body" let-row>
                         <tr>
-                            <td>{{ row.BUGPATCHDAY || '—' }}</td>
-                            <td>{{ row.BUGRELEASEDATE || '—' }}</td>
+                            <td>{{ row.BUGPATCHDAY || '-' }}</td>
+                            <td>{{ row.BUGRELEASEDATE || '-' }}</td>
                             <td>
                                 <a href="#" class="alertbug-preview-link" (click)="openBugView(row); $event.preventDefault()">
                                     {{ bugPreview(row.BUGISSUE) }}
                                 </a>
                             </td>
                             <td>{{ bugPreview(row.BUGRESOLUTION) }}</td>
-                            <td>{{ row.BUGUTIL || '—' }}</td>
+                            <td>{{ row.BUGUTIL || '-' }}</td>
                             <td>
                                 <button type="button" pButton icon="fas fa-eye"
                                     class="p-button-text p-button-sm"
@@ -735,10 +738,12 @@
 
         <div class="field col-12">
             <label class="font-bold">{{ 'S19.BUG.ISSUE' | lbl:'Issue' }}</label>
-            <p class="altspec-edit-hint">{{ 'S19.SPC.RICHHT' | lbl:'Type or paste from Word, Outlook, or Excel — formatting is converted to HTML automatically.' }}</p>
+            <p class="altspec-edit-hint">{{ 'S19.SPC.RICHHT' | lbl:'Type or paste from Word, Outlook, or Excel - formatting is converted to HTML automatically.' }}</p>
             <p-editor [(ngModel)]="bugDisplay.BUGISSUE"
                 styleClass="altspec-rich-editor alertbug-rich-editor"
-                [style]="{ height: '14rem' }">
+                [style]="{ height: '14rem' }"
+                [modules]="altspecQuillModules"
+                (onInit)="onBugQuillInit($event, 'BUGISSUE')">
                 <ng-template pTemplate="header">
                     <ng-container *ngTemplateOutlet="bugEditorToolbar"></ng-container>
                 </ng-template>
@@ -749,7 +754,9 @@
             <label class="font-bold">{{ 'S19.BUG.RES' | lbl:'Resolution' }}</label>
             <p-editor [(ngModel)]="bugDisplay.BUGRESOLUTION"
                 styleClass="altspec-rich-editor alertbug-rich-editor"
-                [style]="{ height: '14rem' }">
+                [style]="{ height: '14rem' }"
+                [modules]="altspecQuillModules"
+                (onInit)="onBugQuillInit($event, 'BUGRESOLUTION')">
                 <ng-template pTemplate="header">
                     <ng-container *ngTemplateOutlet="bugEditorToolbar"></ng-container>
                 </ng-template>
@@ -760,7 +767,9 @@
             <label class="font-bold">{{ 'S19.BUG.NOTES' | lbl:'Notes' }}</label>
             <p-editor [(ngModel)]="bugDisplay.BUGNOTES"
                 styleClass="altspec-rich-editor alertbug-rich-editor"
-                [style]="{ height: '10rem' }">
+                [style]="{ height: '10rem' }"
+                [modules]="altspecQuillModules"
+                (onInit)="onBugQuillInit($event, 'BUGNOTES')">
                 <ng-template pTemplate="header">
                     <ng-container *ngTemplateOutlet="bugEditorToolbar"></ng-container>
                 </ng-template>
@@ -806,6 +815,7 @@
     </span>
     <span class="ql-formats">
         <button type="button" class="ql-link" title="Link"></button>
+        <button type="button" class="ql-table" title="Insert table"></button>
         <button type="button" class="ql-clean" title="Clear formatting"></button>
     </span>
 </ng-template>
@@ -822,8 +832,8 @@
     (onHide)="closeBugView()">
     <p-header>{{ 'S19.BUG.VIEW' | lbl:'Patch entry' }}</p-header>
     <div *ngIf="bugViewRow" class="alertbug-view">
-        <p><strong>{{ 'S19.BUG.PDAY' | lbl:'Patch day' }}:</strong> {{ bugViewRow.BUGPATCHDAY || '—' }}
-           · <strong>{{ 'S19.BUG.RDAY' | lbl:'Release date' }}:</strong> {{ bugViewRow.BUGRELEASEDATE || '—' }}</p>
+        <p><strong>{{ 'S19.BUG.PDAY' | lbl:'Patch day' }}:</strong> {{ bugViewRow.BUGPATCHDAY || '-' }}
+           · <strong>{{ 'S19.BUG.RDAY' | lbl:'Release date' }}:</strong> {{ bugViewRow.BUGRELEASEDATE || '-' }}</p>
         <h4>{{ 'S19.BUG.ISSUE' | lbl:'Issue' }}</h4>
         <div class="altspec-preview-body ql-editor" [innerHTML]="bugViewIssueSafe"></div>
         <h4>{{ 'S19.BUG.RES' | lbl:'Resolution' }}</h4>

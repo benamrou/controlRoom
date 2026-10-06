@@ -1,10 +1,11 @@
-import {Component, ViewEncapsulation, OnInit, ViewChild} from '@angular/core';
-import { WarehouseService, WidgetService, ExportService, ImportService } from '../../../shared/services';
+import {Component, ViewEncapsulation, OnInit, ViewChild, OnDestroy} from '@angular/core';
+import { WarehouseService, WidgetService, ExportService, ImportService, UserService} from '../../../shared/services';
 import {DatePipe} from '@angular/common';
 
 import { MessageService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 import { buildMassUpdateMenuItems } from '../../../shared/i18n/mass-update-i18n.helper';
+import { resetMassUpdateWizardState, bindMassUpdateOnEnvironmentChange } from '../../../shared/i18n/mass-update-file.helper';
 import { LabelService } from '../../../shared/services/labels/labels.service';
 import { Subscription } from 'rxjs';
 import { Table } from 'primeng/table';
@@ -22,7 +23,7 @@ import { HttpClient } from "@angular/common/http";
     encapsulation: ViewEncapsulation.None
 })
 
-export class StockLayerComponent implements OnInit{
+export class StockLayerComponent implements OnInit, OnDestroy{
 
     @ViewChild('fileUpload') fileUpload: any;
     @ViewChild('result') resultTable!: Table;
@@ -31,6 +32,7 @@ export class StockLayerComponent implements OnInit{
    activeIndex: number = 0;
    menuItems: MenuItem[] = [];
   private labelSub?: Subscription;
+  private envSub?: Subscription;
    uploadedFiles: any[] = [];
 
    templateID = 'ICR_TEMPLATE018';
@@ -84,7 +86,7 @@ export class StockLayerComponent implements OnInit{
 
   constructor(private _widgetService: WidgetService, private _messageService: MessageService,
               private _exportService: ExportService, public _importService: ImportService,
-              private httpClient: HttpClient, private _labels: LabelService) {
+              private httpClient: HttpClient, private _labels: LabelService, private _userService: UserService) {
     this.datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
     this.dateTomorrow =  new Date(this.dateNow.setDate(this.dateNow.getDate() + 1));
@@ -106,10 +108,16 @@ export class StockLayerComponent implements OnInit{
   ngOnInit() {
     this.buildMassUpdateSteps();
     this.labelSub = this._labels.revision$.subscribe(() => this.buildMassUpdateSteps());
+    this.envSub = bindMassUpdateOnEnvironmentChange(this, this._userService.environmentChanged$, this._messageService);
+  }
+
+  ngOnDestroy(): void {
+    this.labelSub?.unsubscribe();
+    this.envSub?.unsubscribe();
   }
 
   private buildMassUpdateSteps(): void {
-    this.menuItems = buildMassUpdateMenuItems(this._labels, this._labels.text('S50.MU.STP0', 'Select your Stock layer file change.'));
+    this.menuItems = buildMassUpdateMenuItems(this._labels, this._labels.text('S50.MU.STP0', 'Select your Stock layer initialization file.'));
     const steps: { i: number; sumKey: string; sumFb: string }[] = [
       { i: 0, sumKey: 'MU.TOAST.S0', sumFb: 'Pick your data file' },
       { i: 1, sumKey: 'MU.TOAST.S1', sumFb: 'Specify change configuration' },
@@ -143,11 +151,8 @@ export class StockLayerComponent implements OnInit{
   }
 
     onSelect(event: any) {
-        this.activeIndex = 0; // Go next step;
-        this.uploadedFiles = [];
-        this.displayConfirm = false;
-        let formData: FormData = new FormData();
-        this.indicatorXLSfileLoaded = false;
+        // Full wizard reset - required when reselecting a file mid-flow
+        this.reset();
         try {   
             for(let i =0; i < event.currentFiles.length; i++) {
                 //console.log('event.currentFiles:', event.currentFiles[i]);
@@ -244,7 +249,7 @@ export class StockLayerComponent implements OnInit{
                         this._importService.execute(executionId.RESULT[0]).subscribe 
                                 (data => {  
                                     //console.log('data userID : ', data);
-                                    userID = data[0].RESULT;
+                                    userID = data[0];
                                 },
                                 error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Invalid file during execution plan load', detail: error }); },
                                 () =>    {  
@@ -440,8 +445,8 @@ export class StockLayerComponent implements OnInit{
                                     this.globalValid.push('<i class="fas fa-thumbs-up" style="padding-right: 1em;"></i> Data file verification SUCCESSFUL ' +
                                                             ' <ul style="margin-bottom: 0px;"> ' +
                                                             ' <li>Columns naming is respected</li>' +
-                                                            ' <li>Item codes are all recognized</li>' +
-                                                            ' <li>Items are orderable</li></ul>'); 
+                                                            ' <li>ITEM_CODE and LV_CODE match ARTVL exactly</li>' +
+                                                            ' <li>Site, position, quantity, and unit cost are valid</li></ul>');
                                     this.activeIndex = this.activeIndex + 1; // Enable Configuration
                                     this.activeIndex = this.activeIndex + 1; // Enable schedule
                                     this.activeIndex = this.activeIndex + 1; // Enable Recap
@@ -471,8 +476,8 @@ export class StockLayerComponent implements OnInit{
   checkGlobal(): boolean {
     this.globalError=[];
     let result = true;    
-    if(this._importService.wb.sheets[0].worksheet.columns.length < 5) {
-        this.globalError.push('stock layer file must contains the following headers: SITE_CODE, ITEM_CODE, LV_CODE, QTY, CASE_COST'); 
+    if(this._importService.wb.sheets[0].worksheet.columns.length < 6) {
+        this.globalError.push('Stock layer file must contain the following headers: SITE_CODE, ITEM_CODE, LV_CODE, POSITION, QTY, UNIT_COST'); 
         return false;
     }
     if (this._importService.wb.sheets[0].worksheet.columns[0].field.toUpperCase() !== 'SITE_CODE') {
@@ -487,12 +492,16 @@ export class StockLayerComponent implements OnInit{
         this.globalError.push('The column C header must be named LV_CODE'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'QTY') {
-        this.globalError.push('The column D header must be named QTY'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[3].field.toUpperCase() !== 'POSITION') {
+        this.globalError.push('The column D header must be named POSITION'); 
       result = false;
     }
-    if (this._importService.wb.sheets[0].worksheet.columns[4].field.toUpperCase() !== 'CASE_COST') {
-        this.globalError.push('The column E header must be named CASE_COST'); 
+    if (this._importService.wb.sheets[0].worksheet.columns[4].field.toUpperCase() !== 'QTY') {
+        this.globalError.push('The column E header must be named QTY'); 
+      result = false;
+    }
+    if (this._importService.wb.sheets[0].worksheet.columns[5].field.toUpperCase() !== 'UNIT_COST') {
+        this.globalError.push('The column F header must be named UNIT_COST'); 
       result = false;
     }
 
@@ -500,17 +509,7 @@ export class StockLayerComponent implements OnInit{
   }
   
   reset() {
-      this.activeIndex = 0; // Go next step;
-      this.globalValid = [];
-      this.uploadedFiles = [];
-      this.displayConfirm = false;
-      this.indicatorXLSfileLoaded = false;
-        this.recapSummary = {
-        totalRecords: 0,
-        successRecords: 0,
-        errorRecords: 0,
-        errorDetails: [] as any[], // Array of row objects with all columns
-        columns: [] as string[] // Dynamic column names from worksheet
-    };
+      resetMassUpdateWizardState(this);
   }
+
 }

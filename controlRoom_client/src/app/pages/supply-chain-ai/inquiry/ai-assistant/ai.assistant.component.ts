@@ -20,14 +20,14 @@ const CONTEXT_ENTITY_LABEL_KEYS: Record<string, [string, string]> = {
 };
 
 /**
- * Issue 7 — recoverable parameter gaps.
+ * Issue 7 - recoverable parameter gaps.
  * Maps entity name → { prompt shown to user, detect() extracts the value from the reply }.
  * When /execute returns parameter_gaps that contain one of these keys, the assistant
  * stashes the execute payload and prompts the user; the next reply resumes execution.
  */
 const RECOVERABLE_GAPS: Record<string, { prompt: string; detect: (t: string) => string | null }> = {
     lu_id: {
-        prompt: 'Which item (LU code)? Reply with the item code — e.g., `item 100100` or just `100100`.',
+        prompt: 'Which item (LU code)? Reply with the item code - e.g., `item 100100` or just `100100`.',
         detect: (t: string) => {
             const clean = String(t || '').trim();
             const m = clean.match(/\b(?:item|article|codart|lu|sku|product)\s*(?:code|#|no\.?)?\s*(\d{4,8})\b/i)
@@ -36,7 +36,7 @@ const RECOVERABLE_GAPS: Record<string, { prompt: string; detect: (t: string) => 
         }
     },
     site_id: {
-        prompt: 'For which store? Reply with the store code — e.g., `store 10` or just `10`.',
+        prompt: 'For which store? Reply with the store code - e.g., `store 10` or just `10`.',
         detect: (t: string) => {
             const clean = String(t || '').trim();
             const m = clean.match(/\b(?:store|site|at)\s*0*(\d{1,5})\b/i) || clean.match(/^0*(\d{1,5})$/);
@@ -44,7 +44,7 @@ const RECOVERABLE_GAPS: Record<string, { prompt: string; detect: (t: string) => 
         }
     },
     supplier_id: {
-        prompt: 'Which supplier? Reply with the supplier code — e.g., `06966`, or name — e.g., `Lipari`.',
+        prompt: 'Which supplier? Reply with the supplier code - e.g., `06966`, or name - e.g., `Lipari`.',
         detect: (t: string) => {
             const clean = String(t || '').trim();
             if (/^\d{3,8}$/.test(clean)) { return clean; }
@@ -97,9 +97,9 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     bindContext: any = null;
     /** Raw Oracle error message (from `qErr` branch) or `null`. */
     executionError = '';
-    /** UI toggle for the "Debug — executed SQL" panel. */
+    /** UI toggle for the "Debug - executed SQL" panel. */
     showDebug = false;
-    /** Full /diagnose response for the latest turn — top-N skill scores,
+    /** Full /diagnose response for the latest turn - top-N skill scores,
      *  vocab matches, extracted entities, top-skill template feasibility.
      *  Lets the designer answer "why was this skill picked?" and "why
      *  did the chosen template not run?" without inspecting server logs. */
@@ -112,7 +112,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     followUpText = '';
     currentSessionContext: any = { entities: {}, bindings: {} };
     /**
-     * Phase 12 — conversational enrichment for the item card.
+     * Phase 12 - conversational enrichment for the item card.
      *
      * Set when the user asks to add retail/EAN/history to the V_GOLD_ITEM card
      * but a required bind (today: site_id when retail is requested) is missing.
@@ -122,7 +122,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
      * skill_id + template_code = 'ITM_FULL_ATTRIBUTES', and execute.
      *
      * ⚠️ skill_id MUST be captured here. The user's reply ("7", "store 7") is
-     * too thin for the router to land on ITEM_MASTER_RETAIL — it picks
+     * too thin for the router to land on ITEM_MASTER_RETAIL - it picks
      * DSD_VENDOR_RETAIL or CONVERSATIONAL on partial overlap. If we only
      * override `template_code` and leave `skill_id` as `route.selected_skill_id`,
      * the engine looks for ITM_FULL_ATTRIBUTES inside the wrong skill and
@@ -138,7 +138,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         skill_id?: string;
     } | null = null;
     /**
-     * Issue 7 — stash for gap-entity recovery. Set when /execute returns
+     * Issue 7 - stash for gap-entity recovery. Set when /execute returns
      * parameter_gaps containing a RECOVERABLE_GAPS key. Cleared on the next
      * turn if the user supplies a matching value; cleared unconditionally on
      * reset. independend of pendingEnrichment (item-card enrichment has its
@@ -154,7 +154,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
      * with candidate_options (ENGINE_VENDOR_RESOLVE found 2+ suppliers). On the next
      * turn, if the user's reply identifies one candidate (by code "(06966)", name, or
      * ordinal), we inject supplier_id into the stashed execPayload and re-submit
-     * /execute directly — bypassing /route entirely so the original question context
+     * /execute directly - bypassing /route entirely so the original question context
      * is preserved. Cleared when a candidate is matched OR when the user types
      * something unrelated (no match → normal routing proceeds).
      */
@@ -173,19 +173,19 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         sqlTemplateDraft: ''
     };
 
-    /** Template skills from AI0000040 — designer picks correct skill without creating a new one. */
+    /** Template skills from AI0000040 - designer picks correct skill without creating a new one. */
     templateSkills: any[] = [];
     loadingTemplateSkills = false;
     designerSelectedSkill: any = null;
 
-    // ADJUST — inline session-context editor (entity chips in right panel)
+    // ADJUST - inline session-context editor (entity chips in right panel)
     contextEditKey: string | null = null;
     contextEditValue = '';
     contextAddMode = false;
     contextAddKey = '';
     contextAddValue = '';
 
-    // LEARN — teach-correct-skill panel shown after thumb-down
+    // LEARN - teach-correct-skill panel shown after thumb-down
     thumbDownTeachVisible: { [idx: number]: boolean } = {};
     thumbDownTeachDone:    { [idx: number]: boolean } = {};
     thumbDownTeachSkill:   { [idx: number]: any }     = {};
@@ -204,7 +204,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
     isAiAdmin = false;
 
-    /** Empty-state starters — rebuilt on label revision. */
+    /** Empty-state starters - rebuilt on label revision. */
     examplePrompts: string[] = [];
 
     ngOnInit(): void {
@@ -314,7 +314,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
             return { routing_label: "Couldn't match your question", routing_severity: 'danger' };
         }
         if (diag?.low_confidence || conf < 50) {
-            return { routing_label: 'Not sure — pick an option below or rephrase', routing_severity: 'warning' };
+            return { routing_label: 'Not sure - pick an option below or rephrase', routing_severity: 'warning' };
         }
         return { routing_label: 'Understood your question', routing_severity: 'success' };
     }
@@ -354,7 +354,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         this.contextAddValue = '';
     }
 
-    /** Skill used for designer retry / Skill Builder — overrides routed skill when set. */
+    /** Skill used for designer retry / Skill Builder - overrides routed skill when set. */
     getDesignerSkillId(): string | null {
         const fromPicker = this.designerSelectedSkill?.SKILL_ID ?? this.designerSelectedSkill?.skill_id;
         if (fromPicker != null && String(fromPicker).trim() !== '') {
@@ -386,7 +386,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                             SKILL_CODE: code,
                             SKILL_NAME: name,
                             DOMAIN: domain,
-                            _label: `${code} — ${name}${domain ? ' (' + domain + ')' : ''}`
+                            _label: `${code} - ${name}${domain ? ' (' + domain + ')' : ''}`
                         };
                     })
                     .filter((r: any) => !!r.SKILL_ID);
@@ -628,7 +628,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
         // When the engine is asking the user to pick a vendor (needsClarification + candidates
         // present), the exec human_summary is from the gap branch ("I couldn't find…") which
-        // is wrong — suppress it so only the clarification question is shown.
+        // is wrong - suppress it so only the clarification question is shown.
         const suppressExecSummary = needsClarification && clarifications.length > 0;
         const assistantText = (!suppressExecSummary && humanSummary)
             ? [humanSummary, clarificationText].filter(Boolean).join('\n\n')
@@ -647,7 +647,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
             answer_quality: answerQuality,
             designer_required: this.requestedSql.length > 0
         });
-        // Phase 5 — when the route confidence is low, surface the runner-up
+        // Phase 5 - when the route confidence is low, surface the runner-up
         // skills as clickable chips. Click resends the question with
         // `preferred_skill_id` so the engine forces that skill.
         const alternatives = this.buildAlternativeChips(route);
@@ -659,7 +659,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
             : '';
         const routingMeta = this.isAiAdmin ? {} : this.buildAnalystRoutingMeta(route);
 
-        // Phase 12 — attach the result payload to the assistant turn so the
+        // Phase 12 - attach the result payload to the assistant turn so the
         // table, debug panel, and export buttons can render inline in the chat
         // bubble (no need to look at the side "Detailed results" card).
         // Snapshots are deep-copied so subsequent runs don't mutate older turns.
@@ -708,7 +708,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Phase 5 — build clarification chips. We only show them when the engine
+     * Phase 5 - build clarification chips. We only show them when the engine
      * itself signals low confidence (avoids noise on perfect routes). The
      * picked skill is excluded; we surface up to 2 distinct alternatives.
      */
@@ -852,7 +852,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                 label: 'Answer',
                 detail: rowCount === 1
                     ? `I found 1 item in GOLD linked to ${supplierPhrase}. The row is in the table below.`
-                    : `I found ${rowCount} items in GOLD linked to ${supplierPhrase}. Every matching row is in the table — use the pager to scroll through the list.`
+                    : `I found ${rowCount} items in GOLD linked to ${supplierPhrase}. Every matching row is in the table - use the pager to scroll through the list.`
             };
         }
 
@@ -926,7 +926,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
     /**
      * EAN / UPC questions: run ITM_BARCODE_LOOKUP first, then ITM_ARTICLE_HEADER
-     * on ITEM_MASTER_RETAIL once we have an LU — not a single template with :ean only.
+     * on ITEM_MASTER_RETAIL once we have an LU - not a single template with :ean only.
      */
     private shouldChainEanToItemCard(
         route: any,
@@ -1015,7 +1015,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                 if (!(cardExec?.result_rows?.length)) {
                     this.prependHumanSummary(
                         cardExec,
-                        preamble + ' No rows in V_GOLD_ITEM for that LU — check the view / DB link.'
+                        preamble + ' No rows in V_GOLD_ITEM for that LU - check the view / DB link.'
                     );
                 } else {
                     this.prependHumanSummary(cardExec, preamble);
@@ -1066,10 +1066,10 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         const evidenceFacts: string[] = Array.isArray(chain?.evidence_facts) ? chain.evidence_facts : [];
         const followUpHint = chain?.follow_up_hint ? String(chain.follow_up_hint) : '';
 
-        // Conclusion label — single key or issue count
+        // Conclusion label - single key or issue count
         const conclusionLabel = issuesFound > 1
-            ? ('Diagnostic — ' + issuesFound + ' issues found')
-            : ('Diagnostic — ' + (chain?.conclusion_key || 'complete'));
+            ? ('Diagnostic - ' + issuesFound + ' issues found')
+            : ('Diagnostic - ' + (chain?.conclusion_key || 'complete'));
 
         this.conclusion = {
             label: conclusionLabel,
@@ -1286,7 +1286,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         this.running = false;
         if (enrichmentOverride) { this.pendingEnrichment = null; }
 
-        // Vendor disambiguation — clear the stash once /execute returns real rows.
+        // Vendor disambiguation - clear the stash once /execute returns real rows.
         // On 0-result attempts (wrong vendor, inactive supplier) the stash persists
         // so the user can pick a different candidate without re-routing.
         if (this.pendingVendorClarification
@@ -1295,7 +1295,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
             this.pendingVendorClarification = null;
         }
 
-        // Issue 7 — when /execute returns parameter_gaps for a RECOVERABLE_GAPS
+        // Issue 7 - when /execute returns parameter_gaps for a RECOVERABLE_GAPS
         // entity and we have the original execPayload, stash it and prompt the
         // user instead of showing a dead-end "I need X" message with no follow-up.
         // Enrichment turns (pendingEnrichment) already have their own stash path.
@@ -1335,11 +1335,11 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         this.pushTurn('assistant', 'I could not execute the selected skill template context. Please retry or refine your question.');
     }
 
-    // ── Phase 12 — Conversational enrichment helpers ──────────────────────────
+    // ── Phase 12 - Conversational enrichment helpers ──────────────────────────
     //
     // The flow: user asks "tell me about item 100100" → ITM_ARTICLE_HEADER fires
     // → session.entities.lu_id = '100100'. User then asks "add retail price for
-    // store 10" — we want to land on ITM_FULL_ATTRIBUTES with include_retail='Y'
+    // store 10" - we want to land on ITM_FULL_ATTRIBUTES with include_retail='Y'
     // and reuse the prior lu_id. The detection below runs after /route returns
     // and BEFORE /execute, so we override `template_code` and `bindings` rather
     // than touch engine code.
@@ -1367,7 +1367,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
     /**
      * "and the retail", "add ean", "plus history", "include EAN codes",
-     * "with retail", "also retail" — anything that smells like a continuation
+     * "with retail", "also retail" - anything that smells like a continuation
      * rather than a fresh standalone question.
      */
     private hasContinuationMarker(text: string): boolean {
@@ -1387,7 +1387,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
     /**
      * Pull a bare numeric reply ("10", "store 10", "041") as a site_id when
-     * we already asked the user for one. Belt-and-braces — the BIND_HINTs
+     * we already asked the user for one. Belt-and-braces - the BIND_HINTs
      * ("at store", "for store") usually catch this on /route already.
      */
     private extractSiteIdFromReply(text: string): string | null {
@@ -1398,7 +1398,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         return null;
     }
 
-    // ── Issue 7 — gap-entity recovery helpers ────────────────────────────────
+    // ── Issue 7 - gap-entity recovery helpers ────────────────────────────────
 
     /** Try to extract the requested entity value from the user's gap reply. */
     private extractEntityValueFromReply(text: string, gapEntity: string): string | null {
@@ -1430,7 +1430,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         const t = String(text || '').trim();
         if (!candidates?.length || !t) { return null; }
 
-        // 1 — explicit supplier code in parentheses: "(06966)" or "(AO0696672)"
+        // 1 - explicit supplier code in parentheses: "(06966)" or "(AO0696672)"
         //     Also match bare all-digit codes like "06966" as a standalone token.
         const codeInParens = t.match(/\(([A-Z0-9]{3,12})\)/i);
         const bareDigitCode = t.match(/\b(\d{5,8})\b/);
@@ -1449,7 +1449,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
             if (hit) { return String(hit.supplier_id || hit.SUPPLIER_ID); }
         }
 
-        // 2 — supplier name substring (longest match wins, case-insensitive)
+        // 2 - supplier name substring (longest match wins, case-insensitive)
         const tUp = t.toUpperCase();
         let bestHit: any = null;
         let bestLen = 0;
@@ -1462,7 +1462,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         }
         if (bestHit) { return String(bestHit.supplier_id || bestHit.SUPPLIER_ID); }
 
-        // 3 — ordinal selection ("first", "1", "option 1", "second", "2")
+        // 3 - ordinal selection ("first", "1", "option 1", "second", "2")
         if (/\b(first|1st|one|option\s*1|#\s*1|\b1\b)\b/i.test(t) && candidates[0]) {
             return String(candidates[0].supplier_id || candidates[0].SUPPLIER_ID);
         }
@@ -1503,7 +1503,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
      * Walk chatTurns backwards to find the skill_id that fired the last item-
      * card execute (ITM_ARTICLE_HEADER or ITM_FULL_ATTRIBUTES). We need this
      * because the user's enrichment reply ("add retail", "7") doesn't carry
-     * enough signal for /route to land on ITEM_MASTER_RETAIL — we have to
+     * enough signal for /route to land on ITEM_MASTER_RETAIL - we have to
      * force the skill ourselves so the engine looks for ITM_FULL_ATTRIBUTES
      * inside the right skill.
      */
@@ -1522,7 +1522,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
     /**
      * Force ITM_ARTICLE_HEADER when the user (or a chip) asks for the item card
-     * and we already have lu_id — e.g. after ITM_BARCODE_LOOKUP resolved the EAN.
+     * and we already have lu_id - e.g. after ITM_BARCODE_LOOKUP resolved the EAN.
      */
     private buildItemCardOverride(
         route: any,
@@ -1570,7 +1570,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         this.pushTurn(
             'assistant',
             'For which store should I look up retail' + luPart + '? ' +
-            'Reply with the store code — e.g., `store 10` or just `10`.'
+            'Reply with the store code - e.g., `store 10` or just `10`.'
         );
         this.running = false;
         this.awaitingAssistant = false;
@@ -1582,7 +1582,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
      * already in scope. If so, return the skill_id + template_code + bindings
      * + entities the /execute call must use. Otherwise return null (normal
      * routing). The return shape carries skill_id because the user's bare
-     * reply ("7") otherwise routes to whatever scrap of vocab matches — not
+     * reply ("7") otherwise routes to whatever scrap of vocab matches - not
      * ITEM_MASTER_RETAIL.
      */
     private buildEnrichmentOverride(
@@ -1591,7 +1591,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     ): { skill_id: string; template_code: string; bindings: any; entities: any } | null {
         const reuseSiteId = this.extractSiteIdFromReply(questionText);
 
-        // Branch A — we're resuming a paused enrichment (pendingEnrichment was
+        // Branch A - we're resuming a paused enrichment (pendingEnrichment was
         // set earlier because we asked for site_id). Only resume if the reply
         // actually looks like a site code; otherwise the user changed topic
         // (e.g. typed "tell me about item 200200") and we must clear the stash
@@ -1621,10 +1621,10 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
             };
         }
 
-        // Branch B — fresh continuation. Require BOTH a continuation marker
+        // Branch B - fresh continuation. Require BOTH a continuation marker
         // AND an enrichment keyword AND a session lu_id. This prevents
         // standalone questions ("show price history") from being hijacked
-        // — those still route to the existing single-template skills.
+        // - those still route to the existing single-template skills.
         if (!this.hasItemContextInSession()) { return null; }
         if (!this.hasContinuationMarker(questionText)) { return null; }
         const newFlags = this.detectEnrichmentFlags(questionText);
@@ -1636,7 +1636,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         if (!skillId) { return null; }
         const merged = { ...(this.currentSessionContext.bindings || {}), ...newFlags };
         // Carry forward whatever the route extracted (e.g., the user said
-        // "add retail for store 10" — the lexical pass already put site_id
+        // "add retail for store 10" - the lexical pass already put site_id
         // into route.entities; we just merge it on top of session entities).
         const entities = {
             ...(this.currentSessionContext.entities || {}),
@@ -1686,7 +1686,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         this.timelineEvents[1].done = true;
         this.timelineEvents[1].date = new Date();
 
-        // Issue 7 — if a recoverable gap was stashed on the previous turn,
+        // Issue 7 - if a recoverable gap was stashed on the previous turn,
         // try to extract the requested entity from this reply and resume execute
         // directly (skip routing entirely). If the reply doesn't match, clear the
         // stash and let routing proceed normally.
@@ -1717,17 +1717,17 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                 this.submitExecuteInquiry(pending.route, pending.execPayload, null, null);
                 return;
             }
-            // Reply doesn't look like the expected entity — clear stash and route normally.
+            // Reply doesn't look like the expected entity - clear stash and route normally.
             this.pendingGapResolution = null;
         }
 
-        // Vendor disambiguation — if the previous turn showed a "which supplier?"
+        // Vendor disambiguation - if the previous turn showed a "which supplier?"
         // clarification (requires_clarification=true from ENGINE_VENDOR_RESOLVE),
         // try to match this reply against the candidate list. If it matches,
         // inject supplier_id into a copy of the stashed execPayload and resume
         // /execute directly without re-routing (preserving the original context).
         //
-        // The stash is NOT cleared here — it persists until /execute returns rows
+        // The stash is NOT cleared here - it persists until /execute returns rows
         // (finishExecuteInquiry clears it on success). This lets the user try the
         // wrong vendor (0 results), then immediately pick the right one without
         // re-routing through an ambiguous question that lands on a wrong skill.
@@ -1741,7 +1741,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                 this.timelineEvents[2].date = new Date();
                 this.timelineEvents[3].done = true;
                 this.timelineEvents[3].date = new Date();
-                // Build a one-time attempt payload (copy — stash stays pristine for retry).
+                // Build a one-time attempt payload (copy - stash stays pristine for retry).
                 // supplier_id goes ONLY into the attempt payload, not into session context.
                 // Keeping it out of session prevents it from bleeding into subsequent
                 // "what about [other vendor]?" questions via the execPayload entity merge.
@@ -1758,7 +1758,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                 this.submitExecuteInquiry(resolvedRoute, attemptPayload, null, null);
                 return;
             }
-            // User typed something unrelated — clear stash and route normally.
+            // User typed something unrelated - clear stash and route normally.
             this.pendingVendorClarification = null;
         }
 
@@ -1770,7 +1770,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
             routePayload.preferred_skill_id = preferredSkillId;
         }
 
-        // Phase 11 — fire /diagnose in parallel so the Engine diagnostics
+        // Phase 11 - fire /diagnose in parallel so the Engine diagnostics
         // panel always has scored candidates + vocab matches + bind feasibility,
         // even when /route fails entirely. Best-effort; never blocks the run.
         this._svc.diagnoseInquiry({ retailer_id: retailerId, question_text: questionText })
@@ -1794,7 +1794,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                     ...(this.currentSessionContext.entities || {}),
                     ...(route?.entities || {})
                 };
-                // Vendor-switch guard — if the question mentions a NEW supplier name
+                // Vendor-switch guard - if the question mentions a NEW supplier name
                 // (vendor_text changed) but the engine hasn't yet resolved supplier_id,
                 // clear the stale supplier_id from the previous vendor so it doesn't
                 // bleed into this execute context.
@@ -1819,7 +1819,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
                 this.maybeLogUnresolved(route, questionText, retailerId);
 
-                // Phase 12 — conversational enrichment. If the question is a
+                // Phase 12 - conversational enrichment. If the question is a
                 // follow-up like "add retail" / "and the EAN" / "with price
                 // history" (or the user is replying with a missing site_id
                 // after a previous prompt), pivot to ITM_FULL_ATTRIBUTES with
@@ -1833,7 +1833,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                 if (enrichmentOverride
                     && enrichmentOverride.bindings.include_retail === 'Y'
                     && !enrichmentOverride.entities.site_id) {
-                    // Retail requested but no store known yet — ask first.
+                    // Retail requested but no store known yet - ask first.
                     // Stash the owning skill_id so the next turn can force it
                     // regardless of what /route picks on a bare "7" reply.
                     this.promptForSiteIdBeforeEnrichment({
@@ -1863,7 +1863,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                         ? executeOverride.skill_id
                         : route?.selected_skill_id,
                     intent_type: route?.intent_type,
-                    // supplier_id is NOT carried from session context — the engine must
+                    // supplier_id is NOT carried from session context - the engine must
                     // re-resolve it from vendor_text via ENGINE_VENDOR_RESOLVE each time.
                     // Carrying it forward caused stale vendor codes to be used for follow-up
                     // questions about different vendors ("What about Midland?").
@@ -1876,7 +1876,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                         ? executeOverride.entities
                         : (() => {
                             // Merge session + route entities, but strip stale supplier_id
-                            // from session — ENGINE_VENDOR_RESOLVE resolves it fresh.
+                            // from session - ENGINE_VENDOR_RESOLVE resolves it fresh.
                             const merged: any = {
                                 ...(this.currentSessionContext.entities || {}),
                                 ...(route?.entities || {})
@@ -1892,7 +1892,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                     execPayload.template_code = executeOverride.template_code;
                 }
 
-                // Vendor disambiguation — when ENGINE_VENDOR_RESOLVE found multiple
+                // Vendor disambiguation - when ENGINE_VENDOR_RESOLVE found multiple
                 // candidates the engine sets requires_clarification=true.
                 // Two paths:
                 //   A) The user's question text already contains the supplier code or
@@ -1910,7 +1910,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                         questionText, route.candidate_options
                     );
                     if (selfResolvedId) {
-                        // Path A — inject supplier now; no stash needed.
+                        // Path A - inject supplier now; no stash needed.
                         // Also clear requires_clarification on the route object so
                         // handleExecuteResponse does not re-render the "Which one?"
                         // message after the supplier is already resolved.
@@ -1930,7 +1930,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                         route.requires_clarification = false;
                         this.pendingVendorClarification = null;
                     } else {
-                        // Path B — can't resolve from text; stash for the next reply
+                        // Path B - can't resolve from text; stash for the next reply
                         this.pendingVendorClarification = {
                             execPayload: { ...execPayload },
                             route,
@@ -1938,7 +1938,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                         };
                     }
                 } else {
-                    // Clean route (no clarification needed) — clear any stale stash
+                    // Clean route (no clarification needed) - clear any stale stash
                     this.pendingVendorClarification = null;
                 }
 
@@ -1962,7 +1962,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
                 this.conclusion = {
                     label: 'Routing failed (HTTP ' + (status || '???') + ')',
-                    detail: [serverMsg, serverHint].filter(Boolean).join(' — ')
+                    detail: [serverMsg, serverHint].filter(Boolean).join(' - ')
                         || 'No detail returned by /api/ai/engine/route.',
                     severity: 'danger'
                 };
@@ -2028,7 +2028,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         return this.gaugeCircumference * (1 - pct / 100);
     }
 
-    /** Color for the gauge based on confidence band — red / amber / green. */
+    /** Color for the gauge based on confidence band - red / amber / green. */
     get confidenceColor(): string {
         if (this.confidence > 80) { return '#10b981'; }
         if (this.confidence >= 50) { return '#f59e0b'; }
@@ -2069,7 +2069,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
     getOracleErrorFriendly(): string {
         return "I ran into a data issue while querying your GOLD database. " +
-               "This SQL template needs a fix — the issue has been noted.";
+               "This SQL template needs a fix - the issue has been noted.";
     }
 
     // ── Debug helpers ─────────────────────────────────────────────────────────
@@ -2118,7 +2118,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Phase 11 — routing diagnostics helpers.
+     * Phase 11 - routing diagnostics helpers.
      *
      * These power the "Engine diagnostics" card so designers can answer
      *   1. Why was THIS skill picked? (top-N candidates + score breakdown)
@@ -2360,7 +2360,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         }
     }
 
-    // ── Phase 12 — per-turn inline result helpers ─────────────────────────────
+    // ── Phase 12 - per-turn inline result helpers ─────────────────────────────
 
     /** True when this turn has tabular rows attached (and they aren't an Oracle error blob). */
     turnHasResults(t: any): boolean {
@@ -2371,7 +2371,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Phase 12 — return the human-readable enrichment labels for a turn.
+     * Phase 12 - return the human-readable enrichment labels for a turn.
      * Reads the include_* flags out of the captured bind_context. The labels
      * line up with the column groupings ITM_FULL_ATTRIBUTES adds.
      */
@@ -2571,7 +2571,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
             ];
         }
 
-        // Phase 10 + 12 — granular drill-downs across ITEM_MASTER_RETAIL templates.
+        // Phase 10 + 12 - granular drill-downs across ITEM_MASTER_RETAIL templates.
         // Chip text is authored with INTENT_PHRASE words ("retail price",
         // "all variants", "ean code", "price history") so the engine re-routes
         // the follow-up. For enrichment chips ("Add retail price", "Add EAN
@@ -2582,7 +2582,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         // `currentSessionContext`, so the user doesn't need to re-type the LU.
         if (skill.includes('ITEM_MASTER_RETAIL') || skill === 'ITEM_RETAIL') {
             // Once the user is looking at a card, enrichment chips win over
-            // "show a different table" chips — they keep the consolidated view.
+            // "show a different table" chips - they keep the consolidated view.
             if (template === 'ITM_ARTICLE_HEADER') {
                 return ['Add reference to order', 'Add retail price', 'Add EAN codes', 'Add price history'];
             }
@@ -2595,7 +2595,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                 if (bindings.include_retail !== 'Y')    { chips.push('Add retail price'); }
                 if (bindings.include_ean !== 'Y')        { chips.push('Add EAN codes'); }
                 if (bindings.include_history !== 'Y')    { chips.push('Add price history'); }
-                // Always offer the full audit table as an escape hatch — that
+                // Always offer the full audit table as an escape hatch - that
                 // one is fundamentally M:N per variant and renders as its own
                 // table rather than a card column.
                 chips.push('Show full price history');
@@ -2673,7 +2673,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         ];
     }
 
-    /** Index of the most recent assistant turn — used to scope the chips. */
+    /** Index of the most recent assistant turn - used to scope the chips. */
     get lastAssistantTurnIndex(): number {
         for (let i = this.chatTurns.length - 1; i >= 0; i -= 1) {
             if (this.chatTurns[i]?.role === 'assistant') { return i; }
@@ -2681,7 +2681,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         return -1;
     }
 
-    /** Click on a suggestion chip — sends the chip as a follow-up question. */
+    /** Click on a suggestion chip - sends the chip as a follow-up question. */
     askFollowUp(text: string): void {
         if (this.running || !text || !String(text).trim()) { return; }
         if (!this.selectedRetailer?.RETAILER_ID) {
@@ -2733,11 +2733,11 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
                     severity: thumb === 'up' ? 'success' : 'info',
                     summary: 'Feedback recorded',
                     detail: thumb === 'up'
-                        ? 'Thanks — logged as a positive answer.'
-                        : 'Thanks — logged so the team can improve this skill.'
+                        ? 'Thanks - logged as a positive answer.'
+                        : 'Thanks - logged so the team can improve this skill.'
                 });
 
-                // Phase 4a — a thumb-down also flags this question for the
+                // Phase 4a - a thumb-down also flags this question for the
                 // "Pending phrasings" admin queue so vocabulary can be tuned.
                 if (thumb === 'down' && this.routeResult) {
                     this.logUnresolved(this.routeResult, payload.question_text,
@@ -2756,7 +2756,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Phase 5 — re-run the previous question forcing the engine to use the
+     * Phase 5 - re-run the previous question forcing the engine to use the
      * skill the analyst clicked from the alternative chips. The same retailer
      * + question text are reused; the engine returns route + execute as
      * usual but with `preferred_skill_id` overriding the scorer.
@@ -2798,7 +2798,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Phase 4a — when /route returns a low-confidence answer, drop the
+     * Phase 4a - when /route returns a low-confidence answer, drop the
      * question into AI_ENGINE_UNRESOLVED so an admin can promote it from the
      * Skill Studio "Pending phrasings" screen.
      */
@@ -2837,7 +2837,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     exportConversation(): void {
         if (!this.chatTurns.length) { return; }
         const lines: string[] = [
-            'AI Assistant — Session Export',
+            'AI Assistant - Session Export',
             `Retailer: ${this.selectedRetailer?.RETAILER_NAME || this.selectedRetailer?.RETAILER_ID || '-'}`,
             `Date: ${new Date().toLocaleString()}`,
             '─'.repeat(60)
@@ -2867,7 +2867,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         });
     }
 
-    // ── ADJUST — Active context editor ────────────────────────────────────────
+    // ── ADJUST - Active context editor ────────────────────────────────────────
 
     hasContextEntities(): boolean {
         const e = this.currentSessionContext?.entities;
@@ -2924,7 +2924,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         this.contextAddValue = '';
     }
 
-    // ── LEARN — teach correct skill after thumb-down ──────────────────────────
+    // ── LEARN - teach correct skill after thumb-down ──────────────────────────
 
     submitTeachSkill(turn: any, idx: number): void {
         const skill = this.thumbDownTeachSkill[idx];
@@ -2962,7 +2962,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
         });
     }
 
-    // ── EXTEND — designer panel visibility ───────────────────────────────────
+    // ── EXTEND - designer panel visibility ───────────────────────────────────
 
     /** Show the designer panel when SQL templates are missing (requestedSql) OR when
      *  the engine matched no skill at all (low confidence + no selected skill). */

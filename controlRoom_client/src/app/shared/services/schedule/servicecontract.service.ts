@@ -190,8 +190,6 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
          let options = new HttpHeaders();
          this.params= new HttpParams();
          this.params = this.params.set('PARAM', vendorCode);
-         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
          return this.http.get(this.request, this.params, this.options).pipe(map(response => {
          //return this.http.getMock('assets/data/schedule.json', this.params, this.options).pipe(map(response => {
@@ -418,8 +416,6 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
      this.params= new HttpParams();
      let dateNow = new Date();
      
-     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
      headersSearch = headersSearch.set('ENV_COMMAND', //'ls -lrt');
          // Initialization
          this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
@@ -453,8 +449,6 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
      for (let i =0; i < schedule.sites.length; i++) {
          this.params = this.params.append('PARAM', schedule.sites[i].code);
      }
-     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
      //console.log('Parameters delete: ' + JSON.stringify(this.params));
      return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
@@ -482,8 +476,6 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
      for (let i =0; i < schedule.sites.length; i++) {
          this.params = this.params.append('PARAM', schedule.sites[i].code);
      }
-     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
      //console.log('Parameters delete: ' + JSON.stringify(this.params));
      return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {

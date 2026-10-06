@@ -1,8 +1,18 @@
-<nav class="sidebar summer-sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
+<nav class="sidebar fall-sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
     *ngIf="_userService.userInfo" style="padding-top:1%">
+        <button type="button"
+                class="fall-sidebar-toggle"
+                (click)="toggleCollapsed()"
+                [attr.aria-expanded]="!collapsed"
+                [attr.aria-label]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+                [title]="collapsed ? 'Expand menu' : 'Collapse menu'">
+            <i class="fas" [ngClass]="collapsed ? 'fa-angle-double-right' : 'fa-angle-double-left'"></i>
+            <span class="menu-label">{{ collapsed ? 'Expand' : 'Collapse' }}</span>
+        </button>
+
         <ul class="list-group">
         <a routerLink="/dashboard" routerLinkActive="router-link-active" class="list-group-item">
-            <i class="fas fa-tachometer-alt"></i>&nbsp; Dashboard
+            <i class="fas fa-tachometer-alt"></i><span class="menu-label">&nbsp;Dashboard</span>
         </a>
 
         <ng-container *ngIf="!_userService.userInfo.aiMenuMode">
@@ -15,14 +25,14 @@
                 (expand)="addExpandClass($event)"></app-sidebar-menu>
         </ng-container>
 
-        <li *ngIf="menuAccess.loadFailed" class="p-3 text-muted small">
+        <li *ngIf="menuAccess.loadFailed" class="p-3 text-muted small menu-label">
             Menu catalog not loaded. Run <strong>35_menu_access_libquery.sql</strong> (DDL block if needed),
             log out, and log in again.
                         </li>
         </ul>
 </nav>
 
-<nav class="sidebar_admin summer-sidebar-admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
+<nav class="sidebar_admin fall-sidebar-admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
     *ngIf="_userService.userInfo">
     <ul class="list-group" *ngIf="_userService.userInfo.type == '1' && menuAccess.adminTree.length">
         <app-sidebar-menu [nodes]="menuAccess.adminTree" [showMenu]="showMenu"

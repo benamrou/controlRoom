@@ -72,7 +72,7 @@ export class AiContextLearningComponent implements OnInit {
 
     onRetailerChange(): void {
         if (!this.selectedRetailer) { return; }
-        // Normalise field name — Oracle may return RETAILER_ID uppercase
+        // Normalise field name - Oracle may return RETAILER_ID uppercase
         const rid = this.selectedRetailer.RETAILER_ID || this.selectedRetailer.retailer_id;
         if (!rid) { return; }
         this.selectedRetailer.RETAILER_ID = rid;
@@ -152,7 +152,7 @@ export class AiContextLearningComponent implements OnInit {
             next:  ()  => { this.sessionLoading = false; },
             error: (e) => {
                 this.sessionLoading = false;
-                console.error('[S03] startSession failed — QA log inserts will be rejected by FK', e);
+                console.error('[S03] startSession failed - QA log inserts will be rejected by FK', e);
                 this._msg.add({ severity: 'warn', summary: 'Session warning',
                     detail: 'Could not persist session to DB. Q&A will still work but answers may not be saved.' });
             }
@@ -165,7 +165,7 @@ export class AiContextLearningComponent implements OnInit {
         const prevRound = this.sessionRound;
         this.sessionRound++;
 
-        // Persist Q&A to DB — fire and forget
+        // Persist Q&A to DB - fire and forget
         this._svc.saveAnswer({
             session_id:    this.sessionId,
             retailer_id:   this.selectedRetailer.RETAILER_ID,
@@ -210,7 +210,7 @@ export class AiContextLearningComponent implements OnInit {
             next: () => {
                 this.sessionPhase = 'VALIDATE';
                 this.sessionLoading = false;
-                this.currentQuestion = 'Review this SQL — does it correctly represent ' +
+                this.currentQuestion = 'Review this SQL - does it correctly represent ' +
                     this.activeItem.DISPLAY_NAME + ' for your GOLD instance?';
             },
             error: () => { this.sessionLoading = false; }
@@ -300,9 +300,9 @@ export class AiContextLearningComponent implements OnInit {
     }
 
     getPriorityLabel(p: number): string {
-        if (p === 1) { return 'P1 — Required'; }
-        if (p === 2) { return 'P2 — Core'; }
-        return 'P3 — Enhanced';
+        if (p === 1) { return 'P1 - Required'; }
+        if (p === 2) { return 'P2 - Core'; }
+        return 'P3 - Enhanced';
     }
 
     getPrioritySeverity(p: number): string {
@@ -373,9 +373,9 @@ export class AiContextLearningComponent implements OnInit {
 
     domainOptions     = ['ITEM','STOCK','PROMOTION','SUPPLIER','SITE','MOVEMENT'];
     priorityOptions   = [
-        { label: '1 — Required', value: 1 },
-        { label: '2 — Core',     value: 2 },
-        { label: '3 — Enhanced', value: 3 }
+        { label: '1 - Required', value: 1 },
+        { label: '2 - Core',     value: 2 },
+        { label: '3 - Enhanced', value: 3 }
     ];
 
     toggleCatalogPanel(): void {

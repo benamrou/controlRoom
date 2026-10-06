@@ -77,12 +77,30 @@ export class ImportService{
         return this._http.postFile(this.baseUploadUrl, formData);
     }
 
-    addColumns(columnName: any, value: any) {
-        this.wb.sheets[0].worksheet.rows.map(function(item: any) {
-            item[columnName] = value; 
-        });
+    /** Replace in-memory workbook (used when user reselects a mass-load file). */
+    clearWorkbook() {
+        this.wb = new WorkBookJSON();
+    }
 
-        this.wb.sheets[0].worksheet.columns.push( {field: columnName, header:columnName});
+    /**
+     * Ensure a column exists on sheet 0 and set every row's value.
+     * Idempotent — reselecting a file must not push a duplicate COMMENTS column.
+     */
+    addColumns(columnName: any, value: any) {
+        if (!this.wb?.sheets?.length) {
+            return;
+        }
+        const sheet = this.wb.sheets[0].worksheet;
+        const name = String(columnName);
+        sheet.rows.forEach((item: any) => {
+            item[name] = value;
+        });
+        const exists = sheet.columns.some(
+            (col: any) => String(col.field).toUpperCase() === name.toUpperCase()
+        );
+        if (!exists) {
+            sheet.columns.push({ field: name, header: name });
+        }
     }
 
 
@@ -102,9 +120,7 @@ export class ImportService{
         this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
 
         headersSearch = headersSearch.set('QUERY_ID', this.request );
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('FILENAME', filename);
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         return this._http.post(this.request, this.params, headersSearch, json).pipe(map(response => {
                 let data = <any> response;
                 return data;
@@ -127,9 +143,7 @@ export class ImportService{
     this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
 
     headersSearch = headersSearch.set('QUERY_ID', this.request );
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
     headersSearch = headersSearch.set('FILENAME', filename);
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this._http.post(this.request, this.params, headersSearch, json).pipe(map(response => {
             let data = <any> response;
             return data;
@@ -187,6 +201,35 @@ export class ImportService{
         return '';
     }
 
+    /** Movement number (IMSNMVT) returned by STOCKLAYER_EXECUTE for pssti06p. */
+    static extractNmvt(data: unknown): string {
+        if (data == null) {
+            return '';
+        }
+        if (typeof data === 'string' || typeof data === 'number') {
+            return '';
+        }
+        if (Array.isArray(data)) {
+            if (!data.length) {
+                return '';
+            }
+            return ImportService.extractNmvt(data[0]);
+        }
+        if (typeof data === 'object') {
+            const row = data as Record<string, unknown>;
+            for (const key of ['NMVT', 'IMSNMVT', 'nmvt']) {
+                const col = row[key];
+                if (Array.isArray(col) && col.length && col[0] != null && String(col[0]).trim() !== '') {
+                    return String(col[0]).trim();
+                }
+                if (col != null && !Array.isArray(col) && String(col).trim() !== '') {
+                    return String(col).trim();
+                }
+            }
+        }
+        return '';
+    }
+
    execute (executionId: any) {
     //console.log('postFile',filename, startdate, trace, now, schedule_date, schedule_time, json )
     this.request = this.executeUploadJSONUrl;
@@ -196,11 +239,10 @@ export class ImportService{
     this.params = this.params.append('PARAM',executionId);
     this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
 
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this._http.get(this.request, this.params, headersSearch).pipe(map(response => {
             const planUserId = ImportService.extractExecutionPlanUserId(response);
-            return [{ RESULT: planUserId }];
+            const nmvt = ImportService.extractNmvt(response);
+            return [{ RESULT: planUserId, NMVT: nmvt }];
     }));
     
     }
@@ -226,6 +268,10 @@ export class ImportService{
         let pt33_18_ITEMADDRESS = 18;
         let pt33_19_PURCHASEORDERPUSH = 19;
         let pt33_20_STOCKLAYER = 20;
+        let pt33_21_ITEMENDUPC = 21; /* No Pro*C — package updates ARTCOCA directly */
+        let pt33_22_REFTOORDER = 22; /* INTARTASS close/reopen → psifa07p */
+        let pt33_23_NEWITEMPPG = 23; /* ARTENTLIST + ARTDETLIST direct insert — no Pro*C */
+        let pt33_24_LOADRETURN = 24; /* INTDETRET → psint41p class 10 + 0 */
 
 
         this.request = this.executeJobURL;
@@ -239,73 +285,113 @@ export class ImportService{
         if(this._userService.userInfo.mainEnvironment[0].debug == '1') {
             command = command + 'export GOLD_DEBUG=1; ';
         }
+        const planUser = ImportService.extractExecutionPlanUserId(
+            userID != null && typeof userID === 'object' ? userID : [{ RESULT: userID }]
+        );
+        const nmvt = ImportService.extractNmvt(
+            userID != null && typeof userID === 'object' ? userID : null
+        );
+        const planUserFlag = planUser ? (' -u' + planUser) : '';
+        if (!planUser) {
+            console.warn('executePlan: no execution-plan user id from MAS0000002 (-u flag omitted)');
+        }
+        const dateNowStr = this.datePipe.transform(dateNow, 'dd/MM/yy');
+        const datePassedStr = this.datePipe.transform(datePassed, 'dd/MM/yy');
+        const envLang = this._userService.userInfo.envDefaultLanguage;
+        let dualJobWithPlanUser = false;
+
         switch (toolId)  {
             case pt33_1_MERCHHIERARCHY: /* Item Merchandise change - psifa05p */
                 // Batch to execute
-                command = command + 'psifa05p psifa05p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                command = command + 'psifa05p psifa05p $USERID ' + dateNowStr + ' 1 ';
                 break;
             case pt33_5_ITEMSVATTRIBUTE: /* Item/SV attribute - psifa122p */
-                command = command + 'psifa122p psifa122p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                command = command + 'psifa122p psifa122p $USERID ' + dateNowStr + ' 1 ';
                 break;
             case pt33_3_ITEMATTRIBUTE: /* Item attribute - psifa55p */
-                command = command + 'psifa55p psifa55p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                command = command + 'psifa55p psifa55p $USERID ' + dateNowStr + ' 1 ';
                 break;
             case pt33_16_ITEMATTRIBUTEPERIOD: /* Item attribute - psifa55p */
-                command = command + 'psifa55p psifa55p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                command = command + 'psifa55p psifa55p $USERID ' + dateNowStr + ' 1 ';
                 break;
             case pt33_4_ITEMCATMANAGER: /* Item - Category Manager Package update */
                 break;
             case pt33_6_ITEMSVINFO: /* Item SV Info - psifa166p */ 
-                command = command + 'psifa166p psifa166p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                command = command + 'psifa166p psifa166p $USERID ' + dateNowStr + ' 1 ';
                 break;
             case pt33_7_SKUDIMENSION: /* Item - SKU dimension Package update */
                 break;
             case pt33_8_ITEMCHARACTERISTIC: /* Item Characteristic */ 
-                command = command + 'psifa128p psifa128p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ';
+                command = command + 'psifa128p psifa128p $USERID ' + dateNowStr + ' ';
                 break;
             case pt33_9_ITEMVARIABLEWEIGHT: /* Variable weght */ 
-                command = command + 'psifa41p psifa41p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+                command = command + 'psifa41p psifa41p $USERID ' + dateNowStr + ' 1 ';
                 break;
             case pt33_10_ITEMLOGISTICCODE: /* Logisitc code */ 
-                command = command + 'psifa50p psifa50p $USERID ' + this.datePipe.transform(datePassed, 'dd/MM/yy') + ' 1 ';
+                command = command + 'psifa50p psifa50p $USERID ' + datePassedStr + ' 1 ';
                 break;
             case pt33_11_ITEMIMAGES: /* Item images */ 
-                command = command + 'psifa125p psifa125p $USERID ' + this.datePipe.transform(datePassed, 'dd/MM/yy') + ' 1 ';
+                command = command + 'psifa125p psifa125p $USERID ' + datePassedStr + ' 1 ';
                 break;
             case pt33_12_ITEMRETAIL: /* Item retail */ 
-                command = command + 'psifa40p psifa40p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 -1 ';
+                command = command + 'psifa40p psifa40p $USERID ' + dateNowStr + ' 1 -1 ';
                 break;
             case pt33_15_PURCHASEORDER: /* Purchase order */ 
-                command = command + 'psint05p psint05p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' -1 -1 ';
+                command = command + 'psint05p psint05p $USERID ' + dateNowStr + ' -1 -1 ';
                 break;
             case pt33_18_ITEMADDRESS: /* Purchase order */ 
-                command = command + 'psifa34p psifa34p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' ';
+                command = command + 'psifa34p psifa34p $USERID ' + dateNowStr + ' ';
                 break;
             case pt33_19_PURCHASEORDERPUSH: /* Purchase order */ 
-                command = command + 'psint05p psint05p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' -1 -1 ';
+                command = command + 'psint05p psint05p $USERID ' + dateNowStr + ' -1 -1 ';
                 break;
-            case pt33_20_STOCKLAYER: /* Purchase order */ 
-                command = command + 'psitf03p psitf03p $USERID ' + this.datePipe.transform(dateNow, 'dd/MM/yy') + ' 1 ';
+            case pt33_20_STOCKLAYER: /* Stock layer init in cost — ITFSTOCK + INTMVTSTO */
+                /* Each job needs its own args (common suffix only covers one job) */
+                dualJobWithPlanUser = true;
+                command = command +
+                    'psitf03p psitf03p $USERID ' + dateNowStr + ' 1' + planUserFlag + ' ' + envLang + ' 1;';
+                if (nmvt) {
+                    /* NMVT = "class:site:nmvt,…" — pssti06p prog u/p class site sequence lang num_log
+                       class = SITDGENE.SOCCMAG (0=WH, 10=store) */
+                    nmvt.split(',').map(p => p.trim()).filter(p => p.split(':').length >= 3).forEach(p => {
+                        const parts = p.split(':');
+                        const klass = parts[0];
+                        const site = parts[1];
+                        const n = parts[2];
+                        if (klass && site && n) {
+                            command = command +
+                                ' pssti06p pssti06p $USERID ' + klass + ' ' + site + ' ' + n + ' HN 1;';
+                        }
+                    });
+                }
+                break;
+            case pt33_21_ITEMENDUPC: /* Item end UPC — package-only */
+                break;
+            case pt33_22_REFTOORDER: /* Reference to order — INTARTASS / orderable assortment */
+                command = command + 'psifa07p psifa07p $USERID ' + dateNowStr + ' 1 ';
+                break;
+            case pt33_23_NEWITEMPPG: /* New Item PPG — package direct ARTENTLIST/ARTDETLIST */
+                break;
+            case pt33_24_LOADRETURN: /* Load for return — INTDETRET → psint41p class 10 then 0 */
+                dualJobWithPlanUser = true;
+                command = command +
+                    'psint41p psint41p $USERID ' + dateNowStr + ' 10 -1' + planUserFlag + ' ' + envLang + ' 1; ' +
+                    'psint41p psint41p $USERID ' + dateNowStr + ' 0 -1' + planUserFlag + ' ' + envLang + ' 1;';
                 break;
             default:
                 console.log ('Unknown mass tool id : ', toolId);
         }
-        const planUser = ImportService.extractExecutionPlanUserId(
-            userID != null && typeof userID === 'object' ? userID : [{ RESULT: userID }]
-        );
-        if (planUser) {
-            command = command + ' -u' + planUser;
-        } else {
-            console.warn('executePlan: no execution-plan user id from MAS0000002 (-u flag omitted)');
-        }
 
         console.log('userID', userID, 'planUser', planUser);
 
-        command = command + ' ' + this._userService.userInfo.envDefaultLanguage + ' 1;'
+        if (!dualJobWithPlanUser) {
+            if (planUser) {
+                command = command + planUserFlag;
+            }
+            command = command + ' ' + envLang + ' 1;';
+        }
 
         console.log(' command :', command)
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         headersSearch = headersSearch.set('ENV_COMMAND', command);
 
         return this._http.execute(this.request, this.params, headersSearch, command).pipe(map(response => {
@@ -325,9 +411,7 @@ export class ImportService{
         this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
 
         headersSearch = headersSearch.set('QUERY_ID', this.request );
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         headersSearch = headersSearch.set('FILENAME', filename);
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         return this._http.post(this.request, this.params, headersSearch, json).pipe(
             tap(response => console.log('Backend response received')),
             catchError(error => {
@@ -346,8 +430,6 @@ getTemplate(templateID: any) {
     this.params = this.params.append('PARAM', templateID);
 
     headersSearch = headersSearch.set('QUERY_ID', this.request);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
     return this._http.getFile(this.request, this.params, headersSearch).pipe(
         map(response => {
@@ -393,8 +475,6 @@ getTemplate(templateID: any) {
             this.params = this.params.append('PARAM', loadDate);
             this.params = this.params.append('PARAM', executionDate);
             this.params = this.params.append('PARAM', futureOnly);
-            headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-            headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
       
             //console.log('Parameters delete: ' + JSON.stringify(this.params));
             return this._http.get(this.request, this.params, headersSearch).pipe(map(response => {
@@ -450,8 +530,6 @@ getTemplate(templateID: any) {
         this.params = this.params.append('PARAM',schedule_date);
         this.params = this.params.append('PARAM',status);
         this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
   
         return this._http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
@@ -466,8 +544,6 @@ getTemplate(templateID: any) {
         this.params = this.params.append('PARAM',jsonid);
         this.params = this.params.append('PARAM',localStorage.getItem('ICRUser')!);
     
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         return this._http.get(this.request, this.params, headersSearch).pipe(map(response => {
                 let data = <any> response;
                 return data;

@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <!-- Status chips: plain p-button classes — avoid pButton + p-badge inside one host (PrimeNG 14 conflicts / CD churn). -->
+    <!-- Status chips: plain p-button classes - avoid pButton + p-badge inside one host (PrimeNG 14 conflicts / CD churn). -->
     <div class="ai-skill-status-bar">
         <span class="ai-skill-status-label">{{ 'S56.BYSTAT' | lbl:'By status:' }}</span>
         <button *ngFor="let sc of statusChips; trackBy: trackStatusChip"
@@ -110,7 +110,7 @@
                                [severity]="domainSeverity[skill.domain] || 'secondary'"></p-tag>
                         <span *ngIf="skill.version" class="ai-skill-ver">v{{ skill.version }}</span>
                     </div>
-                    <p class="ai-skill-desc">{{ skill.description || '—' }}</p>
+                    <p class="ai-skill-desc">{{ skill.description || '-' }}</p>
                     <div class="ai-skill-card-meta">
                         <span *ngIf="skill.updatedAt"><i class="fas fa-clock"></i> {{ skill.updatedAt }}</span>
                         <span *ngIf="skill.retailerId"><i class="fas fa-tag"></i> {{ skill.retailerId }}</span>
@@ -144,6 +144,6 @@
     </p-dataView>
 
     <p *ngIf="!isDesigner && !isAdmin" class="ai-skill-readonly-hint">
-        <i class="fas fa-info-circle"></i> {{ 'S56.READONLY' | lbl:'Read-only — designer or admin role required to create or change skills.' }}
+        <i class="fas fa-info-circle"></i> {{ 'S56.READONLY' | lbl:'Read-only - designer or admin role required to create or change skills.' }}
     </p>
 </div>

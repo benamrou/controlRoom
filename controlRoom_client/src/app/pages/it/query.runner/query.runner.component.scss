@@ -374,7 +374,7 @@
     }
 }
 
-// ── SQL Editor Card — outside .qrunner-container so ::ng-deep reaches global ──
+// ── SQL Editor Card - outside .qrunner-container so ::ng-deep reaches global ──
 ::ng-deep .qrunner-container .sql-editor-card {
     border: 1px solid var(--surface-300);
     border-radius: 8px;

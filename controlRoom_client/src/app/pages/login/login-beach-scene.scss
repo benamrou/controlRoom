@@ -1,5 +1,5 @@
 // Beach Crusin'–inspired scene (codepen.io/a-trost/pen/VwLYJpR)
-// Fence, rocks, surfboards, rolling ball — palms stay as emoji overlay.
+// Fence, rocks, surfboards, rolling ball - palms stay as emoji overlay.
 
 $beach-ocean:       #58ac9d;
 $beach-ocean-deep:  #3d8f82;
@@ -115,7 +115,7 @@ $beach-wood-dark:   #6a503c;
     }
 
     &__group {
-        // Flight transform applied to parent .beach-bird — keep group untransformed
+        // Flight transform applied to parent .beach-bird - keep group untransformed
     }
 
     &__back-wing,
@@ -169,7 +169,7 @@ $beach-wood-dark:   #6a503c;
     overflow: visible;
 }
 
-// Montoro "gassy shark" (codepen.io/alvaromontoro/pen/zYKbRgP) — scaled for a small patrol zone
+// Montoro "gassy shark" (codepen.io/alvaromontoro/pen/zYKbRgP) - scaled for a small patrol zone
 $beach-shark-gray: #7a8a92;
 
 @keyframes beach-shark-biting {
@@ -214,7 +214,7 @@ $beach-shark-gray: #7a8a92;
     }
 }
 
-// Montoro-inspired SVG shark — fins/tail are separate paths (not clipped by body bite)
+// Montoro-inspired SVG shark - fins/tail are separate paths (not clipped by body bite)
 .beach-shark-montoro {
     position: absolute;
     bottom: 4%;
@@ -301,7 +301,7 @@ $beach-shark-gray: #7a8a92;
     }
 
     &__hull-body {
-        // Single curved hull — stripe and cabin sit on deck (y 72)
+        // Single curved hull - stripe and cabin sit on deck (y 72)
     }
 
     &__rig {
@@ -642,7 +642,7 @@ $beach-shark-gray: #7a8a92;
     33% { transform: translateY(0) scaleY(0.95); animation-timing-function: cubic-bezier(0.22, 0.55, 0.36, 1); }
     37.5% { transform: translateY(-1.5px) scaleY(1); animation-timing-function: cubic-bezier(0.55, 0.08, 0.9, 0.45); }
     39.5% { transform: translateY(0) scaleY(0.96); }
-    // Rolling phase — stays on sand, subtle squash as it rolls
+    // Rolling phase - stays on sand, subtle squash as it rolls
     42%, 100% { transform: translateY(0) scaleY(0.97); }
 }
 
@@ -663,7 +663,7 @@ $beach-shark-gray: #7a8a92;
     }
 }
 
-// ── Palm trees (emoji — user preference) ───────────────────────
+// ── Palm trees (emoji - user preference) ───────────────────────
 .beach-palms {
     position: absolute;
     left: 0;

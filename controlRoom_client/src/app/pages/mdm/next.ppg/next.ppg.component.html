@@ -49,12 +49,12 @@
           </div>
         </div>
     </div>
-    <div class="row">
-      <p-tabView [activeIndex]="activeDomain" [style]="{'width': '98%', 'position': 'absolute', 'left':'1em', 'border': '1px solid darkgray' }">
+    <div class="row next-ppg-tabs">
+      <p-tabView [activeIndex]="activeDomain" [style]="{'width': '98%', 'margin-left':'1em', 'border': '1px solid darkgray' }">
         <ng-container *ngFor="let category of AllCategories; let catIndex=index">
-          <p-tabPanel  [headerStyle]="{'width': '15%', 'background-color':'dimgrey', 'line-height':'0px'}">
+          <p-tabPanel>
               <ng-template pTemplate = "header">
-                <span style="color:white">{{category.entryDesc}}</span>
+                <span class="next-ppg-tab-label">{{category.entryDesc}}</span>
                 <span class="badge_round">
                   {{category.count}}
                 </span>

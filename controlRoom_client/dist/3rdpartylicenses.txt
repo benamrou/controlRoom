@@ -398,9 +398,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   [1]: http://eligrey.com
 
 
-gsap
-Standard 'no charge' license: https://gsap.com/standard-license. Club GSAP members get more: https://gsap.com/licensing/. Why GreenSock doesn't employ an MIT license: https://gsap.com/why-license/
-
 hammerjs
 MIT
 The MIT License (MIT)

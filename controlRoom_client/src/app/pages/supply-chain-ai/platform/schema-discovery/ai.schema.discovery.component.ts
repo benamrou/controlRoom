@@ -353,7 +353,7 @@ export class AiSchemaDiscoveryComponent implements OnInit, OnDestroy {
     }
 
     formatNumber(n: number): string {
-        return n ? n.toLocaleString() : '—';
+        return n ? n.toLocaleString() : '-';
     }
 
     clearFilters(): void {

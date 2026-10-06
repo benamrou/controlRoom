@@ -25,6 +25,8 @@ Each row is one sidebar entry under **Mass-change box**. Workflow is the same on
 | PO push | `/purchaseorderpush` | Push PO data to downstream | ICR_TEMPLATE017 | 19 |
 | Stock layer | `/stocklayer` | Stock layer adjustments | ICR_TEMPLATE018 | 20 |
 | Papyrus UPC | `/itemendupc` | End / cleanup UPC (Papyrus) | ICR_TEMPLATE020 | 21 |
+| Reference to order | `/referencetoorder` | Close/reopen orderable assortment via `INTARTASS` (`IASREFC` / `ARAREFC`) by vendor / item / LV; batch `psifa07p` | ICR_TEMPLATE021 | 22 |
+| New Item PPG | `/newitemppg` | Create PPG list + attach items via direct `ARTENTLIST`/`ARTDETLIST`; `PPG_ID` = list code, `PPG_NAME` = description | ICR_TEMPLATE022 | 23 |
 
 ### Not in sidebar (code only)
 

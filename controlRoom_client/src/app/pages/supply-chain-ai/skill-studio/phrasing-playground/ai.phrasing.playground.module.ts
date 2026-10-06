@@ -18,7 +18,7 @@ import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header
 import { I18nModule } from "src/app/shared/pipes/i18n.module";
 
 /**
- * Phase 6 — Phrasing Playground (Skill Studio).  Same eager-routing pattern
+ * Phase 6 - Phrasing Playground (Skill Studio).  Same eager-routing pattern
  * as Pending Phrasings / Skill Library. Exposed via:
  *   /ai/skill-studio/playground
  *

@@ -81,8 +81,6 @@ export class SearchService {
         body.values = searchElement;
 
         headersSearch = headersSearch.set('QUERY_ID', this.baseItemQueryID);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
                 let data = <any> response;
                 for(let i=0; i < data.length; i ++) {
@@ -107,8 +105,6 @@ export class SearchService {
             }
         }
         this.params = this.params.set('PARAM', paramsConcatenate);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
   
         return this.http.get(request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
@@ -129,8 +125,6 @@ export class SearchService {
         this.params= new HttpParams();
 
         this.params = this.params.set('PARAM', itemCinr);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
   
         return this.http.get(request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
@@ -150,8 +144,6 @@ export class SearchService {
         this.params= new HttpParams();
 
         this.params = this.params.set('PARAM', itemCinr);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
@@ -171,8 +163,6 @@ export class SearchService {
     this.params= new HttpParams();
 
     this.params = this.params.set('PARAM', itemCinr);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
     return this.http.get(request, this.params, this.options).pipe(map(response => {
             let data = <any> response;
@@ -193,8 +183,6 @@ export class SearchService {
         this.params= new HttpParams();
 
         this.params = this.params.set('PARAM', itemCinr);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
@@ -214,8 +202,6 @@ export class SearchService {
     this.params= new HttpParams();
 
     this.params = this.params.set('PARAM', itemCinr);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
     return this.http.get(request, this.params, this.options).pipe(map(response => {
             let data = <any> response;
@@ -235,8 +221,6 @@ export class SearchService {
         this.params= new HttpParams();
 
         this.params = this.params.set('PARAM', itemCinr);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
@@ -257,8 +241,6 @@ export class SearchService {
         console.log('getSearchResultSaleVariant:', this.baseSearchItemSaleVariantUrl)
 
         this.params = this.params.set('PARAM', itemCinr);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
@@ -278,8 +260,6 @@ export class SearchService {
         this.params= new HttpParams();
 
         this.params = this.params.set('PARAM', itemCinr);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;
@@ -299,8 +279,6 @@ export class SearchService {
         this.params= new HttpParams();
 
         this.params = this.params.set('PARAM', itemCinr);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(request, this.params, this.options).pipe(map(response => {
                 let data = <any> response;

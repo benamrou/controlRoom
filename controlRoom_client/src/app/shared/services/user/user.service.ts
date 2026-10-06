@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {HttpService} from '../request/html.service';
 import { map } from 'rxjs/operators';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, Subject } from 'rxjs';
 
 
 export class User {
@@ -46,6 +47,9 @@ export class User {
     /********************************************************/
     public screenInfo;
  }
+/** Central (domain 1) vs stock (domain 2) ENVDBLINK tier for DATABASE_SID. */
+export type DatabaseSidTier = 'central' | 'stock';
+
  export class Environment {
     public level: string; 
     public id: string;
@@ -88,27 +92,31 @@ export class User {
  
    public userInfo : User;
 
-   public ICRAuthToken: string;
-   public ICRUser: string;
-   public ICRSID: string;
-   public ICRLanguage: string;
- 
-   /** Gathered data @login */
-   public network; // Whole network location
-   public networkTree; // Whole network location as TreeData
-   public structure; // Whole merchandise structure
-   public structureTree; // Whole merchandise structure as TreeData
- 
-   private baseUserUrl: string = '/api/user/';
-   private baseEnvironmentUrl: string = '/api/environment/';
-   private baseUserProfileUrl: string = '/api/userprofile/';
-   
-   private request: string;
-   private params: HttpParams;
-   private options: HttpHeaders;
- 
-   constructor(private http:HttpService, private router:Router) { 
-   }
+  public ICRAuthToken: string;
+  public ICRUser: string;
+  public ICRSID: string;
+  public ICRLanguage: string;
+
+  /** Gathered data @login */
+  public network; // Whole network location
+  public networkTree; // Whole network location as TreeData
+  public structure; // Whole merchandise structure
+  public structureTree; // Whole merchandise structure as TreeData
+
+  /** Fires after top-bar environment switch (DATABASE_SID / cookies updated). */
+  private readonly _environmentChanged$ = new Subject<string>();
+  readonly environmentChanged$: Observable<string> = this._environmentChanged$.asObservable();
+
+  private baseUserUrl: string = '/api/user/';
+  private baseEnvironmentUrl: string = '/api/environment/';
+  private baseUserProfileUrl: string = '/api/userprofile/';
+  
+  private request: string;
+  private params: HttpParams;
+  private options: HttpHeaders;
+
+  constructor(private http:HttpService, private router:Router) { 
+  }
  
      /**
       * This function retrieves the User information.
@@ -173,9 +181,10 @@ export class User {
      getEnvironment(username: string) {
          //console.log('***** getEnvironment - User -  ****');
          // Reinitialize data
-         let idMainEnv;
+         let defaultEnvType: string | undefined;
          this.userInfo.mainEnvironment =  [];
          this.userInfo.envUserAccess = [];
+         this.userInfo.envCorporateAccess = [];
          this.userInfo.sid = [];
  
          this.request = this.baseEnvironmentUrl;
@@ -237,71 +246,29 @@ export class User {
                      if (env.level === 'CORPORATE') { this.userInfo.envCorporateAccess.push(env); }
  
                      if (env.default === 1) {
-                        console.log('MAIN CENTRAL ',env);
-                        idMainEnv = i;
-                        // Set cookies for environment access information
-                        this.setCookiesEnvironment(env);
-
-                        this.userInfo.mainEnvironment.push(env);
+                        console.log('MAIN CENTRAL ', env);
+                        defaultEnvType = env.type;
                         this.userInfo.envDefaultLanguage = env.defaultLanguage;
-                        if ( ! this.userInfo.sid.includes(env.dbLink)) {
-                            this.userInfo.sid.push(env.dbLink);
-
-                        }
                      }
  
                  }
 
-                 /* Set cookies STOCK main */
-                 console.log('idMainEnv ',idMainEnv, data[idMainEnv]);
-                 for(let i=0; i < data.length; i ++) {
-                    let env = new Environment();
-                     env.level = data[i].LEVEL;
-                     env.id = data[i].ENVID;
-                     env.code = data[i].ENVCODE;
-                     env.type = data[i].ENVTYPE;
-                     env.status = data[i].ENVACTIVE;
-                     env.shortDescription = data[i].ENVSDESC;
-                     env.longDescription = data[i].ENVLDESC;
-                     env.dbType = data[i].ENVDBTYPE;
-                     env.ipAddress = data[i].ENVIP;
-                     env.portNumber = data[i].ENVPORT;
-                     env.connectionID = data[i].ENVUSER;
-                     env.connectionPassword = data[i].ENVPASSWORD;
-                     env.databaseSourceSID = data[i].ENVSOURCE;
-                     env.dbLink = data[i].ENVDBLINK;
-                     env.GOLDversion = data[i].ENVVERSION;
-                     env.default = data[i].ENVDEFAULT;
-                     env.defaultLanguage = data[i].ENVDEFLANG;
-                     env.initSH = data[i].ENVVARINITSH;
-                     env.titleColor = data[i].ENVTITLECOLOR;
-                     env.title = data[i].ENVTITLE;
-                     env.picture = data[i].CORPPIC;
-                     env.domain = data[i].ENVDOMAIN != null ? String(data[i].ENVDOMAIN) : '';
-                     env.restartcentral = data[i].ENVCENTRALRESTART;
-                     env.restartstock = data[i].ENVSTOCKRESTART;
-                     env.restartallstock = data[i].ENVALLSTOCKRESTART;
-                     env.restartmob = data[i].ENVMOBRESTART;
-                     env.restartgfa = data[i].ENVGFARESTART;
-                     env.restartgwvo = data[i].ENVGWVORESTART;
-                     env.restartgwr = data[i].ENVGWRRESTART;
-                     env.restartprint = data[i].ENVPRINTERRESTART;
-                     env.restartradio = data[i].ENVRADIORESTART;
-                     env.restartxml = data[i].ENVXMLRESTART;
-                     env.restartvocal = data[i].ENVVOCALRESTART;
-                     env.debug = data[i].ENVDEBUG;
-                    if (data[i].ENVTYPE == data[idMainEnv].ENVTYPE && data[i].ENVDOMAIN == 2) {
-                        console.log('MAIN STOCK ',data[i]);
-                        this.setCookiesEnvironment(env);
-                    }
-                }
-
+                 const restoredType = localStorage.getItem(UserService.LS_ENV_TYPE);
+                 let activeType = restoredType || defaultEnvType;
+                 if (activeType) {
+                     if (!this.applyEnvironmentType(activeType) && defaultEnvType && activeType !== defaultEnvType) {
+                         activeType = defaultEnvType;
+                         this.applyEnvironmentType(activeType);
+                     }
+                     if (this.databaseSid('central')) {
+                         if (!restoredType && defaultEnvType) {
+                             localStorage.setItem(UserService.LS_ENV_TYPE, defaultEnvType);
+                         }
+                     } else {
+                         console.warn('[UserService] getEnvironment: DATABASE_SID not set after apply', activeType);
+                     }
+                 }
                  console.log('ICRSID', this.userInfo);
-                 localStorage.setItem('ICRSID', this.userInfo.sid[0].toString());
-                 this.ICRSID = this.userInfo.sid[0].toString();
-                 this.applyDataLanguage(this.userInfo.envDefaultLanguage || 'us_US');
-                 
-                 //console.log('Env: ' + JSON.stringify (this.userInfo));
          }));
      }
  
@@ -311,45 +278,206 @@ export class User {
       * @method setMainEnvironmentUsingType
       * @param envID envrionment type  
       */
-     setMainEnvironment(envType: string) {
-         this.userInfo.mainEnvironment = [];
-         this.userInfo.sid = [];
+     /**
+      * Switch active GOLD environment by ENVTYPE (header dropdown).
+      * @returns false when no matching environment could be resolved (session unchanged).
+      */
+     setMainEnvironment(envType: string): boolean {
+         if (!this.userInfo) {
+             return false;
+         }
+         const snapshot = this.snapshotSessionState();
          this.unsetCookiesEnvironment();
+         if (!this.applyEnvironmentType(envType)) {
+             this.restoreSessionState(snapshot);
+             return false;
+         }
+         localStorage.setItem(UserService.LS_ENV_TYPE, String(envType));
+         this._environmentChanged$.next(String(envType));
+         return true;
+     }
 
-         const pool =
-             this.userInfo.envUserAccess.length > 0
-                 ? this.userInfo.envUserAccess
-                 : this.userInfo.envCorporateAccess;
+     /** Merged corporate + user pool — user grants override corporate for the same type × domain. */
+     environmentPool(): Environment[] {
+         const byKey = new Map<string, Environment>();
+         const key = (env: Environment) => `${env.type}|${env.domain}`;
+         for (const env of this.userInfo?.envCorporateAccess || []) {
+             if (env?.type) {
+                 byKey.set(key(env), env);
+             }
+         }
+         for (const env of this.userInfo?.envUserAccess || []) {
+             if (env?.type) {
+                 byKey.set(key(env), env);
+             }
+         }
+         return Array.from(byKey.values());
+     }
 
-         // Same as login: refresh batch SSH cookies for every tier on this ENVTYPE (central + stock + …).
+     /** Active ENVDBLINK — sid[0] central, sid[1] stock (domain 2). */
+     databaseSid(tier: DatabaseSidTier = 'central'): string {
+         const idx = tier === 'stock' ? 1 : 0;
+         const fromMemory = this.userInfo?.sid?.[idx];
+         if (fromMemory != null && String(fromMemory).trim() !== '') {
+             return String(fromMemory);
+         }
+         const stored = this.ICRSID || localStorage.getItem('ICRSID') || '';
+         const parts = UserService.splitSidHeader(stored);
+         if (parts.length) {
+             if (tier === 'stock' && parts.length === 1) {
+                 return parts[0];
+             }
+             return parts[idx] ?? parts[0] ?? '';
+         }
+         return '';
+     }
+
+     /** DATABASE_SID HTTP header — central + stock ENVDBLINKs for CALLQUERY (always two slots). */
+     databaseSidHeader(): string {
+         const central = this.databaseSid('central');
+         if (!central) {
+             return '';
+         }
+         const stock = this.databaseSid('stock') || central;
+         return `${central}, ${stock}`;
+     }
+
+     static splitSidHeader(value: string): string[] {
+         return String(value || '')
+             .split(',')
+             .map((s) => s.trim())
+             .filter(Boolean);
+     }
+
+     /** CORPENV.ENVDEFLANG for the active GOLD environment. */
+     dataLanguage(): string {
+         return UserService.resolveDataLanguage(this.userInfo);
+     }
+
+     /** Apply ENVTYPE: tier cookies, mainEnvironment=GOLD central (domain 1), sid[0]=LIBQUERY DATABASE_SID. */
+     private applyEnvironmentType(envType: string): boolean {
+         const pool = this.environmentPool();
+         let central: Environment | undefined;
+
          for (const env of pool) {
-             if (env.type === envType) {
-                 this.setCookiesEnvironment(env);
+             if (env.type !== envType) {
+                 continue;
+             }
+             this.setCookiesEnvironment(env);
+             if (String(env.domain) === '1') {
+                 central = central ?? env;
              }
          }
 
-         // Primary session = central (domain 1) — drives initSH, DATABASE_SID, and http.execute ENV_ID.
-         let primary: Environment | undefined;
-         for (const env of pool) {
-             if (env.type === envType && String(env.domain) === '1') {
-                 primary = env;
-                 break;
-             }
+         if (!central) {
+             central = pool.find((e) => e.type === envType);
          }
-         if (!primary) {
-             for (const env of pool) {
-                 if (env.type === envType) {
-                     primary = env;
-                     break;
+         if (!central) {
+             return false;
+         }
+
+         const querySidEnv = this.resolveQuerySidEnvironment(pool, envType, central);
+         if (!querySidEnv?.dbLink) {
+             return false;
+         }
+
+         this.userInfo.mainEnvironment = [central];
+         this.userInfo.sid = [];
+         this.userInfo.sid.push(querySidEnv.dbLink);
+         const stockEnv = this.resolveStockSidEnvironment(pool, envType);
+         this.userInfo.sid[1] = stockEnv?.dbLink || querySidEnv.dbLink;
+
+         this.applyDataLanguage(
+             querySidEnv.defaultLanguage || central.defaultLanguage || this.userInfo.envDefaultLanguage || 'us_US',
+         );
+         this.mirrorSessionToStorage();
+         return true;
+     }
+
+     /**
+      * LIBQUERY DATABASE_SID — legacy Heinens: ENVDEFAULT row, else CUSTOM@ link, else GOLD central.
+      * (e.g. HEINENS_CUSTOM_PROD for PICK000001 — not HEINENS_CEN_PPRD / HEINENS_CEN_PROD.)
+      */
+     private resolveQuerySidEnvironment(
+         pool: Environment[],
+         envType: string,
+         central: Environment,
+     ): Environment | undefined {
+         const forType = pool.filter((e) => e.type === envType);
+         const withDefault = forType.find((e) => Number(e.default) === 1 && e.dbLink);
+         if (withDefault) {
+             return withDefault;
+         }
+         const custom = forType.find((e) => /CUSTOM/i.test(String(e.dbLink || '')));
+         if (custom) {
+             return custom;
+         }
+         if (central?.dbLink) {
+             return central;
+         }
+         return forType.find((e) => e.dbLink);
+     }
+
+     /** Domain 2 / STK ENVDBLINK for the active ENVTYPE (e.g. HEINENS_STK_PROD). */
+     private resolveStockSidEnvironment(pool: Environment[], envType: string): Environment | undefined {
+         const domain2 = pool.filter((e) => e.type === envType && String(e.domain) === '2');
+         const fromDomain = domain2.find((e) => e.dbLink);
+         if (fromDomain) {
+             return fromDomain;
+         }
+         return pool
+             .filter((e) => e.type === envType)
+             .find((e) => /_STK_/i.test(String(e.dbLink || '')) || /STK/i.test(String(e.code || '')));
+     }
+
+     private mirrorSessionToStorage(): void {
+         const header = this.databaseSidHeader();
+         if (header) {
+             this.ICRSID = header;
+             localStorage.setItem('ICRSID', header);
+         }
+     }
+
+     private snapshotSessionState(): {
+         mainEnvironment: Environment[];
+         sid: String[];
+         icrSid: string;
+         icrLanguage: string;
+         envDefaultLanguage: string;
+     } {
+         return {
+             mainEnvironment: [...(this.userInfo?.mainEnvironment || [])],
+             sid: [...(this.userInfo?.sid || [])],
+             icrSid: this.ICRSID,
+             icrLanguage: this.ICRLanguage,
+             envDefaultLanguage: this.userInfo?.envDefaultLanguage,
+         };
+     }
+
+     private restoreSessionState(snapshot: ReturnType<UserService['snapshotSessionState']>): void {
+         if (!this.userInfo) {
+             return;
+         }
+         this.userInfo.mainEnvironment = snapshot.mainEnvironment;
+         this.userInfo.sid = snapshot.sid;
+         this.ICRSID = snapshot.icrSid;
+         this.ICRLanguage = snapshot.icrLanguage;
+         if (snapshot.envDefaultLanguage) {
+             this.userInfo.envDefaultLanguage = snapshot.envDefaultLanguage;
+         }
+         if (snapshot.icrSid) {
+             localStorage.setItem('ICRSID', snapshot.icrSid);
+         }
+         if (snapshot.icrLanguage) {
+             localStorage.setItem(UserService.LS_DATA_LANGUAGE, snapshot.icrLanguage);
+         }
+         const main = snapshot.mainEnvironment?.[0];
+         if (main?.type) {
+             for (const env of this.environmentPool()) {
+                 if (env.type === main.type) {
+                     this.setCookiesEnvironment(env);
                  }
              }
-         }
-         if (primary) {
-             this.userInfo.mainEnvironment.push(primary);
-             this.userInfo.sid.push(primary.dbLink);
-             this.ICRSID = String(primary.dbLink);
-             localStorage.setItem('ICRSID', this.ICRSID);
-             this.applyDataLanguage(primary.defaultLanguage || this.userInfo.envDefaultLanguage || 'us_US');
          }
      }
  
@@ -369,6 +497,8 @@ export class User {
      static readonly LS_UI_LANGUAGE = 'ICRUiLanguage';
      /** localStorage: job/data LANGUAGE header — CORPENV.ENVDEFLANG for active GOLD env. */
      static readonly LS_DATA_LANGUAGE = 'ICRLanguage';
+     /** localStorage: last selected header ENVTYPE — restored on login / F5. */
+     static readonly LS_ENV_TYPE = 'ICREnvType';
 
      /** UI language for labels/menus — never falls back to ENVDEFLANG. */
      static resolveUiLanguage(userInfo?: { language?: string } | null): string {

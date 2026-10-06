@@ -79,7 +79,7 @@ export class AiPhrasingPlaygroundComponent implements OnInit {
         "what items we are buying from unilever",
         "site 7 buyable assortment from lipari",
         "supplier UNILEVER reliability over 90 days",
-        // ── Phase 9 — Heinens / DSD jargon samples ──
+        // ── Phase 9 - Heinens / DSD jargon samples ──
         "do we still range items from lipari at store 7",
         "active dsd assortment from lipari for store 41",
         "scanback items from lipari 06966",
@@ -110,7 +110,7 @@ export class AiPhrasingPlaygroundComponent implements OnInit {
                 const rows = this.unwrap(data);
                 this.retailers = rows.map((r: any) => ({
                     id: String(r.RETAILER_ID || r.retailer_id),
-                    label: `${r.RETAILER_CODE || r.retailer_code || ''} — ${r.RETAILER_NAME || r.retailer_name || ''}`.trim()
+                    label: `${r.RETAILER_CODE || r.retailer_code || ''} - ${r.RETAILER_NAME || r.retailer_name || ''}`.trim()
                 })).filter((r: any) => r.id);
                 if (!this.selectedRetailerId && this.retailers.length) {
                     this.selectedRetailerId = this.retailers[0].id;
@@ -188,7 +188,7 @@ export class AiPhrasingPlaygroundComponent implements OnInit {
     }
 
     /**
-     * Phase 8 — keep only entity keys with a non-empty value, so the UI
+     * Phase 8 - keep only entity keys with a non-empty value, so the UI
      * doesn't render "vendor_text: null" rows when nothing was extracted.
      */
     extractedEntityKeys(): string[] {

@@ -18,7 +18,7 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { PageHeaderModule } from "src/app/shared/modules/page-header/page-header.module";
 import { I18nModule } from "src/app/shared/pipes/i18n.module";
 
-/** Same pattern as `AiRetailerSetupModule` — eager route in `AppRoutingModule`, no lazy `loadChildren`. */
+/** Same pattern as `AiRetailerSetupModule` - eager route in `AppRoutingModule`, no lazy `loadChildren`. */
 @NgModule({
     imports: [
         RouterModule, CommonModule, FormsModule,

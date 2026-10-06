@@ -515,7 +515,7 @@ export class AiDataHealthConfigComponent implements OnInit {
     }
   }
 
-  /** Search list may omit/truncate CLOB — reload by QUERYID like Query Library edit. */
+  /** Search list may omit/truncate CLOB - reload by QUERYID like Query Library edit. */
   private loadFullLibQuerySqlIfNeeded(catRow: LibQueryCatalogRow): void {
     const id = catRow.QUERYID;
     if (id === undefined || id === null || String(id).trim() === '') {

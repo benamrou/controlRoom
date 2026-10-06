@@ -44,12 +44,10 @@ export class WatchICRService {
         private _queryService: QueryService
     ) {}
 
-    /** Common QUERY_ID + DATABASE_SID + LANGUAGE header bundle. */
+    /** Common QUERY_ID header — DATABASE_SID and LANGUAGE are set by HttpService. */
     private headers(queryId: string): HttpHeaders {
         return new HttpHeaders()
-            .set('QUERY_ID',     queryId)
-            .set('DATABASE_SID', this._userService.userInfo.sid[0].toString())
-            .set('LANGUAGE',     this._userService.userInfo.envDefaultLanguage);
+            .set('QUERY_ID',     queryId);
     }
 
 

@@ -23,7 +23,7 @@
 
     <div class="ai-step-body">
 
-        <!-- ─── STEP 0 — Select GOLD environment ───────────────────────────────── -->
+        <!-- ─── STEP 0 - Select GOLD environment ───────────────────────────────── -->
         <div *ngIf="activeStep === 0" class="ai-step-panel">
 
             <div class="ai-step-header">
@@ -72,7 +72,7 @@
                     <div class="ai-env-card-row">
                         <span class="ai-card-label">DB link</span>
                         <span class="ai-card-value">
-                            <code>{{ selectedEnv.GOLD_DBLINK || selectedEnv.ENVDBLINK || '—' }}</code>
+                            <code>{{ selectedEnv.GOLD_DBLINK || selectedEnv.ENVDBLINK || '-' }}</code>
                             <p-tag *ngIf="selectedEnv.GOLD_DBLINK || selectedEnv.ENVDBLINK"
                                    value="Used for all @dblink references in SQL conditions"
                                    severity="info" styleClass="ai-card-note"></p-tag>
@@ -106,7 +106,7 @@
             </div>
         </div>
 
-        <!-- ─── STEP 1 — Retailer identity ────────────────────────────────────── -->
+        <!-- ─── STEP 1 - Retailer identity ────────────────────────────────────── -->
         <div *ngIf="activeStep === 1" class="ai-step-panel">
 
             <div class="ai-step-header">
@@ -124,7 +124,7 @@
                            placeholder="e.g. HNUCEN_PREPROD" maxlength="30" />
                     <small class="ai-hint">
                         <i class="fas fa-lock"></i>
-                        Permanent unique key — auto-filled from environment, max 30 characters.
+                        Permanent unique key - auto-filled from environment, max 30 characters.
                         Used as suffix in generated views: <code>V_GOLD_ACTIVE_ITEM_{{ retailerId || 'RETAILER_ID' }}</code>
                     </small>
                 </div>
@@ -143,7 +143,7 @@
             </div>
         </div>
 
-        <!-- ─── STEP 2 — Connection test ──────────────────────────────────────── -->
+        <!-- ─── STEP 2 - Connection test ──────────────────────────────────────── -->
         <div *ngIf="activeStep === 2" class="ai-step-panel">
 
             <div class="ai-step-header">
@@ -177,7 +177,7 @@
 
             <!-- Running -->
             <div *ngIf="testRunning" class="ai-test-running">
-                <p>Testing <strong>{{ selectedEnv?.GOLD_DBLINK || selectedEnv?.ENVDBLINK }}</strong> — querying core GOLD tables...</p>
+                <p>Testing <strong>{{ selectedEnv?.GOLD_DBLINK || selectedEnv?.ENVDBLINK }}</strong> - querying core GOLD tables...</p>
                 <p-progressBar mode="indeterminate" styleClass="ai-progress"></p-progressBar>
             </div>
 
@@ -191,7 +191,7 @@
 
                 <div *ngIf="testSuccess" class="ai-test-success-banner">
                     <i class="fas fa-check-circle"></i>
-                    {{ 'S53.TEST.OK' | lbl:'Connection verified — GOLD is reachable.' }}
+                    {{ 'S53.TEST.OK' | lbl:'Connection verified - GOLD is reachable.' }}
                 </div>
 
                 <div *ngIf="!testSuccess" class="ai-test-fail-banner">
@@ -206,7 +206,7 @@
             </div>
         </div>
 
-        <!-- ─── STEP 3 — Confirm & save ───────────────────────────────────────── -->
+        <!-- ─── STEP 3 - Confirm & save ───────────────────────────────────────── -->
         <div *ngIf="activeStep === 3" class="ai-step-panel">
 
             <div class="ai-step-header">
@@ -224,7 +224,7 @@
                     <div class="ai-confirm-card">
                         <div class="ai-confirm-card-label"><i class="fas fa-fingerprint"></i> Retailer ID</div>
                         <p class="ai-confirm-value">{{ retailerId }}</p>
-                        <small class="ai-hint">Permanent — cannot be changed after save</small>
+                        <small class="ai-hint">Permanent - cannot be changed after save</small>
                     </div>
                     <div class="ai-confirm-card">
                         <div class="ai-confirm-card-label"><i class="fas fa-building"></i> Retailer name</div>
@@ -248,7 +248,7 @@
                     <div class="ai-next-step-item">
                         <span class="ai-next-num">1</span>
                         <div>
-                            <strong>Context Learning (S03)</strong> — teach the AI engine how your GOLD instance defines
+                            <strong>Context Learning (S03)</strong> - teach the AI engine how your GOLD instance defines
                             active items, inactive items, stock quantity, promotions, and POS sales.
                             All 5 P1 items must be locked before views can be generated.
                         </div>
@@ -256,14 +256,14 @@
                     <div class="ai-next-step-item">
                         <span class="ai-next-num">2</span>
                         <div>
-                            <strong>View generation</strong> — once P1 items are locked, the AI generates
+                            <strong>View generation</strong> - once P1 items are locked, the AI generates
                             <code>V_GOLD_ACTIVE_ITEM_{{ retailerId }}</code> using your learned SQL conditions.
                         </div>
                     </div>
                     <div class="ai-next-step-item">
                         <span class="ai-next-num">3</span>
                         <div>
-                            <strong>AI operations</strong> — the AI Dashboard, Blockers, and Recommendations
+                            <strong>AI operations</strong> - the AI Dashboard, Blockers, and Recommendations
                             screens become active for this retailer.
                         </div>
                     </div>

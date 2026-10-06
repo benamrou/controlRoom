@@ -34,13 +34,13 @@
 
     <div *ngIf="selectedRetailer" class="ai-context-layout">
 
-        <!-- ══ LEFT — Knowledge catalog ══ -->
+        <!-- ══ LEFT - Knowledge catalog ══ -->
         <div class="ai-catalog-panel">
 
             <div class="ai-panel-header">
                 <span class="ai-panel-title"><i class="fas fa-list-check"></i> {{ 'S55.CAT.TTL' | lbl:'Knowledge items' }}</span>
                 <p-tag *ngIf="p1AllLocked()"
-                       [value]="'S55.P1.OK' | lbl:'P1 Complete — view ready'"
+                       [value]="'S55.P1.OK' | lbl:'P1 Complete - view ready'"
                        severity="success"
                        styleClass="ai-p1-badge"></p-tag>
             </div>
@@ -52,7 +52,7 @@
             <!-- P1 -->
             <div class="ai-priority-group">
                 <div class="ai-group-header">
-                    <p-tag [value]="'S55.P1.TAG' | lbl:'P1 — Required'" severity="danger"></p-tag>
+                    <p-tag [value]="'S55.P1.TAG' | lbl:'P1 - Required'" severity="danger"></p-tag>
                     <span class="ai-group-note">{{ 'S55.P1.NOTE' | lbl:'All must be locked to generate the active item view' }}</span>
                 </div>
                 <div *ngFor="let item of p1Items" class="ai-catalog-item"
@@ -78,7 +78,7 @@
             <!-- P2 -->
             <div class="ai-priority-group">
                 <div class="ai-group-header">
-                    <p-tag [value]="'S55.P2.TAG' | lbl:'P2 — Core'" severity="warning"></p-tag>
+                    <p-tag [value]="'S55.P2.TAG' | lbl:'P2 - Core'" severity="warning"></p-tag>
                     <span class="ai-group-note">Extended context for blockers & replenishment</span>
                 </div>
                 <div *ngFor="let item of p2Items" class="ai-catalog-item"
@@ -101,7 +101,7 @@
             <!-- P3 -->
             <div class="ai-priority-group">
                 <div class="ai-group-header">
-                    <p-tag [value]="'S55.P3.TAG' | lbl:'P3 — Enhanced'" severity="info"></p-tag>
+                    <p-tag [value]="'S55.P3.TAG' | lbl:'P3 - Enhanced'" severity="info"></p-tag>
                     <span class="ai-group-note">Intelligence & forecasting context</span>
                 </div>
                 <div *ngFor="let item of p3Items" class="ai-catalog-item"
@@ -122,7 +122,7 @@
             </div>
         </div>
 
-        <!-- ══ RIGHT — Session panel ══ -->
+        <!-- ══ RIGHT - Session panel ══ -->
         <div class="ai-session-panel">
 
             <!-- Empty state -->
@@ -248,7 +248,7 @@
                                       placeholder="e.g. EXISTS (SELECT 1 FROM ARTSITE@{{ selectedRetailer?.GOLD_DBLINK || selectedRetailer?.ENVDBLINK }} ast WHERE ast.SITCINV = ul.ARUCINLUVC AND (ast.SITLIEN = 1 OR ast.SITPREV = 1))"></textarea>
                             <div class="ai-sql-format-guide">
                                 <div class="ai-sql-guide-title"><i class="fas fa-info-circle"></i> SQL format guide</div>
-                                <p>Enter a <strong>WHERE clause condition only</strong> — not a full SELECT statement.</p>
+                                <p>Enter a <strong>WHERE clause condition only</strong> - not a full SELECT statement.</p>
                                 <div class="ai-sql-guide-row">
                                     <span class="ai-sql-ok">✓ Valid</span>
                                     <code>EXISTS (SELECT 1 FROM ARTUC@dblink a WHERE a.ARACINR = ul.ARUCINR AND TRUNC(SYSDATE) &lt; a.ARADFIN)</code>
@@ -262,11 +262,11 @@
                                     <code>SELECT * FROM artuc WHERE ...</code>
                                     <span class="ai-sql-guide-tip"> → rewrite as EXISTS or NOT EXISTS</span>
                                 </div>
-                                <small>Use <code>@{{ selectedRetailer?.GOLD_DBLINK || selectedRetailer?.ENVDBLINK || 'dblink' }}</code> for cross-database table references.<br>Type <code>@dblink</code> as a shortcut — it will be replaced automatically on submit.</small>
+                                <small>Use <code>@{{ selectedRetailer?.GOLD_DBLINK || selectedRetailer?.ENVDBLINK || 'dblink' }}</code> for cross-database table references.<br>Type <code>@dblink</code> as a shortcut - it will be replaced automatically on submit.</small>
                             </div>
                             <div *ngIf="isSqlInvalid()" class="ai-sql-error-box">
                                 <i class="fas fa-exclamation-triangle"></i>
-                                SQL starts with SELECT — must be a WHERE clause fragment.
+                                SQL starts with SELECT - must be a WHERE clause fragment.
                                 Convert it automatically:
                                 <div class="ai-convert-actions">
                                     <button pButton label="Convert to EXISTS" icon="fas fa-sync-alt"
@@ -429,7 +429,7 @@
                     <input pInputText [(ngModel)]="catalogForm.knowledge_key"
                            [disabled]="editMode"
                            placeholder="e.g. SUPPLIER_HOLD (uppercase, underscored)" />
-                    <small class="ai-hint">Unique ID — max 40 chars, uppercase and underscores only.</small>
+                    <small class="ai-hint">Unique ID - max 40 chars, uppercase and underscores only.</small>
                 </div>
             </div>
 

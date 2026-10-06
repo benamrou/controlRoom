@@ -85,6 +85,9 @@ import { AlertLogJournalComponent } from './pages/alerts/journal/alert.journal.c
 import { QueryRunnerComponent } from './pages/it/query.runner/query.runner.component';
 import { PresetQueryManagerComponent } from './pages/it/preset.query/preset.query.manager.component';
 import { ItemEndUPCComponent } from './pages/mass.update/item.end.upc/item.end.upc.component';
+import { ReferenceToOrderComponent } from './pages/mass.update/reference.to.order/reference.to.order.component';
+import { NewItemPpgComponent } from './pages/mass.update/new.item.ppg/new.item.ppg.component';
+import { LoadReturnComponent } from './pages/mass.update/load.return/load.return.component';
 import { WatchICRComponent } from './pages/alerts/watch/watch.icr.component';
 
 import { QueryLibraryComponent } from './pages/admin/query.library/query.library.component';
@@ -93,6 +96,7 @@ import { SettingCustomerComponent } from './pages/admin/setting-customer/setting
 import { SettingUsersComponent } from './pages/admin/setting-users/setting.users.component';
 import { SettingMenuAccessComponent } from './pages/admin/setting-menu-access/setting.menu.access.component';
 import { SettingWidgetLibraryComponent } from './pages/admin/setting-widget-library/setting.widget.library.component';
+import { SettingMassloadRulesComponent } from './pages/admin/setting-massload-rules/setting.massload.rules.component';
 
 import { ItemRetailComponent } from './pages/mass.update/item.retail/item.retail.component';
 
@@ -209,6 +213,9 @@ const routes: Routes = [
   { path: 'stocklayer', component: StockLayerComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemretail', component: ItemRetailComponent, canActivate: [AuthentificationGuard] },
   { path: 'itemendupc', component: ItemEndUPCComponent, canActivate: [AuthentificationGuard] },
+  { path: 'referencetoorder', component: ReferenceToOrderComponent, canActivate: [AuthentificationGuard] },
+  { path: 'newitemppg', component: NewItemPpgComponent, canActivate: [AuthentificationGuard] },
+  { path: 'loadreturn', component: LoadReturnComponent, canActivate: [AuthentificationGuard] },
   
   /* Reporting */
   { path: 'scorecardcao', component: ScorecardCAOComponent, canActivate: [AuthentificationGuard] },
@@ -237,6 +244,7 @@ const routes: Routes = [
   { path: 'settingusers', component: SettingUsersComponent, canActivate: [AuthentificationGuard] },
   { path: 'settingmenu', component: SettingMenuAccessComponent, canActivate: [AuthentificationGuard] },
   { path: 'settingwidget', component: SettingWidgetLibraryComponent, canActivate: [AuthentificationGuard] },
+  { path: 'settingmassload', component: SettingMassloadRulesComponent, canActivate: [AuthentificationGuard] },
   {
     path: 'app-logs',
     loadChildren: () => import('./pages/admin/app-logs/app.logs.module').then((m) => m.AppLogsModule),

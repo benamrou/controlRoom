@@ -40,7 +40,7 @@
         </bbs-multiselect>
 
         <span style="margin-left:1em; margin-right:1.3em; padding-left: 5px; font-weight: bolder">{{ 'S24.LBL.PST' | lbl:'Period start :' }} </span>
-        <p-calendar [(ngModel)]="periodStart"  
+        <p-calendar appendTo="body" [(ngModel)]="periodStart"  
                     [readonlyInput]="true"
                     dateFormat="mm/dd/yy"
                     [style]="{'height': '35px'}"
@@ -48,7 +48,7 @@
                     [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
         <span style="margin-left:1em; padding-left: 5px; font-weight: bolder">{{ 'S24.LBL.PEN' | lbl:'Period end :' }} </span>
-        <p-calendar [(ngModel)]="periodEnd"  
+        <p-calendar appendTo="body" [(ngModel)]="periodEnd"  
                     [readonlyInput]="true"
                     dateFormat="mm/dd/yy"
                     [style]="{'height': '35px'}"

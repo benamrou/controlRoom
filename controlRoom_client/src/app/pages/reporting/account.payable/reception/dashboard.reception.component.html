@@ -31,7 +31,7 @@
 </div>
 <div class="bbs_search_sub_panel"  >
     <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S11.LBL.PST' | lbl:'Period start :' }} </span>
-    <p-calendar [(ngModel)]="periodStart"  
+    <p-calendar appendTo="body" [(ngModel)]="periodStart"  
                 [minDate]="dateTomorrow"
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
@@ -40,7 +40,7 @@
                 [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
     <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">{{ 'S11.LBL.PEN' | lbl:'Period end :' }} </span>
-    <p-calendar [(ngModel)]="periodEnd"  
+    <p-calendar appendTo="body" [(ngModel)]="periodEnd"  
                 [minDate]="dateTomorrow"
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
@@ -326,11 +326,11 @@
                         </div>
                         <div class="ui-grid-row">
                             <div class="ui-grid-col-4"><label class="font-bold" for="start">Start</label></div>
-                            <div class="ui-grid-col-8"><p-calendar [(ngModel)]="retailSelected.start" dateFormat="yy-mm-dd" dataType="string"></p-calendar></div>
+                            <div class="ui-grid-col-8"><p-calendar appendTo="body" [(ngModel)]="retailSelected.start" dateFormat="yy-mm-dd" dataType="string"></p-calendar></div>
                         </div>
                         <div class="ui-grid-row">
                             <div class="ui-grid-col-4"><label class="font-bold" for="end">End</label></div>
-                            <div class="ui-grid-col-8"><p-calendar [(ngModel)]="retailSelected.end" dateFormat="yy-mm-dd" dataType="string"></p-calendar></div>
+                            <div class="ui-grid-col-8"><p-calendar appendTo="body" [(ngModel)]="retailSelected.end" dateFormat="yy-mm-dd" dataType="string"></p-calendar></div>
                         </div>
                         <div class="ui-grid-row">
                             <div class="ui-grid-col-4"><label class="font-bold">Retail</label></div>

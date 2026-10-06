@@ -31,10 +31,10 @@
                 <h4><i class="fas fa-rocket"></i> Quick start</h4>
                 <ol>
                     <li>Click <b>CREATE</b>.</li>
-                    <li><b>General</b> tab — pick the <b>Alert</b> (LALTID) and, optionally, a <b>LALTPARAM LIKE</b> pattern (e.g.&nbsp;<code>%CNT0000000004_5%</code>) to target one instance of a fan-out alert.</li>
+                    <li><b>General</b> tab - pick the <b>Alert</b> (LALTID) and, optionally, a <b>LALTPARAM LIKE</b> pattern (e.g.&nbsp;<code>%CNT0000000004_5%</code>) to target one instance of a fan-out alert.</li>
                     <li>Use <b>Test pattern</b> to confirm the pattern matches real rows from the last 24 h.</li>
-                    <li><b>Schedule</b> tab — set the cron when the log entry is expected, plus the grace period.</li>
-                    <li><b>Recovery shell</b> tab — edit the pre-filled curl template so it re-fires the missed alert (typically a call to <code>/api/notification/</code>).</li>
+                    <li><b>Schedule</b> tab - set the cron when the log entry is expected, plus the grace period.</li>
+                    <li><b>Recovery shell</b> tab - edit the pre-filled curl template so it re-fires the missed alert (typically a call to <code>/api/notification/</code>).</li>
                     <li>Save. The next scan will start enforcing the contract.</li>
                 </ol>
             </div>
@@ -42,11 +42,11 @@
             <div class="watch-help-section">
                 <h4><i class="fas fa-key"></i> Key concepts</h4>
                 <ul>
-                    <li><b>AWTPARAMLIKE</b> — Oracle <code>LIKE</code> pattern matched against <code>ALERTLOG.LALTPARAM</code>. Empty = match by LALTID alone. Required for fan-out alerts that fire many rows per run.</li>
-                    <li><b>Grace (sec)</b> — how long after the expected fire time before declaring it missed. Default 120 s.</li>
-                    <li><b>Max retries / scan</b> — hard cap so a long-broken alert can't trigger a fire-storm. Default 3.</li>
-                    <li><b>Catch up at startup</b> — also evaluate this watch when the Node app restarts.</li>
-                    <li><b>Active</b> — pause/resume the contract without losing it.</li>
+                    <li><b>AWTPARAMLIKE</b> - Oracle <code>LIKE</code> pattern matched against <code>ALERTLOG.LALTPARAM</code>. Empty = match by LALTID alone. Required for fan-out alerts that fire many rows per run.</li>
+                    <li><b>Grace (sec)</b> - how long after the expected fire time before declaring it missed. Default 120 s.</li>
+                    <li><b>Max retries / scan</b> - hard cap so a long-broken alert can't trigger a fire-storm. Default 3.</li>
+                    <li><b>Catch up at startup</b> - also evaluate this watch when the Node app restarts.</li>
+                    <li><b>Active</b> - pause/resume the contract without losing it.</li>
                 </ul>
             </div>
 
@@ -63,8 +63,8 @@
             <div class="watch-help-section">
                 <h4><i class="fas fa-sitemap"></i> Architecture</h4>
                 <ul>
-                    <li><b>ALERTWATCH</b> — the contracts you define here.</li>
-                    <li><b>ALERTWATCHLOG</b> — audit trail of every recovery the watchdog attempted.</li>
+                    <li><b>ALERTWATCH</b> - the contracts you define here.</li>
+                    <li><b>ALERTWATCHLOG</b> - audit trail of every recovery the watchdog attempted.</li>
                     <li><b>watchdog.js</b> Node controller, called every 5 min by OS cron and/or a row in <code>ALERTSCHEDULE</code>.</li>
                     <li>OS cron is the disaster-recovery layer: if the Node app is unreachable, the cron entry pages the admin so the watchdog itself can never silently disappear.</li>
                 </ul>
@@ -94,7 +94,7 @@
 
 <!-- ========================= EDIT / CREATE DIALOG ========================= -->
 <p-dialog *ngIf="watchDisplay" [(visible)]="displayWatch"
-          header="{{isNewWatch ? 'New Watch' : ('Watch — ' + watchDisplay.AWTID)}}"
+          header="{{isNewWatch ? 'New Watch' : ('Watch - ' + watchDisplay.AWTID)}}"
           [maximizable]="true" [style]="{width: '85vw'}">
 
     <div class="flex flex-row-reverse flex-wrap" style="padding-right: 20px;">
@@ -136,8 +136,8 @@
                                     [virtualScrollItemSize]="36">
                             <ng-template let-alert pTemplate="item">
                                 <div class="awtaltid-item">
-                                    <span class="awtaltid-id">{{alert.label.split(' — ')[0]}}</span>
-                                    <span class="awtaltid-desc">{{alert.label.split(' — ').slice(1).join(' — ')}}</span>
+                                    <span class="awtaltid-id">{{alert.label.split(' - ')[0]}}</span>
+                                    <span class="awtaltid-desc">{{alert.label.split(' - ').slice(1).join(' - ')}}</span>
                                 </div>
                             </ng-template>
                         </p-dropdown>
@@ -160,7 +160,7 @@
                         <div *ngIf="previewRows && previewRows.length > 0" class="preview-panel">
                             <strong>{{previewRows.length}} matching ALERTLOG row(s):</strong>
                             <div *ngFor="let r of previewRows.slice(0, 50)">
-                                {{r.LALTEDATE}} — LALTID={{r.LALTID}} LALTPARAM={{r.LALTPARAM}}
+                                {{r.LALTEDATE}} - LALTID={{r.LALTID}} LALTPARAM={{r.LALTPARAM}}
                             </div>
                             <div *ngIf="previewRows.length > 50">… (+ {{previewRows.length - 50}} more)</div>
                         </div>
@@ -176,7 +176,7 @@
                 <div class="formgrid grid">
                     <div class="field col-3">
                         <label class="font-bold" for="awtactivedate">Effective Date</label>
-                        <p-calendar id="awtactivedate" [(ngModel)]="watchDisplay.AWTACTIVEDATE"
+                        <p-calendar appendTo="body" id="awtactivedate" [(ngModel)]="watchDisplay.AWTACTIVEDATE"
                                     [showIcon]="true" dateFormat="mm/dd/yy" [showButtonBar]="true">
                         </p-calendar>
                     </div>
@@ -281,7 +281,7 @@
                     <div class="field col-12" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                         <label class="font-bold" for="awtshell" style="margin: 0;">
                             AWTSHELL
-                            <i class="pi pi-info-circle" pTooltip="Shell script the watchdog runs when a missed occurrence is detected. Same conventions as SALTSHELL — typically calls /api/notification/ for the specific instance."></i>
+                            <i class="pi pi-info-circle" pTooltip="Shell script the watchdog runs when a missed occurrence is detected. Same conventions as SALTSHELL - typically calls /api/notification/ for the specific instance."></i>
                         </label>
                         <button pButton type="button" icon="fas fa-magic" label="Insert template"
                                 pTooltip="Reset to a curl template you can edit"
@@ -333,7 +333,7 @@
 
 <!-- ========================= RECOVERY HISTORY DIALOG ========================= -->
 <p-dialog *ngIf="displayHistory" [(visible)]="displayHistory"
-          header="Recovery history — {{historyAwtId}}"
+          header="Recovery history - {{historyAwtId}}"
           [maximizable]="true" [style]="{width: '80vw'}">
     <div class="formgrid grid" style="margin-bottom: 10px;">
         <div class="field col-2">

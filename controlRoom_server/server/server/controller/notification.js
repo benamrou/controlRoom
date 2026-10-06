@@ -258,9 +258,15 @@ function isOracleErrorResult(rows) {
 
 /**
  * Execute a shell script from SALTSHELL content
- * Adapted from crontab.js executeScript function
+ * Adapted from crontab.js executeScript — also writes ALERTLOG start/end
+ * (LALTID = SALTID, LALTREQID = CRON_…, same shape as scheduler runs).
+ *
+ * @param {string|number} id — SALTID
+ * @param {string} scriptContent
+ * @param {string} user
+ * @param {{ saltCron?: string, saltDesc?: string, source?: string }} [meta]
  */
-async function executeShellScript(id, scriptContent, user) {
+async function executeShellScript(id, scriptContent, user, meta) {
     return new Promise(async (resolve, reject) => {
         if (!scriptContent) {
             resolve({ success: false, message: 'No script content provided' });
@@ -273,8 +279,57 @@ async function executeShellScript(id, scriptContent, user) {
         const filePath = path.join(tempDir, fileName);
         let output = '';
         let errorOutput = '';
+        const requestId = heap.dbLogger.generateRequestId('CRON');
+        const startedAtMs = Date.now();
+        let dbEnded = false;
+
+        const finishDb = async (kind, detail) => {
+            if (dbEnded) {
+                return;
+            }
+            dbEnded = true;
+            const duration = Math.max(0, Math.floor((Date.now() - startedAtMs) / 1000));
+            try {
+                if (kind === 'complete') {
+                    await heap.dbLogger.updateRequest(requestId, {
+                        status: 'COMPLETE',
+                        phase: 'CRON_DONE',
+                        endTime: true,
+                        duration,
+                    });
+                } else {
+                    await heap.dbLogger.updateRequest(requestId, {
+                        status: 'FAILED',
+                        phase: 'CRON_FAILED',
+                        endTime: true,
+                        duration,
+                        error: detail || 'Shell script failed',
+                    });
+                }
+            } catch (e) {
+                heap.logger.log('alert', `ALERTLOG end write failed for ${requestId}: ${e.message}`, user, 3);
+            }
+        };
 
         try {
+            await heap.dbLogger.logStart(
+                requestId,
+                String(id),
+                user || 'notification',
+                {
+                    type: 'ALERTSCHEDULE',
+                    saltId: String(id),
+                    saltCron: (meta && meta.saltCron) || '',
+                    saltDesc: (meta && meta.saltDesc) || '',
+                    source: (meta && meta.source) || 'alert_management',
+                    catchup: false,
+                },
+                '',
+                '',
+                { util: 'notification.shell', phase: 'CRON_SHELL' }
+            );
+            heap.logger.log('alert', `Shell execution ${id} [START] ${requestId}`, user, 2);
+
             // Ensure temp dir exists
             await fs_promises.mkdir(tempDir, { recursive: true });
 
@@ -295,18 +350,21 @@ async function executeShellScript(id, scriptContent, user) {
 
             command.on('error', async (err) => {
                 heap.logger.log('alert', `ERROR - Shell execution ${id}: ${err}`, user, 3);
+                await finishDb('failed', err && err.message ? err.message : String(err));
                 await safeCleanupScript(filePath);
-                reject({ success: false, message: err.message, output, errorOutput });
+                reject({ success: false, message: err.message, output, errorOutput, requestId });
             });
 
             command.on('exit', async (code) => {
                 await safeCleanupScript(filePath);
                 if (code === 0) {
-                    heap.logger.log('alert', `Shell execution ${id} [COMPLETED]`, user, 2);
-                    resolve({ success: true, message: 'Script executed successfully', output, errorOutput, exitCode: code });
+                    heap.logger.log('alert', `Shell execution ${id} [COMPLETED] ${requestId}`, user, 2);
+                    await finishDb('complete');
+                    resolve({ success: true, message: 'Script executed successfully', output, errorOutput, exitCode: code, requestId });
                 } else {
-                    heap.logger.log('alert', `ERROR - Shell execution ${id} exited with code ${code}`, user, 3);
-                    resolve({ success: false, message: `Script exited with code ${code}`, output, errorOutput, exitCode: code });
+                    heap.logger.log('alert', `ERROR - Shell execution ${id} exited with code ${code} ${requestId}`, user, 3);
+                    await finishDb('failed', `Exited with code ${code}`);
+                    resolve({ success: false, message: `Script exited with code ${code}`, output, errorOutput, exitCode: code, requestId });
                 }
             });
 
@@ -315,8 +373,9 @@ async function executeShellScript(id, scriptContent, user) {
 
         } catch (err) {
             heap.logger.log('alert', `ERROR - Shell execution ${id}: ${err}`, user, 3);
+            await finishDb('failed', err && err.message ? err.message : String(err));
             await safeCleanupScript(filePath);
-            reject({ success: false, message: err.message });
+            reject({ success: false, message: err.message, requestId });
         }
     });
 }
@@ -670,7 +729,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
               await heap.dbLogger.updateRequest(request.requestId, {
                 status: 'COMPLETE',
                 phase: 'NO_EMAIL',
-                rowCount: dataDetail.length
+                rowCount: detailData.length
               });
               await heap.dbLogger.logComplete(request.requestId, duration);
               heap.logger.log('alert', `[REQUEST COMPLETE] ${request.requestId} | Duration: ${duration}s (0 rows, no email)`, 'alert', 1);
@@ -1295,7 +1354,16 @@ module.get = async function (request,response) {
                 heap.logger.log('alert', 'Executing shell script for SALTID: ' + saltid, 'alert', 2);
 
                 try {
-                    const result = await executeShellScript(saltid, saltshell, request.header('USER') || 'notification');
+                    const result = await executeShellScript(
+                        saltid,
+                        saltshell,
+                        request.header('USER') || 'notification',
+                        {
+                            saltCron: scheduleData[0].SALTCRON || '',
+                            saltDesc: scheduleData[0].SALTDESC || scheduleData[0].SALTCOMMENT || '',
+                            source: 'alert_management',
+                        }
+                    );
                     heap.logger.log('alert', 'Shell script execution completed: ' + JSON.stringify(result), 'alert', 2);
                     
                     // Return result as array for consistent frontend handling
@@ -1309,6 +1377,7 @@ module.get = async function (request,response) {
                             response.send([{ 
                                 STATUS: result.success ? 'SUCCESS' : 'ERROR',
                                 EXIT_CODE: result.exitCode,
+                                REQUEST_ID: result.requestId,
                                 OUTPUT: result.output,
                                 ERROR_OUTPUT: result.errorOutput,
                                 MESSAGE: result.message
@@ -1317,6 +1386,7 @@ module.get = async function (request,response) {
                     } else {
                         response.send([{ 
                             STATUS: result.success ? 'SUCCESS' : 'ERROR',
+                            REQUEST_ID: result.requestId,
                             MESSAGE: result.message
                         }]);
                     }
@@ -1324,6 +1394,7 @@ module.get = async function (request,response) {
                     heap.logger.log('alert', 'Shell script execution failed: ' + JSON.stringify(error), 'alert', 3);
                     response.status(500).send([{ 
                         STATUS: 'ERROR',
+                        REQUEST_ID: error && error.requestId,
                         MESSAGE: error.message || 'Shell script execution failed'
                     }]);
                 }

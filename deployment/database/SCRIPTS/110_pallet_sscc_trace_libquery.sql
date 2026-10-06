@@ -23,7 +23,7 @@ INSERT INTO LIBQUERY (
 SELECT (SELECT NVL(MAX(QUERYID), 0) + 1 FROM LIBQUERY),
        'WHS0000009',
        'Pallet/SSCC trace - search',
-       'Live+archive SSCC. Flow: OE/HO_TYPEOR else UL/HL_TYPCDE. Shipped store/PO: UL/HL_NUMORL+DONORD → TB_ECDE/TB_HECDE. :param1=SSCC,:param2=item,:param3=PO,:param4=flow,:param5=missing,:param6=whs,:param7=vendor.',
+       'Live+archive SSCC. Flow: OE/HO_TYPEOR else UL/HL_TYPCDE. :param1=SSCC,:param2=item,:param3=PO,:param4=flow,:param5=missing,:param6=whs,:param7=vendor,:param8=created_from(YYYY-MM-DD|-1),:param9=created_until(YYYY-MM-DD|-1).',
        TO_CLOB(q'!
 SELECT q."Whs #",
        q."Store #",
@@ -35,6 +35,7 @@ SELECT q."Whs #",
        q."PO #",
        q."Flow",
        q."Flow code",
+       q."Created on",
        q."Received on",
        q."UBD",
        q."Prod lot",
@@ -62,6 +63,7 @@ SELECT q."Whs #",
              ELSE NVL(TRIM(NVL(r.OE_TYPEOR, l.UL_TYPCDE)), ' ')
            END AS "Flow",
            NVL(r.OE_TYPEOR, l.UL_TYPCDE) AS "Flow code",
+           TO_CHAR(TRUNC(e.UE_DATCRE), 'MM/DD/YYYY') AS "Created on",
            TO_CHAR(TRUNC(e.UE_DATREC), 'MM/DD/YYYY') AS "Received on",
            NVL(dlc.UT_VALIND, ' ') AS "UBD",
            NVL(lof.UT_VALIND, ' ') AS "Prod lot",
@@ -72,7 +74,7 @@ SELECT q."Whs #",
            NVL(l.UL_NUMORC, 0) AS "OR #",
            NVL(l.UL_NUMORL, 0) AS "OL #",
            'LIVE' AS "Source",
-           e.UE_DATREC AS sort_dat
+           e.UE_DATCRE AS sort_dat
       FROM TB_EUMS@HEINENS_STK_PROD e
       JOIN TB_LCUMS@HEINENS_STK_PROD l
         ON l.UL_USSCC = e.UE_USSCC
@@ -114,6 +116,10 @@ SELECT q."Whs #",
        AND (:param6 = '-1' OR TO_CHAR(l.UL_DONORD) = TO_CHAR(:param6))
        AND (:param7 = '-1'
             OR TO_CHAR(NVL(r.OE_FOURN, a.AR_FOURN)) = TO_CHAR(:param7))
+       AND (:param8 = '-1'
+            OR TRUNC(e.UE_DATCRE) >= TO_DATE(:param8, 'YYYY-MM-DD'))
+       AND (:param9 = '-1'
+            OR TRUNC(e.UE_DATCRE) <= TO_DATE(:param9, 'YYYY-MM-DD'))
 !') || TO_CLOB(q'!
     UNION ALL
 
@@ -132,6 +138,7 @@ SELECT q."Whs #",
              ELSE NVL(TRIM(NVL(hr.HO_TYPEOR, hl.HL_TYPCDE)), ' ')
            END AS "Flow",
            NVL(hr.HO_TYPEOR, hl.HL_TYPCDE) AS "Flow code",
+           TO_CHAR(TRUNC(he.HE_DATCRE), 'MM/DD/YYYY') AS "Created on",
            TO_CHAR(TRUNC(he.HE_DATREC), 'MM/DD/YYYY') AS "Received on",
            NVL(hdlc.HT_VALIND, ' ') AS "UBD",
            NVL(hlof.HT_VALIND, ' ') AS "Prod lot",
@@ -142,7 +149,7 @@ SELECT q."Whs #",
            NVL(hl.HL_NUMORC, 0) AS "OR #",
            NVL(hl.HL_NUMORL, 0) AS "OL #",
            'ARCHIVE' AS "Source",
-           he.HE_DATREC AS sort_dat
+           he.HE_DATCRE AS sort_dat
       FROM TB_HEUMS@HEINENS_STK_PROD he
       JOIN TB_HLCUMS@HEINENS_STK_PROD hl
         ON hl.HL_USSCC = he.HE_USSCC
@@ -183,11 +190,15 @@ SELECT q."Whs #",
        AND (:param6 = '-1' OR TO_CHAR(hl.HL_DONORD) = TO_CHAR(:param6))
        AND (:param7 = '-1'
             OR TO_CHAR(NVL(hr.HO_FOURN, a.AR_FOURN)) = TO_CHAR(:param7))
+       AND (:param8 = '-1'
+            OR TRUNC(he.HE_DATCRE) >= TO_DATE(:param8, 'YYYY-MM-DD'))
+       AND (:param9 = '-1'
+            OR TRUNC(he.HE_DATCRE) <= TO_DATE(:param9, 'YYYY-MM-DD'))
   ) q
  ORDER BY q.sort_dat DESC NULLS LAST, q."SSCC", q."Line"
 !'),
-       ':param1=sscc,:param2=item,:param3=po,:param4=flow,:param5=missing,:param6=whs,:param7=vendor',
-       'WHS #,STORE #,SSCC,PKG SSCC,LINE,ITEM,ITEM DESC.,PO #,FLOW,FLOW CODE,RECEIVED ON,UBD,PROD LOT,HAS UBD,HAS LOF,SV,LV,OR #,OL #,SOURCE',
+       ':param1=sscc,:param2=item,:param3=po,:param4=flow,:param5=missing,:param6=whs,:param7=vendor,:param8=created_from,:param9=created_until',
+       'WHS #,STORE #,SSCC,PKG SSCC,LINE,ITEM,ITEM DESC.,PO #,FLOW,FLOW CODE,CREATED ON,RECEIVED ON,UBD,PROD LOT,HAS UBD,HAS LOF,SV,LV,OR #,OL #,SOURCE',
        1, 0, 0
   FROM dual;
 

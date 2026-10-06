@@ -72,8 +72,6 @@ export class SyndigoService {
         body.values = categories;
 
         headersSearch = headersSearch.set('QUERY_ID', this.querySyndigoUPCCategoryLookUp);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
                 let data = <any> response;
                 return data;

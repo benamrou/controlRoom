@@ -125,7 +125,7 @@ export class ManufacturingAgrnComponent implements OnInit {
       this._messageService.add({
         severity: 'warn',
         summary: 'Manufacturing AGRN',
-        detail: `${integrationWarning}${count ? ` — ${count} line(s) listed below.` : ''}`,
+        detail: `${integrationWarning}${count ? ` - ${count} line(s) listed below.` : ''}`,
         life: 10000,
       });
       return;

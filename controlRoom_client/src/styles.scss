@@ -1,3 +1,5 @@
+@import './app/layouts/themes/fall-palette';
+
 /* You can add global styles to this file, and also import other style files */
 @import 'icr-button-contrast.scss';
 
@@ -11,4 +13,65 @@
     border-style: none;
     border-color: initial;
     border-image: initial;
+}
+
+/* Workspace offset beside the fixed Fall sidebar.
+   --icr-sidebar-offset is published by SidebarComponent (230px / 52px). */
+:root {
+    --icr-sidebar-offset: 230px;
+}
+
+.main-container {
+    margin-top: 56px;
+    margin-left: var(--icr-sidebar-offset, 230px) !important;
+    padding: 15px;
+    box-sizing: border-box;
+    min-width: 0;
+    width: auto;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: margin-left 0.2s ease-in-out;
+}
+
+.login-shell {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+@media print {
+    .main-container {
+        margin-top: 0 !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* Dialog title bar — fall theme (replaces legacy sea-green #8fbc8f) */
+.p-dialog .p-dialog-header,
+.p-dialog-draggable .p-dialog-header {
+    background: linear-gradient(
+        135deg,
+        rgba($fall-cream, 0.98) 0%,
+        rgba($fall-amber, 0.94) 45%,
+        rgba($fall-burnt, 0.92) 100%
+    ) !important;
+    border-bottom: 1.5px solid rgba($fall-coral, 0.32);
+    color: $fall-deep !important;
+    height: auto;
+    min-height: 2.4rem;
+    padding: 0.7rem 1.1rem;
+}
+
+.p-dialog .p-dialog-header .p-dialog-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $fall-deep !important;
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon {
+    color: $fall-deep !important;
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon:hover {
+    background: rgba($fall-coral, 0.18) !important;
 }

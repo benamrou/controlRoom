@@ -27,9 +27,9 @@ DECLARE
 BEGIN
   seed3('S87.TITLE', 'Pallet/SSCC traceability', 'Pallet/SSCC traceability', 'Tracabilite palette/SSCC', 'SCR0000000087');
   seed3('S87.WARN',
-        'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC pallet lines. Default search: allotment missing both indicators. Production lot is only available for Manufacturing warehouse 93080.',
-        'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC pallet lines. Default search: allotment missing both indicators. Production lot is only available for Manufacturing warehouse 93080.',
-        'Ajouter, modifier ou supprimer DLC et LOF sur les SSCC live et archives. Recherche par defaut : allotement sans les deux indicateurs. LOF reserve a l''entrepot Manufacturing 93080.',
+        'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC pallet lines. Default search: allotment, any indicators. Use Apply to all to set the same UBD and/or production lot on every result row.',
+        'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC pallet lines. Default search: allotment, any indicators. Use Apply to all to set the same UBD and/or production lot on every result row.',
+        'Ajouter, modifier ou supprimer DLC et LOF sur les SSCC live et archives. Recherche par defaut : allotement, tous indicateurs. Utiliser Appliquer a tous pour fixer la meme DLC et/ou le meme lot sur toutes les lignes.',
         'SCR0000000087');
   seed3('S87.LBL.SSCC', 'SSCC #', 'SSCC #', 'SSCC #', 'SCR0000000087');
   seed3('S87.LBL.ITEM', 'Item #', 'Item #', 'Article #', 'SCR0000000087');
@@ -39,6 +39,10 @@ BEGIN
   seed3('S87.LBL.VND', 'Vendor #', 'Vendor #', 'Fournisseur #', 'SCR0000000087');
   seed3('S87.LBL.FLOW', 'Flow', 'Flow', 'Flux', 'SCR0000000087');
   seed3('S87.LBL.MISS', 'Missing', 'Missing', 'Manquant', 'SCR0000000087');
+  seed3('S87.LBL.CFROM', 'Created from', 'Created from', 'Cree a partir du', 'SCR0000000087');
+  seed3('S87.LBL.CUNTIL', 'Created until', 'Created until', 'Cree jusqu''au', 'SCR0000000087');
+  seed3('S87.PLH.CFROM', 'Optional', 'Optional', 'Optionnel', 'SCR0000000087');
+  seed3('S87.PLH.CUNTIL', 'Optional', 'Optional', 'Optionnel', 'SCR0000000087');
   seed3('S87.PLH.SSCC', 'Enter SSCC', 'Enter SSCC', 'Saisir SSCC', 'SCR0000000087');
   seed3('S87.PLH.ITEM', 'Enter item code', 'Enter item code', 'Saisir article', 'SCR0000000087');
   seed3('S87.PLH.PO', 'Enter PO (receipt or shipment)', 'Enter PO (receipt or shipment)', 'Saisir commande (reception ou expedition)', 'SCR0000000087');
@@ -76,12 +80,12 @@ BEGIN
   seed3('S87.MSG.UINV', 'User id does not match your login.',
         'User id does not match your login.',
         'L''identifiant ne correspond pas a votre connexion.', 'SCR0000000087');
-  seed3('S87.MSG.LOF', 'Production lot is only allowed for Manufacturing warehouse 93080.',
-        'Production lot is only allowed for Manufacturing warehouse 93080.',
-        'Le lot de fabrication est reserve a l''entrepot Manufacturing 93080.', 'SCR0000000087');
   seed3('S87.MSG.MASSREQ', 'Enter a UBD and/or production lot to apply to all results.',
         'Enter a UBD and/or production lot to apply to all results.',
         'Saisir une DLC et/ou un lot a appliquer a tous les resultats.', 'SCR0000000087');
+  seed3('S87.MSG.DRANGE', 'Created from must be on or before Created until.',
+        'Created from must be on or before Created until.',
+        'La date Cree a partir du doit etre anterieure ou egale a Cree jusqu''au.', 'SCR0000000087');
   seed3('S87.MSG.EMPTY', 'No SSCC lines found for the current filters.',
         'No SSCC lines found for the current filters.',
         'Aucune ligne SSCC pour les filtres selectionnes.', 'SCR0000000087');
@@ -104,7 +108,7 @@ USING (
   SELECT 'SCR0000000087' AS TOBID,
          'Warehouse' AS TOBCAT,
          q'[<div><i class="bbs-keywords">What is it : </i>Maintain UBD and production lot (LOF) indicators on GOLD STOCK SSCC lines (TB_TRAUMS / TB_HTRAUMS). Mainly for allotment receiving where indicators were not captured.</div>]' AS TOBDESC,
-         q'[<div><i class="bbs-keywords">When to use : </i>Allotment pallets missing UBD/LOF, or correct an existing indicator. LOF is restricted to Manufacturing warehouse 93080.</div>]' AS TOBDESC2
+         q'[<div><i class="bbs-keywords">When to use : </i>Allotment pallets missing UBD/LOF, or correct an existing indicator. Apply to all sets the same UBD and/or production lot on every searched line.</div>]' AS TOBDESC2
     FROM dual
 ) s ON (t.TOBID = s.TOBID)
 WHEN MATCHED THEN UPDATE SET

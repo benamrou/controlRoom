@@ -39,7 +39,7 @@
 <div class="bbs_search_sub_panel"  >
 
     <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S09.LBL.LOADED' | lbl:'Loaded :' }} </span>
-    <p-calendar [(ngModel)]="searchLoadingDate"  
+    <p-calendar appendTo="body" [(ngModel)]="searchLoadingDate"  
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
                 [style]="{'height': '35px'}"
@@ -47,7 +47,7 @@
                 [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
     <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">{{ 'S09.LBL.EXEC' | lbl:'Execution :' }} </span>
-    <p-calendar [(ngModel)]="searchExecutionDate"  
+    <p-calendar appendTo="body" [(ngModel)]="searchExecutionDate"  
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
                 [style]="{'height': '35px'}"
@@ -236,7 +236,7 @@
                             <div style="text-align: center;">
                                 <button type="submit" 
                                     #buttonDOWNLOAD_{{index}}
-                                    pButton (click)="downloadFile(index,  false)" 
+                                    pButton (click)="downloadFile(rowData, false)" 
                                     icon="fas fa-file-excel" >
                                 </button>
                             </div>
@@ -246,14 +246,14 @@
                                 <button type="submit" 
                                     *ngIf="rowData['JSONNBERROR'] > 0"
                                     #buttonERROR_{{index}}
-                                    pButton (click)="downloadFile(index, true)" 
+                                    pButton (click)="downloadFile(rowData, true)" 
                                     icon="fas fa-file-excel" 
                                     style="text-align: center;margin: 0"
                                 ></button>
                                 <button type="submit" 
                                     *ngIf="rowData['JSONNBERROR'] === 0"
                                     #buttonERROR_{{index}}
-                                    pButton (click)="downloadFile(index, true)" 
+                                    pButton (click)="downloadFile(rowData, true)" 
                                     icon="fas fa-file-excel" 
                                     style="text-align: center;margin: 0"
                                     disabled

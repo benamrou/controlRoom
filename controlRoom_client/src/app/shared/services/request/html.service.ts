@@ -1,4 +1,4 @@
-import { Injectable} from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
 //import {Http, XHRBackend, RequestOptions, , BrowserXhr,BaseRequestOptions,
@@ -7,7 +7,7 @@ import { Router } from "@angular/router";
 import {Observable, ObservableInput, throwError} from 'rxjs';
 import {catchError, tap } from 'rxjs/operators';
 import {environment} from '../../../../environments/environment';
-import { UserService } from '../user/user.service';
+import { UserService, DatabaseSidTier } from '../user/user.service';
 
 /** localStorage key — persisted across sessions */
 const REQUEST_LOG_STORAGE_KEY = 'ICR_HTTP_REQUEST_LOG';
@@ -25,7 +25,12 @@ export class HttpService  {
   /** When true, HTTP request/response details are written to the browser console. */
   private _requestLogEnabled = false;
 
-  constructor(private httpClient: HttpClient, private _router: Router, private _userService: UserService) {
+  constructor(
+    private httpClient: HttpClient,
+    private _router: Router,
+    /** Lazy — avoids circular DI with UserService (UserService → HttpService → UserService). */
+    private _injector: Injector,
+  ) {
     this._requestLogEnabled = this.readRequestLogFlag();
     this.resetTransaction();
   }
@@ -126,6 +131,51 @@ export class HttpService  {
     //console.log('endTransaction', id, this.transactionsId);
   }
 
+  /** Resolve UserService at call time (not in constructor) to break circular DI. */
+  private sessionUser(): UserService | null {
+    try {
+      return this._injector.get(UserService);
+    } catch {
+      return null;
+    }
+  }
+
+  private resolveDatabaseSid(): string {
+    const userSvc = this.sessionUser();
+    if (userSvc) {
+      if (typeof userSvc.databaseSidHeader === 'function') {
+        const combined = userSvc.databaseSidHeader();
+        if (combined) {
+          return combined;
+        }
+      }
+      if (typeof userSvc.databaseSid === 'function') {
+        const central = userSvc.databaseSid('central');
+        if (central) {
+          return central;
+        }
+      }
+    }
+    return (localStorage.getItem('ICRSID') || '').trim();
+  }
+
+  private resolveDataLanguage(): string {
+    const userSvc = this.sessionUser();
+    if (userSvc && typeof userSvc.dataLanguage === 'function') {
+      return userSvc.dataLanguage();
+    }
+    return localStorage.getItem('ICRLanguage') || 'us_US';
+  }
+
+  /** Single place for DATABASE_SID + LANGUAGE on ICR API calls (reads UserService session). */
+  private withSessionHeaders(headers: HttpHeaders, _tier: DatabaseSidTier = 'central'): HttpHeaders {
+    return headers
+      .set('USER', localStorage.getItem('ICRUser') || '')
+      .set('Authorization', localStorage.getItem('ICRAuthToken') || '')
+      .set('DATABASE_SID', this.resolveDatabaseSid())
+      .set('LANGUAGE', this.resolveDataLanguage());
+  }
+
   getMock(url: string, paramOtions?: HttpParams, headersOption?:HttpHeaders, responseType?): Observable<Response> {
     let token = localStorage.getItem('ICRAuthToken');
     let user = localStorage.getItem('ICRUser');
@@ -205,10 +255,7 @@ export class HttpService  {
     if (!externalUrl) {
       url = this.baseUrl + url;
       headersOption = headersOption.set('Content-type', 'Application/json; charset=UTF-8');
-      headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
-      headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
-      headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
-      headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+      headersOption = this.withSessionHeaders(headersOption, 'central');
     }
 
     this.logRequest('HTTP GET', url, headersOption, paramOptions);
@@ -248,10 +295,7 @@ export class HttpService  {
     headersOption = headersOption.set('Content-Type', 'application/json');
     headersOption = headersOption.set('Content-type', 'Application/json; charset=UTF-8');
     headersOption = headersOption.set('Accept', 'application/octet-stream');
-    headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
-    headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
-    headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
-    headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+    headersOption = this.withSessionHeaders(headersOption, 'central');
 
     this.logRequest('HTTP GET FILE', url, headersOption, paramOptions);
     return this.httpClient.get(url, { headers: headersOption,
@@ -292,11 +336,7 @@ export class HttpService  {
 
     if (!externalUrl) {
       url = this.baseUrl + url;
-  
-      headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
-      headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
-      headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
-      headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+      headersOption = this.withSessionHeaders(headersOption, 'central');
     }
 
     if (bodyOptions) {
@@ -340,10 +380,7 @@ export class HttpService  {
     }
     headersOption = headersOption.set('Content-Type', 'multipart/form-data');
 
-    headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
-    headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
-    headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
-    headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+    headersOption = this.withSessionHeaders(headersOption, 'central');
 
     if (bodyOptions) {
       body = bodyOptions;
@@ -385,10 +422,7 @@ export class HttpService  {
     }
     headersOption = headersOption.set('Content-Type', 'application/json');
     headersOption = headersOption.set('Content-type', 'Application/json; charset=UTF-8');
-    headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
-    headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
-    headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
-    headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+    headersOption = this.withSessionHeaders(headersOption, 'central');
     headersOption = headersOption.set('ENV_IP', localStorage.getItem('ENV_IP'));
     headersOption = headersOption.set('ENV_ID', localStorage.getItem('ENV_ID'));
     headersOption = headersOption.set('ENV_PASS', localStorage.getItem('ENV_PASS'));
@@ -433,10 +467,7 @@ export class HttpService  {
     }
     headersOption = headersOption.set('Content-Type', 'application/json');
     headersOption = headersOption.set('Content-type', 'Application/json; charset=UTF-8');
-    headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
-    headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
-    headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
-    headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+    headersOption = this.withSessionHeaders(headersOption, 'stock');
     headersOption = headersOption.set('ENV_IP', localStorage.getItem('ENV_IP_STOCK'));
     headersOption = headersOption.set('ENV_ID', localStorage.getItem('ENV_ID_STOCK'));
     headersOption = headersOption.set('ENV_PASS', localStorage.getItem('ENV_PASS_STOCK'));
@@ -481,10 +512,7 @@ export class HttpService  {
     }
     headersOption = headersOption.set('Content-Type', 'application/json');
     headersOption = headersOption.set('Content-type', 'Application/json; charset=UTF-8');
-    headersOption = headersOption.set('USER', localStorage.getItem('ICRUser'));
-    headersOption = headersOption.set('Authorization', localStorage.getItem('ICRAuthToken'));
-    headersOption = headersOption.set('DATABASE_SID', localStorage.getItem('ICRSID'));
-    headersOption = headersOption.set('LANGUAGE', localStorage.getItem('ICRLanguage'));
+    headersOption = this.withSessionHeaders(headersOption, 'central');
     headersOption = headersOption.set('ENV_IP', localStorage.getItem('ENV_IP_MOB'));
     headersOption = headersOption.set('ENV_ID', localStorage.getItem('ENV_ID_MOB'));
     headersOption = headersOption.set('ENV_PASS', localStorage.getItem('ENV_PASS_MOB'));

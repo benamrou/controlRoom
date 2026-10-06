@@ -46,8 +46,8 @@ export class UnixRunnerService {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'DATABASE_SID': this._userService.userInfo.sid[0].toString(),
-      'LANGUAGE': this._userService.userInfo.envDefaultLanguage
+      'DATABASE_SID': this._userService.databaseSidHeader() || this._userService.databaseSid('central'),
+      'LANGUAGE': this._userService.dataLanguage()
     },
     body: JSON.stringify({ cmd: command })
   });

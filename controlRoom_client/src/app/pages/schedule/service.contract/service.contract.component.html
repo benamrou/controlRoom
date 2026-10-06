@@ -144,7 +144,7 @@
                                             </tr>
                                     <tr>
                                         <th class="createTemporarySchedule">
-                                                <p-calendar *ngIf="isScheduleToChange(temporarySchedule[indice])" 
+                                                <p-calendar appendTo="body" *ngIf="isScheduleToChange(temporarySchedule[indice])" 
                                                 [(ngModel)]="temporarySchedule[indice].start"  
                                                 [minDate]="dateTomorrow"
                                                 [readonlyInput]="true"
@@ -159,7 +159,7 @@
                                                         (change)="refreshTimeline(temporarySchedule[indice])"  /-->
                                         </th>
                                         <th class="createTemporarySchedule">
-                                                <p-calendar *ngIf="isScheduleToChange(temporarySchedule[indice])" 
+                                                <p-calendar appendTo="body" *ngIf="isScheduleToChange(temporarySchedule[indice])" 
                                                 [(ngModel)]="temporarySchedule[indice].end"  
                                                 [readonlyInput]="true"
                                                 [minDate]="dateTomorrow"

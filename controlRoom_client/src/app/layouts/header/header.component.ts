@@ -2,6 +2,7 @@ import { ApplicationRef, Component, OnInit, Output, EventEmitter, Inject } from 
 import { UserService, LogginService, LabelService, Environment } from '../../shared/services/index';
 import { HeaderMenuRow, MenuAccessService } from '../../shared/services/menu/menu-access.service';
 import { SettingsAdminService } from '../../shared/services/settings/settings.admin.service';
+import { NewsBulletinService, NewsItem } from '../../shared/services/news/news.bulletin.service';
 import { Router } from '@angular/router';
 import { MessageService, SelectItem } from 'primeng/api';
 import { DOCUMENT } from '@angular/common';
@@ -19,6 +20,7 @@ export class HeaderComponent implements OnInit {
 
 
   @Output() languageSwitched = new EventEmitter();
+  @Output() sidebarCollapseToggle = new EventEmitter<void>();
 	// List of environment to access
 	public selectedEnvironment!: string;
 	environments: SelectItem [] = [];
@@ -44,12 +46,38 @@ export class HeaderComponent implements OnInit {
 	languageBusy = false;
 	languageOptions = uiLanguageOptions();
 
+	newsDialogVisible = false;
+	newsBusy = false;
+	newsTabIndex = 0;
+	newsItems: NewsItem[] = [];
+	patchItems: NewsItem[] = [];
+	adminNewsItems: NewsItem[] = [];
+	newsBadgeCount = 0;
+	newsNotifyCount = 0;
+	patchNotifyCount = 0;
+	private newsNotifyIds = new Set<number>();
+	newsBannerVisible = false;
+	newsBannerItems: NewsItem[] = [];
+	newsEditVisible = false;
+	newsEditBusy = false;
+	newsForm: NewsItem = this.emptyNewsForm();
+	newsNotifyDate: Date | null = null;
+	newsTypeOptions = [
+		{ label: 'News', value: 'NEWS' },
+		{ label: 'Patch', value: 'PATCH' },
+	];
+	publishedOptions = [
+		{ label: 'Published', value: 1 },
+		{ label: 'Draft', value: 0 },
+	];
+
 	constructor(
         private _logginService: LogginService,
         public _userService: UserService,
         public menuAccess: MenuAccessService,
         private _labelService: LabelService,
         private _settingsAdmin: SettingsAdminService,
+        private _news: NewsBulletinService,
         private _msg: MessageService,
         public _router: Router,
         private _appRef: ApplicationRef,
@@ -67,6 +95,8 @@ export class HeaderComponent implements OnInit {
 
     ngOnInit(): void {
 		this.refreshEnvironments();
+		this.refreshNewsBadge();
+		this.maybeShowLoginBanner();
 	}
 
 	get currentUiLanguage(): string {
@@ -165,8 +195,9 @@ export class HeaderComponent implements OnInit {
 	}
 
     toggleSidebar() {
-        const dom: any = document.querySelector('body');
-        dom.classList.toggle('push-right');
+        // Desktop Fall theme: collapse/expand the icon rail.
+        // (Legacy mobile push-right overlay has no Fall styles.)
+        this.sidebarCollapseToggle.emit();
     }
 
     rltAndLtr() {
@@ -224,10 +255,19 @@ export class HeaderComponent implements OnInit {
     }
 
 	environmentChange(envLabel: any, envType: any) {
+		if (!this._userService.setMainEnvironment(envType)) {
+			this._msg.add({
+				severity: 'error',
+				summary: 'Environment',
+				detail: `Could not switch to ${envLabel}. Your current environment was kept.`,
+				life: 5000,
+			});
+			this.loadEnvironments();
+			return;
+		}
 		this.msgDisplayed = this.msgEnvironment + ' ' + envLabel + '.';
 		this.envTypeConnected = envType;
 		this.selectedEnvironment = envLabel;
-		this._userService.setMainEnvironment(envType);
 		console.log('User env' + JSON.stringify(this._userService.userInfo));
 		this.displaySwitch = true;
 		this.setTopBarDisplay();
@@ -364,6 +404,193 @@ export class HeaderComponent implements OnInit {
 					? err.message
 					: 'Could not change password. Check your current password and try again.';
 				this._msg.add({ severity: 'error', summary: 'Password change failed', detail });
+			},
+		});
+	}
+
+	get isIcrAdmin(): boolean {
+		return Number(this._userService.userInfo?.type) === 1;
+	}
+
+	private emptyNewsForm(): NewsItem {
+		return {
+			NEWS_ID: 0,
+			ITEM_TYPE: 'NEWS',
+			TITLE: '',
+			BODY: '',
+			PUBLISHED: 1,
+			NOTIFICATION_DATE: '',
+			NOTIFICATION_MSG: '',
+		};
+	}
+
+	private defaultNotifyDate(): Date | null {
+		return null;
+	}
+
+	refreshNewsBadge(): void {
+		this._news.listLoginBanners().subscribe({
+			next: (rows) => { this.applyNotifyCounts(rows); },
+			error: () => { this.applyNotifyCounts([]); },
+		});
+	}
+
+	maybeShowLoginBanner(): void {
+		if (!NewsBulletinService.consumeLoginBannerPending()) {
+			return;
+		}
+		this._news.listLoginBanners().subscribe({
+			next: (rows) => {
+				this.applyNotifyCounts(rows);
+				if (!rows.length) {
+					return;
+				}
+				this.newsBannerItems = rows;
+				this.newsBannerVisible = true;
+			},
+			error: () => { /* login continues without banner */ },
+		});
+	}
+
+	closeNewsBanner(): void {
+		this.newsBannerVisible = false;
+	}
+
+	openNewsFromBanner(): void {
+		this.newsBannerVisible = false;
+		this.openNewsDialog();
+	}
+
+	openNewsDialog(): void {
+		this.newsDialogVisible = true;
+		this.newsTabIndex = 0;
+		this.loadPublishedNews();
+		if (this.isIcrAdmin) {
+			this.loadAdminNews();
+		}
+	}
+
+	loadPublishedNews(): void {
+		this.newsBusy = true;
+		forkJoin({
+			published: this._news.listPublished('-1'),
+			banners: this._news.listLoginBanners().pipe(catchError(() => of([] as NewsItem[]))),
+		}).subscribe({
+			next: ({ published, banners }) => {
+				this.applyNotifyCounts(banners);
+				const news = published.filter((r) => r.ITEM_TYPE === 'NEWS');
+				const patches = published.filter((r) => r.ITEM_TYPE === 'PATCH');
+				this.newsItems = this.notifyFirst(news);
+				this.patchItems = this.notifyFirst(patches);
+				this.newsBusy = false;
+			},
+			error: (err: unknown) => {
+				this.newsBusy = false;
+				this._msg.add({
+					severity: 'error',
+					summary: 'News',
+					detail: err instanceof Error ? err.message : 'Could not load news and patches.',
+				});
+			},
+		});
+	}
+
+	isActiveNotify(item: NewsItem): boolean {
+		return !!item?.NEWS_ID && this.newsNotifyIds.has(item.NEWS_ID);
+	}
+
+	private applyNotifyCounts(rows: NewsItem[]): void {
+		const list = Array.isArray(rows) ? rows : [];
+		this.newsNotifyIds = new Set(list.map((r) => r.NEWS_ID).filter((id) => !!id));
+		this.newsNotifyCount = list.filter((r) => r.ITEM_TYPE === 'NEWS').length;
+		this.patchNotifyCount = list.filter((r) => r.ITEM_TYPE === 'PATCH').length;
+		this.newsBadgeCount = list.length;
+	}
+
+	private notifyFirst(rows: NewsItem[]): NewsItem[] {
+		const active: NewsItem[] = [];
+		const rest: NewsItem[] = [];
+		for (const row of rows) {
+			(this.isActiveNotify(row) ? active : rest).push(row);
+		}
+		return active.concat(rest);
+	}
+
+	loadAdminNews(): void {
+		this._news.listAll('-1').subscribe({
+			next: (rows) => { this.adminNewsItems = rows; },
+			error: () => { this.adminNewsItems = []; },
+		});
+	}
+
+	openNewsEditor(row?: NewsItem): void {
+		this.newsForm = row
+			? { ...row, BODY: row.BODY || '', TITLE: row.TITLE || '', ITEM_TYPE: row.ITEM_TYPE || 'NEWS', PUBLISHED: Number(row.PUBLISHED) === 0 ? 0 : 1, NOTIFICATION_MSG: row.NOTIFICATION_MSG || '' }
+			: this.emptyNewsForm();
+		this.newsNotifyDate = row
+			? NewsBulletinService.parseDate(row.NOTIFICATION_DATE)
+			: this.defaultNotifyDate();
+		this.newsEditVisible = true;
+	}
+
+	closeNewsEditor(): void {
+		this.newsEditVisible = false;
+		this.newsForm = this.emptyNewsForm();
+		this.newsNotifyDate = null;
+	}
+
+	saveNewsItem(): void {
+		const title = (this.newsForm.TITLE || '').trim();
+		if (!title) {
+			this._msg.add({ severity: 'warn', summary: 'Validation', detail: 'Title is required.' });
+			return;
+		}
+		const userId = this._userService.ICRUser || this._userService.userInfo?.username || 'admin';
+		this.newsEditBusy = true;
+		this._news.save({
+			...this.newsForm,
+			TITLE: title,
+			ITEM_TYPE: String(this.newsForm.ITEM_TYPE || 'NEWS').toUpperCase(),
+			NOTIFICATION_DATE: NewsBulletinService.toYmd(this.newsNotifyDate),
+			UPDATED_BY: userId,
+		}).subscribe({
+			next: () => {
+				this.newsEditBusy = false;
+				this.closeNewsEditor();
+				this.loadPublishedNews();
+				this.loadAdminNews();
+				this._msg.add({ severity: 'success', summary: 'Published', detail: 'News / patch saved.' });
+			},
+			error: (err: unknown) => {
+				this.newsEditBusy = false;
+				this._msg.add({
+					severity: 'error',
+					summary: 'Save failed',
+					detail: err instanceof Error ? err.message : 'Could not save. ICR admin access required.',
+				});
+			},
+		});
+	}
+
+	deleteNewsItem(row: NewsItem): void {
+		if (!row?.NEWS_ID) {
+			return;
+		}
+		if (!this._document.defaultView?.confirm('Delete this ' + (row.ITEM_TYPE === 'PATCH' ? 'patch' : 'news') + ' item?')) {
+			return;
+		}
+		this._news.delete(row.NEWS_ID).subscribe({
+			next: () => {
+				this.loadPublishedNews();
+				this.loadAdminNews();
+				this._msg.add({ severity: 'success', summary: 'Deleted', detail: 'Item removed.' });
+			},
+			error: (err: unknown) => {
+				this._msg.add({
+					severity: 'error',
+					summary: 'Delete failed',
+					detail: err instanceof Error ? err.message : 'Could not delete.',
+				});
 			},
 		});
 	}

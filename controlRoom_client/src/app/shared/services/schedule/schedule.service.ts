@@ -111,8 +111,6 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
          this.params = this.params.set('PARAM', vendorCode);
          this.params = this.params.append('PARAM', periodStart);
          this.params = this.params.append('PARAM', periodEnd);
-         headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-         headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
          return this.http.get(this.request, this.params, this.options).pipe(map(response => {
                  let data = <any> response;
@@ -340,8 +338,6 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
      this.params= new HttpParams();
      let dateNow = new Date();
      
-     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
      headersSearch = headersSearch.set('ENV_COMMAND', //'ls -lrt');
          // Initialization
          this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
@@ -385,8 +381,6 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
                  this.params = this.params.append('PARAM', sites[i].code);
          }
      }
-     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
      //console.log('Parameters delete: ' + JSON.stringify(this.params));
      return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
@@ -416,8 +410,6 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
              this.params = this.params.append('PARAM', schedule.sites[i].code);
          }
      }
-     headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-     headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
  
      //console.log('Parameters createSchedule: ' + JSON.stringify(this.params));
      return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
@@ -444,8 +436,6 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
 
     headersSearch = headersSearch.set('QUERY_ID', this.request );
     headersSearch = headersSearch.set('FILENAME', filename );
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this.http.post(this.request, this.params, headersSearch, body).pipe(map(response => {
             let data = <any> response;
             return data;

@@ -225,7 +225,7 @@ export class ItemAttributeComponent implements OnInit{
                             '<b>Item attribute change is usually taking between 1 and 3 minutes</b>';
 
         // CHANGED: pass the raw File instead of JSON-stringified rows.
-        // The server now parses the Excel with exceljs — avoids 413 on large files.
+        // The server now parses the Excel with exceljs - avoids 413 on large files.
         // nbRecord is omitted: the server counts rows from the file directly.
         this._importService.postExecution(this.uploadedFiles[0].name, this.toolID,
                             this.datePipe.transform(this.startDate,'MM/dd/yy'),

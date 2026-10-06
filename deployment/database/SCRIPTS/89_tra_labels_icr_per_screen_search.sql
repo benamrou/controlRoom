@@ -171,6 +171,9 @@ BEGIN
   -- S51
   seed3('S51.DLG.UPD', 'Update completed', 'Update completed', 'Mise a jour terminee', 'SCR0000000051');
 
+  -- S90
+  seed3('S90.DLG.UPD', 'Update completed', 'Update completed', 'Mise a jour terminee', 'SCR0000000090');
+
   -- S52
   seed3('S52.BTN.SRCH', 'SEARCH', 'SEARCH', 'RECHERCHER', 'SCR0000000052');
 

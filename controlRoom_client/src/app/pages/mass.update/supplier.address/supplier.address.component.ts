@@ -1,7 +1,8 @@
-import {Component, ViewEncapsulation, OnInit, ViewChild} from '@angular/core';
-import { WarehouseService, WidgetService, ExportService, ImportService } from '../../../shared/services';
+import {Component, ViewEncapsulation, OnInit, ViewChild, OnDestroy} from '@angular/core';
+import { WarehouseService, WidgetService, ExportService, ImportService, UserService} from '../../../shared/services';
 import { MenuItem } from 'primeng/api';
 import { buildMassUpdateMenuItems } from '../../../shared/i18n/mass-update-i18n.helper';
+import { resetMassUpdateWizardState, bindMassUpdateOnEnvironmentChange } from '../../../shared/i18n/mass-update-file.helper';
 import { LabelService } from '../../../shared/services/labels/labels.service';
 import { Subscription } from 'rxjs';
 import { Table } from 'primeng/table';
@@ -21,7 +22,7 @@ import {DatePipe} from '@angular/common';
     encapsulation: ViewEncapsulation.None
 })
 
-export class SupplierAddressComponent implements OnInit{
+export class SupplierAddressComponent implements OnInit, OnDestroy{
 
     @ViewChild('fileUpload') fileUpload: any;
     @ViewChild('result') resultTable: Table;
@@ -30,6 +31,7 @@ export class SupplierAddressComponent implements OnInit{
    activeIndex: number = 0;
    menuItems: MenuItem[] = [];
   private labelSub?: Subscription;
+  private envSub?: Subscription;
    uploadedFiles: any[] = [];
 
    templateID = 'ICR_TEMPLATE011';
@@ -82,7 +84,7 @@ export class SupplierAddressComponent implements OnInit{
   displayConfirm: boolean;
 
   constructor(private _widgetService: WidgetService, private _messageService: MessageService,
-              private _exportService: ExportService, public _importService: ImportService, private _labels: LabelService) {
+              private _exportService: ExportService, public _importService: ImportService, private _labels: LabelService, private _userService: UserService) {
     this.datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
     this.dateTomorrow =  new Date(this.dateNow.setDate(this.dateNow.getDate() + 1));
@@ -104,6 +106,12 @@ export class SupplierAddressComponent implements OnInit{
   ngOnInit() {
     this.buildMassUpdateSteps();
     this.labelSub = this._labels.revision$.subscribe(() => this.buildMassUpdateSteps());
+    this.envSub = bindMassUpdateOnEnvironmentChange(this, this._userService.environmentChanged$, this._messageService);
+  }
+
+  ngOnDestroy(): void {
+    this.labelSub?.unsubscribe();
+    this.envSub?.unsubscribe();
   }
 
   private buildMassUpdateSteps(): void {
@@ -141,11 +149,8 @@ export class SupplierAddressComponent implements OnInit{
   }
 
     onSelect(event) {
-        this.activeIndex = 0; // Go next step;
-        this.uploadedFiles = [];
-        this.displayConfirm = false;
-        let formData: FormData = new FormData();
-        this.indicatorXLSfileLoaded = false;
+        // Full wizard reset - required when reselecting a file mid-flow
+        this.reset();
         try {   
             for(let i =0; i < event.currentFiles.length; i++) {
                 //console.log('event.currentFiles:', event.currentFiles[i]);
@@ -486,18 +491,8 @@ export class SupplierAddressComponent implements OnInit{
   }
 
   reset() {
-      this.activeIndex = 0; // Go next step;
-      this.globalValid = [];
-      this.uploadedFiles = [];
-      this.displayConfirm = false;
-      this.indicatorXLSfileLoaded = false;
-        this.recapSummary = {
-        totalRecords: 0,
-        successRecords: 0,
-        errorRecords: 0,
-        errorDetails: [] as any[], // Array of row objects with all columns
-        columns: [] as string[] // Dynamic column names from worksheet
-    };
+      resetMassUpdateWizardState(this);
   }
+
  
 }

@@ -25,14 +25,14 @@
 </div>
 <div class="bbs_search_sub_panel"  >
     <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'S37.LBL.PST' | lbl:'Period start :' }} </span>
-    <p-calendar [(ngModel)]="periodStart"  
+    <p-calendar appendTo="body" [(ngModel)]="periodStart"  
                 dateFormat="mm/dd/yy"
                 [style]="{'height': '35px'}"
                 name="scheduleStart" [showIcon]="true" 
                 [showOnFocus]="true" [showOtherMonths]="true"></p-calendar>
 
     <span style="margin-left:11em; padding-left: 15px; font-weight: bolder">{{ 'S37.LBL.PEN' | lbl:'Period end :' }} </span>
-    <p-calendar [(ngModel)]="periodEnd"  
+    <p-calendar appendTo="body" [(ngModel)]="periodEnd"  
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
                 [style]="{'height': '35px'}"

@@ -16,26 +16,34 @@ let configuration = {
 
 /**
  * Generate unique request ID
+ * @param {string} [prefix='REQ'] — use 'CRON' for ALERTSCHEDULE shell runs
  */
-function generateRequestId() {
-    return `REQ_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+function generateRequestId(prefix) {
+    const p = (prefix && String(prefix).trim()) || 'REQ';
+    return `${p}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 /**
  * Log request start to ALERTLOG
  * Uses MERGE - if archiving already created row, UPDATE it; otherwise INSERT
  * MUST complete before archiving to avoid race condition
+ *
+ * @param {object} [options]
+ * @param {string} [options.util='notification.js'] — LALTUTIL (e.g. 'crontab.js')
+ * @param {string} [options.phase='INIT'] — LALTPHASE (e.g. 'CRON_SHELL')
  */
-async function logStart(requestId, altId, email, laltparam, laltdb, laltlangue) {
+async function logStart(requestId, altId, email, laltparam, laltdb, laltlangue, options) {
     const oracledb = require('oracledb');
     let conn;
+    const util = (options && options.util) || 'notification.js';
+    const phase = (options && options.phase) || 'INIT';
     try {
         conn = await oracledb.getConnection(configuration.config.db.connAttrs);
         
         const result = await conn.execute(
             `MERGE INTO ALERTLOG A
-             USING (SELECT :reqid AS LALTREQID, :altid AS LALTID, :email AS LALTEMAIL, SYSDATE AS LALTDCRE, SYSDATE AS LALTDMAJ, 'notification.js' AS LALTUTIL,
-                           SYSTIMESTAMP AS LALTSTARTTIME, 'INIT' AS LALTPHASE, 'PROCESSING' AS LALTSTATUS,
+             USING (SELECT :reqid AS LALTREQID, :altid AS LALTID, :email AS LALTEMAIL, SYSDATE AS LALTDCRE, SYSDATE AS LALTDMAJ, :util AS LALTUTIL,
+                           SYSTIMESTAMP AS LALTSTARTTIME, :phase AS LALTPHASE, 'PROCESSING' AS LALTSTATUS,
                            SYSDATE AS LALTEDATE,
                            :altparam as LALTPARAM,
                            :altlangue as LALTLANGUE,
@@ -56,13 +64,16 @@ async function logStart(requestId, altId, email, laltparam, laltdb, laltlangue) 
              WHEN NOT MATCHED THEN
                 INSERT (LALTREQID, LALTID, LALTEMAIL, LALTSTARTTIME, LALTPHASE, LALTSTATUS, LALTEDATE, LALTDCRE, LALTDMAJ, LALTUTIL, LALTPARAM, LALTDB, LALTLANGUE)
                 VALUES (B.LALTREQID, B.LALTID, B.LALTEMAIL, B.LALTSTARTTIME, B.LALTPHASE, B.LALTSTATUS, B.LALTEDATE, B.LALTDCRE, B.LALTDMAJ, B.LALTUTIL, B.LALTPARAM, B.LALTDB, B.LALTLANGUE)`,
-            { reqid: requestId, 
-              altid: altId, 
-              altparam: JSON.stringify(laltparam),
-              altdb: laltdb,
-              altlangue: laltlangue,
-
-              email: email },
+            {
+              reqid: requestId,
+              altid: String(altId),
+              altparam: typeof laltparam === 'string' ? laltparam : JSON.stringify(laltparam == null ? '' : laltparam),
+              altdb: laltdb == null ? '' : String(laltdb),
+              altlangue: laltlangue == null ? '' : String(laltlangue),
+              email: email == null ? '' : String(email),
+              util: String(util).substring(0, 50),
+              phase: String(phase).substring(0, 50),
+            },
             { autoCommit: true }
         );
         
@@ -77,7 +88,7 @@ async function logStart(requestId, altId, email, laltparam, laltdb, laltlangue) 
              AND LALTREQID = :reqid
              AND trunc(LALTDCRE)=trunc(SYSDATE)
              ORDER BY LALTEDATE DESC`,
-            { altid: altId, reqid: requestId }
+            { altid: String(altId), reqid: requestId }
         );
         
         configuration.logger.log('alert', `[DB_LOGGER] logStart SUCCESS - ReqID: ${requestId}, Alert: ${altId}, Rows affected: ${result.rowsAffected}`, 'alert', 1);

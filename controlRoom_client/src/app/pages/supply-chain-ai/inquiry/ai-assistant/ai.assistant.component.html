@@ -100,11 +100,11 @@
                                 <li *ngFor="let fact of getTurnEvidenceFacts(t)">{{ fact }}</li>
                             </ul>
 
-                            <!-- Diagnostic chain step audit trail (admin only — collapsible) -->
+                            <!-- Diagnostic chain step audit trail (admin only - collapsible) -->
                             <div *ngIf="isAiAdmin && t.role === 'assistant' && t.meta?.is_diagnostic && t.meta?.diagnostic_steps?.length"
                                  class="ai-diag-steps">
                                 <p-accordion>
-                                    <p-accordionTab header="Diagnostic chain — {{ t.meta.diagnostic_steps.length }} step(s)">
+                                    <p-accordionTab header="Diagnostic chain - {{ t.meta.diagnostic_steps.length }} step(s)">
                                         <div *ngFor="let step of t.meta.diagnostic_steps; let si = index"
                                              class="ai-diag-step"
                                              [class.ai-diag-step--stopped]="step.stopped_here"
@@ -113,13 +113,13 @@
                                                 <span class="ai-diag-step-num">Step {{ step.step_order }}</span>
                                                 <span class="ai-diag-step-label">{{ step.step_label }}</span>
                                                 <span class="ai-diag-step-tpl">{{ step.template_code }}</span>
-                                                <!-- HARD stop — chain aborted -->
+                                                <!-- HARD stop - chain aborted -->
                                                 <p-tag *ngIf="step.stopped_here"
                                                        value="HARD STOP"
                                                        severity="danger"
                                                        icon="fas fa-hand-paper"
                                                        styleClass="ai-diag-step-stop"></p-tag>
-                                                <!-- SOFT issue — issue logged, chain continued -->
+                                                <!-- SOFT issue - issue logged, chain continued -->
                                                 <p-tag *ngIf="step.issue_found && !step.stopped_here"
                                                        value="ISSUE"
                                                        severity="warning"
@@ -158,7 +158,7 @@
                                 </button>
                             </div>
 
-                            <!-- Phase 12 — inline result table per turn -->
+                            <!-- Phase 12 - inline result table per turn -->
                             <div *ngIf="t.role === 'assistant' && (turnHasResults(t) || turnHasError(t))"
                                  class="ai-chat-results">
                                 <div class="ai-chat-results-head">
@@ -202,7 +202,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Phase 12 — enrichment indicator. Visible only on ITM_FULL_ATTRIBUTES;
+                                <!-- Phase 12 - enrichment indicator. Visible only on ITM_FULL_ATTRIBUTES;
                                      shows which include_* flags fed the SQL so the user sees how the
                                      consolidated table was built. -->
                                 <div *ngIf="getTurnEnrichments(t).length"
@@ -257,7 +257,7 @@
                                 </p-table>
                                 </div>
 
-                                <!-- Data identity footer — retailer + query time -->
+                                <!-- Data identity footer - retailer + query time -->
                                 <div *ngIf="t.meta?.retailer_name && turnHasResults(t) && !turnHasError(t)"
                                      class="ai-chat-results-footer">
                                     <i class="fas fa-database"></i>
@@ -293,7 +293,7 @@
                                  class="ai-clarifications">
                                 <span class="ai-clarifications-prompt">
                                     <i class="fas fa-route"></i>
-                                    I'm not fully sure — did you mean:
+                                    I'm not fully sure - did you mean:
                                 </span>
                                 <button *ngFor="let alt of t.meta.alternatives"
                                         type="button"
@@ -349,9 +349,9 @@
                                         <i class="fas"
                                            [class.fa-thumbs-up]="feedbackSent[tIdx] === 'up'"
                                            [class.fa-thumbs-down]="feedbackSent[tIdx] === 'down'"></i>
-                                        Thanks — feedback recorded
+                                        Thanks - feedback recorded
                                     </span>
-                                    <!-- LEARN — after thumb-down: offer to teach the correct skill -->
+                                    <!-- LEARN - after thumb-down: offer to teach the correct skill -->
                                     <button *ngIf="isAiAdmin && feedbackSent[tIdx] === 'down' && !thumbDownTeachDone[tIdx]"
                                             pButton
                                             type="button"
@@ -365,7 +365,7 @@
                                         <i class="fas fa-check-circle"></i> Phrase taught
                                     </span>
                                 </ng-template>
-                                <!-- Teach panel — inline skill picker + confirm -->
+                                <!-- Teach panel - inline skill picker + confirm -->
                                 <div *ngIf="isAiAdmin && thumbDownTeachVisible[tIdx] && !thumbDownTeachDone[tIdx]"
                                      class="ai-teach-panel">
                                     <span class="ai-teach-prompt">
@@ -458,9 +458,9 @@
                         <p-tag [value]="confidenceLabel" [severity]="confidenceSeverity"></p-tag>
                         <p class="ai-confidence-hint">{{ confidenceHint }}</p>
                         <ul class="ai-confidence-legend">
-                            <li><span class="dot dot--low"></span>&lt; 50 — not very sure which skill fits</li>
-                            <li><span class="dot dot--mid"></span>50–80 — good match</li>
-                            <li><span class="dot dot--high"></span>&gt; 80 — high confidence</li>
+                            <li><span class="dot dot--low"></span>&lt; 50 - not very sure which skill fits</li>
+                            <li><span class="dot dot--mid"></span>50–80 - good match</li>
+                            <li><span class="dot dot--high"></span>&gt; 80 - high confidence</li>
                         </ul>
                     </div>
                 </div>
@@ -487,7 +487,7 @@
                 </ul>
             </p-card>
 
-            <!-- ADJUST — Active context: shows accumulated session entities with inline edit.
+            <!-- ADJUST - Active context: shows accumulated session entities with inline edit.
                  Displayed as soon as the engine extracts at least one entity (supplier, site, dates).
                  Edits take effect on the next follow-up without retyping the question. -->
             <p-card header="Active context" *ngIf="hasContextEntities()" styleClass="ai-context-card">
@@ -566,7 +566,7 @@
                 </p>
             </p-card>
 
-            <!-- Engine diagnostics — admin only (USERAIADMIN = 1). -->
+            <!-- Engine diagnostics - admin only (USERAIADMIN = 1). -->
             <p-card *ngIf="isAiAdmin && hasDebugInfo()" styleClass="ai-diag-card">
                 <ng-template pTemplate="header">
                     <div class="ai-diag-card-head">
@@ -657,7 +657,7 @@
                     </div>
                 </div>
 
-                <!-- Section 3: Routing context — intent + entities -->
+                <!-- Section 3: Routing context - intent + entities -->
                 <div *ngIf="diagResult" class="ai-diag-section">
                     <div class="ai-diag-section-title">
                         <i class="fas fa-language"></i>
@@ -676,7 +676,7 @@
                     </div>
                     <div *ngIf="!getEntityKeysWithValues().length" class="ai-diag-section-help">
                         No entities were extracted. The router will fail to bind any
-                        template parameter — add a <code>BIND_HINT</code> row in
+                        template parameter - add a <code>BIND_HINT</code> row in
                         <code>AI_SKILL_VOCABULARY</code> so phrases like "for store 7"
                         or "item 100100" map to <code>site_id</code> / <code>lu_id</code>.
                     </div>
@@ -708,11 +708,11 @@
                                     <div class="ai-diag-tpl-label" *ngIf="t.template_label">{{ t.template_label }}</div>
                                 </td>
                                 <td>
-                                    <span *ngIf="!t.required_binds?.length" class="muted">—</span>
+                                    <span *ngIf="!t.required_binds?.length" class="muted">-</span>
                                     <code *ngFor="let b of t.required_binds" class="ai-diag-bind-chip">{{ b }}</code>
                                 </td>
                                 <td>
-                                    <span *ngIf="!t.missing_binds?.length" class="muted">—</span>
+                                    <span *ngIf="!t.missing_binds?.length" class="muted">-</span>
                                     <code *ngFor="let b of t.missing_binds" class="ai-diag-bind-chip ai-diag-bind-chip--missing">{{ b }}</code>
                                 </td>
                                 <td>
@@ -781,7 +781,7 @@
                                 [loading]="loadingTemplateSkills"
                                 styleClass="ai-designer-skill-dd">
                     </p-dropdown>
-                    <p class="ai-designer-hint">Defaults to the last routed skill; change this to use an existing skill and edit its templates in Skill Builder — no new skill required.</p>
+                    <p class="ai-designer-hint">Defaults to the last routed skill; change this to use an existing skill and edit its templates in Skill Builder - no new skill required.</p>
 
                     <label>Template code override (optional)</label>
                     <input pInputText [(ngModel)]="designerInput.templateCode" placeholder="Example: ITM_ARTICLE_HEADER" />
@@ -815,7 +815,7 @@
                                 class="p-button-outlined"
                                 [disabled]="running || !getDesignerSkillId() || (!designerInput.sqlTemplateDraft?.trim() && !designerInput.templateCode?.trim())"
                                 (click)="openSkillBuilderWithDraft()"></button>
-                        <!-- EXTEND — shortcut when no skill exists at all for this question -->
+                        <!-- EXTEND - shortcut when no skill exists at all for this question -->
                         <button *ngIf="!routeResult?.selected_skill_id"
                                 pButton
                                 type="button"
@@ -873,7 +873,7 @@
                     </div>
                 </ng-template>
 
-                <!-- Oracle error path — show raw error + executed SQL inline so the designer can copy/paste -->
+                <!-- Oracle error path - show raw error + executed SQL inline so the designer can copy/paste -->
                 <div *ngIf="isOracleErrorRow(resultRows)" class="ai-oracle-error-msg">
                     <i class="fas fa-exclamation-triangle"></i>
                     {{ getOracleErrorFriendly() }}
@@ -916,7 +916,7 @@
                     </p-table>
                 </ng-container>
 
-                <!-- Debug panel — executed SQL + bind context. Always visible on Oracle errors,
+                <!-- Debug panel - executed SQL + bind context. Always visible on Oracle errors,
                      toggleable for successful runs via the "Debug" button in the header. -->
                 <div *ngIf="hasDebugInfo() && (showDebug || isOracleErrorRow(resultRows))" class="ai-debug-block">
                     <div class="ai-debug-block-head">

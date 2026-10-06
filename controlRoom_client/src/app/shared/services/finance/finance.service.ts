@@ -37,8 +37,6 @@ export class FinanceService {
     this.params = this.params.append('PARAM', age);
     this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
 
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let data = <any> response;
             return data;
@@ -73,8 +71,6 @@ export class FinanceService {
     let body = invoiceDetails;
 
     headersSearch = headersSearch.set('QUERY_ID', this.queryUpdateInvoice);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this.http.post(this.request, this.params, headersSearch,  body).pipe(map(response => {
             let data = <any> response;
             return data;

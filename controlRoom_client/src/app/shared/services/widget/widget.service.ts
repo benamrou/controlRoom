@@ -267,8 +267,6 @@ export class WidgetService {
         this.params =  this.params.append('PARAM', widget.widparam);
         this.params =  this.params.append('PARAM', localStorage.getItem('ICRUser'));
 
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
         
         return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
                     let data = <any> response;

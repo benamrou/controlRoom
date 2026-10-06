@@ -1,4 +1,4 @@
-<nav class="sidebar summer-sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
+<nav class="sidebar fall-sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
     *ngIf="_userService.userInfo" style="padding-top:1%">
     <ul class="list-group">
         <a routerLink="/dashboard" routerLinkActive="router-link-active" class="list-group-item">
@@ -21,7 +21,7 @@
     </ul>
 </nav>
 
-<nav class="sidebar_admin summer-sidebar-admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
+<nav class="sidebar_admin fall-sidebar-admin" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}"
     *ngIf="_userService.userInfo && menuAccess.adminTree.length">
     <div class="list-group">
         <app-sidebar-menu [nodes]="menuAccess.adminTree" [showMenu]="showMenu"

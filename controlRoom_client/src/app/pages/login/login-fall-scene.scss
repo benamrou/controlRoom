@@ -1,0 +1,755 @@
+/* Soft Autumnal park - hills, maple, leaves, playful black cat */
+
+.fall-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.fall-sun {
+    position: absolute;
+    top: 6%;
+    right: 14%;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 3;
+    background: radial-gradient(circle at 35% 32%, #fff6ea 0%, #f2a65a 40%, #e07b39 100%);
+    box-shadow:
+        0 0 36px rgba(#f2994a, 0.55),
+        0 0 80px rgba(#e07b39, 0.28);
+    animation: fall-sun-glow 5s ease-in-out infinite;
+}
+
+@keyframes fall-sun-glow {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 36px rgba(#f2994a, 0.55), 0 0 80px rgba(#e07b39, 0.28); }
+    50%      { transform: scale(1.05); box-shadow: 0 0 48px rgba(#f2994a, 0.7), 0 0 96px rgba(#e07b39, 0.35); }
+}
+
+.login-page--night .fall-sun {
+    background: radial-gradient(circle at 38% 32%, #fff8e7 0%, #f0d9a0 45%, #c9a66b 100%);
+    box-shadow:
+        0 0 28px rgba(#fff6ea, 0.55),
+        0 0 64px rgba(#f2a65a, 0.25);
+    animation: fall-moon-float 5.5s ease-in-out infinite;
+}
+
+@keyframes fall-moon-float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-5px) scale(1.04); }
+}
+
+// Night owl - JS-driven flight to tall right tree canopy tip
+.fall-owl-stage {
+    position: absolute;
+    left: -10%;
+    top: 28%;
+    width: 48px;
+    height: 40px;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -70%);
+    will-change: left, top;
+    transition: none;
+}
+
+.login-page--night .fall-owl-stage {
+    opacity: 1;
+}
+
+.fall-owl-stage--perched {
+    z-index: 5;
+}
+
+.fall-owl {
+    position: relative;
+    width: 44px;
+    height: 36px;
+    filter: drop-shadow(0 2px 4px rgba(#000, 0.45));
+
+    &--flip { transform: scaleX(-1); }
+}
+
+.fall-owl__body {
+    position: absolute;
+    left: 10px;
+    bottom: 4px;
+    width: 24px;
+    height: 20px;
+    background: linear-gradient(160deg, #c4a574 0%, #8b6914 45%, #6b4f2a 100%);
+    border-radius: 12px 14px 10px 10px;
+}
+
+.fall-owl__body::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: 5px;
+    height: 8px;
+    border-radius: 4px;
+    background: repeating-linear-gradient(
+        90deg,
+        rgba(#5c3a21, 0.35) 0 2px,
+        transparent 2px 5px
+    );
+    opacity: 0.7;
+}
+
+.fall-owl__head {
+    position: absolute;
+    left: 6px;
+    top: 0;
+    width: 28px;
+    height: 22px;
+    background: linear-gradient(180deg, #d2b48c 0%, #a67c52 100%);
+    border-radius: 50% 50% 40% 40%;
+    z-index: 2;
+}
+
+.fall-owl__ear {
+    position: absolute;
+    top: -6px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid #8b6914;
+
+    &--l { left: 2px; transform: rotate(-18deg); }
+    &--r { right: 2px; transform: rotate(18deg); }
+}
+
+.fall-owl__eye {
+    position: absolute;
+    top: 7px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffe9a8 0%, #e8b84a 40%, #5c3a21 70%);
+    box-shadow: 0 0 8px rgba(#f2a65a, 0.85);
+    animation: fall-owl-blink 4.5s ease-in-out infinite;
+
+    &--l { left: 4px; }
+    &--r { right: 4px; animation-delay: -0.8s; }
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: 2px;
+        top: 2px;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: #1a100c;
+    }
+}
+
+@keyframes fall-owl-blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    93% { transform: scaleY(0.1); }
+}
+
+.fall-owl__beak {
+    position: absolute;
+    left: 50%;
+    bottom: 3px;
+    width: 0;
+    height: 0;
+    margin-left: -4px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid #e07b39;
+}
+
+.fall-owl__wing {
+    position: absolute;
+    bottom: 8px;
+    width: 16px;
+    height: 14px;
+    background: linear-gradient(180deg, #a67c52, #6b4423);
+    border-radius: 50% 20% 60% 40%;
+    z-index: 1;
+    transform-origin: center top;
+}
+
+.fall-owl--flying .fall-owl__wing--l {
+    animation: fall-owl-flap-l 0.32s ease-in-out infinite;
+}
+.fall-owl--flying .fall-owl__wing--r {
+    animation: fall-owl-flap-r 0.32s ease-in-out infinite;
+}
+
+.fall-owl-stage--perched .fall-owl__wing--l,
+.fall-owl-stage--reduced .fall-owl__wing--l {
+    transform: rotate(8deg) scaleY(0.85);
+    animation: none;
+}
+.fall-owl-stage--perched .fall-owl__wing--r,
+.fall-owl-stage--reduced .fall-owl__wing--r {
+    transform: rotate(-8deg) scaleY(0.85);
+    animation: none;
+}
+
+@keyframes fall-owl-flap-l {
+    0%, 100% { transform: rotate(-32deg); }
+    50% { transform: rotate(22deg); }
+}
+
+@keyframes fall-owl-flap-r {
+    0%, 100% { transform: rotate(32deg); }
+    50% { transform: rotate(-22deg); }
+}
+
+.fall-owl__wing--l { left: 2px; }
+.fall-owl__wing--r { right: 2px; }
+
+.fall-owl__tail {
+    position: absolute;
+    right: 4px;
+    bottom: 2px;
+    width: 10px;
+    height: 8px;
+    background: #6b4423;
+    border-radius: 0 0 6px 4px;
+    transform: rotate(12deg);
+}
+
+.login-page--paused .fall-owl__wing,
+.login-page--paused .fall-owl__eye {
+    animation-play-state: paused;
+}
+
+// Rolling hills
+.fall-hills {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 48%;
+    z-index: 2;
+}
+
+.fall-hill {
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    border-radius: 50% 50% 0 0;
+}
+
+.fall-hill--back {
+    bottom: 18%;
+    height: 55%;
+    background: linear-gradient(180deg, #d98b4a 0%, #c46a35 100%);
+    opacity: 0.85;
+}
+
+.fall-hill--mid {
+    bottom: 10%;
+    height: 48%;
+    background: linear-gradient(180deg, #e07b39 0%, #b85c38 100%);
+    opacity: 0.92;
+}
+
+.fall-hill--front {
+    bottom: 0;
+    height: 28%;
+    background: linear-gradient(180deg, #c9a66b 0%, #a67c52 70%, #8f6a45 100%);
+}
+
+// Briolet-style recursive forest (canvas)
+.fall-forest-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.fall-ground {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 14%;
+    z-index: 5;
+    background: linear-gradient(180deg, transparent 0%, rgba(#a67c52, 0.35) 40%, #8f6a45 100%);
+}
+
+.fall-litter {
+    position: absolute;
+    inset: 0;
+    animation: fall-litter-sway 6s ease-in-out infinite;
+    background-image:
+        radial-gradient(ellipse 10px 5px at 8% 40%, #e07b39 50%, transparent 52%),
+        radial-gradient(ellipse 8px 4px at 18% 65%, #c45c26 50%, transparent 52%),
+        radial-gradient(ellipse 11px 5px at 32% 35%, #e8b84a 50%, transparent 52%),
+        radial-gradient(ellipse 7px 4px at 48% 70%, #b85c38 50%, transparent 52%),
+        radial-gradient(ellipse 9px 4px at 62% 45%, #e07b39 50%, transparent 52%),
+        radial-gradient(ellipse 8px 5px at 78% 60%, #e8b84a 50%, transparent 52%),
+        radial-gradient(ellipse 10px 4px at 90% 38%, #c45c26 50%, transparent 52%),
+        radial-gradient(ellipse 9px 4px at 24% 48%, #f2a65a 50%, transparent 52%),
+        radial-gradient(ellipse 7px 3px at 55% 55%, #e07b39 50%, transparent 52%);
+    opacity: 0.75;
+}
+
+@keyframes fall-litter-sway {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(3px); }
+}
+
+.fall-leaves {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.fall-leaf {
+    position: absolute;
+    top: -40px;
+    opacity: 0;
+    animation: fall-leaf-drift linear infinite;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 1px 1px rgba(#5c3a21, 0.2));
+
+    &[data-tone='1'] { filter: hue-rotate(-8deg) saturate(1.05); }
+    &[data-tone='2'] { filter: hue-rotate(18deg) saturate(1.1); }
+    &[data-tone='3'] { filter: hue-rotate(-28deg) brightness(0.95); }
+}
+
+.fall-leaves--paused .fall-leaf,
+.fall-leaves--reduced .fall-leaf {
+    animation-play-state: paused;
+}
+
+.fall-leaves--reduced .fall-leaf {
+    opacity: 0.5;
+    top: 20%;
+    animation: none;
+}
+
+@keyframes fall-leaf-drift {
+    0%   { transform: translateY(-40px) translateX(0) rotate(0deg); opacity: 0; }
+    8%   { opacity: 0.95; }
+    45%  { transform: translateY(45vh) translateX(36px) rotate(160deg); opacity: 0.9; }
+    100% { transform: translateY(108vh) translateX(-24px) rotate(420deg); opacity: 0; }
+}
+
+// Cat stage - position is JS-driven (left % + hop transform)
+.fall-cat-stage {
+    position: absolute;
+    bottom: 11%;
+    left: 18%;
+    width: 140px;
+    height: 64px;
+    z-index: 7;
+    will-change: left, transform;
+    pointer-events: none;
+}
+
+.fall-cat-stage--reduced {
+    left: 16% !important;
+    transform: none !important;
+}
+
+.fall-cat {
+    position: relative;
+    width: 58px;
+    height: 38px;
+    transform-origin: center bottom;
+
+    &--flip { transform: scaleX(-1); }
+
+    &--walk .fall-cat__paw--l {
+        animation: fall-cat-paw 0.55s ease-in-out infinite;
+    }
+    &--walk .fall-cat__paw--r {
+        animation: fall-cat-paw 0.55s ease-in-out infinite reverse;
+    }
+    &--walk .fall-cat__body {
+        animation: fall-cat-bob 0.55s ease-in-out infinite;
+    }
+}
+
+.fall-cat-stage--paused .fall-cat--walk .fall-cat__paw--l,
+.fall-cat-stage--paused .fall-cat--walk .fall-cat__paw--r,
+.fall-cat-stage--paused .fall-cat--walk .fall-cat__body {
+    animation-play-state: paused;
+}
+
+@keyframes fall-cat-paw {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-3px); }
+}
+
+@keyframes fall-cat-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-1px); }
+}
+
+// Gray wolves - click to spawn (max 4)
+.fall-wolves {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.fall-wolf-stage {
+    position: absolute;
+    left: 10%;
+    bottom: 10%;
+    width: 96px;
+    height: 52px;
+    transform-origin: 20% 100%;
+    will-change: left;
+}
+
+.fall-wolf {
+    position: relative;
+    width: 78px;
+    height: 42px;
+    transform-origin: center bottom;
+
+    &--flip { transform: scaleX(-1); }
+
+    &--walk .fall-wolf__paw--l,
+    &--walk .fall-wolf__paw--bl {
+        animation: fall-wolf-paw 0.48s ease-in-out infinite;
+    }
+    &--walk .fall-wolf__paw--r,
+    &--walk .fall-wolf__paw--br {
+        animation: fall-wolf-paw 0.48s ease-in-out infinite reverse;
+    }
+    &--walk .fall-wolf__body {
+        animation: fall-wolf-bob 0.48s ease-in-out infinite;
+    }
+    &--walk .fall-wolf__tail {
+        animation: fall-wolf-tail 0.7s ease-in-out infinite;
+    }
+
+    &--howl .fall-wolf__snout {
+        transform: rotate(-18deg) translateY(-2px);
+    }
+    &--howl .fall-wolf__head {
+        transform: rotate(-12deg) translateY(-3px);
+    }
+}
+
+@keyframes fall-wolf-paw {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-3px); }
+}
+
+@keyframes fall-wolf-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-1.5px); }
+}
+
+@keyframes fall-wolf-tail {
+    0%, 100% { transform: rotate(-8deg); }
+    50%      { transform: rotate(16deg); }
+}
+
+.fall-wolf__body {
+    position: absolute;
+    bottom: 6px;
+    left: 18px;
+    width: 44px;
+    height: 22px;
+    background: linear-gradient(180deg, #9a9a9a 0%, #6e6e6e 55%, #5a5a5a 100%);
+    border-radius: 14px 16px 11px 12px;
+    box-shadow: 0 2px 6px rgba(#000, 0.28);
+}
+
+.fall-wolf__body::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    right: 10px;
+    top: 3px;
+    height: 7px;
+    border-radius: 6px;
+    background: rgba(#c8c8c8, 0.45);
+}
+
+.fall-wolf__head {
+    position: absolute;
+    bottom: 14px;
+    left: 0;
+    width: 26px;
+    height: 22px;
+    background: linear-gradient(160deg, #a3a3a3 0%, #707070 100%);
+    border-radius: 10px 12px 9px 10px;
+    transition: transform 0.25s ease;
+    transform-origin: 70% 80%;
+}
+
+.fall-wolf__snout {
+    position: absolute;
+    bottom: 10px;
+    left: -6px;
+    width: 16px;
+    height: 10px;
+    background: #8a8a8a;
+    border-radius: 8px 4px 6px 8px;
+    transition: transform 0.25s ease;
+    transform-origin: right center;
+    z-index: 1;
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: 1px;
+        top: 3px;
+        width: 5px;
+        height: 4px;
+        background: #3a3a3a;
+        border-radius: 50%;
+    }
+}
+
+.fall-wolf__ear {
+    position: absolute;
+    top: -9px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 14px solid #7a7a7a;
+
+    &--l { left: 2px; transform: rotate(-8deg); }
+    &--r { right: 2px; transform: rotate(8deg); }
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: -3px;
+        top: 4px;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+        border-bottom: 7px solid #c4a484;
+    }
+}
+
+.fall-wolf__eye {
+    position: absolute;
+    top: 8px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #e8b84a;
+    box-shadow: 0 0 5px rgba(#e8b84a, 0.7);
+    animation: fall-cat-blink 5.5s ease-in-out infinite;
+
+    &--l { left: 5px; }
+    &--r { right: 5px; animation-delay: -1.2s; }
+}
+
+.fall-wolf__tail {
+    position: absolute;
+    bottom: 18px;
+    right: -2px;
+    width: 22px;
+    height: 7px;
+    background: linear-gradient(90deg, #6e6e6e, #9a9a9a);
+    border-radius: 6px 8px 8px 4px;
+    transform-origin: left center;
+    transform: rotate(-8deg);
+}
+
+.fall-wolf__paw {
+    position: absolute;
+    bottom: 2px;
+    width: 8px;
+    height: 6px;
+    background: #4f4f4f;
+    border-radius: 3px;
+
+    &--l { left: 22px; }
+    &--r { left: 40px; }
+    &--bl { left: 28px; bottom: 1px; opacity: 0.85; }
+    &--br { left: 48px; bottom: 1px; opacity: 0.85; }
+}
+
+.login-page--paused .fall-wolf--walk .fall-wolf__paw,
+.login-page--paused .fall-wolf--walk .fall-wolf__body,
+.login-page--paused .fall-wolf--walk .fall-wolf__tail {
+    animation-play-state: paused;
+}
+
+.fall-cat__body {
+    position: absolute;
+    bottom: 4px;
+    left: 12px;
+    width: 36px;
+    height: 18px;
+    background: #1a1a1a;
+    border-radius: 12px 14px 10px 10px;
+    box-shadow: 0 2px 5px rgba(#000, 0.28);
+}
+
+.fall-cat__head {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    width: 22px;
+    height: 18px;
+    background: #1a1a1a;
+    border-radius: 9px 11px 8px 8px;
+}
+
+.fall-cat__ear {
+    position: absolute;
+    top: -7px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid #1a1a1a;
+    &--l { left: 1px; }
+    &--r { right: 1px; }
+}
+
+.fall-cat__eye {
+    position: absolute;
+    top: 7px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #ffb300;
+    box-shadow: 0 0 5px rgba(#ffb300, 0.75);
+    animation: fall-cat-blink 5s ease-in-out infinite;
+    &--l { left: 4px; }
+    &--r { right: 4px; }
+}
+
+@keyframes fall-cat-blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.08); }
+}
+
+.fall-cat__tail {
+    position: absolute;
+    bottom: 14px;
+    right: -4px;
+    width: 20px;
+    height: 4px;
+    background: #1a1a1a;
+    border-radius: 4px;
+    transform-origin: left center;
+    animation: fall-cat-tail 2.2s ease-in-out infinite;
+}
+
+@keyframes fall-cat-tail {
+    0%, 100% { transform: rotate(20deg); }
+    50% { transform: rotate(-14deg); }
+}
+
+.fall-cat__paw {
+    position: absolute;
+    bottom: 2px;
+    width: 7px;
+    height: 5px;
+    background: #111;
+    border-radius: 3px;
+    &--l { left: 16px; }
+    &--r { left: 34px; }
+}
+
+.fall-chase-leaf {
+    position: absolute;
+    top: -14px;
+    left: 62px;
+    font-size: 1.15rem;
+    animation: fall-chase-leaf-fly 2.2s ease-in-out 1 forwards;
+    pointer-events: none;
+}
+
+.fall-cat-stage:has(.fall-cat--flip) .fall-chase-leaf {
+    left: auto;
+    right: 62px;
+    animation-name: fall-chase-leaf-fly-left;
+}
+
+@keyframes fall-chase-leaf-fly {
+    0%   { opacity: 0; transform: translate(28px, -20px) rotate(0deg); }
+    12%  { opacity: 1; }
+    55%  { opacity: 1; transform: translate(4px, 4px) rotate(150deg); }
+    100% { opacity: 0; transform: translate(-8px, 16px) rotate(280deg); }
+}
+
+@keyframes fall-chase-leaf-fly-left {
+    0%   { opacity: 0; transform: translate(-28px, -20px) rotate(0deg); }
+    12%  { opacity: 1; }
+    55%  { opacity: 1; transform: translate(-4px, 4px) rotate(-150deg); }
+    100% { opacity: 0; transform: translate(8px, 16px) rotate(-280deg); }
+}
+
+.fall-leaf-burst {
+    position: absolute;
+    top: 0;
+    left: 40px;
+    width: 40px;
+    height: 40px;
+    pointer-events: none;
+}
+
+.fall-leaf-burst__bit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 5px;
+    margin: -2px;
+    border-radius: 50% 0;
+    background: #e07b39;
+    animation: fall-burst-out 0.9s ease-out forwards;
+
+    &:nth-child(1) { background: #e8b84a; --dx: -16px; --dy: -12px; }
+    &:nth-child(2) { background: #c45c26; --dx: 14px; --dy: -10px; animation-delay: 0.04s; }
+    &:nth-child(3) { background: #b85c38; --dx: -8px; --dy: 12px; animation-delay: 0.06s; }
+    &:nth-child(4) { background: #f2a65a; --dx: 12px; --dy: 10px; animation-delay: 0.08s; }
+    &:nth-child(5) { background: #e07b39; --dx: 0; --dy: -16px; animation-delay: 0.05s; }
+}
+
+@keyframes fall-burst-out {
+    0%   { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.4) rotate(120deg); }
+}
+
+.login-page--night {
+    .fall-hill--back { filter: brightness(0.45); }
+    .fall-hill--mid { filter: brightness(0.4); }
+    .fall-hill--front {
+        background: linear-gradient(180deg, #4a3424 0%, #3a281c 100%);
+    }
+    .fall-forest-canvas { filter: brightness(0.62); }
+    .fall-litter { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fall-sun,
+    .fall-litter,
+    .fall-cat__tail,
+    .fall-cat__eye,
+    .fall-cat__paw,
+    .fall-cat__body,
+    .fall-wolf__paw,
+    .fall-wolf__body,
+    .fall-wolf__tail,
+    .fall-wolf__eye,
+    .fall-owl-stage,
+    .fall-owl__wing,
+    .fall-owl__eye {
+        animation: none !important;
+    }
+}

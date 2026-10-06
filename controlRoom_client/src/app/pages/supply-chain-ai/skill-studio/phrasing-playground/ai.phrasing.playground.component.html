@@ -84,7 +84,7 @@
                 <ng-template #noTop><em class="pp-empty">no skill matched</em></ng-template>
             </div>
             <div class="pp-summary-block" *ngIf="diag.low_confidence">
-                <p-tag [value]="'S59.LOWCONF' | lbl:'LOW CONFIDENCE — would land in Pending Phrasings'"
+                <p-tag [value]="'S59.LOWCONF' | lbl:'LOW CONFIDENCE - would land in Pending Phrasings'"
                        severity="warning"></p-tag>
             </div>
             <div class="pp-summary-block pp-summary-entities" *ngIf="extractedEntityKeys().length">
@@ -102,7 +102,7 @@
             </div>
         </div>
 
-        <!-- Phase 8 — BIND_HINT-driven extraction audit -->
+        <!-- Phase 8 - BIND_HINT-driven extraction audit -->
         <div *ngIf="diag.bind_hint_extractions?.length" class="pp-bind-hints">
             <h4>BIND_HINT extractions <small>(designer-driven)</small></h4>
             <table class="pp-bind-hints-table">
@@ -158,7 +158,7 @@
 
         <!-- Top templates (bind feasibility) -->
         <div *ngIf="diag.top_templates?.length" class="pp-templates">
-            <h4>Templates on top skill — bind feasibility</h4>
+            <h4>Templates on top skill - bind feasibility</h4>
             <div class="pp-template-list">
                 <div *ngFor="let tpl of diag.top_templates" class="pp-template-card">
                     <div class="pp-template-head">
@@ -192,7 +192,7 @@
                 <div class="pp-skill-head" (click)="toggleSkill(s.skill_id)">
                     <div class="pp-skill-id">
                         <strong>{{ s.skill_code || s.skill_id }}</strong>
-                        <span class="pp-domain">{{ s.domain || '—' }}</span>
+                        <span class="pp-domain">{{ s.domain || '-' }}</span>
                     </div>
                     <div class="pp-skill-score">
                         <div class="pp-score-bar"

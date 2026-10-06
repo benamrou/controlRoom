@@ -13,7 +13,7 @@
     </span>
     <span style="margin-right:20px; font-weight: bolder">{{ 'S02.LBL.SCDT' | lbl:'Score card date :' }} </span>
     <span style="overflow: hidden; padding-right: .5em; width: 30%; line-height: 25px" >
-        <p-calendar [(ngModel)]="scorecardDate"  name="scorecardDate" 
+        <p-calendar appendTo="body" [(ngModel)]="scorecardDate"  name="scorecardDate" 
                     dateFormat="mm/dd/yy" [showIcon]="true" 
                     [showOnFocus]="true" [showOtherMonths]="true">
         </p-calendar>

@@ -350,6 +350,43 @@
 
 ---
 
+### Reference to order — tool 22 · `ICR_TEMPLATE021`
+
+| Col | Header |
+|-----|--------|
+| A | Vendor |
+| B | Item number |
+| C | LV |
+| D | Ref to order |
+
+**Business intent:** Update **reference to order** (`ARAREFC`) on active orderable assortment by closing/reopening via `INTARTASS` → batch `psifa07p`.
+
+**SME rules**
+
+- Item and vendor must exist; active OA required; OA start must be before SYSDATE−2.
+- New ref must not already be on a different active item for the same vendor.
+
+---
+
+### New Item PPG — tool 23 · `ICR_TEMPLATE022`
+
+| Col | Header |
+|-----|--------|
+| A | UPC |
+| B | PPG_NAME |
+| C | PPG_ID |
+
+**Business intent:** Assign existing items (resolved from **UPC**) to a **new PPG** item list by direct insert into `ARTENTLIST` (header) + `ARTDETLIST` (detail). **PPG_ID** is the list code; **PPG_NAME** is the list description.
+
+**SME rules**
+
+- UPC must be **active** (`ARTCOCA` current period → `ARTUV`).
+- **PPG_ID** must **not** already exist in `ARTENTLIST`.
+- Item must **not** already sit on a different active PPG list.
+- The load **creates** the PPG list header in `ARTENTLIST` (`PPG_ID` / `PPG_NAME`) and attaches each corresponding UPC in `ARTDETLIST` (`DLICINV` = item code from UPC).
+
+---
+
 ### Item address — tool 18 · `ICR_TEMPLATE016`
 
 | Col | Header |

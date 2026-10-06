@@ -110,7 +110,6 @@ export class CountingService {
         this.params= new HttpParams();
         this.params = this.params.set('PARAM', countingDate);
         this.options = new HttpHeaders();
-        this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
@@ -186,7 +185,6 @@ export class CountingService {
         this.params = this.params.set('PARAM', countingDate);
         this.params = this.params.append('PARAM', store);
         this.params = this.params.append('PARAM', filename);
-        this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
@@ -247,7 +245,6 @@ export class CountingService {
         this.params = this.params.set('PARAM', countingDate);
         this.params = this.params.append('PARAM', store);
         this.params = this.params.append('PARAM', filename);
-        this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
@@ -306,7 +303,6 @@ export class CountingService {
         this.params = this.params.set('PARAM', countingDate);
         this.params = this.params.append('PARAM', store);
         this.params = this.params.append('PARAM', filename);
-        this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
@@ -331,7 +327,6 @@ export class CountingService {
         this.params = this.params.set('PARAM', countingDate);
         this.params = this.params.append('PARAM', store);
         this.params = this.params.append('PARAM', filename);
-        this.options = this.options.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
         this.options = this.options.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     
         //console.log('Get Rejection');

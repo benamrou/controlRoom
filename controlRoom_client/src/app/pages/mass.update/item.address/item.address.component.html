@@ -282,7 +282,7 @@
         <div class="row">
             <div style="width: 50%;">
                 <span style="margin-right:1.3em; margin-top: 5px; padding-left: 15px; font-weight: bolder">{{ 'MU.LBL.LNKDT' | lbl:'New link start date :' }} </span>
-                <p-calendar [(ngModel)]="startDate"  
+                <p-calendar appendTo="body" [(ngModel)]="startDate"  
                             [readonlyInput]="true"
                             dateFormat="mm/dd/yy"
                             [defaultDate]="defaultStartDate"
@@ -319,7 +319,7 @@
 
             <div *ngIf="scheduleFlag"  style="width: 50%;">
 
-                <p-calendar [(ngModel)]="scheduleDate"  
+                <p-calendar appendTo="body" [(ngModel)]="scheduleDate"  
                             [minDate]="dateNow"
                             dateFormat="mm/dd/yy"
                             [showTime]="true"

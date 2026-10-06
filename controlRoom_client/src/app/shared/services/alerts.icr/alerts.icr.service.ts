@@ -284,8 +284,6 @@ export class AlertsICRService {
         this.params = this.params.append('PARAM', params.view || 'live');
 
         headersSearch = headersSearch.set('QUERY_ID', this.queryGetMonitoring);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(
             map(response => {
@@ -314,8 +312,6 @@ export class AlertsICRService {
         this.params = this.params.append('PARAM', params.alertId || '-1');
 
         headersSearch = headersSearch.set('QUERY_ID', this.queryGetWeeklyStats);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(
             map(response => {
@@ -351,8 +347,6 @@ export class AlertsICRService {
 
 
         headersSearch = headersSearch.set('QUERY_ID', this.queryGetMonthlyStats);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(
             map(response => {
@@ -387,8 +381,6 @@ export class AlertsICRService {
         this.params = this.params.append('PARAM', requestId || '-1');
 
         headersSearch = headersSearch.set('QUERY_ID', this.queryGetLogDetails);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(
             map(response => {
@@ -421,8 +413,6 @@ export class AlertsICRService {
         this.params = this.params.append('PARAM', requestId || '-1');
 
         headersSearch = headersSearch.set('QUERY_ID', this.queryGetBlobData);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(
             map(response => {
@@ -449,8 +439,6 @@ export class AlertsICRService {
         this.params = this.params.append('PARAM', reqID || '-1');
 
         headersSearch = headersSearch.set('QUERY_ID', this.queryRetryAlert);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, headersSearch).pipe(
             map(response => {

@@ -762,7 +762,7 @@
     padding: 0;
 }
 
-/* Tab View Styling — scoped under .alert-log-journal (avoids global .p-tabview leaks) */
+/* Tab View Styling - scoped under .alert-log-journal (avoids global .p-tabview leaks) */
 :host ::ng-deep .alert-log-journal .p-tabview .p-tabview-nav {
     background: #f8f9fa !important;
     border-bottom: 2px solid #dee2e6;

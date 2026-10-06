@@ -1,7 +1,7 @@
 /* ────────────────────────────────────────────────────────────────────────
    Watchdog screen styles.
    Component uses encapsulation: ViewEncapsulation.None, so every rule below
-   is global once the component is loaded — no :host / ::ng-deep needed and,
+   is global once the component is loaded - no :host / ::ng-deep needed and,
    crucially, those wrappers would *not* match anything here.
    ──────────────────────────────────────────────────────────────────────── */
 
@@ -167,11 +167,11 @@
 }
 
 
-/* ─── AWTALTID dropdown overlay — wider panel + 2-column row layout ─────
+/* ─── AWTALTID dropdown overlay - wider panel + 2-column row layout ─────
    The default overlay inherits the dropdown input width (~half the dialog).
    This rule lets the body-level overlay grow to fit the full
-   "ALTID — ALTSUBJECT" labels without clipping.  The dropdown is
-   appendTo=body so the panel exists outside the component's DOM — we
+   "ALTID - ALTSUBJECT" labels without clipping.  The dropdown is
+   appendTo=body so the panel exists outside the component's DOM - we
    target it from the global stylesheet via the panelStyleClass we set on
    the dropdown. */
 .awtaltid-panel {
@@ -207,7 +207,7 @@
 }
 
 
-/* ─── Search-bar Status dropdown — keep it 35px to match the inputs ─────── */
+/* ─── Search-bar Status dropdown - keep it 35px to match the inputs ─────── */
 .watch-search-dropdown {
     display: inline-flex;
     align-items: center;
@@ -242,7 +242,7 @@
    rules force a known background and white text on Run-now / Test-pattern /
    action buttons so the labels are always visible regardless of theme.
    With ViewEncapsulation.None, the simple `.p-button.x` selector is enough
-   — no `:host ::ng-deep` (which wouldn't match here anyway).
+   - no `:host ::ng-deep` (which wouldn't match here anyway).
 */
 .p-button.p-button-warning,
 .p-button.p-button-warning:not(:disabled) {

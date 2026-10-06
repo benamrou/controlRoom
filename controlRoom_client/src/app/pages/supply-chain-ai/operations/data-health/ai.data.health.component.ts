@@ -297,7 +297,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
       return;
     }
     this.detailRowsMaximized = false;
-    this.rowsTitle = `${card.CHECK_NAME} — ${runAt}`;
+    this.rowsTitle = `${card.CHECK_NAME} - ${runAt}`;
     this.detailRows = [];
     this.detailColumns = [];
     this.rowsVisible = true;
@@ -432,7 +432,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
   }
 
   durationLabel(ms: number): string {
-    if (!ms) { return '—'; }
+    if (!ms) { return '-'; }
     return ms < 1000 ? `${ms}ms` : `${(ms / 1000).toFixed(1)}s`;
   }
 
@@ -527,7 +527,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  /** Fix all (once) — batch SQL/script or job-only. */
+  /** Fix all (once) - batch SQL/script or job-only. */
   hasBatchResolution(card: CheckCard | null): boolean {
     const mode = this.resolutionMode(card);
     if (mode === 'NONE') { return false; }
@@ -788,7 +788,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
               this._msg.add({
                 severity: 'error',
                 summary: 'Batch fix',
-                detail: 'Could not reload check definition — refresh the dashboard and try again.'
+                detail: 'Could not reload check definition - refresh the dashboard and try again.'
               });
             }
           });
@@ -933,7 +933,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
     return labels[mode] || mode;
   }
 
-  /** Fix all fixable — batch SQL / LIBQUERY / job once; SQL_SCRIPT runs script per distinct site. */
+  /** Fix all fixable - batch SQL / LIBQUERY / job once; SQL_SCRIPT runs script per distinct site. */
   private runFixAllOnce(card: CheckCard, fixable: Record<string, unknown>[]): void {
     const fixableCount = fixable.length;
     const retailerId = this.selectedRetailer?.RETAILER_ID;
@@ -1059,7 +1059,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Summary bar totals — derived from the same card list as the grid (avoids AI0000081 drift). */
+  /** Summary bar totals - derived from the same card list as the grid (avoids AI0000081 drift). */
   private recomputeSummaryFromCards(): void {
     const enabled = this.cards.filter((c) => Number(c.ENABLED) === 1);
     let lastRun: string | null = null;
@@ -1090,7 +1090,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Inline SQL (AI0000092), optional GOLD script, optional scheduler job — per row.
+   * Inline SQL (AI0000092), optional GOLD script, optional scheduler job - per row.
    */
   private runSqlResolutionChain(
     row: Record<string, unknown>,
@@ -1181,7 +1181,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
       });
   }
 
-  /** Payload for AI0000092 — bind keys match :tokens in RESOLUTION_SQL. */
+  /** Payload for AI0000092 - bind keys match :tokens in RESOLUTION_SQL. */
   private buildResolutionSqlPayload(
     row: Record<string, unknown>,
     card: CheckCard,
@@ -1198,7 +1198,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
         this._msg.add({
           severity: 'warn',
           summary: 'Missing value',
-          detail: `Column "${entry.col}" is empty — cannot run resolution SQL.`
+          detail: `Column "${entry.col}" is empty - cannot run resolution SQL.`
         });
         return null;
       }
@@ -1227,7 +1227,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
         this._msg.add({
           severity: 'warn',
           summary: 'Missing value',
-          detail: `Column "${col}" is empty — cannot run resolution.`
+          detail: `Column "${col}" is empty - cannot run resolution.`
         });
         return null;
       }
@@ -1346,7 +1346,7 @@ export class AiDataHealthComponent implements OnInit, OnDestroy {
   ): void {
     if (!rows.length) {
       fail('No script targets', {
-        message: 'Could not derive distinct sites from fixable rows — check script parameter map column headers.'
+        message: 'Could not derive distinct sites from fixable rows - check script parameter map column headers.'
       });
       return;
     }

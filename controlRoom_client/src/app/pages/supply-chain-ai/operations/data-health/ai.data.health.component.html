@@ -42,7 +42,7 @@
   </div>
 </div>
 
-<!-- Summary bar — click a metric to filter the grid (click again to show all) -->
+<!-- Summary bar - click a metric to filter the grid (click again to show all) -->
 <div class="adh-summary p-mb-4" *ngIf="summary">
   <button type="button" class="adh-summary-card adh-summary-card--filter"
     [class.adh-summary-card--active]="isStatusFilterActive('ALL')"
@@ -216,7 +216,7 @@
         <td style="text-align:right">
           <span *ngIf="row.TREND > 0" class="adh-trend-up">▲ {{ row.TREND }}</span>
           <span *ngIf="row.TREND < 0" class="adh-trend-down">▼ {{ row.TREND * -1 }}</span>
-          <span *ngIf="row.TREND === 0" class="adh-trend-flat">—</span>
+          <span *ngIf="row.TREND === 0" class="adh-trend-flat">-</span>
         </td>
         <td style="text-align:right">{{ durationLabel(row.RUN_DURATION_MS) }}</td>
         <td style="text-align:center">
@@ -294,7 +294,7 @@
               [disabled]="!!fixingRowKey && !isRowFixing(row)"
               (click)="confirmFixRow(row, $event)">
             </button>
-            <span *ngIf="!isRowFixable(row)" class="adh-rows-na">—</span>
+            <span *ngIf="!isRowFixable(row)" class="adh-rows-na">-</span>
           </td>
         </tr>
       </ng-template>

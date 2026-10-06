@@ -433,7 +433,7 @@
 
             <div *ngIf="scheduleFlag"  style="width: 50%;">
 
-                <p-calendar [(ngModel)]="scheduleDate"  
+                <p-calendar appendTo="body" [(ngModel)]="scheduleDate"  
                             [minDate]="dateNow"
                             dateFormat="mm/dd/yy"
                             [showTime]="true"

@@ -1,0 +1,183 @@
+<app-page-header [heading]="'S93.TITLE' | lbl:'Mass-load settings'"
+                  [waitMessage]="waitMessage"
+                  [screenID]="screenID"
+                  [icon]="'fa-sliders-h'">
+</app-page-header>
+
+<div class="content-section implementation settings-crud massload-rules">
+  <p-toast position="top-right"></p-toast>
+  <p-confirmDialog [style]="{width: '28rem'}"></p-confirmDialog>
+
+  <div class="settings-toolbar grid align-items-end mb-3">
+    <div class="col-12 md:col-3">
+      <label class="font-bold block mb-1">{{ 'S93.COL.TYPE' | lbl:'Load type' }}</label>
+      <p-dropdown [options]="loadTypeOptions"
+                  [(ngModel)]="filterLoadType"
+                  [showClear]="true"
+                  placeholder="All types"
+                  styleClass="w-full"
+                  (onChange)="loadRules()">
+      </p-dropdown>
+    </div>
+    <div class="col-12 md:col-3">
+      <label class="font-bold block mb-1">{{ 'S93.COL.ACTIVE' | lbl:'Active' }}</label>
+      <p-dropdown [options]="activeOptions"
+                  [(ngModel)]="filterActive"
+                  optionLabel="label"
+                  optionValue="value"
+                  styleClass="w-full"
+                  (onChange)="loadRules()">
+      </p-dropdown>
+    </div>
+    <div class="col-12 md:col-6 flex align-items-end gap-2">
+      <button pButton type="button" icon="fas fa-sync-alt"
+              [label]="'CMN.REFRESH' | lbl:'Refresh'"
+              class="p-button-outlined"
+              (click)="loadRules()"
+              [loading]="loading"></button>
+      <button pButton type="button" icon="pi pi-plus"
+              [label]="'S93.BTN.ADD' | lbl:'Add rule'"
+              class="CREATE_Button"
+              (click)="openNew()"></button>
+    </div>
+  </div>
+
+  <p-table #rulesTable
+           [value]="rules"
+           [loading]="loading"
+           [paginator]="true"
+           [rows]="25"
+           [rowsPerPageOptions]="[25, 50, 100]"
+           responsiveLayout="scroll"
+           styleClass="p-datatable-sm menu-access-table"
+           sortMode="multiple"
+           [globalFilterFields]="globalFields">
+    <ng-template pTemplate="caption">
+      <div class="table-header grid align-items-center">
+        <div class="col-6">
+          <span class="text-muted">{{ rules.length }} rule(s)</span>
+        </div>
+        <div class="col-6" style="text-align:right">
+          <span class="p-input-icon-right">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text"
+                   (input)="rulesTable.filterGlobal($any($event.target).value, 'contains')"
+                   [placeholder]="'CMN.SEARCH' | lbl:'Type text to filter...'" />
+          </span>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="actions-col">{{ 'CMN.ACTIONS' | lbl:'Actions' }}</th>
+        <th pSortableColumn="LOAD_TYPE">{{ 'S93.COL.TYPE' | lbl:'Load type' }} <p-sortIcon field="LOAD_TYPE"></p-sortIcon></th>
+        <th pSortableColumn="LOAD_CODE">Code <p-sortIcon field="LOAD_CODE"></p-sortIcon></th>
+        <th pSortableColumn="RULE_SCOPE">{{ 'S93.COL.SCOPE' | lbl:'Scope' }} <p-sortIcon field="RULE_SCOPE"></p-sortIcon></th>
+        <th pSortableColumn="RULE_NAME">{{ 'S93.COL.NAME' | lbl:'Name' }} <p-sortIcon field="RULE_NAME"></p-sortIcon></th>
+        <th pSortableColumn="TARGET_TABLE">{{ 'S93.COL.TABLE' | lbl:'Target table' }} <p-sortIcon field="TARGET_TABLE"></p-sortIcon></th>
+        <th pSortableColumn="ACTIVE">{{ 'S93.COL.ACTIVE' | lbl:'Active' }} <p-sortIcon field="ACTIVE"></p-sortIcon></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td class="actions-col">
+          <span class="action-buttons">
+            <button pButton pRipple type="button" icon="pi pi-pencil"
+                    class="p-button-rounded p-button-sm action-btn"
+                    (click)="openEdit(row)"></button>
+            <button pButton pRipple type="button" icon="pi pi-trash"
+                    class="p-button-rounded p-button-sm p-button-outlined action-btn action-btn-delete"
+                    (click)="confirmDelete(row)"></button>
+          </span>
+        </td>
+        <td><strong>{{ row.LOAD_TYPE }}</strong></td>
+        <td>{{ row.LOAD_CODE }}</td>
+        <td><span class="scope-badge scope-{{ row.RULE_SCOPE }}">{{ row.RULE_SCOPE }}</span></td>
+        <td>{{ row.RULE_NAME }}</td>
+        <td><code>{{ row.TARGET_TABLE }}</code></td>
+        <td>{{ row.ACTIVE == 1 ? 'ON' : 'OFF' }}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="7" class="text-center">No mass-load rules found.</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [(visible)]="dialogVisible"
+          [modal]="true"
+          [style]="{width: '720px'}"
+          [maximizable]="true"
+          [header]="(isNew ? 'S93.DLG.NEW' : 'S93.DLG.EDIT') | lbl:(isNew ? 'New mass-load rule' : 'Edit mass-load rule')">
+  <div class="grid formgrid p-fluid">
+    <div class="field col-12 md:col-6">
+      <label>{{ 'S93.COL.TYPE' | lbl:'Load type' }} *</label>
+      <p-dropdown [options]="loadTypeOptions"
+                  [(ngModel)]="form.LOAD_TYPE"
+                  [filter]="true"
+                  appendTo="body"
+                  styleClass="w-full"
+                  (onChange)="onLoadTypeChange()"
+                  [disabled]="!isNew && !!form.RULE_ID">
+      </p-dropdown>
+    </div>
+    <div class="field col-12 md:col-6">
+      <label>{{ 'S93.COL.SCOPE' | lbl:'Scope' }} *</label>
+      <p-dropdown [options]="scopeOptions"
+                  [(ngModel)]="form.RULE_SCOPE"
+                  optionLabel="label"
+                  optionValue="value"
+                  appendTo="body"
+                  styleClass="w-full"
+                  [disabled]="!isNew && !!form.RULE_ID">
+      </p-dropdown>
+    </div>
+    <div class="field col-12 md:col-6">
+      <label>{{ 'S93.FLD.CODE' | lbl:'Load code' }} *</label>
+      <input pInputText [(ngModel)]="form.LOAD_CODE" maxlength="40" />
+    </div>
+    <div class="field col-12 md:col-6">
+      <label>{{ 'S93.COL.TABLE' | lbl:'Target table' }}</label>
+      <input pInputText [(ngModel)]="form.TARGET_TABLE" maxlength="100" />
+    </div>
+    <div class="field col-12 md:col-8">
+      <label>{{ 'S93.COL.NAME' | lbl:'Name' }}</label>
+      <input pInputText [(ngModel)]="form.RULE_NAME" maxlength="200" />
+    </div>
+    <div class="field col-12 md:col-4">
+      <label>{{ 'S93.COL.ACTIVE' | lbl:'Active' }}</label>
+      <p-dropdown [options]="[{label:'ON',value:1},{label:'OFF',value:0}]"
+                  [(ngModel)]="form.ACTIVE"
+                  optionLabel="label"
+                  optionValue="value"
+                  appendTo="body"
+                  styleClass="w-full">
+      </p-dropdown>
+    </div>
+    <div class="field col-12">
+      <label>{{ 'S93.FLD.RULES' | lbl:'Rules JSON (CLOB)' }} *</label>
+      <small class="text-muted d-block mb-1">
+        {{ 'S93.HINT.RULES' | lbl:'JSON object with target_table and fields map. Structure depends on the GOLD interface table for this load type.' }}
+      </small>
+      <textarea pInputTextarea [(ngModel)]="rulesJsonText"
+                rows="14"
+                class="rules-json"
+                [class.ng-invalid]="!!jsonError"></textarea>
+      <small class="p-error" *ngIf="jsonError">{{ jsonError }}</small>
+    </div>
+    <div class="field col-12">
+      <label>{{ 'S93.FLD.NOTES' | lbl:'Notes' }}</label>
+      <input pInputText [(ngModel)]="form.NOTES" maxlength="500" />
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton type="button" class="p-button-text"
+            [label]="'CMN.CANCEL' | lbl:'Cancel'"
+            (click)="dialogVisible=false"></button>
+    <button pButton type="button"
+            [label]="'CMN.SAVE' | lbl:'Save'"
+            icon="pi pi-check"
+            [loading]="saving"
+            (click)="save()"></button>
+  </ng-template>
+</p-dialog>

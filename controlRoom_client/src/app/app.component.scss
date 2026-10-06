@@ -1,3 +1,4 @@
+@import './layouts/themes/fall-palette';
 $button_color: #0081c2;
 $button_background: white;
 /*******************************************/
@@ -104,38 +105,9 @@ $button_background: white;
     -o-transition: margin-left 0.2s ease-in-out;
     transition: margin-left 0.2s ease-in-out;
 }
-.main-container {
-    margin-top: 56px;
-    margin-left: 235px;
-    padding: 15px;
-    -ms-overflow-x: hidden;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    position: relative;
-    overflow: initial;
-}
-
-/* Login (and brief / before redirect): no sidebar offset — single outlet hosts all routes */
-.login-shell {
-    margin: 0;
-    padding: 0;
-    margin-top: 0;
-    margin-left: 0;
-}
-.collapsed {
-    margin-left: 100px;
-}
-@media screen and (max-width: 992px) {
-    .main-container {
-        margin-left: 0px !important;
-    }
-}
-@media print {
-    .main-container {
-        margin-top: 0px !important;
-        margin-left: 0px !important;
-    }
-}
+/* Layout offsets for .main-container / .login-shell live in styles.scss
+   (driven by --icr-sidebar-offset from the sidebar) so they are not lost
+   to encapsulation or class desync. */
 
 .pull-right {
     margin-left: auto;
@@ -276,8 +248,13 @@ input, input:valid {
 // Coloring header
 .p-panel.p-panel-toggleable .p-panel-header {
     padding: 0.75rem 1.25rem;
-    background-color: #8fbc8f!important;
-    color: white;
+    background: linear-gradient(
+        135deg,
+        rgba($fall-cream, 0.98) 0%,
+        rgba($fall-amber, 0.94) 45%,
+        rgba($fall-burnt, 0.92) 100%
+    ) !important;
+    color: $fall-deep;
 }
 
 .p-treetable {
@@ -285,7 +262,13 @@ input, input:valid {
 }
 
 .p-dialog-draggable .p-dialog-header {
-    background-color: #8fbc8f!important;
+    background: linear-gradient(
+        135deg,
+        rgba($fall-cream, 0.98) 0%,
+        rgba($fall-amber, 0.94) 45%,
+        rgba($fall-burnt, 0.92) 100%
+    ) !important;
+    color: $fall-deep;
 }
 thead, tbody, tfoot, tr, td, th {
     line-height: 1em;
@@ -306,8 +289,8 @@ font-size:  smaller;
 
 
 .p-dialog .p-dialog-header {
-    //background: darkcyan !important;
-    height: 20px;
+    height: auto;
+    min-height: 2.4rem;
   }
   
   .p-confirm-dialog .p-dialog-content {
@@ -320,10 +303,56 @@ font-size:  smaller;
 
 .p-dialog .p-dialog-header .p-dialog-title {
     font-size: medium;
-    color: white;
+    color: $fall-deep;
 }
 
 .p-dialog .p-dialog-header .p-dialog-header-icon {
-    color: white;
+    color: $fall-deep;
 }
+
+/* ── Fall page-switch leaf gust (app-wide) ───────────────────── */
+.fall-page-wipe {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.fall-page-wipe__leaf {
+    position: absolute;
+    top: 10%;
+    left: -8%;
+    font-size: 1.25rem;
+    opacity: 0;
+    animation: fall-page-gust 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    filter: drop-shadow(0 1px 2px rgba(92, 58, 33, 0.25));
+}
+
+@for $i from 1 through 14 {
+    .fall-page-wipe__leaf:nth-child(#{$i}) {
+        top: percentage((6 + ($i * 5.5)) / 100);
+        animation-delay: #{($i - 1) * 0.018}s;
+        font-size: #{0.85 + ($i % 4) * 0.18}rem;
+    }
+}
+
+@keyframes fall-page-gust {
+    0% {
+        opacity: 0;
+        transform: translateX(0) translateY(0) rotate(0deg) scale(0.8);
+    }
+    18% {
+        opacity: 0.95;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(110vw) translateY(18px) rotate(380deg) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fall-page-wipe { display: none !important; }
+}
+
 

@@ -25,7 +25,7 @@
         <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">{{ 'RT.FPK.PU' | lbl:'Picking unit :' }} </span>
         <span style="overflow: hidden; padding-left: .7em; width: 90%; line-height: 25px">
         <p-dropdown [options]="pickingUnits" [(ngModel)]="selectedPU" placeholder="Select a picking unit" 
-                optionLabel="name" [showClear]="true">
+                optionLabel="name" [showClear]="true" appendTo="body">
         </p-dropdown>
         </span>
 </div>

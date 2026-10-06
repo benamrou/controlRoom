@@ -66,16 +66,16 @@ export class AiPendingPhrasingsComponent implements OnInit {
     skillOptions: { label: string; value: string }[] = [];
 
     readonly termTypeOptions = [
-        { label: "INTENT_PHRASE — full question pattern (×9)", value: "INTENT_PHRASE" },
-        { label: "SYNONYM — single-word substitution (×4)",   value: "SYNONYM" },
-        { label: "BIND_HINT — bind pointer ('for store')",    value: "BIND_HINT" },
-        { label: "JARGON — domain term (×5)",                  value: "JARGON" },
-        { label: "BRAND_TERM — vendor/brand alias (×5)",       value: "BRAND_TERM" },
-        { label: "ABBREVIATION — short form",                  value: "ABBREVIATION" },
-        { label: "PROCESS_TERM — workflow term",               value: "PROCESS_TERM" }
+        { label: "INTENT_PHRASE - full question pattern (×9)", value: "INTENT_PHRASE" },
+        { label: "SYNONYM - single-word substitution (×4)",   value: "SYNONYM" },
+        { label: "BIND_HINT - bind pointer ('for store')",    value: "BIND_HINT" },
+        { label: "JARGON - domain term (×5)",                  value: "JARGON" },
+        { label: "BRAND_TERM - vendor/brand alias (×5)",       value: "BRAND_TERM" },
+        { label: "ABBREVIATION - short form",                  value: "ABBREVIATION" },
+        { label: "PROCESS_TERM - workflow term",               value: "PROCESS_TERM" }
     ];
 
-    // ── Phase 7 — auto-promote dialog state ────────────────────────────────
+    // ── Phase 7 - auto-promote dialog state ────────────────────────────────
     autoPromoteOpen = false;
     autoPromoteLoading = false;
     autoPromoteRunning = false;
@@ -113,7 +113,7 @@ export class AiPendingPhrasingsComponent implements OnInit {
                     domain:  String(s.DOMAIN || s.domain || "")
                 })).filter(s => s.skillId);
                 this.skillOptions = this.skills.map(s => ({
-                    label: `${s.code} — ${s.name || s.domain}`.trim(),
+                    label: `${s.code} - ${s.name || s.domain}`.trim(),
                     value: s.skillId
                 }));
 
@@ -152,7 +152,7 @@ export class AiPendingPhrasingsComponent implements OnInit {
         const boost    = row._confidenceBoost != null ? row._confidenceBoost : 1.5;
 
         row._busy = true;
-        // Step 1 — insert into AI_SKILL_VOCABULARY
+        // Step 1 - insert into AI_SKILL_VOCABULARY
         this._svc.promoteUnresolvedToVocabulary({
             unres_id: row.UNRES_ID,
             skill_id: row._targetSkillId,
@@ -162,7 +162,7 @@ export class AiPendingPhrasingsComponent implements OnInit {
             confidence_boost: boost
         }).subscribe({
             next: () => {
-                // Step 2 — stamp PROMOTED_AT on the unresolved row
+                // Step 2 - stamp PROMOTED_AT on the unresolved row
                 this._svc.stampUnresolvedAsPromoted({
                     unres_id: row.UNRES_ID,
                     promoted_term: term,
@@ -274,7 +274,7 @@ export class AiPendingPhrasingsComponent implements OnInit {
     }
 
     // ─────────────────────────────────────────────────────────────────────
-    // Phase 7 — auto-promote on repeat
+    // Phase 7 - auto-promote on repeat
     //
     // When the same USER_OVERRIDE phrasing has been picked by enough distinct
     // analysts inside the lookback window, we can promote it without a manual
@@ -333,7 +333,7 @@ export class AiPendingPhrasingsComponent implements OnInit {
         }
         this._confirm.confirm({
             message: `Auto-promote ${selected.length} phrasing(s) into AI_SKILL_VOCABULARY ` +
-                     `with confidence boost ${this.autoThresholds.boost}? This is idempotent — ` +
+                     `with confidence boost ${this.autoThresholds.boost}? This is idempotent - ` +
                      `re-running on the same phrasings is a no-op.`,
             header: "Auto-promote selected phrasings",
             icon: "fas fa-arrow-up",
@@ -385,7 +385,7 @@ export class AiPendingPhrasingsComponent implements OnInit {
                     error: () => {
                         item._busy = false;
                         item._failed = true;
-                        // Vocabulary inserted but stamping failed — log and continue.
+                        // Vocabulary inserted but stamping failed - log and continue.
                         this.processAutoPromoteQueue(queue, index + 1);
                     }
                 });

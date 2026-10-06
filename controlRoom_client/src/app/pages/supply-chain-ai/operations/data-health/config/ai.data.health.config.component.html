@@ -58,7 +58,7 @@
         <td><p-tag [value]="def.SEVERITY" [severity]="severityTag(def.SEVERITY)"></p-tag></td>
         <td>
           <span *ngIf="def.SKILL_CODE" class="adhc-skill">{{ def.SKILL_CODE }}</span>
-          <span *ngIf="!def.SKILL_CODE" class="adhc-none">—</span>
+          <span *ngIf="!def.SKILL_CODE" class="adhc-none">-</span>
         </td>
         <td>
           <span *ngIf="def.RESOLUTION_MODE && def.RESOLUTION_MODE !== 'NONE'" class="adhc-resolution">
@@ -68,7 +68,7 @@
               {{ def.RESOLUTION_JOB_NAME }}
             </span>
           </span>
-          <span *ngIf="!def.RESOLUTION_MODE || def.RESOLUTION_MODE === 'NONE'" class="adhc-none">—</span>
+          <span *ngIf="!def.RESOLUTION_MODE || def.RESOLUTION_MODE === 'NONE'" class="adhc-none">-</span>
         </td>
         <td style="text-align:center">
           <p-inputSwitch [(ngModel)]="def.ENABLED" (onChange)="toggleEnabled(def)"
@@ -187,7 +187,7 @@
 
     <div class="adhc-form-row adhc-form-row--2col">
       <div>
-        <label class="adhc-label">Skill code <span class="adhc-hint-inline">(optional — for Investigate)</span></label>
+        <label class="adhc-label">Skill code <span class="adhc-hint-inline">(optional - for Investigate)</span></label>
         <input pInputText [(ngModel)]="form.SKILL_CODE"
           placeholder="e.g. ITEM_MASTER_RETAIL"
           class="adhc-input" />
@@ -266,7 +266,7 @@
         placeholder="UPDATE vteremart@dblink SET … WHERE vtatrt = 2 AND trunc(vtadate) >= trunc(sysdate-1)"
         (ngModelChange)="resolutionVerifyState = 'idle'"></textarea>
       <small class="adhc-hint">
-        Optional. Broad <code>WHERE</code>, no <code>:binds</code> — one statement fixes every matching row.
+        Optional. Broad <code>WHERE</code>, no <code>:binds</code> - one statement fixes every matching row.
         Used by <strong>Fix all (once)</strong>. If empty, batch falls back to per-row SQL (not recommended when
         per-row SQL uses <code>:binds</code>).
       </small>
@@ -333,7 +333,7 @@
       <small class="adhc-hint">
         Optional fixed GOLD command when there is no per-row script map.
         For <strong>SQL_SCRIPT</strong>, Fix all (once) runs batch SQL once, then the
-        <strong>per-row script</strong> once per distinct site (same as line Fix) — batch script is ignored when a script map exists.
+        <strong>per-row script</strong> once per distinct site (same as line Fix) - batch script is ignored when a script map exists.
       </small>
     </div>
     <div class="adhc-form-row">
@@ -428,7 +428,7 @@
       </div>
       <p class="adhc-query-preview-libtitle" *ngIf="queryPreviewTitleLib">
         <strong>{{ queryPreviewTitleLib }}</strong>
-        <span *ngIf="queryPreviewDesc"> — {{ queryPreviewDesc }}</span>
+        <span *ngIf="queryPreviewDesc"> - {{ queryPreviewDesc }}</span>
       </p>
       <p class="adhc-query-preview-libmeta" *ngIf="queryPreviewParam || queryPreviewTypeLabel">
         <span *ngIf="queryPreviewParam"><code>QUERYPARAM</code> {{ queryPreviewParam }}</span>
@@ -438,7 +438,7 @@
       <pre class="adhc-query-preview-sql">{{ queryPreviewSql }}</pre>
     </div>
     <p class="adhc-query-preview-nosql adhc-hint" *ngIf="!queryPreviewLoading && !queryPreviewSql">
-      SQL text not loaded — Query Library lookup (<code>LIB0000001</code>) may require admin access or the
+      SQL text not loaded - Query Library lookup (<code>LIB0000001</code>) may require admin access or the
       query id may be missing from the catalog.
     </p>
 

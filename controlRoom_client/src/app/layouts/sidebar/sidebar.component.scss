@@ -1,37 +1,65 @@
 /* ==============================================
-   ICR SUMMER THEME — sidebar.component.scss
-   Matches login.component.scss summer palette
+   ICR FALL THEME — sidebar.component.scss
+   Matches login.component.scss fall palette
    ============================================== */
 
-@import '../themes/summer-palette';
+@import '../themes/fall-palette';
+
+$sidebar-width: 230px;
+$sidebar-collapsed-width: 52px;
 
 // ── Main Sidebar ───────────────────────────────────────────────
 // ViewEncapsulation.None — styles apply to app-sidebar-menu children (Bootstrap overrides).
-.summer-sidebar {
+.fall-sidebar {
     position: fixed;
     top: 56px;                          // below the navbar
     left: 0;
-    width: 230px;
+    width: $sidebar-width;
     height: calc(100vh - 56px);
     overflow-y: auto;                   // ← KEY FIX: scroll when content overflows
     overflow-x: hidden;
     background: linear-gradient(
         180deg,
-        rgba($summer-sky-top, 0.97)  0%,
-        rgba($summer-sky-mid, 0.95) 55%,
-        rgba($summer-horizon, 0.93) 100%
+        $fall-cream 0%,
+        lighten($fall-cream, 1%) 55%,
+        rgba($fall-amber, 0.35) 100%
     ) !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-right: 1.5px solid rgba($summer-coral, 0.22);
-    box-shadow: 2px 0 16px rgba($summer-deep, 0.08);
+    border-right: 1.5px solid rgba($fall-coral, 0.22);
+    box-shadow: 2px 0 16px rgba($fall-deep, 0.08);
     z-index: 100;
+    transition: width 0.2s ease;
 
     // Smooth custom scrollbar
     &::-webkit-scrollbar          { width: 5px; }
     &::-webkit-scrollbar-track    { background: transparent; }
-    &::-webkit-scrollbar-thumb    { background: rgba($summer-coral, 0.40); border-radius: 4px; }
-    &::-webkit-scrollbar-thumb:hover { background: rgba($summer-coral, 0.65); }
+    &::-webkit-scrollbar-thumb    { background: rgba($fall-coral, 0.40); border-radius: 4px; }
+    &::-webkit-scrollbar-thumb:hover { background: rgba($fall-coral, 0.65); }
+
+    .fall-sidebar-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: calc(100% - 16px);
+        margin: 4px 8px 8px;
+        padding: 8px 10px;
+        border: 1px solid rgba($fall-coral, 0.28);
+        border-radius: 8px;
+        background: rgba($fall-white, 0.55);
+        color: $fall-deep;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+
+        i { color: $fall-trunk; width: 16px; text-align: center; }
+
+        &:hover {
+            background: rgba($fall-sun, 0.4);
+            border-color: rgba($fall-coral, 0.45);
+        }
+    }
 
     // ── Top-level list ────────────────────────────────────────
     ul.list-group {
@@ -48,43 +76,71 @@
         padding: 10px 16px;
         font-size: 0.88rem;
         font-weight: 600;
-        color: $summer-deep !important;
+        color: $fall-deep !important;
         background: transparent !important;
         background-color: transparent !important;
         border: none !important;
-        border-top: 1px solid rgba($summer-coral, 0.10) !important;
+        border-top: 1px solid rgba($fall-coral, 0.10) !important;
         border-radius: 0;
         cursor: pointer;
         transition: background 0.16s, padding-left 0.16s;
         text-decoration: none;
+        white-space: nowrap;
+    }
 
-        i { color: $summer-palm; margin-right: 6px; width: 16px; }
+    .list-group-item i,
+    a.list-group-item i,
+    .nested-menu > .list-group-item i {
+        color: $fall-trunk;
+        margin-right: 6px;
+        width: 16px;
+        text-align: center;
+        display: inline-block;
+    }
 
-        &:hover {
-            background: rgba($summer-sun, 0.30) !important;
-            padding-left: 20px;
-            color: $summer-deep !important;
-        }
+    .list-group-item:hover,
+    a.list-group-item:hover,
+    .nested-menu > .list-group-item:hover {
+        background: rgba($fall-sun, 0.30) !important;
+        padding-left: 20px;
+        color: $fall-deep !important;
+    }
 
-        &.router-link-active {
-            background: linear-gradient(90deg, rgba($summer-coral, 0.22) 0%, rgba($summer-sun, 0.18) 100%) !important;
-            border-left: 3px solid $summer-coral !important;
-            padding-left: 13px;
-            color: darken($summer-deep, 5%) !important;
+    .list-group-item.router-link-active,
+    a.list-group-item.router-link-active {
+        background: linear-gradient(90deg, rgba($fall-coral, 0.22) 0%, rgba($fall-sun, 0.18) 100%) !important;
+        border-left: 3px solid $fall-coral !important;
+        padding-left: 13px;
+        color: darken($fall-deep, 5%) !important;
+        position: relative;
+
+        &::after {
+            content: '🍂';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            font-size: 0.75rem;
+            animation: fall-sidebar-leaf 2.8s ease-in-out infinite;
+            pointer-events: none;
         }
     }
+
+@keyframes fall-sidebar-leaf {
+    0%, 100% { transform: translateY(-50%) rotate(-8deg); }
+    50%      { transform: translateY(calc(-50% - 2px)) rotate(8deg); }
+}
 
     ul.list-group > a.list-group-item:first-of-type {
         border-top: none !important;
     }
 
-    .submenu-group-label span {
+    .submenu-group-label .menu-label {
         display: block;
         padding: 0.35rem 1rem 0.25rem;
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
-        color: darken($summer-deep, 8%);
+        color: darken($fall-deep, 8%);
         letter-spacing: 0.03em;
     }
 
@@ -104,8 +160,8 @@
         list-style: none;
         padding: 2px 0 2px 16px;
         margin: 0;
-        background: rgba($summer-white, 0.35);
-        border-left: 2px solid rgba($summer-coral, 0.25);
+        background: rgba($fall-white, 0.35);
+        border-left: 2px solid rgba($fall-coral, 0.25);
         margin-left: 12px;
 
         li { padding: 0; }
@@ -131,51 +187,92 @@
         padding: 7px 12px;
         font-size: 0.83rem;
         font-weight: 500;
-        color: darken($summer-deep, 2%);
+        color: darken($fall-deep, 2%);
         text-decoration: none;
         border-radius: 6px;
         transition: background 0.14s, padding-left 0.14s;
+        white-space: nowrap;
 
-        i { color: $summer-palm; margin-right: 6px; width: 14px; font-size: 0.80rem; }
+        i { color: $fall-trunk; margin-right: 6px; width: 14px; font-size: 0.80rem; text-align: center; display: inline-block; }
 
         &:hover {
-            background: rgba($summer-sun, 0.35);
+            background: rgba($fall-sun, 0.35);
             padding-left: 16px;
         }
 
         &.router-link-active {
-            background: rgba($summer-coral, 0.20);
-            color: darken($summer-deep, 8%);
+            background: rgba($fall-coral, 0.20);
+            color: darken($fall-deep, 8%);
             font-weight: 700;
         }
     }
 
-    // ── Collapsed state ───────────────────────────────────────
+    // ── Collapsed state (icon rail) ───────────────────────────
     &.collapsed {
-        width: 52px;
-        .list-group-item span,
-        .bbs_link_menu span { display: none; }
-        .list-group-item i  { margin-right: 0; }
+        width: $sidebar-collapsed-width;
+
+        .fall-sidebar-toggle {
+            width: calc(100% - 8px);
+            margin: 4px 4px 8px;
+            padding: 8px 0;
+            justify-content: center;
+            gap: 0;
+        }
+
+        ul.list-group {
+            padding-bottom: 120px;
+        }
+
+        .menu-label,
+        .submenu-group-label,
+        li.nested {
+            display: none !important;
+        }
+
+        .list-group-item,
+        a.list-group-item,
+        .nested-menu > .list-group-item {
+            padding: 12px 0;
+            text-align: center;
+
+            &:hover { padding-left: 0; }
+
+            i { margin-right: 0; }
+
+            &.router-link-active {
+                padding-left: 0;
+                &::after { display: none; }
+            }
+        }
+
+        .bbs_link_menu {
+            padding: 8px 0;
+            text-align: center;
+            &:hover { padding-left: 0; }
+            i { margin-right: 0; }
+        }
     }
 }
 
 
 // ── Admin Sidebar ──────────────────────────────────────────────
-.summer-sidebar-admin {
+.fall-sidebar-admin {
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 230px;
+    width: $sidebar-width;
     background: linear-gradient(
         135deg,
-        rgba($summer-horizon, 0.96) 0%,
-        rgba($summer-ocean,  0.90) 100%
+        rgba($fall-cream, 0.98) 0%,
+        rgba($fall-amber, 0.55) 100%
     ) !important;
-    border-top:  1.5px solid rgba($summer-coral, 0.22);
-    border-right: 1.5px solid rgba($summer-coral, 0.22);
-    box-shadow: 2px -2px 12px rgba($summer-deep, 0.07);
+    border-top:  1.5px solid rgba($fall-coral, 0.22);
+    border-right: 1.5px solid rgba($fall-coral, 0.22);
+    box-shadow: 2px -2px 12px rgba($fall-deep, 0.07);
     z-index: 100;
     overflow-y: auto;
+    overflow-x: hidden;
+    transition: width 0.2s ease;
 
     .list-group { padding: 6px 0 12px 0; }
 
@@ -186,17 +283,18 @@
         padding: 10px 16px;
         font-size: 0.85rem;
         font-weight: 600;
-        color: $summer-deep !important;
+        color: $fall-deep !important;
         background: transparent !important;
         background-color: transparent !important;
         border: none !important;
         cursor: pointer;
         transition: background 0.15s;
         text-decoration: none;
+        white-space: nowrap;
 
-        i { color: $summer-palm; margin-right: 6px; }
+        i { color: $fall-trunk; margin-right: 6px; width: 16px; text-align: center; display: inline-block; }
 
-        &:hover { background: rgba($summer-sun, 0.30) !important; }
+        &:hover { background: rgba($fall-sun, 0.30) !important; }
 
         &.isDisabled { pointer-events: none; opacity: 0.40; }
     }
@@ -212,27 +310,50 @@
         list-style: none;
         padding: 2px 0 2px 16px;
         margin: 0 0 0 12px;
-        background: rgba($summer-white, 0.35);
-        border-left: 2px solid rgba($summer-coral, 0.22);
+        background: rgba($fall-white, 0.35);
+        border-left: 2px solid rgba($fall-coral, 0.22);
 
         li a {
             display: block;
             padding: 7px 10px;
             font-size: 0.82rem;
-            color: $summer-deep;
+            color: $fall-deep;
             text-decoration: none;
             border-radius: 5px;
             transition: background 0.13s;
+            white-space: nowrap;
 
-            i { color: $summer-palm; margin-right: 5px; }
-            &:hover { background: rgba($summer-sun, 0.30); }
-            &.router-link-active { background: rgba($summer-coral, 0.18); font-weight: 700; }
+            i { color: $fall-trunk; margin-right: 5px; }
+            &:hover { background: rgba($fall-sun, 0.30); }
+            &.router-link-active { background: rgba($fall-coral, 0.18); font-weight: 700; }
         }
     }
 
     .logo {
         text-align: center;
         padding: 8px 0 10px;
-        border-top: 1px solid rgba($summer-coral, 0.18);
+        border-top: 1px solid rgba($fall-coral, 0.18);
+    }
+
+    &.collapsed {
+        width: $sidebar-collapsed-width;
+
+        .menu-label,
+        .submenu-group-label,
+        li.nested {
+            display: none !important;
+        }
+
+        .list-group-item,
+        a.list-group-item {
+            padding: 10px 0;
+            text-align: center;
+            i { margin-right: 0; }
+        }
+
+        .logo {
+            padding: 6px 2px;
+            img { width: 70% !important; max-width: 36px; }
+        }
     }
 }

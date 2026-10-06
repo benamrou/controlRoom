@@ -202,15 +202,17 @@ $border-weight: 3px;
     color: white;
     border-radius: 50%;
     height: 2em;
-    width: 4em;
+    width: 2em;
     line-height: 2em;
-    position: absolute;
-    align-content: center;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 0.4em;
     text-align: center;
-    top: 0px;
     background: radial-gradient(#FF5E00, #FF5E00);
     background-repeat: no-repeat;
-    right: 0px;
+    position: relative;
+    top: 0;
+    right: auto;
 }
 
 //table
@@ -270,7 +272,7 @@ $border-weight: 3px;
   }
 
   .ui-tabview .ui-tabview-nav>li.ui-state-active {
-    background: indianred !important;
+    background: darkorange !important;
   }
   
   // Dialog
@@ -288,13 +290,38 @@ $border-weight: 3px;
   width: 100%;
 }
 
-:host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
-    background-color: dimgrey !important;
-}
-:host ::ng-deep .p-tabview .p-tabview-nav {
-    background-color: dimgrey !important;
-}
+// Scoped tab colors (ViewEncapsulation.None — do not style all p-tabviews app-wide)
+.next-ppg-tabs {
+  .p-tabview .p-tabview-nav {
+    background: #4a5568 !important;
+    border: none !important;
+  }
 
-:host ::ng-deep .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
-  background-color: crimson !important;
+  .p-tabview .p-tabview-nav li {
+    margin-right: 2px;
+  }
+
+  .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    background: #4a5568 !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0.75rem 1.1rem !important;
+  }
+
+  .p-tabview .p-tabview-nav li .p-tabview-nav-link:not(.p-disabled):focus {
+    box-shadow: none !important;
+  }
+
+  .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    background: darkorange !important;
+    color: #fff !important;
+    border: none !important;
+  }
+
+  .next-ppg-tab-label {
+    color: #fff;
+    font-weight: 600;
+    margin-right: 0.35em;
+  }
 }

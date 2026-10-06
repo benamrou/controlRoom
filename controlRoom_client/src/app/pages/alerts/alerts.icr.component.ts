@@ -5,6 +5,11 @@ import { ImportService,  AlertsICRService, QueryService } from '../../shared/ser
 import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
 import { Dialog } from 'primeng/dialog';
 import { Chips } from 'primeng/chips';
+import {
+  bindQuillTableToolbar,
+  buildQuillTableModules,
+  readQuillHtml,
+} from '../../shared/utils/quill-html-table';
 
 @Component({
     selector: 'alerts.icr-cmp',
@@ -131,11 +136,14 @@ export class AlertsICRComponent implements OnDestroy {
    altspecHasContent = false;
    private altspecPreviewRaw = '';
    altspecShowHtmlSource = false;
+   /** Quill modules: keep <table> on paste/load (Excel / Word). */
+   altspecQuillModules = buildQuillTableModules();
+   private altspecQuill: any = null;
    alertSheduleDisplay_DALTEMAIL: string[] = []; 
    alertSheduleDisplay_DALTEMAILCC: string[] = []; 
    alertSheduleDisplay_DALTEMAILBCC: string[] = [];
 
-   /** ALERTBUG — patch / bug-fix history (HTML CLOB like ALTSPEC) */
+   /** ALERTBUG - patch / bug-fix history (HTML CLOB like ALTSPEC) */
    alertBugRows: any[] = [];
    alertBugLoading = false;
    showBugDialog = false;
@@ -182,7 +190,7 @@ export class AlertsICRComponent implements OnDestroy {
    this.csvButtonTooltip = "This is reporting all the information in the table below for detailed analyze."
   }
 
-  /** Cached sanitized ALTSPEC — updated explicitly to avoid CD / innerHTML storms while typing. */
+  /** Cached sanitized ALTSPEC - updated explicitly to avoid CD / innerHTML storms while typing. */
   private refreshAltspecPreview(): void {
     const raw = this.normalizeAltspecValue(this.alertDisplay?.ALTSPEC);
     if (raw === this.altspecPreviewRaw) {
@@ -199,10 +207,14 @@ export class AlertsICRComponent implements OnDestroy {
     if (value == null) {
       return '';
     }
-    const raw = String(value).trim();
+    let raw = String(value).trim();
     if (!raw || raw === '<p><br></p>' || raw === '<p></p>' || raw === '<br>') {
       return '';
     }
+    // Drop editor-only attributes before persist / preview
+    raw = raw
+      .replace(/\scontenteditable=("true"|'true'|true)/gi, '')
+      .replace(/\sdata-table-blot="[^"]*"/gi, '');
     return raw;
   }
 
@@ -218,10 +230,65 @@ export class AlertsICRComponent implements OnDestroy {
   }
 
   onAltspecEditorChange(event: { htmlValue?: string }): void {
-    if (event?.htmlValue != null) {
-      this.alertDisplay.ALTSPEC = event.htmlValue;
+    // PrimeNG already wrote html into ngModel via onModelChange.
+    // Do NOT reassign alertDisplay.ALTSPEC here - a different string triggers
+    // Editor.writeValue() → setContents() and jumps the caret to the top.
+    this.altspecHasContent = !!this.normalizeAltspecValue(
+      event?.htmlValue != null ? event.htmlValue : this.alertDisplay?.ALTSPEC
+    );
+  }
+
+  onAltspecQuillInit(event: { editor?: any }): void {
+    const quill = event?.editor;
+    if (!quill) {
+      return;
     }
-    this.altspecHasContent = !!this.normalizeAltspecValue(this.alertDisplay?.ALTSPEC);
+    this.altspecQuill = quill;
+    // No per-keystroke HTML sync - that rewrites ngModel and resets the caret.
+    bindQuillTableToolbar(quill);
+    this.rehydrateQuillTables(quill, this.alertDisplay?.ALTSPEC, (html) => {
+      // Init-only rewrite (editor just opened); safe before the user types.
+      this.alertDisplay.ALTSPEC = html;
+    });
+  }
+
+  onBugQuillInit(event: { editor?: any }, field: 'BUGISSUE' | 'BUGRESOLUTION' | 'BUGNOTES'): void {
+    const quill = event?.editor;
+    if (!quill || !this.bugDisplay) {
+      return;
+    }
+    bindQuillTableToolbar(quill);
+    this.rehydrateQuillTables(quill, this.bugDisplay[field], (html) => {
+      this.bugDisplay[field] = html;
+    });
+    // Capture latest HTML (incl. table cell edits) when leaving this editor
+    quill.root.addEventListener('focusout', (ev: FocusEvent) => {
+      const next = ev.relatedTarget as Node | null;
+      if (next && quill.root.contains(next)) {
+        return;
+      }
+      if (this.bugDisplay) {
+        this.bugDisplay[field] = readQuillHtml(quill);
+      }
+    });
+  }
+
+  /** After clipboard matchers are bound, reload HTML so <table> survives as embeds. */
+  private rehydrateQuillTables(
+    quill: any,
+    html: string,
+    assign: (html: string) => void
+  ): void {
+    if (!quill || !html || !/<table[\s>]/i.test(html)) {
+      return;
+    }
+    try {
+      quill.setText('');
+      quill.clipboard.dangerouslyPasteHTML(0, html);
+      assign(readQuillHtml(quill));
+    } catch {
+      /* keep original HTML if Quill rejects */
+    }
   }
 
   toggleAltspecHtmlSource(): void {
@@ -235,6 +302,7 @@ export class AlertsICRComponent implements OnDestroy {
     this.altspecPreviewRaw = '';
     this.altspecPreviewSafe = '';
     this.altspecHasContent = false;
+    this.altspecQuill = null;
   }
 
   enterAltspecEdit(): void {
@@ -247,12 +315,17 @@ export class AlertsICRComponent implements OnDestroy {
   }
 
   exitAltspecEdit(): void {
+    // Pull final HTML from Quill so table cell edits (no text-change) are included
+    if (this.altspecQuill) {
+      this.alertDisplay.ALTSPEC = readQuillHtml(this.altspecQuill);
+    }
     this.ensureAltspecString();
     const normalized = this.normalizeAltspecValue(this.alertDisplay?.ALTSPEC);
     this.alertDisplay.ALTSPEC = normalized;
     this.altspecEditMode = false;
     this.altspecShowHtmlSource = false;
     this.altspecEditSnapshot = '';
+    this.altspecQuill = null;
     this.refreshAltspecPreview();
   }
 
@@ -261,6 +334,7 @@ export class AlertsICRComponent implements OnDestroy {
     this.altspecEditMode = false;
     this.altspecShowHtmlSource = false;
     this.altspecEditSnapshot = '';
+    this.altspecQuill = null;
     this.refreshAltspecPreview();
   }
 
@@ -303,7 +377,7 @@ export class AlertsICRComponent implements OnDestroy {
   private openSpecPdfPrintWindow(bugRows: any[]): void {
     const altid = String(this.alertDisplay?.ALTID || '').trim();
     const subject = String(this.alertDisplay?.ALTSUBJECT || '').trim();
-    const title = [altid, subject].filter(Boolean).join(' — ') || 'Alert specification';
+    const title = [altid, subject].filter(Boolean).join(' - ') || 'Alert specification';
     const specHtml = this.normalizeAltspecValue(this.alertDisplay?.ALTSPEC)
       || '<p><em>No specification written.</em></p>';
     const bugsHtml = this.buildBugsPdfSection(bugRows || []);
@@ -431,11 +505,11 @@ export class AlertsICRComponent implements OnDestroy {
       return '<p><em>No patch history recorded for this alert.</em></p>';
     }
     return rows.map((row, idx) => {
-      const patch = this.escapeHtml(row.BUGPATCHDAY || '—');
-      const release = this.escapeHtml(row.BUGRELEASEDATE || '—');
-      const by = this.escapeHtml(row.BUGUTIL || '—');
-      const issue = this.normalizeBugHtmlField(row.BUGISSUE) || '<p><em>—</em></p>';
-      const resolution = this.normalizeBugHtmlField(row.BUGRESOLUTION) || '<p><em>—</em></p>';
+      const patch = this.escapeHtml(row.BUGPATCHDAY || '-');
+      const release = this.escapeHtml(row.BUGRELEASEDATE || '-');
+      const by = this.escapeHtml(row.BUGUTIL || '-');
+      const issue = this.normalizeBugHtmlField(row.BUGISSUE) || '<p><em>-</em></p>';
+      const resolution = this.normalizeBugHtmlField(row.BUGRESOLUTION) || '<p><em>-</em></p>';
       const notes = this.normalizeBugHtmlField(row.BUGNOTES);
       const notesBlock = this.bugHtmlEmpty(notes)
         ? ''
@@ -523,13 +597,13 @@ export class AlertsICRComponent implements OnDestroy {
       .replace(/\s+/g, ' ')
       .trim();
     if (!s) {
-      return '—';
+      return '-';
     }
     return s.length > max ? s.slice(0, max) + '…' : s;
   }
 
   private bugHtmlEmpty(html: unknown): boolean {
-    return this.bugPreview(html, 99999) === '—';
+    return this.bugPreview(html, 99999) === '-';
   }
 
   private normalizeBugHtmlField(value: unknown): string {
@@ -1055,6 +1129,11 @@ export class AlertsICRComponent implements OnDestroy {
 
   /** Save all changes (Alert, Distribution, Schedule) */
   saveChanges() {
+    // If still in spec edit mode, pull Quill HTML (incl. table cells) before persist
+    if (this.altspecEditMode && this.altspecQuill) {
+      this.alertDisplay.ALTSPEC = this.normalizeAltspecValue(readQuillHtml(this.altspecQuill));
+    }
+
     // Validate required fields
     if (!this.alertDisplay.ALTID || this.alertDisplay.ALTID.trim() === '') {
       this._messageService.add({severity:'error', summary:'Validation Error', detail: 'Alert ID is required.'});

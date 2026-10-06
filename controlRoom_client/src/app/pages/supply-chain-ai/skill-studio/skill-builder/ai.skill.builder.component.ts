@@ -168,8 +168,8 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
         { label: "Info", value: "INFO" }
     ];
     readonly stepTypeOptions = [
-        { label: "HARD — abort chain on match", value: "HARD" },
-        { label: "SOFT — record issue, continue", value: "SOFT" }
+        { label: "HARD - abort chain on match", value: "HARD" },
+        { label: "SOFT - record issue, continue", value: "SOFT" }
     ];
 
     private subs = new Subscription();
@@ -365,7 +365,7 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
             case "DRAFT": return "Draft";
             case "PUBLISHED": return "Published";
             case "DEPRECATED": return "Deprecated";
-            default: return status || "—";
+            default: return status || "-";
         }
     }
 
@@ -505,7 +505,7 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
             const key = this.cell(this.rowAsRecord(row), "CONCLUSION_KEY", "conclusion_key");
             if (key && !seen.has(key)) {
                 seen.add(key);
-                this.diagConclusionRows.push({ CONCLUSION_KEY: key, SEVERITY: "—" });
+                this.diagConclusionRows.push({ CONCLUSION_KEY: key, SEVERITY: "-" });
             }
         }
         this.diagConclusionCols = AiSkillBuilderComponent.COLS_DIAG_CONCL;
@@ -525,7 +525,7 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
             next: (r: any) => { this.diagTestLoading = false; this.diagTestResult = r; },
             error: () => {
                 this.diagTestLoading = false;
-                this.diagTestResult = { error: true, human_summary: "Chain call failed — check Node logs and confirm tables 37/38 are deployed." };
+                this.diagTestResult = { error: true, human_summary: "Chain call failed - check Node logs and confirm tables 37/38 are deployed." };
             }
         });
     }
@@ -858,7 +858,7 @@ export class AiSkillBuilderComponent implements OnInit, OnDestroy {
                 break;
         }
         if (!idVal) {
-            this._msg.add({ severity: "warn", summary: "Delete", detail: "Row has no id yet — refresh the list." });
+            this._msg.add({ severity: "warn", summary: "Delete", detail: "Row has no id yet - refresh the list." });
             return;
         }
         this._confirm.confirm({

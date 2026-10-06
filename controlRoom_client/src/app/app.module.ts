@@ -143,6 +143,7 @@ import { SettingCustomerModule } from './pages/admin/setting-customer/setting.cu
 import { SettingUsersModule } from './pages/admin/setting-users/setting.users.module';
 import { SettingMenuAccessModule } from './pages/admin/setting-menu-access/setting.menu.access.module';
 import { SettingWidgetLibraryModule } from './pages/admin/setting-widget-library/setting.widget.library.module';
+import { SettingMassloadRulesModule } from './pages/admin/setting-massload-rules/setting.massload.rules.module';
 import { PurchaseOrderPushModule } from './pages/mass.update/purchase.order.push/purchase.order.push.module';
 import { StockLayerModule } from './pages/mass.update/stock.layer/stock.layer.module';
 import { QueryRunnerModule } from './pages/it/query.runner/query.runner.module';
@@ -167,12 +168,16 @@ import { TreeModule } from 'primeng/tree';
 import { DropdownModule } from 'primeng/dropdown';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { SmartUBDModule } from './pages/reporting/smartUBD/smart.ubd.module';
 import { PPGRetailModule } from './pages/mdm/ppg.retail/ppg.retail.module';
 import { PalletLabelModule } from './pages/warehouse/toolkit/pallet.label/pallet.label.module';
 import { AvailableMHModule } from './pages/mdm/available.mh/available.mh.module';
 import { AlertLogJournalModule } from './pages/alerts/journal/alert.journal.module';
 import { ItemEndUPCModule } from './pages/mass.update/item.end.upc/item.end.upc.module';
+import { ReferenceToOrderModule } from './pages/mass.update/reference.to.order/reference.to.order.module';
+import { NewItemPpgModule } from './pages/mass.update/new.item.ppg/new.item.ppg.module';
+import { LoadReturnModule } from './pages/mass.update/load.return/load.return.module';
 import { WatchICRModule } from './pages/alerts/watch/watch.icr.module';
 
 /* ═══════════════════════════════════════════════════════════ */
@@ -212,7 +217,7 @@ import { DocumentationModule } from './pages/documentation/documentation.module'
     InputNumberModule,
     TabViewModule, DialogModule, FullCalendarModule,SelectButtonModule,
     TooltipModule, PanelModule, CalendarModule,TreeModule,DropdownModule,
-    OverlayPanelModule,
+    OverlayPanelModule, InputTextareaModule,
     /** BBS */
 
     AlertModule,
@@ -300,12 +305,16 @@ import { DocumentationModule } from './pages/documentation/documentation.module'
     SettingUsersModule,
     SettingMenuAccessModule,
     SettingWidgetLibraryModule,
+    SettingMassloadRulesModule,
     StockLayerModule,
     ItemRetailModule,
     AlertLogJournalModule,
     QueryRunnerModule,
     PresetQueryManagerModule,
     ItemEndUPCModule,
+    ReferenceToOrderModule,
+    NewItemPpgModule,
+    LoadReturnModule,
     WatchICRModule,
 
     /* Supply Chain AI */

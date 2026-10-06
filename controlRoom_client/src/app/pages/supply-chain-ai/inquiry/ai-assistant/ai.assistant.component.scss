@@ -1,4 +1,4 @@
-/* AI Assistant — Supply Chain AI Module */
+/* AI Assistant - Supply Chain AI Module */
 .ai-module-container { padding: 1rem 1.25rem; }
 .ai-assistant-workspace {
     display: grid;
@@ -200,7 +200,7 @@
     p { margin: 0; line-height: 1.45; white-space: pre-wrap; color: #0f172a; }
     small { color: #94a3b8; display: block; margin-top: .35rem; }
 }
-/* Phase 12 — assistant bubbles that carry a result table need extra width
+/* Phase 12 - assistant bubbles that carry a result table need extra width
    so the columns fit comfortably without horizontal scrolling. Triggered
    automatically via :has() when an .ai-chat-results child is present. */
 .ai-chat-bubble:has(.ai-chat-results) {
@@ -622,7 +622,7 @@
     margin-top: .7rem;
 }
 
-/* ── Phase 11 — Engine diagnostics card ──────────────────────────────────── */
+/* ── Phase 11 - Engine diagnostics card ──────────────────────────────────── */
 
 .ai-diag-card {
     .p-card-header { padding: 0; }
@@ -961,7 +961,7 @@
     }
 }
 
-/* ── Phase 12 — inline per-turn results in chat bubble ──────────────────── */
+/* ── Phase 12 - inline per-turn results in chat bubble ──────────────────── */
 
 .ai-chat-results {
     margin-top: .65rem;
@@ -1034,7 +1034,7 @@
     }
 }
 
-/* Phase 12 — enrichment indicator row above the inline result table.
+/* Phase 12 - enrichment indicator row above the inline result table.
    Only shown for ITM_FULL_ATTRIBUTES turns; lists which include_* flags
    the SQL had on (retail / EAN / history). Each chip mirrors the column
    group it added so the user can see how the consolidated card was built. */
@@ -1081,7 +1081,7 @@
 /* Horizontal scroll container around the inline result table.
    We deliberately use the non-scrollable p-table mode so that <thead> and
    <tbody> live inside the SAME <table>. That makes column widths inherently
-   match between header and body — which is what fixes the "2 | Nancy Lechner"
+   match between header and body - which is what fixes the "2 | Nancy Lechner"
    value being visually split across two columns in scrollable mode. */
 .ai-chat-results-footer {
     display: flex;
@@ -1183,7 +1183,7 @@
     margin-top: .65rem;
 }
 
-/* ── SHARE — bubble meta row + copy button ───────────────────────────────── */
+/* ── SHARE - bubble meta row + copy button ───────────────────────────────── */
 
 .ai-bubble-meta-row {
     display: flex;
@@ -1211,7 +1211,7 @@
     }
 }
 
-/* SHARE — export session button in chat header */
+/* SHARE - export session button in chat header */
 .ai-chat-header-actions {
     display: flex;
     flex-wrap: wrap;
@@ -1221,7 +1221,7 @@
     .p-button.p-button-sm { padding: .35rem .75rem; font-size: .8rem; }
 }
 
-/* ── ADJUST — Active context card ────────────────────────────────────────── */
+/* ── ADJUST - Active context card ────────────────────────────────────────── */
 
 .ai-context-chips {
     display: flex;
@@ -1305,7 +1305,7 @@
     i { margin-right: .3rem; color: #94a3b8; }
 }
 
-/* ── LEARN — teach correct skill panel ───────────────────────────────────── */
+/* ── LEARN - teach correct skill panel ───────────────────────────────────── */
 
 .ai-teach-trigger-btn {
     margin-left: .4rem;

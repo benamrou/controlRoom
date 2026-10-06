@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { UserService, LabelService } from '../../shared/services/index';
 import { MenuAccessService } from '../../shared/services/menu/menu-access.service';
@@ -9,7 +9,10 @@ import { MenuAccessService } from '../../shared/services/menu/menu-access.servic
     styleUrls: ['./sidebar.component.scss'],
     encapsulation: ViewEncapsulation.None,
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit, OnDestroy {
+    private static readonly OFFSET_EXPANDED = '230px';
+    private static readonly OFFSET_COLLAPSED = '52px';
+
     isActive: boolean = false;
     collapsed: boolean = false;
     showMenu: string = '';
@@ -39,6 +42,16 @@ export class SidebarComponent {
         });
     }
 
+    ngOnInit(): void {
+        // Publish offset + emit so workspace margin matches even after remount
+        this.publishSidebarOffset();
+        this.collapsedEvent.emit(this.collapsed);
+    }
+
+    ngOnDestroy(): void {
+        document.documentElement.style.setProperty('--icr-sidebar-offset', '0px');
+    }
+
     eventCalled() {
         this.isActive = !this.isActive;
     }
@@ -52,8 +65,26 @@ export class SidebarComponent {
     }
 
     toggleCollapsed() {
-        this.collapsed = !this.collapsed;
+        this.setCollapsed(!this.collapsed);
+    }
+
+    setCollapsed(value: boolean): void {
+        if (this.collapsed !== value) {
+            this.collapsed = value;
+            if (this.collapsed) {
+                this.showMenu = '';
+            }
+        }
+        this.publishSidebarOffset();
         this.collapsedEvent.emit(this.collapsed);
+    }
+
+    /** Single source of truth for workspace left margin (styles.scss). */
+    private publishSidebarOffset(): void {
+        const px = this.collapsed
+            ? SidebarComponent.OFFSET_COLLAPSED
+            : SidebarComponent.OFFSET_EXPANDED;
+        document.documentElement.style.setProperty('--icr-sidebar-offset', px);
     }
 
     isToggled(): boolean {

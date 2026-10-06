@@ -40,8 +40,6 @@ export class ReportingService {
         this.params = this.params.set('PARAM', vendorCode);
         this.params = this.params.append('PARAM', periodStart);
         this.params = this.params.append('PARAM', periodEnd);
-        headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-        headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
         return this.http.get(this.request, this.params, this.options).pipe(map(response => {
             let data = <any> response;
@@ -62,8 +60,6 @@ export class ReportingService {
     this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
 
     headersSearch = headersSearch.set('DSH_ID', dashboardId);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
         let data = <any> response;
         return this.reportingList;
@@ -83,8 +79,6 @@ export class ReportingService {
     this.params = this.params.append('PARAM',localStorage.getItem('ICRUser'));
 
     headersSearch = headersSearch.set('DSH_ID', dashboardId);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
         let data = <any> response;
         return this.reportingList;

@@ -37,5 +37,6 @@ export * from './order/order.service';
 export * from './unix/unix.runner.service';
 export * from './alerts.icr/watch.icr.service';
 export * from './menu/menu-access.service';
+export * from './news/news.bulletin.service';
 export * from './app-logs/app.logs.service';
 

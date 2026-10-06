@@ -23,7 +23,7 @@ export class AiSkillLibraryComponent implements OnInit, OnDestroy {
     statusFilter: string | null = null;
     domainFilter: string | null = null;
 
-    /** Filled when `skills` changes — avoid a getter returning a new array each CD (breaks *ngFor / nested Prime widgets). */
+    /** Filled when `skills` changes - avoid a getter returning a new array each CD (breaks *ngFor / nested Prime widgets). */
     statusChips: { key: string; label: string; count: number }[] = [];
 
     statusOptions: { label: string; value: string | null }[] = [];
@@ -186,7 +186,7 @@ export class AiSkillLibraryComponent implements OnInit, OnDestroy {
             case "DRAFT": return "Draft";
             case "PUBLISHED": return "Published";
             case "DEPRECATED": return "Deprecated";
-            default: return status || "—";
+            default: return status || "-";
         }
     }
 

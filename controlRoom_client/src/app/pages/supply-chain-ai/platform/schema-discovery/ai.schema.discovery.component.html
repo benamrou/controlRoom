@@ -7,13 +7,13 @@
     <div class="ai-schema-banner">
         <div class="ai-schema-banner-icon"><i class="fas fa-database"></i></div>
         <div>
-            <strong>{{ 'S54.BAN.TTL' | lbl:'Schema Discovery — GOLD physical catalog' }}</strong>
+            <strong>{{ 'S54.BAN.TTL' | lbl:'Schema Discovery - GOLD physical catalog' }}</strong>
             <p>
                 {{ 'S54.BAN.P1' | lbl:'Scans GOLD schemas via CORPENV DB links. The catalog feeds the AI engine for SQL validation.' }}
                 <ng-container *ngIf="expectedGoldSchemaOwners.length; else schemaPlaceholder">
                     (<ng-container *ngFor="let s of expectedGoldSchemaOwners; let last = last"><code>{{ s }}</code><span *ngIf="!last">, </span></ng-container>)
                 </ng-container>
-                <ng-template #schemaPlaceholder>(<code>PREFIX</code>CEN, <code>PREFIX</code>GWR, <code>PREFIX</code>STK — prefix from <code>CORPENV.ENVGOLDSCHEMA</code> / retailer code)</ng-template>
+                <ng-template #schemaPlaceholder>(<code>PREFIX</code>CEN, <code>PREFIX</code>GWR, <code>PREFIX</code>STK - prefix from <code>CORPENV.ENVGOLDSCHEMA</code> / retailer code)</ng-template>
             </p>
             <p>
                 {{ 'S54.BAN.P2' | lbl:'Designers can annotate tables with domain tags and descriptions for AI context.' }}
@@ -50,7 +50,7 @@
                                mode="indeterminate" styleClass="ai-scan-progress"></p-progressBar>
             </div>
 
-            <!-- Scan button — admin only -->
+            <!-- Scan button - admin only -->
             <button *ngIf="isAdmin"
                     pButton
                     [label]="scanStatus?.STATUS === 'RUNNING' ? ('S54.SCAN.RUN' | lbl:'Scan in progress...') : (scanStatus?.TABLES_SCANNED ? ('S54.BTN.RESC' | lbl:'Re-scan') : ('S54.BTN.SCAN' | lbl:'Run full scan'))"
@@ -180,7 +180,7 @@
                         <span>·</span>
                         <span>{{ columns.length }} columns</span>
                         <span *ngIf="selectedTable.DESCRIPTION" class="ai-col-desc-inline">
-                            — {{ selectedTable.DESCRIPTION }}
+                            - {{ selectedTable.DESCRIPTION }}
                         </span>
                     </div>
                 </div>
@@ -237,7 +237,7 @@
         </div>
     </div>
 
-    <!-- Empty state — no scan yet -->
+    <!-- Empty state - no scan yet -->
     <div *ngIf="selectedRetailer && !loadingTables && tables.length === 0 && scanStatus?.STATUS !== 'RUNNING'"
          class="ai-no-scan">
         <i class="fas fa-database ai-no-scan-icon"></i>

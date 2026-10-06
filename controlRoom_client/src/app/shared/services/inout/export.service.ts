@@ -362,13 +362,31 @@ export class ExportService{
         workbook.calcProperties.fullCalcOnLoad = true;
     }
 
+    /**
+     * Fallback when addTable cannot be used. Keep default Excel styling
+     * (no navy/white header) so the sheet still matches the journal report.
+     */
+    writeJsonRows(worksheet, columns: string[], dataRows: any[][], startRow: number) {
+        const header = worksheet.getRow(startRow);
+        header.values = [undefined, ...columns];
+        header.font = { name: 'Calibri', size: 11, bold: true };
+        header.commit();
+
+        for (let i = 0; i < dataRows.length; i++) {
+            const row = worksheet.getRow(startRow + 1 + i);
+            row.values = [undefined, ...(dataRows[i] || [])];
+            row.font = { name: 'Calibri', size: 11 };
+            row.commit();
+        }
+    }
+
     json2xls(workbook, worksheet, reportid, subject, content, rawData, formatStructure, border ?, freeze?, tableName?) {
 
         let valueColumns=[];
-        let dataColumns;
-        if(rawData.length >1) {
-            valueColumns = Object.keys(rawData[0]);
-            dataColumns = [];
+        let dataColumns = [];
+        const rows = Array.isArray(rawData) ? rawData : [];
+        if (rows.length > 0 && rows[0] && typeof rows[0] === 'object') {
+            valueColumns = Object.keys(rows[0]);
         }
 
         for(let i =0;i < valueColumns.length ; i ++) {
@@ -383,8 +401,8 @@ export class ExportService{
         // Add rows detail
         let dataRows = [];
 
-        for (let i = 0; i < rawData.length; i++) {
-            dataRows.push (Object.values(rawData[i]));
+        for (let i = 0; i < rows.length; i++) {
+            dataRows.push (Object.values(rows[i] || {}));
         }
 
         this.setXLSHeader(worksheet, reportid, subject , content);
@@ -393,23 +411,27 @@ export class ExportService{
             worksheet.views = [{state: 'frozen', xSplit: freeze.ALTFREEZECOLUMN, ySplit: freeze.ALTROWCOLUMN+1}];
         }
 
-        /**************************************************************************/  
-        // Creating the table detail EXCEL (real table)
-        if(valueColumns.length >0) {
-            worksheet.addTable({
-                name: tableName,
-                ref: 'A5',
-                headerRow: true,
-                totalsRow: true,
-                style: {
-                theme: 'TableStyleLight1',
-                showRowStripes: true,
-                },
-                columns: dataColumns,
-                rows: dataRows,
-            });
-        
-
+        /**************************************************************************/
+        // Excel table theme TableStyleLight1 (original layout).
+        // totalsRow must stay off for a single data row — ExcelJS otherwise
+        // turns that row into the totals line and the sheet looks empty.
+        if (valueColumns.length > 0) {
+            try {
+                worksheet.addTable({
+                    name: tableName,
+                    ref: 'A5',
+                    headerRow: true,
+                    totalsRow: dataRows.length > 1,
+                    style: {
+                        theme: 'TableStyleLight1',
+                        showRowStripes: true,
+                    },
+                    columns: dataColumns,
+                    rows: dataRows,
+                });
+            } catch (e) {
+                this.writeJsonRows(worksheet, valueColumns, dataRows, 5);
+            }
 
             this.formatXLS(worksheet,dataRows, formatStructure);
 

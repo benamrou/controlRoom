@@ -1,5 +1,5 @@
 import {Component, ViewEncapsulation, ViewChild, Input} from '@angular/core';
-import {  WidgetService, ProcessService,  ParamService, ImportService, ExportService } from '../../../shared/services';
+import {  WidgetService, ProcessService,  ParamService, ImportService, ExportService, QueryService } from '../../../shared/services';
 import {DatePipe} from '@angular/common';
 
 
@@ -94,7 +94,8 @@ export class MassJournalComponent {
   constructor( private _messageService: MessageService, private _processService: ProcessService, 
                private _exportService: ExportService,
                private _confirmationService: ConfirmationService,
-               private _importService: ImportService, private _paramService: ParamService) {
+               private _importService: ImportService, private _paramService: ParamService,
+               private _query: QueryService) {
     this.screenID =  'SCR0000000009';
     this.datePipe     = new DatePipe('en-US');
     this.dateNow = new Date();
@@ -195,53 +196,73 @@ export class MassJournalComponent {
     this.selectedElement = null;
   }
 
-downloadFile(id: any, isError: any) {
-  console.log('Downloading...', id, this.searchResult[id]);
-  
-  if (isError) {
-    // For errors, parse the malformed JSONERROR
-    let raw = this.searchResult[id].JSONERROR;
-    let parsedData = this.fixMalformedJson(raw);
-    
-    this._exportService.saveCSV(parsedData, null, null, null, 
-                                'MASSCHANGE_' + this.searchResult[id].JSONID, 
-                                'Mass Change execution report REJECTION', 
-                                'Process ' + this.searchResult[id].JSONID + 
-                                ' running the EXCEL file ' + this.searchResult[id].JSONFILE + 
-                                ' has been executed on ' + this.searchResult[id].JSONDPROCESS + 
-                                ' by ' + this.searchResult[id].USERNAME + 
-                                ' - Nb error: ' + this.searchResult[id].JSONNBERROR);
-  } else {
-    // For successful records, JSONCONTENT is already valid JSON
-    try {
-      let content = this.searchResult[id].JSONCONTENT;
-      let parsedData;
-      
-      // Check if it's a string that needs parsing or already an object
-      if (typeof content === 'string') {
-        parsedData = JSON.parse(content);
-      } else {
-        parsedData = content;
-      }
-      
-      console.log('✅ Successfully parsed', parsedData.length, 'records');
-      
-      this._exportService.saveCSV(parsedData, null, null, null, 
-                                  'MASSCHANGE_' + this.searchResult[id].JSONID, 
-                                  'Mass Change execution report', 
-                                  'Process ' + this.searchResult[id].JSONID + 
-                                  ' running the EXCEL file ' + this.searchResult[id].JSONFILE + 
-                                  ' has been executed on ' + this.searchResult[id].JSONDPROCESS + 
-                                  ' by ' + this.searchResult[id].USERNAME);
-    } catch (e) {
-      console.error('Failed to parse JSONCONTENT:', e);
-      this._messageService.add({
-        severity: 'error', 
-        summary: 'Parse Error', 
-        detail: 'Could not parse the content data'
+downloadFile(row: any, isError: any) {
+  if (!row) {
+    return;
+  }
+  const step = String(row.JSONSTEP || 'EXECUTION').toUpperCase();
+  const exportRows = (payload: any) => {
+    let parsedData = this.parseJournalPayload(payload);
+    if (!Array.isArray(parsedData)) {
+      parsedData = parsedData ? [parsedData] : [];
+    }
+    if (isError) {
+      parsedData = parsedData.filter((rec: any) => {
+        const comment = rec == null ? '' : String(rec.COMMENTS ?? rec.ERROR ?? rec.MESSAGE ?? '').trim();
+        return comment !== '';
       });
     }
+    if (!parsedData.length) {
+      this._messageService.add({
+        severity: 'warn',
+        summary: isError ? 'Error file' : 'Data file',
+        detail: isError
+          ? 'No error lines found (empty COMMENTS is treated as success) for JSONID ' + row.JSONID + '.'
+          : 'No loaded rows found for JSONID ' + row.JSONID + '.'
+      });
+      return;
+    }
+    this._exportService.saveCSV(
+      parsedData, null, null, null,
+      'MASSCHANGE_' + row.JSONID,
+      isError ? 'Mass Change execution report REJECTION' : 'Mass Change execution report',
+      'Process ' + row.JSONID +
+      ' running the EXCEL file ' + row.JSONFILE +
+      ' has been executed on ' + row.JSONDPROCESS +
+      ' by ' + row.USERNAME +
+      (isError ? ' - Nb error: ' + row.JSONNBERROR : '')
+    );
+  };
+
+  // MAS0000003 UNION ALL often returns empty CLOBs; fetch the payload without UNION.
+  this._query.getQueryResult('MAS0000006', [String(row.JSONID), step]).subscribe(
+    (data: any) => {
+      const rec = Array.isArray(data) && data.length ? data[0] : data;
+      const payload = isError ? rec?.JSONERROR : rec?.JSONCONTENT;
+      if (payload == null || payload === '') {
+        exportRows(isError ? row.JSONERROR : row.JSONCONTENT);
+        return;
+      }
+      exportRows(payload);
+    },
+    () => {
+      exportRows(isError ? row.JSONERROR : row.JSONCONTENT);
+    }
+  );
+}
+
+/** Journal CLOBs may be a JSON array, a JSON string, or concatenated json_object() output. */
+parseJournalPayload(raw: any): any[] {
+  if (raw == null || raw === '') {
+    return [];
   }
+  if (Array.isArray(raw)) {
+    return raw;
+  }
+  if (typeof raw === 'object') {
+    return [raw];
+  }
+  return this.fixMalformedJson(String(raw));
 }
 
 // Alternative: More defensive parsing

@@ -18,7 +18,7 @@ export class SettingUsersComponent implements OnInit, OnDestroy {
 
   screenID = 'SCR0000000065';
   activeTab = 0;
-  /** In-dialog save/load only — do not use page-header waitMessage (full-page BlockUI hid the navbar). */
+  /** In-dialog save/load only - do not use page-header waitMessage (full-page BlockUI hid the navbar). */
   userDialogBusy = false;
 
   /** Columns included in the table caption global filter (Query Library pattern). */
@@ -32,7 +32,7 @@ export class SettingUsersComponent implements OnInit, OnDestroy {
     'USERTYPE',
   ];
 
-  /** Sentinel for Access profile dropdown — PrimeNG mishandles `null` option values in dialogs. */
+  /** Sentinel for Access profile dropdown - PrimeNG mishandles `null` option values in dialogs. */
   static readonly PROFILE_NONE = -1;
 
   corpsDropdown: { label: string; value: number }[] = [];
@@ -65,13 +65,13 @@ export class SettingUsersComponent implements OnInit, OnDestroy {
   activeOptions: { label: string; value: number }[] = [];
   yesNo: { label: string; value: number }[] = [];
   langOptions: { label: string; value: string }[] = [];
-  /** USERSROOM.USERTYPE — 1 unlocks General Settings (ADMIN menu flag). */
+  /** USERSROOM.USERTYPE - 1 unlocks General Settings (ADMIN menu flag). */
   userTypeOptions: { label: string; value: number }[] = [];
   collapseOptions: { label: string; value: string }[] = [];
 
   private labelSub?: Subscription;
 
-  /** Access-flag columns — PrimeNG checkboxes need numeric 0|1, not string/null from Oracle. */
+  /** Access-flag columns - PrimeNG checkboxes need numeric 0|1, not string/null from Oracle. */
   private static readonly USER_FLAG_KEYS = [
     'USERDATAINTEGRITY',
     'USERIT',
@@ -144,7 +144,7 @@ export class SettingUsersComponent implements OnInit, OnDestroy {
     this._svc.listAccessProfiles().subscribe({
       next: (rows) => {
         const opts = rows.map((p) => ({
-          label: `${p.PROFILE_CODE} — ${p.PROFILE_NAME}`,
+          label: `${p.PROFILE_CODE} - ${p.PROFILE_NAME}`,
           value: Number(p.PROFILE_ID),
         })).filter((o) => o.value > 0);
         this.profileDropdown = [
@@ -158,7 +158,7 @@ export class SettingUsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  /** Row count for footer — reflects global filter when active. */
+  /** Row count for footer - reflects global filter when active. */
   get usersFooterCount(): number {
     const filtered = this.usersTable?.filteredValue as unknown[] | undefined;
     if (filtered) {
@@ -185,7 +185,7 @@ export class SettingUsersComponent implements OnInit, OnDestroy {
     this._svc.listCorporates('-1', '-1').subscribe({
       next: (rows) => {
         const mapped = rows.map((c) => ({
-          label: `${c.CORPCODE || ''} — ${c.CORPLDESC || c.CORPSDESC || ''}`.trim(),
+          label: `${c.CORPCODE || ''} - ${c.CORPLDESC || c.CORPSDESC || ''}`.trim(),
           value: Number(c.CORPID),
         }));
         const dropped = mapped.filter((o) => o.value <= 0 || Number.isNaN(o.value));
@@ -439,7 +439,7 @@ export class SettingUsersComponent implements OnInit, OnDestroy {
         this.widgetCatalog = rows.map((w) => {
           const id = String(w.WIDID || '').trim();
           const name = String(w.WIDNAME_DESC || w.WIDID || '').trim();
-          return { label: `${id} — ${name}`, value: id };
+          return { label: `${id} - ${name}`, value: id };
         }).filter((o) => o.value);
       },
       error: () => {
@@ -627,7 +627,7 @@ export class SettingUsersComponent implements OnInit, OnDestroy {
     this.onAccessFlagChange(row);
   }
 
-  /** After duplicate save — copy USERSENV and USER_WIDGET from source to new user id. */
+  /** After duplicate save - copy USERSENV and USER_WIDGET from source to new user id. */
   private copyDuplicateUserData(sourceUserId: string, newUserId: string, userAppli: number): void {
     this._svc.getUser(newUserId, userAppli).subscribe({
       next: (rows) => {

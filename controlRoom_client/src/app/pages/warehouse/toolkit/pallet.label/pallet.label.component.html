@@ -38,7 +38,7 @@
             style="width: 20%;margin-left: 10px;"/>     
     </span>
     <span style="margin-right:1.3em; padding-left: 15px; font-weight: bolder">Label requested on : </span>
-    <p-calendar [(ngModel)]="printedOn" 
+    <p-calendar appendTo="body" [(ngModel)]="printedOn" 
                 [readonlyInput]="true"
                 dateFormat="mm/dd/yy"
                 [style]="{'height': '35px'}"

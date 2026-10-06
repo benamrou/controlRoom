@@ -82,8 +82,6 @@ export class ProcessService {
     this.params = this.params.set('PARAM', processDate);
     this.params = this.params.append('PARAM', batchName);
     this.params = this.params.append('PARAM', args);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let processInformation = new ProcessData();
@@ -104,8 +102,6 @@ export class ProcessService {
     this.params = new HttpParams();
     this.params = this.params.set('PARAM', batchId);
     this.params = this.params.append('PARAM', processDate);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let processInformation = new ProcessData();
@@ -138,8 +134,6 @@ export class ProcessService {
                           // Batch to execute
                           batchid + ' ' + batchid + '.icr' + ' $USERID ' + parameter + '; ' ;
     
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
     console.log('Executing job : ' ,headersSearch);
     return this.http.execute(this.request, this.params, headersSearch, scriptToExecute).pipe(map(response => {
@@ -163,8 +157,6 @@ export class ProcessService {
                           // Batch to execute
                       script ;
     
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     /*headersSearch = headersSearch.set('ENV_COMMAND', 
         // Initialization
         this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
@@ -211,8 +203,6 @@ export class ProcessService {
                       script ;
 
     this.params = this.params.set('PARAM', scriptToExecute);
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
 
     console.log('scriptToExecute', scriptToExecute, this._userService.userInfo.mainEnvironment);
@@ -244,8 +234,6 @@ export class ProcessService {
                           // Batch to execute
                       script ;
     
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
     /*headersSearch = headersSearch.set('ENV_COMMAND', 
         // Initialization
         this._userService.userInfo.mainEnvironment[0].initSH + '; ' +
@@ -270,8 +258,6 @@ export class ProcessService {
     this.request = this.myJobList;
     let headersSearch = new HttpHeaders();
     this.params = new HttpParams();
-    headersSearch = headersSearch.set('DATABASE_SID', this._userService.userInfo.sid[0].toString());
-    headersSearch = headersSearch.set('LANGUAGE', this._userService.userInfo.envDefaultLanguage);
 
     return this.http.get(this.request, this.params, headersSearch).pipe(map(response => {
             let myJobList = new MyJobList();

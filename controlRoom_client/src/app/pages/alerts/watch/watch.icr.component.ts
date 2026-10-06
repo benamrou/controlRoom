@@ -1,5 +1,5 @@
 /**
- * Critical Alert Watch — CRUD + reporting screen for ALERTWATCH.
+ * Critical Alert Watch - CRUD + reporting screen for ALERTWATCH.
  *
  * Sister screen to alerts.icr.component.ts. Lets ops define, edit, pause and
  * audit the watchdog contracts that guarantee critical ALERTLOG signatures
@@ -38,7 +38,7 @@ export class WatchICRComponent implements OnInit, OnDestroy {
     // ─── data ───────────────────────────────────────────────────────────────
     searchResult: any[] = [];
     alertList: any[] = [];                // dropdown source from ALERTS table
-    alertOptions: any[] = [];             // [{label:'ALTID — ALTSUBJECT', value:'ALTID'}]
+    alertOptions: any[] = [];             // [{label:'ALTID - ALTSUBJECT', value:'ALTID'}]
     selectedElement: any = {};
 
     columnsResult: any[];
@@ -114,7 +114,7 @@ export class WatchICRComponent implements OnInit, OnDestroy {
     toggleHelp() {
         this.showHelp = !this.showHelp;
         try { localStorage.setItem('watchdog.showHelp', this.showHelp ? '1' : '0'); }
-        catch (_) { /* localStorage may be disabled — best effort */ }
+        catch (_) { /* localStorage may be disabled - best effort */ }
     }
 
 
@@ -158,7 +158,7 @@ export class WatchICRComponent implements OnInit, OnDestroy {
     /**
      * Load the alerts dropdown ONCE when the screen opens.  Previously this lived
      * inside search(), which meant every SEARCH click ran ALT0000001 against
-     * ALERTS in addition to the WAT0000001 / ALERTWATCH query — wasteful and
+     * ALERTS in addition to the WAT0000001 / ALERTWATCH query - wasteful and
      * misleading in the query log.
      */
     ngOnInit() {
@@ -166,7 +166,7 @@ export class WatchICRComponent implements OnInit, OnDestroy {
             data => {
                 this.alertList = data || [];
                 this.alertOptions = this.alertList.map(a => ({
-                    label: `${a.ALTID} — ${a.ALTSUBJECT || ''}`,
+                    label: `${a.ALTID} - ${a.ALTSUBJECT || ''}`,
                     value: a.ALTID
                 }));
             },
@@ -211,7 +211,7 @@ export class WatchICRComponent implements OnInit, OnDestroy {
             data => {
                 this.alertList = data || [];
                 this.alertOptions = this.alertList.map(a => ({
-                    label: `${a.ALTID} — ${a.ALTSUBJECT || ''}`,
+                    label: `${a.ALTID} - ${a.ALTSUBJECT || ''}`,
                     value: a.ALTID
                 }));
                 this._messageService.add({severity:'info', summary:'Refreshed',
@@ -224,7 +224,7 @@ export class WatchICRComponent implements OnInit, OnDestroy {
 
     // ==================== CRUD =================================================
 
-    /** Default AWTSHELL template — preseeded so the user can edit it directly
+    /** Default AWTSHELL template - preseeded so the user can edit it directly
      *  (and copy / select / paste) instead of staring at a CSS placeholder. */
     private readonly AWTSHELL_TEMPLATE: string =
 `. $HOME/env/envICR

@@ -144,7 +144,7 @@
                         </div>
 
                         <div class="params-card no-params-notice" *ngIf="selectedPreset.params.length === 0">
-                            <i class="pi pi-bolt mr-2"></i>This query requires no parameters — ready to execute.
+                            <i class="pi pi-bolt mr-2"></i>This query requires no parameters - ready to execute.
                         </div>
 
                         <!-- Execute Toolbar -->
@@ -257,7 +257,7 @@
 
         <div class="no-results" *ngIf="results.length === 0 && !loading">
             <i class="pi pi-inbox"></i>
-            <p>Query executed successfully — no rows returned.</p>
+            <p>Query executed successfully - no rows returned.</p>
         </div>
 
         <div class="results-wrapper" *ngIf="results.length > 0">
@@ -267,7 +267,7 @@
                     {{ results.length }} row(s) · {{ dynamicColumns.length }} column(s)
                     <span class="results-label" *ngIf="activeQueryLabel"
                         [pTooltip]="activeQueryLabel" tooltipPosition="right">
-                        — {{ activeQueryLabel }}
+                        - {{ activeQueryLabel }}
                     </span>
                 </span>
                 <span class="p-input-icon-left">

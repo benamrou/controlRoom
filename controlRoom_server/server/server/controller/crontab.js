@@ -24,11 +24,13 @@
 *   #9  - Script content is normalised with a #!/bin/bash shebang if missing
 *   #10 - SALTSHELL/SALTJOB dual-column ambiguity is warned and resolved in one place
 *   #11 - Per-job execution timeout added (JOB_TIMEOUT_MS); process is SIGTERMed then SIGKILLed
+*   #12 - Each SALTSHELL run writes start/end to ALERTLOG (LALTID=SALTID, LALTUTIL=crontab.js)
 */
 
 "use strict";
 
 let logger          = require("../utils/logger.js");
+let dbLogger        = require("../utils/db_logger.js");
 let { streamEnd }   = require('@rauschma/stringio');   // streamWrite unused — removed
 let cron            = require('node-cron');
 let spawn           = require('child_process').spawn;
@@ -60,23 +62,83 @@ function normaliseScript(content) {
     return trimmed.startsWith('#!') ? trimmed : `#!/bin/bash\n${trimmed}`;
 }
 
-// ---------------------------------------------------------------------------
-// executeScript
-//   FIX #2  — 'uncaughtException' listener removed
-//   FIX #3  — onExit() removed; exit+error events own the cleanup lifecycle
-//             catch block no longer calls safeCleanup (prevents double-delete)
-//   FIX #7  — writeToWritable awaited
-//   FIX #8  — global.gc() called inside exit handler, after process ends
-//   FIX #9  — script normalised before writing
-//   FIX #11 — timeout wraps the child process
-// ---------------------------------------------------------------------------
-async function executeScript(id, schedule, scriptContent, user) {
+function cronDurationSec(startedAtMs) {
+    return Math.max(0, Math.floor((Date.now() - startedAtMs) / 1000));
+}
+
+/**
+ * Write ALERTLOG start/end for one ALERTSCHEDULE shell run.
+ * LALTID = SALTID (schedule id). Downstream /api/notification/ runs still log their own ALTID rows.
+ *
+ * @param {string|number} id — SALTID
+ * @param {string} schedule — SALTCRON expression
+ * @param {string} scriptContent
+ * @param {string} user
+ * @param {{ catchup?: boolean, saltDesc?: string }} [meta]
+ */
+async function executeScript(id, schedule, scriptContent, user, meta) {
     if (!scriptContent) return;
 
     const fileName = `script-${id}-${uuidv4()}.sh`;
     const filePath = path.join(TEMP_DIR, fileName);
+    const requestId = dbLogger.generateRequestId('CRON');
+    const startedAtMs = Date.now();
+    let dbEnded = false;
+
+    const finishDb = async (kind, detail) => {
+        if (dbEnded) {
+            return;
+        }
+        dbEnded = true;
+        const duration = cronDurationSec(startedAtMs);
+        try {
+            if (kind === 'complete') {
+                await dbLogger.updateRequest(requestId, {
+                    status: 'COMPLETE',
+                    phase: 'CRON_DONE',
+                    endTime: true,
+                    duration,
+                });
+            } else if (kind === 'timeout') {
+                await dbLogger.updateRequest(requestId, {
+                    status: 'TIMEOUT',
+                    phase: 'CRON_TIMEOUT',
+                    endTime: true,
+                    duration,
+                    error: detail || 'Cron job exceeded timeout limit',
+                });
+            } else {
+                await dbLogger.updateRequest(requestId, {
+                    status: 'FAILED',
+                    phase: 'CRON_FAILED',
+                    endTime: true,
+                    duration,
+                    error: detail || 'Cron job failed',
+                });
+            }
+        } catch (e) {
+            logger.log('CRON', `ALERTLOG end write failed for ${requestId}: ${e.message}`, user, 3);
+        }
+    };
 
     try {
+        await dbLogger.logStart(
+            requestId,
+            String(id),
+            'crontab',
+            {
+                type: 'ALERTSCHEDULE',
+                saltId: String(id),
+                saltCron: schedule,
+                saltDesc: (meta && meta.saltDesc) || '',
+                catchup: !!(meta && meta.catchup),
+            },
+            '',
+            '',
+            { util: 'crontab.js', phase: 'CRON_SHELL' }
+        );
+        logger.log('CRON', `Cron Job ${id} ${schedule} [START] ${requestId}`, user, 2);
+
         await fs.mkdir(TEMP_DIR, { recursive: true });
         await fs.writeFile(filePath, normaliseScript(scriptContent), { mode: 0o755 }); // FIX #9
 
@@ -89,6 +151,8 @@ async function executeScript(id, schedule, scriptContent, user) {
         // FIX #11 — execution timeout
         const killTimer = setTimeout(() => {
             logger.log('CRON', `TIMEOUT - Cron Job ${id} exceeded ${JOB_TIMEOUT_MS}ms — sending SIGTERM`, user, 3);
+            // Persist TIMEOUT as soon as we kill; exit handler will no-op on dbEnded
+            finishDb('timeout', `Exceeded ${JOB_TIMEOUT_MS}ms — SIGTERM/SIGKILL`);
             command.kill('SIGTERM');
             setTimeout(() => {
                 // Force-kill if still alive after 5 s grace period
@@ -101,15 +165,19 @@ async function executeScript(id, schedule, scriptContent, user) {
         command.on('error', async (err) => {
             clearTimeout(killTimer);
             logger.log('CRON', `ERROR - Cron Job ${id} ${schedule} ${err}`, user, 3);
+            await finishDb('failed', String(err && err.message ? err.message : err));
             await safeCleanup(filePath); // FIX #3 — only cleanup owner
         });
 
         command.on('exit', async (code) => {
             clearTimeout(killTimer);                       // FIX #11 — always cancel timer
             if (code === 0) {
-                logger.log('CRON', `Cron Job ${id} ${schedule} [COMPLETED]`, user, 2);
+                logger.log('CRON', `Cron Job ${id} ${schedule} [COMPLETED] ${requestId}`, user, 2);
+                await finishDb('complete');
             } else {
-                logger.log('CRON', `ERROR - Cron Job ${id} ${schedule} exited with code ${code}`, user, 3);
+                logger.log('CRON', `ERROR - Cron Job ${id} ${schedule} exited with code ${code} ${requestId}`, user, 3);
+                // If timeout already wrote TIMEOUT, keep that status
+                await finishDb('failed', `Exited with code ${code}`);
             }
             await safeCleanup(filePath);   // FIX #3 — single, authoritative cleanup
             global.gc?.();                 // FIX #8 — GC hint after process has actually ended
@@ -121,6 +189,7 @@ async function executeScript(id, schedule, scriptContent, user) {
     } catch (err) {
         // Covers fs.mkdir / fs.writeFile / spawn failures — NOT child-process exit codes
         logger.log('CRON', `ERROR - Cron Job ${id} ${schedule} ${err}`, user, 3);
+        await finishDb('failed', String(err && err.message ? err.message : err));
         // FIX #3 — safeCleanup only if the file was actually created
         await safeCleanup(filePath);
     }
@@ -138,7 +207,7 @@ async function safeCleanup(filePath) {
 // shell2crontab
 //   FIX #6 — validates cron expression before scheduling; logs actual error
 // ---------------------------------------------------------------------------
-function shell2crontab(cronTab, id, schedule, script, user) {
+function shell2crontab(cronTab, id, schedule, script, user, meta) {
     // FIX #6a — validate expression upfront
     if (!cron.validate(schedule)) {
         logger.log('CRON', `Invalid cron expression for job ${id}: "${schedule}" — skipping`, user, 3);
@@ -147,7 +216,7 @@ function shell2crontab(cronTab, id, schedule, script, user) {
     try {
         cronTab.push(
             cron.schedule(schedule, async () => {
-                await executeScript(id, schedule, script, user);
+                await executeScript(id, schedule, script, user, meta);
             })
         );
     } catch (e) {
@@ -216,7 +285,10 @@ module.exports = function (app, SQL) {
 
                         const script = selectScript(job); // FIX #10
                         if (script) {
-                            shell2crontab(cronTab, job.SALTID, job.SALTCRON, script, user);
+                            shell2crontab(cronTab, job.SALTID, job.SALTCRON, script, user, {
+                                saltDesc: job.SALTDESC || job.SALTCOMMENT || '',
+                                catchup: false,
+                            });
                         } else {
                             logger.log('CRON', `Job ${job.SALTID} has no script defined — skipping`, user, 3);
                         }
@@ -247,7 +319,10 @@ module.exports = function (app, SQL) {
 
                     logger.log('CRON', `RUN MISSED: ${job.SALTID} — ${job.SALTCRON}`, user, 2);
                     try {
-                        await executeScript(job.SALTID, job.SALTCRON, script, user); // FIX #4
+                        await executeScript(job.SALTID, job.SALTCRON, script, user, {
+                            saltDesc: job.SALTDESC || job.SALTCOMMENT || '',
+                            catchup: true,
+                        }); // FIX #4
                     } catch (e) {
                         logger.log('CRON', `Missed-job execution failed for ${job.SALTID}: ${e.message}`, user, 3);
                     }
