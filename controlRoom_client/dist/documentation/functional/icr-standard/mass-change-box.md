@@ -11,9 +11,14 @@ The mass-change box lets **data integrity** (and selected warehouse users for mo
 | Access | What you see |
 |--------|----------------|
 | **Data integrity** flag or `DATA_INTEGRITY` profile | All mass-change routes in the sidebar |
+| **Buyer** | Selected tools only (e.g. **Store/Whs returns**) when granted |
 | **Warehouse** flag | **Journal only** — track executions, not launch loads |
 
-Buyers and helpdesk users do not receive the full mass-change menu unless explicitly granted data integrity rights.
+Buyers and helpdesk users do not receive the full mass-change menu unless explicitly granted data integrity (or tool-specific) rights.
+
+## Screen copy
+
+Keep mass-load UIs free of technical jargon (no GOLD tables, interface columns, package or job names). Excel template headers may be named for the file; on-screen help describes them in business language. Full rule: [Mass-change screens — UX rule](functional/icr-standard/mass-change-screens.md#ux-rule--no-technical-information-on-screen).
 
 ## Standard workflow (every screen)
 
@@ -38,8 +43,9 @@ Mass loads honor the **header GOLD environment**. Running against production req
 
 ## Screen catalog
 
-- [Mass-change screens](functional/icr-standard/mass-change-screens.md) — quick route index  
-- **[Mass-change SME reference](functional/icr-standard/mass-change-sme-reference.md)** — column specs, business rules, sign-off checklist (for data integrity SMEs)
+- [Mass-change screens](functional/icr-standard/mass-change-screens.md) — quick route index (includes **Store/Whs returns**)  
+- **[Mass-change SME reference](functional/icr-standard/mass-change-sme-reference.md)** — column specs, business rules, sign-off checklist (for data integrity SMEs)  
+- [Technical: Mass-load architecture](technical/icr-standard/mass-load-architecture.md) — PKMASSCHANGE, tool 24 Excel defaults, deploy cheat sheet
 
 ![Mass journal](assets/screenshots/mass-journal.svg)
 

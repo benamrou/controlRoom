@@ -387,6 +387,33 @@
 
 ---
 
+### Store/Whs returns — tool 24 · `ICR_TEMPLATE023`
+
+| Col | Header (Excel) | Business meaning | Usual values |
+|-----|----------------|------------------|--------------|
+| A | SITE | Store or warehouse | — |
+| B | VENDOR_CODE | Supplier | As entered (no AO rewrite) |
+| C | ITEM_CODE | Item | — |
+| D | LV | Pack / variant | — |
+| E | QTY | Quantity in SKU | > 0 |
+| F | COMPENSATION | Credit / invoice handling | Usual **4** (credit request). **3** = sending invoice · **4** = credit request |
+| G | PHYSICAL | Return type | Usual **3** store · **2** warehouse. **1** = physical return · **2** = financial return · **3** = return destruction |
+| H | REASON | Return reason | Usual **3** store · **703** warehouse. **3** = corporate request · **703** = allotment error |
+
+*(IT mapping to INTDETRET: COMPENSATION→IRFTMODE, PHYSICAL→IRFRPHY, REASON→IRFMOTI — not shown on the screen.)*
+
+**Business intent:** Bulk **supplier returns** (store and warehouse). ICR writes `INTDETRET`, then runs `psint41p` for class **0** then **10**.
+
+**SME rules**
+
+- **VENDOR_CODE** as entered (no AO prefix strip).
+- **QTY** is in **SKU** units (not cases unless the pack LV already reflects that).
+- Item/LV must exist and must have been **orderable** at that site from that supplier (any ARTUC period — expired OA still OK).
+- Put **COMPENSATION / PHYSICAL / REASON** on every Excel row (no Mass-load settings table).
+- One return BL number per SITE+VENDOR group in the file.
+
+---
+
 ### Item address — tool 18 · `ICR_TEMPLATE016`
 
 | Col | Header |
@@ -449,4 +476,6 @@
 ## Related
 
 - [Mass-change box (overview)](functional/icr-standard/mass-change-box.md)  
-- [Technical catalog](technical/icr-standard/mass-load-catalog.md)
+- [Mass-change screens](functional/icr-standard/mass-change-screens.md)  
+- [Technical catalog](technical/icr-standard/mass-load-catalog.md)  
+- [Mass-load architecture](technical/icr-standard/mass-load-architecture.md) — deploy order, `ICR_MASSLOAD_RULE`, tool 24

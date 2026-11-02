@@ -1,0 +1,1580 @@
+/* Halloween decorations layered on the Fall scene (pointer-events: none).
+   Pure Fall archive: login-fall-scene_Fall.scss + login.component_Fall.* */
+
+@import '../../layouts/themes/fall-palette';
+
+// ── Distant haunted house ────────────────────────────────────
+.hw-house {
+    position: absolute;
+    right: 18%;
+    bottom: 22%;
+    width: 72px;
+    height: 58px;
+    z-index: 2;
+    opacity: 0.55;
+    pointer-events: none;
+    transition: opacity 1.1s ease, filter 1.1s ease;
+
+    &__body {
+        position: absolute;
+        bottom: 0;
+        left: 10px;
+        width: 48px;
+        height: 34px;
+        background: linear-gradient(180deg, #2a1e30 0%, #171126 100%);
+        border-radius: 2px 2px 0 0;
+    }
+
+    &__roof {
+        position: absolute;
+        bottom: 30px;
+        left: 4px;
+        width: 0;
+        height: 0;
+        border-left: 30px solid transparent;
+        border-right: 30px solid transparent;
+        border-bottom: 22px solid #1a1224;
+    }
+
+    &__tower {
+        position: absolute;
+        bottom: 28px;
+        right: 8px;
+        width: 14px;
+        height: 28px;
+        background: #1e1628;
+        &::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -2px;
+            width: 0;
+            height: 0;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-bottom: 12px solid #29162F;
+        }
+    }
+
+    &__win {
+        position: absolute;
+        width: 6px;
+        height: 8px;
+        background: $hw-candle;
+        border-radius: 1px;
+        box-shadow: 0 0 8px rgba($hw-candle, 0.7);
+        animation: hw-window-flicker 3.2s ease-in-out infinite;
+
+        &--1 { bottom: 14px; left: 18px; animation-delay: 0.2s; }
+        &--2 { bottom: 14px; left: 30px; animation-delay: 1.1s; }
+        &--3 { bottom: 40px; right: 11px; width: 5px; height: 6px; animation-delay: 0.7s; }
+    }
+}
+
+.login-page--night .hw-house {
+    opacity: 0.85;
+    filter: brightness(0.9);
+    .hw-house__win {
+        box-shadow: 0 0 14px rgba($hw-pumpkin, 0.85), 0 0 4px $hw-candle;
+    }
+}
+
+@keyframes hw-window-flicker {
+    0%, 100% { opacity: 1; }
+    40% { opacity: 0.55; }
+    55% { opacity: 0.95; }
+    70% { opacity: 0.4; }
+}
+
+// ── Ground fog ───────────────────────────────────────────────
+.hw-fog {
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    bottom: 6%;
+    height: 22%;
+    z-index: 5;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 40% 70% at 20% 80%, rgba($hw-mist, 0.35) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 60% at 55% 90%, rgba($hw-mist, 0.28) 0%, transparent 70%),
+        radial-gradient(ellipse 35% 55% at 85% 75%, rgba($hw-mist, 0.32) 0%, transparent 70%);
+    animation: hw-fog-drift 18s ease-in-out infinite;
+    opacity: 0.7;
+    transition: opacity 1.2s ease;
+}
+
+.login-page--night .hw-fog {
+    opacity: 1;
+    background:
+        radial-gradient(ellipse 50% 80% at 15% 85%, rgba($hw-mist, 0.22) 0%, transparent 70%),
+        radial-gradient(ellipse 55% 70% at 50% 95%, rgba(#3a2a48, 0.55) 0%, transparent 72%),
+        radial-gradient(ellipse 40% 65% at 80% 80%, rgba($hw-mist, 0.2) 0%, transparent 70%);
+}
+
+.login-page--night.login-page--scare-fog .hw-fog {
+    opacity: 1.15;
+    filter: brightness(0.85);
+}
+
+@keyframes hw-fog-drift {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(18px); }
+}
+
+// ── Eyes in the trees ────────────────────────────────────────
+.hw-eyes {
+    position: absolute;
+    z-index: 5;
+    width: 14px;
+    height: 6px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: $hw-candle;
+        box-shadow: 0 0 6px $hw-pumpkin;
+    }
+    &::before { left: 0; }
+    &::after { right: 0; }
+
+    &--l { left: 8%; bottom: 38%; }
+    &--r { right: 10%; bottom: 42%; }
+}
+
+.login-page--night .hw-eyes {
+    opacity: 0.85;
+    animation: hw-eyes-blink 7s ease-in-out infinite;
+}
+.login-page--night .hw-eyes--r { animation-delay: 2.4s; }
+
+.login-page--night.login-page--scare-eyes .hw-eyes {
+    opacity: 1;
+    filter: brightness(1.6);
+}
+
+@keyframes hw-eyes-blink {
+    0%, 88%, 100% { opacity: 0.85; transform: scaleY(1); }
+    90% { opacity: 0.2; transform: scaleY(0.15); }
+    92% { opacity: 0.9; transform: scaleY(1); }
+}
+
+// ── Graves / tombstones ──────────────────────────────────────
+.hw-graves {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.hw-grave {
+    position: absolute;
+    bottom: 11%;
+    width: 36px;
+    height: 48px;
+
+    &__stone {
+        position: absolute;
+        left: 50%;
+        bottom: 8px;
+        width: 28px;
+        height: 36px;
+        margin-left: -14px;
+        background: linear-gradient(160deg, #6a6570 0%, #4a4550 45%, #2e2a32 100%);
+        border-radius: 14px 14px 3px 3px;
+        box-shadow:
+            inset 1px 1px 0 rgba(#fff, 0.12),
+            inset -2px -2px 0 rgba(#000, 0.25),
+            0 2px 6px rgba($hw-ink, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &--small {
+            width: 20px;
+            height: 26px;
+            margin-left: -10px;
+            border-radius: 10px 10px 2px 2px;
+        }
+    }
+
+    &__rip {
+        font-size: 0.55rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: rgba(#1a1520, 0.75);
+        text-shadow: 0 1px 0 rgba(#fff, 0.08);
+        font-family: Georgia, 'Times New Roman', serif;
+        line-height: 1;
+    }
+
+    &__stone--small .hw-grave__rip {
+        font-size: 0.7rem;
+        color: rgba(#1a1520, 0.65);
+    }
+
+    &__cross {
+        position: absolute;
+        left: 50%;
+        bottom: 38px;
+        width: 3px;
+        height: 14px;
+        margin-left: -1.5px;
+        background: #3a343c;
+        border-radius: 1px;
+        &::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: -4px;
+            width: 11px;
+            height: 3px;
+            background: #3a343c;
+            border-radius: 1px;
+        }
+    }
+
+    &__mound {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 40px;
+        height: 10px;
+        margin-left: -20px;
+        background: radial-gradient(ellipse at 50% 30%, #3a4a38 0%, #263A2C 70%, transparent 75%);
+        border-radius: 50%;
+        opacity: 0.9;
+    }
+
+    &--1 {
+        left: 16%;
+        transform: rotate(-6deg);
+        .hw-grave__stone { height: 40px; }
+    }
+
+    &--2 {
+        left: 24%;
+        bottom: 10%;
+        transform: rotate(4deg) scale(0.9);
+        opacity: 0.92;
+    }
+
+    &--3 {
+        right: 18%;
+        left: auto;
+        bottom: 10.5%;
+        transform: rotate(7deg);
+        opacity: 0.88;
+    }
+}
+
+.login-page--night .hw-grave {
+    .hw-grave__stone {
+        background: linear-gradient(160deg, #3a3540 0%, #252028 50%, #151218 100%);
+        box-shadow:
+            inset 1px 1px 0 rgba($hw-moon, 0.06),
+            inset -2px -2px 0 rgba(#000, 0.4),
+            0 0 10px rgba($hw-aubergine, 0.25);
+    }
+    .hw-grave__rip { color: rgba($hw-mist, 0.45); }
+    .hw-grave__cross { background: #1e1a22; &::before { background: #1e1a22; } }
+    .hw-grave__mound {
+        background: radial-gradient(ellipse at 50% 30%, #1a221c 0%, #0E0A14 70%, transparent 75%);
+    }
+}
+
+// ── Skeletons: human (grave1), dog (grave2), cat (grave3) ────
+$skel-bone: #e8e0d4;
+$skel-bone-dim: #d8d0c4;
+$skel-bone-dark: #b8b0a4;
+
+.hw-skeletons {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.hw-skeleton {
+    position: absolute;
+    bottom: 11%;
+    transform-origin: 50% 100%;
+    opacity: 0;
+
+    &__figure {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-origin: 50% 90%;
+    }
+
+    // Positions match each grave
+    &--human {
+        left: 16%;
+        width: 36px;
+        height: 56px;
+    }
+    &--dog {
+        left: 24%;
+        bottom: 10%;
+        width: 48px;
+        height: 32px;
+    }
+    &--cat {
+        right: 18%;
+        left: auto;
+        bottom: 10.5%;
+        width: 40px;
+        height: 28px;
+    }
+}
+
+// ── Human bones ──────────────────────────────────────────────
+.hw-skeleton--human {
+    .hw-skeleton__skull {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 14px;
+        height: 14px;
+        margin-left: -7px;
+        background: $skel-bone;
+        border-radius: 46% 46% 40% 40%;
+        box-shadow: inset 0 -2px 0 rgba(#000, 0.12);
+
+        &::before,
+        &::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            width: 3px;
+            height: 3.5px;
+            border-radius: 50%;
+            background: #1a1220;
+        }
+        &::before { left: 2px; }
+        &::after { right: 2px; }
+    }
+
+    .hw-skeleton__spine {
+        position: absolute;
+        left: 50%;
+        top: 13px;
+        width: 3px;
+        height: 16px;
+        margin-left: -1.5px;
+        background: repeating-linear-gradient(180deg, $skel-bone-dim 0 3px, $skel-bone-dark 3px 4px);
+        border-radius: 1px;
+    }
+
+    .hw-skeleton__ribs {
+        position: absolute;
+        left: 50%;
+        top: 15px;
+        width: 18px;
+        height: 12px;
+        margin-left: -9px;
+        background:
+            radial-gradient(ellipse 7px 3px at 50% 20%, transparent 55%, $skel-bone-dim 56%, $skel-bone-dim 70%, transparent 71%),
+            radial-gradient(ellipse 8px 3px at 50% 50%, transparent 55%, $skel-bone-dim 56%, $skel-bone-dim 70%, transparent 71%),
+            radial-gradient(ellipse 7px 3px at 50% 80%, transparent 55%, $skel-bone-dim 56%, $skel-bone-dim 70%, transparent 71%);
+    }
+
+    .hw-skeleton__arm {
+        position: absolute;
+        top: 16px;
+        width: 3px;
+        height: 16px;
+        background: $skel-bone-dim;
+        border-radius: 1px;
+        transform-origin: top center;
+        &--l { left: 6px; transform: rotate(18deg); }
+        &--r { right: 6px; transform: rotate(-18deg); }
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: -1px;
+            width: 5px;
+            height: 4px;
+            background: $skel-bone;
+            border-radius: 1px;
+        }
+    }
+
+    .hw-skeleton__pelvis {
+        position: absolute;
+        left: 50%;
+        top: 28px;
+        width: 12px;
+        height: 6px;
+        margin-left: -6px;
+        background: #d0c8bc;
+        border-radius: 2px 2px 4px 4px;
+    }
+
+    .hw-skeleton__leg {
+        position: absolute;
+        top: 33px;
+        width: 3px;
+        height: 18px;
+        background: $skel-bone-dim;
+        border-radius: 1px;
+        transform-origin: top center;
+        &--l { left: 11px; }
+        &--r { right: 11px; }
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: -2px;
+            width: 7px;
+            height: 3px;
+            background: $skel-bone;
+            border-radius: 1px;
+        }
+    }
+}
+
+// ── Dog skeleton ─────────────────────────────────────────────
+.hw-skel-dog {
+    &__head {
+        position: absolute;
+        left: 2px;
+        top: 4px;
+        width: 12px;
+        height: 11px;
+        background: $skel-bone;
+        border-radius: 40% 50% 35% 40%;
+        &::before,
+        &::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            width: 2.5px;
+            height: 2.5px;
+            border-radius: 50%;
+            background: #1a1220;
+        }
+        &::before { left: 2px; }
+        &::after { left: 6px; }
+    }
+    &__snout {
+        position: absolute;
+        left: -2px;
+        top: 9px;
+        width: 8px;
+        height: 5px;
+        background: $skel-bone-dim;
+        border-radius: 40% 20% 40% 40%;
+        &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 1px;
+            width: 3px;
+            height: 2.5px;
+            background: #2a2030;
+            border-radius: 50%;
+        }
+    }
+    &__ear {
+        position: absolute;
+        top: 0;
+        width: 0;
+        height: 0;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+        border-bottom: 8px solid $skel-bone-dim;
+        &--l { left: 3px; transform: rotate(-18deg); }
+        &--r { left: 10px; transform: rotate(12deg); }
+    }
+    &__body {
+        position: absolute;
+        left: 12px;
+        top: 10px;
+        width: 26px;
+        height: 10px;
+        background: repeating-linear-gradient(90deg, $skel-bone-dim 0 4px, $skel-bone-dark 4px 5px);
+        border-radius: 6px;
+    }
+    &__ribs {
+        position: absolute;
+        left: 14px;
+        top: 8px;
+        width: 20px;
+        height: 8px;
+        background:
+            radial-gradient(ellipse 4px 5px at 25% 50%, transparent 50%, $skel-bone 52%, $skel-bone 62%, transparent 64%),
+            radial-gradient(ellipse 4px 5px at 50% 50%, transparent 50%, $skel-bone 52%, $skel-bone 62%, transparent 64%),
+            radial-gradient(ellipse 4px 5px at 75% 50%, transparent 50%, $skel-bone 52%, $skel-bone 62%, transparent 64%);
+        opacity: 0.85;
+    }
+    &__leg {
+        position: absolute;
+        top: 18px;
+        width: 2.5px;
+        height: 12px;
+        background: $skel-bone-dim;
+        border-radius: 1px;
+        transform-origin: top center;
+        &--fl { left: 14px; }
+        &--fr { left: 20px; }
+        &--bl { left: 30px; }
+        &--br { left: 36px; }
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: -2px;
+            width: 6px;
+            height: 2.5px;
+            background: $skel-bone;
+            border-radius: 1px;
+        }
+    }
+    &__tail {
+        position: absolute;
+        right: 2px;
+        top: 8px;
+        width: 10px;
+        height: 2.5px;
+        background: $skel-bone-dim;
+        border-radius: 2px;
+        transform-origin: left center;
+        transform: rotate(-25deg);
+    }
+}
+
+// ── Cat skeleton ─────────────────────────────────────────────
+.hw-skel-cat {
+    &__head {
+        position: absolute;
+        left: 2px;
+        top: 2px;
+        width: 11px;
+        height: 10px;
+        background: $skel-bone;
+        border-radius: 45%;
+        &::before,
+        &::after {
+            content: '';
+            position: absolute;
+            top: 3.5px;
+            width: 2px;
+            height: 2.5px;
+            border-radius: 50%;
+            background: #1a1220;
+        }
+        &::before { left: 2px; }
+        &::after { left: 6px; }
+    }
+    &__ear {
+        position: absolute;
+        top: -2px;
+        width: 0;
+        height: 0;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+        border-bottom: 7px solid $skel-bone-dim;
+        &--l { left: 2px; transform: rotate(-8deg); }
+        &--r { left: 8px; transform: rotate(8deg); }
+    }
+    &__body {
+        position: absolute;
+        left: 11px;
+        top: 8px;
+        width: 20px;
+        height: 8px;
+        background: repeating-linear-gradient(90deg, $skel-bone-dim 0 3px, $skel-bone-dark 3px 4px);
+        border-radius: 5px;
+    }
+    &__leg {
+        position: absolute;
+        top: 14px;
+        width: 2px;
+        height: 10px;
+        background: $skel-bone-dim;
+        border-radius: 1px;
+        transform-origin: top center;
+        &--fl { left: 12px; }
+        &--fr { left: 17px; }
+        &--bl { left: 24px; }
+        &--br { left: 29px; }
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: -1.5px;
+            width: 5px;
+            height: 2px;
+            background: $skel-bone;
+            border-radius: 1px;
+        }
+    }
+    &__tail {
+        position: absolute;
+        right: 0;
+        top: 4px;
+        width: 12px;
+        height: 2px;
+        background: $skel-bone-dim;
+        border-radius: 2px;
+        transform-origin: left center;
+        transform: rotate(-40deg);
+        &::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: -3px;
+            width: 6px;
+            height: 2px;
+            background: $skel-bone-dim;
+            border-radius: 2px;
+            transform: rotate(55deg);
+        }
+    }
+}
+
+// ── Shared phase animations (driven by parent .hw-skeletons) ─
+.hw-skeletons--rising .hw-skeleton {
+    opacity: 1;
+    animation: hw-skel-rise 2.2s ease-out forwards;
+
+    &--dog { animation-name: hw-skel-rise-dog; animation-delay: 0.35s; animation-fill-mode: both; }
+    &--cat { animation-name: hw-skel-rise-cat; animation-delay: 0.7s; animation-fill-mode: both; }
+
+    &--human {
+        .hw-skeleton__arm--l { animation: hw-skel-arm-l 0.9s ease-in-out infinite alternate; }
+        .hw-skeleton__arm--r { animation: hw-skel-arm-r 0.9s ease-in-out infinite alternate; }
+    }
+}
+
+.hw-skeletons--walking .hw-skeleton {
+    opacity: 1;
+
+    &--human {
+        animation: hw-skel-walk-human 16s linear infinite;
+        .hw-skeleton__figure { animation: hw-skel-bob 0.55s ease-in-out infinite; }
+        .hw-skeleton__leg--l { animation: hw-skel-leg 0.55s ease-in-out infinite; }
+        .hw-skeleton__leg--r { animation: hw-skel-leg 0.55s ease-in-out infinite reverse; }
+        .hw-skeleton__arm--l { animation: hw-skel-arm-l 0.55s ease-in-out infinite alternate; }
+        .hw-skeleton__arm--r { animation: hw-skel-arm-r 0.55s ease-in-out infinite alternate; }
+    }
+
+    &--dog {
+        animation: hw-skel-walk-dog 14s linear infinite;
+        .hw-skeleton__figure { animation: hw-skel-bob 0.4s ease-in-out infinite; }
+        .hw-skel-dog__leg--fl,
+        .hw-skel-dog__leg--br { animation: hw-skel-quad-leg 0.4s ease-in-out infinite; }
+        .hw-skel-dog__leg--fr,
+        .hw-skel-dog__leg--bl { animation: hw-skel-quad-leg 0.4s ease-in-out infinite reverse; }
+        .hw-skel-dog__tail { animation: hw-skel-dog-tail 0.5s ease-in-out infinite alternate; }
+    }
+
+    &--cat {
+        animation: hw-skel-walk-cat 12s linear infinite;
+        .hw-skeleton__figure { animation: hw-skel-bob 0.35s ease-in-out infinite; }
+        .hw-skel-cat__leg--fl,
+        .hw-skel-cat__leg--br { animation: hw-skel-quad-leg 0.35s ease-in-out infinite; }
+        .hw-skel-cat__leg--fr,
+        .hw-skel-cat__leg--bl { animation: hw-skel-quad-leg 0.35s ease-in-out infinite reverse; }
+        .hw-skel-cat__tail { animation: hw-skel-cat-tail 0.6s ease-in-out infinite alternate; }
+    }
+}
+
+.hw-skeletons--falling .hw-skeleton {
+    opacity: 1;
+
+    &--human {
+        animation: hw-skel-fall-human 1.35s ease-in forwards;
+        .hw-skeleton__figure { animation: hw-skel-crumple 1.35s ease-in forwards; }
+    }
+    &--dog {
+        animation: hw-skel-fall-dog 1.35s ease-in forwards;
+        .hw-skeleton__figure { animation: hw-skel-crumple 1.35s ease-in forwards; }
+    }
+    &--cat {
+        animation: hw-skel-fall-cat 1.35s ease-in forwards;
+        .hw-skeleton__figure { animation: hw-skel-crumple 1.35s ease-in forwards; }
+    }
+
+    .hw-skeleton__leg--l,
+    .hw-skeleton__leg--r,
+    .hw-skeleton__arm--l,
+    .hw-skeleton__arm--r,
+    .hw-skel-dog__leg,
+    .hw-skel-cat__leg,
+    .hw-skel-dog__tail,
+    .hw-skel-cat__tail {
+        animation: none !important;
+    }
+}
+
+.hw-skeletons--paused .hw-skeleton,
+.hw-skeletons--paused .hw-skeleton__figure,
+.hw-skeletons--paused .hw-skeleton__leg--l,
+.hw-skeletons--paused .hw-skeleton__leg--r,
+.hw-skeletons--paused .hw-skeleton__arm--l,
+.hw-skeletons--paused .hw-skeleton__arm--r,
+.hw-skeletons--paused .hw-skel-dog__leg,
+.hw-skeletons--paused .hw-skel-cat__leg,
+.hw-skeletons--paused .hw-skel-dog__tail,
+.hw-skeletons--paused .hw-skel-cat__tail {
+    animation-play-state: paused !important;
+}
+
+@keyframes hw-skel-rise {
+    0%   { opacity: 0; transform: translate(0, 28px) scaleY(0.35); clip-path: inset(70% 0 0 0); }
+    35%  { opacity: 1; transform: translate(0, 10px) scaleY(0.7); clip-path: inset(30% 0 0 0); }
+    70%  { transform: translate(4px, -4px) scaleY(1.05); clip-path: inset(0 0 0 0); }
+    100% { opacity: 1; transform: translate(8px, 0) scaleY(1); clip-path: inset(0 0 0 0); }
+}
+
+@keyframes hw-skel-rise-dog {
+    0%   { opacity: 0; transform: translate(0, 20px) scaleX(-1) scaleY(0.3); clip-path: inset(65% 0 0 0); }
+    40%  { opacity: 1; transform: translate(0, 6px) scaleX(-1) scaleY(0.75); clip-path: inset(25% 0 0 0); }
+    100% { opacity: 1; transform: translate(6px, 0) scaleX(-1) scaleY(1); clip-path: inset(0 0 0 0); }
+}
+
+@keyframes hw-skel-rise-cat {
+    0%   { opacity: 0; transform: translate(0, 18px) scaleY(0.3); clip-path: inset(65% 0 0 0); }
+    40%  { opacity: 1; transform: translate(0, 5px) scaleY(0.8); clip-path: inset(20% 0 0 0); }
+    100% { opacity: 1; transform: translate(-6px, 0) scaleY(1); clip-path: inset(0 0 0 0); }
+}
+
+@keyframes hw-skel-walk-human {
+    0%   { transform: translate(8px, 0) scaleX(1); }
+    40%  { transform: translate(72px, 0) scaleX(1); }
+    42%  { transform: translate(72px, 0) scaleX(-1); }
+    82%  { transform: translate(8px, 0) scaleX(-1); }
+    84%  { transform: translate(8px, 0) scaleX(1); }
+    100% { transform: translate(8px, 0) scaleX(1); }
+}
+
+@keyframes hw-skel-walk-dog {
+    // Art faces left — flip when moving right so they walk forward
+    0%   { transform: translate(6px, 0) scaleX(-1); }
+    38%  { transform: translate(64px, 0) scaleX(-1); }
+    40%  { transform: translate(64px, 0) scaleX(1); }
+    80%  { transform: translate(6px, 0) scaleX(1); }
+    82%  { transform: translate(6px, 0) scaleX(-1); }
+    100% { transform: translate(6px, 0) scaleX(-1); }
+}
+
+@keyframes hw-skel-walk-cat {
+    // Art faces left — walk left unflipped, flip when returning right
+    0%   { transform: translate(-6px, 0) scaleX(1); }
+    38%  { transform: translate(-70px, 0) scaleX(1); }
+    40%  { transform: translate(-70px, 0) scaleX(-1); }
+    80%  { transform: translate(-6px, 0) scaleX(-1); }
+    82%  { transform: translate(-6px, 0) scaleX(1); }
+    100% { transform: translate(-6px, 0) scaleX(1); }
+}
+
+@keyframes hw-skel-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+
+@keyframes hw-skel-leg {
+    0%, 100% { transform: rotate(12deg); }
+    50% { transform: rotate(-14deg); }
+}
+
+@keyframes hw-skel-quad-leg {
+    0%, 100% { transform: rotate(18deg); }
+    50% { transform: rotate(-20deg); }
+}
+
+@keyframes hw-skel-arm-l {
+    from { transform: rotate(8deg); }
+    to { transform: rotate(28deg); }
+}
+
+@keyframes hw-skel-arm-r {
+    from { transform: rotate(-8deg); }
+    to { transform: rotate(-28deg); }
+}
+
+@keyframes hw-skel-dog-tail {
+    from { transform: rotate(-35deg); }
+    to { transform: rotate(-10deg); }
+}
+
+@keyframes hw-skel-cat-tail {
+    from { transform: rotate(-50deg); }
+    to { transform: rotate(-25deg); }
+}
+
+@keyframes hw-skel-fall-human {
+    0%   { opacity: 1; transform: translate(40px, 0) rotate(0deg); }
+    35%  { transform: translate(24px, -6px) rotate(-25deg); }
+    70%  { opacity: 0.85; transform: translate(8px, 18px) rotate(-78deg); }
+    100% { opacity: 0; transform: translate(0, 30px) rotate(-95deg) scaleY(0.4); }
+}
+
+@keyframes hw-skel-fall-dog {
+    0%   { opacity: 1; transform: translate(30px, 0) rotate(0deg); }
+    40%  { transform: translate(14px, -4px) rotate(40deg); }
+    100% { opacity: 0; transform: translate(0, 22px) rotate(95deg) scaleY(0.35); }
+}
+
+@keyframes hw-skel-fall-cat {
+    0%   { opacity: 1; transform: translate(-30px, 0) rotate(0deg); }
+    40%  { transform: translate(-12px, -4px) rotate(-45deg); }
+    100% { opacity: 0; transform: translate(0, 20px) rotate(-100deg) scaleY(0.35); }
+}
+
+@keyframes hw-skel-crumple {
+    0% { transform: rotate(0deg); }
+    40% { transform: rotate(12deg) scaleY(0.85); }
+    100% { transform: rotate(20deg) scaleY(0.45) translateY(8px); }
+}
+
+.login-page--paused {
+    .hw-skeleton,
+    .hw-skeleton__figure,
+    .hw-skeleton__leg--l,
+    .hw-skeleton__leg--r,
+    .hw-skeleton__arm--l,
+    .hw-skeleton__arm--r,
+    .hw-skel-dog__leg,
+    .hw-skel-cat__leg,
+    .hw-skel-dog__tail,
+    .hw-skel-cat__tail {
+        animation-play-state: paused !important;
+    }
+}
+
+// ── Jack-o'-lanterns ─────────────────────────────────────────
+.hw-pumpkins {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.hw-pumpkin {
+    position: absolute;
+    bottom: 9%;
+    width: 36px;
+    height: 30px;
+
+    &__body {
+        position: absolute;
+        inset: 4px 0 0;
+        background: radial-gradient(circle at 35% 40%, lighten($hw-pumpkin, 8%) 0%, $hw-pumpkin 45%, $hw-burnt 100%);
+        border-radius: 50% 50% 48% 48%;
+        box-shadow: 0 2px 8px rgba($hw-ink, 0.35);
+    }
+
+    &__stem {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 5px;
+        height: 8px;
+        margin-left: -2px;
+        background: #3d5a32;
+        border-radius: 2px;
+    }
+
+    &__face {
+        position: absolute;
+        inset: 10px 6px 6px;
+        opacity: 0.92;
+
+        &::before,
+        &::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 5px solid $hw-candle;
+            filter: drop-shadow(0 0 4px $hw-candle);
+        }
+        &::before { left: 4px; }
+        &::after { right: 4px; }
+    }
+
+    &__mouth {
+        position: absolute;
+        left: 50%;
+        bottom: 8px;
+        width: 14px;
+        height: 6px;
+        margin-left: -7px;
+        background: $hw-candle;
+        border-radius: 0 0 8px 8px;
+        clip-path: polygon(0 0, 20% 100%, 40% 30%, 60% 100%, 80% 30%, 100% 100%, 100% 0);
+        box-shadow: 0 0 8px rgba($hw-candle, 0.8);
+    }
+
+    &--glow .hw-pumpkin__body {
+        box-shadow:
+            0 0 16px rgba($hw-pumpkin, 0.55),
+            0 2px 8px rgba($hw-ink, 0.35);
+        animation: hw-pumpkin-glow 2.8s ease-in-out infinite;
+    }
+
+    &--1 { left: 4%; width: 42px; height: 34px; }
+    &--2 { left: 11%; width: 28px; height: 24px; bottom: 8%; }
+    &--3 { left: 22%; width: 22px; height: 18px; bottom: 10%; opacity: 0.9; }
+    &--4 { right: 6%; left: auto; width: 40px; height: 32px; }
+    &--5 { right: 14%; left: auto; width: 26px; height: 22px; bottom: 8.5%; }
+    &--6 { right: 22%; left: auto; width: 18px; height: 15px; bottom: 10%; }
+}
+
+.login-page--night .hw-pumpkin--glow .hw-pumpkin__body {
+    animation-duration: 1.8s;
+}
+.login-page--night.login-page--scare-pumpkin .hw-pumpkin--glow .hw-pumpkin__face,
+.login-page--night.login-page--scare-pumpkin .hw-pumpkin--glow .hw-pumpkin__mouth {
+    animation: hw-pumpkin-flicker 0.35s steps(2) 4;
+}
+
+@keyframes hw-pumpkin-glow {
+    0%, 100% { box-shadow: 0 0 12px rgba($hw-pumpkin, 0.45), 0 2px 8px rgba($hw-ink, 0.35); }
+    50% { box-shadow: 0 0 22px rgba($hw-candle, 0.7), 0 2px 8px rgba($hw-ink, 0.35); }
+}
+
+@keyframes hw-pumpkin-flicker {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.25; filter: brightness(0.4); }
+}
+
+// ── Ghosts (canvas — ste-vg wavy rising style) ────────────────
+.hw-ghosts-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 6;
+    pointer-events: none;
+}
+
+// ── Bats (SVG silhouette + independent wing flap) ────────────
+.hw-bats {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.hw-bat {
+    position: absolute;
+    left: -8%;
+    // Wider aspect (~100:44) so the silhouette reads as a bat, not a blob
+    width: 52px;
+    height: 23px;
+    color: #1a1224;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
+    animation: hw-bat-path linear infinite;
+    will-change: transform;
+
+    &__motion {
+        width: 100%;
+        height: 100%;
+        animation: hw-bat-bob 0.48s ease-in-out infinite;
+        transform-origin: 50% 50%;
+    }
+
+    &__svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        fill: currentColor;
+    }
+
+    &__wing {
+        transform-box: fill-box;
+        // Gentler flap — large rotations were warping the silhouette
+        animation: hw-bat-flap 0.22s ease-in-out infinite alternate;
+
+        &--l {
+            transform-origin: 92% 50%;
+        }
+
+        &--r {
+            transform-origin: 8% 50%;
+            animation-name: hw-bat-flap-r;
+        }
+    }
+
+    &__eye {
+        fill: rgba($hw-candle, 0.2);
+    }
+
+    // Size / depth variety (width only — path animation owns transform)
+    &:nth-child(1) { top: 11%; width: 54px; height: 24px; animation-duration: 21s; }
+    &:nth-child(2) { top: 17%; width: 36px; height: 16px; animation-duration: 27s; animation-delay: -8s; opacity: 0.72; }
+    &:nth-child(3) { top: 7%;  width: 60px; height: 26px; animation-duration: 18s; animation-delay: -3s; }
+    &:nth-child(4) { top: 24%; width: 30px; height: 13px; animation-duration: 31s; animation-delay: -14s; opacity: 0.55; }
+    &:nth-child(5) { top: 14%; width: 46px; height: 20px; animation-duration: 24s; animation-delay: -18s; }
+    &:nth-child(6) { top: 9%;  width: 40px; height: 18px; animation-duration: 26s; animation-delay: -6s; opacity: 0.68; }
+    &:nth-child(7) { top: 20%; width: 34px; height: 15px; animation-duration: 29s; animation-delay: -11s; opacity: 0.6; }
+}
+
+.login-page--night .hw-bat {
+    color: #0a0610;
+    opacity: 0.95;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+
+    .hw-bat__eye {
+        fill: $hw-candle;
+        filter: drop-shadow(0 0 2px rgba($hw-candle, 0.85));
+    }
+}
+
+.hw-bat-swarm {
+    display: none;
+    position: absolute;
+    top: 6%;
+    right: 8%;
+    width: 200px;
+    height: 90px;
+    pointer-events: none;
+}
+
+.login-page--night.login-page--scare-bats .hw-bat-swarm {
+    display: block;
+    animation: hw-bat-swarm-fly 2.8s ease-in 1 forwards;
+}
+
+.hw-bat--swarm {
+    position: absolute;
+    left: auto;
+    right: auto;
+    animation: none;
+    width: 32px;
+    height: 14px;
+    opacity: 0.95;
+
+    &:nth-child(1) { left: 8%;  top: 22%; width: 34px; height: 15px; }
+    &:nth-child(2) { left: 32%; top: 4%;  width: 26px; height: 11px; animation: hw-bat-swarm-wiggle 0.35s ease-in-out infinite; }
+    &:nth-child(3) { left: 52%; top: 28%; width: 38px; height: 17px; }
+    &:nth-child(4) { left: 72%; top: 10%; width: 24px; height: 11px; }
+    &:nth-child(5) { left: 40%; top: 48%; width: 30px; height: 13px; animation: hw-bat-swarm-wiggle 0.4s ease-in-out infinite reverse; }
+    &:nth-child(6) { left: 18%; top: 40%; width: 22px; height: 10px; }
+
+    .hw-bat__motion {
+        animation-duration: 0.32s;
+    }
+
+    .hw-bat__wing {
+        animation-duration: 0.16s;
+    }
+}
+
+@keyframes hw-bat-flap {
+    from { transform: rotate(-18deg) scaleY(0.88); }
+    to   { transform: rotate(14deg)  scaleY(1.04); }
+}
+
+@keyframes hw-bat-flap-r {
+    from { transform: rotate(18deg)  scaleY(0.88); }
+    to   { transform: rotate(-14deg) scaleY(1.04); }
+}
+
+@keyframes hw-bat-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-1.5px); }
+}
+
+@keyframes hw-bat-path {
+    0%   { transform: translate3d(0, 0, 0); }
+    15%  { transform: translate3d(16vw, -18px, 0); }
+    30%  { transform: translate3d(34vw, 8px, 0); }
+    48%  { transform: translate3d(52vw, -12px, 0); }
+    65%  { transform: translate3d(72vw, 14px, 0); }
+    82%  { transform: translate3d(92vw, -6px, 0); }
+    100% { transform: translate3d(118vw, 4px, 0); }
+}
+
+@keyframes hw-bat-swarm-fly {
+    0%   { opacity: 0; transform: translate(50px, 16px) scale(0.55); }
+    12%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(-220px, -50px) scale(1.15); }
+}
+
+@keyframes hw-bat-swarm-wiggle {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(-4px, -3px); }
+}
+
+// ── Fireflies / candy sparkles ───────────────────────────────
+.hw-fireflies {
+    position: absolute;
+    inset: 0;
+    z-index: 7;
+    pointer-events: none;
+}
+
+.hw-firefly {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: $hw-candle;
+    box-shadow: 0 0 8px $hw-candle;
+    animation: hw-firefly 5s ease-in-out infinite;
+    opacity: 0;
+
+    &:nth-child(1) { left: 12%; top: 55%; animation-delay: 0s; }
+    &:nth-child(2) { left: 28%; top: 62%; animation-delay: 1.2s; }
+    &:nth-child(3) { left: 70%; top: 58%; animation-delay: 0.6s; }
+    &:nth-child(4) { left: 82%; top: 48%; animation-delay: 2.1s; }
+    &:nth-child(5) { left: 48%; top: 70%; animation-delay: 1.7s; }
+    &:nth-child(6) { left: 8%; top: 40%; animation-delay: 3s; }
+    &:nth-child(7) { left: 90%; top: 36%; animation-delay: 2.5s; }
+    &:nth-child(8) { left: 60%; top: 66%; animation-delay: 0.9s; }
+}
+
+@keyframes hw-firefly {
+    0%, 100% { opacity: 0; transform: translate(0, 0) scale(0.6); }
+    20% { opacity: 0.9; }
+    50% { opacity: 0.5; transform: translate(12px, -18px) scale(1); }
+    80% { opacity: 0.85; transform: translate(-8px, -28px) scale(0.8); }
+}
+
+// ── Night witch on broom (L→R, windy bob) ────────────────────
+.hw-witch-sky {
+    position: absolute;
+    top: 12%;
+    left: 0;
+    z-index: 9;
+    width: 100%;
+    height: 40%;
+    pointer-events: none;
+    overflow: visible;
+
+    &--paused .hw-witch,
+    &--paused .hw-witch__cape,
+    &--paused .hw-witch__bristles {
+        animation-play-state: paused !important;
+    }
+}
+
+.hw-witch {
+    position: absolute;
+    left: -12%;
+    top: 28%;
+    width: 72px;
+    height: 48px;
+    transform-origin: 40% 60%;
+    // Horizontal flight + vertical wind bob combined
+    animation: hw-witch-cross 18s linear infinite;
+    filter: drop-shadow(0 2px 6px rgba($hw-ink, 0.45));
+    will-change: transform, opacity;
+
+    &__broom {
+        position: absolute;
+        left: 4px;
+        top: 28px;
+        width: 52px;
+        height: 3px;
+        background: linear-gradient(90deg, #5c4030 0%, #8b6914 60%, #6b4423 100%);
+        border-radius: 2px;
+        transform: rotate(-8deg);
+        box-shadow: 0 1px 0 rgba(#000, 0.25);
+    }
+
+    &__bristles {
+        position: absolute;
+        left: 48px;
+        top: 22px;
+        width: 22px;
+        height: 16px;
+        background: linear-gradient(90deg, #c9a66b 0%, #8a7040 100%);
+        border-radius: 2px 8px 8px 2px;
+        transform: rotate(-8deg);
+        clip-path: polygon(0 20%, 15% 0, 100% 10%, 100% 90%, 15% 100%, 0 80%);
+        animation: hw-witch-bristle 0.55s ease-in-out infinite alternate;
+        transform-origin: left center;
+    }
+
+    &__body {
+        position: absolute;
+        left: 22px;
+        top: 14px;
+        width: 16px;
+        height: 18px;
+        background: linear-gradient(180deg, #2a1838 0%, #1a1024 100%);
+        border-radius: 6px 6px 4px 4px;
+        transform: rotate(-6deg);
+    }
+
+    &__cape {
+        position: absolute;
+        left: 14px;
+        top: 16px;
+        width: 18px;
+        height: 22px;
+        background: linear-gradient(135deg, #1a1020 0%, #3a1848 100%);
+        border-radius: 4px 2px 12px 8px;
+        transform: rotate(-18deg);
+        transform-origin: top right;
+        animation: hw-witch-cape 0.7s ease-in-out infinite alternate;
+        opacity: 0.95;
+    }
+
+    &__arm {
+        position: absolute;
+        left: 30px;
+        top: 20px;
+        width: 14px;
+        height: 3px;
+        background: #e8c4a8;
+        border-radius: 2px;
+        transform: rotate(12deg);
+    }
+
+    &__head {
+        position: absolute;
+        left: 26px;
+        top: 6px;
+        width: 12px;
+        height: 12px;
+        background: #e8c4a8;
+        border-radius: 50%;
+        box-shadow: 0 0 0 1px rgba($hw-ink, 0.15);
+
+        &::after {
+            // nose
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: 5px;
+            width: 5px;
+            height: 3px;
+            background: #d4a888;
+            border-radius: 0 50% 50% 0;
+        }
+    }
+
+    &__hat {
+        position: absolute;
+        left: 22px;
+        top: -4px;
+        width: 0;
+        height: 0;
+        border-left: 11px solid transparent;
+        border-right: 11px solid transparent;
+        border-bottom: 20px solid #1a1024;
+        filter: drop-shadow(0 1px 1px rgba(#000, 0.3));
+
+        &::before {
+            // brim
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 16px;
+            width: 28px;
+            height: 4px;
+            background: #1a1024;
+            border-radius: 2px;
+        }
+
+        &::after {
+            // buckle
+            content: '';
+            position: absolute;
+            left: -3px;
+            top: 14px;
+            width: 6px;
+            height: 3px;
+            background: $hw-pumpkin;
+            border-radius: 1px;
+        }
+    }
+}
+
+@keyframes hw-witch-cross {
+    0% {
+        transform: translateX(0) translateY(0) rotate(-4deg);
+        opacity: 0;
+    }
+    4% { opacity: 1; }
+    12% {
+        transform: translateX(14vw) translateY(-18px) rotate(-2deg);
+    }
+    25% {
+        transform: translateX(28vw) translateY(14px) rotate(3deg);
+    }
+    38% {
+        transform: translateX(42vw) translateY(-22px) rotate(-5deg);
+    }
+    50% {
+        transform: translateX(56vw) translateY(10px) rotate(2deg);
+    }
+    62% {
+        transform: translateX(70vw) translateY(-16px) rotate(-3deg);
+    }
+    75% {
+        transform: translateX(84vw) translateY(18px) rotate(4deg);
+    }
+    88% {
+        transform: translateX(100vw) translateY(-8px) rotate(-2deg);
+        opacity: 1;
+    }
+    96% { opacity: 0.35; }
+    100% {
+        transform: translateX(118vw) translateY(6px) rotate(0deg);
+        opacity: 0;
+    }
+}
+
+@keyframes hw-witch-cape {
+    from { transform: rotate(-22deg) skewX(-4deg); }
+    to   { transform: rotate(-12deg) skewX(6deg); }
+}
+
+@keyframes hw-witch-bristle {
+    from { transform: rotate(-10deg) scaleX(1); }
+    to   { transform: rotate(-4deg) scaleX(1.06); }
+}
+
+.login-page--paused .hw-witch,
+.login-page--paused .hw-witch__cape,
+.login-page--paused .hw-witch__bristles {
+    animation-play-state: paused !important;
+}
+
+// ── Trick-or-treaters ────────────────────────────────────────
+.hw-kids {
+    position: absolute;
+    bottom: 7%;
+    left: -20%;
+    z-index: 8;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    pointer-events: none;
+    animation: hw-kids-walk 42s linear infinite;
+    will-change: transform;
+}
+
+.hw-kid {
+    position: relative;
+    width: 28px;
+    height: 44px;
+
+    &__legs {
+        position: absolute;
+        bottom: 0;
+        left: 8px;
+        width: 5px;
+        height: 12px;
+        background: #2a2030;
+        border-radius: 2px;
+        animation: hw-kid-step 0.55s ease-in-out infinite;
+        &::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            width: 5px;
+            height: 12px;
+            background: #2a2030;
+            border-radius: 2px;
+            animation: hw-kid-step 0.55s ease-in-out infinite reverse;
+        }
+    }
+
+    &__body {
+        position: absolute;
+        bottom: 10px;
+        left: 5px;
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+    }
+
+    &__head {
+        position: absolute;
+        bottom: 26px;
+        left: 7px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #e8c4a8;
+        &::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 3px;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            background: #1a1220;
+            box-shadow: 6px 0 0 #1a1220;
+        }
+    }
+
+    &__basket {
+        position: absolute;
+        bottom: 12px;
+        right: -6px;
+        width: 10px;
+        height: 8px;
+        background: $hw-pumpkin;
+        border-radius: 2px 2px 3px 3px;
+        box-shadow: inset 0 -2px 0 $hw-burnt;
+        animation: hw-basket-swing 0.55s ease-in-out infinite;
+        &::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 1px;
+            width: 8px;
+            height: 4px;
+            border: 1.5px solid #5c3a21;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+        }
+    }
+
+    // Vampire
+    &--vamp {
+        .hw-kid__body {
+            background: linear-gradient(180deg, #1a1220 0%, #2a1830 100%);
+            box-shadow: 0 -2px 0 2px #8b1e2d;
+        }
+        .hw-kid__body::after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            width: 8px;
+            height: 20px;
+            background: #121018;
+            border-radius: 0 0 0 8px;
+            transform: skewX(12deg);
+        }
+    }
+
+    // Witch
+    &--witch {
+        .hw-kid__body { background: linear-gradient(180deg, #5b3a7a 0%, #3a2458 100%); }
+        .hw-kid__head::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -2px;
+            width: 0;
+            height: 0;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-bottom: 16px solid #3a2458;
+        }
+        .hw-kid__broom {
+            position: absolute;
+            bottom: 14px;
+            left: -8px;
+            width: 22px;
+            height: 2px;
+            background: #6b4423;
+            transform: rotate(-25deg);
+            &::after {
+                content: '';
+                position: absolute;
+                right: -2px;
+                top: -3px;
+                width: 6px;
+                height: 8px;
+                background: #c9a66b;
+                border-radius: 0 2px 2px 0;
+            }
+        }
+    }
+
+    // Monster
+    &--monster {
+        .hw-kid__body { background: linear-gradient(180deg, #4a6b3a 0%, #2f4528 100%); }
+        .hw-kid__head {
+            background: #5a7a48;
+            &::before {
+                content: '';
+                position: absolute;
+                top: -4px;
+                left: 2px;
+                width: 3px;
+                height: 4px;
+                background: #3a5a30;
+                box-shadow: 7px 0 0 #3a5a30;
+                border-radius: 1px;
+            }
+        }
+    }
+}
+
+@keyframes hw-kids-walk {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(130vw); }
+}
+
+@keyframes hw-kid-step {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+
+@keyframes hw-basket-swing {
+    0%, 100% { transform: rotate(-8deg); }
+    50% { transform: rotate(10deg); }
+}
+
+// ── Pause / reduced motion ───────────────────────────────────
+.login-page--paused,
+.login-page--reduced {
+    .hw-fog,
+    .hw-bat,
+    .hw-bat__motion,
+    .hw-bat__wing,
+    .hw-bat--swarm,
+    .hw-firefly,
+    .hw-witch,
+    .hw-witch__cape,
+    .hw-witch__bristles,
+    .hw-kids,
+    .hw-kid__legs,
+    .hw-kid__legs::after,
+    .hw-kid__basket,
+    .hw-pumpkin--glow .hw-pumpkin__body,
+    .hw-house__win,
+    .hw-eyes {
+        animation-play-state: paused !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hw-fog,
+    .hw-bat,
+    .hw-bat__motion,
+    .hw-bat__wing,
+    .hw-bat--swarm,
+    .hw-firefly,
+    .hw-witch-sky,
+    .hw-kids,
+    .hw-kid__legs,
+    .hw-kid__legs::after,
+    .hw-kid__basket,
+    .hw-pumpkin--glow .hw-pumpkin__body,
+    .hw-eyes {
+        animation: none !important;
+    }
+    .hw-kids { left: 8%; transform: none; }
+}

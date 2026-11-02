@@ -7,6 +7,7 @@ import { MenuAccessService } from '../../shared/services/menu/menu-access.servic
 import { catchError, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { FallForestRenderer } from './login-fall-forest';
+import { HalloweenGhostRenderer } from './login-halloween-ghosts';
 
 interface FallLeaf {
     id: number;
@@ -43,6 +44,7 @@ interface FallWolf {
 export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('fallForest') fallForestCanvas?: ElementRef<HTMLCanvasElement>;
+    @ViewChild('hwGhosts') hwGhostsCanvas?: ElementRef<HTMLCanvasElement>;
     @ViewChild('catStage') catStageRef?: ElementRef<HTMLDivElement>;
     @ViewChild('owlStage') owlStageRef?: ElementRef<HTMLDivElement>;
 
@@ -73,8 +75,27 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     owlPerched = false;
     owlFacingLeft = false;
 
+    /** Decorative slot arrays (template *ngFor). */
+    batSlots = [1, 2, 3, 4, 5, 6, 7];
+    batSwarmSlots = [1, 2, 3, 4, 5, 6];
+    fireflySlots = [1, 2, 3, 4, 5, 6, 7, 8];
+
+    /** Night-mode scare event flags (CSS class toggles). */
+    scareFog = false;
+    scareEyes = false;
+    scarePumpkin = false;
+    scareGhost = false;
+    scareBats = false;
+
+    /** Grave skeleton: hidden → rising → walking; day → falling → hidden. */
+    skeletonPhase: 'hidden' | 'rising' | 'walking' | 'falling' = 'hidden';
+
     private forest?: FallForestRenderer;
+    private ghosts?: HalloweenGhostRenderer;
     private chaseTimer?: ReturnType<typeof setTimeout>;
+    private scareTimer?: ReturnType<typeof setTimeout>;
+    private scareClearTimer?: ReturnType<typeof setTimeout>;
+    private skeletonTimer?: ReturnType<typeof setTimeout>;
     private catRaf = 0;
     private wolfRaf = 0;
     private wolfLastTs = 0;
@@ -94,7 +115,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private catLastTs = 0;
     private leafIdSeq = 0;
     private wolfIdSeq = 0;
-    private static readonly LEAF_GLYPHS = ['🍂', '🍁', '🍃'];
+    private static readonly LEAF_GLYPHS = ['🍂', '🍁', '🍃', '🍂', '🍁'];
     private static readonly CAT_WALK_SPEED = 3.2; // % of scene width per second
     private static readonly CAT_TURN_MS = 480;
     private static readonly CAT_MIN_PCT = 6;
@@ -134,6 +155,14 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.forest.setPaused(true);
             }
         }
+        const ghostCanvas = this.hwGhostsCanvas?.nativeElement;
+        if (ghostCanvas) {
+            this.ghosts = new HalloweenGhostRenderer(ghostCanvas);
+            this.ghosts.start({ reducedMotion: this.reducedMotion, night: this.isNightMode });
+            if (this.animationsPaused) {
+                this.ghosts.setPaused(true);
+            }
+        }
         if (!this.reducedMotion && !this.animationsPaused) {
             this.applyCatPose();
             this.startCatIdle();
@@ -147,18 +176,24 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         this.stopCatMotion();
         this.stopWolfMotion();
         this.stopOwlMotion();
+        this.stopScareLoop();
+        this.clearSkeletonTimer();
         this.forest?.destroy();
         this.forest = undefined;
+        this.ghosts?.destroy();
+        this.ghosts = undefined;
     }
 
     @HostListener('document:visibilitychange')
     onVisibilityChange(): void {
         this.animationsPaused = document.hidden;
         this.forest?.setPaused(document.hidden);
+        this.ghosts?.setPaused(document.hidden);
         if (document.hidden) {
             this.stopCatMotion();
             this.stopWolfMotion();
             this.stopOwlMotion();
+            this.stopScareLoop();
             this.catPhase = 'idle';
             this.catHopPx = 0;
             this.catIsTurning = false;
@@ -168,6 +203,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
             this.ensureWolfLoop();
             if (this.isNightMode) {
                 this.startOwlFlight();
+                this.startScareLoop();
             }
         }
     }
@@ -305,13 +341,113 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         event?.preventDefault();
         this.isNightMode = !this.isNightMode;
         this.forest?.setNight(this.isNightMode);
+        this.ghosts?.setNight(this.isNightMode);
         if (this.isNightMode) {
             // Let *ngIf create the owl node, then start flight
             setTimeout(() => this.startOwlFlight(), 0);
+            this.startScareLoop();
+            this.awakenSkeleton();
         } else {
             this.stopOwlMotion();
             this.owlPerched = false;
+            this.stopScareLoop();
+            this.clearScareFlags();
+            this.collapseSkeleton();
         }
+    }
+
+    private clearSkeletonTimer(): void {
+        if (this.skeletonTimer) {
+            clearTimeout(this.skeletonTimer);
+            this.skeletonTimer = undefined;
+        }
+    }
+
+    private awakenSkeleton(): void {
+        this.clearSkeletonTimer();
+        if (this.reducedMotion) {
+            this.skeletonPhase = 'walking';
+            return;
+        }
+        this.skeletonPhase = 'rising';
+        // Match CSS rise (+ cat stagger ~0.7s), then stroll
+        this.skeletonTimer = setTimeout(() => {
+            if (this.isNightMode) {
+                this.skeletonPhase = 'walking';
+            }
+        }, 3000);
+    }
+
+    private collapseSkeleton(): void {
+        this.clearSkeletonTimer();
+        if (this.skeletonPhase === 'hidden') {
+            return;
+        }
+        if (this.reducedMotion) {
+            this.skeletonPhase = 'hidden';
+            return;
+        }
+        this.skeletonPhase = 'falling';
+        this.skeletonTimer = setTimeout(() => {
+            this.skeletonPhase = 'hidden';
+        }, 1400);
+    }
+
+    private startScareLoop(): void {
+        this.stopScareLoop();
+        if (this.reducedMotion || this.animationsPaused) {
+            return;
+        }
+        const schedule = () => {
+            const waitMs = 9000 + Math.random() * 11000;
+            this.scareTimer = setTimeout(() => {
+                this.triggerScareEvent();
+                schedule();
+            }, waitMs);
+        };
+        schedule();
+    }
+
+    private stopScareLoop(): void {
+        if (this.scareTimer) {
+            clearTimeout(this.scareTimer);
+            this.scareTimer = undefined;
+        }
+        if (this.scareClearTimer) {
+            clearTimeout(this.scareClearTimer);
+            this.scareClearTimer = undefined;
+        }
+    }
+
+    private clearScareFlags(): void {
+        this.scareFog = false;
+        this.scareEyes = false;
+        this.scarePumpkin = false;
+        this.scareGhost = false;
+        this.scareBats = false;
+    }
+
+    private triggerScareEvent(): void {
+        if (!this.isNightMode || this.animationsPaused || this.reducedMotion) {
+            return;
+        }
+        this.clearScareFlags();
+        const kinds = ['fog', 'eyes', 'pumpkin', 'ghost', 'bats'] as const;
+        const kind = kinds[Math.floor(Math.random() * kinds.length)];
+        this.ngZone.run(() => {
+            if (kind === 'fog') { this.scareFog = true; }
+            if (kind === 'eyes') { this.scareEyes = true; }
+            if (kind === 'pumpkin') { this.scarePumpkin = true; }
+            if (kind === 'ghost') {
+                this.scareGhost = true;
+                this.ghosts?.scareBurst();
+            }
+            if (kind === 'bats') { this.scareBats = true; }
+        });
+        const holdMs = kind === 'bats' || kind === 'ghost' ? 3200 : 2200;
+        this.scareClearTimer = setTimeout(() => {
+            this.ngZone.run(() => this.clearScareFlags());
+        }, holdMs);
     }
 
     private startOwlFlight(): void {

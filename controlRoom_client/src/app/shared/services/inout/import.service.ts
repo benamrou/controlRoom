@@ -271,7 +271,7 @@ export class ImportService{
         let pt33_21_ITEMENDUPC = 21; /* No Pro*C — package updates ARTCOCA directly */
         let pt33_22_REFTOORDER = 22; /* INTARTASS close/reopen → psifa07p */
         let pt33_23_NEWITEMPPG = 23; /* ARTENTLIST + ARTDETLIST direct insert — no Pro*C */
-        let pt33_24_LOADRETURN = 24; /* INTDETRET → psint41p class 10 + 0 */
+        let pt33_24_LOADRETURN = 24; /* INTDETRET → psint41p class 0 then 10 */
 
 
         this.request = this.executeJobURL;
@@ -372,11 +372,11 @@ export class ImportService{
                 break;
             case pt33_23_NEWITEMPPG: /* New Item PPG — package direct ARTENTLIST/ARTDETLIST */
                 break;
-            case pt33_24_LOADRETURN: /* Load for return — INTDETRET → psint41p class 10 then 0 */
-                dualJobWithPlanUser = true;
+            case pt33_24_LOADRETURN: /* Load for return — INTDETRET → psint41p class 0 then 10 */
+                dualJobWithPlanUser = true; /* full args per job — skip common -u/lang suffix */
                 command = command +
-                    'psint41p psint41p $USERID ' + dateNowStr + ' 10 -1' + planUserFlag + ' ' + envLang + ' 1; ' +
-                    'psint41p psint41p $USERID ' + dateNowStr + ' 0 -1' + planUserFlag + ' ' + envLang + ' 1;';
+                    'psint41p psint41p $USERID ' + dateNowStr + ' 0 -1 -1 ' + envLang + ' 1; ' +
+                    'psint41p psint41p $USERID ' + dateNowStr + ' 10 -1 -1 ' + envLang + ' 1;';
                 break;
             default:
                 console.log ('Unknown mass tool id : ', toolId);

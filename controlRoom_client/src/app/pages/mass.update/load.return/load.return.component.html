@@ -1,5 +1,5 @@
 <div>
-    <app-page-header #pageHeader [heading]="'S92.TITLE' | lbl:'Load for return'" [icon]="'fa-undo'"
+    <app-page-header #pageHeader [heading]="'S92.TITLE' | lbl:'Store/Whs returns'" [icon]="'fa-undo'"
                      [waitMessage]="waitMessage"  [okExit]="okExit" [screenID]="screenID">
     </app-page-header>
 </div>
@@ -137,23 +137,27 @@
         <div class="row">
             <div class="col">
                 {{ 'S92.MU.SEL' | lbl:'Select your return file.' }}
-                {{ 'S92.MU.XLS' | lbl:'Your Excel file must include these five column headers:' }}
+                {{ 'S92.MU.XLS' | lbl:'Your Excel file must include these eight columns (use the exact header names from the template):' }}
                 <ul>
-                    <li>{{ 'S92.MU.CA' | lbl:'COLUMN A: SITE — store or warehouse' }}</li>
-                    <li>{{ 'S92.MU.CB' | lbl:'COLUMN B: VENDOR_CODE — supplier' }}</li>
-                    <li>{{ 'S92.MU.CC' | lbl:'COLUMN C: ITEM_CODE — item' }}</li>
-                    <li>{{ 'S92.MU.CD' | lbl:'COLUMN D: LV — pack / logistic variant' }}</li>
-                    <li>{{ 'S92.MU.CE' | lbl:'COLUMN E: QTY — quantity in SKU' }}</li>
+                    <li>{{ 'S92.MU.CA' | lbl:'SITE : store or warehouse' }}</li>
+                    <li>{{ 'S92.MU.CB' | lbl:'VENDOR_CODE : supplier code' }}</li>
+                    <li>{{ 'S92.MU.CC' | lbl:'ITEM_CODE : item' }}</li>
+                    <li>{{ 'S92.MU.CD' | lbl:'LV : Logistic variant' }}</li>
+                    <li>{{ 'S92.MU.CE' | lbl:'QTY : quantity in SKU' }}</li>
+                    <li>{{ 'S92.MU.CF' | lbl:'COMPENSATION : usually 4 (credit request). Values: 3 = sending invoice, 4 = credit request' }}</li>
+                    <li>{{ 'S92.MU.CG' | lbl:'PHYSICAL : usually 3 for a store, 2 for a warehouse. Values: 1 = physical return, 2 = financial return, 3 = return destruction' }}</li>
+                    <li>{{ 'S92.MU.CH' | lbl:'REASON : usually 3 for a store, 703 for a warehouse. Values: 3 = corporate request, 703 = allotment error' }}</li>
                 </ul>
                 <div class="alert alert-info" role="alert" style="margin-top: 0.75em; margin-bottom: 0; font-size: small;">
                     <div><b>{{ 'S92.MU.PURP' | lbl:'Purpose:' }}</b>
-                        {{ 'S92.MU.PURP.TXT' | lbl:'Create supplier returns in bulk from your Excel file. The system validates each line, then creates and processes the returns for store and warehouse.' }}
+                        {{ 'S92.MU.PURP.TXT' | lbl:'Create supplier returns in bulk from your Excel file. Each line is checked, then the returns are created and processed for store and warehouse.' }}
                     </div>
                     <div style="margin-top: 0.5em;"><b>{{ 'S92.MU.CHK' | lbl:'Checks (before execute):' }}</b></div>
                     <ul style="margin-bottom: 0;">
                         <li>{{ 'S92.MU.CHK1' | lbl:'Store/warehouse, supplier, and item + pack must be valid.' }}</li>
-                        <li>{{ 'S92.MU.CHK2' | lbl:'Quantity must be greater than 0 (expressed in SKU).' }}</li>
+                        <li>{{ 'S92.MU.CHK2' | lbl:'Quantity must be greater than 0 (in SKU).' }}</li>
                         <li>{{ 'S92.MU.CHK3' | lbl:'The item/pack must be (or have been) orderable for that site from that supplier.' }}</li>
+                        <li>{{ 'S92.MU.CHK4' | lbl:'Compensation, physical, and reason must be numbers on every row.' }}</li>
                     </ul>
                 </div>
             </div>
@@ -284,7 +288,7 @@
     <!-- Step 1 - Configuration definition -->
     <p-fieldset #step1 legend="{{menuItems[1].title}}" [toggleable]="true" styleClass="fieldSetCustom fieldSetCustomBorder" *ngIf="activeIndex > 0">
         <div class="row" style="padding-left: 15px;">
-            <span>{{ 'S92.MU.CFG' | lbl:'No extra options are required — continue to create the returns.' }}</span>
+            <span>{{ 'S92.MU.CFG' | lbl:'No extra options are required : continue to create the returns.' }}</span>
         </div>
     </p-fieldset>
 

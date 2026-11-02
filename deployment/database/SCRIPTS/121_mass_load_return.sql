@@ -7,7 +7,7 @@
 -- Pair with 122_pkmasschange_load_return.sql (PKMASSCHANGE package patch).
 -- Template file: controlRoom_server/server/templates/ICR_TEMPLATE023.xlsx
 -- Columns: SITE, VENDOR_CODE, ITEM_CODE, LV, QTY
--- GOLD batch: psint41p twice (class 10 then class 0)
+-- GOLD batch: psint41p twice (class 0 then class 10)
 -- =============================================================================
 
 SET DEFINE OFF;
@@ -21,7 +21,7 @@ USING (
          'STANDARD'         AS MENU_MODE,
          '/loadreturn'      AS ROUTE_PATH,
          'fas fa-undo'      AS ICON_CLASS,
-         'Load for return'  AS LABEL_TEXT,
+         'Store/Whs returns'  AS LABEL_TEXT,
          252                AS SORT_ORDER,
          CAST(NULL AS VARCHAR2(50)) AS EXPAND_KEY,
          1                  AS ACTIVE
@@ -74,11 +74,11 @@ SELECT 2, 'ROUTE_LOADRETURN', 1 FROM dual
 
 MERGE INTO ICR_MENU_LABEL t
 USING (
-  SELECT 'ROUTE_LOADRETURN' AS MENU_CODE, 'us_US' AS MLLANGUE, 'Load for return' AS LABEL_TEXT FROM dual
+  SELECT 'ROUTE_LOADRETURN' AS MENU_CODE, 'us_US' AS MLLANGUE, 'Store/Whs returns' AS LABEL_TEXT FROM dual
   UNION ALL
-  SELECT 'ROUTE_LOADRETURN', 'en_GB', 'Load for return' FROM dual
+  SELECT 'ROUTE_LOADRETURN', 'en_GB', 'Store/Whs returns' FROM dual
   UNION ALL
-  SELECT 'ROUTE_LOADRETURN', 'fr_FR', 'Chargement retours' FROM dual
+  SELECT 'ROUTE_LOADRETURN', 'fr_FR', 'Retours Mag./Ent.' FROM dual
 ) s ON (t.MENU_CODE = s.MENU_CODE AND t.MLLANGUE = s.MLLANGUE)
 WHEN MATCHED THEN UPDATE SET
   t.LABEL_TEXT = s.LABEL_TEXT,
@@ -114,10 +114,10 @@ USING (
          l.TENTRYLANG,
          33 AS TENTRYPARAMID,
          CASE l.TENTRYLANG
-           WHEN 'fr_FR' THEN 'Chargement retours'
-           ELSE 'Load for return'
+           WHEN 'fr_FR' THEN 'Retours Mag./Ent.'
+           ELSE 'Store/Whs returns'
          END AS TENTRYDESC,
-         'Mass change tool 24 — INTDETRET / psint41p class 10+0' AS TENTRYCOMMENT
+         'Mass change tool 24 — INTDETRET / psint41p class 0 then 10' AS TENTRYCOMMENT
     FROM (SELECT DISTINCT TENTRYLANG FROM TRA_ENTRIES WHERE TENTRYPARAMID = 33) l
 ) s
 ON (t.TENTRYID = s.TENTRYID AND t.TENTRYLANG = s.TENTRYLANG AND t.TENTRYPARAMID = s.TENTRYPARAMID)
@@ -133,7 +133,7 @@ WHEN NOT MATCHED THEN INSERT (
 );
 
 INSERT INTO TRA_ENTRIES (TENTRYID, TENTRYDESC, TENTRYCOMMENT, TENTRYLANG, TENTRYDCRE, TENTRYDMAJ, TENTRYUTIL, TENTRYPARAMID)
-SELECT 24, 'Load for return', 'Mass change tool 24 — INTDETRET / psint41p class 10+0', 'us_US', SYSDATE, SYSDATE, 'ICR', 33
+SELECT 24, 'Store/Whs returns', 'Mass change tool 24 — INTDETRET / psint41p class 0 then 10', 'us_US', SYSDATE, SYSDATE, 'ICR', 33
   FROM dual
  WHERE NOT EXISTS (
        SELECT 1 FROM TRA_ENTRIES
@@ -141,6 +141,7 @@ SELECT 24, 'Load for return', 'Mass change tool 24 — INTDETRET / psint41p clas
      );
 
 COMMIT;
+
 
 -- ── TRA_LABELS ───────────────────────────────────────────────────────────────
 DECLARE
@@ -163,18 +164,34 @@ DECLARE
     VALUES (p_id, p_fr, 0, p_screen, 'fr_FR', SYSDATE, SYSDATE, 'admin');
   END;
 BEGIN
-  seed3('S92.TITLE', 'Load for return', 'Load for return', 'Chargement retours', 'SCR0000000092');
+  seed3('S92.TITLE', 'Store/Whs returns', 'Store/Whs returns', 'Retours Mag./Ent.', 'SCR0000000092');
   seed3('S92.DLG.UPD', 'Update completed', 'Update completed', 'Mise a jour terminee', 'SCR0000000092');
-  seed3('S92.MU.CA', 'COLUMN A: SITE — store or warehouse', 'COLUMN A: SITE — store or warehouse', 'COLONNE A : SITE — magasin ou entrepot', 'SCR0000000092');
-  seed3('S92.MU.CB', 'COLUMN B: VENDOR_CODE — supplier', 'COLUMN B: VENDOR_CODE — supplier', 'COLONNE B : VENDOR_CODE — fournisseur', 'SCR0000000092');
-  seed3('S92.MU.CC', 'COLUMN C: ITEM_CODE — item', 'COLUMN C: ITEM_CODE — item', 'COLONNE C : ITEM_CODE — article', 'SCR0000000092');
-  seed3('S92.MU.CD', 'COLUMN D: LV — pack / logistic variant', 'COLUMN D: LV — pack / logistic variant', 'COLONNE D : LV — conditionnement', 'SCR0000000092');
-  seed3('S92.MU.CE', 'COLUMN E: QTY — quantity in SKU', 'COLUMN E: QTY — quantity in SKU', 'COLONNE E : QTY — quantite en SKU', 'SCR0000000092');
+  seed3('S92.MU.CA', 'SITE — store or warehouse', 'SITE — store or warehouse', 'SITE — magasin ou entrepot', 'SCR0000000092');
+  seed3('S92.MU.CB', 'VENDOR_CODE — supplier', 'VENDOR_CODE — supplier', 'VENDOR_CODE — fournisseur', 'SCR0000000092');
+  seed3('S92.MU.CC', 'ITEM_CODE — item', 'ITEM_CODE — item', 'ITEM_CODE — article', 'SCR0000000092');
+  seed3('S92.MU.CD', 'LV — pack / variant', 'LV — pack / variant', 'LV — conditionnement', 'SCR0000000092');
+  seed3('S92.MU.CE', 'QTY — quantity in SKU', 'QTY — quantity in SKU', 'QTY — quantite en SKU', 'SCR0000000092');
+  seed3('S92.MU.CF',
+        'COMPENSATION — usually 4 (credit request). Values: 3 = sending invoice, 4 = credit request',
+        'COMPENSATION — usually 4 (credit request). Values: 3 = sending invoice, 4 = credit request',
+        'COMPENSATION — generalement 4 (demande d''avoir). Valeurs : 3 = envoi facture, 4 = demande d''avoir',
+        'SCR0000000092');
+  seed3('S92.MU.CG',
+        'PHYSICAL — usually 3 for a store, 2 for a warehouse. Values: 1 = physical return, 2 = financial return, 3 = return destruction',
+        'PHYSICAL — usually 3 for a store, 2 for a warehouse. Values: 1 = physical return, 2 = financial return, 3 = return destruction',
+        'PHYSICAL — generalement 3 magasin, 2 entrepot. Valeurs : 1 = retour physique, 2 = retour financier, 3 = destruction',
+        'SCR0000000092');
+  seed3('S92.MU.CH',
+        'REASON — usually 3 for a store, 703 for a warehouse. Values: 3 = corporate request, 703 = allotment error',
+        'REASON — usually 3 for a store, 703 for a warehouse. Values: 3 = corporate request, 703 = allotment error',
+        'REASON — generalement 3 magasin, 703 entrepot. Valeurs : 3 = demande corporate, 703 = erreur allotement',
+        'SCR0000000092');
+
   seed3('S92.MU.PURP', 'Purpose:', 'Purpose:', 'Objectif :', 'SCR0000000092');
   seed3('S92.MU.PURP.TXT',
-        'Create supplier returns in bulk from your Excel file. The system validates each line, then creates and processes the returns for store and warehouse.',
-        'Create supplier returns in bulk from your Excel file. The system validates each line, then creates and processes the returns for store and warehouse.',
-        'Creer des retours fournisseur en masse a partir de votre fichier Excel. Le systeme controle chaque ligne, puis cree et traite les retours magasin et entrepot.',
+        'Create supplier returns in bulk from your Excel file. Each line is checked, then the returns are created and processed for store and warehouse.',
+        'Create supplier returns in bulk from your Excel file. Each line is checked, then the returns are created and processed for store and warehouse.',
+        'Creer des retours fournisseur en masse a partir de votre fichier Excel. Chaque ligne est controlee, puis les retours sont crees et traites pour magasin et entrepot.',
         'SCR0000000092');
   seed3('S92.MU.CHK', 'Checks (before execute):', 'Checks (before execute):', 'Controles (avant execution) :', 'SCR0000000092');
   seed3('S92.MU.CHK1',
@@ -183,19 +200,24 @@ BEGIN
         'Le magasin/entrepot, le fournisseur et l''article + conditionnement doivent etre valides.',
         'SCR0000000092');
   seed3('S92.MU.CHK2',
-        'Quantity must be greater than 0 (expressed in SKU).',
-        'Quantity must be greater than 0 (expressed in SKU).',
-        'La quantite doit etre superieure a 0 (exprimee en SKU).',
+        'Quantity must be greater than 0 (in SKU).',
+        'Quantity must be greater than 0 (in SKU).',
+        'La quantite doit etre superieure a 0 (en SKU).',
         'SCR0000000092');
   seed3('S92.MU.CHK3',
         'The item/pack must be (or have been) orderable for that site from that supplier.',
         'The item/pack must be (or have been) orderable for that site from that supplier.',
         'L''article/conditionnement doit etre (ou avoir ete) commandable pour ce site chez ce fournisseur.',
         'SCR0000000092');
+  seed3('S92.MU.CHK4',
+        'Compensation, physical, and reason must be numbers on every row.',
+        'Compensation, physical, and reason must be numbers on every row.',
+        'Compensation, physical et reason doivent etre des nombres sur chaque ligne.',
+        'SCR0000000092');
   seed3('S92.MU.CNM',
-        'Use the exact column headers from the template (SITE, VENDOR_CODE, ITEM_CODE, LV, QTY).',
-        'Use the exact column headers from the template (SITE, VENDOR_CODE, ITEM_CODE, LV, QTY).',
-        'Utiliser exactement les en-tetes du modele (SITE, VENDOR_CODE, ITEM_CODE, LV, QTY).',
+        'Keep the exact column header names from the template file.',
+        'Keep the exact column header names from the template file.',
+        'Conserver exactement les noms d''en-tetes du fichier modele.',
         'SCR0000000092');
   seed3('S92.MU.SEL',
         'Select your return file.',
@@ -213,9 +235,9 @@ BEGIN
         'Quand souhaitez-vous creer les retours?',
         'SCR0000000092');
   seed3('S92.MU.XLS',
-        'Your Excel file must include these five column headers:',
-        'Your Excel file must include these five column headers:',
-        'Votre fichier Excel doit contenir ces cinq en-tetes de colonnes:',
+        'Your Excel file must include these eight columns (use the exact header names from the template):',
+        'Your Excel file must include these eight columns (use the exact header names from the template):',
+        'Votre fichier Excel doit contenir ces huit colonnes (utiliser exactement les en-tetes du modele) :',
         'SCR0000000092');
   seed3('S92.MU.CFG',
         'No extra options are required — continue to create the returns.',

@@ -23,6 +23,24 @@ then generates per-retailer Oracle views and operational intelligence.
 
 ---
 
+## Mass-change / mass-load (quick pointer)
+
+Full runbook (process, tool 24 Store/Whs returns, deploy order, compile traps): 
+**`documentation/technical/icr-standard/mass-load-architecture.md`**
+
+| Item | Location |
+|---|---|
+| Catalog (routes / toolIDs) | `documentation/technical/icr-standard/mass-load-catalog.md` |
+| Functional screens | `documentation/functional/icr-standard/mass-change-screens.md` |
+| Package body | `deployment/database/SCRIPTS/111_pkmasschange_ref_to_order.sql` (+ `122` / `125` excel patch) |
+| Tool 24 menu / PARAM 33 | `121_mass_load_return.sql` |
+| Drop retired rules table | `126_drop_icr_massload_rule.sql` |
+| Angular load return | `pages/mass.update/load.return/` · `toolID=24` · `ICR_TEMPLATE023` |
+
+**Rules of thumb:** vendor code as entered (no AO strip); Excel carries `COMPENSATION`/`PHYSICAL`/`REASON` → `IRFTMODE`/`IRFRPHY`/`IRFMOTI`; package keeps `IRFTYPE=1` / `IRFDEVI=840` / `IRFCONS=0`; load-type labels from `TRA_ENTRIES.TENTRYDESC` not `PARAMCHAR1`; declare TYPE/cursor **before** nested procedures in PL/SQL; **no technical jargon on mass-load screens** (business copy only — see `mass-change-screens.md` UX rule).
+
+---
+
 ## ⚠️ Architecture rules — MANDATORY
 
 ### 1. All data access via LIBQUERY
@@ -1730,6 +1748,8 @@ Strategic layer — optimization signals, trend analysis, financial performance.
 - [x] Menu & access admin (`/settingmenu`) — catalog, flag rules, profiles, profile menus `SET0000046`–`0054`; **`MENU_TYPE = HEADER`** for profile dropdown + AI toggle
 - [x] Header profile menu (data-driven) — `HDR_USER_*` seeds in `35` / patch `54`, `SET0000041`, `MenuAccessService.profileMenu$`, `header.component` `*ngFor` (replaces hardcoded Profile/Inbox/… list)
 - [x] Self-service **Change password** — `SET0000024` (`53_user_change_password_libquery.sql`), header dialog, `SettingsAdminService.changeOwnPassword()`; `QueryService` sid/language fallbacks + `param ?? []`
+- [x] Mass-change tool 24 **Store/Whs returns** — `ICR_TEMPLATE023`, `LOADRETURN_*` in PKMASSCHANGE, dual `psint41p`, vendor as-is, ARTUC orderable check, `generateBL` / OA contract fields
+- [x] **`ICR_MASSLOAD_RULE`** + Mass-change **Mass-load settings** (`/settingmassload`, after Journal) — CONSTANT/STORE/WAREHOUSE CLOB rules; execute reads table only (no package fallback); LIBQUERY `MAS0000100`–`0104`
 - [ ] S15 Domain Investigation (and richer assistant UX: template picker)
 - [ ] Phase B skill packs (scripts 42–62) — order depth, supplier depth, pricing depth, inventory depth, receiving depth, warehouse ops (GWR/HNPSTK), warehouse overwatch, cross-store, replenishment depth, sales, financial, logistics, assortment depth, HQ overwatch
 - [ ] Phase B diagnostic chains (scripts 56–60) — ORDER_BLOCKED, STOCK_VARIANCE_ROOT_CAUSE, SUPPLIER_PERFORMANCE_ISSUE, PROMOTION_EXECUTION_FAIL, NETWORK_IMBALANCE_ROOT_CAUSE

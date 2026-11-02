@@ -2,14 +2,22 @@
      *ngIf="_userService.userInfo">
     <p-toast position="top-right"></p-toast>
 
-    <p-dialog header="Notification" [visible]="displaySwitch"  [style]="{width: '50vw'}"  [maximizable]="false">
+    <p-dialog header="Notification"
+              [(visible)]="displaySwitch"
+              [modal]="true"
+              appendTo="body"
+              [style]="{width: '28rem'}"
+              [maximizable]="false"
+              [draggable]="false"
+              [dismissableMask]="false"
+              (onHide)="onEnvNotifyHide()">
         <span>{{msgDisplayed}}</span>
-            <p-footer>
-                <button style="float: right; margin-bottom:0.5em"
-                        type="button" pButton icon="fas fa-check" iconPos="right" (click)="displaySwitch=false"
-                        label="Ok">
-                </button>
-            </p-footer>
+        <ng-template pTemplate="footer">
+            <button type="button" pButton icon="fas fa-check" iconPos="right"
+                    (click)="closeEnvNotify()"
+                    label="Ok">
+            </button>
+        </ng-template>
     </p-dialog>
 
     <p-dialog header="Change password" [(visible)]="changePasswordVisible" [modal]="true"
@@ -192,9 +200,9 @@
                     {{appEnvironment}}
                 </a>
 
-                <!-- Fall badge -->
+                <!-- Halloween badge -->
                 <div class="fall-badge">
-                    <span>🍂 Fall mode</span>
+                    <span>🎃 Halloween</span>
                 </div>
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02" style="padding-right: 3%">

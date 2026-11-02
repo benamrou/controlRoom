@@ -4,9 +4,22 @@ Each row is one sidebar entry under **Mass-change box**. Workflow is the same on
 
 > **SME detail:** Column headers, parameter tables, risks, and sign-off template → [Mass-change SME reference](functional/icr-standard/mass-change-sme-reference.md).
 
+## UX rule — no technical information on screen
+
+Mass-load screens are **buyer / data-integrity facing**. Do **not** show technical details in the UI:
+
+- No GOLD table or column names (`INTDETRET`, `IRFTMODE`, `IRFRPHY`, `IRFMOTI`, …)
+- No package, Pro*C, job, or DB-link names (`PKMASSCHANGE`, `psint41p`, `@dblink`, …)
+- No internal codes explained only for IT — use business words and usual values (e.g. “usually 3 for a store”)
+- Excel **header names** from the template may appear (users must match them); describe each in plain language
+- Validation and success messages stay business-readable
+
+Technical mapping belongs in [mass-load architecture](technical/icr-standard/mass-load-architecture.md) and the SME reference — not on the screen.
+
 | Menu label | Route | Business focus | Template ID | Tool ID |
 |------------|-------|----------------|-------------|---------|
 | Journal | `/massjournal` | Execution history, calendar, batch status | — | ProcessService |
+| Mass-load settings | `/settingmassload` | Configure INTDETRET / interface defaults by load type (CONSTANT / STORE / WAREHOUSE) | — | LIBQUERY `MAS000010x` |
 | Item Hierarchy | `/itemhierarchy` | Merchandise hierarchy assignments | ICR_TEMPLATE001 | 1 |
 | Item description | `/itemdescription` | Item text / descriptions | ICR_TEMPLATE015 | 17 |
 | Item List desc. | `/itemlistdescription` | List-level descriptions | ICR_TEMPLATE012 | 14 |
@@ -27,6 +40,7 @@ Each row is one sidebar entry under **Mass-change box**. Workflow is the same on
 | Papyrus UPC | `/itemendupc` | End / cleanup UPC (Papyrus) | ICR_TEMPLATE020 | 21 |
 | Reference to order | `/referencetoorder` | Close/reopen orderable assortment via `INTARTASS` (`IASREFC` / `ARAREFC`) by vendor / item / LV; batch `psifa07p` | ICR_TEMPLATE021 | 22 |
 | New Item PPG | `/newitemppg` | Create PPG list + attach items via direct `ARTENTLIST`/`ARTDETLIST`; `PPG_ID` = list code, `PPG_NAME` = description | ICR_TEMPLATE022 | 23 |
+| Store/Whs returns | `/loadreturn` | Bulk supplier returns → `INTDETRET` + dual `psint41p` (store then WH class) | ICR_TEMPLATE023 | 24 |
 
 ### Not in sidebar (code only)
 
@@ -45,6 +59,15 @@ Use the journal to:
 - Drill into result lines for errors.
 
 Warehouse users with journal-only access use this screen to monitor loads executed by data integrity.
+
+### Store/Whs returns {#load-for-return}
+
+**Route:** `/loadreturn` · tool **24** · template `ICR_TEMPLATE023`
+
+Excel: `SITE`, `VENDOR_CODE` (as entered), `ITEM_CODE`, `LV`, `QTY` (SKU), `COMPENSATION`, `PHYSICAL`, `REASON`.  
+Maps to `IRFTMODE` / `IRFRPHY` / `IRFMOTI`. Buyer-facing UI; returns land in `INTDETRET` then `psint41p` class 0 then 10.
+
+See [Mass-load architecture](technical/icr-standard/mass-load-architecture.md).
 
 ### Item address load
 

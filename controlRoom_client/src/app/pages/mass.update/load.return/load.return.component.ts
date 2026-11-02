@@ -265,7 +265,7 @@ export class LoadReturnComponent implements OnInit, OnDestroy{
                                             data => {  },
                                             error => { this._messageService.add({key:'top', sticky:true, severity:'error', summary:'Execution issue', detail: error }); },
                                             () => { this._messageService.add({key:'top', sticky:true, severity:'info', summary:'Step 4/4: Executing plan', detail:  '"' + this.uploadedFiles[0].name + '" processing plan results collected.'});
-                                                    this.msgFinalDisplayed = 'Load for return ' + this.uploadedFiles[0].name + ' - ' + 
+                                                    this.msgFinalDisplayed = 'Store/Whs returns ' + this.uploadedFiles[0].name + ' - ' + 
                                                                             ' has been successfully processed.';
                                                 
                                                     this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
@@ -296,7 +296,7 @@ export class LoadReturnComponent implements OnInit, OnDestroy{
                                                         // ONLY NEW CODE: Build recap summary
                                                         this.buildRecapSummary();
                                                         
-                                                        this.msgFinalDisplayed = 'Load for return ' + this.uploadedFiles[0].name + ' - ' + 
+                                                        this.msgFinalDisplayed = 'Store/Whs returns ' + this.uploadedFiles[0].name + ' - ' + 
                                                                                 ' has been successfully processed.';
 
                                                         this.waitMessage =  'Step 1/4: Posting the execution plan... &emsp;<b>COMPLETED</b><br>'+ 
@@ -446,11 +446,12 @@ export class LoadReturnComponent implements OnInit, OnDestroy{
                                 //console.log('rowsWithError: ', rowsWithError);
                                 if (rowsWithError.length === 0) {
                                     this.globalValid = [];
-                                    this.globalValid.push('<i class="fas fa-thumbs-up" style="padding-right: 1em;"></i> Data file verification SUCCESSFUL ' +
+                                    this.globalValid.push('<i class="fas fa-thumbs-up" style="padding-right: 1em;"></i> File check successful ' +
                                                             ' <ul style="margin-bottom: 0px;"> ' +
-                                                            ' <li>Column headers respected (SITE, VENDOR_CODE, ITEM_CODE, LV, QTY)</li>' +
+                                                            ' <li>Column headers match the template</li>' +
                                                             ' <li>Store/warehouse, supplier, and item + pack are valid</li>' +
-                                                            ' <li>Quantity is greater than 0 (in SKU)</li>' +
+                                                            ' <li>Quantity is greater than 0</li>' +
+                                                            ' <li>Compensation, physical, and reason are filled with numbers</li>' +
                                                             ' <li>Item/pack is or was orderable for that site from that supplier</li>' +
                                                             ' <li>Supplier returns will be created and processed automatically</li></ul>'); 
                                     this.activeIndex = this.activeIndex + 1; // Enable Configuration
@@ -482,25 +483,19 @@ export class LoadReturnComponent implements OnInit, OnDestroy{
   checkGlobal(): boolean {
     this.globalError = [];
     const cols = this._importService.wb?.sheets?.[0]?.worksheet?.columns;
-    if (!cols || cols.length < 5) {
-        this.globalError.push('Load for return file must contain headers: SITE, VENDOR_CODE, ITEM_CODE, LV, QTY');
+    const required = ['SITE', 'VENDOR_CODE', 'ITEM_CODE', 'LV', 'QTY', 'COMPENSATION', 'PHYSICAL', 'REASON'];
+    if (!cols || cols.length < required.length) {
+        this.globalError.push(
+          'The file is missing columns. Download the template and keep the same header names.');
         return false;
     }
-    if (cols[0].field.toUpperCase() !== 'SITE') {
-      this.globalError.push('The column A header must be named SITE');
-    }
-    if (cols[1].field.toUpperCase() !== 'VENDOR_CODE') {
-      this.globalError.push('The column B header must be named VENDOR_CODE');
-    }
-    if (cols[2].field.toUpperCase() !== 'ITEM_CODE') {
-      this.globalError.push('The column C header must be named ITEM_CODE');
-    }
-    if (cols[3].field.toUpperCase() !== 'LV') {
-      this.globalError.push('The column D header must be named LV');
-    }
-    if (cols[4].field.toUpperCase() !== 'QTY') {
-      this.globalError.push('The column E header must be named QTY');
-    }
+    required.forEach((name, idx) => {
+      if ((cols[idx].field || '').toUpperCase() !== name) {
+        const letter = String.fromCharCode('A'.charCodeAt(0) + idx);
+        this.globalError.push(
+          `Column ${letter} header must be "${name}" (same as the template).`);
+      }
+    });
     return this.globalError.length === 0;
   }
   reset() {

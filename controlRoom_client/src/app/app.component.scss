@@ -245,14 +245,14 @@ input, input:valid {
     outline: none;
     border-radius: 10px;
 }
-// Coloring header
+// Coloring header — solid fills only (no alpha; dialogs must stay opaque)
 .p-panel.p-panel-toggleable .p-panel-header {
     padding: 0.75rem 1.25rem;
     background: linear-gradient(
         135deg,
-        rgba($fall-cream, 0.98) 0%,
-        rgba($fall-amber, 0.94) 45%,
-        rgba($fall-burnt, 0.92) 100%
+        $fall-cream 0%,
+        $fall-amber 45%,
+        $fall-burnt 100%
     ) !important;
     color: $fall-deep;
 }
@@ -261,15 +261,6 @@ input, input:valid {
     font-size: smaller;
 }
 
-.p-dialog-draggable .p-dialog-header {
-    background: linear-gradient(
-        135deg,
-        rgba($fall-cream, 0.98) 0%,
-        rgba($fall-amber, 0.94) 45%,
-        rgba($fall-burnt, 0.92) 100%
-    ) !important;
-    color: $fall-deep;
-}
 thead, tbody, tfoot, tr, td, th {
     line-height: 1em;
 }
@@ -291,23 +282,14 @@ font-size:  smaller;
 .p-dialog .p-dialog-header {
     height: auto;
     min-height: 2.4rem;
-  }
-  
-  .p-confirm-dialog .p-dialog-content {
-    padding-top: 1em;
-  }
+}
 
-  .p-dialog .p-dialog-content {
+.p-confirm-dialog .p-dialog-content {
     padding-top: 1em;
 }
 
-.p-dialog .p-dialog-header .p-dialog-title {
-    font-size: medium;
-    color: $fall-deep;
-}
-
-.p-dialog .p-dialog-header .p-dialog-header-icon {
-    color: $fall-deep;
+.p-dialog .p-dialog-content {
+    padding-top: 1em;
 }
 
 /* ── Fall page-switch leaf gust (app-wide) ───────────────────── */

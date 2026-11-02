@@ -16,7 +16,7 @@ app-sidebar-menu {
     color: $fall-deep !important;
     background: transparent !important;
     border: none !important;
-    border-top: 1px solid rgba($fall-coral, 0.10) !important;
+    border-top: 1px solid rgba($hw-aubergine, 0.12) !important;
     text-decoration: none;
     cursor: pointer;
 
@@ -27,7 +27,7 @@ app-sidebar-menu {
     }
 
     i {
-        color: $fall-trunk;
+        color: $hw-burnt;
         margin-right: 6px;
         width: 16px;
         font-size: 1em;
@@ -36,17 +36,17 @@ app-sidebar-menu {
     }
 
     &:hover {
-        background: rgba($fall-sun, 0.30) !important;
+        background: rgba($hw-pumpkin, 0.18) !important;
     }
 
     &.router-link-active {
-        background: linear-gradient(90deg, rgba($fall-coral, 0.22) 0%, rgba($fall-sun, 0.18) 100%) !important;
-        border-left: 3px solid $fall-coral !important;
+        background: linear-gradient(90deg, rgba($hw-pumpkin, 0.24) 0%, rgba($hw-aubergine, 0.12) 100%) !important;
+        border-left: 3px solid $hw-pumpkin !important;
         padding-left: 13px;
         position: relative;
 
         &::after {
-            content: '🍂';
+            content: '🎃';
             position: absolute;
             right: 10px;
             top: 50%;
@@ -63,11 +63,11 @@ app-sidebar-menu {
     50%      { transform: translateY(calc(-50% - 2px)) rotate(8deg); }
 }
 
-// Tiny seasonal accents — warm icon tint via palette (Font Awesome glyphs unchanged)
+// Tiny seasonal accents — pumpkin icon tint
 .fall-sidebar app-sidebar-menu i,
 .fall-sidebar-admin app-sidebar-menu i,
 .fall-sidebar > ul > a > i {
-    color: $fall-trunk;
+    color: $hw-burnt;
 }
 
 // No encapsulation — must match .fall-sidebar / .fall-sidebar-admin on ancestor <nav>.
@@ -100,13 +100,13 @@ app-sidebar-menu {
 }
 
 .fall-sidebar .nested-menu ul.submenu {
-    background: rgba($fall-white, 0.35);
-    border-left: 2px solid rgba($fall-coral, 0.25);
+    background: rgba($hw-aubergine, 0.06);
+    border-left: 2px solid rgba($hw-pumpkin, 0.3);
 }
 
 .fall-sidebar-admin .nested-menu ul.submenu {
-    background: rgba($fall-white, 0.35);
-    border-left: 2px solid rgba($fall-coral, 0.22);
+    background: rgba($hw-aubergine, 0.06);
+    border-left: 2px solid rgba($hw-pumpkin, 0.28);
 }
 
 .fall-sidebar app-sidebar-menu > li,
@@ -124,24 +124,24 @@ app-sidebar-menu {
     border-radius: 6px;
 
     i {
-        color: $fall-trunk;
+        color: $hw-burnt;
         margin-right: 6px;
         width: 14px;
         font-size: 0.80rem;
     }
 
     &:hover {
-        background: rgba($fall-sun, 0.35);
+        background: rgba($hw-pumpkin, 0.2);
     }
 
     &.router-link-active {
-        background: rgba($fall-coral, 0.20);
+        background: rgba($hw-pumpkin, 0.22);
         font-weight: 700;
         position: relative;
         padding-right: 1.6rem;
 
         &::after {
-            content: '🍂';
+            content: '🎃';
             position: absolute;
             right: 8px;
             top: 50%;
@@ -161,16 +161,16 @@ app-sidebar-menu {
     border-radius: 5px;
 
     i {
-        color: $fall-trunk;
+        color: $hw-burnt;
         margin-right: 5px;
     }
 
     &:hover {
-        background: rgba($fall-sun, 0.30);
+        background: rgba($hw-pumpkin, 0.18);
     }
 
     &.router-link-active {
-        background: rgba($fall-coral, 0.18);
+        background: rgba($hw-pumpkin, 0.2);
         font-weight: 700;
     }
 }

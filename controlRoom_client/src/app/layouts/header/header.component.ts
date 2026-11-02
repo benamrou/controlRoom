@@ -94,6 +94,7 @@ export class HeaderComponent implements OnInit {
 	}
 
     ngOnInit(): void {
+		this.clearOrphanDialogMasks();
 		this.refreshEnvironments();
 		this.refreshNewsBadge();
 		this.maybeShowLoginBanner();
@@ -268,9 +269,31 @@ export class HeaderComponent implements OnInit {
 		this.msgDisplayed = this.msgEnvironment + ' ' + envLabel + '.';
 		this.envTypeConnected = envType;
 		this.selectedEnvironment = envLabel;
-		console.log('User env' + JSON.stringify(this._userService.userInfo));
-		this.displaySwitch = true;
 		this.setTopBarDisplay();
+		this.displaySwitch = true;
+	}
+
+	closeEnvNotify(): void {
+		this.displaySwitch = false;
+	}
+
+	onEnvNotifyHide(): void {
+		this.displaySwitch = false;
+		// After PrimeNG leave animation (~150ms), strip any orphan mask left behind
+		setTimeout(() => this.clearOrphanDialogMasks(), 220);
+	}
+
+	/** Remove stuck PrimeNG dialog veils (mask painted without a visible dialog). */
+	private clearOrphanDialogMasks(): void {
+		const doc = this._document;
+		doc.querySelectorAll('body > .p-dialog-mask').forEach((el) => {
+			const host = el as HTMLElement;
+			const dialog = host.querySelector('.p-dialog') as HTMLElement | null;
+			if (!dialog) {
+				host.remove();
+			}
+		});
+		doc.body.classList.remove('p-overflow-hidden');
 	}
 
 	setTopBarDisplay(): void {

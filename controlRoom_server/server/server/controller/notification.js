@@ -680,11 +680,13 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
               heap.logger.log('alert', `Emailing workbook length main query 0 ${alertData[0].ALTEMAIL} `, 'alert', 1);
               heap.logger.log('alert', `Emailing workbook real time ${alertData[0].ALTREALTIME} `, 'alert', 1);
 
-              await heap.dbLogger.updateRequest(request.requestId, {
+               // FIX: removed premature status=COMPLETE / phase=NO_EMAIL update here.
+              // Each branch below now sets its own final status/phase.
+              /*await heap.dbLogger.updateRequest(request.requestId, {
                 status: 'COMPLETE',
                 phase: 'NO_EMAIL',
                 rowCount: detailData.length
-              });
+              }); */
           if (alertData[0].ALTREALTIME == '0') {
               heap.logger.log('alert', `Emailing workbook no attachment ${alertData[0].ALTEMAIL} `, 'alert', 1);
               

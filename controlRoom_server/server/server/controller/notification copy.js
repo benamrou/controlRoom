@@ -110,6 +110,20 @@ function sendSMS(to, subject, message) {
     // Preview only available when sending through an Ethereal account
 }
 
+/**
+ * Log what the SMTP server accepted/rejected. nodemailer calls the success
+ * callback as soon as at least ONE recipient is accepted, so rejected
+ * recipients are otherwise invisible. messageId lets you find the message
+ * in an Exchange / M365 message trace.
+ */
+function logSmtpResult(requestId, info) {
+    if (!info) return;
+    const rejected = info.rejected || [];
+    heap.logger.log('alert',
+        `[SMTP OK] ${requestId || 'N/A'} | messageId=${info.messageId} | accepted=${JSON.stringify(info.accepted || [])} | rejected=${JSON.stringify(rejected)} | response=${info.response}`,
+        'alert', rejected.length > 0 ? 3 : 1);
+}
+
 function sendEmail(to, emailcc, emailbcc, subject, message, requestId, requestStartTime, overallTimeout) {
     let mailOptions = {
         from: configuration.config.notification.email_user,
@@ -125,9 +139,9 @@ function sendEmail(to, emailcc, emailbcc, subject, message, requestId, requestSt
             recipient: configuration.config.notification.email_user
         }
     };
-    let infoMessage =  heap.transporter.sendMail(mailOptions, async (error) => {
-        if (error) { 
-            heap.logger.log('alert', 'Error sending email function call: ' + to + ' ' + subject + ' ' + 
+    let infoMessage =  heap.transporter.sendMail(mailOptions, async (error, info) => {
+        if (error) {
+            heap.logger.log('alert', 'Error sending email function call: ' + to + ' ' + subject + ' ' +
                                 message , 'alert', 3);
             //logger.log('alert', 'Error sending email BUFFER: ' + JSON.stringify(stream) , 'alert', 3);
             heap.logger.log('alert', 'Error sending email ERROR details: ' + JSON.stringify(error) , 'alert', 3);
@@ -141,18 +155,21 @@ function sendEmail(to, emailcc, emailbcc, subject, message, requestId, requestSt
             sendSMS('6789863021@tmomail.net','CRITICAL: SPAM alert ' + subject, `RequestID: ${requestId || 'N/A'}, Error: ${JSON.stringify(error)}`);
         }
         else {
+            // SMTP accepted the message — log what the server actually took
+            logSmtpResult(requestId, info);
+
             // Mark request as complete
             if (requestId && requestStartTime) {
                 const duration = Math.floor((Date.now() - requestStartTime) / 1000);
                 clearTimeout(overallTimeout);
-                
+
                 await heap.dbLogger.updateRequest(requestId, {
                   status: 'COMPLETE',
-                  phase: 'NO_EMAIL',
+                  phase: 'EMAIL_SENT',   // FIX: was 'NO_EMAIL' — overwrote EMAIL_SENT after a successful send
                   rowCount: 0
                 });
                 await heap.dbLogger.logComplete(requestId, duration);
-                heap.logger.log('alert', `[REQUEST COMPLETE] ${requestId} | Duration: ${duration}s (0 rows, no attachment)`, 'alert', 1);
+                heap.logger.log('alert', `[REQUEST COMPLETE] ${requestId} | Duration: ${duration}s (0 rows, email sent, no attachment)`, 'alert', 1);
             }
         }
     });
@@ -211,7 +228,8 @@ function sendEmailCSV(to, emailcc, emailbcc, subject, message, stream, preHtml, 
         }
         else {
             heap.logger.log('alert', 'Email sent to:' + to + ' cc:' +  emailcc + ' bcc:' + emailbcc + ' subject: ' + subject, 'alert', 1);
-            
+            logSmtpResult(requestId, info);
+
             // Mark request as complete
             if (requestId && requestStartTime) {
                 const duration = Math.floor((Date.now() - requestStartTime) / 1000);
@@ -237,11 +255,36 @@ function clearModule() {
     heap.disrequire('json2xls.js');
 }
 
+// ── ORACLE ERROR ROUTING ────────────────────────────────────────────────
+// PKREQUESTMANAGER returns Oracle errors as a 1-row result
+// ('Executing issue, check DBMS_SQL.EXECUTE rights. -NNNN-ORA-NNNNN...').
+// Those must never reach the business distribution list: reroute to admin.
+const ADMIN_EMAIL = 'abenamrouche@heinens.com';
+
+/**
+ * Detect PKREQUESTMANAGER error rows (Oracle errors returned as data).
+ * Errors always come back as a single row, so checking the first is enough.
+ */
+function isOracleErrorResult(rows) {
+    if (!rows || rows.length === 0) return false;
+    return Object.values(rows[0]).some(v =>
+        v && typeof v === 'string' &&
+        (v.includes('ORA-') || v.includes('Executing issue'))
+    );
+}
+// ────────────────────────────────────────────────────────────────────────
+
 /**
  * Execute a shell script from SALTSHELL content
- * Adapted from crontab.js executeScript function
+ * Adapted from crontab.js executeScript — also writes ALERTLOG start/end
+ * (LALTID = SALTID, LALTREQID = CRON_…, same shape as scheduler runs).
+ *
+ * @param {string|number} id — SALTID
+ * @param {string} scriptContent
+ * @param {string} user
+ * @param {{ saltCron?: string, saltDesc?: string, source?: string }} [meta]
  */
-async function executeShellScript(id, scriptContent, user) {
+async function executeShellScript(id, scriptContent, user, meta) {
     return new Promise(async (resolve, reject) => {
         if (!scriptContent) {
             resolve({ success: false, message: 'No script content provided' });
@@ -254,8 +297,57 @@ async function executeShellScript(id, scriptContent, user) {
         const filePath = path.join(tempDir, fileName);
         let output = '';
         let errorOutput = '';
+        const requestId = heap.dbLogger.generateRequestId('CRON');
+        const startedAtMs = Date.now();
+        let dbEnded = false;
+
+        const finishDb = async (kind, detail) => {
+            if (dbEnded) {
+                return;
+            }
+            dbEnded = true;
+            const duration = Math.max(0, Math.floor((Date.now() - startedAtMs) / 1000));
+            try {
+                if (kind === 'complete') {
+                    await heap.dbLogger.updateRequest(requestId, {
+                        status: 'COMPLETE',
+                        phase: 'CRON_DONE',
+                        endTime: true,
+                        duration,
+                    });
+                } else {
+                    await heap.dbLogger.updateRequest(requestId, {
+                        status: 'FAILED',
+                        phase: 'CRON_FAILED',
+                        endTime: true,
+                        duration,
+                        error: detail || 'Shell script failed',
+                    });
+                }
+            } catch (e) {
+                heap.logger.log('alert', `ALERTLOG end write failed for ${requestId}: ${e.message}`, user, 3);
+            }
+        };
 
         try {
+            await heap.dbLogger.logStart(
+                requestId,
+                String(id),
+                user || 'notification',
+                {
+                    type: 'ALERTSCHEDULE',
+                    saltId: String(id),
+                    saltCron: (meta && meta.saltCron) || '',
+                    saltDesc: (meta && meta.saltDesc) || '',
+                    source: (meta && meta.source) || 'alert_management',
+                    catchup: false,
+                },
+                '',
+                '',
+                { util: 'notification.shell', phase: 'CRON_SHELL' }
+            );
+            heap.logger.log('alert', `Shell execution ${id} [START] ${requestId}`, user, 2);
+
             // Ensure temp dir exists
             await fs_promises.mkdir(tempDir, { recursive: true });
 
@@ -276,18 +368,21 @@ async function executeShellScript(id, scriptContent, user) {
 
             command.on('error', async (err) => {
                 heap.logger.log('alert', `ERROR - Shell execution ${id}: ${err}`, user, 3);
+                await finishDb('failed', err && err.message ? err.message : String(err));
                 await safeCleanupScript(filePath);
-                reject({ success: false, message: err.message, output, errorOutput });
+                reject({ success: false, message: err.message, output, errorOutput, requestId });
             });
 
             command.on('exit', async (code) => {
                 await safeCleanupScript(filePath);
                 if (code === 0) {
-                    heap.logger.log('alert', `Shell execution ${id} [COMPLETED]`, user, 2);
-                    resolve({ success: true, message: 'Script executed successfully', output, errorOutput, exitCode: code });
+                    heap.logger.log('alert', `Shell execution ${id} [COMPLETED] ${requestId}`, user, 2);
+                    await finishDb('complete');
+                    resolve({ success: true, message: 'Script executed successfully', output, errorOutput, exitCode: code, requestId });
                 } else {
-                    heap.logger.log('alert', `ERROR - Shell execution ${id} exited with code ${code}`, user, 3);
-                    resolve({ success: false, message: `Script exited with code ${code}`, output, errorOutput, exitCode: code });
+                    heap.logger.log('alert', `ERROR - Shell execution ${id} exited with code ${code} ${requestId}`, user, 3);
+                    await finishDb('failed', `Exited with code ${code}`);
+                    resolve({ success: false, message: `Script exited with code ${code}`, output, errorOutput, exitCode: code, requestId });
                 }
             });
 
@@ -296,8 +391,9 @@ async function executeShellScript(id, scriptContent, user) {
 
         } catch (err) {
             heap.logger.log('alert', `ERROR - Shell execution ${id}: ${err}`, user, 3);
+            await finishDb('failed', err && err.message ? err.message : String(err));
             await safeCleanupScript(filePath);
-            reject({ success: false, message: err.message });
+            reject({ success: false, message: err.message, requestId });
         }
     });
 }
@@ -430,6 +526,11 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
           heap.logger.log('alert', 'SQL Error on main QUERY: ' + err.message, 'alert', 3);
           return;
         }
+        // ── ORACLE ERROR ROUTING: detect error rows on the main query
+        let oracleErrorDetected = isOracleErrorResult(detailData);
+        if (oracleErrorDetected) {
+          heap.logger.log('alert', `[ORACLE ERROR DETECTED] ${request.requestId} | Alert: ${alertData[0].ALTID} | Rerouting to admin only: ${JSON.stringify(detailData[0])}`, 'alert', 3);
+        }
         let preHtml = '';
         let bannerHtml = '';
         if (bannerData.length >= 1) {
@@ -529,6 +630,12 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                     heap.logger.log('alert', `dataDetailN empty ${qNode.dataDetailN}`, 'alert', 3);
                     dataDetailN = [];
                   }
+
+                  // ── ORACLE ERROR ROUTING: a secondary sheet can carry the error too
+                  if (!oracleErrorDetected && isOracleErrorResult(dataDetailN)) {
+                    oracleErrorDetected = true;
+                    heap.logger.log('alert', `[ORACLE ERROR DETECTED] ${request.requestId} | ${qNode.key} | Rerouting to admin only: ${JSON.stringify(dataDetailN[0])}`, 'alert', 3);
+                  }
                   
                     // Update phase to JSON2XLS
                     await heap.dbLogger.updateRequest(request.requestId, {
@@ -591,11 +698,8 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
               heap.logger.log('alert', `Emailing workbook length main query 0 ${alertData[0].ALTEMAIL} `, 'alert', 1);
               heap.logger.log('alert', `Emailing workbook real time ${alertData[0].ALTREALTIME} `, 'alert', 1);
 
-              await heap.dbLogger.updateRequest(request.requestId, {
-                status: 'COMPLETE',
-                phase: 'NO_EMAIL',
-                rowCount: detailData.length
-              });
+              // FIX: removed premature status=COMPLETE / phase=NO_EMAIL update here.
+              // Each branch below now sets its own final status/phase.
           if (alertData[0].ALTREALTIME == '0') {
               heap.logger.log('alert', `Emailing workbook no attachment ${alertData[0].ALTEMAIL} `, 'alert', 1);
               
@@ -605,6 +709,19 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                 rowCount: detailData.length
               });
               
+              if (oracleErrorDetected) {
+                // ── ORACLE ERROR ROUTING: admin only, request marked FAILED
+                const durationErr = Math.floor((Date.now() - request.requestStartTime) / 1000);
+                clearTimeout(request.overallTimeout);
+                await heap.dbLogger.logFailed(request.requestId, durationErr, 'Oracle error in alert result (secondary query)');
+                sendEmail(
+                  ADMIN_EMAIL,
+                  null,
+                  null,
+                  `ORACLE ERROR ALERT - ${alertData[0].ALTSUBJECT} ${SUBJECT_EXT}`,
+                  html
+                );
+              } else {
               sendEmail(
                 alertData[0].ALTEMAIL,
                 alertData[0].ALTEMAILCC,
@@ -615,6 +732,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                 request.requestStartTime,
                 request.overallTimeout
               );
+              }
           }
           else {
               // No email sent (ALTREALTIME != '0' and 0 rows)
@@ -626,7 +744,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
               await heap.dbLogger.updateRequest(request.requestId, {
                 status: 'COMPLETE',
                 phase: 'NO_EMAIL',
-                rowCount: dataDetail.length
+                rowCount: detailData.length
               });
               await heap.dbLogger.logComplete(request.requestId, duration);
               heap.logger.log('alert', `[REQUEST COMPLETE] ${request.requestId} | Duration: ${duration}s (0 rows, no email)`, 'alert', 1);
@@ -800,6 +918,27 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                 
                 heap.logger.log('alert', `[Excel Generated] Size: ${bufferSizeMB}MB | Duration: ${bufferDuration}s | Rows: ${detailData.length}`, 'alert', 1);
                 
+                if (oracleErrorDetected) {
+                  // ── ORACLE ERROR ROUTING: admin only, request marked FAILED.
+                  // No monitoring params passed to sendEmailCSV so its success
+                  // path cannot overwrite the FAILED status with COMPLETE
+                  // (same pattern as the Excel-generation fallback email).
+                  const durationErr = Math.floor((Date.now() - request.requestStartTime) / 1000);
+                  clearTimeout(request.overallTimeout);
+                  await heap.dbLogger.logFailed(request.requestId, durationErr,
+                    `Oracle error in alert result: ${JSON.stringify(detailData[0]).substring(0, 3900)}`);
+                  sendEmailCSV(
+                    ADMIN_EMAIL,
+                    null,
+                    null,
+                    `ORACLE ERROR ALERT - ${alertData[0].ALTSUBJECT} ${SUBJECT_EXT}`,
+                    html,
+                    buffer,
+                    preHtml,
+                    false,
+                    FILENAME_EXT
+                  );
+                } else {
                 // Update phase to EMAIL_SENT
                 await heap.dbLogger.updateRequest(request.requestId, {
                   phase: 'EMAIL_SENT'
@@ -819,6 +958,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
                   request.requestStartTime,
                   request.overallTimeout
                 );
+                }
                 buffer = null;
                 // FIX: clearModule/gc moved here — after async work completes —
                 // to avoid racing the active xlsx write stream
@@ -882,7 +1022,7 @@ async function processDetailandXLS(SQLProcess, alertData, request, response, res
           }
 
         // Optionally send SMS if configured
-        if (alertData[0].ALTSMS == 1 && alertData[0].ALTSMSCONTENT && alertData[0].ALTMOBILE && html.indexOf('ERRORDIAGNOSED') < 0) {
+        if (alertData[0].ALTSMS == 1 && alertData[0].ALTSMSCONTENT && alertData[0].ALTMOBILE && html.indexOf('ERRORDIAGNOSED') < 0 && !oracleErrorDetected) {
           const newLineSMS = '<br>';
           sendSMS(
             alertData[0].ALTMOBILE,
@@ -1229,7 +1369,16 @@ module.get = async function (request,response) {
                 heap.logger.log('alert', 'Executing shell script for SALTID: ' + saltid, 'alert', 2);
 
                 try {
-                    const result = await executeShellScript(saltid, saltshell, request.header('USER') || 'notification');
+                    const result = await executeShellScript(
+                        saltid,
+                        saltshell,
+                        request.header('USER') || 'notification',
+                        {
+                            saltCron: scheduleData[0].SALTCRON || '',
+                            saltDesc: scheduleData[0].SALTDESC || scheduleData[0].SALTCOMMENT || '',
+                            source: 'alert_management',
+                        }
+                    );
                     heap.logger.log('alert', 'Shell script execution completed: ' + JSON.stringify(result), 'alert', 2);
                     
                     // Return result as array for consistent frontend handling
@@ -1243,6 +1392,7 @@ module.get = async function (request,response) {
                             response.send([{ 
                                 STATUS: result.success ? 'SUCCESS' : 'ERROR',
                                 EXIT_CODE: result.exitCode,
+                                REQUEST_ID: result.requestId,
                                 OUTPUT: result.output,
                                 ERROR_OUTPUT: result.errorOutput,
                                 MESSAGE: result.message
@@ -1251,6 +1401,7 @@ module.get = async function (request,response) {
                     } else {
                         response.send([{ 
                             STATUS: result.success ? 'SUCCESS' : 'ERROR',
+                            REQUEST_ID: result.requestId,
                             MESSAGE: result.message
                         }]);
                     }
@@ -1258,6 +1409,7 @@ module.get = async function (request,response) {
                     heap.logger.log('alert', 'Shell script execution failed: ' + JSON.stringify(error), 'alert', 3);
                     response.status(500).send([{ 
                         STATUS: 'ERROR',
+                        REQUEST_ID: error && error.requestId,
                         MESSAGE: error.message || 'Shell script execution failed'
                     }]);
                 }
@@ -1272,4 +1424,3 @@ module.get = async function (request,response) {
     }
     return module;
  }
- 
