@@ -1,0 +1,464 @@
+@import '../../layouts/themes/fall-palette';
+
+// Thanksgiving picnic & décor — left/right foreground, center clear for login card
+
+.tg-scene {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+// ---- Hay bales (right mid-ground) ----
+.tg-hay {
+  position: absolute;
+  bottom: 18%;
+  right: 4%;
+  width: 88px;
+  height: 52px;
+  background: radial-gradient(ellipse at 50% 40%, lighten($tg-hay, 8%), $tg-hay 55%, darken($tg-hay, 12%));
+  border-radius: 40% 40% 45% 45%;
+  box-shadow:
+    0 4px 10px rgba($fall-deep, 0.28),
+    inset 0 -6px 10px rgba($fall-deep, 0.15);
+  &::before {
+    content: '';
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 28%;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba($fall-deep, 0.18) 6px, rgba($fall-deep, 0.18) 8px);
+  }
+  &--back {
+    bottom: 20%;
+    right: 9%;
+    width: 70px;
+    height: 42px;
+    opacity: 0.9;
+    transform: scale(0.92);
+  }
+}
+
+// ---- Cornucopia (right foreground) ----
+.tg-cornucopia {
+  position: absolute;
+  bottom: 14%;
+  right: 14%;
+  width: 72px;
+  height: 48px;
+  z-index: 3;
+  &__horn {
+    position: absolute;
+    width: 58px;
+    height: 28px;
+    left: 0;
+    bottom: 8px;
+    background: linear-gradient(135deg, #A67C52, #8B5E3C 60%, #6B4423);
+    border-radius: 60% 20% 40% 50%;
+    transform: rotate(-18deg);
+    box-shadow: 0 3px 8px rgba($fall-deep, 0.3);
+  }
+  &__spill {
+    position: absolute;
+    right: 0;
+    bottom: 4px;
+    width: 36px;
+    height: 32px;
+  }
+  &__gourd {
+    position: absolute;
+    width: 14px;
+    height: 12px;
+    border-radius: 50% 50% 45% 45%;
+    background: $fall-pumpkin-a;
+    box-shadow: inset -2px -2px 4px rgba($fall-deep, 0.25);
+    &--1 { right: 4px; bottom: 10px; background: $fall-burnt; }
+    &--2 { right: 14px; bottom: 4px; width: 11px; height: 10px; background: $tg-gold; }
+    &--3 { right: 8px; bottom: 18px; width: 10px; height: 9px; background: $tg-burgundy; }
+  }
+}
+
+// ---- Autumn wreath (left tree area, mid) ----
+.tg-wreath {
+  position: absolute;
+  top: 22%;
+  left: 7%;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 10px solid transparent;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 42%, $fall-burnt 43%, $fall-leaf-gold 55%, $tg-burgundy 68%, transparent 70%) padding-box,
+    radial-gradient(circle, transparent 55%, rgba($fall-deep, 0.15) 70%) border-box;
+  box-shadow: 0 4px 12px rgba($fall-deep, 0.2);
+  opacity: 0.92;
+  animation: tg-wreath-sway 7s ease-in-out infinite;
+}
+
+@keyframes tg-wreath-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+// ---- Picnic feast (LEFT foreground) ----
+.tg-picnic {
+  position: absolute;
+  left: 2%;
+  bottom: 8%;
+  width: min(340px, 32vw);
+  height: min(220px, 28vh);
+  min-width: 260px;
+  min-height: 180px;
+  z-index: 4;
+  transform-origin: bottom left;
+}
+
+.tg-table {
+  position: absolute;
+  left: 8%;
+  bottom: 18%;
+  width: 84%;
+  height: 28%;
+  &__top {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 42%;
+    background: linear-gradient(180deg, lighten($tg-table, 18%), $tg-table 40%, darken($tg-table, 8%));
+    border-radius: 6px 6px 4px 4px;
+    box-shadow:
+      0 6px 14px rgba($fall-deep, 0.35),
+      inset 0 2px 0 rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba($fall-deep, 0.25);
+  }
+  &__cloth {
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 6%;
+    height: 36%;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgba($fall-cream, 0.95) 0 10px,
+        rgba($tg-burgundy, 0.35) 10px 12px
+      );
+    border-radius: 2px;
+    opacity: 0.9;
+  }
+  &__leg {
+    position: absolute;
+    bottom: 0;
+    width: 8%;
+    height: 62%;
+    background: linear-gradient(90deg, darken($tg-table, 6%), lighten($tg-table, 4%), darken($tg-table, 10%));
+    border-radius: 2px;
+    &--l { left: 12%; }
+    &--r { right: 12%; }
+  }
+}
+
+// Roasted turkey (prominent center of table)
+.tg-turkey {
+  position: absolute;
+  left: 36%;
+  bottom: 42%;
+  width: 28%;
+  height: 32%;
+  z-index: 5;
+  &__body {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 8%;
+    height: 70%;
+    background: radial-gradient(ellipse at 45% 35%, lighten($tg-turkey, 18%), $tg-turkey 50%, darken($tg-turkey, 18%));
+    border-radius: 48% 48% 42% 42%;
+    box-shadow:
+      0 4px 10px rgba($fall-deep, 0.35),
+      inset -4px -6px 12px rgba($fall-deep, 0.25),
+      inset 3px 4px 8px rgba(255, 220, 160, 0.35);
+  }
+  &__leg {
+    position: absolute;
+    width: 22%;
+    height: 38%;
+    bottom: 18%;
+    background: linear-gradient(160deg, lighten($tg-turkey, 10%), darken($tg-turkey, 12%));
+    border-radius: 40% 40% 55% 55%;
+    &--l { left: -2%; transform: rotate(-28deg); }
+    &--r { right: -2%; transform: rotate(28deg); }
+  }
+  &__drum {
+    position: absolute;
+    width: 55%;
+    height: 28%;
+    bottom: -8%;
+    left: 22%;
+    background: #E8D5B5;
+    border-radius: 40%;
+    box-shadow: inset 0 -1px 2px rgba($fall-deep, 0.2);
+  }
+  &__steam {
+    position: absolute;
+    left: 30%;
+    top: -8%;
+    width: 40%;
+    height: 28%;
+    background: radial-gradient(ellipse, rgba(255, 255, 255, 0.45), transparent 70%);
+    animation: tg-steam 3.5s ease-in-out infinite;
+    filter: blur(2px);
+  }
+}
+
+@keyframes tg-steam {
+  0%, 100% { opacity: 0.35; transform: translateY(0) scaleX(1); }
+  50% { opacity: 0.7; transform: translateY(-6px) scaleX(1.15); }
+}
+
+// Dishes on table
+.tg-dish {
+  position: absolute;
+  bottom: 44%;
+  z-index: 4;
+  &__bowl {
+    width: 100%;
+    height: 55%;
+    border-radius: 40% 40% 35% 35%;
+    background: linear-gradient(180deg, #F5E6D3, #E8D4B8);
+    box-shadow: 0 2px 4px rgba($fall-deep, 0.25);
+  }
+  &__fill {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 8%;
+    height: 42%;
+    border-radius: 45%;
+  }
+  &--mash {
+    left: 12%;
+    width: 14%;
+    height: 16%;
+    .tg-dish__fill { background: radial-gradient(circle, #FFF8E7, #F0E0C0); }
+  }
+  &--veg {
+    left: 22%;
+    width: 13%;
+    height: 15%;
+    .tg-dish__fill { background: radial-gradient(circle, #7CB342, #558B2F); }
+  }
+  &--corn {
+    right: 14%;
+    width: 12%;
+    height: 14%;
+    .tg-dish__fill {
+      background: repeating-linear-gradient(90deg, #F9C74F 0 3px, #F4A261 3px 4px);
+      border-radius: 30%;
+    }
+  }
+  &--pie {
+    right: 24%;
+    width: 15%;
+    height: 14%;
+    .tg-dish__bowl {
+      background: linear-gradient(180deg, #D4A574, #A67C52);
+      border-radius: 8% 8% 20% 20%;
+      height: 70%;
+    }
+    .tg-dish__fill {
+      top: 0;
+      height: 55%;
+      background: radial-gradient(ellipse, lighten($tg-pie, 12%), $tg-pie);
+      border-radius: 8% 8% 40% 40%;
+    }
+  }
+  &--bread {
+    left: 68%;
+    width: 11%;
+    height: 12%;
+    bottom: 46%;
+    .tg-dish__bowl {
+      background: linear-gradient(145deg, #E8C48A, #C9A66B 60%, #A67C52);
+      border-radius: 40% 40% 35% 35%;
+      height: 80%;
+    }
+  }
+}
+
+// Guests around the table (friendly cartoon silhouettes)
+.tg-guest {
+  position: absolute;
+  z-index: 3;
+  &__body {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 38%;
+    height: 48%;
+    border-radius: 40% 40% 20% 20%;
+  }
+  &__head {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 42%;
+    height: 28%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #F5D0B0, #E0B090);
+    box-shadow: inset -2px -2px 4px rgba($fall-deep, 0.15);
+    top: 8%;
+  }
+  &__hair {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 2%;
+    width: 48%;
+    height: 18%;
+    border-radius: 50% 50% 20% 20%;
+  }
+  &__arm {
+    position: absolute;
+    width: 18%;
+    height: 28%;
+    border-radius: 40%;
+    top: 38%;
+    background: #E0B090;
+    &--l { left: 8%; transform: rotate(18deg); }
+    &--r { right: 8%; transform: rotate(-18deg); }
+  }
+
+  &--1 {
+    left: 4%;
+    bottom: 28%;
+    width: 22%;
+    height: 48%;
+    .tg-guest__body { background: linear-gradient(180deg, $tg-burgundy, darken($tg-burgundy, 8%)); }
+    .tg-guest__hair { background: #3E2723; }
+    animation: tg-guest-sway 4.5s ease-in-out infinite;
+  }
+  &--2 {
+    left: 18%;
+    bottom: 26%;
+    width: 20%;
+    height: 44%;
+    .tg-guest__body { background: linear-gradient(180deg, $tg-forest, darken($tg-forest, 10%)); }
+    .tg-guest__hair { background: #5D4037; width: 52%; }
+    animation: tg-guest-sway 5s ease-in-out infinite 0.4s;
+  }
+  &--3 {
+    right: 6%;
+    bottom: 27%;
+    width: 21%;
+    height: 46%;
+    .tg-guest__body { background: linear-gradient(180deg, #5C6BC0, #3949AB); }
+    .tg-guest__hair { background: #4E342E; }
+    animation: tg-guest-sway 4.8s ease-in-out infinite 0.8s;
+  }
+  &--4 {
+    right: 20%;
+    bottom: 25%;
+    width: 18%;
+    height: 40%;
+    .tg-guest__body { background: linear-gradient(180deg, $fall-burnt, $fall-rust); }
+    .tg-guest__hair { background: #6D4C41; border-radius: 40%; height: 14%; top: 6%; }
+    animation: tg-guest-sway 5.2s ease-in-out infinite 1.1s;
+  }
+}
+
+@keyframes tg-guest-sway {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-3px) rotate(1.5deg); }
+}
+
+// Decorative gourds near picnic
+.tg-gourd-cluster {
+  position: absolute;
+  left: 72%;
+  bottom: 6%;
+  width: 20%;
+  height: 18%;
+  z-index: 5;
+}
+.tg-gourd {
+  position: absolute;
+  border-radius: 50% 50% 45% 45%;
+  box-shadow: 0 2px 6px rgba($fall-deep, 0.3), inset -2px -2px 4px rgba($fall-deep, 0.2);
+  &--a {
+    left: 0; bottom: 0; width: 42%; height: 70%;
+    background: radial-gradient(circle at 35% 30%, lighten($fall-pumpkin-a, 10%), $fall-burnt);
+  }
+  &--b {
+    left: 32%; bottom: 8%; width: 34%; height: 55%;
+    background: radial-gradient(circle at 40% 30%, $tg-gold, darken($tg-gold, 15%));
+  }
+  &--c {
+    left: 58%; bottom: 0; width: 38%; height: 62%;
+    background: radial-gradient(circle at 40% 30%, lighten($tg-burgundy, 20%), $tg-burgundy);
+  }
+}
+
+// Soft golden afternoon glow overlay (non-blocking)
+.tg-golden-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 40% at 78% 18%, rgba(255, 200, 100, 0.28), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 20% 70%, rgba(224, 123, 57, 0.12), transparent 55%);
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: soft-light;
+}
+
+// Night: warmer dusk, keep feast readable
+.login-page--night {
+  .tg-golden-glow {
+    background:
+      radial-gradient(ellipse 50% 35% at 78% 16%, rgba(255, 160, 60, 0.18), transparent 55%),
+      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(40, 20, 10, 0.35), transparent 50%);
+    mix-blend-mode: normal;
+  }
+  .tg-picnic { filter: brightness(0.92) saturate(1.05); }
+  .tg-turkey__steam { opacity: 0.5; }
+}
+
+.login-page--paused {
+  .tg-wreath,
+  .tg-guest--1,
+  .tg-guest--2,
+  .tg-guest--3,
+  .tg-guest--4,
+  .tg-turkey__steam {
+    animation-play-state: paused !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .tg-picnic {
+    width: min(280px, 42vw);
+    left: 1%;
+    bottom: 6%;
+    transform: scale(0.88);
+  }
+  .tg-hay,
+  .tg-cornucopia,
+  .tg-wreath { opacity: 0.85; transform: scale(0.85); }
+}
+
+@media (max-width: 600px) {
+  .tg-picnic {
+    opacity: 0.75;
+    transform: scale(0.65);
+    transform-origin: bottom left;
+    left: 0;
+    bottom: 4%;
+  }
+  .tg-hay--back,
+  .tg-wreath { display: none; }
+  .tg-cornucopia { right: 4%; bottom: 10%; transform: scale(0.8); }
+}

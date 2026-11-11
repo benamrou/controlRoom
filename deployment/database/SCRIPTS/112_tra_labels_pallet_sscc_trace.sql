@@ -27,9 +27,9 @@ DECLARE
 BEGIN
   seed3('S87.TITLE', 'Pallet/SSCC traceability', 'Pallet/SSCC traceability', 'Tracabilite palette/SSCC', 'SCR0000000087');
   seed3('S87.WARN',
-        'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC pallet lines. Default search: allotment, any indicators. Use Apply to all to set the same UBD and/or production lot on every result row.',
-        'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC pallet lines. Default search: allotment, any indicators. Use Apply to all to set the same UBD and/or production lot on every result row.',
-        'Ajouter, modifier ou supprimer DLC et LOF sur les SSCC live et archives. Recherche par defaut : allotement, tous indicateurs. Utiliser Appliquer a tous pour fixer la meme DLC et/ou le meme lot sur toutes les lignes.',
+        'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC lines. Saves update reception-movement traceability and related shipped pallets. Default search: allotment. Use Apply to all for every result row.',
+        'Add, edit or remove UBD and production lot (LOF) on live and archived SSCC lines. Saves update reception-movement traceability and related shipped pallets. Default search: allotment. Use Apply to all for every result row.',
+        'Ajouter, modifier ou supprimer DLC et LOF sur les SSCC live et archives. L''enregistrement met a jour la tracabilite du mouvement de reception et les palettes expediees liees. Recherche par defaut : allotement.',
         'SCR0000000087');
   seed3('S87.LBL.SSCC', 'SSCC #', 'SSCC #', 'SSCC #', 'SCR0000000087');
   seed3('S87.LBL.ITEM', 'Item #', 'Item #', 'Article #', 'SCR0000000087');
@@ -71,12 +71,12 @@ BEGIN
   seed3('S87.PLH.UID', 'Enter your user id to confirm', 'Enter your user id to confirm',
         'Saisir votre identifiant pour confirmer', 'SCR0000000087');
   seed3('S87.CFM.TTL', 'Confirm change', 'Confirm change', 'Confirmer modification', 'SCR0000000087');
-  seed3('S87.CFM.DEL', 'Remove this traceability indicator from the SSCC line?',
-        'Remove this traceability indicator from the SSCC line?',
-        'Supprimer cet indicateur de tracabilite de la ligne SSCC ?', 'SCR0000000087');
-  seed3('S87.CFM.SAV', 'Save this traceability indicator on the SSCC line?',
-        'Save this traceability indicator on the SSCC line?',
-        'Enregistrer cet indicateur de tracabilite sur la ligne SSCC ?', 'SCR0000000087');
+  seed3('S87.CFM.DEL', 'Remove this indicator from the reception movement and related SSCC lines?',
+        'Remove this indicator from the reception movement and related SSCC lines?',
+        'Supprimer cet indicateur du mouvement de reception et des lignes SSCC liees ?', 'SCR0000000087');
+  seed3('S87.CFM.SAV', 'Save this indicator on the reception movement and related SSCC lines?',
+        'Save this indicator on the reception movement and related SSCC lines?',
+        'Enregistrer cet indicateur sur le mouvement de reception et les lignes SSCC liees ?', 'SCR0000000087');
   seed3('S87.MSG.UINV', 'User id does not match your login.',
         'User id does not match your login.',
         'L''identifiant ne correspond pas a votre connexion.', 'SCR0000000087');
@@ -107,8 +107,8 @@ MERGE INTO TRA_TECHOBJ t
 USING (
   SELECT 'SCR0000000087' AS TOBID,
          'Warehouse' AS TOBCAT,
-         q'[<div><i class="bbs-keywords">What is it : </i>Maintain UBD and production lot (LOF) indicators on GOLD STOCK SSCC lines (TB_TRAUMS / TB_HTRAUMS). Mainly for allotment receiving where indicators were not captured.</div>]' AS TOBDESC,
-         q'[<div><i class="bbs-keywords">When to use : </i>Allotment pallets missing UBD/LOF, or correct an existing indicator. Apply to all sets the same UBD and/or production lot on every searched line.</div>]' AS TOBDESC2
+         q'[<div><i class="bbs-keywords">What is it : </i>Maintain UBD and production lot (LOF) on GOLD STOCK reception movements (TB_TMVTR / TB_HTMVTR), shipment movements (TB_TMVTE / TB_HTMVTE), and SSCC lines (TB_TRAUMS / TB_HTRAUMS). Allotment received keeps indicators on the reception movement; in-stock and shipped also update pallet lines and shipment indicators, including sibling shipped SSCCs.</div>]' AS TOBDESC,
+         q'[<div><i class="bbs-keywords">When to use : </i>Allotment or in-stock pallets missing UBD/LOF, or correct an existing indicator. Save/delete fans out to the linked reception movement, shipment movement (when shipped), and related shipped pallets.</div>]' AS TOBDESC2
     FROM dual
 ) s ON (t.TOBID = s.TOBID)
 WHEN MATCHED THEN UPDATE SET

@@ -17,13 +17,28 @@ Restore by copying `*_Fall.*` over the live filenames:
 | `layouts/sidebar/sidebar.component.scss` | `sidebar.component_Fall.scss` |
 | `layouts/sidebar/sidebar-menu/sidebar-menu.component.scss` | `sidebar-menu.component_Fall.scss` |
 
-Also remove or stop importing `login-halloween-extras.scss` from `login.component.scss`.
+Also remove or stop importing `login-thanksgiving-extras.scss` / `login-halloween-extras.scss` from `login.component.scss` as appropriate.
 
-## Active: Halloween 2026
+## Halloween 2026 (archived)
 
-Immersive Halloween dusk (default) + haunted midnight (moon click) on the Fall layout.
+Full snapshot under `pages/login/SeasonalThemes/Halloween_2026/`:
 
-- Palette: `fall-palette.scss` (spec colors + `$fall-*` aliases)
-- Decorations: `pages/login/login-halloween-extras.scss`
-- Forest foliage: `login-fall-forest.ts` (purple/burgundy/burnt)
-- Moon toggle + night scare events: `login.component.ts`
+- `login.component.{html,scss,ts}`
+- `login-halloween-extras.scss`, `login-halloween-ghosts.ts`
+- `fall-palette.scss` (Halloween remap with `$hw-*`)
+- `header.component.{html,scss}`, `sidebar.component.scss`, `sidebar-menu.component.scss`
+
+Restore by copying those files back over the live paths and re-importing `login-halloween-extras.scss`.
+
+## Active: Thanksgiving 2026
+
+Warm golden autumn afternoon on the Fall layout + CSS picnic feast (left foreground).
+
+Snapshot: `pages/login/SeasonalThemes/Thanksgiving_2026/`
+
+- Palette: `fall-palette.scss` (Fall colors + `$tg-*` accents)
+- Decorations: `pages/login/login-thanksgiving-extras.scss`
+- Forest foliage: `login-fall-forest.ts` (warm Fall leaf colors)
+- Greeting: 🦃 Happy Thanksgiving!
+- Header badge: 🦃 Thanksgiving
+- Sidebar active markers: 🦃

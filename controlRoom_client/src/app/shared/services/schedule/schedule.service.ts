@@ -133,7 +133,7 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
                          //schedule.end = this.datePipe.transform(data[i].LISDFIN, 'yyyy-MM-dd');
      
                  }
-                 //console.log('Supplier Schedule COMPLETED => ' + JSON.stringify(this.supplierSchedule));
+                 console.log('Supplier Schedule COMPLETED => ' + JSON.stringify(this.supplierSchedule));
                  return this.supplierSchedule;
              }));
    }
@@ -280,22 +280,22 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
                          JSON.stringify(supplierSchedules[i].schedules[k].deliveryDate) === JSON.stringify(supplierSchedules[i].workingSchedule[j].deliveryDate) &&
                          JSON.stringify(supplierSchedules[i].schedules[k].deliveryTime) === JSON.stringify(supplierSchedules[i].workingSchedule[j].deliveryTime) &&
                          JSON.stringify(supplierSchedules[i].schedules[k].leadTime) === JSON.stringify(supplierSchedules[i].workingSchedule[j].leadTime))   {
-                         
  
-                         //console.log('Schedule Match found : ' + JSON.stringify(supplierSchedules[i].workingSchedule[j]));
                          indexMatch = k;
+                         console.log('Schedule Match found : ' + JSON.stringify(supplierSchedules[i].workingSchedule[j]), indexMatch);
                          break;
                       }
                  }
-                 if (indexMatch >  -1) {
-                     site = new SiteSchedule();
-                     site.code = supplierSchedules[i].workingSchedule[j].sitecode;
-                     site.description = supplierSchedules[i].workingSchedule[j].sitedescription;
- 
-                     //console.log('Push store schedule Match Store : ' + JSON.stringify(site));
- 
-                     schedule.sites.push(site);
-                 }
+                if (indexMatch >  -1) {
+                    site = new SiteSchedule();
+                    site.code = supplierSchedules[i].workingSchedule[j].sitecode;
+                    site.description = supplierSchedules[i].workingSchedule[j].sitedescription;
+
+                    //console.log('Push store schedule Match Store : ' + JSON.stringify(site));
+
+                    // Attach to the matched schedule, not the last-created `schedule` variable
+                    supplierSchedules[i].schedules[indexMatch].sites.push(site);
+                }
                  else {
  
                      site = new SiteSchedule();
@@ -320,7 +320,7 @@ import { HttpParams, HttpHeaders } from '@angular/common/http';
      
                      supplierSchedules[i].activeschedules += 1;
                      supplierSchedules[i].schedules.push(schedule);
-                     //console.log('No match new schedule : ' + JSON.stringify(supplierSchedules[i]));
+                     //console.log('Match new schedule : ' + JSON.stringify(supplierSchedules[i]));
                  }
              }
          }

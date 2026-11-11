@@ -1,7 +1,6 @@
 /* ==============================================
-   ICR HALLOWEEN chrome — header.component.scss
-   Palette via fall-palette.scss (Halloween remap)
-   Pure Fall archive: header.component_Fall.scss
+   ICR FALL THEME — header.component.scss
+   Matches login.component.scss fall palette
    ============================================== */
 
 @import '../themes/fall-palette';
@@ -11,35 +10,33 @@
     z-index: 1040;
 }
 
-// ── Navbar Bar (Halloween dusk) ───────────────────────────────
+// ── Navbar Bar ─────────────────────────────────────────────────
 .fall-header {
     position: relative;
     overflow: visible;
     background: linear-gradient(
-        115deg,
-        $hw-aubergine 0%,
-        #3A2438 38%,
-        $hw-burgundy 72%,
-        darken($hw-burnt, 4%) 100%
+        135deg,
+        rgba($fall-cream, 0.95) 0%,
+        rgba($fall-amber, 0.92) 45%,
+        rgba($fall-burnt, 0.90) 100%
     );
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1.5px solid rgba($hw-pumpkin, 0.45);
+    border-bottom: 1.5px solid rgba($fall-coral, 0.30);
     box-shadow:
-        0 2px 18px rgba($hw-ink, 0.35),
-        0 0 24px rgba($hw-aubergine, 0.25),
-        0 1px 0 rgba($hw-moon, 0.08) inset;
+        0 2px 16px rgba($fall-deep, 0.10),
+        0 1px 0   rgba($fall-white, 0.60) inset;
 
     // ── Brand ────────────────────────────────────────────────
     .navbar-brand {
         font-weight: 700;
         font-size: 1.15rem;
         letter-spacing: 0.02em;
-        color: $hw-moon !important;
-        text-shadow: 0 1px 4px rgba($hw-ink, 0.45);
+        color: $fall-deep !important;
+        text-shadow: 0 1px 3px rgba($fall-white, 0.70);
         transition: opacity 0.2s;
 
-        &:hover { opacity: 0.85; }
+        &:hover { opacity: 0.78; }
     }
 
     .env-current-label {
@@ -51,34 +48,33 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         vertical-align: middle;
-        color: rgba($hw-moon, 0.85);
     }
 
     .adh-lang-dropdown .dropdown-item.active {
-        color: darken($hw-pumpkin, 8%) !important;
+        color: darken($fall-coral, 12%) !important;
         font-weight: 700;
         background: linear-gradient(
             90deg,
-            rgba($hw-pumpkin, 0.28) 0%,
-            rgba($hw-candle, 0.22) 100%
+            rgba($fall-coral, 0.28) 0%,
+            rgba($fall-sun, 0.22) 100%
         );
     }
 
     // ── Nav Links ────────────────────────────────────────────
     .nav-link {
-        color: $hw-moon !important;
+        color: $fall-deep !important;
         font-weight: 500;
         font-size: 0.93rem;
         padding: 0.45rem 0.75rem;
         border-radius: 8px;
         transition: background 0.18s, color 0.18s;
 
-        i { margin-right: 4px; color: $hw-candle; }
+        i { margin-right: 4px; }
 
         &:hover,
         &:focus {
-            background: rgba($hw-pumpkin, 0.22);
-            color: $hw-moon !important;
+            background: rgba($fall-coral, 0.18);
+            color: darken($fall-deep, 8%) !important;
         }
 
         &.isDisabled {
@@ -87,7 +83,7 @@
         }
     }
 
-    // Halloween badge — centred in the navbar
+    // Thanksgiving badge — centred in the navbar
     .fall-badge {
         position: absolute;
         left: 50%;
@@ -95,32 +91,30 @@
         transform: translate(-50%, -50%);
 
         span {
-            background: linear-gradient(135deg, $hw-pumpkin, $hw-burnt);
+            background: linear-gradient(135deg, $fall-burnt, $tg-burgundy);
             color: #fff;
             font-size: 0.7rem;
             font-weight: 700;
             padding: 4px 14px;
             border-radius: 12px;
-            box-shadow:
-                0 2px 12px rgba($hw-pumpkin, 0.4),
-                0 0 0 1px rgba($hw-moon, 0.15) inset;
+            box-shadow: 0 2px 10px rgba($tg-burgundy, 0.28);
             letter-spacing: 0.03em;
-            text-shadow: 0 1px 2px rgba($hw-ink, 0.35);
         }
     }
 
     // ── Hamburger toggler ─────────────────────────────────────
     .navbar-toggler {
-        border-color: rgba($hw-moon, 0.35);
+        border-color: rgba($fall-deep, 0.30);
 
         .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23FFF0C9' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%235C3A21' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
         }
     }
+    
 }
 
 
-// ── Halloween Badge ──────────────────────────────────────────
+// ── Thanksgiving Badge ───────────────────────────────────────
 .fall-badge {
     display: flex;
     align-items: center;
@@ -138,14 +132,13 @@
         color: #fff;
         background: linear-gradient(
             135deg,
-            $hw-pumpkin 0%,
-            mix($hw-pumpkin, $hw-aubergine, 55%) 100%
+            $fall-burnt 0%,
+            $tg-burgundy 100%
         );
-        border: 1px solid rgba($hw-candle, 0.4);
+        border: 1px solid rgba($tg-gold, 0.45);
         box-shadow:
-            0 1px 8px rgba($hw-pumpkin, 0.35),
-            0 0 14px rgba($hw-aubergine, 0.25),
-            0 0 0 1px rgba($hw-moon, 0.2) inset;
+            0 1px 6px rgba($tg-burgundy, 0.25),
+            0 0 0 1px rgba($fall-white, 0.45) inset;
         animation: badge-sway 4s ease-in-out infinite;
     }
 }
@@ -155,17 +148,16 @@
     50%      { transform: rotate(1.5deg);  }
 }
 
-// ── Halloween Dropdowns ──────────────────────────────────────
+// ── Fall Dropdowns ───────────────────────────────────────────
 .fall-dropdown {
-    background: rgba(247, 240, 228, 0.96);
+    background: rgba($fall-white, 0.92);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1.5px solid rgba($hw-pumpkin, 0.35);
+    border: 1.5px solid rgba($fall-coral, 0.25);
     border-radius: 14px;
     box-shadow:
-        0 8px 28px rgba($hw-ink, 0.28),
-        0 0 20px rgba($hw-aubergine, 0.12),
-        0 0 0 1px rgba($hw-moon, 0.5) inset;
+        0 8px 28px rgba($fall-deep, 0.12),
+        0 0 0 1px rgba($fall-white, 0.70) inset;
     padding: 6px 4px;
     min-width: 160px;
     overflow: hidden;
@@ -181,26 +173,26 @@
         align-items: center;
         gap: 8px;
 
-        i { color: $hw-burnt; min-width: 16px; }
+        i { color: $fall-trunk; min-width: 16px; }
 
         &:hover,
         &:focus {
             background: linear-gradient(
                 90deg,
-                rgba($hw-pumpkin, 0.28) 0%,
-                rgba($hw-aubergine, 0.12) 100%
+                rgba($fall-sun, 0.45) 0%,
+                rgba($fall-sky-mid,  0.35) 100%
             );
-            color: $hw-aubergine;
+            color: darken($fall-deep, 6%);
             padding-left: 20px;
         }
 
         &.active {
-            background: rgba($hw-pumpkin, 0.22);
+            background: rgba($fall-sky-mid, 0.35);
             font-weight: 700;
         }
 
         &:active {
-            background: rgba($hw-burgundy, 0.2);
+            background: rgba($fall-coral, 0.25);
             color: $fall-deep;
         }
 
@@ -210,8 +202,9 @@
         }
     }
 
+    // Thin petal-pink divider between groups (optional, targets last profile item)
     .dropdown-divider {
-        border-color: rgba($hw-aubergine, 0.18);
+        border-color: rgba($fall-coral, 0.22);
         margin: 4px 10px;
     }
 }
@@ -226,10 +219,10 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    background: rgba($hw-ink, 0.35);
-    border: 1.5px solid rgba($hw-moon, 0.45);
+    background: rgba(0,0,0,.35);
+    border: 1.5px solid rgba(255,255,255,.5);
     border-radius: 20px;
-    color: $hw-moon;
+    color: #fff;
     cursor: pointer;
     font-size: .78rem;
     font-weight: 600;
@@ -238,7 +231,7 @@
     white-space: nowrap;
     letter-spacing: .03em;
 
-    i { font-size: .8rem; color: $hw-candle; }
+    i { font-size: .8rem; }
 
     .ai-mode-label { font-weight: 700; }
     .ai-mode-state {
@@ -248,22 +241,21 @@
     }
 
     &:hover {
-        background: rgba($hw-pumpkin, 0.28);
-        border-color: $hw-moon;
+        background: rgba(0,0,0,.5);
+        border-color: #fff;
     }
 
     &--active {
-        background: $hw-pumpkin;
-        border-color: $hw-candle;
+        background: #38a169;
+        border-color: #38a169;
         color: #fff;
-        box-shadow: 0 0 12px rgba($hw-pumpkin, 0.55);
+        box-shadow: 0 0 10px rgba(56, 161, 105, .65);
 
         .ai-mode-state { opacity: 1; }
-        i { color: #fff; }
 
         &:hover {
-            background: $hw-burnt;
-            border-color: $hw-candle;
+            background: #276749;
+            border-color: #48bb78;
         }
     }
 }
@@ -279,10 +271,10 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba($hw-ink, 0.35);
-    border: 1.5px solid rgba($hw-moon, 0.45);
+    background: rgba(0,0,0,.35);
+    border: 1.5px solid rgba(255,255,255,.5);
     border-radius: 20px;
-    color: $hw-moon;
+    color: #fff;
     cursor: pointer;
     font-size: .78rem;
     font-weight: 600;
@@ -291,11 +283,11 @@
     white-space: nowrap;
     letter-spacing: .03em;
 
-    i { font-size: .85rem; margin-right: 0; color: $hw-candle; }
+    i { font-size: .85rem; margin-right: 0; }
 
     &:hover {
-        background: rgba($hw-pumpkin, 0.28);
-        border-color: $hw-moon;
+        background: rgba(0,0,0,.5);
+        border-color: #fff;
     }
 }
 
@@ -326,23 +318,23 @@
 }
 
 .news-empty {
-    color: $fall-deep;
+    color: #5c3a21;
     opacity: 0.7;
     padding: 1rem 0.25rem;
 }
 
 .news-card {
-    border: 1px solid rgba($hw-pumpkin, 0.28);
+    border: 1px solid rgba(197, 120, 80, 0.25);
     border-radius: 10px;
     padding: 0.75rem 1rem;
     margin-bottom: 0.75rem;
-    background: rgba($hw-moon, 0.55);
+    background: rgba(255, 255, 255, 0.7);
 
     h4,
     .news-card-title {
         margin: 0 0 0.25rem;
         font-size: 1rem;
-        color: $hw-aubergine;
+        color: #5c3a21;
         display: flex;
         align-items: center;
         gap: 0.4rem;

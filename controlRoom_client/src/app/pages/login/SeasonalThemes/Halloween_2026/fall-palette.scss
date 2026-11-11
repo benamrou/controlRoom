@@ -1,0 +1,40 @@
+// Active seasonal chrome palette — Halloween 2026 (login, header, sidebar)
+// Pure Fall snapshot remains in fall-palette_Fall.scss
+
+// Spec colors
+$hw-midnight:     #171126;
+$hw-aubergine:    #29162F;
+$hw-forest:       #263A2C;
+$hw-pumpkin:      #F07827;
+$hw-burnt:        #B84E24;
+$hw-moon:         #FFF0C9;
+$hw-mist:         #B9B1C8;
+$hw-candle:       #FFC766;
+$hw-burgundy:     #6B2D3C;
+$hw-ink:          #0E0A14;
+$hw-ghost:        rgba(255, 248, 240, 0.78);
+
+// Fall aliases remapped so existing .fall-* chrome picks up Halloween
+$fall-burnt:      $hw-pumpkin;
+$fall-amber:      $hw-candle;
+$fall-rust:       $hw-burnt;
+$fall-cream:      #F7F0E4;
+$fall-pumpkin-a:  $hw-pumpkin;
+$fall-pumpkin-b:  darken($hw-pumpkin, 6%);
+$fall-deep:       #3A2438;
+
+$fall-sky-top:    lighten($hw-candle, 8%);
+$fall-sky-mid:    $hw-pumpkin;
+$fall-horizon:    $hw-aubergine;
+$fall-ground:     #3D4A38;
+$fall-ground-dark:#2A3328;
+$fall-leaf-red:   $hw-burgundy;
+$fall-leaf-orange:$hw-pumpkin;
+$fall-leaf-gold:  $hw-candle;
+$fall-trunk:      #1A1420;
+$fall-white:      #ffffff;
+$fall-card-bg:    #F7F0E4;
+$fall-coral:      $hw-pumpkin;
+$fall-sun:        $hw-candle;
+$fall-peach:      $hw-candle;
+$fall-success:    #6B8E3E;

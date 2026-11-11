@@ -23,6 +23,25 @@ then generates per-retailer Oracle views and operational intelligence.
 
 ---
 
+## App version & last updates (login)
+
+Clicking the **company logo** on the login page opens a dialog with:
+- **Version** — hardcoded in `controlRoom_client/src/app/shared/app-release.ts` (`APP_VERSION`)
+- **Last updates** — live **What's new** feed (`ICR_NEWS` Patch/News), same as the post-login banner: `NewsBulletinService.listLoginBanners()` → LIBQUERY **`SET0000074`** (published items with active `NOTIFICATION_DATE` + `NOTIFICATION_MSG`)
+
+| Item | Location |
+|---|---|
+| Version constant | `controlRoom_client/src/app/shared/app-release.ts` |
+| Login dialog | `pages/login/login.component.ts` / `.html` — logo → `showHideVersion()` / `showAboutDialog` |
+| News / Patch admin & header UI | Header “What's new” · script `120_icr_news_patch.sql` · `SET0000070`–`0074` |
+
+**Agent / developer rule:**
+1. On every user-visible frontend ship: **bump** `APP_VERSION` (e.g. `6.0.1b0.12` → `6.0.1b0.13`).
+2. For release notes users should see: publish a **PATCH** or **NEWS** row in What’s new (with notify-until + notification message) — do **not** hardcode update bullets in `app-release.ts`.
+3. Do **not** reintroduce a corner version label on login.
+
+---
+
 ## Mass-change / mass-load (quick pointer)
 
 Full runbook (process, tool 24 Store/Whs returns, deploy order, compile traps): 

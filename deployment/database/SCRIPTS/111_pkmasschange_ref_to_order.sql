@@ -7,6 +7,8 @@
 -- Tool 22 (REFTOORDER) wired into MAIN_CHECK, MAIN_EXECUTE, MAIN_COLLECTERROR.
 -- Tool 23 (NEWITEMPPG) — New Item PPG via direct ARTENTLIST + ARTDETLIST (GET_NEXT_AVAILABLE_PPG kept unused).
 -- Tool 24 (LOADRETURN) — INTDETRET insert + Angular psint41p class 0 then 10.
+-- Tool 7  (SKUDIMENSION) — see 127_pkmasschange_skudimension_perf.sql (resolve-once
+--   keyed UPDATEs; paste SKUDIMENSION_EXECUTE into live package body).
 -- Tool 20 (STOCKLAYER) upgraded — init cost: POSITION column, ITFSTOCK + INTMVTSTO,
 --   psitf03p + pssti06p; UNIT_COST posted as-is to SKFPURP / IMSNPRE;
 --   LV_CODE required from file — exact ARTVL match, no ARTUL/default guess.

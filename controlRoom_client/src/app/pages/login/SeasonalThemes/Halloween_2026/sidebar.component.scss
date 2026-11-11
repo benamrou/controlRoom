@@ -1,0 +1,362 @@
+/* ==============================================
+   ICR HALLOWEEN chrome — sidebar.component.scss
+   Palette via fall-palette.scss (Halloween remap)
+   Pure Fall archive: sidebar.component_Fall.scss
+   ============================================== */
+
+@import '../themes/fall-palette';
+
+$sidebar-width: 230px;
+$sidebar-collapsed-width: 52px;
+
+// ── Main Sidebar ───────────────────────────────────────────────
+// ViewEncapsulation.None — styles apply to app-sidebar-menu children (Bootstrap overrides).
+.fall-sidebar {
+    position: fixed;
+    top: 56px;                          // below the navbar
+    left: 0;
+    width: $sidebar-width;
+    height: calc(100vh - 56px);
+    overflow-y: auto;                   // ← KEY FIX: scroll when content overflows
+    overflow-x: hidden;
+    background: linear-gradient(
+        180deg,
+        #F7F0E4 0%,
+        #EDE6F2 42%,
+        rgba($hw-aubergine, 0.14) 78%,
+        rgba($hw-burgundy, 0.12) 100%
+    ) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-right: 1.5px solid rgba($hw-pumpkin, 0.32);
+    box-shadow: 2px 0 18px rgba($hw-ink, 0.12), 2px 0 24px rgba($hw-aubergine, 0.08);
+    z-index: 100;
+    transition: width 0.2s ease;
+
+    // Smooth custom scrollbar
+    &::-webkit-scrollbar          { width: 5px; }
+    &::-webkit-scrollbar-track    { background: transparent; }
+    &::-webkit-scrollbar-thumb    { background: rgba($hw-pumpkin, 0.45); border-radius: 4px; }
+    &::-webkit-scrollbar-thumb:hover { background: rgba($hw-burnt, 0.65); }
+
+    .fall-sidebar-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: calc(100% - 16px);
+        margin: 4px 8px 8px;
+        padding: 8px 10px;
+        border: 1px solid rgba($hw-pumpkin, 0.32);
+        border-radius: 8px;
+        background: rgba($hw-moon, 0.55);
+        color: $fall-deep;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+
+        i { color: $hw-burnt; width: 16px; text-align: center; }
+
+        &:hover {
+            background: rgba($hw-pumpkin, 0.22);
+            border-color: rgba($hw-pumpkin, 0.5);
+        }
+    }
+
+    // ── Top-level list ────────────────────────────────────────
+    ul.list-group {
+        list-style: none;
+        padding: 6px 0 180px 0;         // ← clears the fixed admin bar at the bottom
+        margin: 0;
+    }
+
+    // ── Top-level items (override Bootstrap white list-group-item) ──
+    .list-group-item,
+    a.list-group-item,
+    .nested-menu > .list-group-item {
+        display: block;
+        padding: 10px 16px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: $fall-deep !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        border-top: 1px solid rgba($hw-aubergine, 0.12) !important;
+        border-radius: 0;
+        cursor: pointer;
+        transition: background 0.16s, padding-left 0.16s;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .list-group-item i,
+    a.list-group-item i,
+    .nested-menu > .list-group-item i {
+        color: $hw-burnt;
+        margin-right: 6px;
+        width: 16px;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .list-group-item:hover,
+    a.list-group-item:hover,
+    .nested-menu > .list-group-item:hover {
+        background: rgba($hw-pumpkin, 0.18) !important;
+        padding-left: 20px;
+        color: $hw-aubergine !important;
+    }
+
+    .list-group-item.router-link-active,
+    a.list-group-item.router-link-active {
+        background: linear-gradient(90deg, rgba($hw-pumpkin, 0.24) 0%, rgba($hw-aubergine, 0.12) 100%) !important;
+        border-left: 3px solid $hw-pumpkin !important;
+        padding-left: 13px;
+        color: $hw-aubergine !important;
+        position: relative;
+
+        &::after {
+            content: '🎃';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            font-size: 0.75rem;
+            animation: fall-sidebar-leaf 2.8s ease-in-out infinite;
+            pointer-events: none;
+        }
+    }
+
+@keyframes fall-sidebar-leaf {
+    0%, 100% { transform: translateY(-50%) rotate(-8deg); }
+    50%      { transform: translateY(calc(-50% - 2px)) rotate(8deg); }
+}
+
+    ul.list-group > a.list-group-item:first-of-type {
+        border-top: none !important;
+    }
+
+    .submenu-group-label .menu-label {
+        display: block;
+        padding: 0.35rem 1rem 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: darken($fall-deep, 8%);
+        letter-spacing: 0.03em;
+    }
+
+    // ── Submenu (1st level) ───────────────────────────────────
+    li.nested {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.28s ease;
+
+        &.expand {
+            max-height: 2000px;         // large enough for any submenu
+            transition: max-height 0.35s ease;
+        }
+    }
+
+    ul.submenu {
+        list-style: none;
+        padding: 2px 0 2px 16px;
+        margin: 0;
+        background: rgba($hw-aubergine, 0.06);
+        border-left: 2px solid rgba($hw-pumpkin, 0.3);
+        margin-left: 12px;
+
+        li { padding: 0; }
+    }
+
+    // ── Sub-submenu (2nd level — Reporting box) ───────────────
+    ul.subsubmenu {
+        list-style: none;
+        padding: 1px 0 1px 14px;
+        margin: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.25s ease;
+
+        &.expand {
+            max-height: 800px;
+        }
+    }
+
+    // ── Submenu / sub-submenu links ───────────────────────────
+    .bbs_link_menu {
+        display: block;
+        padding: 7px 12px;
+        font-size: 0.83rem;
+        font-weight: 500;
+        color: darken($fall-deep, 2%);
+        text-decoration: none;
+        border-radius: 6px;
+        transition: background 0.14s, padding-left 0.14s;
+        white-space: nowrap;
+
+        i { color: $hw-burnt; margin-right: 6px; width: 14px; font-size: 0.80rem; text-align: center; display: inline-block; }
+
+        &:hover {
+            background: rgba($hw-pumpkin, 0.2);
+            padding-left: 16px;
+        }
+
+        &.router-link-active {
+            background: rgba($hw-pumpkin, 0.22);
+            color: $hw-aubergine;
+            font-weight: 700;
+        }
+    }
+
+    // ── Collapsed state (icon rail) ───────────────────────────
+    &.collapsed {
+        width: $sidebar-collapsed-width;
+
+        .fall-sidebar-toggle {
+            width: calc(100% - 8px);
+            margin: 4px 4px 8px;
+            padding: 8px 0;
+            justify-content: center;
+            gap: 0;
+        }
+
+        ul.list-group {
+            padding-bottom: 120px;
+        }
+
+        .menu-label,
+        .submenu-group-label,
+        li.nested {
+            display: none !important;
+        }
+
+        .list-group-item,
+        a.list-group-item,
+        .nested-menu > .list-group-item {
+            padding: 12px 0;
+            text-align: center;
+
+            &:hover { padding-left: 0; }
+
+            i { margin-right: 0; }
+
+            &.router-link-active {
+                padding-left: 0;
+                &::after { display: none; }
+            }
+        }
+
+        .bbs_link_menu {
+            padding: 8px 0;
+            text-align: center;
+            &:hover { padding-left: 0; }
+            i { margin-right: 0; }
+        }
+    }
+}
+
+
+// ── Admin Sidebar ──────────────────────────────────────────────
+.fall-sidebar-admin {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: $sidebar-width;
+    background: linear-gradient(
+        135deg,
+        rgba(#F7F0E4, 0.98) 0%,
+        rgba($hw-aubergine, 0.18) 55%,
+        rgba($hw-burgundy, 0.22) 100%
+    ) !important;
+    border-top:  1.5px solid rgba($hw-pumpkin, 0.3);
+    border-right: 1.5px solid rgba($hw-pumpkin, 0.3);
+    box-shadow: 2px -2px 14px rgba($hw-ink, 0.12), 0 -4px 16px rgba($hw-aubergine, 0.08);
+    z-index: 100;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: width 0.2s ease;
+
+    .list-group { padding: 6px 0 12px 0; }
+
+    .list-group-item,
+    a.list-group-item,
+    .nested-menu > .list-group-item {
+        display: block;
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: $fall-deep !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        cursor: pointer;
+        transition: background 0.15s;
+        text-decoration: none;
+        white-space: nowrap;
+
+        i { color: $hw-burnt; margin-right: 6px; width: 16px; text-align: center; display: inline-block; }
+
+        &:hover { background: rgba($hw-pumpkin, 0.18) !important; }
+
+        &.isDisabled { pointer-events: none; opacity: 0.40; }
+    }
+
+    li.nested {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.28s ease;
+        &.expand { max-height: 600px; }
+    }
+
+    ul.submenu {
+        list-style: none;
+        padding: 2px 0 2px 16px;
+        margin: 0 0 0 12px;
+        background: rgba($hw-aubergine, 0.06);
+        border-left: 2px solid rgba($hw-pumpkin, 0.28);
+
+        li a {
+            display: block;
+            padding: 7px 10px;
+            font-size: 0.82rem;
+            color: $fall-deep;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.13s;
+            white-space: nowrap;
+
+            i { color: $hw-burnt; margin-right: 5px; }
+            &:hover { background: rgba($hw-pumpkin, 0.18); }
+            &.router-link-active { background: rgba($hw-pumpkin, 0.2); font-weight: 700; }
+        }
+    }
+
+    .logo {
+        text-align: center;
+        padding: 8px 0 10px;
+        border-top: 1px solid rgba($hw-pumpkin, 0.25);
+    }
+
+    &.collapsed {
+        width: $sidebar-collapsed-width;
+
+        .menu-label,
+        .submenu-group-label,
+        li.nested {
+            display: none !important;
+        }
+
+        .list-group-item,
+        a.list-group-item {
+            padding: 10px 0;
+            text-align: center;
+            i { margin-right: 0; }
+        }
+
+        .logo {
+            padding: 6px 2px;
+            img { width: 70% !important; max-width: 36px; }
+        }
+    }
+}

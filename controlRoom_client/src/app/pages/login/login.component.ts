@@ -7,7 +7,8 @@ import { MenuAccessService } from '../../shared/services/menu/menu-access.servic
 import { catchError, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { FallForestRenderer } from './login-fall-forest';
-import { HalloweenGhostRenderer } from './login-halloween-ghosts';
+import { APP_VERSION } from '../../shared/app-release';
+import { NewsItem } from '../../shared/services/news/news.bulletin.service';
 
 interface FallLeaf {
     id: number;
@@ -35,6 +36,16 @@ interface FallWolf {
     howling: boolean;
 }
 
+interface VolcanoPumpkin {
+    id: number;
+    arc: number;
+    delay: number;
+    vx: string;
+    vy: string;
+    spin: string;
+    size: number;
+}
+
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
@@ -44,7 +55,6 @@ interface FallWolf {
 export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('fallForest') fallForestCanvas?: ElementRef<HTMLCanvasElement>;
-    @ViewChild('hwGhosts') hwGhostsCanvas?: ElementRef<HTMLCanvasElement>;
     @ViewChild('catStage') catStageRef?: ElementRef<HTMLDivElement>;
     @ViewChild('owlStage') owlStageRef?: ElementRef<HTMLDivElement>;
 
@@ -59,7 +69,11 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     canConnect: boolean = false;
     connectionMessage: Message[] = [];
     divVersion: any;
-    showVersion = false;
+    showAboutDialog = false;
+    aboutBusy = false;
+    aboutError = '';
+    aboutItems: NewsItem[] = [];
+    readonly appVersion = APP_VERSION;
 
     footballs: number[] = Array(50).fill(0);
     snowflakes: number[] = Array(50).fill(0);
@@ -74,28 +88,21 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     wolves: FallWolf[] = [];
     owlPerched = false;
     owlFacingLeft = false;
+    turkeyFlying = false;
+    runnerFalling: { [id: number]: boolean } = {};
+    tableTurkeyVolcano = false;
+    volcanoPumpkins: VolcanoPumpkin[] = [];
 
-    /** Decorative slot arrays (template *ngFor). */
-    batSlots = [1, 2, 3, 4, 5, 6, 7];
-    batSwarmSlots = [1, 2, 3, 4, 5, 6];
-    fireflySlots = [1, 2, 3, 4, 5, 6, 7, 8];
+    private turkeyFlyTimer?: ReturnType<typeof setTimeout>;
+    private runnerFallTimers: { [id: number]: ReturnType<typeof setTimeout> } = {};
+    private tableTurkeyClicks = 0;
+    private volcanoTimer?: ReturnType<typeof setTimeout>;
+    private volcanoPumpkinIdSeq = 0;
+    private static readonly TABLE_TURKEY_CLICKS_NEEDED = 7;
 
-    /** Night-mode scare event flags (CSS class toggles). */
-    scareFog = false;
-    scareEyes = false;
-    scarePumpkin = false;
-    scareGhost = false;
-    scareBats = false;
-
-    /** Grave skeleton: hidden → rising → walking; day → falling → hidden. */
-    skeletonPhase: 'hidden' | 'rising' | 'walking' | 'falling' = 'hidden';
 
     private forest?: FallForestRenderer;
-    private ghosts?: HalloweenGhostRenderer;
     private chaseTimer?: ReturnType<typeof setTimeout>;
-    private scareTimer?: ReturnType<typeof setTimeout>;
-    private scareClearTimer?: ReturnType<typeof setTimeout>;
-    private skeletonTimer?: ReturnType<typeof setTimeout>;
     private catRaf = 0;
     private wolfRaf = 0;
     private wolfLastTs = 0;
@@ -134,6 +141,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         private _screenService: ScreenService,
         private _structureService: StructureService,
         private _menuAccess: MenuAccessService,
+        private _news: NewsBulletinService,
         private ngZone: NgZone,
     ) {
         this.canConnect = false;
@@ -155,14 +163,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.forest.setPaused(true);
             }
         }
-        const ghostCanvas = this.hwGhostsCanvas?.nativeElement;
-        if (ghostCanvas) {
-            this.ghosts = new HalloweenGhostRenderer(ghostCanvas);
-            this.ghosts.start({ reducedMotion: this.reducedMotion, night: this.isNightMode });
-            if (this.animationsPaused) {
-                this.ghosts.setPaused(true);
-            }
-        }
         if (!this.reducedMotion && !this.animationsPaused) {
             this.applyCatPose();
             this.startCatIdle();
@@ -176,24 +176,27 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         this.stopCatMotion();
         this.stopWolfMotion();
         this.stopOwlMotion();
-        this.stopScareLoop();
-        this.clearSkeletonTimer();
+        if (this.turkeyFlyTimer) {
+            clearTimeout(this.turkeyFlyTimer);
+            this.turkeyFlyTimer = undefined;
+        }
+        Object.keys(this.runnerFallTimers).forEach((key) => {
+            clearTimeout(this.runnerFallTimers[+key]);
+        });
+        this.runnerFallTimers = {};
+        this.resetTableTurkeyVolcano();
         this.forest?.destroy();
         this.forest = undefined;
-        this.ghosts?.destroy();
-        this.ghosts = undefined;
     }
 
     @HostListener('document:visibilitychange')
     onVisibilityChange(): void {
         this.animationsPaused = document.hidden;
         this.forest?.setPaused(document.hidden);
-        this.ghosts?.setPaused(document.hidden);
         if (document.hidden) {
             this.stopCatMotion();
             this.stopWolfMotion();
             this.stopOwlMotion();
-            this.stopScareLoop();
             this.catPhase = 'idle';
             this.catHopPx = 0;
             this.catIsTurning = false;
@@ -203,7 +206,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
             this.ensureWolfLoop();
             if (this.isNightMode) {
                 this.startOwlFlight();
-                this.startScareLoop();
             }
         }
     }
@@ -221,10 +223,110 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!target) {
             return;
         }
-        if (target.closest('.main-content, .fall-sun, .fall-toast, .p-toast, button, input, a, label')) {
+        if (target.closest('.main-content, .fall-sun, .fall-toast, .p-toast, button, input, a, label, .tg-run-turkey, .tg-runner, .tg-turkey')) {
             return;
         }
         this.spawnWolf(event);
+    }
+
+    trackVolcanoPumpkin(_index: number, p: VolcanoPumpkin): number {
+        return p.id;
+    }
+
+    isRunnerFalling(id: number): boolean {
+        return !!this.runnerFalling[id];
+    }
+
+    onTurkeyClick(event: Event): void {
+        event.stopPropagation();
+        event.preventDefault();
+        if (this.animationsPaused || this.reducedMotion) {
+            return;
+        }
+        if (this.turkeyFlyTimer) {
+            clearTimeout(this.turkeyFlyTimer);
+            this.turkeyFlyTimer = undefined;
+        }
+        // Retrigger CSS animation if already flying
+        this.turkeyFlying = false;
+        requestAnimationFrame(() => {
+            this.turkeyFlying = true;
+            this.turkeyFlyTimer = setTimeout(() => {
+                this.turkeyFlying = false;
+                this.turkeyFlyTimer = undefined;
+            }, 1100);
+        });
+    }
+
+    onRunnerClick(event: Event, id: number): void {
+        event.stopPropagation();
+        event.preventDefault();
+        if (this.animationsPaused || this.reducedMotion) {
+            return;
+        }
+        if (this.runnerFallTimers[id]) {
+            clearTimeout(this.runnerFallTimers[id]);
+            delete this.runnerFallTimers[id];
+        }
+        this.runnerFalling = { ...this.runnerFalling, [id]: false };
+        requestAnimationFrame(() => {
+            this.runnerFalling = { ...this.runnerFalling, [id]: true };
+            this.runnerFallTimers[id] = setTimeout(() => {
+                this.runnerFalling = { ...this.runnerFalling, [id]: false };
+                delete this.runnerFallTimers[id];
+            }, 1500);
+        });
+    }
+
+    onTableTurkeyClick(event: Event): void {
+        event.stopPropagation();
+        event.preventDefault();
+        if (!this.isNightMode || this.animationsPaused || this.reducedMotion || this.tableTurkeyVolcano) {
+            return;
+        }
+        this.tableTurkeyClicks += 1;
+        if (this.tableTurkeyClicks < LoginComponent.TABLE_TURKEY_CLICKS_NEEDED) {
+            return;
+        }
+        this.tableTurkeyClicks = 0;
+        this.triggerTableTurkeyVolcano();
+    }
+
+    private triggerTableTurkeyVolcano(): void {
+        if (this.volcanoTimer) {
+            clearTimeout(this.volcanoTimer);
+            this.volcanoTimer = undefined;
+        }
+        const arcs = [-1.15, -0.85, -0.5, -0.15, 0.2, 0.55, 0.9, 1.2];
+        this.volcanoPumpkins = arcs.map((arc, i) => {
+            const spread = arc * (90 + Math.random() * 50);
+            const height = -(110 + Math.random() * 90);
+            return {
+                id: ++this.volcanoPumpkinIdSeq,
+                arc: i,
+                delay: i * 70 + Math.floor(Math.random() * 40),
+                vx: `${spread.toFixed(1)}px`,
+                vy: `${height.toFixed(1)}px`,
+                spin: `${(spread > 0 ? 1 : -1) * (280 + Math.random() * 220)}deg`,
+                size: 14 + Math.floor(Math.random() * 12),
+            };
+        });
+        this.tableTurkeyVolcano = true;
+        this.volcanoTimer = setTimeout(() => {
+            this.tableTurkeyVolcano = false;
+            this.volcanoPumpkins = [];
+            this.volcanoTimer = undefined;
+        }, 3200);
+    }
+
+    private resetTableTurkeyVolcano(): void {
+        this.tableTurkeyClicks = 0;
+        this.tableTurkeyVolcano = false;
+        this.volcanoPumpkins = [];
+        if (this.volcanoTimer) {
+            clearTimeout(this.volcanoTimer);
+            this.volcanoTimer = undefined;
+        }
     }
 
     private spawnWolf(event: MouseEvent): void {
@@ -341,114 +443,16 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         event?.preventDefault();
         this.isNightMode = !this.isNightMode;
         this.forest?.setNight(this.isNightMode);
-        this.ghosts?.setNight(this.isNightMode);
         if (this.isNightMode) {
             // Let *ngIf create the owl node, then start flight
             setTimeout(() => this.startOwlFlight(), 0);
-            this.startScareLoop();
-            this.awakenSkeleton();
         } else {
             this.stopOwlMotion();
             this.owlPerched = false;
-            this.stopScareLoop();
-            this.clearScareFlags();
-            this.collapseSkeleton();
+            this.resetTableTurkeyVolcano();
         }
     }
 
-    private clearSkeletonTimer(): void {
-        if (this.skeletonTimer) {
-            clearTimeout(this.skeletonTimer);
-            this.skeletonTimer = undefined;
-        }
-    }
-
-    private awakenSkeleton(): void {
-        this.clearSkeletonTimer();
-        if (this.reducedMotion) {
-            this.skeletonPhase = 'walking';
-            return;
-        }
-        this.skeletonPhase = 'rising';
-        // Match CSS rise (+ cat stagger ~0.7s), then stroll
-        this.skeletonTimer = setTimeout(() => {
-            if (this.isNightMode) {
-                this.skeletonPhase = 'walking';
-            }
-        }, 3000);
-    }
-
-    private collapseSkeleton(): void {
-        this.clearSkeletonTimer();
-        if (this.skeletonPhase === 'hidden') {
-            return;
-        }
-        if (this.reducedMotion) {
-            this.skeletonPhase = 'hidden';
-            return;
-        }
-        this.skeletonPhase = 'falling';
-        this.skeletonTimer = setTimeout(() => {
-            this.skeletonPhase = 'hidden';
-        }, 1400);
-    }
-
-    private startScareLoop(): void {
-        this.stopScareLoop();
-        if (this.reducedMotion || this.animationsPaused) {
-            return;
-        }
-        const schedule = () => {
-            const waitMs = 9000 + Math.random() * 11000;
-            this.scareTimer = setTimeout(() => {
-                this.triggerScareEvent();
-                schedule();
-            }, waitMs);
-        };
-        schedule();
-    }
-
-    private stopScareLoop(): void {
-        if (this.scareTimer) {
-            clearTimeout(this.scareTimer);
-            this.scareTimer = undefined;
-        }
-        if (this.scareClearTimer) {
-            clearTimeout(this.scareClearTimer);
-            this.scareClearTimer = undefined;
-        }
-    }
-
-    private clearScareFlags(): void {
-        this.scareFog = false;
-        this.scareEyes = false;
-        this.scarePumpkin = false;
-        this.scareGhost = false;
-        this.scareBats = false;
-    }
-
-    private triggerScareEvent(): void {
-        if (!this.isNightMode || this.animationsPaused || this.reducedMotion) {
-            return;
-        }
-        this.clearScareFlags();
-        const kinds = ['fog', 'eyes', 'pumpkin', 'ghost', 'bats'] as const;
-        const kind = kinds[Math.floor(Math.random() * kinds.length)];
-        this.ngZone.run(() => {
-            if (kind === 'fog') { this.scareFog = true; }
-            if (kind === 'eyes') { this.scareEyes = true; }
-            if (kind === 'pumpkin') { this.scarePumpkin = true; }
-            if (kind === 'ghost') {
-                this.scareGhost = true;
-                this.ghosts?.scareBurst();
-            }
-            if (kind === 'bats') { this.scareBats = true; }
-        });
-        const holdMs = kind === 'bats' || kind === 'ghost' ? 3200 : 2200;
-        this.scareClearTimer = setTimeout(() => {
-            this.ngZone.run(() => this.clearScareFlags());
-        }, holdMs);
-    }
 
     private startOwlFlight(): void {
         if (!this.isNightMode || this.animationsPaused) {
@@ -861,6 +865,25 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     showHideVersion(): void {
-        this.showVersion = !this.showVersion;
+        this.showAboutDialog = true;
+        this.loadAboutUpdates();
+    }
+
+    private loadAboutUpdates(): void {
+        this.aboutBusy = true;
+        this.aboutError = '';
+        this.aboutItems = [];
+        this._news.listLoginBanners().subscribe({
+            next: (rows) => {
+                this.aboutItems = Array.isArray(rows) ? rows : [];
+                this.aboutBusy = false;
+            },
+            error: (err: unknown) => {
+                this.aboutBusy = false;
+                this.aboutError = err instanceof Error
+                    ? err.message
+                    : 'Could not load last updates.';
+            },
+        });
     }
 }

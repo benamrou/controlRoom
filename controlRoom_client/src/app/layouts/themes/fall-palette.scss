@@ -1,40 +1,36 @@
-// Active seasonal chrome palette — Halloween 2026 (login, header, sidebar)
-// Pure Fall snapshot remains in fall-palette_Fall.scss
+// Active seasonal chrome palette — Thanksgiving 2026 (login, header, sidebar)
+// Pure Fall snapshot: fall-palette_Fall.scss
+// Halloween 2026 archive: pages/login/SeasonalThemes/Halloween_2026/
 
-// Spec colors
-$hw-midnight:     #171126;
-$hw-aubergine:    #29162F;
-$hw-forest:       #263A2C;
-$hw-pumpkin:      #F07827;
-$hw-burnt:        #B84E24;
-$hw-moon:         #FFF0C9;
-$hw-mist:         #B9B1C8;
-$hw-candle:       #FFC766;
-$hw-burgundy:     #6B2D3C;
-$hw-ink:          #0E0A14;
-$hw-ghost:        rgba(255, 248, 240, 0.78);
+$fall-burnt:      #E07B39;
+$fall-amber:      #F2A65A;
+$fall-rust:       #B85C38;
+$fall-cream:      #FFF6EA;
+$fall-pumpkin-a:  #F2994A;
+$fall-pumpkin-b:  #EB8A3E;
+$fall-deep:       #5C3A21;
 
-// Fall aliases remapped so existing .fall-* chrome picks up Halloween
-$fall-burnt:      $hw-pumpkin;
-$fall-amber:      $hw-candle;
-$fall-rust:       $hw-burnt;
-$fall-cream:      #F7F0E4;
-$fall-pumpkin-a:  $hw-pumpkin;
-$fall-pumpkin-b:  darken($hw-pumpkin, 6%);
-$fall-deep:       #3A2438;
+// Thanksgiving accents
+$tg-burgundy:     #8B3A3A;
+$tg-gold:         #E8B84A;
+$tg-forest:       #4A6B3A;
+$tg-hay:          #D4B06A;
+$tg-table:        #6B4423;
+$tg-turkey:       #C4783A;
+$tg-pie:          #C45C26;
 
-$fall-sky-top:    lighten($hw-candle, 8%);
-$fall-sky-mid:    $hw-pumpkin;
-$fall-horizon:    $hw-aubergine;
-$fall-ground:     #3D4A38;
-$fall-ground-dark:#2A3328;
-$fall-leaf-red:   $hw-burgundy;
-$fall-leaf-orange:$hw-pumpkin;
-$fall-leaf-gold:  $hw-candle;
-$fall-trunk:      #1A1420;
+$fall-sky-top:    lighten($fall-amber, 14%);
+$fall-sky-mid:    $fall-amber;
+$fall-horizon:    $fall-burnt;
+$fall-ground:     #C9A66B;
+$fall-ground-dark:#A67C52;
+$fall-leaf-red:   #C45C26;
+$fall-leaf-orange:$fall-burnt;
+$fall-leaf-gold:  #E8B84A;
+$fall-trunk:      #6B4423;
 $fall-white:      #ffffff;
-$fall-card-bg:    #F7F0E4;
-$fall-coral:      $hw-pumpkin;
-$fall-sun:        $hw-candle;
-$fall-peach:      $hw-candle;
+$fall-card-bg:    rgba(255, 246, 234, 0.96);
+$fall-coral:      $fall-burnt;
+$fall-sun:        $fall-pumpkin-a;
+$fall-peach:      $fall-amber;
 $fall-success:    #6B8E3E;

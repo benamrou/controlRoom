@@ -1,0 +1,264 @@
+<ROOT>
+    <NAME>Summary PPG</NAME>
+    <QUERY> 
+
+/***********************************************************************/
+/* Query : PPG list with different retails                             */
+/* Compare retails on overlapping date segments (not exact AVEPRIX     */
+/* start/end). Report only windows where distinct unit retail > 1.     */
+/***********************************************************************/
+WITH item_prices AS (
+    SELECT
+        dl.dlinlis,
+        dl.dlicinv,
+        av.avintar,
+        av.aviprix,
+        NVL(av.avimulti, 1) AS avimulti,
+        av.aviprix || ''/'' || NVL(av.avimulti, 1) AS retail_display,
+        GREATEST(av.aviddeb, TRUNC(SYSDATE + 1)) AS aviddeb,
+        av.avidfin
+    FROM artdetlist@heinens_custom_prod dl,
+         aveprix@heinens_custom_prod av
+    WHERE dl.dlicinv = av.avicinv
+      AND dl.dlinlis LIKE ''PPG%''
+      AND av.avidfin >= TRUNC(SYSDATE + 1)
+      AND dl.dlidfin >= TRUNC(SYSDATE + 1)
+      AND EXISTS (
+            SELECT 1
+              FROM artuc@heinens_custom_prod,
+                   artvl@heinens_custom_prod
+             WHERE araseqvl = arlseqvl
+               AND arlcinluvc = dlicinv
+               AND avidfin > TRUNC(araddeb)
+               AND TRUNC(aradfin) > aviddeb
+               AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1, arasite, ''1100'', ''1'') = 1
+        )
+),
+boundaries AS (
+    SELECT DISTINCT dlinlis, avintar, bound_dt
+      FROM (
+            SELECT dlinlis, avintar, aviddeb AS bound_dt FROM item_prices
+            UNION
+            SELECT dlinlis, avintar, avidfin + 1 FROM item_prices
+           )
+),
+segments AS (
+    SELECT
+        dlinlis,
+        avintar,
+        bound_dt AS seg_start,
+        LEAD(bound_dt) OVER (PARTITION BY dlinlis, avintar ORDER BY bound_dt) - 1 AS seg_end
+    FROM boundaries
+),
+segment_prices AS (
+    SELECT
+        s.dlinlis,
+        s.avintar,
+        s.seg_start,
+        s.seg_end,
+        ip.dlicinv,
+        ip.aviprix,
+        ip.avimulti,
+        ip.retail_display
+    FROM segments s
+    JOIN item_prices ip
+      ON ip.dlinlis = s.dlinlis
+     AND ip.avintar = s.avintar
+     AND s.seg_end >= ip.aviddeb
+     AND ip.avidfin >= s.seg_start
+    WHERE s.seg_end IS NOT NULL
+      AND s.seg_end >= s.seg_start
+),
+price_check AS (
+    SELECT
+        dlinlis,
+        dlicinv,
+        avintar,
+        aviprix,
+        avimulti,
+        retail_display,
+        seg_start AS aviddeb,
+        seg_end   AS avidfin,
+        COUNT(DISTINCT retail_display)
+            OVER (PARTITION BY dlinlis, avintar, seg_start, seg_end) AS distinct_retails,
+        FIRST_VALUE(retail_display)
+            OVER (PARTITION BY dlinlis, avintar, seg_start, seg_end
+                  ORDER BY aviprix / avimulti, retail_display) AS min_retail,
+        FIRST_VALUE(retail_display)
+            OVER (PARTITION BY dlinlis, avintar, seg_start, seg_end
+                  ORDER BY aviprix / avimulti DESC, retail_display DESC) AS max_retail
+    FROM segment_prices
+),
+price_flags AS (
+    SELECT
+        dlinlis,
+        avintar,
+        aviddeb,
+        avidfin,
+        dlicinv,
+        retail_display,
+        min_retail,
+        max_retail,
+        distinct_retails,
+        CASE WHEN retail_display = min_retail THEN 1 ELSE 0 END AS is_min,
+        CASE WHEN retail_display = max_retail THEN 1 ELSE 0 END AS is_max
+    FROM price_check
+    WHERE distinct_retails > 1
+)
+SELECT
+    dlinlis        "Item list",
+    avintar        "Price list",
+    TO_CHAR(aviddeb, ''MM/DD/RR'') "Retail on",
+    TO_CHAR(avidfin, ''MM/DD/RR'') "Retail end",
+    SUM(is_min) || '' item(s) at '' || min_retail  "Nb items at min",
+    SUM(is_max) || '' item(s) at '' || max_retail "Nb items at max",
+    COUNT(*)       "Total items",
+    distinct_retails "Distinct retails"
+FROM price_flags
+GROUP BY
+    dlinlis,
+    avintar,
+    aviddeb,
+    avidfin,
+    min_retail,
+    max_retail,
+    distinct_retails
+ORDER BY
+    dlinlis,
+    avintar,
+    aviddeb,
+    avidfin
+
+</QUERY>
+<NAME2>Item details</NAME2>
+<QUERY2> 
+/***********************************************************************/
+/* Query : PPG item details with different retails (overlap segments)  */
+/***********************************************************************/
+WITH item_prices AS (
+    SELECT
+        dl.dlinlis,
+        dl.dlicinv,
+        av.avintar,
+        av.aviprix,
+        NVL(av.avimulti, 1) AS avimulti,
+        av.aviprix || ''/'' || NVL(av.avimulti, 1) AS retail_display,
+        av.aviddeb AS item_aviddeb,
+        av.avidfin AS item_avidfin,
+        GREATEST(av.aviddeb, TRUNC(SYSDATE + 1)) AS aviddeb,
+        av.avidfin
+    FROM artdetlist@heinens_custom_prod dl,
+         aveprix@heinens_custom_prod av
+    WHERE dl.dlicinv = av.avicinv
+      AND dl.dlinlis LIKE ''PPG%''
+      AND av.avidfin >= TRUNC(SYSDATE + 1)
+      AND dl.dlidfin >= TRUNC(SYSDATE + 1)
+      AND EXISTS (
+            SELECT 1
+              FROM artuc@heinens_custom_prod,
+                   artvl@heinens_custom_prod
+             WHERE araseqvl = arlseqvl
+               AND arlcinluvc = dlicinv
+               AND avidfin > TRUNC(araddeb)
+               AND TRUNC(aradfin) > aviddeb
+               AND pkresrel.isSiteBelongToNode@heinens_custom_prod(1, arasite, ''1100'', ''1'') = 1
+        )
+),
+boundaries AS (
+    SELECT DISTINCT dlinlis, avintar, bound_dt
+      FROM (
+            SELECT dlinlis, avintar, aviddeb AS bound_dt FROM item_prices
+            UNION
+            SELECT dlinlis, avintar, avidfin + 1 FROM item_prices
+           )
+),
+segments AS (
+    SELECT
+        dlinlis,
+        avintar,
+        bound_dt AS seg_start,
+        LEAD(bound_dt) OVER (PARTITION BY dlinlis, avintar ORDER BY bound_dt) - 1 AS seg_end
+    FROM boundaries
+),
+segment_prices AS (
+    SELECT
+        s.dlinlis,
+        s.avintar,
+        s.seg_start,
+        s.seg_end,
+        ip.dlicinv,
+        ip.aviprix,
+        ip.avimulti,
+        ip.retail_display,
+        ip.item_aviddeb,
+        ip.item_avidfin
+    FROM segments s
+    JOIN item_prices ip
+      ON ip.dlinlis = s.dlinlis
+     AND ip.avintar = s.avintar
+     AND s.seg_end >= ip.aviddeb
+     AND ip.avidfin >= s.seg_start
+    WHERE s.seg_end IS NOT NULL
+      AND s.seg_end >= s.seg_start
+),
+price_check AS (
+    SELECT
+        dlinlis,
+        dlicinv,
+        avintar,
+        aviprix,
+        avimulti,
+        retail_display,
+        item_aviddeb,
+        item_avidfin,
+        seg_start,
+        seg_end,
+        COUNT(DISTINCT retail_display)
+            OVER (PARTITION BY dlinlis, avintar, seg_start, seg_end) AS distinct_retails,
+        FIRST_VALUE(retail_display)
+            OVER (PARTITION BY dlinlis, avintar, seg_start, seg_end
+                  ORDER BY aviprix / avimulti, retail_display) AS min_retail,
+        FIRST_VALUE(retail_display)
+            OVER (PARTITION BY dlinlis, avintar, seg_start, seg_end
+                  ORDER BY aviprix / avimulti DESC, retail_display DESC) AS max_retail
+    FROM segment_prices
+),
+price_counts AS (
+    SELECT
+        pc.*,
+        SUM(CASE WHEN retail_display = min_retail THEN 1 ELSE 0 END)
+            OVER (PARTITION BY dlinlis, avintar, seg_start, seg_end) AS items_at_min,
+        SUM(CASE WHEN retail_display = max_retail THEN 1 ELSE 0 END)
+            OVER (PARTITION BY dlinlis, avintar, seg_start, seg_end) AS items_at_max
+    FROM price_check pc
+    WHERE distinct_retails > 1
+)
+SELECT
+    pc.dlinlis                              "Item list",
+    pc.avintar                              "Price list",
+    TO_CHAR(pc.item_aviddeb, ''MM/DD/RR'')   "Retail on",
+    TO_CHAR(pc.item_avidfin, ''MM/DD/RR'')   "Retail end",
+    uv.arvcexr || ''/'' || uv.arvcexv         "Item/SV code",
+    pkstrucobj.get_desc@heinens_custom_prod(1, uv.arvcinr, ''HN'') "Item desc.",
+    pc.retail_display                       "Retail",
+    pc.min_retail                           "Min retail",
+    pc.items_at_min                         "Nb items min retail",
+    pc.max_retail                           "Max retail",
+    pc.items_at_max                         "Nb items max retail"
+FROM price_counts pc,
+     artuv@heinens_custom_prod uv
+WHERE pc.dlicinv = uv.arvcinv
+ORDER BY
+    pc.dlinlis,
+    pc.avintar,
+    pc.seg_start,
+    pc.seg_end,
+    pc.item_aviddeb,
+    pc.aviprix / pc.avimulti,
+    pc.dlicinv
+</QUERY2>
+ 
+  <HEADERIFEMPTY>No PPG retail issue</HEADERIFEMPTY>
+  <HEADER>PPG with different retail</HEADER>
+  
+</ROOT>

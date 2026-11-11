@@ -115,7 +115,7 @@ export class SupplierScheduleComponent {
                                                   this.datePipe.transform(this.periodEnd, 'MM/dd/yyyy'))
             .subscribe( 
                 data => { this.searchResult = data; // put the data returned from the server in our variable
-                //console.log(JSON.stringify(this.searchResult));  
+                console.log('RESULT: ', JSON.stringify(this.searchResult));  
               },
                 error => {
                       // console.log('Error HTTP GET Service ' + error + JSON.stringify(error)); // in case of failure show this message

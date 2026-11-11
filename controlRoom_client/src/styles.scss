@@ -46,30 +46,29 @@
     }
 }
 
-/* Dialog chrome — Halloween dusk (matches header).
+/* Dialog chrome — Thanksgiving / Fall (matches header).
    Do NOT set opacity on .p-dialog — PrimeNG animates it; !important leaves the mask stuck.
    Do NOT paint every .p-dialog-mask — non-modal dialogs still use that wrapper for centering. */
 .p-dialog {
-    background: #F7F0E4 !important;
-    border: 1.5px solid rgba($hw-pumpkin, 0.35) !important;
+    background: $fall-cream !important;
+    border: 1.5px solid rgba($fall-burnt, 0.35) !important;
     border-radius: 14px !important;
     box-shadow:
-        0 12px 40px rgba($hw-ink, 0.35),
-        0 0 28px rgba($hw-aubergine, 0.18) !important;
+        0 12px 40px rgba($fall-deep, 0.18),
+        0 0 28px rgba($tg-burgundy, 0.10) !important;
     overflow: hidden;
 }
 
 .p-dialog .p-dialog-header,
 .p-dialog-draggable .p-dialog-header {
     background: linear-gradient(
-        115deg,
-        $hw-aubergine 0%,
-        #3A2438 40%,
-        $hw-burgundy 72%,
-        darken($hw-burnt, 4%) 100%
+        135deg,
+        rgba($fall-cream, 0.98) 0%,
+        rgba($fall-amber, 0.95) 45%,
+        rgba($fall-burnt, 0.92) 100%
     ) !important;
-    border-bottom: 1.5px solid rgba($hw-pumpkin, 0.45);
-    color: $hw-moon !important;
+    border-bottom: 1.5px solid rgba($fall-coral, 0.35);
+    color: $fall-deep !important;
     height: auto;
     min-height: 2.4rem;
     padding: 0.7rem 1.1rem;
@@ -78,32 +77,32 @@
 .p-dialog .p-dialog-header .p-dialog-title {
     font-size: 1rem;
     font-weight: 700;
-    color: $hw-moon !important;
-    text-shadow: 0 1px 3px rgba($hw-ink, 0.35);
+    color: $fall-deep !important;
+    text-shadow: 0 1px 3px rgba($fall-white, 0.55);
 }
 
 .p-dialog .p-dialog-header .p-dialog-header-icon {
-    color: $hw-moon !important;
+    color: $fall-deep !important;
 }
 
 .p-dialog .p-dialog-header .p-dialog-header-icon:hover {
-    background: rgba($hw-pumpkin, 0.28) !important;
-    color: $hw-candle !important;
+    background: rgba($fall-burnt, 0.22) !important;
+    color: $tg-burgundy !important;
 }
 
 .p-dialog .p-dialog-content {
-    background: #F7F0E4 !important;
+    background: $fall-cream !important;
     color: $fall-deep;
 }
 
 .p-dialog .p-dialog-footer {
-    background: #EDE6F2 !important;
-    border-top: 1px solid rgba($hw-pumpkin, 0.22) !important;
+    background: lighten($fall-cream, 1%) !important;
+    border-top: 1px solid rgba($fall-burnt, 0.22) !important;
 }
 
 /* Modal veil only — leave animation must be able to fade background to transparent */
 .p-dialog-mask.p-component-overlay {
-    background-color: rgba($hw-ink, 0.55);
+    background-color: rgba($fall-deep, 0.45);
 }
 
 .p-dialog-mask:not(.p-component-overlay) {

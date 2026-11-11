@@ -47,50 +47,48 @@ interface TreeSpec {
     seed: number;
 }
 
-/** Halloween haunted forest trunks */
-const BRANCH = '#1A1420';
+const BRANCH = '#2b2118';
 
-/** Purple / burgundy / burnt foliage — open center kept for login card */
 const TREE_SPECS: TreeSpec[] = [
     {
         xRatio: 0.03, trunkLen: 68, depth: 10, spread: 0.48, branchScale: 0.72, lean: -0.08,
-        trunkWidth: 5.8, leafColors: ['#4A2A48', '#6B2D3C', '#3A3A28'], leafMin: 1.2, leafMax: 2.6, density: 1.05, seed: 11,
+        trunkWidth: 5.8, leafColors: ['#8B5E5A', '#A66B5B', '#C47A5A'], leafMin: 1.2, leafMax: 2.6, density: 1.05, seed: 11,
     },
     {
         xRatio: 0.09, trunkLen: 102, depth: 11, spread: 0.52, branchScale: 0.73, lean: 0.05,
-        trunkWidth: 8.0, leafColors: ['#B84E24', '#6B2D3C', '#F07827'], leafMin: 1.4, leafMax: 3.2, density: 1.15, seed: 29,
+        trunkWidth: 8.0, leafColors: ['#E07B39', '#C45C26', '#B85C38'], leafMin: 1.4, leafMax: 3.2, density: 1.2, seed: 29,
     },
     {
         xRatio: 0.16, trunkLen: 88, depth: 10, spread: 0.5, branchScale: 0.73, lean: -0.14,
-        trunkWidth: 6.8, leafColors: ['#5B3A7A', '#B84E24', '#3A2A38'], leafMin: 1.3, leafMax: 2.9, density: 1.0, seed: 47,
+        trunkWidth: 6.8, leafColors: ['#F2A65A', '#E8B84A', '#E07B39'], leafMin: 1.3, leafMax: 2.9, density: 1.1, seed: 47,
     },
     {
         xRatio: 0.23, trunkLen: 76, depth: 9, spread: 0.46, branchScale: 0.72, lean: 0.1,
-        trunkWidth: 6.0, leafColors: ['#6B2D3C', '#F07827', '#2A3328'], leafMin: 1.2, leafMax: 2.7, density: 0.9, seed: 53,
+        trunkWidth: 6.0, leafColors: ['#C45C26', '#E07B39', '#A66B5B'], leafMin: 1.2, leafMax: 2.7, density: 0.95, seed: 53,
     },
     {
         xRatio: 0.29, trunkLen: 58, depth: 8, spread: 0.44, branchScale: 0.71, lean: -0.06,
-        trunkWidth: 4.8, leafColors: ['#3A2A38', '#B84E24', '#4A3A28'], leafMin: 1.0, leafMax: 2.3, density: 0.75, seed: 59,
+        trunkWidth: 4.8, leafColors: ['#B85C38', '#C9A66B', '#E8B84A'], leafMin: 1.0, leafMax: 2.3, density: 0.85, seed: 59,
     },
     {
         xRatio: 0.71, trunkLen: 62, depth: 8, spread: 0.45, branchScale: 0.71, lean: 0.07,
-        trunkWidth: 5.0, leafColors: ['#4A2A48', '#B84E24', '#263A2C'], leafMin: 1.0, leafMax: 2.4, density: 0.8, seed: 61,
+        trunkWidth: 5.0, leafColors: ['#E8B84A', '#D4A017', '#C9A66B'], leafMin: 1.0, leafMax: 2.4, density: 0.88, seed: 61,
     },
     {
         xRatio: 0.77, trunkLen: 94, depth: 10, spread: 0.5, branchScale: 0.73, lean: 0.12,
-        trunkWidth: 7.4, leafColors: ['#F07827', '#6B2D3C', '#5B3A7A'], leafMin: 1.3, leafMax: 3.0, density: 1.1, seed: 67,
+        trunkWidth: 7.4, leafColors: ['#E8B84A', '#F2A65A', '#D4A017'], leafMin: 1.3, leafMax: 3.0, density: 1.15, seed: 67,
     },
     {
         xRatio: 0.85, trunkLen: 120, depth: 12, spread: 0.56, branchScale: 0.74, lean: -0.04,
-        trunkWidth: 9.2, leafColors: ['#B84E24', '#F07827', '#4A2A48', '#6B2D3C'], leafMin: 1.5, leafMax: 3.4, density: 1.25, seed: 83,
+        trunkWidth: 9.2, leafColors: ['#E07B39', '#F2994A', '#C45C26', '#E8B84A'], leafMin: 1.5, leafMax: 3.4, density: 1.3, seed: 83,
     },
     {
         xRatio: 0.92, trunkLen: 86, depth: 10, spread: 0.48, branchScale: 0.72, lean: 0.09,
-        trunkWidth: 6.4, leafColors: ['#5B3A7A', '#B84E24', '#FFC766'], leafMin: 1.2, leafMax: 2.7, density: 1.0, seed: 101,
+        trunkWidth: 6.4, leafColors: ['#C9A66B', '#E8B84A', '#F2A65A'], leafMin: 1.2, leafMax: 2.7, density: 1.05, seed: 101,
     },
     {
         xRatio: 0.97, trunkLen: 70, depth: 9, spread: 0.46, branchScale: 0.71, lean: -0.1,
-        trunkWidth: 5.4, leafColors: ['#3A2A38', '#6B2D3C', '#F07827'], leafMin: 1.1, leafMax: 2.5, density: 0.85, seed: 113,
+        trunkWidth: 5.4, leafColors: ['#A66B5B', '#C45C26', '#E07B39'], leafMin: 1.1, leafMax: 2.5, density: 0.9, seed: 113,
     },
 ];
 

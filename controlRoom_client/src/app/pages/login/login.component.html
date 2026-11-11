@@ -1,16 +1,8 @@
-<div class="login-page"
-     [@routerTransition]
+<div class="login-page" [@routerTransition]
      [class.login-page--night]="isNightMode"
      [class.login-page--paused]="animationsPaused"
      [class.login-page--reduced]="reducedMotion"
-     [class.login-page--scare-fog]="scareFog"
-     [class.login-page--scare-eyes]="scareEyes"
-     [class.login-page--scare-pumpkin]="scarePumpkin"
-     [class.login-page--scare-ghost]="scareGhost"
-     [class.login-page--scare-bats]="scareBats"
      (click)="onPageClick($event)">
-
-    <div class="version" *ngIf="showVersion">vers. 6.0.1b0.10</div>
 
     <div class="content-section implementation fall-toast">
         <p-toast key="top" [style]="{marginTop: '80px'}" position="top-right"></p-toast>
@@ -18,13 +10,13 @@
 
     <div class="fall-sky"></div>
     <div class="night-stars" aria-hidden="true"></div>
-    <div class="hw-horizon-glow" aria-hidden="true"></div>
+    <div class="tg-golden-glow" aria-hidden="true"></div>
 
     <div class="fall-scene" aria-hidden="true">
         <div class="fall-sun"
             role="button"
             tabindex="0"
-            [attr.aria-label]="isNightMode ? 'Switch to dusk' : 'Switch to nighttime'"
+            [attr.aria-label]="isNightMode ? 'Switch to daytime' : 'Switch to nighttime'"
             (click)="toggleDayNight($event)"
             (keydown.enter)="toggleDayNight($event)"
             (keydown.space)="toggleDayNight($event); $event.preventDefault()">
@@ -36,20 +28,8 @@
             <div class="fall-hill fall-hill--front"></div>
         </div>
 
-        <div class="hw-house" aria-hidden="true">
-            <div class="hw-house__roof"></div>
-            <div class="hw-house__tower"></div>
-            <div class="hw-house__body"></div>
-            <span class="hw-house__win hw-house__win--1"></span>
-            <span class="hw-house__win hw-house__win--2"></span>
-            <span class="hw-house__win hw-house__win--3"></span>
-        </div>
-
         <!-- Briolet-style recursive forest (pointillist foliage + falling dots) -->
         <canvas #fallForest class="fall-forest-canvas" aria-hidden="true"></canvas>
-
-        <span class="hw-eyes hw-eyes--l" aria-hidden="true"></span>
-        <span class="hw-eyes hw-eyes--r" aria-hidden="true"></span>
 
         <!-- Night owl: flies to the tall right tree canopy tip -->
         <div #owlStage class="fall-owl-stage"
@@ -74,200 +54,244 @@
             </div>
         </div>
 
-        <div class="hw-fog" aria-hidden="true"></div>
-
         <div class="fall-ground">
             <div class="fall-litter"></div>
         </div>
 
-        <div class="hw-graves" aria-hidden="true">
-            <div class="hw-grave hw-grave--1">
-                <span class="hw-grave__stone">
-                    <span class="hw-grave__rip">R.I.P.</span>
-                </span>
-                <span class="hw-grave__mound"></span>
+        <!-- Thanksgiving picnic feast (left foreground — login card center stays clear) -->
+        <div class="tg-scene" aria-hidden="true">
+            <div class="tg-hay tg-hay--back"></div>
+            <div class="tg-hay"></div>
+
+            <!-- Pumpkins at the base of the trees -->
+            <div class="tg-pumpkins tg-pumpkins--left" aria-hidden="true">
+                <div class="tg-pumpkin tg-pumpkin--lg">
+                    <span class="tg-pumpkin__stem"></span>
+                    <span class="tg-pumpkin__body"></span>
+                </div>
+                <div class="tg-pumpkin tg-pumpkin--sm">
+                    <span class="tg-pumpkin__stem"></span>
+                    <span class="tg-pumpkin__body"></span>
+                </div>
             </div>
-            <div class="hw-grave hw-grave--2">
-                <span class="hw-grave__stone">
-                    <span class="hw-grave__rip">R.I.P.</span>
-                </span>
-                <span class="hw-grave__cross"></span>
-                <span class="hw-grave__mound"></span>
-            </div>
-            <div class="hw-grave hw-grave--3">
-                <span class="hw-grave__stone hw-grave__stone--small">
-                    <span class="hw-grave__rip">†</span>
-                </span>
-                <span class="hw-grave__mound"></span>
+            <div class="tg-pumpkins tg-pumpkins--right" aria-hidden="true">
+                <div class="tg-pumpkin tg-pumpkin--md">
+                    <span class="tg-pumpkin__stem"></span>
+                    <span class="tg-pumpkin__body"></span>
+                </div>
+                <div class="tg-pumpkin tg-pumpkin--sm tg-pumpkin--gold">
+                    <span class="tg-pumpkin__stem"></span>
+                    <span class="tg-pumpkin__body"></span>
+                </div>
+                <div class="tg-pumpkin tg-pumpkin--xs">
+                    <span class="tg-pumpkin__stem"></span>
+                    <span class="tg-pumpkin__body"></span>
+                </div>
             </div>
 
-            <!-- Night: one skeleton per grave; day: all collapse -->
-            <div class="hw-skeletons" *ngIf="skeletonPhase !== 'hidden'" aria-hidden="true"
-                 [class.hw-skeletons--rising]="skeletonPhase === 'rising'"
-                 [class.hw-skeletons--walking]="skeletonPhase === 'walking'"
-                 [class.hw-skeletons--falling]="skeletonPhase === 'falling'"
-                 [class.hw-skeletons--paused]="animationsPaused || reducedMotion">
+            <div class="tg-cornucopia">
+                <div class="tg-cornucopia__horn"></div>
+                <div class="tg-cornucopia__spill">
+                    <span class="tg-cornucopia__gourd tg-cornucopia__gourd--1"></span>
+                    <span class="tg-cornucopia__gourd tg-cornucopia__gourd--2"></span>
+                    <span class="tg-cornucopia__gourd tg-cornucopia__gourd--3"></span>
+                </div>
+            </div>
 
-                <!-- Grave 1 — human -->
-                <div class="hw-skeleton hw-skeleton--human">
-                    <div class="hw-skeleton__figure">
-                        <span class="hw-skeleton__skull"></span>
-                        <span class="hw-skeleton__spine"></span>
-                        <span class="hw-skeleton__ribs"></span>
-                        <span class="hw-skeleton__arm hw-skeleton__arm--l"></span>
-                        <span class="hw-skeleton__arm hw-skeleton__arm--r"></span>
-                        <span class="hw-skeleton__pelvis"></span>
-                        <span class="hw-skeleton__leg hw-skeleton__leg--l"></span>
-                        <span class="hw-skeleton__leg hw-skeleton__leg--r"></span>
+            <!-- People chasing a turkey through the forest clearing -->
+            <div class="tg-chase"
+                 [class.tg-chase--paused]="animationsPaused || reducedMotion"
+                 aria-hidden="true">
+                <div class="tg-run-turkey"
+                     role="button"
+                     tabindex="0"
+                     aria-label="Scare the turkey"
+                     title="Click me!"
+                     [class.tg-run-turkey--fly]="turkeyFlying"
+                     (click)="onTurkeyClick($event)"
+                     (keydown.enter)="onTurkeyClick($event)"
+                     (keydown.space)="onTurkeyClick($event); $event.preventDefault()">
+                    <div class="tg-run-turkey__actor">
+                        <span class="tg-run-turkey__tail"></span>
+                        <span class="tg-run-turkey__body"></span>
+                        <span class="tg-run-turkey__wing"></span>
+                        <span class="tg-run-turkey__head">
+                            <span class="tg-run-turkey__eye"></span>
+                            <span class="tg-run-turkey__beak"></span>
+                            <span class="tg-run-turkey__wattle"></span>
+                        </span>
+                        <span class="tg-run-turkey__leg tg-run-turkey__leg--f"></span>
+                        <span class="tg-run-turkey__leg tg-run-turkey__leg--b"></span>
                     </div>
                 </div>
 
-                <!-- Grave 2 — dog -->
-                <div class="hw-skeleton hw-skeleton--dog">
-                    <div class="hw-skeleton__figure">
-                        <span class="hw-skel-dog__head"></span>
-                        <span class="hw-skel-dog__snout"></span>
-                        <span class="hw-skel-dog__ear hw-skel-dog__ear--l"></span>
-                        <span class="hw-skel-dog__ear hw-skel-dog__ear--r"></span>
-                        <span class="hw-skel-dog__body"></span>
-                        <span class="hw-skel-dog__ribs"></span>
-                        <span class="hw-skel-dog__leg hw-skel-dog__leg--fl"></span>
-                        <span class="hw-skel-dog__leg hw-skel-dog__leg--fr"></span>
-                        <span class="hw-skel-dog__leg hw-skel-dog__leg--bl"></span>
-                        <span class="hw-skel-dog__leg hw-skel-dog__leg--br"></span>
-                        <span class="hw-skel-dog__tail"></span>
+                <div class="tg-runner tg-runner--1"
+                     role="button"
+                     tabindex="0"
+                     aria-label="Trip the runner"
+                     title="Click me!"
+                     [class.tg-runner--fall]="isRunnerFalling(1)"
+                     (click)="onRunnerClick($event, 1)"
+                     (keydown.enter)="onRunnerClick($event, 1)"
+                     (keydown.space)="onRunnerClick($event, 1); $event.preventDefault()">
+                    <div class="tg-runner__actor">
+                        <span class="tg-runner__arm"></span>
+                        <span class="tg-runner__body"></span>
+                        <span class="tg-runner__head">
+                            <span class="tg-runner__hair"></span>
+                            <span class="tg-runner__eye"></span>
+                        </span>
+                        <span class="tg-runner__leg tg-runner__leg--f"></span>
+                        <span class="tg-runner__leg tg-runner__leg--b"></span>
                     </div>
                 </div>
-
-                <!-- Grave 3 — cat -->
-                <div class="hw-skeleton hw-skeleton--cat">
-                    <div class="hw-skeleton__figure">
-                        <span class="hw-skel-cat__head"></span>
-                        <span class="hw-skel-cat__ear hw-skel-cat__ear--l"></span>
-                        <span class="hw-skel-cat__ear hw-skel-cat__ear--r"></span>
-                        <span class="hw-skel-cat__body"></span>
-                        <span class="hw-skel-cat__leg hw-skel-cat__leg--fl"></span>
-                        <span class="hw-skel-cat__leg hw-skel-cat__leg--fr"></span>
-                        <span class="hw-skel-cat__leg hw-skel-cat__leg--bl"></span>
-                        <span class="hw-skel-cat__leg hw-skel-cat__leg--br"></span>
-                        <span class="hw-skel-cat__tail"></span>
+                <div class="tg-runner tg-runner--2"
+                     role="button"
+                     tabindex="0"
+                     aria-label="Trip the runner"
+                     title="Click me!"
+                     [class.tg-runner--fall]="isRunnerFalling(2)"
+                     (click)="onRunnerClick($event, 2)"
+                     (keydown.enter)="onRunnerClick($event, 2)"
+                     (keydown.space)="onRunnerClick($event, 2); $event.preventDefault()">
+                    <div class="tg-runner__actor">
+                        <span class="tg-runner__arm"></span>
+                        <span class="tg-runner__body"></span>
+                        <span class="tg-runner__head">
+                            <span class="tg-runner__hair tg-runner__hair--long"></span>
+                            <span class="tg-runner__eye"></span>
+                        </span>
+                        <span class="tg-runner__leg tg-runner__leg--f"></span>
+                        <span class="tg-runner__leg tg-runner__leg--b"></span>
+                    </div>
+                </div>
+                <div class="tg-runner tg-runner--3"
+                     role="button"
+                     tabindex="0"
+                     aria-label="Trip the runner"
+                     title="Click me!"
+                     [class.tg-runner--fall]="isRunnerFalling(3)"
+                     (click)="onRunnerClick($event, 3)"
+                     (keydown.enter)="onRunnerClick($event, 3)"
+                     (keydown.space)="onRunnerClick($event, 3); $event.preventDefault()">
+                    <div class="tg-runner__actor">
+                        <span class="tg-runner__arm"></span>
+                        <span class="tg-runner__body"></span>
+                        <span class="tg-runner__head">
+                            <span class="tg-runner__hair tg-runner__hair--bun"></span>
+                            <span class="tg-runner__eye"></span>
+                        </span>
+                        <span class="tg-runner__leg tg-runner__leg--f"></span>
+                        <span class="tg-runner__leg tg-runner__leg--b"></span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="hw-pumpkins" aria-hidden="true">
-            <div class="hw-pumpkin hw-pumpkin--1 hw-pumpkin--glow">
-                <span class="hw-pumpkin__stem"></span>
-                <span class="hw-pumpkin__body"></span>
-                <span class="hw-pumpkin__face"></span>
-                <span class="hw-pumpkin__mouth"></span>
-            </div>
-            <div class="hw-pumpkin hw-pumpkin--2">
-                <span class="hw-pumpkin__stem"></span>
-                <span class="hw-pumpkin__body"></span>
-            </div>
-            <div class="hw-pumpkin hw-pumpkin--3">
-                <span class="hw-pumpkin__stem"></span>
-                <span class="hw-pumpkin__body"></span>
-            </div>
-            <div class="hw-pumpkin hw-pumpkin--4 hw-pumpkin--glow">
-                <span class="hw-pumpkin__stem"></span>
-                <span class="hw-pumpkin__body"></span>
-                <span class="hw-pumpkin__face"></span>
-                <span class="hw-pumpkin__mouth"></span>
-            </div>
-            <div class="hw-pumpkin hw-pumpkin--5">
-                <span class="hw-pumpkin__stem"></span>
-                <span class="hw-pumpkin__body"></span>
-            </div>
-            <div class="hw-pumpkin hw-pumpkin--6">
-                <span class="hw-pumpkin__stem"></span>
-                <span class="hw-pumpkin__body"></span>
-            </div>
-        </div>
+            <div class="tg-picnic">
+                <!-- Rustic wooden picnic table -->
+                <div class="tg-table">
+                    <span class="tg-table__bench tg-table__bench--back"></span>
+                    <span class="tg-table__leg tg-table__leg--bl"></span>
+                    <span class="tg-table__leg tg-table__leg--br"></span>
+                    <span class="tg-table__leg tg-table__leg--fl"></span>
+                    <span class="tg-table__leg tg-table__leg--fr"></span>
+                    <div class="tg-table__apron"></div>
+                    <div class="tg-table__top">
+                        <span class="tg-table__plank"></span>
+                        <span class="tg-table__plank"></span>
+                        <span class="tg-table__plank"></span>
+                    </div>
+                    <div class="tg-table__cloth"></div>
+                </div>
 
-        <!-- Wavy rising ghosts (ste-vg CodePen style) -->
-        <canvas #hwGhosts class="hw-ghosts-canvas" aria-hidden="true"></canvas>
-
-        <div class="hw-bats" aria-hidden="true">
-            <!-- Classic silhouette: pointed ears, compact body, 3-scallop wings -->
-            <div class="hw-bat" *ngFor="let n of batSlots">
-                <div class="hw-bat__motion">
-                    <svg class="hw-bat__svg" viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg" focusable="false">
-                        <g class="hw-bat__wing hw-bat__wing--l">
-                            <path d="M45 22
-                                C38 15 26 8 6 10
-                                L10 15
-                                Q16 13 18 17
-                                Q12 21 5 24
-                                Q16 22 21 20
-                                Q14 27 7 31
-                                Q20 27 29 23
-                                Q24 30 14 36
-                                Q32 29 45 25 Z"/>
-                        </g>
-                        <g class="hw-bat__torso">
-                            <path d="M46.5 14
-                                L44.5 5.5 L48 11.5 L50 4 L52 11.5 L55.5 5.5 L53.5 14
-                                C56.5 16 57.5 24 55 28.5
-                                C53.5 31 51.5 32.5 50 32.5
-                                C48.5 32.5 46.5 31 45 28.5
-                                C42.5 24 43.5 16 46.5 14 Z"/>
-                            <circle class="hw-bat__eye" cx="48" cy="19.5" r="1.05"/>
-                            <circle class="hw-bat__eye" cx="52" cy="19.5" r="1.05"/>
-                        </g>
-                        <g class="hw-bat__wing hw-bat__wing--r">
-                            <path d="M55 22
-                                C62 15 74 8 94 10
-                                L90 15
-                                Q84 13 82 17
-                                Q88 21 95 24
-                                Q84 22 79 20
-                                Q86 27 93 31
-                                Q80 27 71 23
-                                Q76 30 86 36
-                                Q68 29 55 25 Z"/>
-                        </g>
+                <!-- Roasted turkey (SVG) — night mode: 7 clicks → pumpkin volcano -->
+                <div class="tg-turkey"
+                     role="button"
+                     tabindex="0"
+                     [attr.aria-label]="isNightMode ? 'Mysterious turkey' : 'Thanksgiving turkey'"
+                     [class.tg-turkey--night-hot]="isNightMode"
+                     [class.tg-turkey--volcano]="tableTurkeyVolcano"
+                     (click)="onTableTurkeyClick($event)"
+                     (keydown.enter)="onTableTurkeyClick($event)"
+                     (keydown.space)="onTableTurkeyClick($event); $event.preventDefault()">
+                    <span class="tg-turkey__steam tg-turkey__steam--1"></span>
+                    <span class="tg-turkey__steam tg-turkey__steam--2"></span>
+                    <span class="tg-turkey__steam tg-turkey__steam--3"></span>
+                    <span class="tg-turkey__lava" *ngIf="tableTurkeyVolcano" aria-hidden="true"></span>
+                    <svg class="tg-turkey__svg" viewBox="0 0 120 78" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                        <defs>
+                            <radialGradient id="tgTurkeyBody" cx="42%" cy="35%" r="60%">
+                                <stop offset="0%" stop-color="#E8A05A"/>
+                                <stop offset="45%" stop-color="#C4783A"/>
+                                <stop offset="100%" stop-color="#8B4518"/>
+                            </radialGradient>
+                            <radialGradient id="tgTurkeyHighlight" cx="40%" cy="30%" r="50%">
+                                <stop offset="0%" stop-color="#FFE4B5"/>
+                                <stop offset="100%" stop-color="#C4783A" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <ellipse cx="60" cy="70" rx="42" ry="6" fill="rgba(92,58,33,0.22)"/>
+                        <ellipse cx="60" cy="62" rx="38" ry="8" fill="#E8D5B5" stroke="#C9A88A" stroke-width="1"/>
+                        <path d="M22 48 C18 38 22 28 34 26 C30 38 28 48 32 56 Z" fill="#C4783A"/>
+                        <path d="M98 48 C102 38 98 28 86 26 C90 38 92 48 88 56 Z" fill="#C4783A"/>
+                        <ellipse cx="28" cy="54" rx="7" ry="5" fill="#E8D5B5" transform="rotate(-25 28 54)"/>
+                        <ellipse cx="92" cy="54" rx="7" ry="5" fill="#E8D5B5" transform="rotate(25 92 54)"/>
+                        <ellipse cx="60" cy="42" rx="36" ry="26" fill="url(#tgTurkeyBody)"/>
+                        <ellipse cx="60" cy="36" rx="28" ry="16" fill="url(#tgTurkeyHighlight)" opacity="0.55"/>
+                        <path d="M48 28 Q60 22 72 28" fill="none" stroke="#A65C2A" stroke-width="1.2" opacity="0.35"/>
+                        <path d="M44 40 Q60 34 76 40" fill="none" stroke="#A65C2A" stroke-width="1" opacity="0.28"/>
                     </svg>
-                </div>
-            </div>
-            <div class="hw-bat-swarm" aria-hidden="true">
-                <div class="hw-bat hw-bat--swarm" *ngFor="let n of batSwarmSlots">
-                    <div class="hw-bat__motion">
-                        <svg class="hw-bat__svg" viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg" focusable="false">
-                            <g class="hw-bat__wing hw-bat__wing--l">
-                                <path d="M45 22 C38 15 26 8 6 10 L10 15 Q16 13 18 17 Q12 21 5 24 Q16 22 21 20 Q14 27 7 31 Q20 27 29 23 Q24 30 14 36 Q32 29 45 25 Z"/>
-                            </g>
-                            <g class="hw-bat__torso">
-                                <path d="M46.5 14 L44.5 5.5 L48 11.5 L50 4 L52 11.5 L55.5 5.5 L53.5 14 C56.5 16 57.5 24 55 28.5 C53.5 31 51.5 32.5 50 32.5 C48.5 32.5 46.5 31 45 28.5 C42.5 24 43.5 16 46.5 14 Z"/>
-                            </g>
-                            <g class="hw-bat__wing hw-bat__wing--r">
-                                <path d="M55 22 C62 15 74 8 94 10 L90 15 Q84 13 82 17 Q88 21 95 24 Q84 22 79 20 Q86 27 93 31 Q80 27 71 23 Q76 30 86 36 Q68 29 55 25 Z"/>
-                            </g>
-                        </svg>
+                    <div class="tg-turkey__ejecta" *ngIf="volcanoPumpkins.length" aria-hidden="true">
+                        <span class="tg-volcano-pumpkin"
+                              *ngFor="let p of volcanoPumpkins; trackBy: trackVolcanoPumpkin"
+                              [attr.data-arc]="p.arc"
+                              [style.animation-delay.ms]="p.delay"
+                              [style.--vx]="p.vx"
+                              [style.--vy]="p.vy"
+                              [style.--spin]="p.spin"
+                              [style.--size.px]="p.size">
+                            <span class="tg-volcano-pumpkin__stem"></span>
+                            <span class="tg-volcano-pumpkin__body"></span>
+                        </span>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="hw-fireflies" aria-hidden="true">
-            <span class="hw-firefly" *ngFor="let n of fireflySlots"></span>
-        </div>
+                <!-- Side dishes -->
+                <div class="tg-dish tg-dish--mash">
+                    <span class="tg-dish__plate"></span>
+                    <span class="tg-dish__mash"></span>
+                    <span class="tg-dish__butter"></span>
+                </div>
+                <div class="tg-dish tg-dish--veg">
+                    <span class="tg-dish__plate"></span>
+                    <span class="tg-dish__bean"></span>
+                    <span class="tg-dish__bean tg-dish__bean--2"></span>
+                    <span class="tg-dish__bean tg-dish__bean--3"></span>
+                </div>
+                <div class="tg-dish tg-dish--corn">
+                    <span class="tg-dish__plate"></span>
+                    <span class="tg-dish__cob"></span>
+                </div>
+                <div class="tg-dish tg-dish--pie">
+                    <span class="tg-dish__crust"></span>
+                    <span class="tg-dish__filling"></span>
+                    <span class="tg-dish__whip"></span>
+                </div>
+                <div class="tg-dish tg-dish--bread">
+                    <span class="tg-dish__roll"></span>
+                    <span class="tg-dish__roll tg-dish__roll--2"></span>
+                    <span class="tg-dish__roll tg-dish__roll--3"></span>
+                </div>
+                <div class="tg-dish tg-dish--gravy">
+                    <span class="tg-dish__boat"></span>
+                    <span class="tg-dish__gravy"></span>
+                </div>
 
-        <!-- Night-only: witch on broom, L→R with wind bob -->
-        <div class="hw-witch-sky"
-             *ngIf="isNightMode && !reducedMotion"
-             [class.hw-witch-sky--paused]="animationsPaused"
-             aria-hidden="true">
-            <div class="hw-witch">
-                <span class="hw-witch__broom"></span>
-                <span class="hw-witch__bristles"></span>
-                <span class="hw-witch__cape"></span>
-                <span class="hw-witch__body"></span>
-                <span class="hw-witch__arm"></span>
-                <span class="hw-witch__head"></span>
-                <span class="hw-witch__hat"></span>
+                <div class="tg-gourd-cluster">
+                    <span class="tg-gourd tg-gourd--a"></span>
+                    <span class="tg-gourd tg-gourd--b"></span>
+                    <span class="tg-gourd tg-gourd--c"></span>
+                </div>
             </div>
         </div>
 
@@ -280,28 +304,6 @@
                 [style.animation-duration.s]="leaf.duration"
                 [style.font-size.rem]="leaf.size"
                 [attr.data-tone]="leaf.tone">{{ leaf.glyph }}</span>
-        </div>
-
-        <div class="hw-kids" *ngIf="!reducedMotion" aria-hidden="true">
-            <div class="hw-kid hw-kid--vamp">
-                <div class="hw-kid__legs"></div>
-                <div class="hw-kid__body"></div>
-                <div class="hw-kid__head"></div>
-                <span class="hw-kid__basket"></span>
-            </div>
-            <div class="hw-kid hw-kid--witch">
-                <div class="hw-kid__legs"></div>
-                <div class="hw-kid__body"></div>
-                <div class="hw-kid__head"></div>
-                <span class="hw-kid__broom"></span>
-                <span class="hw-kid__basket"></span>
-            </div>
-            <div class="hw-kid hw-kid--monster">
-                <div class="hw-kid__legs"></div>
-                <div class="hw-kid__body"></div>
-                <div class="hw-kid__head"></div>
-                <span class="hw-kid__basket"></span>
-            </div>
         </div>
 
         <div #catStage class="fall-cat-stage"
@@ -323,7 +325,7 @@
                 <span class="fall-cat__paw fall-cat__paw--l"></span>
                 <span class="fall-cat__paw fall-cat__paw--r"></span>
             </div>
-            <span class="fall-chase-leaf" *ngIf="catPhase === 'chase'" aria-hidden="true">🍂</span>
+            <span class="fall-chase-leaf" *ngIf="catPhase === 'chase'" aria-hidden="true">🍁</span>
             <div class="fall-leaf-burst" *ngIf="catPhase === 'catch'" aria-hidden="true">
                 <span class="fall-leaf-burst__bit"></span>
                 <span class="fall-leaf-burst__bit"></span>
@@ -371,10 +373,44 @@
             <div class="login-card">
                 <div class="logo">
                     <img src="./assets/images/logo.png" width="120px" class="user-avatar"
-                         (click)="showHideVersion()" />
+                         role="button"
+                         tabindex="0"
+                         title="Version & updates"
+                         (click)="showHideVersion()"
+                         (keydown.enter)="showHideVersion()" />
                 </div>
 
                 <h1>{{ 'LG.TITLE' | lbl:'Inventory Control Room' }}</h1>
+
+                <p-dialog header="Inventory Control Room"
+                          [(visible)]="showAboutDialog"
+                          [modal]="true"
+                          [draggable]="false"
+                          [resizable]="false"
+                          [style]="{width: '40rem'}"
+                          styleClass="login-about-dialog">
+                    <p class="login-about-version"><strong>Version</strong> {{ appVersion }}</p>
+                    <h3 class="login-about-heading">Last updates</h3>
+                    <p class="login-about-intro">Active Patch and News notifications.</p>
+                    <div *ngIf="aboutBusy" class="login-about-empty">Loading…</div>
+                    <div *ngIf="!aboutBusy && aboutError" class="login-about-empty">{{ aboutError }}</div>
+                    <div *ngIf="!aboutBusy && !aboutError && aboutItems.length === 0"
+                         class="login-about-empty">No active updates.</div>
+                    <article *ngFor="let item of aboutItems" class="login-about-card"
+                             [class.login-about-card--patch]="item.ITEM_TYPE === 'PATCH'">
+                        <div class="login-about-type">{{ item.ITEM_TYPE === 'PATCH' ? 'Patch' : 'News' }}</div>
+                        <h4 class="login-about-title">{{ item.TITLE }}</h4>
+                        <div class="login-about-meta">{{ item.PUBLISHED_ON }}
+                            <span *ngIf="item.NOTIFICATION_DATE"> · Until {{ item.NOTIFICATION_DATE }}</span>
+                        </div>
+                        <pre class="login-about-body">{{ item.NOTIFICATION_MSG }}</pre>
+                    </article>
+                    <ng-template pTemplate="footer">
+                        <button type="button" pButton label="Close"
+                                class="p-button-text"
+                                (click)="showAboutDialog = false"></button>
+                    </ng-template>
+                </p-dialog>
 
                 <form role="form" (ngSubmit)="onLoggedin()">
                     <div class="form-group">
@@ -436,9 +472,8 @@
         </div>
 
         <div class="fall-message">
-            <span class="fall-icon" aria-hidden="true">{{ isNightMode ? '🦇' : '🎃' }}</span>
-            <h2>{{ isNightMode ? 'Enter if you dare...' : 'Happy Halloween!' }}</h2>
-            <p>{{ isNightMode ? 'The moon is watching — welcome back' : 'Spooky season is here — welcome back' }}</p>
+            <h2>Happy Thanksgiving!</h2>
+            <p>Giving thanks for another great season — welcome back!</p>
         </div>
     </div>
 </div>

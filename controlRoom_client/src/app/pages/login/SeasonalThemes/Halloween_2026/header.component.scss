@@ -1,0 +1,413 @@
+/* ==============================================
+   ICR HALLOWEEN chrome — header.component.scss
+   Palette via fall-palette.scss (Halloween remap)
+   Pure Fall archive: header.component_Fall.scss
+   ============================================== */
+
+@import '../themes/fall-palette';
+
+// Stay above page BlockUI overlays (z-index 99 in page-header) and dialog masks
+.pos-f-t.fixed-top.header {
+    z-index: 1040;
+}
+
+// ── Navbar Bar (Halloween dusk) ───────────────────────────────
+.fall-header {
+    position: relative;
+    overflow: visible;
+    background: linear-gradient(
+        115deg,
+        $hw-aubergine 0%,
+        #3A2438 38%,
+        $hw-burgundy 72%,
+        darken($hw-burnt, 4%) 100%
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1.5px solid rgba($hw-pumpkin, 0.45);
+    box-shadow:
+        0 2px 18px rgba($hw-ink, 0.35),
+        0 0 24px rgba($hw-aubergine, 0.25),
+        0 1px 0 rgba($hw-moon, 0.08) inset;
+
+    // ── Brand ────────────────────────────────────────────────
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: 0.02em;
+        color: $hw-moon !important;
+        text-shadow: 0 1px 4px rgba($hw-ink, 0.45);
+        transition: opacity 0.2s;
+
+        &:hover { opacity: 0.85; }
+    }
+
+    .env-current-label {
+        margin-left: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        max-width: 7rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+        color: rgba($hw-moon, 0.85);
+    }
+
+    .adh-lang-dropdown .dropdown-item.active {
+        color: darken($hw-pumpkin, 8%) !important;
+        font-weight: 700;
+        background: linear-gradient(
+            90deg,
+            rgba($hw-pumpkin, 0.28) 0%,
+            rgba($hw-candle, 0.22) 100%
+        );
+    }
+
+    // ── Nav Links ────────────────────────────────────────────
+    .nav-link {
+        color: $hw-moon !important;
+        font-weight: 500;
+        font-size: 0.93rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 8px;
+        transition: background 0.18s, color 0.18s;
+
+        i { margin-right: 4px; color: $hw-candle; }
+
+        &:hover,
+        &:focus {
+            background: rgba($hw-pumpkin, 0.22);
+            color: $hw-moon !important;
+        }
+
+        &.isDisabled {
+            pointer-events: none;
+            opacity: 0.4;
+        }
+    }
+
+    // Halloween badge — centred in the navbar
+    .fall-badge {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+
+        span {
+            background: linear-gradient(135deg, $hw-pumpkin, $hw-burnt);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 12px;
+            box-shadow:
+                0 2px 12px rgba($hw-pumpkin, 0.4),
+                0 0 0 1px rgba($hw-moon, 0.15) inset;
+            letter-spacing: 0.03em;
+            text-shadow: 0 1px 2px rgba($hw-ink, 0.35);
+        }
+    }
+
+    // ── Hamburger toggler ─────────────────────────────────────
+    .navbar-toggler {
+        border-color: rgba($hw-moon, 0.35);
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23FFF0C9' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+    }
+}
+
+
+// ── Halloween Badge ──────────────────────────────────────────
+.fall-badge {
+    display: flex;
+    align-items: center;
+    margin-left: 12px;
+
+    span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        color: #fff;
+        background: linear-gradient(
+            135deg,
+            $hw-pumpkin 0%,
+            mix($hw-pumpkin, $hw-aubergine, 55%) 100%
+        );
+        border: 1px solid rgba($hw-candle, 0.4);
+        box-shadow:
+            0 1px 8px rgba($hw-pumpkin, 0.35),
+            0 0 14px rgba($hw-aubergine, 0.25),
+            0 0 0 1px rgba($hw-moon, 0.2) inset;
+        animation: badge-sway 4s ease-in-out infinite;
+    }
+}
+
+@keyframes badge-sway {
+    0%, 100% { transform: rotate(-1.5deg); }
+    50%      { transform: rotate(1.5deg);  }
+}
+
+// ── Halloween Dropdowns ──────────────────────────────────────
+.fall-dropdown {
+    background: rgba(247, 240, 228, 0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba($hw-pumpkin, 0.35);
+    border-radius: 14px;
+    box-shadow:
+        0 8px 28px rgba($hw-ink, 0.28),
+        0 0 20px rgba($hw-aubergine, 0.12),
+        0 0 0 1px rgba($hw-moon, 0.5) inset;
+    padding: 6px 4px;
+    min-width: 160px;
+    overflow: hidden;
+
+    .dropdown-item {
+        color: $fall-deep;
+        font-size: 0.88rem;
+        font-weight: 500;
+        padding: 7px 16px;
+        border-radius: 8px;
+        transition: background 0.15s, color 0.15s, padding-left 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        i { color: $hw-burnt; min-width: 16px; }
+
+        &:hover,
+        &:focus {
+            background: linear-gradient(
+                90deg,
+                rgba($hw-pumpkin, 0.28) 0%,
+                rgba($hw-aubergine, 0.12) 100%
+            );
+            color: $hw-aubergine;
+            padding-left: 20px;
+        }
+
+        &.active {
+            background: rgba($hw-pumpkin, 0.22);
+            font-weight: 700;
+        }
+
+        &:active {
+            background: rgba($hw-burgundy, 0.2);
+            color: $fall-deep;
+        }
+
+        &.isDisabled {
+            pointer-events: none;
+            opacity: 0.38;
+        }
+    }
+
+    .dropdown-divider {
+        border-color: rgba($hw-aubergine, 0.18);
+        margin: 4px 10px;
+    }
+}
+
+// ── AI mode toggle button ─────────────────────────────────────────────────────
+.ai-mode-toggle-item {
+    display: flex;
+    align-items: center;
+}
+
+.ai-mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba($hw-ink, 0.35);
+    border: 1.5px solid rgba($hw-moon, 0.45);
+    border-radius: 20px;
+    color: $hw-moon;
+    cursor: pointer;
+    font-size: .78rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    transition: background .2s, border-color .2s, box-shadow .2s;
+    white-space: nowrap;
+    letter-spacing: .03em;
+
+    i { font-size: .8rem; color: $hw-candle; }
+
+    .ai-mode-label { font-weight: 700; }
+    .ai-mode-state {
+        font-size: .7rem;
+        opacity: .8;
+        font-weight: 500;
+    }
+
+    &:hover {
+        background: rgba($hw-pumpkin, 0.28);
+        border-color: $hw-moon;
+    }
+
+    &--active {
+        background: $hw-pumpkin;
+        border-color: $hw-candle;
+        color: #fff;
+        box-shadow: 0 0 12px rgba($hw-pumpkin, 0.55);
+
+        .ai-mode-state { opacity: 1; }
+        i { color: #fff; }
+
+        &:hover {
+            background: $hw-burnt;
+            border-color: $hw-candle;
+        }
+    }
+}
+
+.news-mail-item {
+    display: flex;
+    align-items: center;
+    margin-left: 0.35rem;
+}
+
+.news-whats-new-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba($hw-ink, 0.35);
+    border: 1.5px solid rgba($hw-moon, 0.45);
+    border-radius: 20px;
+    color: $hw-moon;
+    cursor: pointer;
+    font-size: .78rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    transition: background .2s, border-color .2s;
+    white-space: nowrap;
+    letter-spacing: .03em;
+
+    i { font-size: .85rem; margin-right: 0; color: $hw-candle; }
+
+    &:hover {
+        background: rgba($hw-pumpkin, 0.28);
+        border-color: $hw-moon;
+    }
+}
+
+.news-whats-new-label {
+    font-weight: 700;
+}
+
+.news-mail-link {
+    position: relative;
+
+    i { margin-right: 0 !important; }
+}
+
+.news-mail-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: #c53030;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+}
+
+.news-empty {
+    color: $fall-deep;
+    opacity: 0.7;
+    padding: 1rem 0.25rem;
+}
+
+.news-card {
+    border: 1px solid rgba($hw-pumpkin, 0.28);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    background: rgba($hw-moon, 0.55);
+
+    h4,
+    .news-card-title {
+        margin: 0 0 0.25rem;
+        font-size: 1rem;
+        color: $hw-aubergine;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", inherit;
+    }
+}
+
+.news-card--patch {
+    border-left: 4px solid #2b6cb0;
+}
+
+.news-card--notify {
+    border-left: 4px solid #c53030;
+    background: rgba(254, 215, 215, 0.35);
+}
+
+.news-meta {
+    font-size: 0.78rem;
+    color: #6b4f3a;
+    margin-bottom: 0.5rem;
+}
+
+.news-body {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", inherit;
+    font-size: 0.88rem;
+    color: #3d2b1f;
+    line-height: 1.45;
+}
+
+.news-admin-toolbar {
+    margin-bottom: 0.75rem;
+}
+
+.news-tab-badge {
+    display: inline-block;
+    margin-left: 0.35rem;
+    min-width: 1.15rem;
+    padding: 0 0.35rem;
+    border-radius: 8px;
+    background: #c53030;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.15rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.news-banner-intro {
+    margin: 0 0 0.85rem;
+    font-size: 0.9rem;
+    color: #6b4f3a;
+}
+
+.news-banner-type {
+    display: inline-block;
+    margin-bottom: 0.35rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
+    background: #edf2f7;
+    color: #2d3748;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}

@@ -1,7 +1,6 @@
 /* ==============================================
-   ICR HALLOWEEN chrome — sidebar.component.scss
-   Palette via fall-palette.scss (Halloween remap)
-   Pure Fall archive: sidebar.component_Fall.scss
+   ICR THANKSGIVING 2026 — sidebar.component.scss
+   Warm fall chrome (Fall palette + turkey markers)
    ============================================== */
 
 @import '../themes/fall-palette';
@@ -21,23 +20,22 @@ $sidebar-collapsed-width: 52px;
     overflow-x: hidden;
     background: linear-gradient(
         180deg,
-        #F7F0E4 0%,
-        #EDE6F2 42%,
-        rgba($hw-aubergine, 0.14) 78%,
-        rgba($hw-burgundy, 0.12) 100%
+        $fall-cream 0%,
+        lighten($fall-cream, 1%) 55%,
+        rgba($fall-amber, 0.35) 100%
     ) !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-right: 1.5px solid rgba($hw-pumpkin, 0.32);
-    box-shadow: 2px 0 18px rgba($hw-ink, 0.12), 2px 0 24px rgba($hw-aubergine, 0.08);
+    border-right: 1.5px solid rgba($fall-coral, 0.22);
+    box-shadow: 2px 0 16px rgba($fall-deep, 0.08);
     z-index: 100;
     transition: width 0.2s ease;
 
     // Smooth custom scrollbar
     &::-webkit-scrollbar          { width: 5px; }
     &::-webkit-scrollbar-track    { background: transparent; }
-    &::-webkit-scrollbar-thumb    { background: rgba($hw-pumpkin, 0.45); border-radius: 4px; }
-    &::-webkit-scrollbar-thumb:hover { background: rgba($hw-burnt, 0.65); }
+    &::-webkit-scrollbar-thumb    { background: rgba($fall-coral, 0.40); border-radius: 4px; }
+    &::-webkit-scrollbar-thumb:hover { background: rgba($fall-coral, 0.65); }
 
     .fall-sidebar-toggle {
         display: flex;
@@ -46,20 +44,20 @@ $sidebar-collapsed-width: 52px;
         width: calc(100% - 16px);
         margin: 4px 8px 8px;
         padding: 8px 10px;
-        border: 1px solid rgba($hw-pumpkin, 0.32);
+        border: 1px solid rgba($fall-coral, 0.28);
         border-radius: 8px;
-        background: rgba($hw-moon, 0.55);
+        background: rgba($fall-white, 0.55);
         color: $fall-deep;
         font-size: 0.82rem;
         font-weight: 600;
         cursor: pointer;
         transition: background 0.15s, border-color 0.15s;
 
-        i { color: $hw-burnt; width: 16px; text-align: center; }
+        i { color: $fall-trunk; width: 16px; text-align: center; }
 
         &:hover {
-            background: rgba($hw-pumpkin, 0.22);
-            border-color: rgba($hw-pumpkin, 0.5);
+            background: rgba($fall-sun, 0.4);
+            border-color: rgba($fall-coral, 0.45);
         }
     }
 
@@ -82,7 +80,7 @@ $sidebar-collapsed-width: 52px;
         background: transparent !important;
         background-color: transparent !important;
         border: none !important;
-        border-top: 1px solid rgba($hw-aubergine, 0.12) !important;
+        border-top: 1px solid rgba($fall-coral, 0.10) !important;
         border-radius: 0;
         cursor: pointer;
         transition: background 0.16s, padding-left 0.16s;
@@ -93,7 +91,7 @@ $sidebar-collapsed-width: 52px;
     .list-group-item i,
     a.list-group-item i,
     .nested-menu > .list-group-item i {
-        color: $hw-burnt;
+        color: $fall-trunk;
         margin-right: 6px;
         width: 16px;
         text-align: center;
@@ -103,21 +101,21 @@ $sidebar-collapsed-width: 52px;
     .list-group-item:hover,
     a.list-group-item:hover,
     .nested-menu > .list-group-item:hover {
-        background: rgba($hw-pumpkin, 0.18) !important;
+        background: rgba($fall-sun, 0.30) !important;
         padding-left: 20px;
-        color: $hw-aubergine !important;
+        color: $fall-deep !important;
     }
 
     .list-group-item.router-link-active,
     a.list-group-item.router-link-active {
-        background: linear-gradient(90deg, rgba($hw-pumpkin, 0.24) 0%, rgba($hw-aubergine, 0.12) 100%) !important;
-        border-left: 3px solid $hw-pumpkin !important;
+        background: linear-gradient(90deg, rgba($fall-coral, 0.22) 0%, rgba($fall-sun, 0.18) 100%) !important;
+        border-left: 3px solid $fall-coral !important;
         padding-left: 13px;
-        color: $hw-aubergine !important;
+        color: darken($fall-deep, 5%) !important;
         position: relative;
 
         &::after {
-            content: '🎃';
+            content: '🦃';
             position: absolute;
             right: 10px;
             top: 50%;
@@ -162,8 +160,8 @@ $sidebar-collapsed-width: 52px;
         list-style: none;
         padding: 2px 0 2px 16px;
         margin: 0;
-        background: rgba($hw-aubergine, 0.06);
-        border-left: 2px solid rgba($hw-pumpkin, 0.3);
+        background: rgba($fall-white, 0.35);
+        border-left: 2px solid rgba($fall-coral, 0.25);
         margin-left: 12px;
 
         li { padding: 0; }
@@ -195,16 +193,16 @@ $sidebar-collapsed-width: 52px;
         transition: background 0.14s, padding-left 0.14s;
         white-space: nowrap;
 
-        i { color: $hw-burnt; margin-right: 6px; width: 14px; font-size: 0.80rem; text-align: center; display: inline-block; }
+        i { color: $fall-trunk; margin-right: 6px; width: 14px; font-size: 0.80rem; text-align: center; display: inline-block; }
 
         &:hover {
-            background: rgba($hw-pumpkin, 0.2);
+            background: rgba($fall-sun, 0.35);
             padding-left: 16px;
         }
 
         &.router-link-active {
-            background: rgba($hw-pumpkin, 0.22);
-            color: $hw-aubergine;
+            background: rgba($fall-coral, 0.20);
+            color: darken($fall-deep, 8%);
             font-weight: 700;
         }
     }
@@ -265,13 +263,12 @@ $sidebar-collapsed-width: 52px;
     width: $sidebar-width;
     background: linear-gradient(
         135deg,
-        rgba(#F7F0E4, 0.98) 0%,
-        rgba($hw-aubergine, 0.18) 55%,
-        rgba($hw-burgundy, 0.22) 100%
+        rgba($fall-cream, 0.98) 0%,
+        rgba($fall-amber, 0.55) 100%
     ) !important;
-    border-top:  1.5px solid rgba($hw-pumpkin, 0.3);
-    border-right: 1.5px solid rgba($hw-pumpkin, 0.3);
-    box-shadow: 2px -2px 14px rgba($hw-ink, 0.12), 0 -4px 16px rgba($hw-aubergine, 0.08);
+    border-top:  1.5px solid rgba($fall-coral, 0.22);
+    border-right: 1.5px solid rgba($fall-coral, 0.22);
+    box-shadow: 2px -2px 12px rgba($fall-deep, 0.07);
     z-index: 100;
     overflow-y: auto;
     overflow-x: hidden;
@@ -295,9 +292,9 @@ $sidebar-collapsed-width: 52px;
         text-decoration: none;
         white-space: nowrap;
 
-        i { color: $hw-burnt; margin-right: 6px; width: 16px; text-align: center; display: inline-block; }
+        i { color: $fall-trunk; margin-right: 6px; width: 16px; text-align: center; display: inline-block; }
 
-        &:hover { background: rgba($hw-pumpkin, 0.18) !important; }
+        &:hover { background: rgba($fall-sun, 0.30) !important; }
 
         &.isDisabled { pointer-events: none; opacity: 0.40; }
     }
@@ -313,8 +310,8 @@ $sidebar-collapsed-width: 52px;
         list-style: none;
         padding: 2px 0 2px 16px;
         margin: 0 0 0 12px;
-        background: rgba($hw-aubergine, 0.06);
-        border-left: 2px solid rgba($hw-pumpkin, 0.28);
+        background: rgba($fall-white, 0.35);
+        border-left: 2px solid rgba($fall-coral, 0.22);
 
         li a {
             display: block;
@@ -326,16 +323,16 @@ $sidebar-collapsed-width: 52px;
             transition: background 0.13s;
             white-space: nowrap;
 
-            i { color: $hw-burnt; margin-right: 5px; }
-            &:hover { background: rgba($hw-pumpkin, 0.18); }
-            &.router-link-active { background: rgba($hw-pumpkin, 0.2); font-weight: 700; }
+            i { color: $fall-trunk; margin-right: 5px; }
+            &:hover { background: rgba($fall-sun, 0.30); }
+            &.router-link-active { background: rgba($fall-coral, 0.18); font-weight: 700; }
         }
     }
 
     .logo {
         text-align: center;
         padding: 8px 0 10px;
-        border-top: 1px solid rgba($hw-pumpkin, 0.25);
+        border-top: 1px solid rgba($fall-coral, 0.18);
     }
 
     &.collapsed {
